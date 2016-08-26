@@ -328,7 +328,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             }
 
             if (rawCategories.y) {
-                categoriesMap.y = this._escapeCategories(rawCategories.y).reverse();
+                categoriesMap.y = this._mapCategories(rawCategories.y).reverse();
             }
         }
 
@@ -412,19 +412,38 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Get category for tooltip.
-     * @param {number} firstIndex - index
+     * Get tooltip category.
+     * @param {number} categoryIndex - category index
+     * @param {boolean} isVertical - whether vertical category or not
+     * @returns {string}
+     * @private
+     */
+    _getTooltipCategory: function(categoryIndex, isVertical) {
+        var category = this.getCategory(categoryIndex, isVertical);
+        var axisType = isVertical ? 'yAxis' : 'xAxis';
+        var options = this.options[axisType] || {};
+
+        if (predicate.isDatetimeType(options.type)) {
+            category = renderUtil.formatDate(category, options.dateFormat);
+        }
+
+        return category;
+    },
+
+    /**
+     * Make category for tooltip.
+     * @param {number} categoryIndex - category index
      * @param {number} oppositeIndex - opposite index
      * @param {boolean} isVerticalChart - whether vertical chart or not
      * @returns {string}
      */
-    getTooltipCategory: function(firstIndex, oppositeIndex, isVerticalChart) {
-        var isHorizontal = !isVerticalChart;
-        var category = this.getCategory(firstIndex, isHorizontal);
-        var categoryCount = this.getCategoryCount(!isHorizontal);
+    makeTooltipCategory: function(categoryIndex, oppositeIndex, isVerticalChart) {
+        var isVertical = !isVerticalChart;
+        var category = this._getTooltipCategory(categoryIndex, isVertical);
+        var categoryCount = this.getCategoryCount(!isVertical);
 
         if (categoryCount) {
-            category += ', ' + this.getCategory(categoryCount - oppositeIndex - 1, isVerticalChart);
+            category += ', ' + this._getTooltipCategory(categoryCount - oppositeIndex - 1, !isVertical);
         }
 
         return category;

@@ -92,7 +92,7 @@ describe('Tooltip', function() {
             var seriesDataModel = new SeriesDataModel();
             var pickValueMap = jasmine.createSpy('pickValueMap').and.returnValue({});
 
-            spyOn(dataProcessor, 'getTooltipCategory').and.returnValue('Silver');
+            spyOn(dataProcessor, 'makeTooltipCategory').and.returnValue('Silver');
             spyOn(dataProcessor, 'getLegendLabels').and.returnValue(['Density1', 'Density2']);
             seriesDataModel.groups = [
                 new seriesGroup([

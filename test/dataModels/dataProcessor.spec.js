@@ -311,7 +311,7 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('getTooltipCategory()', function() {
+    describe('makeTooltipCategory()', function() {
         it('가로형 차트의 경우 세로형 카테고리를 기본 값으로 합니다.', function() {
             var actual;
 
@@ -320,7 +320,7 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor.getTooltipCategory(0, null, false);
+            actual = dataProcessor.makeTooltipCategory(0, null, false);
 
             expect(dataProcessor.categoriesMap.y).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual).toBe('cate1');
@@ -334,7 +334,7 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor.getTooltipCategory(0, null, true);
+            actual = dataProcessor.makeTooltipCategory(0, null, true);
 
             expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual).toBe('cate1');
@@ -351,7 +351,7 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor.getTooltipCategory(0, 2, true);
+            actual = dataProcessor.makeTooltipCategory(0, 2, true);
 
             expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual).toBe('cate1, 3');
