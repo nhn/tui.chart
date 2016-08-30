@@ -103,6 +103,46 @@ var lineTypeMixer = {
             ],
             plot: true
         });
+    },
+
+    /**
+     * Add plot line.
+     * @param {{index: number, color: string, id: string}} data - data
+     * @override
+     * @api
+     */
+    addPlotLine: function(data) {
+        this.componentManager.get('plot').addPlotLine(data);
+    },
+
+    /**
+     * Add plot band.
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     * @override
+     * @api
+     */
+    addPlotBand: function(data) {
+        this.componentManager.get('plot').addPlotBand(data);
+    },
+
+    /**
+     * Remove plot line.
+     * @param {string} id - line id
+     * @override
+     * @api
+     */
+    removePlotLine: function(id) {
+        this.componentManager.get('plot').removePlotLine(id);
+    },
+
+    /**
+     * Remove plot band.
+     * @param {string} id - band id
+     * @override
+     * @api
+     */
+    removePlotBand: function(id) {
+        this.componentManager.get('plot').removePlotBand(id);
     }
 };
 

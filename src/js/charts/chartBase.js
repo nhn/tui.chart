@@ -779,51 +779,27 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Add plot line.
-     * @param {{index: number, color: string, id: string}} data - data
+     * @abstract
      */
-    addPlotLine: function(data) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.addPlotLine(data);
-        }
-    },
+    addPlotLine: function() {},
 
     /**
      * Add plot band.
-     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     * @abstract
      */
-    addPlotBand: function(data) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.addPlotBand(data);
-        }
-    },
+    addPlotBand: function() {},
 
     /**
      * Remove plot line.
-     * @param {string} id - line id
+     * @abstract
      */
-    removePlotLine: function(id) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.removePlotLine(id);
-        }
-    },
+    removePlotLine: function() {},
 
     /**
      * Remove plot band.
-     * @param {string} id - band id
+     * @abstract
      */
-    removePlotBand: function(id) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.removePlotBand(id);
-        }
-    }
+    removePlotBand: function() {}
 });
 
 module.exports = ChartBase;
