@@ -274,14 +274,14 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Render series label.
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} labelContainer series label area element
      * @private
      */
-    _renderSeriesLabel: function(elSeriesLabelArea) {
+    _renderSeriesLabel: function(labelContainer) {
         if (this.options.stackType) {
-            this._renderStackedSeriesLabel(elSeriesLabelArea);
+            this._renderStackedSeriesLabel(labelContainer);
         } else {
-            this._renderNormalSeriesLabel(elSeriesLabelArea);
+            this._renderNormalSeriesLabel(labelContainer);
         }
     }
 });

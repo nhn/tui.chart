@@ -750,9 +750,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     showSeriesLabel: function() {
-        var serieses = this.componentManager.where({componentType: 'series'});
+        var seriesSet = this.componentManager.where({componentType: 'series'});
 
-        tui.util.forEachArray(serieses, function(series) {
+        tui.util.forEachArray(seriesSet, function(series) {
             series.showLabel();
         });
     },
@@ -762,9 +762,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     hideSeriesLabel: function() {
-        var serieses = this.componentManager.where({componentType: 'series'});
+        var seriesSet = this.componentManager.where({componentType: 'series'});
 
-        tui.util.forEachArray(serieses, function(series) {
+        tui.util.forEachArray(seriesSet, function(series) {
             series.hideLabel();
         });
     },

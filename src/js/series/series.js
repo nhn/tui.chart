@@ -181,6 +181,17 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Append label container to series container.
+     * @param {HTMLElement} seriesContainer - series container
+     * @param {HTMLElement} labelContainer - label container
+     * @private
+     */
+    _appendLabelContainer: function(seriesContainer, labelContainer) {
+        this.seriesLabelContainer = labelContainer;
+        dom.append(seriesContainer, labelContainer);
+    },
+
+    /**
      * Render series area.
      * @param {HTMLElement} seriesContainer series area element
      * @param {object} data data for rendering
@@ -190,7 +201,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
         var extendedBound = this.boundsMaker.getBound('extendedSeries');
-        var seriesData, seriesLabelContainer, paper;
+        var seriesData, labelContainer, paper;
 
         this.data = data;
 
@@ -207,9 +218,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         if (predicate.isShowLabel(this.options)) {
-            seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
-            this.seriesLabelContainer = seriesLabelContainer;
-            dom.append(seriesContainer, seriesLabelContainer);
+            labelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
+            this._appendLabelContainer(seriesContainer, labelContainer);
         }
 
         return paper;
@@ -672,7 +682,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Show label.
      */
     showLabel: function() {
+        var labelContainer;
+
         this.options.showLabel = true;
+
+        if (!this.seriesLabelContainer) {
+            labelContainer = this._renderSeriesLabelArea();
+            this._appendLabelContainer(this.seriesContainer, labelContainer);
+        }
+
         this._showSeriesLabelWithoutAnimation();
     },
 
@@ -681,8 +699,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     hideLabel: function() {
         this.options.showLabel = false;
-        dom.removeClass(this.seriesLabelContainer, 'show');
-        dom.removeClass(this.seriesLabelContainer, 'opacity');
+
+        if (this.seriesLabelContainer) {
+            dom.removeClass(this.seriesLabelContainer, 'show');
+            dom.removeClass(this.seriesLabelContainer, 'opacity');
+        }
     }
 });
 
