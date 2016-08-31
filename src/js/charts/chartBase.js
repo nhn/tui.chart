@@ -653,7 +653,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             updated = true;
         }
 
-        if (dimension.height && dimension.height > 0 &&options.chart.height !== dimension.height) {
+        if (dimension.height && dimension.height > 0 && options.chart.height !== dimension.height) {
             options.chart.height = dimension.height;
             updated = true;
         }
