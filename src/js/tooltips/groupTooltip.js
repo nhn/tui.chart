@@ -385,6 +385,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _fireBeforeShowTooltip: function(index, range) {
         this.userEvent.fire('beforeShowTooltip', {
+            chartType: this.chartType,
             index: index,
             range: range
         });
@@ -399,6 +400,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _fireAfterShowTooltip: function(index, range, additionParams) {
         this.userEvent.fire('afterShowTooltip', tui.util.extend({
+            chartType: this.chartType,
             index: index,
             range: range
         }, additionParams));
