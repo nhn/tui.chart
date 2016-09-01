@@ -524,6 +524,25 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
+     * Move dot.
+     * @param {object} dot - raphael object
+     * @param {{left: number, top: number}} position - position
+     * @private
+     */
+    _moveDot: function(dot, position) {
+        var dotAttrs = {
+            cx: position.left,
+            cy: position.top
+        };
+
+        if (this.dotOpacity) {
+            dotAttrs = tui.util.extend({'fill-opacity': this.dotOpacity}, dotAttrs, this.borderStyle);
+        }
+
+        dot.attr(dotAttrs);
+    },
+
+    /**
      * Show graph for zoom.
      */
     showGraph: function() {
