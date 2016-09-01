@@ -104,15 +104,22 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @private
      */
     _addComponents: function(chartType) {
+        var dataProcessor = this.dataProcessor;
+        var seriesDataModel = dataProcessor.getSeriesDataModel(this.chartType);
+        var isVerticalCategory = seriesDataModel.isXCountGreaterThanYCount();
+        var hasCategories = dataProcessor.hasCategories(isVerticalCategory);
+
         this._addComponentsForAxisType({
             chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
-                    isVertical: true
+                    isVertical: true,
+                    isLabel: hasCategories && isVerticalCategory
                 },
                 {
-                    name: 'xAxis'
+                    name: 'xAxis',
+                    isLabel: hasCategories && !isVerticalCategory
                 }
             ],
             series: [

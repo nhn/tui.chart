@@ -32,14 +32,15 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      */
     _calculateStep: function() {
         var step = 0;
-        var dimension, seriesDataModel, size, len;
+        var dimension, size, len;
+        var seriesDataModel = this._getSeriesDataModel();
+        var isVerticalCategory = seriesDataModel.isXCountGreaterThanYCount();
 
-        if (this.dataProcessor.hasCategories(false)) {
+        if (this.dataProcessor.hasCategories(isVerticalCategory)) {
             dimension = this.boundsMaker.getDimension('series');
-            seriesDataModel = this._getSeriesDataModel();
-            len = this.dataProcessor.getCategoryCount(false);
+            len = this.dataProcessor.getCategoryCount(isVerticalCategory);
 
-            if (seriesDataModel.isXCountGreaterThanYCount()) {
+            if (isVerticalCategory) {
                 size = dimension.height;
             } else {
                 size = dimension.width;
