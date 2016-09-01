@@ -9,7 +9,6 @@
 var BubbleChart = require('../../src/js/charts/bubbleChart');
 var axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 var CircleLegend = require('../../src/js/legends/circleLegend');
-var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for BubbleChart', function() {
     var bubbleChart, componentManager, dataProcessor, boundsMaker, sereisDataModel;
@@ -203,6 +202,8 @@ describe('Test for BubbleChart', function() {
 
     describe('_addComponents()', function() {
         it('circleLegend.visible 옵션이 true이면 componentManager.register를 호출하여 circleLegend 컴포넌트를 생성합니다.', function() {
+            dataProcessor.hasCategories.and.returnValue(false);
+            dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_addComponentsForAxisType');
             bubbleChart.options = {
                 circleLegend: {
@@ -225,6 +226,8 @@ describe('Test for BubbleChart', function() {
         });
 
         it('circleLegend.visible 옵션이 false이면 componentManager.register를 호출하지 않아, circleLegend 컴포넌트를 생성하지 않습니다.', function() {
+            dataProcessor.hasCategories.and.returnValue(false);
+            dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_addComponentsForAxisType');
             bubbleChart.options = {
                 circleLegend: {
