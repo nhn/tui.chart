@@ -95,7 +95,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     _makeBaseDataToMakeTickHtml: function() {
         var dimension = this.boundsMaker.getDimension('legend');
         var axisData = this.scaleModel.getAxisData('legend');
-        var stepCount = this.axesData.tickCount - 1;
+        var stepCount = axisData.tickCount - 1;
         var baseData = {};
         var firstLabel;
 
