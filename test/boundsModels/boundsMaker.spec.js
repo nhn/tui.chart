@@ -6,20 +6,21 @@
 
 'use strict';
 
-var BoundsMaker = require('../../src/js/helpers/boundsMaker');
+var BoundsMaker = require('../../src/js/boundsModels/boundsMaker');
 var chartConst = require('../../src/js/const');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for BoundsMaker', function() {
-    var boundsMaker, dataProcessor;
+    var boundsMaker, dataProcessor, scaleModel;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getLegendData', 'getCategories',
+            ['getFormattedMaxValue', 'getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getLegendData', 'getCategories',
                 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
         dataProcessor.getFormatFunctions.and.returnValue([]);
+        scaleModel = jasmine.createSpyObj('scaleModel', ['getMultilineXAxisLabels', 'getAxisDataMap', 'getAxisData']);
     });
 
     beforeEach(function() {
@@ -32,13 +33,61 @@ describe('Test for BoundsMaker', function() {
                 }
             }
         });
+        boundsMaker.setScaleModel(scaleModel);
+    });
+
+    describe('_getCircleLegendLabelMaxWidth()', function() {
+        it('가장 큰 반지름 값과 CirleLegend label의 테마 정보를 renderUtil.getRenderedLabelWidth에 전달하여 레이블 너비를 구합니다.', function() {
+            dataProcessor.getFormattedMaxValue.and.returnValue('1,000');
+            boundsMaker.theme = {
+                chart: {
+                    fontFamily: 'Verdana'
+                }
+            };
+            boundsMaker._getCircleLegendLabelMaxWidth();
+
+            expect(renderUtil.getRenderedLabelWidth).toHaveBeenCalledWith('1,000', {
+                fontSize: 9,
+                fontFamily: 'Verdana'
+            });
+        });
+
+        it('renderUtil.getRenderedLabelWidth의 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.theme = {
+                chart: {
+                    fontFamily: 'Verdana'
+                }
+            };
+
+            actual = boundsMaker._getCircleLegendLabelMaxWidth();
+            expected = 50;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_getCircleLegendWidth()', function() {
+        it('CircleLegend의 circle너비와 label너비 중 큰 값에 여백값을 더하여 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(boundsMaker, '_calculateMaxRadius').and.returnValue(20);
+            spyOn(boundsMaker, '_getCircleLegendLabelMaxWidth').and.returnValue(65);
+            boundsMaker.legendOption = {};
+
+            actual = boundsMaker._getCircleLegendWidth();
+            expected = 75;
+
+            expect(actual).toBe(expected);
+        });
     });
 
     describe('_calculatePixelStep()', function() {
         it('axis가 라벨타입일 경우의 pixel단위 step을 반환합니다', function() {
             var actual = boundsMaker._calculatePixelStep({
                 tickCount: 4,
-                isLabel: true
+                isLabelAxis: true
             }, 240);
             var expected = 30;
 
@@ -55,24 +104,24 @@ describe('Test for BoundsMaker', function() {
         });
     });
 
-    describe('getMinimumPixelStepForAxis()', function() {
-        it('yAxis와 xAxis의 pixcel단위 step중 작은 값을 찾아 반환합니다.', function() {
+    describe('_calculateMaxRadius()', function() {
+        it('calculate max radius for circle legend', function() {
             var actual, expected;
 
             spyOn(boundsMaker, 'getDimension').and.returnValue({
                 width: 400,
                 height: 240
             });
-            boundsMaker.axesData = {
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {
                     tickCount: 5
                 },
                 yAxis: {
                     tickCount: 4
                 }
-            };
+            });
 
-            actual = boundsMaker.getMinimumPixelStepForAxis();
+            actual = boundsMaker._calculateMaxRadius();
             expected = 80;
 
             expect(actual).toBe(expected);
@@ -347,7 +396,7 @@ describe('Test for BoundsMaker', function() {
                 }
             });
 
-            dataProcessor.getMultilineCategories.and.returnValue([
+            scaleModel.getMultilineXAxisLabels.and.returnValue([
                 'AAAA</br>BBBB'
             ]);
             boundsMaker.theme = {
@@ -412,11 +461,9 @@ describe('Test for BoundsMaker', function() {
                     rotateLabel: false
                 }
             };
-            boundsMaker.axesData = {
-                xAxis: {
-                    labels: []
-                }
-            };
+            scaleModel.getAxisData.and.returnValue({
+                labels: []
+            });
 
             boundsMaker._updateDimensionsAndDegree();
 
@@ -1008,6 +1055,54 @@ describe('Test for BoundsMaker', function() {
 
             expect(boundsMaker.positions.series.left).toBe(1);
             expect(boundsMaker.positions.extendedSeries.left).toBe(2);
+        });
+    });
+
+    describe('_updateLegendAndSeriesWidth()', function() {
+        it('update legend width, when has width for vertical type legend', function() {
+            boundsMaker.dimensions.circleLegend = {
+                width: 80
+            };
+            boundsMaker.dimensions.legend = {
+                width: 0
+            };
+            boundsMaker.options.legend = {
+                visible: true,
+                align: chartConst.LEGEND_ALIGN_LEFT
+            };
+
+            boundsMaker._updateLegendAndSeriesWidth(300, 60);
+
+            expect(boundsMaker.getDimension('legend').width).toBe(80);
+        });
+
+        it('update legend width, when has not width for vertical type legend', function() {
+            boundsMaker.dimensions.circleLegend = {
+                width: 80
+            };
+            boundsMaker.dimensions.legend = {
+                width: 0
+            };
+            boundsMaker.options.legend = {
+                visible: true,
+                align: chartConst.LEGEND_ALIGN_TOP
+            };
+
+            boundsMaker._updateLegendAndSeriesWidth(300, 60);
+
+            expect(boundsMaker.getDimension('legend').width).toBe(0);
+        });
+
+        it('update series width', function() {
+            boundsMaker.dimensions.circleLegend = {
+                width: 80
+            };
+            boundsMaker.dimensions.series = {
+                width: 0
+            };
+            boundsMaker._updateLegendAndSeriesWidth(300, 60);
+
+            expect(boundsMaker.getDimension('series').width).toBe(280);
         });
     });
 });

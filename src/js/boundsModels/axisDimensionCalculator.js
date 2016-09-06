@@ -1,0 +1,64 @@
+/**
+ * @fileoverview Calculator for dimension of axis.
+ * @author NHN Ent.
+ *         FE Development Lab <dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+
+/**
+ * Calculator for dimension of axis.
+ * @module axisDimensionCalculator
+ */
+var axisDimensionCalculator = {
+    /**
+     * Calculate height for x axis.
+     * @param {string} title - title for x axis
+     * @param {{title: object, label: object}} theme - theme for x axis
+     * @returns {*}
+     */
+    calculateXAxisHeight: function(title, theme) {
+        var titleHeight = renderUtil.getRenderedLabelHeight(title, theme.title);
+        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme.label);
+
+        return titleAreaHeight + labelHeight + chartConst.CHART_PADDING;
+    },
+
+    /**
+     * Calculate width for y axis.
+     * @param {Array.<string | number>} labels labels
+     * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
+     * @param {{title: object, label: object}} theme - them for y axis
+     * @returns {number}
+     * @private
+     */
+    calculateYAxisWidth: function(labels, options, theme) {
+        var title = options.title || '';
+        var titleAreaWidth = 0;
+        var width = 0;
+
+        if (options.isCenter) {
+            width += chartConst.AXIS_LABEL_PADDING;
+        } else if (options.rotateTitle === false) {
+            titleAreaWidth = renderUtil.getRenderedLabelWidth(title, theme.title) + chartConst.TITLE_PADDING;
+        } else {
+            titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
+        }
+
+        if (predicate.isDatetimeType(options.type)) {
+            labels = renderUtil.formatDates(labels, options.dateFormat);
+        }
+
+        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
+            chartConst.AXIS_LABEL_PADDING;
+
+        return width;
+    }
+};
+
+module.exports = axisDimensionCalculator;

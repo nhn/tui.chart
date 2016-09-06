@@ -21,12 +21,12 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
      * @constructs MapChartTooltip
      * @override
      */
-    init: function() {
+    init: function(params) {
         /**
          * Map model
          * @type {MapChartMapModel}
          */
-        this.mapModel = null;
+        this.mapModel = params.mapModel;
 
         TooltipBase.apply(this, arguments);
     },
@@ -91,17 +91,6 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
         if (!this.options.align) {
             this.options.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
-    },
-
-    /**
-     * Render.
-     * @param {{mapModel: MapChartMapModel}} data data for rendering
-     * @returns {HTMLElement} tooltip element
-     */
-    render: function(data) {
-        this.mapModel = data.mapModel;
-
-        return TooltipBase.prototype.render.call(this);
     }
 });
 

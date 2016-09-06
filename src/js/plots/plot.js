@@ -41,6 +41,11 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          */
         this.boundsMaker = params.boundsMaker;
 
+        /**
+         * Scale model
+         * @type {ScaleModel}
+         */
+        this.scaleModel = params.scaleModel;
 
         /**
          * Options
@@ -313,7 +318,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     _makeOptionalLinesHtml: function(lines, dimension) {
         var width = dimension.width;
-        var xAxisData = this.boundsMaker.getAxesData().xAxis;
+        var xAxisData = this.scaleModel.getAxisData('xAxis');
         var templateParams = this._makeVerticalLineTemplateParams({
             height: dimension.height + 'px'
         });
@@ -419,8 +424,8 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeVerticalPositions: function(height) {
-        var axesData = this.boundsMaker.getAxesData();
-        var yAxis = axesData.yAxis || axesData.rightYAxis;
+        var axisDataMap = this.scaleModel.getAxisDataMap();
+        var yAxis = axisDataMap.yAxis || axisDataMap.rightYAxis;
         var positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
 
         positions.shift();
@@ -460,7 +465,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeHorizontalPositions: function(width) {
-        var tickCount = this.boundsMaker.getAxesData().xAxis.validTickCount;
+        var tickCount = this.scaleModel.getAxisDataMap().xAxis.validTickCount;
         var positions;
 
         if (this.options.divided) {

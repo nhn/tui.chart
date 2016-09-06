@@ -16,10 +16,11 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     /**
      * Series component for rendering graph of treemap chart.
      * @constructs TreemapChartSeries
+     * @param {object} params - parameters
      * @extends Series
      */
-    init: function() {
-        Series.apply(this, arguments);
+    init: function(params) {
+        Series.call(this, params);
 
         this.theme.borderColor = this.theme.borderColor || chartConst.TREEMAP_DEFAULT_BORDER;
 
@@ -46,6 +47,12 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
          * @type {null|object.<string, object>}
          */
         this.boundMap = null;
+
+        /**
+         * color spectrum
+         * @type {ColorSpectrum}
+         */
+        this.colorSpectrum = params.colorSpectrum;
 
         this._initOptions();
     },
@@ -84,7 +91,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
             seriesDataModel: this._getSeriesDataModel(),
             startDepth: this.startDepth,
             isPivot: true,
-            colorSpectrum: this.options.useColorValue ? this.data.colorSpectrum : null,
+            colorSpectrum: this.options.useColorValue ? this.colorSpectrum : null,
             chartBackground: this.chartBackground,
             zoomable: this.options.zoomable
         };

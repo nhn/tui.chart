@@ -35,7 +35,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      */
     _makePositionTopOfZeroPoint: function() {
         var dimension = this.boundsMaker.getDimension('series');
-        var limit = this.boundsMaker.getAxesData().yAxis.limit;
+        var limit = this.scaleModel.getAxisDataMap().yAxis.limit;
         var top = this._getLimitDistanceFromZeroPoint(dimension.height, limit).toMax;
 
         if (limit.min >= 0 && !top) {

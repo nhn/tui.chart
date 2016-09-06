@@ -54,6 +54,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         this.boundsMaker = params.boundsMaker;
 
         /**
+         * scale model
+         * @type {ScaleModel}
+         */
+        this.scaleModel = params.scaleModel;
+
+        /**
          * whether chart has axes or not
          * @type {boolean}
          */
@@ -98,6 +104,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
 
         params.dataProcessor = this.dataProcessor;
         params.boundsMaker = this.boundsMaker;
+        params.scaleModel = this.scaleModel;
         params.hasAxes = this.hasAxes;
 
         component = new Component(params);
@@ -147,12 +154,33 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     },
 
     /**
+     * Execute components.
+     * @param {string} funcName - function name
+     */
+    execute: function(funcName) {
+        this.each(function(component) {
+            if (component[funcName]) {
+                component[funcName]();
+            }
+        });
+    },
+
+    /**
      * Get component.
      * @param {string} name component name
      * @returns {object} component instance
      */
     get: function(name) {
         return this.componentMap[name];
+    },
+
+    /**
+     * Whether has component or not.
+     * @param {string} name - comopnent name
+     * @returns {boolean}
+     */
+    has: function(name) {
+        return !!this.get(name);
     }
 });
 

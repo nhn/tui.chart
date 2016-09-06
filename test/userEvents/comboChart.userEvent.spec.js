@@ -63,15 +63,15 @@ describe('Test user events for combo chart', function() {
 
             spyOn(customEvent, '_getContainerBound').and.returnValue({
                 left: 50,
-                top: 80,
+                top: 40,
                 right: 450,
-                bottom: 380
+                bottom: 340
             });
 
             comboChart.on('selectSeries', function(info) {
                 expect(info.chartType).toBe('column');
-                expect(info.legend).toBe('Sydney');
-                expect(info.legendIndex).toBe(2);
+                expect(info.legend).toBe('NewYork');
+                expect(info.legendIndex).toBe(1);
                 expect(info.index).toBe(1);
 
                 done();
@@ -90,15 +90,15 @@ describe('Test user events for combo chart', function() {
 
             spyOn(customEvent, '_getContainerBound').and.returnValue({
                 left: 50,
-                top: 80,
+                top: 40,
                 right: 450,
                 bottom: 380
             });
 
             comboChart.on('unselectSeries', function(info) {
                 expect(info.chartType).toBe('column');
-                expect(info.legend).toBe('Sydney');
-                expect(info.legendIndex).toBe(2);
+                expect(info.legend).toBe('NewYork');
+                expect(info.legendIndex).toBe(1);
                 expect(info.index).toBe(1);
 
                 done();

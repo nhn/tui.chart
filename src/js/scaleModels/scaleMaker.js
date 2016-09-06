@@ -1,5 +1,5 @@
 /**
- * @fileoverview AxisScaleMaker calculates the limit and step into values of processed data and returns it.
+ * @fileoverview ScaleMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
  *       FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -7,17 +7,17 @@
 'use strict';
 
 var chartConst = require('../const');
-var predicate = require('./predicate');
-var calculator = require('./calculator');
-var renderUtil = require('./renderUtil');
+var predicate = require('../helpers/predicate');
+var calculator = require('../helpers/calculator');
+var renderUtil = require('../helpers/renderUtil');
 
 var abs = Math.abs;
 
-var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */{
+var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     /**
-     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
+     * ScaleMaker calculates the limit and step into values of processed data and returns it.
      * @param {object} params parameters
-     * @constructs AxisScaleMaker
+     * @constructs ScaleMaker
      */
     init: function(params) {
         /**
@@ -49,6 +49,8 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
          * @type {?{min: number, max: number}}
          */
         this.limitOption = params.limitOption;
+
+        this.axisOptions = params.axisOptions;
 
         /**
          * axis type
@@ -970,4 +972,4 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     }
 });
 
-module.exports = AxisScaleMaker;
+module.exports = ScaleMaker;

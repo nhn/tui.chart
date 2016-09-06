@@ -1140,63 +1140,6 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_makeMultilineCategory()', function() {
-        it('카테고리의 너비가 limitWidth를 넘어가지 않으면 그대로 반환합니다.', function() {
-            var actual = dataProcessor._makeMultilineCategory('ABCDE FGHIJK', 100, {
-                    fontSize: 12,
-                    fontFamily: 'Verdana'
-                }),
-                expected = 'ABCDE FGHIJK';
-            expect(actual).toBe(expected);
-        });
-
-        it('category를 공백으로 나누고 하나씩 붙여가면서 limitWidth를 넘어가는 부분에 대해 개행처리(<br>)하여 반환합니다.', function() {
-            var actual = dataProcessor._makeMultilineCategory('ABCDE FGHIJK HIJKLMN', 40, {
-                    fontSize: 12,
-                    fontFamily: 'Verdana'
-                }),
-                expected = 'ABCDE<br>FGHIJK<br>HIJKLMN';
-            expect(actual).toBe(expected);
-        });
-
-        it('category이 없는 경우에는 개행처리를 하지 않습니다.(공백이 없는 개행처리를 css에서 합니다.)', function() {
-            var actual = dataProcessor._makeMultilineCategory('ABCDEFGHIJKHIJKLMN', 40, {
-                    fontSize: 12,
-                    fontFamily: 'Verdana'
-                }),
-                expected = 'ABCDEFGHIJKHIJKLMN';
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('getMultilineCategories()', function() {
-        it('category들 중에서 limitWidth를 기준으로 개행처리를 합니다.', function() {
-            var actual, expected;
-
-            actual = dataProcessor.getMultilineCategories(50, {
-                fontSize: 12,
-                fontFamily: 'Verdana'
-            }, ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB']);
-            expected = ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
-
-            expect(actual).toEqual(expected);
-        });
-
-        it('캐쉬가 되어있는 경우에는 캐쉬된 결과를 반환합니다.', function() {
-            var actual, expected;
-
-            dataProcessor.multilineCategories = ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
-
-            actual = dataProcessor.getMultilineCategories(50, {
-                fontSize: 12,
-                fontFamily: 'Verdana'
-            });
-            expected = dataProcessor.multilineCategories;
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_addStartValueToAllSeriesItem()', function() {
         it('limit의 값들이 모두 양수이면 start값을 limit.min으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
             dataProcessor.seriesDataModelMap = {

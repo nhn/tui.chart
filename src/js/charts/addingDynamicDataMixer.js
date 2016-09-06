@@ -54,8 +54,8 @@ var addingDynamicDataMixer = {
         var shiftingOption = !!this.options.series.shifting;
 
         this.addedDataCount += 1;
-        this.axisScaleMakerMap = null;
         boundsMaker.initBoundsData();
+        this.scaleModel.initScaleData(this.addedDataCount);
 
         this._render(function() {
             var xAxisWidth = boundsMaker.getDimension('xAxis').width;
@@ -95,7 +95,7 @@ var addingDynamicDataMixer = {
             this.boundsMaker.initBoundsData();
         }
 
-        this.axisScaleMakerMap = null;
+        this.scaleModel.initScaleData(this.addedDataCount);
 
         this._render(function(renderingData) {
             renderingData.animatable = false;
@@ -137,7 +137,7 @@ var addingDynamicDataMixer = {
      */
     _pauseAnimationForAddingData: function() {
         this.paused = true;
-        this._initForAutoTickInterval();
+        this.scaleModel.initForAutoTickInterval();
 
         if (this.rerenderingDelayTimerId) {
             clearTimeout(this.rerenderingDelayTimerId);

@@ -13,7 +13,7 @@ var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
-    var series, makeSeriesLabelHtml, _getPercentValues, dataProcessor, boundsMaker;
+    var series, makeSeriesLabelHtml, dataProcessor, boundsMaker, scaleModel;
 
     beforeAll(function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
@@ -23,11 +23,13 @@ describe('LineTypeSeriesBase', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstItemLabel', 'isCoordinateType']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getAxesData']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
+        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisDataMap']);
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
         series.dataProcessor = dataProcessor;
         series.boundsMaker = boundsMaker;
+        series.scaleModel = scaleModel;
         series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
     });
 
@@ -51,7 +53,7 @@ describe('LineTypeSeriesBase', function() {
                 width: 300,
                 height: 200
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {}
             });
             series.data = {
@@ -99,7 +101,7 @@ describe('LineTypeSeriesBase', function() {
                 width: 300,
                 height: 200
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {}
             });
             actual = series._makeBasicPositions();
@@ -151,7 +153,7 @@ describe('LineTypeSeriesBase', function() {
                 width: 300,
                 height: 200
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {
                     sizeRatio: 0.8,
                     positionRatio: 0.08

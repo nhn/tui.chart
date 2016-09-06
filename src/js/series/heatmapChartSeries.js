@@ -14,10 +14,17 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     /**
      * Series component for rendering graph of heatmap chart.
      * @constructs HeatmapChartSeries
+     * @param {object} params - parameters
      * @extends Series
      */
-    init: function() {
-        Series.apply(this, arguments);
+    init: function(params) {
+        /**
+         * Color spectrum
+         * @type {ColorSpectrum}
+         */
+        this.colorSpectrum = params.colorSpectrum;
+
+        Series.call(this, params);
     },
 
     /**
@@ -33,7 +40,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var boundsSet = this._makeBounds();
 
         return {
-            colorSpectrum: this.data.colorSpectrum,
+            colorSpectrum: this.colorSpectrum,
             groupBounds: boundsSet,
             seriesDataModel: this._getSeriesDataModel()
         };

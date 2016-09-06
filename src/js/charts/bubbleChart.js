@@ -11,7 +11,6 @@ var chartConst = require('../const');
 var Series = require('../series/bubbleChartSeries');
 var CircleLegend = require('../legends/circleLegend');
 var axisTypeMixer = require('./axisTypeMixer');
-var predicate = require('../helpers/predicate');
 var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
@@ -32,8 +31,6 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     init: function(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
         options.circleLegend = options.circleLegend || {};
-
-        this.axisScaleMakerMap = null;
 
         if (!options.tooltip.align) {
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
@@ -68,34 +65,31 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
         }
     },
 
-    /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
-     * @private
-     */
-    _makeAxisScaleMakerMap: function() {
-        var hasCategories = this.dataProcessor.hasCategories();
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
-        var isXCountGreaterThanYCount = seriesDataModel.isXCountGreaterThanYCount();
-        var options = this.options;
-        var scaleMakerMap = {};
 
-        if (hasCategories) {
-            if (isXCountGreaterThanYCount) {
-                scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x');
-            } else {
-                scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y', null, {
-                    isVertical: true
-                });
-            }
-        } else {
-            scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x');
-            scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y', null, {
-                isVertical: true
+    /**
+     * Add scale data for y axis.
+     * @private
+     * @override
+     */
+    _addScaleDataForYAxis: function() {
+        if (this.dataProcessor.hasYValue(this.chartType)) {
+            this.scaleModel.addScale('yAxis', this.options.yAxis, {
+                valueType: 'y'
             });
         }
+    },
 
-        return scaleMakerMap;
+    /**
+     * Add scale data for x axis.
+     * @private
+     * @override
+     */
+    _addScaleDataForXAxis: function() {
+        if (this.dataProcessor.hasXValue(this.chartType)) {
+            this.scaleModel.addScale('xAxis', this.options.xAxis, {
+                valueType: 'x'
+            });
+        }
     },
 
     /**
@@ -104,22 +98,15 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @private
      */
     _addComponents: function(chartType) {
-        var dataProcessor = this.dataProcessor;
-        var seriesDataModel = dataProcessor.getSeriesDataModel(this.chartType);
-        var isVerticalCategory = seriesDataModel.isXCountGreaterThanYCount();
-        var hasCategories = dataProcessor.hasCategories(isVerticalCategory);
-
         this._addComponentsForAxisType({
             chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
-                    isVertical: true,
-                    isLabel: hasCategories && isVerticalCategory
+                    isVertical: true
                 },
                 {
-                    name: 'xAxis',
-                    isLabel: hasCategories && !isVerticalCategory
+                    name: 'xAxis'
                 }
             ],
             series: [
@@ -140,63 +127,26 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     * Update width of legend and series of boundsMaker.
-     * @param {number} seriesWidth - width of series area
-     * @param {number} legendWidth - width of legend area
-     * @private
-     */
-    _updateLegendAndSeriesWidth: function(seriesWidth, legendWidth) {
-        var circleLegendWidth = this.boundsMaker.getDimension('circleLegend').width;
-
-        if (predicate.hasVerticalLegendWidth(this.options.legend)) {
-            this.boundsMaker.registerBaseDimension('legend', {
-                width: circleLegendWidth
-            });
-        }
-
-        this.boundsMaker.registerBaseDimension('series', {
-            width: seriesWidth - (circleLegendWidth - legendWidth)
-        });
-    },
-
-    /**
-     * Update width of legend area by width of circle legend area.
-     * @private
-     */
-    _updateLegendWidthByCircleLegendWidth: function() {
-        var boundsMaker = this.boundsMaker;
-        var axesData = boundsMaker.getAxesData();
-        var circleLegendWidth = boundsMaker.getDimension('circleLegend').width;
-        var legendWidth = boundsMaker.getDimension('calculationLegend').width;
-        var isXAxisLabel, seriesWidth;
-
-        if (legendWidth >= circleLegendWidth) {
-            return;
-        }
-
-        isXAxisLabel = axesData.xAxis.isLabel;
-        seriesWidth = boundsMaker.getDimension('series').width;
-
-        this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
-
-        if (!isXAxisLabel) {
-            this.axisScaleMakerMap = null;
-            this._registerAxesData();
-        }
-    },
-
-    /**
-     * Update dimensions.
+     * Register circle legend dimension
      * @private
      * @override
      */
-    _updateDimensions: function() {
+    _registerCircleLegendDimension: function() {
+        var bm = this.boundsMaker;
+        var updated;
+
         if (!this.options.circleLegend.visible) {
             return;
         }
 
-        this.componentManager.get('circleLegend').registerCircleLegendDimension();
-        this._updateLegendWidthByCircleLegendWidth();
+        bm.registerCircleLegendDimension();
+        updated = bm.updateLegendWidthByCircleLegendWidth();
+
+        if (updated && !this.scaleModel.getAxisDataMap().xAxis.isLabelAxis) {
+            this.scaleModel.initScaleData();
+            this._addScaleDataForYAxis();
+            this._addScaleDataForXAxis();
+        }
     }
 });
 
@@ -208,15 +158,16 @@ tui.util.extend(BubbleChart.prototype, axisTypeMixer);
  * @override
  */
 BubbleChart.prototype._addDataRatios = function() {
-    var scaleMakerMap = this._getAxisScaleMakerMap();
+    var scaleDataMap = this.scaleModel.getScaleMap();
+
     var limitMap = {};
 
-    if (scaleMakerMap.xAxis) {
-        limitMap.x = scaleMakerMap.xAxis.getLimit();
+    if (scaleDataMap.xAxis) {
+        limitMap.x = scaleDataMap.xAxis.getLimit();
     }
 
-    if (scaleMakerMap.yAxis) {
-        limitMap.y = scaleMakerMap.yAxis.getLimit();
+    if (scaleDataMap.yAxis) {
+        limitMap.y = scaleDataMap.yAxis.getLimit();
     }
 
     this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);

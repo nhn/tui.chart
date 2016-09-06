@@ -59,7 +59,13 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          * Map model.
          * @type {MapChartMapModel}
          */
-        this.mapModel = null;
+        this.mapModel = params.mapModel;
+
+        /**
+         * Color spectrum
+         * @type {ColorSpectrum}
+         */
+        this.colorSpectrum = params.colorSpectrum;
 
         /**
          * Previous mouse position.
@@ -121,14 +127,9 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @returns {HTMLElement} series element
      */
     render: function(data) {
-        var container;
-
-        this.mapModel = data.mapModel;
         this._setMapRatio();
 
-        container = Series.prototype.render.call(this, data);
-
-        return container;
+        return Series.prototype.render.call(this, data);
     },
 
     /**
@@ -163,7 +164,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setLimitPositionToMoveMap();
 
         this.graphRenderer.render(this.graphContainer, {
-            colorSpectrum: this.data.colorSpectrum,
+            colorSpectrum: this.colorSpectrum,
             mapModel: this.mapModel,
             dimension: this.graphDimension,
             theme: this.theme

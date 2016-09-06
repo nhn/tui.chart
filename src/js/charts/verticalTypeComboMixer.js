@@ -150,8 +150,7 @@ var verticalTypeComboMixer = {
                 isVertical: true
             },
             {
-                name: 'xAxis',
-                isLabel: true
+                name: 'xAxis'
             }
         ];
         var serieses = this._makeDataForAddingSeriesComponent(chartTypesMap.seriesNames);
@@ -176,18 +175,17 @@ var verticalTypeComboMixer = {
     /**
      * Get y axis option chart types.
      * @param {Array.<string>} chartTypes chart types
-     * @param {object} yAxisOptions y axis options
-     * @returns {Array.<string>} chart types
+     * @param {object} yAxisOption - options for y axis
+     * @returns {Array.<string>}
      * @private
      */
-    _getYAxisOptionChartTypes: function(chartTypes, yAxisOptions) {
-        var resultChartTypes = chartTypes.slice(),
-            isReverse = false,
-            optionChartTypes;
+    _getYAxisOptionChartTypes: function(chartTypes, yAxisOption) {
+        var resultChartTypes = chartTypes.slice();
+        var yAxisOptions = [].concat(yAxisOption || []);
+        var isReverse = false;
+        var optionChartTypes;
 
-        yAxisOptions = yAxisOptions ? [].concat(yAxisOptions) : [];
-
-        if (yAxisOptions.length === 1 && !yAxisOptions[0].chartType) {
+        if (!yAxisOptions.length || (yAxisOptions.length === 1 && !yAxisOptions[0].chartType)) {
             resultChartTypes = [];
         } else if (yAxisOptions.length) {
             optionChartTypes = tui.util.map(yAxisOptions, function(option) {
@@ -207,13 +205,13 @@ var verticalTypeComboMixer = {
     },
 
     /**
-     * Create AxisScaleMake for y axis.
+     * Add Scale for y axis.
+     * @param {string} name - axis name
      * @param {number} index - index of this.chartTypes
      * @param {boolean} isSingleYAxis - whether single y axis or not.
-     * @returns {AxisScaleMaker}
      * @private
      */
-    _createYAxisScaleMaker: function(index, isSingleYAxis) {
+    _addYAxisScale: function(name, index, isSingleYAxis) {
         var chartType = this.chartTypes[index];
         var yAxisOption = this.yAxisOptionsMap[chartType];
         var dataProcessor = this.dataProcessor;
@@ -223,38 +221,40 @@ var verticalTypeComboMixer = {
 
         if (isSingleYAxis && this.options.series) {
             tui.util.forEach(this.options.series, function(seriesOption, seriesName) {
-                var _chartType = dataProcessor.findChartType(seriesName);
+                var _chartType;
+
+                if (!seriesOption.stackType) {
+                    return;
+                }
+
+                _chartType = dataProcessor.findChartType(seriesName);
 
                 if (!predicate.isAllowedStackOption(_chartType)) {
                     return;
                 }
 
                 additionalParams.chartType = _chartType;
-                if (seriesOption.stackType) {
-                    additionalParams.stackType = seriesOption.stackType;
-                }
+                additionalParams.stackType = seriesOption.stackType;
             });
         }
 
-        return this._createAxisScaleMaker(yAxisOption, 'yAxis', null, chartType, additionalParams);
+        this.scaleModel.addScale(name, yAxisOption, {
+            areaType: 'yAxis',
+            chartType: chartType
+        }, additionalParams);
     },
 
     /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
+     * Add scale data for y axis.
      * @private
+     * @override
      */
-    _makeAxisScaleMakerMap: function() {
+    _addScaleDataForYAxis: function() {
         var isSingleYAxis = this.optionChartTypes.length < 2;
-        var axisScaleMakerMap = {
-            yAxis: this._createYAxisScaleMaker(0, isSingleYAxis)
-        };
-
+        this._addYAxisScale('yAxis', 0, isSingleYAxis);
         if (!isSingleYAxis) {
-            axisScaleMakerMap.rightYAxis = this._createYAxisScaleMaker(1);
+            this._addYAxisScale('rightYAxis', 1);
         }
-
-        return axisScaleMakerMap;
     },
 
     /**
@@ -289,32 +289,6 @@ var verticalTypeComboMixer = {
         } else if (tickCountDiff < 0) {
             this._increaseYAxisTickCount(-tickCountDiff, rightYAxisData);
         }
-    },
-
-    /**
-     * Make axes data, used in a axis component like yAxis, xAxis, rightYAxis.
-     * @returns {object} axes data
-     * @private
-     * @override
-     */
-    _makeAxesData: function() {
-        var axisScaleMakerMap = this._getAxisScaleMakerMap();
-        var yAxisOptionsMap = this.yAxisOptionsMap;
-        var yAxisOptions = yAxisOptionsMap[this.chartTypes[0]];
-        var axesData = {
-            xAxis: this._makeAxisData(null, this.options.xAxis),
-            yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, yAxisOptions, true)
-        };
-
-        if (axisScaleMakerMap.rightYAxis) {
-            yAxisOptions = yAxisOptionsMap[this.chartTypes[1]];
-            axesData.rightYAxis = this._makeAxisData(axisScaleMakerMap.rightYAxis, yAxisOptions, true, true);
-            axesData.rightYAxis.aligned = axesData.xAxis.aligned;
-
-            this._updateYAxisTickCount(axesData);
-        }
-
-        return axesData;
     },
 
     /**

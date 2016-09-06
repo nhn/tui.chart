@@ -6,7 +6,7 @@
 
 'use strict';
 
-var maker = require('../../src/js/helpers/axisDataMaker');
+var maker = require('../../src/js/scaleModels/axisDataMaker');
 var chartConst = require('../../src/js/const');
 
 describe('Test for axisDataMaker', function() {

@@ -11,7 +11,7 @@ var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for Axis', function() {
-    var dataProcessor, boundsMaker, axis;
+    var dataProcessor, boundsMaker, scaleModel, axis;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -21,8 +21,9 @@ describe('Test for Axis', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['isValidAllSeriesDataModel', 'getCategories', 'getMultilineCategories', 'isCoordinateType']);
+            ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['registerBaseDimension', 'getDimension', 'getPosition']);
+        scaleModel = jasmine.createSpyObj('scaleModel', ['getMultilineXAxisLabels', 'getAxisData']);
         axis = new Axis({
             theme: {
                 title: {
@@ -39,56 +40,8 @@ describe('Test for Axis', function() {
                 }
             },
             dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker
-        });
-    });
-
-    describe('_makeXAxisHeight()', function() {
-        it('x축 영역의 높이를 계산하여 반환합니다.', function() {
-            var actual, expected;
-
-            axis.options.title = 'Axis Title';
-            actual = axis._makeXAxisHeight();
-            expected = 60;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_makeYAxisWidth()', function() {
-        it('제목 높이와 tick 레이블 너비를 계산하여 y축 영역의 너비를 구합니다.', function() {
-            var actual, expected;
-
-            actual = axis._makeYAxisWidth(['label1', 'label12'], {
-                title: 'Axis Title'
-            });
-            expected = 87;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('rotateTitle옵션이 false인 경우에는 제목 높이로 계산합니다.', function() {
-            var actual, expected;
-
-            actual = axis._makeYAxisWidth(['label1', 'label12'], {
-                title: 'Axis Title',
-                rotateTitle: false
-            });
-            expected = 117;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('isCenter 옵션으로 인해 중앙에 배치될 경우에는 title영역의 너비는 배제되고 여백이 추가로 적용됩니다.', function() {
-            var actual, expected;
-
-            actual = axis._makeYAxisWidth(['label1', 'label12'], {
-                title: 'Axis Title',
-                isCenter: true
-            });
-            expected = 64;
-
-            expect(actual).toBe(expected);
+            boundsMaker: boundsMaker,
+            scaleModel: scaleModel
         });
     });
 
@@ -114,90 +67,6 @@ describe('Test for Axis', function() {
             expected = false;
 
             expect(actual).toBe(expected);
-        });
-    });
-
-    describe('registerDimension()', function() {
-        it('_isValidAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
-            spyOn(axis, '_isValidAxis').and.returnValue(false);
-            axis.componentName = 'yAxis';
-
-            axis.registerDimension();
-
-            expect(boundsMaker.registerBaseDimension).not.toHaveBeenCalled();
-        });
-
-        it('componentType이 xAxis일 경우에는 dimension height를 계산하여 boundsMaker에 등록합니다.', function() {
-            var expected = {
-                height: 60
-            };
-
-            axis.componentName = 'xAxis';
-            axis.componentType = 'xAxis';
-
-            axis.registerDimension();
-
-            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith(axis.componentName, expected);
-        });
-
-        it('componentType이 xAxis가 아니면서 isLabel이 true이면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
-            var expected = {
-                width: 87
-            };
-
-            axis.componentName = 'yAxis';
-            axis.componentType = 'yAxis';
-            axis.isLabel = true;
-
-            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
-
-            axis.registerDimension();
-
-            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith(axis.componentName, expected);
-        });
-
-        it('componentType이 xAxis가 아니면서 isLabel이 true가 아니면 boundsMaker에 등록하지 않습니다.', function() {
-            axis.componentName = 'yAxis';
-            axis.componentType = 'yAxis';
-
-            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
-
-            axis.registerDimension();
-
-            expect(boundsMaker.registerBaseDimension).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('registerAdditionalDimension()', function() {
-        it('_isInvalidRightYAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
-            spyOn(axis, '_isValidAxis').and.returnValue(false);
-            axis.componentName = 'yAxis';
-
-            axis.registerAdditionalDimension();
-
-            expect(boundsMaker.registerBaseDimension).not.toHaveBeenCalled();
-        });
-
-        it('componentType이 yAxis면서 isLabel이 true가 아니면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
-            var expected = {
-                width: 87
-            };
-
-            axis.componentName = 'yAxis';
-            axis.componentType = 'yAxis';
-
-            boundsMaker.axesData = {
-                yAxis: {
-                    labels: ['label1', 'label2'],
-                    options: {
-                        title: 'Axis title'
-                    }
-                }
-            };
-
-            axis.registerAdditionalDimension();
-
-            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith(axis.componentName, expected);
         });
     });
 
@@ -1272,17 +1141,17 @@ describe('Test for Axis', function() {
             expect(actual).toBe(expected);
         });
 
-        it('가로차트의 라벨 타입 axis의 roation 옵션이 false이면 dataProcessor.getMultilineCategories() 를 호출하여 categories를 덮어씌웁니다.', function() {
+        it('가로차트의 라벨 타입 axis의 roation 옵션이 false이면 scaleModel.getMultilineXAxisLabels() 를 호출하여 categories를 덮어씌웁니다.', function() {
             axis.isVertical = false;
             axis.isLabel = true;
             axis.options.rotateLabel = false;
-            dataProcessor.getMultilineCategories.and.returnValue([]);
+            scaleModel.getMultilineXAxisLabels.and.returnValue([]);
             spyOn(axis, '_makeRotationLabelsHtml');
             spyOn(axis, '_makeNormalLabelsHtml');
 
             axis._makeLabelsHtml(100, []);
 
-            expect(dataProcessor.getMultilineCategories).toHaveBeenCalled();
+            expect(scaleModel.getMultilineXAxisLabels).toHaveBeenCalled();
         });
     });
 
@@ -1422,10 +1291,10 @@ describe('Test for Axis', function() {
             boundsMaker.getPosition.and.returnValue({
                 top: 20
             });
-            axis.data = {
+            scaleModel.getAxisData.and.returnValue({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4
-            };
+            });
 
             axis._renderAxisArea(container);
 
@@ -1460,10 +1329,10 @@ describe('Test for Axis', function() {
 
             axis.componentName = 'xAxis';
             axis.options.divided = true;
-            axis.data = {
+            scaleModel.getAxisData.and.returnValue({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4
-            };
+            });
 
             axis._renderAxisArea(container);
 
@@ -1496,10 +1365,10 @@ describe('Test for Axis', function() {
             });
 
             axis.componentName = 'xAxis';
-            axis.data = {
+            scaleModel.getAxisData.and.returnValue({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4
-            };
+            });
 
             axis._renderAxisArea(container);
 

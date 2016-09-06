@@ -32,8 +32,6 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
     init: function(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
 
-        this.axisScaleMakerMap = null;
-
         if (!options.tooltip.align) {
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
@@ -49,17 +47,25 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
     },
 
     /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
+     * Add scale data for y axis.
      * @private
+     * @override
      */
-    _makeAxisScaleMakerMap: function() {
-        var options = this.options;
+    _addScaleDataForYAxis: function() {
+        this.scaleModel.addScale('yAxis', this.options.yAxis, {
+            valueType: 'y'
+        });
+    },
 
-        return {
-            xAxis: this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x'),
-            yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y')
-        };
+    /**
+     * Add scale data for x axis.
+     * @private
+     * @override
+     */
+    _addScaleDataForXAxis: function() {
+        this.scaleModel.addScale('xAxis', this.options.xAxis, {
+            valueType: 'x'
+        });
     },
 
     /**
@@ -98,7 +104,7 @@ tui.util.extend(ScatterChart.prototype, axisTypeMixer);
  * @override
  */
 ScatterChart.prototype._addDataRatios = function() {
-    var scaleMakerMap = this._getAxisScaleMakerMap();
+    var scaleMakerMap = this.scaleModel.getScaleMap();
 
     this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, {
         x: scaleMakerMap.xAxis.getLimit(),

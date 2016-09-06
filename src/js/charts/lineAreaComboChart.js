@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var axisTypeMixer = require('./axisTypeMixer');
-var autoTickMixer = require('./autoTickMixer');
 var zoomMixer = require('./zoomMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
 var comboTypeMixer = require('./comboTypeMixer');
@@ -30,7 +29,6 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
      */
     init: function(rawData, theme, options) {
         this._initForVerticalTypeCombo(rawData, theme, options);
-        this._initForAutoTickInterval();
         this._initForAddingData();
     },
 
@@ -46,22 +44,10 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
         tui.util.extend(this, chartTypesMap);
 
         this._changeCheckedLegends(checkedLegends, rawData, chartTypesMap);
-    },
-
-    /**
-     * Resize.
-     * @param {object} dimension dimension
-     *      @param {number} dimension.width width
-     *      @param {number} dimension.height height
-     * @override
-     */
-    resize: function(dimension) {
-        this._initForAutoTickInterval();
-        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 
 tui.util.extend(LineAreaComboChart.prototype,
-    axisTypeMixer, autoTickMixer, zoomMixer, addingDynamicDataMixer, comboTypeMixer, verticalTypeComboMixer);
+    axisTypeMixer, zoomMixer, addingDynamicDataMixer, comboTypeMixer, verticalTypeComboMixer);
 
 module.exports = LineAreaComboChart;
