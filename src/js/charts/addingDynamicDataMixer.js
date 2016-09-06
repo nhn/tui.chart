@@ -49,10 +49,9 @@ var addingDynamicDataMixer = {
      */
     _animateForAddingData: function() {
         var self = this;
-        var boundsMaker = this.boundsMaker;
         var dataProcessor = this.dataProcessor;
+        var boundsMaker = this.boundsMaker;
         var shiftingOption = !!this.options.series.shifting;
-        var beforeAxesData = boundsMaker.getAxesData();
 
         this.addedDataCount += 1;
         this.axisScaleMakerMap = null;
@@ -78,7 +77,7 @@ var addingDynamicDataMixer = {
                 tickSize: tickSize,
                 shifting: shiftingOption
             }, 'animateForAddingData');
-        }, beforeAxesData);
+        });
 
         if (shiftingOption) {
             this.dataProcessor.shiftData();

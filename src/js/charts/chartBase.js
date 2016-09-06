@@ -606,17 +606,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Make event name for animation.
-     * @param {string} chartType chart type
-     * @param {string} prefix prefix
-     * @returns {string} event name
-     * @private
-     */
-    _makeAnimationEventName: function(chartType, prefix) {
-        return prefix + chartType.substring(0, 1).toUpperCase() + chartType.substring(1) + 'Animation';
-    },
-
-    /**
      * Animate chart.
      */
     animateChart: function() {

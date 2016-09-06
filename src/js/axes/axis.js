@@ -249,9 +249,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _renderDividedAxis: function(axisContainer, width) {
         var lWidth = Math.round(width / 2);
         var rWidth = width - lWidth;
-        var tickCount = this.data.tickCount;
+        var axisData = this.data;
+        var tickCount = axisData.tickCount;
         var halfTickCount = parseInt(tickCount / 2, 10) + 1;
-        var categories = this.data.labels;
+        var categories = axisData.labels;
         var lCategories = categories.slice(0, halfTickCount);
         var rCategories = categories.slice(halfTickCount - 1, tickCount);
         var additionalWidth = lWidth + this.boundsMaker.getDimension('yAxis').width;
@@ -270,18 +271,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderNotDividedAxis: function(axisContainer, dimension) {
-        var data = this.data;
+        var axisData = this.data;
         var isVertical = this.isVertical;
         var width = dimension.width;
         var size = isVertical ? dimension.height : width;
         var additionalSize = 0;
         var childContainers;
 
-        if (data.positionRatio) {
-            additionalSize = size * data.positionRatio;
+        if (axisData.positionRatio) {
+            additionalSize = size * axisData.positionRatio;
         }
 
-        childContainers = this._renderChildContainers(size, width, data.tickCount, data.labels, additionalSize);
+        childContainers = this._renderChildContainers(size, width, axisData.tickCount, axisData.labels, additionalSize);
 
         dom.append(axisContainer, childContainers);
     },
@@ -628,13 +629,14 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeTickHtml: function(size, tickCount, isNotDividedXAxis, additionalSize) {
         var tickColor = this.theme.tickColor;
-        var sizeRatio = this.data.sizeRatio || 1;
+        var axisData = this.data;
+        var sizeRatio = axisData.sizeRatio || 1;
         var posType = this.isVertical ? 'bottom' : 'left';
         var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
         var containerWidth = this.containerWidth || size;
         var template, html;
 
-        positions.length = this.data.labels.length;
+        positions.length = axisData.tickCount;
         additionalSize = calculator.makePercentageValue(additionalSize, containerWidth);
         positions = this._makePercentagePositions(positions, size);
 
@@ -668,6 +670,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _renderTickLine: function(areaSize, isNotDividedXAxis, additionalSize) {
         var tickLineElement = dom.create('DIV', 'tui-chart-tick-line');
         var tickLineExtend = isNotDividedXAxis ? chartConst.OVERLAPPING_WIDTH : 0;
+        var axisData = this.data;
         var positionValue = -tickLineExtend;
         var cssMap = {};
         var sizeType, posType, lineSize;
@@ -680,11 +683,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             posType = 'left';
         }
 
-        if (this.data.lineWidth) {
-            lineSize = this.data.lineWidth;
+        if (axisData.lineWidth) {
+            lineSize = axisData.lineWidth;
         } else {
             lineSize = areaSize + tickLineExtend;
-            if (!this.data.sizeRatio) {
+            if (!axisData.sizeRatio) {
                 positionValue += additionalSize;
             }
         }

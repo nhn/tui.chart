@@ -6,14 +6,14 @@
 
 'use strict';
 
-var LegendModel = require('./legendModel'),
-    LegendDimensionModel = require('./legendDimensionModel'),
-    chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
-    predicate = require('../helpers/predicate'),
-    eventListener = require('../helpers/eventListener'),
-    renderUtil = require('../helpers/renderUtil'),
-    legendTemplate = require('./../legends/legendTemplate');
+var LegendModel = require('./legendModel');
+var LegendDimensionModel = require('./legendDimensionModel');
+var chartConst = require('../const');
+var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
+var eventListener = require('../helpers/eventListener');
+var renderUtil = require('../helpers/renderUtil');
+var legendTemplate = require('./../legends/legendTemplate');
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**

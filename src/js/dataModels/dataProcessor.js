@@ -382,6 +382,17 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Whether count of x data grater than count of y data.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isXCountGreaterThanYCount: function(chartType) {
+        var seriesDataModel = this.getSeriesDataModel(chartType);
+
+        return seriesDataModel.isXCountGreaterThanYCount();
+    },
+
+    /**
      * Get category.
      * @param {number} index index
      * @param {boolean} isVertical - whether vertical or not

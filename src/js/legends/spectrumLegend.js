@@ -32,6 +32,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
          */
         this.className = 'tui-chart-legend-area';
 
+        /**
+         * chart type
+         * @type {string}
+         */
         this.chartType = params.chartType;
 
         /**
@@ -127,10 +131,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      * @private
      */
     _makeBaseDataToMakeTickHtml: function() {
-        var dimension = this.boundsMaker.getDimension('legend'),
-            stepCount = this.axesData.tickCount - 1,
-            baseData = {},
-            firstLabel;
+        var dimension = this.boundsMaker.getDimension('legend');
+        var stepCount = this.axisData.tickCount - 1;
+        var baseData = {};
+        var firstLabel;
 
         if (this.isHorizontal) {
             baseData.startPositionValue = 5;
@@ -152,10 +156,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      * @private
      */
     _makeTickHtml: function() {
-        var self = this,
-            baseData = this._makeBaseDataToMakeTickHtml(),
-            positionValue = baseData.startPositionValue,
-            htmls;
+        var self = this;
+        var baseData = this._makeBaseDataToMakeTickHtml();
+        var positionValue = baseData.startPositionValue;
+        var htmls;
 
         htmls = tui.util.map(this.axesData.labels, function(label) {
             var labelSize, html;

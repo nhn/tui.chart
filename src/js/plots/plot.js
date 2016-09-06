@@ -30,16 +30,17 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.className = 'tui-chart-plot-area';
 
         /**
+         * Data processor
+         * @type {DataProcessor}
+         */
+        this.dataProcessor = params.dataProcessor;
+
+        /**
          * Bounds maker
          * @type {BoundsMaker}
          */
         this.boundsMaker = params.boundsMaker;
 
-        /**
-         * Data processor
-         * @type {DataProcessor}
-         */
-        this.dataProcessor = params.dataProcessor;
 
         /**
          * Options

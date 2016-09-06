@@ -56,12 +56,11 @@ var axisTypeMixer = {
 
     /**
      * Add series components
-     * @param {Array<object>} serieses serieses
-     * @param {object} options options
-     * @param {boolean} aligned whether aligned or not
+     * @param {Array<object>} seriesSet - series set
+     * @param {object} options - options
      * @private
      */
-    _addSeriesComponents: function(serieses, options) {
+    _addSeriesComponents: function(seriesSet, options) {
         var self = this,
             seriesBaseParams = {
                 libType: options.libType,
@@ -71,7 +70,7 @@ var axisTypeMixer = {
                 chartBackground: this.theme.chart.background
             };
 
-        tui.util.forEach(serieses, function(series) {
+        tui.util.forEach(seriesSet, function(series) {
             var seriesParams = tui.util.extend(seriesBaseParams, series.data);
             self.componentManager.register(series.name, series.SeriesClass, seriesParams);
         });
@@ -90,7 +89,7 @@ var axisTypeMixer = {
      * Add legend component.
      * @param {null | object} LegendClass - Legend type class
      * @param {Array.<string>} seriesNames - series names
-     * @param {string} chartType chartType
+     * @param {string} chartType - chart type
      * @private
      */
     _addLegendComponent: function(LegendClass, seriesNames, chartType) {
@@ -228,30 +227,6 @@ var axisTypeMixer = {
     },
 
     /**
-     * Make series data for rendering.
-     * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {Array.<string>} chartTypes chart types
-     * @param {boolean} isVertical whether vertical or not
-     * @returns {object} series data
-     * @private
-     */
-    _makeSeriesDataForRendering: function(axesData, chartTypes) {
-        var limitMap = this._getLimitMap(axesData, chartTypes);
-        var aligned = axesData.xAxis.aligned;
-        var seriesData = {};
-
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            seriesData[chartType + 'Series'] = {
-                limit: limitMap[chartType],
-                aligned: aligned,
-                hasAxes: true
-            };
-        });
-
-        return seriesData;
-    },
-
-    /**
      * Get limit map for coordinate type.
      * @returns {{x: ({min: number, max: number}), y: ({min: number, max: number})}}
      * @private
@@ -291,6 +266,30 @@ var axisTypeMixer = {
         }
 
         tui.util.forEachArray(chartTypes, addDataRatio);
+    },
+
+    /**
+     * Make series data for rendering.
+     * @param {{yAxis: object, xAxis: object}} axesData axes data
+     * @param {Array.<string>} chartTypes chart types
+     * @param {boolean} isVertical whether vertical or not
+     * @returns {object} series data
+     * @private
+     */
+    _makeSeriesDataForRendering: function(axesData, chartTypes) {
+        var limitMap = this._getLimitMap(axesData, chartTypes);
+        var aligned = axesData.xAxis.aligned;
+        var seriesData = {};
+
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            seriesData[chartType + 'Series'] = {
+                limit: limitMap[chartType],
+                aligned: aligned,
+                hasAxes: true
+            };
+        });
+
+        return seriesData;
     },
 
     /**

@@ -30,6 +30,8 @@ var verticalTypeComboMixer = {
 
         tui.util.extend(this, chartTypesMap);
 
+        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = true;
 

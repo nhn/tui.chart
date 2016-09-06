@@ -212,9 +212,9 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
      * @returns {object} tooltip data
      */
     findData: function(groupIndex, layerX, layerY) {
-        var min = 10000,
-            result = null,
-            candidates;
+        var min = 10000;
+        var result = null;
+        var candidates;
 
         if (groupIndex > -1) {
             // layerX, layerY를 포함하는 data 추출
@@ -222,7 +222,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
 
             // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
             tui.util.forEachArray(candidates, function(data) {
-                var diff = Math.abs(layerY - data.sendData.bound.top);
+                var diff = Math.abs(layerY - data.bound.top);
 
                 if (min > diff) {
                     min = diff;

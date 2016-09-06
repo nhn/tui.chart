@@ -181,8 +181,8 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
 
         if (checkLimit) {
-            maxLeft = bound.right - expandSize;
-            minLeft = bound.left + expandSize;
+            maxLeft = bound.right + expandSize;
+            minLeft = bound.left - expandSize;
             clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
         }
 
@@ -247,9 +247,9 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         if (predicate.isTreemapChart(this.chartType)) {
             groupIndex = 0;
         } else {
-            layerX += chartConst.SERIES_EXPAND_SIZE;
             layerY += chartConst.SERIES_EXPAND_SIZE;
             groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+            layerX += chartConst.SERIES_EXPAND_SIZE;
         }
 
         return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
