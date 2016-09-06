@@ -33,7 +33,8 @@ describe('Test for zoomMixer', function() {
 
             zoomMixer._showDragSelection(50);
 
-            expect(zoomMixer.dragSelectionElement.style.left).toBe('20px');
+            expect(zoomMixer.dragSelectionElement.style.left).toBe('10px');
+            expect(zoomMixer.dragSelectionElement.style.width).toBe('100px');
         });
 
         it('layerX가 startLayerX보다 클 경우에는 left값을 startLayerX로 설정합니다.', function() {
