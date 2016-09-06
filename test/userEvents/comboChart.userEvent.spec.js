@@ -70,15 +70,15 @@ describe('Test user events for combo chart', function() {
 
             comboChart.on('selectSeries', function(info) {
                 expect(info.chartType).toBe('column');
-                expect(info.legend).toBe('NewYork');
-                expect(info.legendIndex).toBe(1);
+                expect(info.legend).toBe('Sydney');
+                expect(info.legendIndex).toBe(2);
                 expect(info.index).toBe(1);
 
                 done();
             });
 
             customEvent._onClick({
-                clientX: 123,
+                clientX: 130,
                 clientY: 330
             });
         });
@@ -97,8 +97,8 @@ describe('Test user events for combo chart', function() {
 
             comboChart.on('unselectSeries', function(info) {
                 expect(info.chartType).toBe('column');
-                expect(info.legend).toBe('NewYork');
-                expect(info.legendIndex).toBe(1);
+                expect(info.legend).toBe('Sydney');
+                expect(info.legendIndex).toBe(2);
                 expect(info.index).toBe(1);
 
                 done();
@@ -106,14 +106,14 @@ describe('Test user events for combo chart', function() {
 
             // select
             customEvent._onClick({
-                clientX: 123,
+                clientX: 130,
                 clientY: 330
             });
 
             setTimeout(function() {
                 // unselect
                 customEvent._onClick({
-                    clientX: 123,
+                    clientX: 130,
                     clientY: 330
                 });
             });
