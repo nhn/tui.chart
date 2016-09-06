@@ -1333,6 +1333,7 @@ describe('Test for Axis', function() {
             var actual;
 
             axis.data.labels = categories;
+            axis.data.tickCount = 3;
 
             actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);
 

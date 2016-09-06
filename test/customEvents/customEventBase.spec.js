@@ -86,7 +86,7 @@ describe('Test for CustomEventBase', function() {
             expect(actual.x).toBe(100);
         });
 
-        it('전달하는 clientX가 container의 bound.left 보다 작을 경우의 x는 10(확장 크기)만큼을 반환합니다.', function() {
+        it('전달하는 clientX가 container의 bound.left 보다 작을 경우의 x는 -10(확장 크기)만큼을 반환합니다.', function() {
             var actual;
 
             spyOn(customEventBase, '_getContainerBound').and.returnValue({
@@ -97,7 +97,7 @@ describe('Test for CustomEventBase', function() {
 
             actual = customEventBase._calculateLayerPosition(30);
 
-            expect(actual.x).toBe(10);
+            expect(actual.x).toBe(-10);
         });
 
         it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 작더라도 그대로 반환합니다.', function() {
@@ -126,7 +126,7 @@ describe('Test for CustomEventBase', function() {
 
             actual = customEventBase._calculateLayerPosition(480);
 
-            expect(actual.x).toBe(390);
+            expect(actual.x).toBe(410);
         });
 
         it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 크더라도 그대로 반환합니다.', function() {
