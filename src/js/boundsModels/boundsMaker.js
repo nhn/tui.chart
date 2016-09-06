@@ -486,6 +486,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         return rotatedHeight - rotationInfo.labelHeight;
     },
 
+    /**
+     * Calculate multiline height.
+     * @param {number} limitWidth - limit width
+     * @returns {number}
+     * @private
+     */
     _calculateMultilineHeight: function(limitWidth) {
         var theme = this.theme.xAxis.label;
         var labels = this.scaleModel.getMultilineXAxisLabels(limitWidth, theme);
@@ -931,10 +937,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Make vertical legend dimension.
-     * @returns {{width: number, height: number}} dimension
+     * @returns {{width: number, height: number}}
      * @private
      */
-    _makeVerticalDimension: function() {
+    _makeVerticalLegendDimension: function() {
         var maxValue = tui.util.max(this.dataProcessor.getValues());
         var formatFunctions = this.dataProcessor.getFormatFunctions();
         var valueStr = renderUtil.formatValue(maxValue, formatFunctions, this.chartType, 'legend');
@@ -948,11 +954,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Make horizontal legend dimension
-     * @returns {{width: number, height: number}} dimension
+     * Make horizontal legend dimension.
+     * @returns {{width: number, height: number}}
      * @private
      */
-    _makeHorizontalDimension: function() {
+    _makeHorizontalLegendlDimension: function() {
         var maxValue = tui.util.max(this.dataProcessor.getValues()),
             labelHeight = renderUtil.getRenderedLabelHeight(maxValue, this.theme.label),
             padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
@@ -964,15 +970,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Register dimension.
+     * Update dimension for SpectrumLegend.
      */
-    updateLegendDimensionForCircleLegend: function() {
+    updateDimensionForSpectrumLegend: function() {
         var dimension;
 
-        if (this.isHorizontal) {
-            dimension = this._makeHorizontalDimension();
+        if (predicate.isHorizontalLegend(this.options.legend.align)) {
+            dimension = this._makeHorizontalLegendlDimension();
         } else {
-            dimension = this._makeVerticalDimension();
+            dimension = this._makeVerticalLegendDimension();
         }
 
         this._registerDimension('legend', dimension);

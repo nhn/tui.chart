@@ -392,10 +392,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         if (cm.has('legend')) {
             bm.registerLegendDimension();
-        }
 
-        if (cm.has('circleLegend')) {
-            bm.updateLegendDimensionForCircleLegend();
+            if (cm.get('legend').colorSpectrum) {
+                bm.updateDimensionForSpectrumLegend();
+            }
         }
 
         // 02. y axis, legend scale 추가
