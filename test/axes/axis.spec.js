@@ -765,6 +765,7 @@ describe('Test for Axis', function() {
             var actual, expected;
 
             axis.data.labels = ['label1', 'label2', 'label3', 'label4', 'label5'];
+            axis.data.tickCount = 5;
 
             actual = axis._makeTickHtml(100, 5, true, 0);
             expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
@@ -780,6 +781,7 @@ describe('Test for Axis', function() {
             var actual, expected;
 
             axis.data.labels = ['label1', 'label2', 'label3', 'label4'];
+            axis.data.tickCount = 4;
 
             actual = axis._makeTickHtml(100, 5, true, 0);
             expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
@@ -841,6 +843,7 @@ describe('Test for Axis', function() {
             var actual;
 
             axis.data.labels = ['label1', 'label2', 'label3', 'label4', 'label5'];
+            axis.data.tickCount = 5;
 
             actual = axis._renderTicks(200, 5, true, 0);
 
@@ -857,6 +860,7 @@ describe('Test for Axis', function() {
 
             axis.data.isVertical = false;
             axis.data.labels = ['label1', 'label2', 'label3', 'label4', 'label5'];
+            axis.data.tickCount = 5;
 
             elTickArea = axis._renderTickArea(size, tickCount, categories);
             childNodes = elTickArea.childNodes;

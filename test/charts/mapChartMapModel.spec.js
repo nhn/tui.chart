@@ -398,9 +398,8 @@ describe('MapChartMapModel', function() {
                 actual, expected;
 
             dataProcessor.getValueMapDatum.and.returnValue({});
-            mapModel._createMapData(rawMapData);
 
-            actual = mapModel.mapData;
+            actual = mapModel._createMapData(rawMapData);
             expected = [
                 {
                     code: 'CD1',
@@ -482,9 +481,7 @@ describe('MapChartMapModel', function() {
                 return result;
             });
 
-            mapModel._createMapData(rawMapData);
-
-            actual = mapModel.mapData;
+            actual = mapModel._createMapData(rawMapData);
             expected = [
                 {
                     code: 'CD1',
