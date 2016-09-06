@@ -11,7 +11,7 @@ var CustomEventBase = require('../../src/js/customEvents/customEventBase');
 var chartConst = require('../../src/js/const');
 var dom = require('../../src/js/helpers/domHandler');
 
-describe('Test for AreaTypeCustomEvent', function() {
+describe('Test for zoomMixer', function() {
     beforeAll(function() {
         zoomMixer._getContainerBound = jasmine.createSpy('_getContainerBound');
         zoomMixer._calculateLayerPosition = CustomEventBase.prototype._calculateLayerPosition;
@@ -34,7 +34,6 @@ describe('Test for AreaTypeCustomEvent', function() {
             zoomMixer._showDragSelection(50);
 
             expect(zoomMixer.dragSelectionElement.style.left).toBe('20px');
-            expect(zoomMixer.dragSelectionElement.style.width).toBe('90px');
         });
 
         it('layerX가 startLayerX보다 클 경우에는 left값을 startLayerX로 설정합니다.', function() {
