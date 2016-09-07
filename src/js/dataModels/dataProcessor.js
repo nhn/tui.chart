@@ -890,7 +890,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var mapKey;
 
         chartType = chartType || chartConst.DUMMY_KEY;
-
         mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {

@@ -14,6 +14,7 @@ var circleLegendCalculator = require('./circleLegendCalculator');
 var axisCalculator = require('./axisCalculator');
 var legendCalculator = require('./legendCalculator');
 var seriesCalculator = require('./seriesCalculator');
+var spectrumLegendCalculator = require('./spectrumLegendCalculator');
 
 /**
  * Dimension.
@@ -104,7 +105,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @param {object} chartOption chart option
      */
     initBoundsData: function(chartOption) {
-        this.dimensions = {
+        this.dimensionMap = {
             legend: {
                 width: 0
             },
@@ -125,7 +126,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             }
         };
 
-        this.positions = {};
+        this.positionMap = {};
 
         this.xAxisDegree = 0;
 
@@ -156,7 +157,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerDimension: function(name, dimension) {
-        this.dimensions[name] = tui.util.extend(this.dimensions[name] || {}, dimension);
+        this.dimensionMap[name] = tui.util.extend(this.dimensionMap[name] || {}, dimension);
     },
 
     /**
@@ -166,8 +167,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     getBound: function(name) {
         return {
-            dimension: this.dimensions[name] || {},
-            position: this.positions[name] || {}
+            dimension: this.dimensionMap[name] || {},
+            position: this.positionMap[name] || {}
         };
     },
 
@@ -178,8 +179,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _setBound: function(name, bound) {
-        this.dimensions[name] = bound.dimension;
-        this.positions[name] = bound.position;
+        this.dimensionMap[name] = bound.dimension;
+        this.positionMap[name] = bound.position;
     },
 
     /**
@@ -188,7 +189,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {dimension} component dimension
      */
     getDimension: function(name) {
-        return this.dimensions[name];
+        return this.dimensionMap[name];
     },
 
     /**
@@ -203,10 +204,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         if (types && types.length) {
             tui.util.forEachArray(types, function(type) {
-                dimensionMap[type] = self.dimensions[type];
+                dimensionMap[type] = self.dimensionMap[type];
             });
         } else {
-            dimensionMap = this.dimensions;
+            dimensionMap = this.dimensionMap;
         }
 
         return dimensionMap;
@@ -218,7 +219,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {position} component position
      */
     getPosition: function(name) {
-        return this.positions[name];
+        return this.positionMap[name];
     },
 
     /**
@@ -345,19 +346,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Calculate limit width of x axis.
-     * @param {number} labelCount - label count
-     * @returns {number} limit width
-     * @private
-     */
-    _calculateXAxisLabelLimitWidth: function(labelCount) {
-        var seriesWidth = this.getDimension('series').width;
-        var isAlign = predicate.isLineTypeChart(this.chartType);
-
-        return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
-    },
-
-    /**
      * Find rotation degree.
      * @param {number} limitWidth limit width
      * @param {number} labelWidth label width
@@ -438,12 +426,25 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _updateDimensionsWidth: function(overflowLeft) {
         if (overflowLeft > 0) {
             this.chartLeftPadding += overflowLeft;
-            this.dimensions.plot.width -= overflowLeft;
-            this.dimensions.series.width -= overflowLeft;
-            this.dimensions.customEvent.width -= overflowLeft;
-            this.dimensions.xAxis.width -= overflowLeft;
-            this.positions.series.left += overflowLeft;
+            this.dimensionMap.plot.width -= overflowLeft;
+            this.dimensionMap.series.width -= overflowLeft;
+            this.dimensionMap.customEvent.width -= overflowLeft;
+            this.dimensionMap.xAxis.width -= overflowLeft;
+            this.positionMap.series.left += overflowLeft;
         }
+    },
+
+    /**
+     * Calculate limit width of x axis.
+     * @param {number} labelCount - label count
+     * @returns {number} limit width
+     * @private
+     */
+    _calculateXAxisLabelLimitWidth: function(labelCount) {
+        var seriesWidth = this.getDimension('series').width;
+        var isAlign = predicate.isLineTypeChart(this.chartType);
+
+        return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
 
     /**
@@ -526,13 +527,13 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _updateDimensionsHeight: function(diffHeight) {
-        this.dimensions.plot.height -= diffHeight;
-        this.dimensions.series.height -= diffHeight;
-        this.dimensions.customEvent.height -= diffHeight;
-        this.dimensions.tooltip.height -= diffHeight;
-        this.dimensions.yAxis.height -= diffHeight;
-        this.dimensions.rightYAxis.height -= diffHeight;
-        this.dimensions.xAxis.height += diffHeight;
+        this.dimensionMap.plot.height -= diffHeight;
+        this.dimensionMap.series.height -= diffHeight;
+        this.dimensionMap.customEvent.height -= diffHeight;
+        this.dimensionMap.tooltip.height -= diffHeight;
+        this.dimensionMap.yAxis.height -= diffHeight;
+        this.dimensionMap.rightYAxis.height -= diffHeight;
+        this.dimensionMap.xAxis.height += diffHeight;
     },
 
     /**
@@ -629,22 +630,22 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             yAxisWidth = this.getDimension('yAxis').width,
             leftAreaWidth = yAxisWidth + seriesDimension.width + leftLegendWidth;
 
-        this.positions.plot = {
+        this.positionMap.plot = {
             top: seriesPosition.top,
             left: seriesPosition.left
         };
 
-        this.positions.yAxis = {
+        this.positionMap.yAxis = {
             top: seriesPosition.top,
             left: this.chartLeftPadding + leftLegendWidth
         };
 
-        this.positions.xAxis = {
+        this.positionMap.xAxis = {
             top: seriesPosition.top + seriesDimension.height,
             left: seriesPosition.left
         };
 
-        this.positions.rightYAxis = {
+        this.positionMap.rightYAxis = {
             top: seriesPosition.top,
             left: this.chartLeftPadding + leftAreaWidth - chartConst.OVERLAPPING_WIDTH
         };
@@ -656,11 +657,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _makeLegendPosition: function() {
-        var dimensions = this.dimensions,
-            seriesDimension = this.getDimension('series'),
-            legendOption = this.options.legend,
-            top = dimensions.title.height,
-            yAxisAreaWidth, left;
+        var dimensionMap = this.dimensionMap;
+        var seriesDimension = this.getDimension('series');
+        var legendOption = this.options.legend;
+        var top = dimensionMap.title.height;
+        var yAxisAreaWidth, left;
 
         if (predicate.isLegendAlignBottom(legendOption.align)) {
             top += seriesDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
@@ -732,11 +733,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var seriesPosition = this.getPosition('series');
         var tooltipPosition;
 
-        this.positions.customEvent = tui.util.extend({}, seriesPosition);
-        this.positions.legend = this._makeLegendPosition();
+        this.positionMap.customEvent = tui.util.extend({}, seriesPosition);
+        this.positionMap.legend = this._makeLegendPosition();
 
         if (this.getDimension('circleLegend').width) {
-            this.positions.circleLegend = this._makeCircleLegendPosition();
+            this.positionMap.circleLegend = this._makeCircleLegendPosition();
         }
 
         if (this._isNeedExpansionSeries()) {
@@ -748,7 +749,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             tooltipPosition = seriesPosition;
         }
 
-        this.positions.tooltip = tooltipPosition;
+        this.positionMap.tooltip = tooltipPosition;
     },
 
     /**
@@ -766,7 +767,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
         };
 
-        this.positions.series = seriesPosition;
+        this.positionMap.series = seriesPosition;
 
         if (this.hasAxes) {
             this._updateDimensionsAndDegree();
@@ -794,24 +795,24 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _updateBoundsForYAxisCenterOption: function() {
-        var yAxisWidth = this.getDimension('yAxis').width,
-            yAxisExtensibleLeft = Math.floor((this.getDimension('series').width / 2)) + chartConst.OVERLAPPING_WIDTH,
-            xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH,
-            additionalLeft = renderUtil.isOldBrowser() ? 1 : 0;
+        var yAxisWidth = this.getDimension('yAxis').width;
+        var yAxisExtensibleLeft = Math.floor((this.getDimension('series').width / 2)) + chartConst.OVERLAPPING_WIDTH;
+        var xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH;
+        var additionalLeft = renderUtil.isOldBrowser() ? 1 : 0;
 
-        this.dimensions.extendedSeries.width += yAxisWidth;
-        this.dimensions.xAxis.width += chartConst.OVERLAPPING_WIDTH;
-        this.dimensions.plot.width += yAxisWidth + chartConst.OVERLAPPING_WIDTH;
-        this.dimensions.customEvent.width += yAxisWidth;
-        this.dimensions.tooltip.width += yAxisWidth;
+        this.dimensionMap.extendedSeries.width += yAxisWidth;
+        this.dimensionMap.xAxis.width += chartConst.OVERLAPPING_WIDTH;
+        this.dimensionMap.plot.width += yAxisWidth + chartConst.OVERLAPPING_WIDTH;
+        this.dimensionMap.customEvent.width += yAxisWidth;
+        this.dimensionMap.tooltip.width += yAxisWidth;
 
-        this.positions.series.left -= (yAxisWidth - additionalLeft);
-        this.positions.extendedSeries.left -= (xAxisDecreasingLeft - additionalLeft);
-        this.positions.plot.left -= xAxisDecreasingLeft;
-        this.positions.yAxis.left += yAxisExtensibleLeft;
-        this.positions.xAxis.left -= xAxisDecreasingLeft;
-        this.positions.customEvent.left -= xAxisDecreasingLeft;
-        this.positions.tooltip.left -= xAxisDecreasingLeft;
+        this.positionMap.series.left -= (yAxisWidth - additionalLeft);
+        this.positionMap.extendedSeries.left -= (xAxisDecreasingLeft - additionalLeft);
+        this.positionMap.plot.left -= xAxisDecreasingLeft;
+        this.positionMap.yAxis.left += yAxisExtensibleLeft;
+        this.positionMap.xAxis.left -= xAxisDecreasingLeft;
+        this.positionMap.customEvent.left -= xAxisDecreasingLeft;
+        this.positionMap.tooltip.left -= xAxisDecreasingLeft;
     },
 
     /**
@@ -854,49 +855,17 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Make vertical legend dimension.
-     * @returns {{width: number, height: number}}
-     * @private
-     */
-    _makeVerticalLegendDimension: function() {
-        var maxValue = tui.util.max(this.dataProcessor.getValues());
-        var formatFunctions = this.dataProcessor.getFormatFunctions();
-        var valueStr = renderUtil.formatValue(maxValue, formatFunctions, this.chartType, 'legend');
-        var labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label);
-        var padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
-
-        return {
-            width: chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + padding,
-            height: chartConst.MAP_LEGEND_SIZE
-        };
-    },
-
-    /**
-     * Make horizontal legend dimension.
-     * @returns {{width: number, height: number}}
-     * @private
-     */
-    _makeHorizontalLegendlDimension: function() {
-        var maxValue = tui.util.max(this.dataProcessor.getValues()),
-            labelHeight = renderUtil.getRenderedLabelHeight(maxValue, this.theme.label),
-            padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
-
-        return {
-            width: chartConst.MAP_LEGEND_SIZE,
-            height: chartConst.MAP_LEGEND_GRAPH_SIZE + labelHeight + padding
-        };
-    },
-
-    /**
      * Update dimension for SpectrumLegend.
      */
     updateDimensionForSpectrumLegend: function() {
+        var maxValue = this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+        var labelTheme = this.theme.label;
         var dimension;
 
         if (predicate.isHorizontalLegend(this.options.legend.align)) {
-            dimension = this._makeHorizontalLegendlDimension();
+            dimension = spectrumLegendCalculator._makeHorizontalDimension(maxValue, labelTheme);
         } else {
-            dimension = this._makeVerticalLegendDimension();
+            dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, labelTheme);
         }
 
         this._registerDimension('legend', dimension);

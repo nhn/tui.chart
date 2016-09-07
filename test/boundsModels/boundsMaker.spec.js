@@ -87,7 +87,7 @@ describe('Test for BoundsMaker', function() {
         it('x축 label이 렌더링 될 수있는 영역의 너비를 계산합니다.', function() {
             var actual, expected;
 
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300
             };
 
@@ -101,7 +101,7 @@ describe('Test for BoundsMaker', function() {
             var actual, expected;
 
             boundsMaker.chartType = chartConst.CHART_TYPE_LINE;
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300
             };
 
@@ -200,7 +200,7 @@ describe('Test for BoundsMaker', function() {
             boundsMaker.theme = {
                 xAxis: {}
             };
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 yAxis: {
                     width: 50
                 }
@@ -217,9 +217,9 @@ describe('Test for BoundsMaker', function() {
     });
 
     describe('_updateDimensionsWidth()', function() {
-        it('50의 overflowLeft를 전달하면 chartLeftPadding은 50 증가하고 나머지 dimensions의 width들을 50씩 감소합니다.', function() {
+        it('50의 overflowLeft를 전달하면 chartLeftPadding은 50 증가하고 나머지 dimension의 width들을 50씩 감소합니다.', function() {
             boundsMaker.chartLeftPadding = 10;
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 plot: {
                     width: 200
                 },
@@ -233,7 +233,7 @@ describe('Test for BoundsMaker', function() {
                     width: 200
                 }
             };
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {
                     left: 0
                 }
@@ -259,7 +259,7 @@ describe('Test for BoundsMaker', function() {
                 labelHeight: 20
             };
 
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 200
             };
 
@@ -323,7 +323,7 @@ describe('Test for BoundsMaker', function() {
 
     describe('_updateDimensionsHeight()', function() {
         it('50의 diffHeight를 전달하면 xAxis.heihgt는 50 감소하고, plot.height, series.height는 50 증가합니다.', function() {
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 plot: {
                     height: 200
                 },
@@ -383,7 +383,7 @@ describe('Test for BoundsMaker', function() {
         it('plot dimension은 전달하는 series dimension에서 hidden width 1을 더한 수치로 생성합니다.', function() {
             var actual, expected;
 
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 200,
                 height: 100
             };
@@ -418,7 +418,7 @@ describe('Test for BoundsMaker', function() {
         it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 chart: {
                     width: 500,
                     height: 400
@@ -451,7 +451,7 @@ describe('Test for BoundsMaker', function() {
         it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 chart: {
                     width: 500,
                     height: 400
@@ -486,7 +486,7 @@ describe('Test for BoundsMaker', function() {
 
     describe('_registerCenterComponentsDimension()', function() {
         it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 series: {
                     width: 300,
                     height: 200
@@ -505,14 +505,14 @@ describe('Test for BoundsMaker', function() {
         it('시리즈 position과 leftLegendWidth 정보를 이용하여 axis를 구성하는 components들의 position정보를 등록합니다.', function() {
             var leftLegendWidth = 0;
 
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300,
                 height: 200
             };
-            boundsMaker.dimensions.yAxis = {
+            boundsMaker.dimensionMap.yAxis = {
                 width: 30
             };
-            boundsMaker.positions.series = {
+            boundsMaker.positionMap.series = {
                 left: 50,
                 top: 50
             };
@@ -534,7 +534,7 @@ describe('Test for BoundsMaker', function() {
         it('기본 옵션의 legend position정보를 생성합니다.', function() {
             var actual, expected;
 
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 title: {
                     height: 20
                 },
@@ -563,7 +563,7 @@ describe('Test for BoundsMaker', function() {
         it('align옵션이 bottom인 legend의 position정보를 생성합니다.', function() {
             var actual, expected;
 
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 title: {
                     height: 20
                 },
@@ -597,12 +597,12 @@ describe('Test for BoundsMaker', function() {
         it('series의 left와 너비값 그리고 circleLegend와 legend의 너비 차를 이용하여 left를 구합니다.', function() {
             var actual, expected;
 
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {
                     left: 40
                 }
             };
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 series: {
                     width: 400
                 },
@@ -625,10 +625,10 @@ describe('Test for BoundsMaker', function() {
 
             boundsMaker.options.legend.align = chartConst.LEGEND_ALIGN_LEFT;
 
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {}
             };
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 series: {},
                 circleLegend: {
                     width: 100
@@ -647,12 +647,12 @@ describe('Test for BoundsMaker', function() {
         it('가로타입의 범례인 경우에는 series의 left와 너비 값 만을 이용하여 left를 구합니다.', function() {
             var actual, expected;
 
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {
                     left: 40
                 }
             };
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 series: {
                     width: 400
                 },
@@ -673,12 +673,12 @@ describe('Test for BoundsMaker', function() {
         it('범례가 숨겨진 경우에도 series의 left와 너비 값 만을 이용하여 left를 구합니다.', function() {
             var actual, expected;
 
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {
                     left: 40
                 }
             };
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 series: {
                     width: 400
                 },
@@ -699,12 +699,12 @@ describe('Test for BoundsMaker', function() {
         it('series의 position.top과 series의 높이 값을 더한 값에 circleLegend의 높이를 빼 circleLegend의 top을 구합니다.', function() {
             var actual, expected;
 
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {
                     top: 60
                 }
             };
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 series: {
                     height: 300
                 },
@@ -730,7 +730,7 @@ describe('Test for BoundsMaker', function() {
 
             boundsMaker.chartType = 'bar';
             boundsMaker.hasAxes = true;
-            boundsMaker.positions.series = {
+            boundsMaker.positionMap.series = {
                 left: 50,
                 top: 50
             };
@@ -748,7 +748,7 @@ describe('Test for BoundsMaker', function() {
     describe('_updateBoundsForYAxisCenterOption()', function() {
         it('yAxis 중앙정렬을 위해 각종 컴포넌트들의 bounds를 갱신합니다.', function() {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 extendedSeries: {
                     width: 300
                 },
@@ -765,7 +765,7 @@ describe('Test for BoundsMaker', function() {
                     width: 300
                 }
             };
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {
                     left: 50
                 },
@@ -789,33 +789,33 @@ describe('Test for BoundsMaker', function() {
                 }
             };
 
-            boundsMaker.dimensions.yAxis = {
+            boundsMaker.dimensionMap.yAxis = {
                 width: 50
             };
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300
             };
 
             boundsMaker._updateBoundsForYAxisCenterOption();
 
-            expect(boundsMaker.dimensions.extendedSeries.width).toBe(350);
-            expect(boundsMaker.dimensions.xAxis.width).toBe(301);
-            expect(boundsMaker.dimensions.plot.width).toBe(351);
-            expect(boundsMaker.dimensions.customEvent.width).toBe(350);
-            expect(boundsMaker.dimensions.tooltip.width).toBe(350);
+            expect(boundsMaker.dimensionMap.extendedSeries.width).toBe(350);
+            expect(boundsMaker.dimensionMap.xAxis.width).toBe(301);
+            expect(boundsMaker.dimensionMap.plot.width).toBe(351);
+            expect(boundsMaker.dimensionMap.customEvent.width).toBe(350);
+            expect(boundsMaker.dimensionMap.tooltip.width).toBe(350);
 
-            expect(boundsMaker.positions.series.left).toBe(0);
-            expect(boundsMaker.positions.extendedSeries.left).toBe(1);
-            expect(boundsMaker.positions.plot.left).toBe(1);
-            expect(boundsMaker.positions.yAxis.left).toBe(201);
-            expect(boundsMaker.positions.xAxis.left).toBe(1);
-            expect(boundsMaker.positions.customEvent.left).toBe(1);
-            expect(boundsMaker.positions.tooltip.left).toBe(1);
+            expect(boundsMaker.positionMap.series.left).toBe(0);
+            expect(boundsMaker.positionMap.extendedSeries.left).toBe(1);
+            expect(boundsMaker.positionMap.plot.left).toBe(1);
+            expect(boundsMaker.positionMap.yAxis.left).toBe(201);
+            expect(boundsMaker.positionMap.xAxis.left).toBe(1);
+            expect(boundsMaker.positionMap.customEvent.left).toBe(1);
+            expect(boundsMaker.positionMap.tooltip.left).toBe(1);
         });
 
         it('구형 브라우저(IE7, IE8)의 경우 series와 extendedSeries의 left값이 1만큼 더 많아야 합니다.', function() {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
-            boundsMaker.dimensions = {
+            boundsMaker.dimensionMap = {
                 extendedSeries: {
                     width: 300
                 },
@@ -832,7 +832,7 @@ describe('Test for BoundsMaker', function() {
                     width: 300
                 }
             };
-            boundsMaker.positions = {
+            boundsMaker.positionMap = {
                 series: {
                     left: 50
                 },
@@ -856,26 +856,26 @@ describe('Test for BoundsMaker', function() {
                 }
             };
 
-            boundsMaker.dimensions.yAxis = {
+            boundsMaker.dimensionMap.yAxis = {
                 width: 50
             };
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300
             };
 
             boundsMaker._updateBoundsForYAxisCenterOption();
 
-            expect(boundsMaker.positions.series.left).toBe(1);
-            expect(boundsMaker.positions.extendedSeries.left).toBe(2);
+            expect(boundsMaker.positionMap.series.left).toBe(1);
+            expect(boundsMaker.positionMap.extendedSeries.left).toBe(2);
         });
     });
 
     describe('_updateLegendAndSeriesWidth()', function() {
         it('update legend width, when has width for vertical type legend', function() {
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300
             };
-            boundsMaker.dimensions.legend = {
+            boundsMaker.dimensionMap.legend = {
                 width: 0
             };
             boundsMaker.options.legend = {
@@ -889,10 +889,10 @@ describe('Test for BoundsMaker', function() {
         });
 
         it('update legend width, when has not width for vertical type legend', function() {
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300
             };
-            boundsMaker.dimensions.legend = {
+            boundsMaker.dimensionMap.legend = {
                 width: 0
             };
             boundsMaker.options.legend = {
@@ -906,7 +906,7 @@ describe('Test for BoundsMaker', function() {
         });
 
         it('update series width', function() {
-            boundsMaker.dimensions.series = {
+            boundsMaker.dimensionMap.series = {
                 width: 300
             };
 
