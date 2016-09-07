@@ -154,19 +154,6 @@ var axisTypeMixer = {
     },
 
     /**
-     * Get map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
-     * @private
-     */
-    _getAxisScaleMakerMap: function() {
-        if (!this.axisScaleMakerMap) {
-            this.axisScaleMakerMap = this._makeAxisScaleMakerMap();
-        }
-
-        return this.axisScaleMakerMap;
-    },
-
-    /**
      * Get limit map for coordinate type.
      * @returns {{x: ({min: number, max: number}), y: ({min: number, max: number})}}
      * @private

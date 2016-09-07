@@ -374,10 +374,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _registerCircleLegendDimension: function() {},
 
     /**
-     * Initialize bounds and scale.
+     * Set layout bounds and scale.
      * @private
      */
-    _initBoundsAndScale: function() {
+    _setLayoutBoundsAndScale: function() {
         var labelAxisOptions = (this.isVertical ? this.options.xAxis : this.options.yAxis) || {};
         var cm = this.componentManager;
         var bm = this.boundsMaker;
@@ -434,8 +434,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _render: function(onRender) {
         var renderingData;
 
-        // bounds, scale 정보 계산 및 등록
-        this._initBoundsAndScale();
+        // layout bounds, scale 정보 계산 및 등록
+        this._setLayoutBoundsAndScale();
 
         // 비율값 추가
         this._addDataRatios();
