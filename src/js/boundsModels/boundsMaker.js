@@ -191,6 +191,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         return this.dimensions[name];
     },
 
+    /**
+     * Get dimension map.
+     * @param {string} types - dimension type names
+     * @returns {object}
+     * @private
+     */
     _getDimensionMap: function(types) {
         var self = this;
         var dimensionMap = {};
