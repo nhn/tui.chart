@@ -317,13 +317,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Update dimensions.
-     * @abstract
-     * @private
-     */
-    _updateDimensions: function() {},
-
-    /**
      * Add data ratios.
      * @private
      * @abstract
