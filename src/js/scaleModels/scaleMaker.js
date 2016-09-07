@@ -286,9 +286,9 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
         var baseSize;
 
         if (this.isVertical) {
-            baseSize = this.boundsMaker.makeSeriesHeight();
+            baseSize = this.boundsMaker.calculateSeriesHeight();
         } else {
-            baseSize = this.boundsMaker.makeSeriesWidth();
+            baseSize = this.boundsMaker.calculateSeriesWidth();
         }
 
         return baseSize;

@@ -15,7 +15,7 @@ describe('Test for ScaleMaker', function() {
     var scaleMaker, boundsMaker;
 
     beforeEach(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['makeSeriesHeight', 'makeSeriesWidth']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['calculateSeriesHeight', 'calculateSeriesWidth']);
         scaleMaker = new ScaleMaker({
             dataProcessor: new DataProcessor([], '', {}),
             boundsMaker: boundsMaker
@@ -281,7 +281,7 @@ describe('Test for ScaleMaker', function() {
         it('x축일 경우에는 series width를 기본 사이즈로 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
 
             actual = scaleMaker._getBaseSize();
             expected = 400;
@@ -292,7 +292,7 @@ describe('Test for ScaleMaker', function() {
         it('y축일 경우에는 series height를 기본 사이즈로 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesHeight.and.returnValue(300);
+            boundsMaker.calculateSeriesHeight.and.returnValue(300);
 
             scaleMaker.isVertical = true;
             actual = scaleMaker._getBaseSize();
@@ -306,7 +306,7 @@ describe('Test for ScaleMaker', function() {
         it('너비가 320일 경우에는 320을 40과 60으로 나눈 값인 5와 8 사이의 후보 value count 정보를 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(320);
+            boundsMaker.calculateSeriesWidth.and.returnValue(320);
 
             actual = scaleMaker._getCandidateCountsOfValue();
             expected = [4, 5, 6, 7];
@@ -317,7 +317,7 @@ describe('Test for ScaleMaker', function() {
         it('너비가 450일 경우에는 450을 40과 60으로 나눈 값인 7과 11 사이의의 후보 value count 정보를 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(450);
+            boundsMaker.calculateSeriesWidth.and.returnValue(450);
 
             actual = scaleMaker._getCandidateCountsOfValue();
             expected = [6, 7, 8, 9, 10];
@@ -1052,7 +1052,7 @@ describe('Test for ScaleMaker', function() {
         it('calculate scale.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
             spyOn(scaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 
             actual = scaleMaker._calculateScale();
@@ -1068,7 +1068,7 @@ describe('Test for ScaleMaker', function() {
         it('calculate scale, when axis type is datetime', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
             spyOn(scaleMaker, '_makeBaseValues').and.returnValue([
                 (new Date('01/01/2016')).getTime(),
                 (new Date('01/03/2016')).getTime(),
@@ -1254,7 +1254,7 @@ describe('Test for ScaleMaker', function() {
             var actual, expected;
 
             spyOn(scaleMaker, '_isPercentStackChart').and.returnValue(false);
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
             spyOn(scaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 
             actual = scaleMaker._makeScale();

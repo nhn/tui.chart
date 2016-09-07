@@ -24,8 +24,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      *      @param {string} params.chart type
      */
     init: function(params) {
-        var legendData;
-
         /**
          * legend theme
          * @type {Object}
@@ -74,14 +72,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.dataProcessor = params.dataProcessor;
 
-        legendData = params.dataProcessor.getLegendData();
         /**
          * legend model
          */
         this.legendModel = new LegendModel({
             theme: this.theme,
             labels: params.dataProcessor.getLegendLabels(),
-            legendData: legendData,
+            legendData: params.dataProcessor.getLegendData(),
             seriesNames: this.seriesNames,
             chartType: this.chartType
         });

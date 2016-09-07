@@ -1,5 +1,5 @@
 /**
- * @fileoverview Calculator for dimension of axis.
+ * @fileoverview Calculator for dimension of legend.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -11,10 +11,10 @@ var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 
 /**
- * Calculator for dimension of axis.
- * @module legendDimensionCalculator
+ * Calculator for dimension of legend.
+ * @module legendCalculator
  */
-var legendDimensionCalculator = {
+var legendCalculator = {
     /**
      * Legend margin.
      * @type {number}
@@ -170,7 +170,7 @@ var legendDimensionCalculator = {
     },
 
     /**
-     * Make legend dimension.
+     * Calculate legend dimension.
      * @param {{showCheckbox: boolean, visible: boolean, align: string}} options - options for legend
      * @param {{fontSize: number, fontFamily: number}} labelTheme - label theme for legend
      * @param {Array.<string>} legendLabels - labels for legend
@@ -193,4 +193,4 @@ var legendDimensionCalculator = {
     }
 };
 
-module.exports = legendDimensionCalculator;
+module.exports = legendCalculator;

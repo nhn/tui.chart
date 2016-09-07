@@ -296,9 +296,9 @@ var predicate = {
     },
 
     /**
-     * Whether horizontal legend align or not.
+     * Whether horizontal legend or not.
      * @memberOf module:predicate
-     * @param {string} align - align of legend
+     * @param {string} align - align option for legend
      * @returns {boolean}
      */
     isHorizontalLegend: function(align) {
@@ -306,14 +306,13 @@ var predicate = {
     },
 
     /**
-     * Whether has width for vertical type legend or not.
-     * @param {{align: string, visible: boolean}} legendOption - option for legend component
+     * Whether vertical legend or not.
+     * @memberOf module:predicate
+     * @param {string} align - align option for legend
      * @returns {boolean}
      */
-    hasVerticalLegendWidth: function(legendOption) {
-        legendOption = legendOption || {};
-
-        return !predicate.isHorizontalLegend(legendOption.align) && legendOption.visible;
+    isVerticalLegend: function(align) {
+        return !predicate.isHorizontalLegend(align);
     },
 
     /**

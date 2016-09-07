@@ -36,98 +36,6 @@ describe('Test for BoundsMaker', function() {
         boundsMaker.setScaleModel(scaleModel);
     });
 
-    describe('_getCircleLegendLabelMaxWidth()', function() {
-        it('가장 큰 반지름 값과 CirleLegend label의 테마 정보를 renderUtil.getRenderedLabelWidth에 전달하여 레이블 너비를 구합니다.', function() {
-            dataProcessor.getFormattedMaxValue.and.returnValue('1,000');
-            boundsMaker.theme = {
-                chart: {
-                    fontFamily: 'Verdana'
-                }
-            };
-            boundsMaker._getCircleLegendLabelMaxWidth();
-
-            expect(renderUtil.getRenderedLabelWidth).toHaveBeenCalledWith('1,000', {
-                fontSize: 9,
-                fontFamily: 'Verdana'
-            });
-        });
-
-        it('renderUtil.getRenderedLabelWidth의 결과를 반환합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.theme = {
-                chart: {
-                    fontFamily: 'Verdana'
-                }
-            };
-
-            actual = boundsMaker._getCircleLegendLabelMaxWidth();
-            expected = 50;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_getCircleLegendWidth()', function() {
-        it('CircleLegend의 circle너비와 label너비 중 큰 값에 여백값을 더하여 반환합니다.', function() {
-            var actual, expected;
-
-            spyOn(boundsMaker, '_calculateMaxRadius').and.returnValue(20);
-            spyOn(boundsMaker, '_getCircleLegendLabelMaxWidth').and.returnValue(65);
-            boundsMaker.legendOption = {};
-
-            actual = boundsMaker._getCircleLegendWidth();
-            expected = 75;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_calculatePixelStep()', function() {
-        it('axis가 라벨타입일 경우의 pixel단위 step을 반환합니다', function() {
-            var actual = boundsMaker._calculatePixelStep({
-                tickCount: 4,
-                isLabelAxis: true
-            }, 240);
-            var expected = 30;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('axis가 라벨타입이 아닐 경우의 pixel단위 step을 반환합니다', function() {
-            var actual = boundsMaker._calculatePixelStep({
-                tickCount: 4
-            }, 240);
-            var expected = 80;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_calculateMaxRadius()', function() {
-        it('calculate max radius for circle legend', function() {
-            var actual, expected;
-
-            spyOn(boundsMaker, 'getDimension').and.returnValue({
-                width: 400,
-                height: 240
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
-                xAxis: {
-                    tickCount: 5
-                },
-                yAxis: {
-                    tickCount: 4
-                }
-            });
-
-            actual = boundsMaker._calculateMaxRadius();
-            expected = 80;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_registerChartDimension()', function() {
         it('chart option(width, height) 정보를 받아 chart dimension을 등록합니다.', function() {
             var actual, expected;
@@ -503,102 +411,6 @@ describe('Test for BoundsMaker', function() {
             expect(boundsMaker.getDimension('xAxis').width).toBe(300);
             expect(boundsMaker.getDimension('yAxis').height).toBe(200);
             expect(boundsMaker.getDimension('rightYAxis').height).toBe(200);
-        });
-    });
-
-    describe('makeSeriesWidth()', function() {
-        it('시리즈 영역의 너비를 생성합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.dimensions = {
-                chart: {
-                    width: 500
-                },
-                calculationLegend: {
-                    width: 50
-                },
-                yAxis: {
-                    width: 50
-                },
-                rightYAxis: {
-                    width: 0
-                }
-            };
-            actual = boundsMaker.makeSeriesWidth();
-            expected = 380;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('legend align옵션이 가로(top, bottom) 옵션이면 legend 너비는 계산하지 않습니다.', function() {
-            var actual, expected;
-
-            boundsMaker.options = {
-                legend: {
-                    align: chartConst.LEGEND_ALIGN_TOP
-                }
-            };
-            boundsMaker.dimensions = {
-                chart: {
-                    width: 500
-                },
-                yAxis: {
-                    width: 50
-                },
-                rightYAxis: {
-                    width: 0
-                }
-            };
-            actual = boundsMaker.makeSeriesWidth();
-            expected = 430;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('makeSeriesHeight()', function() {
-        it('시리즈 영역의 높이를 생성합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.dimensions = {
-                chart: {
-                    height: 400
-                },
-                title: {
-                    height: 50
-                },
-                xAxis: {
-                    height: 50
-                }
-            };
-            actual = boundsMaker.makeSeriesHeight();
-            expected = 280;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('legend align옵션이 가로(top, bottom) 옵션이면 legend 높이를 추가적으로 빼줍니다.', function() {
-            var actual, expected;
-
-            boundsMaker.options.legend.align = chartConst.LEGEND_ALIGN_TOP;
-            boundsMaker.dimensions = {
-                chart: {
-                    height: 400
-                },
-                title: {
-                    height: 50
-                },
-                legend: {
-                    height: 50
-                },
-                xAxis: {
-                    height: 50
-                }
-            };
-            actual = boundsMaker.makeSeriesHeight();
-            expected = 230;
-
-            expect(actual).toBe(expected);
         });
     });
 
@@ -1060,8 +872,8 @@ describe('Test for BoundsMaker', function() {
 
     describe('_updateLegendAndSeriesWidth()', function() {
         it('update legend width, when has width for vertical type legend', function() {
-            boundsMaker.dimensions.circleLegend = {
-                width: 80
+            boundsMaker.dimensions.series = {
+                width: 300
             };
             boundsMaker.dimensions.legend = {
                 width: 0
@@ -1071,14 +883,14 @@ describe('Test for BoundsMaker', function() {
                 align: chartConst.LEGEND_ALIGN_LEFT
             };
 
-            boundsMaker._updateLegendAndSeriesWidth(300, 60);
+            boundsMaker._updateLegendAndSeriesWidth(80, 20);
 
             expect(boundsMaker.getDimension('legend').width).toBe(80);
         });
 
         it('update legend width, when has not width for vertical type legend', function() {
-            boundsMaker.dimensions.circleLegend = {
-                width: 80
+            boundsMaker.dimensions.series = {
+                width: 300
             };
             boundsMaker.dimensions.legend = {
                 width: 0
@@ -1088,19 +900,17 @@ describe('Test for BoundsMaker', function() {
                 align: chartConst.LEGEND_ALIGN_TOP
             };
 
-            boundsMaker._updateLegendAndSeriesWidth(300, 60);
+            boundsMaker._updateLegendAndSeriesWidth(80, 20);
 
             expect(boundsMaker.getDimension('legend').width).toBe(0);
         });
 
         it('update series width', function() {
-            boundsMaker.dimensions.circleLegend = {
-                width: 80
-            };
             boundsMaker.dimensions.series = {
-                width: 0
+                width: 300
             };
-            boundsMaker._updateLegendAndSeriesWidth(300, 60);
+
+            boundsMaker._updateLegendAndSeriesWidth(80, 20);
 
             expect(boundsMaker.getDimension('series').width).toBe(280);
         });

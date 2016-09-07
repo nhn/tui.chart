@@ -10,8 +10,10 @@ var chartConst = require('../const');
 var calculator = require('../helpers/calculator');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
-var axisDimensionCalculator = require('./axisDimensionCalculator');
-var legendDimensionCalculator = require('./legendDimensionCalculator');
+var circleLegendCalculator = require('./circleLegendCalculator');
+var axisCalculator = require('./axisCalculator');
+var legendCalculator = require('./legendCalculator');
+var seriesCalculator = require('./seriesCalculator');
 
 /**
  * Dimension.
@@ -158,119 +160,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Register height for x axis component.
-     */
-    registerXAxisHeight: function() {
-        this._registerDimension('xAxis', {
-            height: axisDimensionCalculator.calculateXAxisHeight(this.options.xAxis.title, this.theme.xAxis)
-        });
-    },
-
-    /**
-     * Register dimension for legend component.
-     */
-    registerLegendDimension: function() {
-        var legendLabels = tui.util.pluck(this.dataProcessor.getLegendData(), 'label');
-        var legendOptions = this.options.legend;
-        var labelTheme = this.theme.legend.label;
-        var chartWidth = this.getDimension('chart').width;
-        var legendDimension = legendDimensionCalculator.calculate(legendOptions, labelTheme, legendLabels, chartWidth);
-
-        this._registerDimension('legend', legendDimension);
-
-        if (!predicate.hasVerticalLegendWidth(legendOptions)) {
-            return;
-        }
-
-        this._registerDimension('calculationLegend', {
-            width: legendDimension.width
-        });
-    },
-
-    /**
-     * Register dimension for y axis.
-     * @param {string} componentName - component name like yAxis, rightYAxis
-     * @param {object} options - options for y axis
-     * @param {{title: object, label: object}} theme - them for y axis
-     */
-    registerYAxisDimension: function(componentName, options, theme) {
-        var categories, scaleData, limit;
-
-        scaleData = this.scaleModel.getScaleMap()[componentName];
-
-        if (!scaleData) {
-            categories = this.dataProcessor.getCategories(true);
-        } else {
-            limit = scaleData.getLimit();
-            categories = [limit.min, limit.max];
-            options = scaleData.axisOptions;
-        }
-
-        this._registerDimension(componentName, {
-            width: axisDimensionCalculator.calculateYAxisWidth(categories, options, theme)
-        });
-    },
-
-    /**
-     * Calculate step of pixel unit.
-     * @param {{tickCount: number, isLabel: boolean}} axisData - data for rendering axis
-     * @param {number} size - width or height of serise area
-     * @returns {number}
-     * @private
-     */
-    _calculatePixelStep: function(axisData, size) {
-        var tickCount = axisData.tickCount;
-        var pixelStep;
-
-        if (axisData.isLabelAxis) {
-            pixelStep = size / tickCount / 2;
-        } else {
-            pixelStep = size / (tickCount - 1);
-        }
-
-        return parseInt(pixelStep, 10);
-    },
-
-    /**
-     * Calculate max radius for circle legend.
-     * @returns {number}
-     * @private
-     */
-    _calculateMaxRadius: function() {
-        var dimension = this.getDimension('series');
-        var axesData = this.scaleModel.getAxisDataMap();
-        var yPixelStep = this._calculatePixelStep(axesData.yAxis, dimension.height);
-        var xPixelStep = this._calculatePixelStep(axesData.xAxis, dimension.width);
-
-        return Math.min(yPixelStep, xPixelStep);
-    },
-
-    /**
-     * Calculate max radius for bubble chart.
-     * @returns {number}
-     * @private
-     */
-    _calculateMaxRadiusForBubbleChart: function() {
-        var maxRadius = this._calculateMaxRadius();
-        var legendWidth = this.getDimension('calculationLegend').width || chartConst.MIN_LEGEND_WIDTH;
-        var circleLegendWidth = this.getDimension('circleLegend').width || legendWidth;
-
-        return Math.min((circleLegendWidth - chartConst.CIRCLE_LEGEND_PADDING) / 2, maxRadius);
-    },
-
-    /**
-     * Get max radius for bubble chart.
-     * @returns {number}
-     */
-    getMaxRadiusForBubbleChart: function() {
-        if (!this.maxRadiusForBubbleChart) {
-            this.maxRadiusForBubbleChart = this._calculateMaxRadiusForBubbleChart();
-        }
-
-        return this.maxRadiusForBubbleChart;
-    },
-
-    /**
      * Get bound.
      * @param {string} name component name
      * @returns {bound} component bound
@@ -300,6 +189,21 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     getDimension: function(name) {
         return this.dimensions[name];
+    },
+
+    _getDimensionMap: function(types) {
+        var self = this;
+        var dimensionMap = {};
+
+        if (types && types.length) {
+            tui.util.forEachArray(types, function(type) {
+                dimensionMap[type] = self.dimensions[type];
+            });
+        } else {
+            dimensionMap = this.dimensions;
+        }
+
+        return dimensionMap;
     },
 
     /**
@@ -337,6 +241,101 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             };
 
         this._registerDimension('title', dimension);
+    },
+
+    /**
+     * Register height for x axis component.
+     */
+    registerXAxisHeight: function() {
+        this._registerDimension('xAxis', {
+            height: axisCalculator.calculateXAxisHeight(this.options.xAxis.title, this.theme.xAxis)
+        });
+    },
+
+    /**
+     * Register dimension for legend component.
+     */
+    registerLegendDimension: function() {
+        var legendLabels = tui.util.pluck(this.dataProcessor.getLegendData(), 'label');
+        var legendOptions = this.options.legend;
+        var labelTheme = this.theme.legend.label;
+        var chartWidth = this.getDimension('chart').width;
+        var legendDimension = legendCalculator.calculate(legendOptions, labelTheme, legendLabels, chartWidth);
+
+        this._registerDimension('legend', legendDimension);
+
+        if (predicate.isHorizontalLegend(legendOptions.align) || !legendOptions.visible) {
+            return;
+        }
+
+        this._registerDimension('calculationLegend', {
+            width: legendDimension.width
+        });
+    },
+
+    /**
+     * Register dimension for y axis.
+     * @param {string} componentName - component name like yAxis, rightYAxis
+     * @param {object} options - options for y axis
+     * @param {{title: object, label: object}} theme - them for y axis
+     */
+    registerYAxisDimension: function(componentName, options, theme) {
+        var categories, scaleData, limit;
+
+        scaleData = this.scaleModel.getScaleMap()[componentName];
+
+        if (!scaleData) {
+            categories = this.dataProcessor.getCategories(true);
+        } else {
+            limit = scaleData.getLimit();
+            categories = [limit.min, limit.max];
+            options = scaleData.axisOptions;
+        }
+
+        this._registerDimension(componentName, {
+            width: axisCalculator.calculateYAxisWidth(categories, options, theme)
+        });
+    },
+
+    /**
+     * Create series width.
+     * @returns {number} series width
+     */
+    calculateSeriesWidth: function() {
+        var dimensionMap = this._getDimensionMap(['chart', 'yAxis', 'calculationLegend', 'rightYAxis']);
+
+        return seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
+    },
+
+    /**
+     * Create series height
+     * @returns {number} series height
+     */
+    calculateSeriesHeight: function() {
+        var dimensionMap = this._getDimensionMap(['chart', 'title', 'legend', 'xAxis']);
+
+        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend);
+    },
+
+    /**
+     * Make series dimension.
+     * @returns {{width: number, height: number}} series dimension
+     * @private
+     */
+    _makeSeriesDimension: function() {
+        return {
+            width: this.calculateSeriesWidth(),
+            height: this.calculateSeriesHeight()
+        };
+    },
+
+    /**
+     * Register series dimension.
+     */
+    registerSeriesDimension: function() {
+        var seriesDimension = this._makeSeriesDimension();
+
+        this._registerDimension('series', seriesDimension);
     },
 
     /**
@@ -421,9 +420,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2)
                 + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
         var yAxisWidth = this.options.yAxis.isCenter ? 0 : this.getDimension('yAxis').width;
-        var diffLeft = newLabelWidth - yAxisWidth;
 
-        return diffLeft;
+        return newLabelWidth - yAxisWidth;
     },
 
     /**
@@ -604,60 +602,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Make series width.
-     * @returns {number} series width
-     */
-    makeSeriesWidth: function() {
-        var chartWidth = this.getDimension('chart').width;
-        var yAxisWidth = this.getDimension('yAxis').width;
-        var legendDimension = this.getDimension('calculationLegend');
-        var legendWidth, rightAreaWidth;
-
-        if (predicate.hasVerticalLegendWidth(this.options.legend)) {
-            legendWidth = legendDimension ? legendDimension.width : 0;
-        } else {
-            legendWidth = 0;
-        }
-
-        rightAreaWidth = legendWidth + this.getDimension('rightYAxis').width;
-
-        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisWidth - rightAreaWidth;
-    },
-
-    /**
-     * Make series height
-     * @returns {number} series height
-     */
-    makeSeriesHeight: function() {
-        var chartHeight = this.getDimension('chart').height;
-        var titleHeight = this.getDimension('title').height;
-        var legendOption = this.options.legend;
-        var legendHeight, bottomAreaWidth;
-
-        if (predicate.isHorizontalLegend(legendOption.align) && legendOption.visible) {
-            legendHeight = this.getDimension('legend').height;
-        } else {
-            legendHeight = 0;
-        }
-
-        bottomAreaWidth = legendHeight + this.dimensions.xAxis.height;
-
-        return chartHeight - (chartConst.CHART_PADDING * 2) - titleHeight - bottomAreaWidth;
-    },
-
-    /**
-     * Make series dimension.
-     * @returns {{width: number, height: number}} series dimension
-     * @private
-     */
-    _makeSeriesDimension: function() {
-        return {
-            width: this.makeSeriesWidth(),
-            height: this.makeSeriesHeight()
-        };
-    },
-
-    /**
      * Register center componets dimension.
      * @private
      */
@@ -741,16 +685,16 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var seriesPosition = this.getPosition('series');
         var seriesDimension = this.getDimension('series');
         var circleDimension = this.getDimension('circleLegend');
-        var legendOption = this.options.legend;
+        var legendOptions = this.options.legend;
         var left, legendWidth;
 
-        if (predicate.isLegendAlignLeft(legendOption.align)) {
+        if (predicate.isLegendAlignLeft(legendOptions.align)) {
             left = 0;
         } else {
             left = seriesPosition.left + seriesDimension.width;
         }
 
-        if (predicate.hasVerticalLegendWidth(this.options.legend)) {
+        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             legendWidth = this.getDimension('legend').width + chartConst.CHART_PADDING;
             left += (legendWidth - circleDimension.width) / 2;
         }
@@ -865,15 +809,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Register series dimension.
-     */
-    registerSeriesDimension: function() {
-        var seriesDimension = this._makeSeriesDimension();
-
-        this._registerDimension('series', seriesDimension);
-    },
-
-    /**
      * Register bounds data.
      */
     registerBoundsData: function() {
@@ -892,42 +827,19 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Get max width of label for CircleLegend.
-     * @returns {number}
-     * @private
-     */
-    _getCircleLegendLabelMaxWidth: function() {
-        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
-        var maxLabelWidth = renderUtil.getRenderedLabelWidth(maxLabel, {
-            fontSize: chartConst.CIRCLE_LEGEND_LABEL_FONT_SIZE,
-            fontFamily: this.theme.chart.fontFamily
-        });
-
-        return maxLabelWidth;
-    },
-
-    /**
-     * Get circle legend width.
-     * @returns {number}
-     * @private
-     */
-    _getCircleLegendWidth: function() {
-        var maxRadius = this._calculateMaxRadius();
-        var maxLabelWidth = this._getCircleLegendLabelMaxWidth();
-
-        return Math.max((maxRadius * 2), maxLabelWidth) + chartConst.CIRCLE_LEGEND_PADDING;
-    },
-
-    /**
      * Register dimension of circle legend.
      * @private
      */
     registerCircleLegendDimension: function() {
-        var circleLegendWidth = this._getCircleLegendWidth();
+        var seriesDimension = this.getDimension('series');
+        var axisDataMap = this.scaleModel.getAxisDataMap();
+        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
+        var fontFamily = this.theme.chart.fontFamily;
+        var circleLegendWidth = circleLegendCalculator.calculateCircleLegendWidth(seriesDimension, axisDataMap,
+                                                                                                maxLabel, fontFamily);
         var legendWidth = this.getDimension('calculationLegend').width;
 
-        legendWidth = Math.max(legendWidth, chartConst.MIN_LEGEND_WIDTH);
-        circleLegendWidth = Math.min(circleLegendWidth, legendWidth);
+        circleLegendWidth = Math.min(circleLegendWidth, Math.max(legendWidth, chartConst.MIN_LEGEND_WIDTH));
 
         this._registerDimension('circleLegend', {
             width: circleLegendWidth,
@@ -986,21 +898,21 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
     /**
      * Update width of legend and series of boundsMaker.
-     * @param {number} seriesWidth - width of series area
-     * @param {number} legendWidth - width of legend area
+     * @param {number} circleLegendWidth - width for circle legend
+     * @param {number} diffWidth - difference width
      * @private
      */
-    _updateLegendAndSeriesWidth: function(seriesWidth, legendWidth) {
-        var circleLegendWidth = this.getDimension('circleLegend').width;
+    _updateLegendAndSeriesWidth: function(circleLegendWidth, diffWidth) {
+        var legendOptions = this.options.legend;
 
-        if (predicate.hasVerticalLegendWidth(this.options.legend)) {
+        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             this._registerDimension('legend', {
                 width: circleLegendWidth
             });
         }
 
         this._registerDimension('series', {
-            width: seriesWidth - (circleLegendWidth - legendWidth)
+            width: this.getDimension('series').width - diffWidth
         });
     },
 
@@ -1011,16 +923,31 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     updateLegendWidthByCircleLegendWidth: function() {
         var circleLegendWidth = this.getDimension('circleLegend').width;
         var legendWidth = this.getDimension('calculationLegend').width;
+        var diffWidth = circleLegendWidth - legendWidth;
         var updated = false;
-        var seriesWidth;
 
-        if (legendWidth < circleLegendWidth) {
-            seriesWidth = this.getDimension('series').width;
-            this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
+        if (diffWidth) {
+            this._updateLegendAndSeriesWidth(circleLegendWidth, diffWidth);
             updated = true;
         }
 
         return updated;
+    },
+
+    /**
+     * Get max radius for bubble chart.
+     * @returns {number}
+     */
+    getMaxRadiusForBubbleChart: function() {
+        var dimensionMap, axisDataMap;
+
+        if (!this.maxRadiusForBubbleChart) {
+            dimensionMap = this._getDimensionMap(['series', 'circleLegend']);
+            axisDataMap = this.scaleModel.getAxisDataMap();
+            this.maxRadiusForBubbleChart = circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap);
+        }
+
+        return this.maxRadiusForBubbleChart;
     }
 });
 

@@ -1,15 +1,15 @@
 /**
- * @fileoverview Test for axisDimensionCalculator.
+ * @fileoverview Test for axisCalculator.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var axisDimensionCalculator = require('../../src/js/boundsModels/axisDimensionCalculator');
+var axisCalculator = require('../../src/js/boundsModels/axisCalculator');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('Test for LegendDimensionModel', function() {
+describe('Test for axisCalculator', function() {
     beforeAll(function () {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
@@ -17,7 +17,7 @@ describe('Test for LegendDimensionModel', function() {
 
     describe('calculateXAxisHeight()', function() {
         it('calculate height for x axis', function() {
-            var actual = axisDimensionCalculator.calculateXAxisHeight('Axis Title', {});
+            var actual = axisCalculator.calculateXAxisHeight('Axis Title', {});
 
             expect(actual).toBe(60);
         });
@@ -27,7 +27,7 @@ describe('Test for LegendDimensionModel', function() {
         it('calculate width for y axis', function() {
             var actual;
 
-            actual = axisDimensionCalculator.calculateYAxisWidth(['label1', 'label12'], {
+            actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title'
             }, {});
 
@@ -37,7 +37,7 @@ describe('Test for LegendDimensionModel', function() {
         it('calculate width for y axis, when rotateTitle option is false', function() {
             var actual;
 
-            actual = axisDimensionCalculator.calculateYAxisWidth(['label1', 'label12'], {
+            actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 rotateTitle: false
             }, {});
@@ -48,7 +48,7 @@ describe('Test for LegendDimensionModel', function() {
         it('calculate width for y axis, when isCenter option is true', function() {
             var actual;
 
-            actual = axisDimensionCalculator.calculateYAxisWidth(['label1', 'label12'], {
+            actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 isCenter: true
             }, {});
