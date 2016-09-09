@@ -43,7 +43,7 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     },
 
     /**
-     * Pick limt option.
+     * Pick limit option.
      * @param {{min: ?number, max: ?number}} axisOptions - axis options
      * @returns {{min: ?number, max: ?number}}
      * @private
