@@ -180,6 +180,13 @@ var calculator = {
         return Math.sin(degree * chartConst.RAD) * hypotenuse;
     },
 
+    /**
+     * Calculate rotated width.
+     * @param {number} degree - degree
+     * @param {number} width - width
+     * @param {number} height - height
+     * @returns {number}
+     */
     calculateRotatedWidth: function(degree, width, height) {
         var centerHalf = calculator.calculateAdjacent(degree, width / 2);
         var sideHalf = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
@@ -187,6 +194,13 @@ var calculator = {
         return (centerHalf + sideHalf) * 2;
     },
 
+    /**
+     * Calculate rotated height
+     * @param {number} degree - degree
+     * @param {number} width - width
+     * @param {number} height - height
+     * @returns {number}
+     */
     calculateRotatedHeight: function(degree, width, height) {
         var centerHalf = calculator.calculateOpposite(degree, width / 2);
         var sideHalf = calculator.calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
