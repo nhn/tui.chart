@@ -939,7 +939,7 @@ describe('Test for Axis', function() {
         it('xAxis label 회전 시 위치해야 할 position을 계산합니다.', function() {
             var actual, expected;
 
-            axis.boundsMaker.xAxisDegree = 25;
+            axis.data.degree = 25;
             actual = axis._calculateRotationMovingPosition({
                 left: 40,
                 moveLeft: 20,
@@ -956,7 +956,7 @@ describe('Test for Axis', function() {
         it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
             var actual, expected;
 
-            axis.boundsMaker.xAxisDegree = 85;
+            axis.data.degree = 85;
             actual = axis._calculateRotationMovingPosition({
                 labelHeight: 20,
                 left: 40,
@@ -978,7 +978,7 @@ describe('Test for Axis', function() {
             var actual, expected;
 
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
-            axis.boundsMaker.xAxisDegree = 25;
+            axis.data.degree = 25;
             actual = axis._calculateRotationMovingPositionForOldBrowser({
                 labelWidth: 40,
                 labelHeight: 20,
@@ -998,7 +998,7 @@ describe('Test for Axis', function() {
             var actual, expected;
 
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
-            axis.boundsMaker.xAxisDegree = 85;
+            axis.data.degree = 85;
             actual = axis._calculateRotationMovingPositionForOldBrowser({
                 degree: 85,
                 labelWidth: 20,
@@ -1019,7 +1019,7 @@ describe('Test for Axis', function() {
             var actual, expected;
 
             spyOn(renderUtil, 'isIE7').and.returnValue(true);
-            axis.boundsMaker.xAxisDegree = 25;
+            axis.data.degree = 25;
             actual = axis._calculateRotationMovingPositionForOldBrowser({
                 labelWidth: 40,
                 labelHeight: 20,
@@ -1082,7 +1082,7 @@ describe('Test for Axis', function() {
 
             spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
-            boundsMaker.xAxisDegree = 45;
+            axis.data.degree = 45;
             actual = axis._makeRotationLabelsHtml(areaSize, positions, categories, labelSize, 0);
             expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label1</span></div>' +
                 '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label2</span></div>' +
@@ -1100,7 +1100,7 @@ describe('Test for Axis', function() {
 
             spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
             spyOn(renderUtil, 'isIE7').and.returnValue(true);
-            boundsMaker.xAxisDegree = 45;
+            axis.data.degree = 45;
             actual = axis._makeRotationLabelsHtml(areaSize, positions, categories, labelSize);
             expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px">' +
                     '<span style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
@@ -1133,25 +1133,12 @@ describe('Test for Axis', function() {
             var actual, expected;
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
-            boundsMaker.xAxisDegree = 45;
+            axis.data.degree = 45;
             axis.componentName = 'xAxis';
             actual = axis._makeLabelsHtml(areaSize, positions, categories, labelSize);
             expected = axis._makeRotationLabelsHtml(areaSize, positions, categories, labelSize);
 
             expect(actual).toBe(expected);
-        });
-
-        it('가로차트의 라벨 타입 axis의 roation 옵션이 false이면 scaleModel.getMultilineXAxisLabels() 를 호출하여 categories를 덮어씌웁니다.', function() {
-            axis.isVertical = false;
-            axis.isLabel = true;
-            axis.options.rotateLabel = false;
-            scaleModel.getMultilineXAxisLabels.and.returnValue([]);
-            spyOn(axis, '_makeRotationLabelsHtml');
-            spyOn(axis, '_makeNormalLabelsHtml');
-
-            axis._makeLabelsHtml(100, []);
-
-            expect(scaleModel.getMultilineXAxisLabels).toHaveBeenCalled();
         });
     });
 

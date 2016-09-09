@@ -451,7 +451,7 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
             normalized = tui.util.subtraction(min, (min >= 0 ? mod : step + mod));
         }
 
-        return normalized;
+        return Math.round(normalized);
     },
 
     /**
@@ -464,10 +464,11 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
      * @private
      */
     _makeNormalizedMax: function(limit, step, valueCount) {
-        var minMaxDiff = tui.util.multiplication(step, valueCount - 1),
-            normalizedMax = tui.util.addition(limit.min, minMaxDiff),
-            maxDiff = limit.max - normalizedMax,
-            modDiff, divideDiff;
+        var minMaxDiff = tui.util.multiplication(step, valueCount - 1);
+        var normalizedMax = tui.util.addition(limit.min, minMaxDiff);
+        var maxDiff = limit.max - normalizedMax;
+        var modDiff, divideDiff;
+
         // normalize된 max값이 원래의 max값 보다 작을 경우 step을 증가시켜 큰 값으로 만들기
         if (maxDiff > 0) {
             modDiff = maxDiff % step;
@@ -641,8 +642,8 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
      * @private
      */
     _makeCandidateScale: function(baseLimit, dataLimit, valueCount, options) {
-        var limit = tui.util.extend({}, baseLimit),
-            step;
+        var limit = tui.util.extend({}, baseLimit);
+        var step;
 
         // 01. 기본 limit 정보로 step 얻기
         step = calculator.calculateStepFromLimit(limit, valueCount);

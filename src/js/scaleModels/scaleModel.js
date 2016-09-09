@@ -3,7 +3,6 @@
 var ScaleMaker = require('./scaleMaker');
 var axisDataMaker = require('./axisDataMaker');
 var predicate = require('../helpers/predicate');
-var renderUtil = require('../helpers/renderUtil');
 
 var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     /**
@@ -17,7 +16,9 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
         this.dataProcessor = params.dataProcessor;
         this.boundsMaker = params.boundsMaker;
         this.options = params.options;
+        this.theme = params.theme;
         this.hasRightYAxis = !!params.hasRightYAxis;
+        this.prevValidLabelCount = null;
 
         this.initScaleData();
         this.initForAutoTickInterval();
@@ -30,7 +31,6 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     initScaleData: function(addedDataCount) {
         this.scaleMap = {};
         this.axisDataMap = null;
-        this.multilineXAxisLabels = null;
         this.addedDataCount = addedDataCount || 0;
     },
 
@@ -87,39 +87,101 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     },
 
     /**
+     * Create value type axis data.
+     * @param {ScaleMaker} scaleData - scale data
+     * @param {object} labelTheme - label theme
+     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isVertical - whether vertical or not
+     * @param {boolean} isPositionRight - whether right position or not
+     * @returns {{
+     *      labels: Array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      isLabelAxis: boolean,
+     *      limit: {min: number, max: number},
+     *      isVertical: boolean
+     * }}
+     * @private
+     */
+    _createValueAxisData: function(scaleData, labelTheme, aligned, isVertical, isPositionRight) {
+        var hasCategories = this.dataProcessor.hasCategories();
+        var isCoordinateLineType = !isVertical && !hasCategories && aligned;
+        var labels = scaleData.getFormattedScaleValues();
+        var tickCount = labels.length;
+        var limit = scaleData.getLimit();
+        var step = scaleData.getStep();
+        var values, additional;
+
+        var axisData = axisDataMaker.makeValueAxisData({
+            labels: labels,
+            tickCount: labels.length,
+            limit: limit,
+            step: step,
+            options: scaleData.axisOptions,
+            labelTheme: labelTheme,
+            isVertical: !!isVertical,
+            isPositionRight: !!isPositionRight,
+            aligned: aligned
+        });
+
+        if (isCoordinateLineType) {
+            values = this.dataProcessor.getValues(this.chartType, 'x');
+            additional = axisDataMaker.makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            tui.util.extend(axisData, additional);
+        }
+
+        return axisData;
+    },
+
+    /**
+     * Create label type axis data.
+     * @param {object} axisOptions - options for axis
+     * @param {object} labelTheme - label theme
+     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isVertical - whether vertical or not
+     * @param {boolean} isPositionRight - whether right position or not
+     * @returns {{
+     *      labels: Array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      isLabelAxis: boolean,
+     *      options: object,
+     *      isVertical: boolean,
+     *      isPositionRight: boolean,
+     *      aligned: boolean
+     * }}
+     * @private
+     */
+    _createLabelAxisData: function(axisOptions, labelTheme, aligned, isVertical, isPositionRight) {
+        return axisDataMaker.makeLabelAxisData({
+            labels: this.dataProcessor.getCategories(isVertical),
+            options: axisOptions,
+            labelTheme: labelTheme,
+            isVertical: !!isVertical,
+            isPositionRight: !!isPositionRight,
+            aligned: aligned,
+            addedDataCount: this.options.series.shifting ? this.addedDataCount : 0
+        });
+    },
+
+    /**
      * Create axis data.
      * @param {object} scaleData - scale data
      * @param {object} axisOptions - axis options
+     * @param {object} labelTheme - them for label
      * @param {boolean} isVertical - whether vertical or not
      * @param {boolean} isPositionRight - whether right position or not
      * @returns {object}
      * @private
      */
-    _createAxisData: function(scaleData, axisOptions, isVertical, isPositionRight) {
-        var chartType = this.chartType;
-        var dataProcessor = this.dataProcessor;
-        var aligned = predicate.isLineTypeChart(chartType, this.seriesNames);
+    _createAxisData: function(scaleData, axisOptions, labelTheme, isVertical, isPositionRight) {
+        var aligned = predicate.isLineTypeChart(this.chartType, this.seriesNames);
         var axisData;
 
         if (scaleData) {
-            axisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: scaleData,
-                dataProcessor: dataProcessor,
-                chartType: chartType,
-                options: scaleData.axisOptions,
-                isVertical: !!isVertical,
-                isPositionRight: !!isPositionRight,
-                aligned: aligned
-            });
+            axisData = this._createValueAxisData(scaleData, labelTheme, aligned, isVertical, isPositionRight);
         } else {
-            axisData = axisDataMaker.makeLabelAxisData({
-                labels: dataProcessor.getCategories(isVertical),
-                options: axisOptions,
-                isVertical: !!isVertical,
-                isPositionRight: !!isPositionRight,
-                aligned: aligned,
-                addedDataCount: this.options.series.shifting ? this.addedDataCount : 0
-            });
+            axisData = this._createLabelAxisData(axisOptions, labelTheme, aligned, isVertical, isPositionRight);
         }
 
         return axisData;
@@ -133,13 +195,14 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     _createAxesData: function() {
         var scaleMap = this.scaleMap;
         var options = this.options;
+        var theme = this.theme;
         var dataMap = {};
 
-        dataMap.xAxis = this._createAxisData(scaleMap.xAxis, options.xAxis);
-        dataMap.yAxis = this._createAxisData(scaleMap.yAxis, options.yAxis, true);
+        dataMap.xAxis = this._createAxisData(scaleMap.xAxis, options.xAxis, theme.xAxis.label);
+        dataMap.yAxis = this._createAxisData(scaleMap.yAxis, options.yAxis, theme.yAxis.label, true);
 
         if (this.hasRightYAxis) {
-            dataMap.rightYAxis = this._createAxisData(scaleMap.rightYAxis, null, true, true);
+            dataMap.rightYAxis = this._createAxisData(scaleMap.rightYAxis, null, theme.yAxis.label, true, true);
             dataMap.rightYAxis.aligned = dataMap.xAxis.aligned;
         }
 
@@ -193,16 +256,18 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     },
 
     /**
-     * Update x axis data.
+     * Update x axis data for auto tick interval.
+     * @param {?boolean} addingDataMode - whether adding data mode or not
      */
-    updateXAxisData: function() {
+    updateXAxisDataForAutoTickInterval: function(addingDataMode) {
         var shiftingOption = this.options.series.shifting;
         var xAxisData = this.getAxisData('xAxis');
         var seriesWidth = this.boundsMaker.getDimension('series').width;
         var prevData = this.prevUpdatedData;
+        var addedCount = this.addedDataCount;
 
         if (shiftingOption || !prevData) {
-            axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, this.addedDataCount);
+            axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, addedCount, addingDataMode);
         } else {
             axisDataMaker.updateLabelAxisDataForStackingDynamicData(xAxisData, prevData, this.firstTickCount);
         }
@@ -215,54 +280,45 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     },
 
     /**
-     * Create multiline label.
-     * @param {string} label - label
-     * @param {number} limitWidth - limit width
-     * @param {object} theme - label theme
-     * @returns {string}
-     * @private
+     * Update x axis data for label.
+     * @param {?boolean} addingDataMode - whether adding data mode or not
      */
-    _createMultilineLabel: function(label, limitWidth, theme) {
-        var words = String(label).split(/\s+/);
-        var lineWords = words[0];
-        var lines = [];
+    updateXAxisDataForLabel: function(addingDataMode) {
+        var axisData = this.getAxisData('xAxis');
+        var labels = axisData.labels;
+        var dimensionMap = this.boundsMaker.getDimensionMap(['series', 'yAxis']);
+        var seriesWidth = dimensionMap.series.width;
+        var aligned = axisData.aligned;
+        var theme = this.theme.xAxis.label;
+        var validLabels, validLabelCount, additionalData;
 
-        tui.util.forEachArray(words.slice(1), function(word) {
-            var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
+        if (addingDataMode) {
+            labels = labels.slice(0, labels.length - 1);
+        }
 
-            if (width > limitWidth) {
-                lines.push(lineWords);
-                lineWords = word;
-            } else {
-                lineWords += ' ' + word;
-            }
+        validLabels = tui.util.filter(labels, function(label) {
+            return !!label;
         });
 
-        if (lineWords) {
-            lines.push(lineWords);
+        if (!tui.util.isNull(this.prevValidLabelCount)) {
+            validLabelCount = this.prevValidLabelCount;
+        } else {
+            validLabelCount = validLabels.length;
         }
 
-        return lines.join('<br>');
-    },
-
-    /**
-     * Get multiline labels for x axis.
-     * @param {number} limitWidth - limit width
-     * @param {object} theme - theme
-     * @returns {null|Array|*}
-     */
-    getMultilineXAxisLabels: function(limitWidth, theme) {
-        var self = this;
-        var axesData;
-
-        if (!this.multilineXAxisLabels) {
-            axesData = this.getAxisDataMap();
-            this.multilineXAxisLabels = tui.util.map(axesData.xAxis.labels, function(label) {
-                return self._createMultilineLabel(label, limitWidth, theme);
-            });
+        if (axisData.options.rotateLabel === false) {
+            additionalData = axisDataMaker.makeAdditionalDataForMultilineLabels(
+                labels, validLabelCount, theme, aligned, seriesWidth
+            );
+        } else {
+            additionalData = axisDataMaker.makeAdditionalDataForRotatedLabels(
+                validLabels, validLabelCount, theme, aligned, dimensionMap
+            );
         }
 
-        return this.multilineXAxisLabels;
+        this.prevValidLabelCount = validLabelCount;
+
+        tui.util.extend(axisData, additionalData);
     }
 });
 

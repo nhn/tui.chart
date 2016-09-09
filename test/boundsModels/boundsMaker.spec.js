@@ -83,141 +83,8 @@ describe('Test for BoundsMaker', function() {
         });
     });
 
-    describe('_calculateXAxisLabelLimitWidth()', function() {
-        it('x축 label이 렌더링 될 수있는 영역의 너비를 계산합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.dimensionMap.series = {
-                width: 300
-            };
-
-            actual = boundsMaker._calculateXAxisLabelLimitWidth(3);
-            expected = 100;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('라인타입 차트의 label 영역 너비를 계산합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.chartType = chartConst.CHART_TYPE_LINE;
-            boundsMaker.dimensionMap.series = {
-                width: 300
-            };
-
-            actual = boundsMaker._calculateXAxisLabelLimitWidth(3);
-            expected = 150;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_findRotationDegree()', function() {
-        it('후보 각(25, 45, 65, 85)을 순회하며 회전된 비교 너비가 제한 너비보다 작으면 해당 각을 반환합니다.', function() {
-            var actual = boundsMaker._findRotationDegree(50, 60, 20),
-                expected = 25;
-            expect(actual).toBe(expected);
-        });
-
-        it('최대 회전각은 85도 입니다.', function() {
-            var actual = boundsMaker._findRotationDegree(5, 120, 20),
-                expected = 85;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_makeHorizontalLabelRotationInfo', function() {
-        beforeEach(function() {
-            spyOn(renderUtil, 'getRenderedLabelsMaxHeight').and.returnValue(20);
-        });
-
-        it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
-            var actual, expected;
-
-            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
-            boundsMaker.axesData = {
-                xAxis: {
-                    labels: ['cate1', 'cate2', 'cate3']
-                }
-            };
-            boundsMaker.theme = {
-                xAxis: {}
-            };
-
-            actual = boundsMaker._makeHorizontalLabelRotationInfo(100);
-            expected = {
-                maxLabelWidth: 120,
-                labelHeight: 20,
-                degree: 25
-            };
-
-            expect(actual).toEqual(expected);
-        });
-
-        it('최대 회전각은 85도 입니다.', function() {
-            var actual, expected;
-
-            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
-            boundsMaker.axesData = {
-                xAxis: {
-                    labels: ['cate1', 'cate2', 'cate3']
-                }
-            };
-            boundsMaker.theme = {
-                xAxis: {}
-            };
-            actual = boundsMaker._makeHorizontalLabelRotationInfo(5);
-            expected = {
-                maxLabelWidth: 120,
-                labelHeight: 20,
-                degree: 85
-            };
-            expect(actual).toEqual(expected);
-        });
-
-        it('회전하지 않는 상태의 가장 긴 레이블의 길이가 제한 너비를 초과하지 않으면 null을 반환합니다.', function() {
-            var actual;
-
-            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(40);
-            boundsMaker.axesData = {
-                xAxis: {
-                    labels: ['cate1', 'cate2']
-                }
-            };
-            boundsMaker.theme = {
-                xAxis: {}
-            };
-            actual = boundsMaker._makeHorizontalLabelRotationInfo(300);
-
-            expect(actual).toBeNull();
-        });
-    });
-
-    describe('_calculateOverflowLeft()', function() {
-        it('회전된 xAxis label이 왼쪽 차트 시작 영역을 얼마나 넘어갔는지 값을 계산하여 반환합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.theme = {
-                xAxis: {}
-            };
-            boundsMaker.dimensionMap = {
-                yAxis: {
-                    width: 50
-                }
-            };
-            actual = boundsMaker._calculateOverflowLeft({
-                degree: 25,
-                maxLabelWidth: 120,
-                labelHeight: 20
-            }, 'abcdefghijklmnopqrstuvwxyz');
-            expected = 3.7677545866464826;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_updateDimensionsWidth()', function() {
-        it('50의 overflowLeft를 전달하면 chartLeftPadding은 50 증가하고 나머지 dimension의 width들을 50씩 감소합니다.', function() {
+        it('update dimensions width', function() {
             boundsMaker.chartLeftPadding = 10;
             boundsMaker.dimensionMap = {
                 plot: {
@@ -233,11 +100,6 @@ describe('Test for BoundsMaker', function() {
                     width: 200
                 }
             };
-            boundsMaker.positionMap = {
-                series: {
-                    left: 0
-                }
-            };
 
             boundsMaker.chartLeftPadding = 10;
             boundsMaker._updateDimensionsWidth(50);
@@ -247,77 +109,6 @@ describe('Test for BoundsMaker', function() {
             expect(boundsMaker.getDimension('series').width).toBe(149);
             expect(boundsMaker.getDimension('customEvent').width).toBe(149);
             expect(boundsMaker.getDimension('xAxis').width).toBe(150);
-            expect(boundsMaker.getPosition('series').left).toBe(50);
-        });
-    });
-
-    describe('_updateDegree()', function() {
-        it('overflowLeft값이 0보다 크면 degree를 재계산하여 rotationInfo.degree의 값을 갱신합니다.', function() {
-            var rotationInfo = {
-                degree: 25,
-                maxLabelWidth: 100,
-                labelHeight: 20
-            };
-
-            boundsMaker.dimensionMap.series = {
-                width: 200
-            };
-
-            boundsMaker._updateDegree(rotationInfo, 8, 20);
-            expect(rotationInfo.degree).toEqual(85);
-        });
-    });
-
-    describe('_calculateXAxisRotatedHeight()', function() {
-        it('레이블 dimension과 degree 정보를 이용하여 x axis의 회전된 높이 정보를 구합니다.', function() {
-            var actual = boundsMaker._calculateXAxisRotatedHeight({
-                    degree: 25,
-                    maxLabelWidth: 100,
-                    labelHeight: 20
-                }),
-                expected = 60.38798191480294;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_calculateDiffWithRotatedHeight()', function() {
-        it('회전된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
-            var actual = boundsMaker._calculateDiffWithRotatedHeight({
-                    degree: 25,
-                    maxLabelWidth: 100,
-                    labelHeight: 20
-                }),
-                expected = 40.38798191480294;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_calculateDiffWithMultilineHeight()', function() {
-        it('개행처리된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
-            var actual, expected;
-
-            renderUtil.getRenderedLabelHeight.and.callFake(function(value) {
-                if (value.indexOf('</br>') > -1) {
-                    return 40;
-                } else {
-                    return 20;
-                }
-            });
-
-            scaleModel.getMultilineXAxisLabels.and.returnValue([
-                'AAAA</br>BBBB'
-            ]);
-            boundsMaker.theme = {
-                xAxis: {}
-            };
-            boundsMaker.axesData = {
-                xAxis: {}
-            };
-
-            actual = boundsMaker._calculateDiffWithMultilineHeight(['AAAA BBBB'], 50);
-            expected = 20;
-
-            expect(actual).toBe(expected);
         });
     });
 
@@ -355,27 +146,6 @@ describe('Test for BoundsMaker', function() {
             expect(boundsMaker.getDimension('xAxis').height).toBe(100);
             expect(boundsMaker.getDimension('yAxis').height).toBe(150);
             expect(boundsMaker.getDimension('rightYAxis').height).toBe(150);
-        });
-    });
-
-    describe('_updateDimensionsAndDegree()', function() {
-        it('rotation 옵션이 false이면 _makeHorizontalLabelRotationInfo()를 호출하지 않습니다.', function() {
-            spyOn(boundsMaker, '_makeHorizontalLabelRotationInfo');
-            spyOn(boundsMaker, '_calculateXAxisLabelLimitWidth');
-            spyOn(boundsMaker, '_calculateDiffWithMultilineHeight');
-            spyOn(boundsMaker, '_updateDimensionsHeight');
-            boundsMaker.options = {
-                xAxis: {
-                    rotateLabel: false
-                }
-            };
-            scaleModel.getAxisData.and.returnValue({
-                labels: []
-            });
-
-            boundsMaker._updateDimensionsAndDegree();
-
-            expect(boundsMaker._makeHorizontalLabelRotationInfo).not.toHaveBeenCalled();
         });
     });
 

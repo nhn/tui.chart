@@ -768,10 +768,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _calculateRotationMovingPosition: function(params) {
         var moveLeft = params.moveLeft;
-        var degree = this.boundsMaker.xAxisDegree;
+        var degree = this.data.degree;
         var containerWidth = this.containerWidth || params.size;
 
-        if (degree === chartConst.ANGLE_85) {
+        if (this.data.degree === chartConst.ANGLE_85) {
             moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2);
         }
 
@@ -794,7 +794,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _calculateRotationMovingPositionForOldBrowser: function(params) {
         var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme);
-        var degree = this.boundsMaker.xAxisDegree;
+        var degree = this.data.degree;
         var smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2);
         var newLabelWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + smallAreaWidth) * 2;
         var changedWidth = renderUtil.isIE7() ? 0 : (labelWidth - newLabelWidth);
@@ -848,7 +848,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeRotationLabelsHtml: function(areaSize, positions, categories, labelSize, additionalSize) {
         var self = this;
-        var degree = this.boundsMaker.xAxisDegree;
+        var degree = this.data.degree;
         var template = axisTemplate.tplAxisLabel;
         var labelHeight = renderUtil.getRenderedLabelHeight(categories[0], this.theme.label);
         var labelCssText = this._makeLabelCssText(labelSize);
@@ -930,11 +930,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeLabelsHtml: function(areaSize, positions, categories, labelSize, additionalSize) {
         var isRotationlessXAxis = !this.isVertical && this.isLabel && this.options.rotateLabel === false;
-        var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree;
+        var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.data.degree;
         var labelsHtml;
 
         if (isRotationlessXAxis) {
-            categories = this.scaleModel.getMultilineXAxisLabels();
+            categories = this.data.multilineLabels;
         }
 
         if (categories.length) {

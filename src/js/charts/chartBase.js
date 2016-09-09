@@ -245,6 +245,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             chartType: this.chartType,
             seriesNames: seriesNames,
             options: this.options,
+            theme: this.theme,
             dataProcessor: this.dataProcessor,
             boundsMaker: this.boundsMaker,
             hasRightYAxis: this.hasRightYAxis
@@ -360,17 +361,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Register circle legend dimension.
-     * @private
-     * @abstract
-     */
-    _registerCircleLegendDimension: function() {},
-
-    /**
      * Set layout bounds and scale.
+     * @param {?boolean} addingDataMode - whether adding data mode or not
      * @private
      */
-    _setLayoutBoundsAndScale: function() {
+    _setLayoutBoundsAndScale: function(addingDataMode) {
         var labelAxisOptions = (this.isVertical ? this.options.xAxis : this.options.yAxis) || {};
         var cm = this.componentManager;
         var bm = this.boundsMaker;
@@ -405,30 +400,36 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         // 05. series 영역 dimension 등록
         bm.registerSeriesDimension();
 
-        // 06. 자동 tick 계산 옵션이 있을 경우에 axis data 갱신
-        if (cm.has('xAxis') && predicate.isAutoTickInterval(labelAxisOptions.tickInterval)) {
-            sm.updateXAxisData();
+        // 06. circle legend가 있을 경우에 circle legend dimension 등록
+        if (cm.has('circleLegend') && this.options.circleLegend.visible) {
+            bm.registerCircleLegendDimension();
         }
 
-        // 07. circle legend가 있을 경우에 circle legend dimension 등록
-        if (cm.has('circleLegend')) {
-            this._registerCircleLegendDimension();
+        if (cm.has('xAxis')) {
+            // 07. 자동 tick 계산 옵션이 있을 경우에 axisData 갱신
+            if (predicate.isAutoTickInterval(labelAxisOptions.tickInterval)) {
+                sm.updateXAxisDataForAutoTickInterval(addingDataMode);
+            }
+
+            // 08. x축 label의 회전 여부 관련한 axisData 갱신
+            sm.updateXAxisDataForLabel(addingDataMode);
         }
 
-        // 08. 나머지 영역 dimension 등록 및 각 영역의 position 정보 등록
+        // 09. 나머지 영역 dimension 등록 및 각 영역의 position 정보 등록
         bm.registerBoundsData();
     },
 
     /**
      * Render.
      * @param {function} onRender render callback function
+     * @param {?boolean} addingDataMode - whether adding data mode or not
      * @private
      */
-    _render: function(onRender) {
+    _render: function(onRender, addingDataMode) {
         var renderingData;
 
         // layout bounds, scale 정보 계산 및 등록
-        this._setLayoutBoundsAndScale();
+        this._setLayoutBoundsAndScale(addingDataMode);
 
         // 비율값 추가
         this._addDataRatios();

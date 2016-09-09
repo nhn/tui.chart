@@ -124,29 +124,6 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
                 baseFontFamily: this.theme.chart.fontFamily
             });
         }
-    },
-
-    /**
-     * Register circle legend dimension
-     * @private
-     * @override
-     */
-    _registerCircleLegendDimension: function() {
-        var bm = this.boundsMaker;
-        var updated;
-
-        if (!this.options.circleLegend.visible) {
-            return;
-        }
-
-        bm.registerCircleLegendDimension();
-        updated = bm.updateLegendWidthByCircleLegendWidth();
-
-        if (updated && !this.scaleModel.getAxisDataMap().xAxis.isLabelAxis) {
-            this.scaleModel.initScaleData();
-            this._addScaleDataForYAxis();
-            this._addScaleDataForXAxis();
-        }
     }
 });
 

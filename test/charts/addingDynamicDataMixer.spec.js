@@ -24,7 +24,8 @@ describe('Test for addingDynamicDataMixer', function() {
 
         mixer._initForAddingData();
         mixer.options = {
-            series: {}
+            series: {},
+            xAxis: {}
         };
 
         mixer._render = jasmine.createSpy('_render').and.callFake(function(callback) {

@@ -8,6 +8,8 @@
 
 var maker = require('../../src/js/scaleModels/axisDataMaker');
 var chartConst = require('../../src/js/const');
+var renderUtil = require('../../src/js/helpers/renderUtil');
+var calculator = require('../../src/js/helpers/calculator');
 
 describe('Test for axisDataMaker', function() {
     describe('_makeLabelsByIntervalOption()', function() {
@@ -77,7 +79,7 @@ describe('Test for axisDataMaker', function() {
         });
     });
 
-    describe('_makeAdditionalDataForCoordinateLineType()', function() {
+    describe('makeAdditionalDataForCoordinateLineType()', function() {
         it('make additional axis data for coordinate line type chart', function() {
             var labels = [5, 10, 15, 20, 25, 30, 35];
             var values = [8, 20, 33, 23, 15];
@@ -87,7 +89,7 @@ describe('Test for axisDataMaker', function() {
             };
             var step = 5;
             var tickCount = 7;
-            var actual = maker._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            var actual = maker.makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
             var expected = {
                 labels: [10, 15, 20, 25, 30],
                 tickCount: 5,
@@ -114,7 +116,7 @@ describe('Test for axisDataMaker', function() {
             };
             var step = 5;
             var tickCount = 7;
-            var actual = maker._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            var actual = maker.makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
             var expected = {
                 labels: [0, 5, 10, 15, 20],
                 tickCount: 5,
@@ -135,27 +137,20 @@ describe('Test for axisDataMaker', function() {
 
     describe('makeValueAxisData()', function() {
         it('make data for value type axis.', function() {
-            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker',
-                            ['getFormattedScaleValues', 'getLimit', 'getStep']);
-            var dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories']);
-            var actual, expected;
-
-            axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
-            axisScaleMaker.getLimit.and.returnValue({
-                min: 0,
-                max: 100
-            });
-            axisScaleMaker.getStep.and.returnValue(25);
-
-            actual = maker.makeValueAxisData({
-                axisScaleMaker: axisScaleMaker,
-                dataProcessor: dataProcessor,
+            var actual = maker.makeValueAxisData({
+                labels: [0, 25, 50, 75, 100],
+                tickCount: 5,
+                limit: {
+                    min: 0,
+                    max: 100
+                },
+                step: 25,
                 options: 'options',
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true
             });
-            expected = {
+            var expected = {
                 labels: [0, 25, 50, 75, 100],
                 tickCount: 5,
                 validTickCount: 5,
@@ -170,52 +165,6 @@ describe('Test for axisDataMaker', function() {
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true
-            };
-
-            expect(actual).toEqual(expected);
-        });
-
-        it('make data for value type axis, when coordinate data and line type chart', function() {
-            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker',
-                ['getFormattedScaleValues', 'getLimit', 'getStep']);
-            var dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories', 'getValues']);
-            var actual, expected;
-
-            axisScaleMaker.getFormattedScaleValues.and.returnValue([5, 10, 15, 20, 25, 30, 35]);
-            axisScaleMaker.getLimit.and.returnValue({
-                min: 5,
-                max: 35
-            });
-            axisScaleMaker.getStep.and.returnValue(5);
-            dataProcessor.hasCategories.and.returnValue(false);
-            dataProcessor.getValues.and.returnValue([8, 20, 33, 23, 15]);
-
-            actual = maker.makeValueAxisData({
-                axisScaleMaker: axisScaleMaker,
-                dataProcessor: dataProcessor,
-                chartType: 'line',
-                options: 'options',
-                isVertical: false,
-                isPositionRight: true,
-                aligned: true
-            });
-            expected = {
-                labels: [10, 15, 20, 25, 30],
-                tickCount: 5,
-                validTickCount: 5,
-                limit: {
-                    min: 10,
-                    max: 30
-                },
-                dataMin: 8,
-                distance: 25,
-                step: 5,
-                options: 'options',
-                isVertical: false,
-                isPositionRight: true,
-                aligned: true,
-                positionRatio: 0.08,
-                sizeRatio: 0.8
             };
 
             expect(actual).toEqual(expected);
@@ -343,6 +292,173 @@ describe('Test for axisDataMaker', function() {
             expect(axisData.sizeRatio).toBe(0.9);
             expect(axisData.lineWidth).toBe(401);
             expect(axisData.interval).toBe(6);
+        });
+    });
+
+    describe('_createMultilineLabel()', function() {
+        it('create multiline labels, when label width shorter than limitWidth', function() {
+            var actual = maker._createMultilineLabel('ABCDE FGHIJK', 100, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+
+            expect(actual).toBe('ABCDE FGHIJK');
+        });
+
+        it('create multiline labels, when label width longer than limitWidth', function() {
+            var actual = maker._createMultilineLabel('ABCDE FGHIJK HIJKLMN', 40, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+
+            expect(actual).toBe('ABCDE<br>FGHIJK<br>HIJKLMN');
+        });
+
+        it('create multiline labels, when has not empty char)', function() {
+            var actual = maker._createMultilineLabel('ABCDEFGHIJKHIJKLMN', 40, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+
+            expect(actual).toBe('ABCDEFGHIJKHIJKLMN');
+        });
+    });
+
+    describe('_createMultilineLabels()', function() {
+        it('create multiline labels', function() {
+            var labels = ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
+            var labelTheme = {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            };
+            var labelWidth = 50
+            var actual = maker._createMultilineLabels(labels, labelTheme, labelWidth);
+
+            expect(actual).toEqual(['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']);
+        });
+    });
+
+    describe('_calculateMultilineHeight()', function() {
+        beforeAll(function() {
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.callFake(function(value) {
+                if (value.indexOf('</br>') > -1) {
+                    return 40;
+                } else {
+                    return 20;
+                }
+            });
+        });
+        it('calculate multiple line height', function() {
+            var multilineLables = [
+                'AAAA</br>BBBB'
+            ];
+            var labelAraeWidth = 50;
+            var actual;
+
+            actual = maker._calculateMultilineHeight(multilineLables, labelAraeWidth);
+
+            expect(actual).toBe(40);
+        });
+
+        it('calculate multiple line height, when not multiple line label', function() {
+            var multilineLables = [
+                'AAAA'
+            ];
+            var labelAraeWidth = 50;
+            var actual;
+
+            actual = maker._calculateMultilineHeight(multilineLables, labelAraeWidth);
+
+            expect(actual).toBe(20);
+        });
+    });
+
+
+    describe('_findRotationDegree()', function() {
+        it('find rotation degree', function() {
+            var actual = maker._findRotationDegree(50, 60, 20);
+
+            expect(actual).toBe(25);
+        });
+
+        it('max degree is 85', function() {
+            var actual = maker._findRotationDegree(5, 120, 20);
+
+            expect(actual).toBe(85);
+        });
+    });
+
+    describe('_calculateRotatedWidth()', function() {
+        it('calculate rotated width', function() {
+            var degree = 25;
+            var firstLabel = 'abcdefghijklmnopqrstuvwxyz';
+            var labelHeight = 20;
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(140);
+            actual = maker._calculateRotatedWidth(degree, firstLabel, labelHeight);
+
+            expect(actual).toBe(131.109272802538);
+        });
+    });
+
+    describe('makeAdditionalDataForRotatedLabels', function() {
+        beforeEach(function() {
+            spyOn(renderUtil, 'getRenderedLabelsMaxHeight').and.returnValue(20);
+        });
+
+        it('make additional data for rotated labels', function() {
+            var validLabels = ['cate1', 'cate2', 'cate3'];
+            var validLabelCount = 3;
+            var labelTheme = {};
+            var aligned = false;
+            var dimensionMap = {
+                series: {
+                    width: 300
+                },
+                yAxis: {
+                    width: 100
+                }
+            };
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            spyOn(calculator, 'calculateRotatedHeight').and.returnValue(30);
+            spyOn(maker, '_calculateRotatedWidth').and.returnValue(110);
+
+            actual = maker.makeAdditionalDataForRotatedLabels(
+                validLabels, validLabelCount, labelTheme, aligned, dimensionMap
+            );
+
+            expect(actual).toEqual({
+                degree: 25,
+                overflowHeight: 10,
+                overflowLeft: -40
+            });
+        });
+
+        it('if labelAreaWidth more than maxLabelWidth, returns null', function() {
+            var validLabels = ['cate1', 'cate2', 'cate3'];
+            var validLabelCount = 3;
+            var labelTheme = {};
+            var aligned = false;
+            var dimensionMap = {
+                series: {
+                    width: 400
+                },
+                yAxis: {
+                    width: 100
+                }
+            };
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+
+            actual = maker.makeAdditionalDataForRotatedLabels(
+                validLabels, validLabelCount, labelTheme, aligned, dimensionMap
+            );
+
+            expect(actual).toBeNull();
         });
     });
 });

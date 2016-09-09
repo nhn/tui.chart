@@ -13,7 +13,7 @@ describe('Test for ScaleModel', function() {
     var scaleModel, dataProcessor, boundsMaker;
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'hasCategories']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
         scaleModel = new ScaleModel({
             dataProcessor: dataProcessor,
@@ -25,22 +25,39 @@ describe('Test for ScaleModel', function() {
     describe('_createAxisData()', function() {
         it('if exist scaleData, returns result by executing axisDataMaker.makeValueAxisData', function() {
             var scaleData = {
-                axisOptions: 'options'
+                axisOptions: 'options',
+                getFormattedScaleValues: function() {
+                    return ['1,000', '2,000', '3,000'];
+                },
+                getLimit: function() {
+                    return {
+                        min: 1000,
+                        max: 3000
+                    };
+                },
+                getStep: function() {
+                    return 1000;
+                }
             };
             var actual, expected;
 
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
-            scaleModel.chartType = 'bar';
+            dataProcessor.hasCategories.and.returnValue(true);
 
-            actual = scaleModel._createAxisData(scaleData, 'options', true);
+            actual = scaleModel._createAxisData(scaleData, 'options', 'labelTheme', true);
             expected = 'value type';
 
             expect(axisDataMaker.makeValueAxisData).toHaveBeenCalledWith({
-                axisScaleMaker: scaleData,
-                chartType: 'bar',
-                dataProcessor: dataProcessor,
+                labels: ['1,000', '2,000', '3,000'],
+                tickCount: 3,
+                limit: {
+                    min: 1000,
+                    max: 3000
+                },
+                step: 1000,
                 options: 'options',
+                labelTheme: 'labelTheme',
                 isVertical: true,
                 isPositionRight: false,
                 aligned: false
@@ -56,12 +73,13 @@ describe('Test for ScaleModel', function() {
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
             scaleModel.options.series = {};
 
-            actual = scaleModel._createAxisData(null, 'options');
+            actual = scaleModel._createAxisData(null, 'options', 'labelTheme');
             expected = 'label type';
 
             expect(axisDataMaker.makeLabelAxisData).toHaveBeenCalledWith({
                 labels: ['cate1', 'cate2'],
                 options: 'options',
+                labelTheme: 'labelTheme',
                 isVertical: false,
                 isPositionRight: false,
                 aligned: false,
@@ -71,7 +89,7 @@ describe('Test for ScaleModel', function() {
         });
     });
 
-    describe('updateXAxisData()', function() {
+    describe('updateXAxisDataForAutoTickInterval()', function() {
         beforeEach(function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 200
@@ -87,9 +105,9 @@ describe('Test for ScaleModel', function() {
             };
             spyOn(axisDataMaker, 'updateLabelAxisDataForAutoTickInterval');
 
-            scaleModel.updateXAxisData();
+            scaleModel.updateXAxisDataForAutoTickInterval(false);
 
-            expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0);
+            expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0, false);
         });
 
         it('update xAxisData, when has not prevUpdatedData', function() {
@@ -98,9 +116,9 @@ describe('Test for ScaleModel', function() {
             };
             spyOn(axisDataMaker, 'updateLabelAxisDataForAutoTickInterval');
 
-            scaleModel.updateXAxisData();
+            scaleModel.updateXAxisDataForAutoTickInterval(false);
 
-            expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0);
+            expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0, false);
         });
 
         it('update xAxisData, when has not shifting option and has prevUpdatedData', function() {
@@ -109,72 +127,11 @@ describe('Test for ScaleModel', function() {
             scaleModel.firstTickCount = 5;
             spyOn(axisDataMaker, 'updateLabelAxisDataForStackingDynamicData');
 
-            scaleModel.updateXAxisData();
+            scaleModel.updateXAxisDataForAutoTickInterval();
 
             expect(axisDataMaker.updateLabelAxisDataForStackingDynamicData).toHaveBeenCalledWith(
                 {}, 'previous updated data', 5
             );
-        });
-    });
-
-    describe('_createMultilineLabel()', function() {
-        it('create multiline labels, when label width shorter than limitWidth', function() {
-            var actual = scaleModel._createMultilineLabel('ABCDE FGHIJK', 100, {
-                fontSize: 12,
-                fontFamily: 'Verdana'
-            });
-
-            expect(actual).toBe('ABCDE FGHIJK');
-        });
-
-        it('create multiline labels, when label width longer than limitWidth', function() {
-            var actual = scaleModel._createMultilineLabel('ABCDE FGHIJK HIJKLMN', 40, {
-                fontSize: 12,
-                fontFamily: 'Verdana'
-            });
-
-            expect(actual).toBe('ABCDE<br>FGHIJK<br>HIJKLMN');
-        });
-
-        it('create multiline labels, when has not empty char)', function() {
-            var actual = scaleModel._createMultilineLabel('ABCDEFGHIJKHIJKLMN', 40, {
-                fontSize: 12,
-                fontFamily: 'Verdana'
-            });
-
-            expect(actual).toBe('ABCDEFGHIJKHIJKLMN');
-        });
-    });
-
-    describe('getMultilineXAxisLabels()', function() {
-        it('get multiline labels for x axis by creating labels', function() {
-            var actual;
-
-            scaleModel.axisDataMap = {
-                xAxis: {
-                    labels: ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB']
-                }
-            };
-
-            actual = scaleModel.getMultilineXAxisLabels(50, {
-                fontSize: 12,
-                fontFamily: 'Verdana'
-            });
-
-            expect(actual).toEqual(['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']);
-        });
-
-        it('get multiline labels for x axis, when chached labels', function() {
-            var actual;
-
-            scaleModel.multilineXAxisLabels = ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
-
-            actual = scaleModel.getMultilineXAxisLabels(50, {
-                fontSize: 12,
-                fontFamily: 'Verdana'
-            });
-
-            expect(actual).toEqual(scaleModel.multilineXAxisLabels);
         });
     });
 });
