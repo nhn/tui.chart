@@ -13,14 +13,16 @@ var dom = require('../../src/js/helpers/domHandler.js');
 var renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('Test for Plot', function() {
-    var plot, dataProcessor, boundsMaker;
+    var plot, dataProcessor, boundsMaker, scaleModel;
 
     beforeEach(function() {
         dataProcessor = new DataProcessor({}, '', {});
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getPosition', 'getDimension', 'getAxesData']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getPosition', 'getDimension']);
+        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisDataMap', 'getAxisData']);
         plot = new Plot({
             dataProcessor: dataProcessor,
             boundsMaker: boundsMaker,
+            scaleModel: scaleModel,
             theme: {
                 lineColor: 'black'
             }
@@ -343,11 +345,9 @@ describe('Test for Plot', function() {
             };
             var actual, expected;
 
-            boundsMaker.getAxesData.and.returnValue({
-                xAxis: {
-                    dataMin: 20,
-                    distance: 200
-                }
+            scaleModel.getAxisData.and.returnValue({
+                dataMin: 20,
+                distance: 200
             });
 
             actual = plot._makeOptionalLinesHtml(lines, dimension);
@@ -386,11 +386,9 @@ describe('Test for Plot', function() {
                     color: 'blue'
                 }
             ];
-            boundsMaker.getAxesData.and.returnValue({
-                xAxis: {
-                    dataMin: 20,
-                    distance: 200
-                }
+            scaleModel.getAxisData.and.returnValue({
+                dataMin: 20,
+                distance: 200
             });
 
             plot._renderOptionalLines(container, dimension);
@@ -419,7 +417,7 @@ describe('Test for Plot', function() {
                 dimension: {width: 400, height: 200},
                 position: {top: 5, right: 5}
             };
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     validTickCount: 5
                 },
@@ -470,7 +468,7 @@ describe('Test for Plot', function() {
         it('make positions for vertical line', function() {
             var positions;
 
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     validTickCount: 5
                 }
@@ -480,14 +478,16 @@ describe('Test for Plot', function() {
         });
 
         it('if yAxis.validTickCount is zero, returns empty array', function() {
-            var positions;
-            boundsMaker.getAxesData.and.returnValue({
+            var actual;
+
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     validTickCount: 0
                 }
             });
-            positions = plot._makeVerticalPositions(200);
-            expect(positions).toEqual([]);
+            actual = plot._makeVerticalPositions(200);
+
+            expect(actual).toEqual([]);
         });
     });
 
@@ -510,7 +510,7 @@ describe('Test for Plot', function() {
         it('make positions for horizontal line', function() {
             var actual;
 
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {
                     validTickCount: 5
                 }
@@ -523,7 +523,7 @@ describe('Test for Plot', function() {
         it('if xAxis.validTickCount is zero, returns empty array', function() {
             var actual;
 
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {
                     validTickCount: 0
                 }
@@ -539,15 +539,15 @@ describe('Test for Plot', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 50
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {
-                    validTickCount: 0
+                    validTickCount: 5
                 }
             });
             plot.options.divided = true;
 
             actual = plot._makeHorizontalPositions(350);
-            expected = plot._makeDividedPlotPositions(350);
+            expected = plot._makeDividedPlotPositions(350, 5);
 
             expect(actual).toEqual(expected);
         });
@@ -565,7 +565,7 @@ describe('Test for Plot', function() {
                 width: 400,
                 height: 200
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     validTickCount: 5
                 },

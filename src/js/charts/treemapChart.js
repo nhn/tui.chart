@@ -11,7 +11,6 @@ var ColorSpectrum = require('./colorSpectrum');
 var Series = require('../series/treemapChartSeries');
 var Tooltip = require('../tooltips/tooltip');
 var Legend = require('../legends/spectrumLegend');
-var axisDataMaker = require('../helpers/axisDataMaker');
 var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
 var chartConst = require('../const');
 
@@ -56,12 +55,15 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @private
      */
     _addComponents: function() {
-        var useColorValue = tui.util.pick(this.options, 'series', 'useColorValue');
+        var seriesTheme = this.theme.series;
+        var useColorValue = this.options.series.useColorValue;
+        var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
 
         this.componentManager.register('series', Series, {
             chartBackground: this.theme.chart.background,
             chartType: this.chartType,
-            userEvent: this.userEvent
+            userEvent: this.userEvent,
+            colorSpectrum: colorSpectrum
         });
 
         this.componentManager.register('tooltip', Tooltip, tui.util.extend({
@@ -71,7 +73,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         if (useColorValue) {
             this.componentManager.register('legend', Legend, {
                 chartType: this.chartType,
-                userEvent: this.userEvent
+                userEvent: this.userEvent,
+                colorSpectrum: colorSpectrum
             });
         }
 
@@ -82,18 +85,16 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
     },
 
     /**
-     * Get legend scale
-     * @returns {Object.<string, AxisScaleMaker>}
+     * Add scale data for x legend.
      * @private
+     * @override
      */
-    _getLegendScale: function() {
-        if (!this.lengedScale) {
-            this.lengedScale = this._createAxisScaleMaker({}, 'legend', null, this.chartType, {
-                valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-            });
-        }
-
-        return this.lengedScale;
+    _addScaleDataForLegend: function() {
+        this.scaleModel.addScale('legend', {}, {
+            chartType: this.chart
+        }, {
+            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
+        });
     },
 
     /**
@@ -102,37 +103,9 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @override
      */
     _addDataRatios: function() {
-        var limit = this._getLegendScale().getLimit();
+        var limit = this.scaleModel.getScaleMap().legend.getLimit();
 
         this.dataProcessor.addDataRatiosForTreemapChart(limit, this.chartType);
-    },
-
-    /**
-     * Make rendering data for delivery to each component.
-     * @returns {object}
-     * @private
-     * @override
-     */
-    _makeRenderingData: function() {
-        var data = {};
-        var seriesTheme = this.theme.series;
-        var useColorValue = tui.util.pick(this.options, 'series', 'useColorValue');
-        var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
-
-        data.legend = {
-            colorSpectrum: colorSpectrum,
-            axesData: axisDataMaker.makeValueAxisData({
-                dataProcessor: this.dataProcessor,
-                chartType: this.chartType,
-                axisScaleMaker: this._getLegendScale(),
-                isVertical: true
-            })
-        };
-        data.series = {
-            colorSpectrum: colorSpectrum
-        };
-
-        return data;
     },
 
     /**

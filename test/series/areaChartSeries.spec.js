@@ -10,10 +10,11 @@ var AreaChartSeries = require('../../src/js/series/areaChartSeries'),
     chartConst = require('../../src/js/const');
 
 describe('AreaChartSeries', function() {
-    var series, boundsMaker;
+    var series, boundsMaker, scaleModel;
 
     beforeAll(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getAxesData']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
+        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisDataMap']);
     });
 
     beforeEach(function() {
@@ -21,7 +22,8 @@ describe('AreaChartSeries', function() {
             chartType: 'area',
             theme: {},
             options: {},
-            boundsMaker: boundsMaker
+            boundsMaker: boundsMaker,
+            scaleModel: scaleModel
         });
     });
 
@@ -38,7 +40,7 @@ describe('AreaChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 height: height
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     limit: limit
                 }
@@ -61,7 +63,7 @@ describe('AreaChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 height: height
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     limit: limit
                 }
@@ -84,7 +86,7 @@ describe('AreaChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 height: height
             });
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     limit: limit
                 }

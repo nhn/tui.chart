@@ -40,26 +40,27 @@ var lineTypeMixer = {
     },
 
     /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
+     * Add scale data for y axis.
      * @private
+     * @override
      */
-    _makeAxisScaleMakerMap: function() {
-        var options = this.options;
-        var scaleMap;
+    _addScaleDataForYAxis: function() {
+        this.scaleModel.addScale('yAxis', this.options.yAxis, {
+            valueType: this.dataProcessor.isCoordinateType() ? 'y' : 'value'
+        });
+    },
 
+    /**
+     * Add scale data for x axis.
+     * @private
+     * @override
+     */
+    _addScaleDataForXAxis: function() {
         if (this.dataProcessor.isCoordinateType()) {
-            scaleMap = {
-                xAxis: this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x'),
-                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y')
-            };
-        } else {
-            scaleMap = {
-                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis')
-            };
+            this.scaleModel.addScale('xAxis', this.options.xAxis, {
+                valueType: 'x'
+            });
         }
-
-        return scaleMap;
     },
 
     /**
@@ -91,8 +92,7 @@ var lineTypeMixer = {
                     isVertical: true
                 },
                 {
-                    name: 'xAxis',
-                    isLabel: true
+                    name: 'xAxis'
                 }
             ],
             series: [

@@ -393,6 +393,28 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Whether has x value or not.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    hasXValue: function(chartType) {
+        var hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
+
+        return !this.hasCategories(hasVerticalCategory) || hasVerticalCategory;
+    },
+
+    /**
+     * Whether has y value or not.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    hasYValue: function(chartType) {
+        var hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
+
+        return !this.hasCategories(hasVerticalCategory) || !hasVerticalCategory;
+    },
+
+    /**
      * Get category.
      * @param {number} index index
      * @param {boolean} isVertical - whether vertical or not
@@ -868,7 +890,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var mapKey;
 
         chartType = chartType || chartConst.DUMMY_KEY;
-
         mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {
@@ -1165,56 +1186,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         }
 
         return funcs;
-    },
-
-    /**
-     * Make multiline category.
-     * @param {string} category category
-     * @param {number} limitWidth limit width
-     * @param {object} theme label theme
-     * @returns {string} multiline category
-     * @private
-     */
-    _makeMultilineCategory: function(category, limitWidth, theme) {
-        var words = String(category).split(/\s+/),
-            lineWords = words[0],
-            lines = [];
-
-        tui.util.forEachArray(words.slice(1), function(word) {
-            var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
-
-            if (width > limitWidth) {
-                lines.push(lineWords);
-                lineWords = word;
-            } else {
-                lineWords += ' ' + word;
-            }
-        });
-
-        if (lineWords) {
-            lines.push(lineWords);
-        }
-
-        return lines.join('<br>');
-    },
-
-    /**
-     * Get multiline categories.
-     * @param {number} limitWidth limit width
-     * @param {object} theme label theme
-     * @param {Array.<(number | string)>} xAxisLabels labels of xAxis
-     * @returns {Array} multiline categories
-     */
-    getMultilineCategories: function(limitWidth, theme, xAxisLabels) {
-        var self = this;
-
-        if (!this.multilineCategories) {
-            this.multilineCategories = tui.util.map(xAxisLabels, function(category) {
-                return self._makeMultilineCategory(category, limitWidth, theme);
-            });
-        }
-
-        return this.multilineCategories;
     },
 
     /**

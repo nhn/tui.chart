@@ -8,6 +8,7 @@
 
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
+var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
 
 /**
@@ -49,8 +50,11 @@ var axisDataMaker = {
      *      tickCount: number,
      *      validTickCount: number,
      *      isLabelAxis: boolean,
-     *      isVertical: boolean
-     * }} axis data
+     *      options: object,
+     *      isVertical: boolean,
+     *      isPositionRight: boolean,
+     *      aligned: boolean
+     * }}
      */
     makeLabelAxisData: function(params) {
         var tickCount = params.labels.length;
@@ -83,6 +87,42 @@ var axisDataMaker = {
     },
 
     /**
+     * Make data for value type axis.
+     * @memberOf module:axisDataMaker
+     * @param {object} params parameters
+     *      @param {AxisScaleMaker} params.axisScaleMaker chart values
+     *      @param {boolean} params.isVertical whether vertical or not
+     * @returns {{
+     *      labels: Array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      isLabelAxis: boolean,
+     *      limit: {min: number, max: number},
+     *      isVertical: boolean
+     * }} axis data
+     */
+    makeValueAxisData: function(params) {
+        var labels = params.labels;
+        var tickCount = params.tickCount;
+        var limit = params.limit;
+        var axisData = {
+            labels: labels,
+            tickCount: tickCount,
+            validTickCount: tickCount,
+            limit: limit,
+            dataMin: limit.min,
+            distance: limit.max - limit.min,
+            step: params.step,
+            options: params.options,
+            isVertical: !!params.isVertical,
+            isPositionRight: !!params.isPositionRight,
+            aligned: !!params.aligned
+        };
+
+        return axisData;
+    },
+
+    /**
      * Make additional data for coordinate line type chart.
      * @param {Array.<string>} labels - labels
      * @param {Array.<number>} values - values
@@ -97,9 +137,8 @@ var axisDataMaker = {
      *      positionRatio: number,
      *      sizeRatio: number
      * }}
-     * @private
      */
-    _makeAdditionalDataForCoordinateLineType: function(labels, values, limit, step, tickCount) {
+    makeAdditionalDataForCoordinateLineType: function(labels, values, limit, step, tickCount) {
         var sizeRatio = 1;
         var positionRatio = 0;
         var min = tui.util.min(values);
@@ -133,56 +172,6 @@ var axisDataMaker = {
             positionRatio: positionRatio,
             sizeRatio: sizeRatio
         };
-    },
-
-    /**
-     * Make data for value type axis.
-     * @memberOf module:axisDataMaker
-     * @param {object} params parameters
-     *      @param {AxisScaleMaker} params.axisScaleMaker chart values
-     *      @param {boolean} params.isVertical whether vertical or not
-     * @returns {{
-     *      labels: Array.<string>,
-     *      tickCount: number,
-     *      validTickCount: number,
-     *      isLabelAxis: boolean,
-     *      limit: {min: number, max: number},
-     *      isVertical: boolean
-     * }} axis data
-     */
-    makeValueAxisData: function(params) {
-        var axisScaleMaker = params.axisScaleMaker;
-        var labels = axisScaleMaker.getFormattedScaleValues();
-        var tickCount = labels.length;
-        var limit = axisScaleMaker.getLimit();
-        var step = axisScaleMaker.getStep();
-        var dataProcessor = params.dataProcessor;
-        var chartType = params.chartType;
-        var axisData = {
-            labels: labels,
-            tickCount: tickCount,
-            validTickCount: tickCount,
-            limit: limit,
-            dataMin: limit.min,
-            distance: limit.max - limit.min,
-            step: step,
-            options: params.options,
-            isVertical: !!params.isVertical,
-            isPositionRight: !!params.isPositionRight,
-            aligned: !!params.aligned
-        };
-        var isVertical = params.isVertical;
-        var hasCategories = dataProcessor.hasCategories();
-        var isCoordinateLineType = !isVertical && !hasCategories && predicate.isLineTypeChart(chartType);
-        var values, additionalData;
-
-        if (isCoordinateLineType) {
-            values = dataProcessor.getValues(chartType, 'x');
-            additionalData = this._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
-            tui.util.extend(axisData, additionalData);
-        }
-
-        return axisData;
     },
 
     /**
@@ -279,12 +268,20 @@ var axisDataMaker = {
      * Update label type axisData for auto tick interval option.
      * @param {object} axisData - axisData
      * @param {number} seriesWidth - series width
-     * @param {number} [addedDataCount] - added data count
+     * @param {?number} addedDataCount - added data count
+     * @param {?boolean} addingDataMode - whether adding data mode or not
      */
-    updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount) {
-        var beforeBlockCount = axisData.tickCount - 1;
-        var intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
+    updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount, addingDataMode) {
+        var beforeBlockCount, intervalInfo;
         var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex;
+
+        if (addingDataMode) {
+            axisData.tickCount -= 1;
+            axisData.labels.pop();
+        }
+
+        beforeBlockCount = axisData.tickCount - 1;
+        intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
 
         if (!intervalInfo) {
             return;
@@ -350,6 +347,199 @@ var axisDataMaker = {
             lineWidth: prevUpdatedData.lineWidth,
             interval: interval
         });
+    },
+
+    /**
+     * Calculate width for label area for x axis.
+     * @param {boolean} aligned - aligned tick and label
+     * @param {number} seriesWidth - series width
+     * @param {number} labelCount - label count
+     * @returns {number} limit width
+     * @private
+     */
+    _calculateXAxisLabelAreaWidth: function(aligned, seriesWidth, labelCount) {
+        if (aligned) {
+            labelCount -= 1;
+        }
+
+        return seriesWidth / labelCount;
+    },
+
+    /**
+     * Create multiline label.
+     * @param {string} label - label
+     * @param {number} limitWidth - limit width
+     * @param {object} theme - label theme
+     * @returns {string}
+     * @private
+     */
+    _createMultilineLabel: function(label, limitWidth, theme) {
+        var words = String(label).split(/\s+/);
+        var lineWords = words[0];
+        var lines = [];
+
+        tui.util.forEachArray(words.slice(1), function(word) {
+            var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
+
+            if (width > limitWidth) {
+                lines.push(lineWords);
+                lineWords = word;
+            } else {
+                lineWords += ' ' + word;
+            }
+        });
+
+        if (lineWords) {
+            lines.push(lineWords);
+        }
+
+        return lines.join('<br>');
+    },
+
+    /**
+     * Create multiline labels.
+     * @param {Array.<string>} labels - labels
+     * @param {object} labelTheme - theme for label
+     * @param {number} labelAreaWidth - label area width
+     * @returns {Array}
+     * @private
+     */
+    _createMultilineLabels: function(labels, labelTheme, labelAreaWidth) {
+        var _createMultilineLabel = this._createMultilineLabel;
+
+        return tui.util.map(labels, function(label) {
+            return _createMultilineLabel(label, labelAreaWidth, labelTheme);
+        });
+    },
+
+    /**
+     * Calculate multiline height.
+     * @param {Array.string} multilineLabels - multiline labels
+     * @param {object} labelTheme - theme for label
+     * @param {number} labelAreaWidth - width for label area
+     * @returns {number}
+     * @private
+     */
+    _calculateMultilineHeight: function(multilineLabels, labelTheme, labelAreaWidth) {
+        return renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
+            cssText: 'line-height:1.2;width:' + labelAreaWidth + 'px'
+        }, labelTheme));
+    },
+
+    /**
+     * Calculate height difference between origin category and multiline category.
+     * @param {Array.<string>} labels - labels
+     * @param {Array.<string>} validLabelCount - valid label count
+     * @param {object} labelTheme - theme for label
+     * @param {boolean} aligned - aligned tick and label
+     * @param {number} seriesWidth - series width
+     * @returns {number}
+     */
+    makeAdditionalDataForMultilineLabels: function(labels, validLabelCount, labelTheme, aligned, seriesWidth) {
+        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(aligned, seriesWidth, validLabelCount);
+        var multilineLabels = this._createMultilineLabels(labels, labelTheme, aligned, seriesWidth);
+        var multilineHeight = this._calculateMultilineHeight(multilineLabels, labelTheme, labelAreaWidth);
+        var labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
+
+        return {
+            multilineLabels: multilineLabels,
+            overflowHeight: multilineHeight - labelHeight
+        };
+    },
+
+    /**
+     * Find rotation degree.
+     * @param {number} labelAreaWidth - limit width
+     * @param {number} labelWidth - label width
+     * @param {number} labelHeight - label height
+     * @returns {number}
+     * @private
+     */
+    _findRotationDegree: function(labelAreaWidth, labelWidth, labelHeight) {
+        var foundDegree = null;
+
+        tui.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
+            var compareWidth = calculator.calculateRotatedWidth(degree, labelWidth, labelHeight);
+
+            foundDegree = degree;
+
+            if (compareWidth <= labelAreaWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN) {
+                return false;
+            }
+
+            return true;
+        });
+
+        return foundDegree;
+    },
+
+    /**
+     * Calculate rotated width.
+     * @param {number} degree - degree for label of x axis
+     * @param {string} firstLabel - first label
+     * @param {number} labelHeight - labelHeight
+     * @param {object} labelTheme - theme for label
+     * @returns {number}
+     * @private
+     */
+    _calculateRotatedWidth: function(degree, firstLabel, labelHeight, labelTheme) {
+        var firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, labelTheme);
+        var newLabelWidth = calculator.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
+
+        // overflow 체크시에는 우측 상단 꼭지 기준으로 계산해야 함
+        newLabelWidth -= calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
+
+        return newLabelWidth;
+    },
+
+    /**
+     * Calculate limit width for label
+     * @param {number} yAxisWidth - y axis width
+     * @param {boolean} aligned - aligned tick and label
+     * @param {number} labelAreaWidth - width for label area
+     * @returns {number}
+     * @private
+     */
+    _calculateLimitWidth: function(yAxisWidth, aligned, labelAreaWidth) {
+        var limitWidth = yAxisWidth;
+
+        if (!aligned) {
+            limitWidth += (labelAreaWidth / 2);
+        }
+
+        return limitWidth;
+    },
+
+    /**
+     * Make additional data for rotated labels.
+     * @param {Array.<string>} validLabels - valid labels
+     * @param {Array.<string>} validLabelCount - valid label count
+     * @param {object} labelTheme - theme for label
+     * @param {boolean} aligned - aligned tick and label
+     * @param {{series: {width: number}, yAxis: {width: number}}} dimensionMap - dimension map
+     * @returns {{degree: number, overflowHeight: number, overflowLeft: number}}
+     */
+    makeAdditionalDataForRotatedLabels: function(validLabels, validLabelCount, labelTheme, aligned, dimensionMap) {
+        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(validLabels, labelTheme);
+        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(aligned, dimensionMap.series.width, validLabelCount);
+        var additionalData = null;
+        var degree, labelHeight, rotatedHeight, limitWidth, rotatedWidth;
+
+        if (labelAreaWidth < maxLabelWidth) {
+            labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);
+            degree = this._findRotationDegree(labelAreaWidth, maxLabelWidth, labelHeight);
+            rotatedHeight = calculator.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
+            rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
+            limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, aligned, labelAreaWidth);
+
+            additionalData = {
+                degree: degree,
+                overflowHeight: rotatedHeight - labelHeight,
+                overflowLeft: rotatedWidth - limitWidth
+            };
+        }
+
+        return additionalData;
     }
 };
 

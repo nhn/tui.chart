@@ -191,7 +191,15 @@ var findMultipleNum = function() {
  */
 var mod = function(target, modNum) {
     var multipleNum = tui.util.findMultipleNum(modNum);
-    return ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
+    var result;
+
+    if (multipleNum === 1) {
+        result = target % modNum;
+    } else {
+        result = ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
+    }
+
+    return result;
 };
 
 /**

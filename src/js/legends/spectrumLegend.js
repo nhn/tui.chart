@@ -63,6 +63,18 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         this.boundsMaker = params.boundsMaker;
 
         /**
+         * scale model
+         * @type {ScaleModel}
+         */
+        this.scaleModel = params.scaleModel;
+
+        /**
+         * color spectrum
+         * @type {ColorSpectrum}
+         */
+        this.colorSpectrum = params.colorSpectrum;
+
+        /**
          * Graph renderer
          * @type {object}
          */
@@ -76,63 +88,14 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     },
 
     /**
-     * Make vertical legend dimension.
-     * @returns {{width: number, height: number}} dimension
-     * @private
-     */
-    _makeVerticalDimension: function() {
-        var maxValue = tui.util.max(this.dataProcessor.getValues());
-        var formatFunctions = this.dataProcessor.getFormatFunctions();
-        var valueStr = renderUtil.formatValue(maxValue, formatFunctions, this.chartType, 'legend');
-        var labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label);
-        var padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
-
-        return {
-            width: chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + padding,
-            height: chartConst.MAP_LEGEND_SIZE
-        };
-    },
-
-    /**
-     * Make horizontal legend dimension
-     * @returns {{width: number, height: number}} dimension
-     * @private
-     */
-    _makeHorizontalDimension: function() {
-        var maxValue = tui.util.max(this.dataProcessor.getValues()),
-            labelHeight = renderUtil.getRenderedLabelHeight(maxValue, this.theme.label),
-            padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
-
-        return {
-            width: chartConst.MAP_LEGEND_SIZE,
-            height: chartConst.MAP_LEGEND_GRAPH_SIZE + labelHeight + padding
-        };
-    },
-
-    /**
-     * Register dimension.
-     */
-    registerDimension: function() {
-        var dimension;
-
-        if (this.isHorizontal) {
-            dimension = this._makeHorizontalDimension();
-        } else {
-            dimension = this._makeVerticalDimension();
-        }
-
-        this.boundsMaker.registerBaseDimension('legend', dimension);
-        this.boundsMaker.registerBaseDimension('calculationLegend', dimension);
-    },
-
-    /**
      * Make base data to make tick html.
      * @returns {{startPositionValue: number, step: number, positionType: string, labelSize: ?number}} base data
      * @private
      */
     _makeBaseDataToMakeTickHtml: function() {
         var dimension = this.boundsMaker.getDimension('legend');
-        var stepCount = this.axesData.tickCount - 1;
+        var axisData = this.scaleModel.getAxisData('legend');
+        var stepCount = axisData.tickCount - 1;
         var baseData = {};
         var firstLabel;
 
@@ -144,7 +107,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             baseData.startPositionValue = 0;
             baseData.step = dimension.height / stepCount;
             baseData.positionType = 'top:';
-            firstLabel = this.axesData.labels[0];
+            firstLabel = axisData.labels[0];
             baseData.labelSize = parseInt(renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label) / 2, 10) - 1;
         }
 
@@ -159,9 +122,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         var self = this;
         var baseData = this._makeBaseDataToMakeTickHtml();
         var positionValue = baseData.startPositionValue;
+        var axisData = this.scaleModel.getAxisData('legend');
         var htmls;
 
-        htmls = tui.util.map(this.axesData.labels, function(label) {
+        htmls = tui.util.map(axisData.labels, function(label) {
             var labelSize, html;
 
             if (self.isHorizontal) {
@@ -260,15 +224,13 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
 
     /**
      * Render legend component.
-     * @param {{colorSpectrum: ColorSpectrum, axesData: object}} data rendering data
+     * @param {{colorSpectrum: ColorSpectrum}} data rendering data
      * @returns {HTMLElement} legend element
      */
-    render: function(data) {
+    render: function() {
         var container = dom.create('DIV', this.className);
 
         this.legendContainer = container;
-        this.colorSpectrum = data.colorSpectrum;
-        this.axesData = data.axesData;
         this._renderLegendArea(container);
 
         return container;

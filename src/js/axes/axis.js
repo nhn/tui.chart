@@ -48,6 +48,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.boundsMaker = params.boundsMaker;
 
         /**
+         * scale model
+         * @type {object}
+         */
+        this.scaleModel = params.scaleModel;
+
+        /**
          * Options
          * @type {object}
          */
@@ -63,7 +69,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Whether label type or not.
          * @type {boolean}
          */
-        this.isLabel = params.isLabel;
+        this.isLabel = null;
 
         /**
          * Whether vertical type or not.
@@ -71,55 +77,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.isVertical = params.isVertical;
 
         /**
-         * Data for rendering
+         * cached axis data
          * @type {object}
          */
         this.data = {};
-    },
-
-    /**
-     * Make height of x axis area.
-     * @returns {number} height
-     * @private
-     */
-    _makeXAxisHeight: function() {
-        var title = this.options.title;
-        var titleHeight = renderUtil.getRenderedLabelHeight(title, this.theme.title);
-        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label);
-
-        return titleAreaHeight + labelHeight + chartConst.CHART_PADDING;
-    },
-
-    /**
-     * Make width of y axis area.
-     * @param {Array.<string | number>} labels labels
-     * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
-     * @returns {number}
-     * @private
-     */
-    _makeYAxisWidth: function(labels, options) {
-        var title = options.title || '';
-        var theme = this.theme;
-        var titleAreaWidth = 0;
-        var width = 0;
-
-        if (options.isCenter) {
-            width += chartConst.AXIS_LABEL_PADDING;
-        } else if (options.rotateTitle === false) {
-            titleAreaWidth = renderUtil.getRenderedLabelWidth(title, theme.title) + chartConst.TITLE_PADDING;
-        } else {
-            titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
-        }
-
-        if (predicate.isDatetimeType(options.type)) {
-            labels = renderUtil.formatDates(labels, options.dateFormat);
-        }
-
-        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
-            chartConst.AXIS_LABEL_PADDING;
-
-        return width;
     },
 
     /**
@@ -135,53 +96,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         }
 
         return isValid;
-    },
-
-    /**
-     * Register legend dimension to boundsMaker.
-     */
-    registerDimension: function() {
-        var dimension = {};
-        var categories;
-
-        if (!this._isValidAxis()) {
-            return;
-        }
-
-        if (this.componentType === 'xAxis') {
-            dimension.height = this._makeXAxisHeight();
-            this.boundsMaker.registerBaseDimension(this.componentName, dimension);
-        } else if (this.isLabel) {
-            categories = this.dataProcessor.getCategories(this.isVertical);
-            dimension.width = this._makeYAxisWidth(categories, this.options);
-            this.boundsMaker.registerBaseDimension(this.componentName, dimension);
-        }
-    },
-
-    /**
-     * Register legend additional dimension to boundsMaker.
-     */
-    registerAdditionalDimension: function() {
-        var axesData = this.boundsMaker.axesData;
-        var dimension, options;
-
-        if (!this._isValidAxis()) {
-            return;
-        }
-
-        if ((this.componentType === 'yAxis') && !this.isLabel) {
-            if (this.componentName === 'rightYAxis') {
-                options = this.options;
-            } else {
-                options = axesData.yAxis.options;
-            }
-
-            dimension = {
-                width: this._makeYAxisWidth(axesData.yAxis.labels, options)
-            };
-
-            this.boundsMaker.registerBaseDimension(this.componentName, dimension);
-        }
     },
 
     /**
@@ -294,7 +208,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderAxisArea: function(axisContainer) {
-        var dimension = tui.util.extend({}, this.boundsMaker.getDimension(this.componentName));
+        var componentName = this.componentName;
+        var dimension = tui.util.extend({}, this.boundsMaker.getDimension(componentName));
+        var axisData = this.scaleModel.getAxisData(componentName);
+
+        this.data = axisData;
+        this.isLabel = axisData.isLabelAxis;
 
         this._addCssClasses(axisContainer);
 
@@ -316,10 +235,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {{isPositionRight: boolean, aligned: aligned}} data rendering data
      * @returns {HTMLElement} axis area base element
      */
-    render: function(data) {
+    render: function() {
         var container = dom.create('DIV', this.className);
 
-        this.data = data;
         this._renderAxisArea(container);
         this.axisContainer = container;
 
@@ -337,7 +255,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             if (data.options) {
                 this.options = data.options;
             }
-            this.data = data;
             this._renderAxisArea(this.axisContainer);
         }
     },
@@ -851,10 +768,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _calculateRotationMovingPosition: function(params) {
         var moveLeft = params.moveLeft;
-        var degree = this.boundsMaker.xAxisDegree;
+        var degree = this.data.degree;
         var containerWidth = this.containerWidth || params.size;
 
-        if (degree === chartConst.ANGLE_85) {
+        if (this.data.degree === chartConst.ANGLE_85) {
             moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2);
         }
 
@@ -877,7 +794,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _calculateRotationMovingPositionForOldBrowser: function(params) {
         var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme);
-        var degree = this.boundsMaker.xAxisDegree;
+        var degree = this.data.degree;
         var smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2);
         var newLabelWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + smallAreaWidth) * 2;
         var changedWidth = renderUtil.isIE7() ? 0 : (labelWidth - newLabelWidth);
@@ -931,7 +848,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeRotationLabelsHtml: function(areaSize, positions, categories, labelSize, additionalSize) {
         var self = this;
-        var degree = this.boundsMaker.xAxisDegree;
+        var degree = this.data.degree;
         var template = axisTemplate.tplAxisLabel;
         var labelHeight = renderUtil.getRenderedLabelHeight(categories[0], this.theme.label);
         var labelCssText = this._makeLabelCssText(labelSize);
@@ -1013,11 +930,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeLabelsHtml: function(areaSize, positions, categories, labelSize, additionalSize) {
         var isRotationlessXAxis = !this.isVertical && this.isLabel && this.options.rotateLabel === false;
-        var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree;
+        var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.data.degree;
         var labelsHtml;
 
         if (isRotationlessXAxis) {
-            categories = this.dataProcessor.getMultilineCategories();
+            categories = this.data.multilineLabels;
         }
 
         if (categories.length) {

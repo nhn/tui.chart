@@ -55,6 +55,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.boundsMaker = params.boundsMaker;
 
         /**
+         * Scale model
+         * @type {ScaleModel}
+         */
+        this.scaleModel = params.scaleModel;
+
+        /**
          * User event listener
          * @type {UserEventListener}
          */

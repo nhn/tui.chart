@@ -9,20 +9,23 @@
 var mixer = require('../../src/js/charts/addingDynamicDataMixer');
 
 describe('Test for addingDynamicDataMixer', function() {
-    var dataProcessor, boundsMaker;
+    var dataProcessor, boundsMaker, scaleModel;
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
                     ['getCategoryCount', 'shiftData', 'addDataFromDynamicData', 'getValues', 'isCoordinateType']);
         boundsMaker = jasmine.createSpyObj('boundsMaker',
                                 ['initBoundsData', 'getAxesData', 'getDimension', 'onAddingDataMode', 'offAddingDataMode']);
+        scaleModel = jasmine.createSpyObj('scaleModel', ['initScaleData', 'initForAutoTickInterval'])
 
         mixer.dataProcessor = dataProcessor;
         mixer.boundsMaker = boundsMaker;
+        mixer.scaleModel = scaleModel;
 
         mixer._initForAddingData();
         mixer.options = {
-            series: {}
+            series: {},
+            xAxis: {}
         };
 
         mixer._render = jasmine.createSpy('_render').and.callFake(function(callback) {
@@ -51,10 +54,10 @@ describe('Test for addingDynamicDataMixer', function() {
             expect(mixer.addedDataCount).toBe(1);
         });
 
-        it('_animateForAddingData 함수를 호출하면 axisScaleMakerMap을 null로 초기화 합니다.', function() {
+        it('_animateForAddingData 함수를 호출하면 scaleModel.initScaleData를 호출하여 초기화 합니다.', function() {
             mixer._animateForAddingData();
 
-            expect(mixer.axisScaleMakerMap).toBeNull();
+            expect(scaleModel.initScaleData).toHaveBeenCalledWith(1);
         });
 
         it('_animateForAddingData 함수를 호출하면 boundsMaker.initBoundsData를 실행합니다.', function() {
@@ -192,14 +195,14 @@ describe('Test for addingDynamicDataMixer', function() {
     });
 
     describe('_pauseAnimationForAddingData()', function() {
-        it('_pauseAnimationForAddingData함수를 호출하면 paused값이 true로 설정하고 _initForAutoTickInterval함수를 실행합니다.', function() {
+        it('_pauseAnimationForAddingData함수를 호출하면 paused값이 true로 설정하고 scaleModel.initForAutoTickInterval함수를 실행합니다.', function() {
             mixer._initForAutoTickInterval = jasmine.createSpy('_initForAutoTickInterval');
 
             mixer.paused = false;
             mixer._pauseAnimationForAddingData();
 
             expect(mixer.paused).toBe(true);
-            expect(mixer._initForAutoTickInterval).toHaveBeenCalled();
+            expect(scaleModel.initForAutoTickInterval).toHaveBeenCalled();
         });
 
         it('this.rerenderingDelayTimerId 값이 있으면 clearTimeout을 수행하고 this.delayRerender를 null로 설정합니다.', function() {

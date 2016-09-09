@@ -1,6 +1,7 @@
 'use strict';
 
 var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
 
 /**
  * addingDynamicData is mixer for adding dynamic data.
@@ -52,10 +53,11 @@ var addingDynamicDataMixer = {
         var dataProcessor = this.dataProcessor;
         var boundsMaker = this.boundsMaker;
         var shiftingOption = !!this.options.series.shifting;
+        var xAxisOptions = this.options.xAxis;
 
         this.addedDataCount += 1;
-        this.axisScaleMakerMap = null;
         boundsMaker.initBoundsData();
+        this.scaleModel.initScaleData(this.addedDataCount);
 
         this._render(function() {
             var xAxisWidth = boundsMaker.getDimension('xAxis').width;
@@ -67,7 +69,7 @@ var addingDynamicDataMixer = {
                 tickCount = dataProcessor.getCategoryCount(false) - 1;
             }
 
-            if (shiftingOption) {
+            if (shiftingOption && !predicate.isAutoTickInterval(xAxisOptions.tickInterval)) {
                 tickCount -= 1;
             }
 
@@ -77,7 +79,7 @@ var addingDynamicDataMixer = {
                 tickSize: tickSize,
                 shifting: shiftingOption
             }, 'animateForAddingData');
-        });
+        }, true);
 
         if (shiftingOption) {
             this.dataProcessor.shiftData();
@@ -95,7 +97,7 @@ var addingDynamicDataMixer = {
             this.boundsMaker.initBoundsData();
         }
 
-        this.axisScaleMakerMap = null;
+        this.scaleModel.initScaleData(this.addedDataCount);
 
         this._render(function(renderingData) {
             renderingData.animatable = false;
@@ -121,11 +123,9 @@ var addingDynamicDataMixer = {
             return;
         }
 
-        this.boundsMaker.onAddingDataMode();
         this._animateForAddingData();
         this.rerenderingDelayTimerId = setTimeout(function() {
             self.rerenderingDelayTimerId = null;
-            self.boundsMaker.offAddingDataMode();
             self._rerenderForAddingData();
             self._checkForAddedData();
         }, 400);
@@ -137,7 +137,7 @@ var addingDynamicDataMixer = {
      */
     _pauseAnimationForAddingData: function() {
         this.paused = true;
-        this._initForAutoTickInterval();
+        this.scaleModel.initForAutoTickInterval();
 
         if (this.rerenderingDelayTimerId) {
             clearTimeout(this.rerenderingDelayTimerId);

@@ -63,9 +63,9 @@ describe('Test user events for combo chart', function() {
 
             spyOn(customEvent, '_getContainerBound').and.returnValue({
                 left: 50,
-                top: 80,
+                top: 40,
                 right: 450,
-                bottom: 380
+                bottom: 340
             });
 
             comboChart.on('selectSeries', function(info) {
@@ -78,7 +78,7 @@ describe('Test user events for combo chart', function() {
             });
 
             customEvent._onClick({
-                clientX: 123,
+                clientX: 130,
                 clientY: 330
             });
         });
@@ -90,7 +90,7 @@ describe('Test user events for combo chart', function() {
 
             spyOn(customEvent, '_getContainerBound').and.returnValue({
                 left: 50,
-                top: 80,
+                top: 40,
                 right: 450,
                 bottom: 380
             });
@@ -106,14 +106,14 @@ describe('Test user events for combo chart', function() {
 
             // select
             customEvent._onClick({
-                clientX: 123,
+                clientX: 130,
                 clientY: 330
             });
 
             setTimeout(function() {
                 // unselect
                 customEvent._onClick({
-                    clientX: 123,
+                    clientX: 130,
                     clientY: 330
                 });
             });

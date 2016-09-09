@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var lineTypeMixer = require('./lineTypeMixer');
-var autoTickMixer = require('./autoTickMixer');
 var zoomMixer = require('./zoomMixer');
 var axisTypeMixer = require('./axisTypeMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
@@ -36,7 +35,6 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      */
     init: function() {
         this._lineTypeInit.apply(this, arguments);
-        this._initForAutoTickInterval();
         this._initForAddingData();
     },
 
@@ -49,22 +47,10 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
-    },
-
-    /**
-     * Resize.
-     * @param {object} dimension dimension
-     *      @param {number} dimension.width width
-     *      @param {number} dimension.height height
-     * @override
-     */
-    resize: function(dimension) {
-        this._initForAutoTickInterval();
-        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 
 tui.util.extend(LineChart.prototype,
-    axisTypeMixer, lineTypeMixer, autoTickMixer, zoomMixer, addingDynamicDataMixer);
+    axisTypeMixer, lineTypeMixer, zoomMixer, addingDynamicDataMixer);
 
 module.exports = LineChart;

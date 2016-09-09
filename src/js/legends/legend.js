@@ -7,7 +7,6 @@
 'use strict';
 
 var LegendModel = require('./legendModel');
-var LegendDimensionModel = require('./legendDimensionModel');
 var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
 var predicate = require('../helpers/predicate');
@@ -25,8 +24,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      *      @param {string} params.chart type
      */
     init: function(params) {
-        var legendData;
-
         /**
          * legend theme
          * @type {Object}
@@ -75,40 +72,16 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.dataProcessor = params.dataProcessor;
 
-        legendData = params.dataProcessor.getLegendData();
         /**
          * legend model
          */
         this.legendModel = new LegendModel({
             theme: this.theme,
             labels: params.dataProcessor.getLegendLabels(),
-            legendData: legendData,
+            legendData: params.dataProcessor.getLegendData(),
             seriesNames: this.seriesNames,
             chartType: this.chartType
         });
-
-        this.dimensionModel = new LegendDimensionModel({
-            legendLabels: tui.util.pluck(legendData, 'label'),
-            chartType: this.chartType,
-            options: this.options,
-            theme: this.theme
-        });
-    },
-
-    /**
-     * Register legend dimension.
-     */
-    registerDimension: function() {
-        var chartWidth = this.boundsMaker.getDimension('chart').width;
-        var legendDimension = this.dimensionModel.makeDimension(chartWidth);
-
-        this.boundsMaker.registerBaseDimension('legend', legendDimension);
-
-        if (predicate.hasVerticalLegendWidth(this.options)) {
-            this.boundsMaker.registerBaseDimension('calculationLegend', {
-                width: legendDimension.width
-            });
-        }
     },
 
     /**

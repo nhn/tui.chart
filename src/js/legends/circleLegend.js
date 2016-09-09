@@ -174,49 +174,6 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     resize: function() {
         this.rerender();
-    },
-
-    /**
-     * Get max width of label for CircleLegend.
-     * @returns {number}
-     * @private
-     */
-    _getCircleLegendLabelMaxWidth: function() {
-        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
-        var maxLabelWidth = renderUtil.getRenderedLabelWidth(maxLabel, {
-            fontSize: this.labelTheme.fontSize,
-            fontFamily: this.labelTheme.fontFamily
-        });
-
-        return maxLabelWidth;
-    },
-
-    /**
-     * Get circle legend width.
-     * @returns {number}
-     * @private
-     */
-    _getCircleLegendWidth: function() {
-        var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
-        var maxLabelWidth = this._getCircleLegendLabelMaxWidth();
-
-        return Math.max((maxRadius * 2), maxLabelWidth) + chartConst.CIRCLE_LEGEND_PADDING;
-    },
-
-    /**
-     * Register dimension of circle legend.
-     * @private
-     */
-    registerCircleLegendDimension: function() {
-        var circleLegendWidth = this._getCircleLegendWidth();
-        var legendWidth = this.boundsMaker.getDimension('calculationLegend').width || chartConst.MIN_LEGEND_WIDTH;
-
-        circleLegendWidth = Math.min(circleLegendWidth, legendWidth);
-
-        this.boundsMaker.registerBaseDimension('circleLegend', {
-            width: circleLegendWidth,
-            height: circleLegendWidth
-        });
     }
 });
 

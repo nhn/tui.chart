@@ -80,14 +80,12 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     },
 
     /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
+     * Add scale data for x axis.
      * @private
+     * @override
      */
-    _makeAxisScaleMakerMap: function() {
-        return {
-            xAxis: this._createAxisScaleMaker(this.options.xAxis, 'xAxis')
-        };
+    _addScaleDataForXAxis: function() {
+        this.scaleModel.addScale('xAxis', this.options.xAxis);
     },
 
     /**
@@ -99,7 +97,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         var axes = [
             {
                 name: 'yAxis',
-                isLabel: true,
                 isVertical: true
             },
             {
@@ -110,7 +107,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         if (this.hasRightYAxis) {
             axes.push({
                 name: 'rightYAxis',
-                isLabel: true,
                 isVertical: true
             });
         }

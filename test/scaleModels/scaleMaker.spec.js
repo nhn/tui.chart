@@ -1,22 +1,22 @@
 /**
- * @fileoverview Test for AxisScaleMaker.
+ * @fileoverview Test for ScaleMaker.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var AxisScaleMaker = require('../../src/js/helpers/axisScaleMaker.js');
+var ScaleMaker = require('../../src/js/scaleModels/scaleMaker.js');
 var chartConst = require('../../src/js/const');
 var DataProcessor = require('../../src/js/dataModels/dataProcessor.js');
 var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
 
-describe('Test for AxisScaleMaker', function() {
-    var axisScaleMaker, boundsMaker;
+describe('Test for ScaleMaker', function() {
+    var scaleMaker, boundsMaker;
 
     beforeEach(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['makeSeriesHeight', 'makeSeriesWidth']);
-        axisScaleMaker = new AxisScaleMaker({
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['calculateSeriesHeight', 'calculateSeriesWidth']);
+        scaleMaker = new ScaleMaker({
             dataProcessor: new DataProcessor([], '', {}),
             boundsMaker: boundsMaker
         });
@@ -26,9 +26,9 @@ describe('Test for AxisScaleMaker', function() {
         it('유효한 percent stack 차트의 경우 %로 formatting 가능한 함수를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(true);
+            spyOn(scaleMaker, '_isPercentStackChart').and.returnValue(true);
 
-            actual = axisScaleMaker._getFormatFunctions();
+            actual = scaleMaker._getFormatFunctions();
             expected = '10%';
 
             expect(actual[0](10)).toBe(expected);
@@ -37,12 +37,12 @@ describe('Test for AxisScaleMaker', function() {
         it('유효한 percent stack 차트가 아닌경우 dataProcessor에서 getFormatFunctions를 호출하여 formatting 가능한 함수를 얻어 반환합니다.', function() {
             var actual;
 
-            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(false);
-            spyOn(axisScaleMaker.dataProcessor, 'getFormatFunctions').and.returnValue('formatFunctions');
+            spyOn(scaleMaker, '_isPercentStackChart').and.returnValue(false);
+            spyOn(scaleMaker.dataProcessor, 'getFormatFunctions').and.returnValue('formatFunctions');
 
-            actual = axisScaleMaker._getFormatFunctions();
+            actual = scaleMaker._getFormatFunctions();
 
-            expect(axisScaleMaker.dataProcessor.getFormatFunctions).toHaveBeenCalled();
+            expect(scaleMaker.dataProcessor.getFormatFunctions).toHaveBeenCalled();
             expect(actual).toBe('formatFunctions');
         });
     });
@@ -51,14 +51,14 @@ describe('Test for AxisScaleMaker', function() {
         it('range정보에서 values를 계산하여 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_getScale').and.returnValue({
+            spyOn(scaleMaker, '_getScale').and.returnValue({
                 limit: {
                     min: -50,
                     max: 50
                 },
                 step: 25
             });
-            actual = axisScaleMaker._getScaleValues();
+            actual = scaleMaker._getScaleValues();
             expected = [-50, -25, 0, 25, 50];
 
             expect(actual).toEqual(expected);
@@ -67,16 +67,16 @@ describe('Test for AxisScaleMaker', function() {
         it('diverging 옵션이 있으면 음수를 양수로 변환하여 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_getScale').and.returnValue({
+            spyOn(scaleMaker, '_getScale').and.returnValue({
                 limit: {
                     min: -50,
                     max: 50
                 },
                 step: 25
             });
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
-            axisScaleMaker.diverging = true;
-            actual = axisScaleMaker._getScaleValues();
+            scaleMaker.chartType = chartConst.CHART_TYPE_BAR;
+            scaleMaker.diverging = true;
+            actual = scaleMaker._getScaleValues();
             expected = [50, 25, 0, 25, 50];
 
             expect(actual).toEqual(expected);
@@ -87,15 +87,15 @@ describe('Test for AxisScaleMaker', function() {
         it('get formatted scale values, when axis type is datetime', function() {
             var actual;
 
-            spyOn(axisScaleMaker, '_getScaleValues').and.returnValue([
+            spyOn(scaleMaker, '_getScaleValues').and.returnValue([
                 (new Date('01/01/2016')),
                 (new Date('04/01/2016')),
                 (new Date('08/01/2016'))
             ]);
-            axisScaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
-            axisScaleMaker.dateFormat = 'YYYY.MM';
+            scaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
+            scaleMaker.dateFormat = 'YYYY.MM';
 
-            actual = axisScaleMaker.getFormattedScaleValues();
+            actual = scaleMaker.getFormattedScaleValues();
 
             expect(actual).toEqual([
                 '2016.01',
@@ -107,14 +107,14 @@ describe('Test for AxisScaleMaker', function() {
         it('get formatted scale values, when axis type is not datetime', function() {
             var actual;
 
-            spyOn(axisScaleMaker, '_getScaleValues').and.returnValue([10, 20, 30]);
-            spyOn(axisScaleMaker, '_getFormatFunctions').and.returnValue([
+            spyOn(scaleMaker, '_getScaleValues').and.returnValue([10, 20, 30]);
+            spyOn(scaleMaker, '_getFormatFunctions').and.returnValue([
                 function(value) {
                     return 'formatted:' + value;
                 }
             ]);
 
-            actual = axisScaleMaker.getFormattedScaleValues();
+            actual = scaleMaker.getFormattedScaleValues();
 
             expect(actual).toEqual([
                 'formatted:10',
@@ -126,13 +126,13 @@ describe('Test for AxisScaleMaker', function() {
         it('get cached formatted scale values, when has cached formatted values', function() {
             var actual;
 
-            axisScaleMaker.formattedValues = [
+            scaleMaker.formattedValues = [
                 'cached:10',
                 'cached:20',
                 'cached:30'
             ];
 
-            actual = axisScaleMaker.getFormattedScaleValues();
+            actual = scaleMaker.getFormattedScaleValues();
 
             expect(actual).toEqual([
                 'cached:10',
@@ -146,7 +146,7 @@ describe('Test for AxisScaleMaker', function() {
         it('normal stack 차트의 baes values를 생성합니다.', function() {
             var seriesGroup, actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 bar: new SeriesDataModel()
             };
             seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
@@ -154,12 +154,12 @@ describe('Test for AxisScaleMaker', function() {
                 st1: [-10, 30, -50],
                 st2: [-20, 40, 60]
             });
-            axisScaleMaker.dataProcessor.seriesDataModelMap.bar.groups = [
+            scaleMaker.dataProcessor.seriesDataModelMap.bar.groups = [
                 seriesGroup
             ];
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
+            scaleMaker.chartType = chartConst.CHART_TYPE_BAR;
 
-            actual = axisScaleMaker._makeBaseValuesForNormalStackedChart();
+            actual = scaleMaker._makeBaseValuesForNormalStackedChart();
             expected = [30, -60, 100, -20];
 
             expect(actual).toEqual(expected);
@@ -170,15 +170,15 @@ describe('Test for AxisScaleMaker', function() {
         it('Make base values for making axis scale.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 bar: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.bar.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.bar.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
+            scaleMaker.chartType = chartConst.CHART_TYPE_BAR;
 
-            actual = axisScaleMaker._makeBaseValues();
+            actual = scaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30];
 
             expect(actual).toEqual(expected);
@@ -187,23 +187,23 @@ describe('Test for AxisScaleMaker', function() {
         it('Make base values, when single yAxis in comboChart.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
 
-            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+            scaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            scaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
                 value: [1, 2, 3]
             };
 
-            axisScaleMaker.isSingleYAxis = true;
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
+            scaleMaker.isSingleYAxis = true;
+            scaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
 
-            actual = axisScaleMaker._makeBaseValues();
+            actual = scaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30, 1, 2, 3];
 
             expect(actual).toEqual(expected);
@@ -212,31 +212,31 @@ describe('Test for AxisScaleMaker', function() {
         it('Make base values, when single yAxis and has stackType option in comboChart.', function() {
             var seriesGroup, actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
 
-            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            scaleMaker.dataProcessor.seriesNames = ['column', 'line'];
             seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.groups = [
+            scaleMaker.dataProcessor.seriesDataModelMap.column.groups = [
                 seriesGroup
             ];
             seriesGroup._makeValuesMapPerStack.and.returnValue({
                 st1: [70, 10, 20, 20, 80, 30],
             });
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
                 value: [1, 2, 3]
             };
 
-            axisScaleMaker.isSingleYAxis = true;
-            axisScaleMaker.stackType = chartConst.NORMAL_STACK_TYPE;
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
+            scaleMaker.isSingleYAxis = true;
+            scaleMaker.stackType = chartConst.NORMAL_STACK_TYPE;
+            scaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
 
-            actual = axisScaleMaker._makeBaseValues();
+            actual = scaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
 
             expect(actual).toEqual(expected);
@@ -245,35 +245,35 @@ describe('Test for AxisScaleMaker', function() {
         it('Make base values, when stackType is normal.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_makeBaseValuesForNormalStackedChart').and.returnValue([
+            spyOn(scaleMaker, '_makeBaseValuesForNormalStackedChart').and.returnValue([
                 80, -10, 20, -30, 80, -40
             ]);
 
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
-            axisScaleMaker.stackType = 'normal';
-            actual = axisScaleMaker._makeBaseValues();
+            scaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
+            scaleMaker.stackType = 'normal';
+            actual = scaleMaker._makeBaseValues();
             expected = [80, -10, 20, -30, 80, -40];
 
             expect(actual).toEqual(expected);
         });
 
         it('Make base values by calling dataProcessor.getValues without arguments, when chartType is map.', function() {
-            spyOn(axisScaleMaker.dataProcessor, 'getValues');
+            spyOn(scaleMaker.dataProcessor, 'getValues');
 
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_MAP;
-            axisScaleMaker._makeBaseValues();
+            scaleMaker.chartType = chartConst.CHART_TYPE_MAP;
+            scaleMaker._makeBaseValues();
 
-            expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith();
+            expect(scaleMaker.dataProcessor.getValues).toHaveBeenCalledWith();
         });
 
         it('Make base values by calling dataProcessor.getValues with arguments(chartType, valueType),' +
             ' when chartType is treemap.', function() {
-            spyOn(axisScaleMaker.dataProcessor, 'getValues');
+            spyOn(scaleMaker.dataProcessor, 'getValues');
 
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_TREEMAP;
-            axisScaleMaker._makeBaseValues();
+            scaleMaker.chartType = chartConst.CHART_TYPE_TREEMAP;
+            scaleMaker._makeBaseValues();
 
-            expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_TREEMAP, 'colorValue');
+            expect(scaleMaker.dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_TREEMAP, 'colorValue');
         });
     });
 
@@ -281,9 +281,9 @@ describe('Test for AxisScaleMaker', function() {
         it('x축일 경우에는 series width를 기본 사이즈로 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
 
-            actual = axisScaleMaker._getBaseSize();
+            actual = scaleMaker._getBaseSize();
             expected = 400;
 
             expect(actual).toBe(expected);
@@ -292,10 +292,10 @@ describe('Test for AxisScaleMaker', function() {
         it('y축일 경우에는 series height를 기본 사이즈로 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesHeight.and.returnValue(300);
+            boundsMaker.calculateSeriesHeight.and.returnValue(300);
 
-            axisScaleMaker.isVertical = true;
-            actual = axisScaleMaker._getBaseSize();
+            scaleMaker.isVertical = true;
+            actual = scaleMaker._getBaseSize();
             expected = 300;
 
             expect(actual).toBe(expected);
@@ -306,9 +306,9 @@ describe('Test for AxisScaleMaker', function() {
         it('너비가 320일 경우에는 320을 40과 60으로 나눈 값인 5와 8 사이의 후보 value count 정보를 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(320);
+            boundsMaker.calculateSeriesWidth.and.returnValue(320);
 
-            actual = axisScaleMaker._getCandidateCountsOfValue();
+            actual = scaleMaker._getCandidateCountsOfValue();
             expected = [4, 5, 6, 7];
 
             expect(actual).toEqual(expected);
@@ -317,9 +317,9 @@ describe('Test for AxisScaleMaker', function() {
         it('너비가 450일 경우에는 450을 40과 60으로 나눈 값인 7과 11 사이의의 후보 value count 정보를 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(450);
+            boundsMaker.calculateSeriesWidth.and.returnValue(450);
 
-            actual = axisScaleMaker._getCandidateCountsOfValue();
+            actual = scaleMaker._getCandidateCountsOfValue();
             expected = [6, 7, 8, 9, 10];
 
             expect(actual).toEqual(expected);
@@ -328,7 +328,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_makeLimitForDivergingOption()', function() {
         it('min, max값의 절대값중 큰 숫자를 구해 새로운 min(-max), max를 반환합니다.', function() {
-            var actual = axisScaleMaker._makeLimitForDivergingOption({
+            var actual = scaleMaker._makeLimitForDivergingOption({
                     min: -20,
                     max: 10
                 }),
@@ -343,7 +343,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_makeIntegerTypeScale()', function() {
         it('min, max가 정수인 경우에는 정수 변환 작업 없는 결과값을 반환합니다.', function() {
-            var actual = axisScaleMaker._makeIntegerTypeScale({
+            var actual = scaleMaker._makeIntegerTypeScale({
                     min: 1,
                     max: 100
                 }),
@@ -360,7 +360,7 @@ describe('Test for AxisScaleMaker', function() {
         });
 
         it('min, max가 소수 경우에는 정수 변환 작업된 결과값을 반환합니다.', function() {
-            var actual = axisScaleMaker._makeIntegerTypeScale({
+            var actual = scaleMaker._makeIntegerTypeScale({
                     min: 0.1,
                     max: 0.9
                 }),
@@ -379,11 +379,11 @@ describe('Test for AxisScaleMaker', function() {
         it('min, max가 소수이고 옵션이 있을 경우에는 옵션값 까지 변환 작업된 결과값을 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.limitOption = {
+            scaleMaker.limitOption = {
                 min: 0.2,
                 max: 0.8
             };
-            actual = axisScaleMaker._makeIntegerTypeScale({
+            actual = scaleMaker._makeIntegerTypeScale({
                 min: 0.1,
                 max: 0.9
             });
@@ -405,7 +405,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_makeLimitIfEqualMinMax()', function() {
         it('min, max값이 0보다 클 경우에는 min을 0으로 설정합니다.', function() {
-            var actual = axisScaleMaker._makeLimitIfEqualMinMax({
+            var actual = scaleMaker._makeLimitIfEqualMinMax({
                     min: 5,
                     max: 5
                 }),
@@ -418,7 +418,7 @@ describe('Test for AxisScaleMaker', function() {
         });
 
         it('min, max값이 0보다 작을 경우에는 max를 0으로 설정합니다.', function() {
-            var actual = axisScaleMaker._makeLimitIfEqualMinMax({
+            var actual = scaleMaker._makeLimitIfEqualMinMax({
                     min: -5,
                     max: -5
                 }),
@@ -433,7 +433,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_makeBaseLimit()', function() {
         it('기본 limit 값을 계산하여 반환합니다.', function() {
-            var actual = axisScaleMaker._makeBaseLimit({
+            var actual = scaleMaker._makeBaseLimit({
                     min: -90,
                     max: 0
                 }, {}),
@@ -446,7 +446,7 @@ describe('Test for AxisScaleMaker', function() {
         });
 
         it('옵션이 있는 경우에는 계산된 기본 limit에 옵션 정보를 적용하여 반환합니다.', function() {
-            var actual = axisScaleMaker._makeBaseLimit({
+            var actual = scaleMaker._makeBaseLimit({
                     min: -90,
                     max: 0
                 }, {
@@ -461,7 +461,7 @@ describe('Test for AxisScaleMaker', function() {
         });
 
         it('min, max값이 같고 양수라면 min을 0으로 변경하고 그대로 반환합니다.', function() {
-            var actual = axisScaleMaker._makeBaseLimit({
+            var actual = scaleMaker._makeBaseLimit({
                     min: 20,
                     max: 20
                 }, {}),
@@ -474,7 +474,7 @@ describe('Test for AxisScaleMaker', function() {
         });
 
         it('min, max값이 같고 음수라면 max을 0으로 변경하고 그대로 반환합니다.', function() {
-            var actual = axisScaleMaker._makeBaseLimit({
+            var actual = scaleMaker._makeBaseLimit({
                     min: -20,
                     max: -20
                 }, {}),
@@ -489,59 +489,59 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_normalizeMin()', function() {
         it('step이 2일때 min 1.6에 대한 정규화 결과는 0입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(1.6, 2);
+            var actual = scaleMaker._normalizeMin(1.6, 2);
             expect(actual).toBe(0);
         });
 
         it('step이 1일때 min 1.6에 대한 정규화 결과는 1입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(1.6, 1);
+            var actual = scaleMaker._normalizeMin(1.6, 1);
             expect(actual).toBe(1);
         });
 
         it('step이 2일때 min 2.3에 대한 정규화 결과는 2입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(2.3, 2);
+            var actual = scaleMaker._normalizeMin(2.3, 2);
             expect(actual).toBe(2);
         });
 
         it('step이 2일때 min 3.3에 대한 정규화 결과는 2입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(3.3, 2);
+            var actual = scaleMaker._normalizeMin(3.3, 2);
             expect(actual).toBe(2);
         });
 
         it('step이 5일때 min 3.3에 대한 정규화 결과는 0입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(3.3, 5);
+            var actual = scaleMaker._normalizeMin(3.3, 5);
             expect(actual).toBe(0);
         });
 
         it('step이 5일때 min 7.3에 대한 정규화 결과는 5입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(7.3, 5);
+            var actual = scaleMaker._normalizeMin(7.3, 5);
             expect(actual).toBe(5);
         });
 
         it('step이 10일때 min 7.3에 대한 정규화 결과는 0입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(7.3, 10);
+            var actual = scaleMaker._normalizeMin(7.3, 10);
             expect(actual).toBe(0);
         });
 
         it('step이 30일때 min -100에 대한 정규화 결과는 -120입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(-100, 30);
+            var actual = scaleMaker._normalizeMin(-100, 30);
             expect(actual).toBe(-120);
         });
 
         it('step이 30일때 min -10에 대한 정규화 결과는 -30입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(-10, 30);
+            var actual = scaleMaker._normalizeMin(-10, 30);
             expect(actual).toBe(-30);
         });
 
         it('step이 5일때 min -10에 대한 정규화 결과는 -10입니다.', function() {
-            var actual = axisScaleMaker._normalizeMin(-10, 5);
+            var actual = scaleMaker._normalizeMin(-10, 5);
             expect(actual).toBe(-10);
         });
     });
 
     describe('_makeNormalizedMax()', function() {
         it('정규화된 max 결과 값을 반환합니다.', function() {
-            var actual = axisScaleMaker._makeNormalizedMax({
+            var actual = scaleMaker._makeNormalizedMax({
                 min: 0,
                 max: 110
             }, 20, 5);
@@ -552,7 +552,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_normalizeLimit()', function() {
         it('정규화된 limit 값을 반환합니다.', function() {
-            var actual = axisScaleMaker._normalizeLimit({
+            var actual = scaleMaker._normalizeLimit({
                 min: 10,
                 max: 110
             }, 20, 5);
@@ -568,9 +568,9 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 actual, expected;
 
-            axisScaleMaker.chartType = 'line';
+            scaleMaker.chartType = 'line';
 
-            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step);
+            actual = scaleMaker._decreaseMinByStep(min, dataMin, step);
             expected = -10;
 
             expect(actual).toEqual(expected);
@@ -582,7 +582,7 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step);
+            actual = scaleMaker._decreaseMinByStep(min, dataMin, step);
             expected = -30;
 
             expect(actual).toEqual(expected);
@@ -595,7 +595,7 @@ describe('Test for AxisScaleMaker', function() {
                 optionMin = 0,
                 actual, expected;
 
-            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step, optionMin);
+            actual = scaleMaker._decreaseMinByStep(min, dataMin, step, optionMin);
             expected = -10;
 
             expect(actual).toEqual(expected);
@@ -607,7 +607,7 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step);
+            actual = scaleMaker._decreaseMinByStep(min, dataMin, step);
             expected = -10;
 
             expect(actual).toEqual(expected);
@@ -621,9 +621,9 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 actual, expected;
 
-            axisScaleMaker.chartType = 'line';
+            scaleMaker.chartType = 'line';
 
-            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step);
+            actual = scaleMaker._increaseMaxByStep(max, dataMax, step);
             expected = 10;
 
             expect(actual).toEqual(expected);
@@ -635,7 +635,7 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step);
+            actual = scaleMaker._increaseMaxByStep(max, dataMax, step);
             expected = 110;
 
             expect(actual).toEqual(expected);
@@ -648,7 +648,7 @@ describe('Test for AxisScaleMaker', function() {
                 optionMax = 80,
                 actual, expected;
 
-            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step, optionMax);
+            actual = scaleMaker._increaseMaxByStep(max, dataMax, step, optionMax);
             expected = 90;
 
             expect(actual).toEqual(expected);
@@ -660,7 +660,7 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step);
+            actual = scaleMaker._increaseMaxByStep(max, dataMax, step);
             expected = 90;
 
             expect(actual).toEqual(expected);
@@ -669,7 +669,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_divideScaleStep()', function() {
         it('step을 반으로 나누었을 때의 valueCount가 후보로 계산된 valueCount와 인접하면 step을 반으로 나누어 반환합니다.', function() {
-            var actual = axisScaleMaker._divideScaleStep({
+            var actual = scaleMaker._divideScaleStep({
                     min: 0,
                     max: 100
                 }, 50, 4),
@@ -692,7 +692,7 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 valueCount = 6,
                 options = {},
-                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
+                actual = scaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 0,
                     max: 100
@@ -713,7 +713,7 @@ describe('Test for AxisScaleMaker', function() {
                 step = 20,
                 valueCount = 6,
                 options = {},
-                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
+                actual = scaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 0,
                     max: 100
@@ -736,7 +736,7 @@ describe('Test for AxisScaleMaker', function() {
                 options = {
                     min: 10
                 },
-                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
+                actual = scaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 10,
                     max: 110
@@ -759,7 +759,7 @@ describe('Test for AxisScaleMaker', function() {
                 options = {
                     max: 110
                 },
-                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
+                actual = scaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 10,
                     max: 110
@@ -775,9 +775,9 @@ describe('Test for AxisScaleMaker', function() {
                     min: 0,
                     max: 80
                 },
-                baseLimit = axisScaleMaker._makeBaseLimit(dataLimit, {}),
+                baseLimit = scaleMaker._makeBaseLimit(dataLimit, {}),
                 valueCount = 4,
-                actual = axisScaleMaker._makeCandidateScale(baseLimit, dataLimit, valueCount, {});
+                actual = scaleMaker._makeCandidateScale(baseLimit, dataLimit, valueCount, {});
 
             expect(actual).toEqual({
                 limit: {
@@ -792,7 +792,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_makeCandidateScales()', function() {
         it('tickCounts정보에 해당하는 tick info 후보군을 계산하여 반환합니다.', function() {
-            var actual = axisScaleMaker._makeCandidateScales({
+            var actual = scaleMaker._makeCandidateScales({
                     limit: {
                         min: 10,
                         max: 100
@@ -818,7 +818,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_getComparingValue()', function() {
         it('axis range를 선정하는 기준이 되는 비교값을 계산하여 반환합니다.', function() {
-            var actual = axisScaleMaker._getComparingValue({
+            var actual = scaleMaker._getComparingValue({
                     min: 10,
                     max: 90
                 }, [4], {
@@ -837,7 +837,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_selectAxisScale()', function() {
         it('후보군들의 비교값 중 비교값이 제일 작은 axis range를 선정하여 반환합니다.', function() {
-            var actual = axisScaleMaker._selectAxisScale({
+            var actual = scaleMaker._selectAxisScale({
                     min: 10,
                     max: 90
                 }, [
@@ -864,7 +864,7 @@ describe('Test for AxisScaleMaker', function() {
 
     describe('_restoreNumberState()', function() {
         it('애초에 정수형 변환이 없었던 tick info는 되돌리는 작업이 수행되지 않은 결과값을 반환합니다.', function() {
-            var tickInfo = axisScaleMaker._restoreNumberState({
+            var tickInfo = scaleMaker._restoreNumberState({
                 step: 5,
                 limit: {
                     min: 1,
@@ -881,7 +881,7 @@ describe('Test for AxisScaleMaker', function() {
         });
 
         it('정수형으로 변환되었던 tick info를 원래 형태의 값으로 되롤린 결과값을 반환합니다.', function() {
-            var tickInfo = axisScaleMaker._restoreNumberState({
+            var tickInfo = scaleMaker._restoreNumberState({
                 step: 5,
                 limit: {
                     min: 1,
@@ -905,7 +905,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1).getTime(),
                 max: new Date(2018, 1, 1).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+            var actual = scaleMaker._findDateType(baseLimit, 6);
 
             expect(actual).toBe(chartConst.DATE_TYPE_YEAR);
         });
@@ -917,7 +917,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1).getTime(),
                 max: new Date(2011, 1, 1).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 24);
+            var actual = scaleMaker._findDateType(baseLimit, 24);
 
             expect(actual).toBe(chartConst.DATE_TYPE_MONTH);
         });
@@ -928,7 +928,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1).getTime(),
                 max: new Date(2010, 12, 1).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+            var actual = scaleMaker._findDateType(baseLimit, 6);
 
             expect(actual).toBe(chartConst.DATE_TYPE_MONTH);
         });
@@ -940,7 +940,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1).getTime(),
                 max: new Date(2010, 3, 1).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+            var actual = scaleMaker._findDateType(baseLimit, 12);
 
             expect(actual).toBe(chartConst.DATE_TYPE_DATE);
         });
@@ -951,7 +951,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1).getTime(),
                 max: new Date(2010, 1, 10).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+            var actual = scaleMaker._findDateType(baseLimit, 6);
 
             expect(actual).toBe(chartConst.DATE_TYPE_DATE);
         });
@@ -963,7 +963,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1).getTime(),
                 max: new Date(2010, 1, 3).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+            var actual = scaleMaker._findDateType(baseLimit, 12);
 
             expect(actual).toBe(chartConst.DATE_TYPE_HOUR);
         });
@@ -974,7 +974,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 13).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+            var actual = scaleMaker._findDateType(baseLimit, 6);
 
             expect(actual).toBe(chartConst.DATE_TYPE_HOUR);
         });
@@ -986,7 +986,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 3).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+            var actual = scaleMaker._findDateType(baseLimit, 12);
 
             expect(actual).toBe(chartConst.DATE_TYPE_MINUTE);
         });
@@ -997,7 +997,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 1, 12).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+            var actual = scaleMaker._findDateType(baseLimit, 6);
 
             expect(actual).toBe(chartConst.DATE_TYPE_MINUTE);
         });
@@ -1009,7 +1009,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 1, 3).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+            var actual = scaleMaker._findDateType(baseLimit, 12);
 
             expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
         });
@@ -1020,7 +1020,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 1, 1, 12).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+            var actual = scaleMaker._findDateType(baseLimit, 6);
 
             expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
         });
@@ -1032,7 +1032,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 1, 1, 6).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+            var actual = scaleMaker._findDateType(baseLimit, 12);
 
             expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
         });
@@ -1042,7 +1042,7 @@ describe('Test for AxisScaleMaker', function() {
                 min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 1, 1, 1).getTime()
             };
-            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+            var actual = scaleMaker._findDateType(baseLimit, 6);
 
             expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
         });
@@ -1052,10 +1052,10 @@ describe('Test for AxisScaleMaker', function() {
         it('calculate scale.', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
-            spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
+            spyOn(scaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 
-            actual = axisScaleMaker._calculateScale();
+            actual = scaleMaker._calculateScale();
             expected = {
                 limit: {min: 0, max: 100},
                 step: 20,
@@ -1068,22 +1068,22 @@ describe('Test for AxisScaleMaker', function() {
         it('calculate scale, when axis type is datetime', function() {
             var actual, expected;
 
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
-            spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
+            spyOn(scaleMaker, '_makeBaseValues').and.returnValue([
                 (new Date('01/01/2016')).getTime(),
                 (new Date('01/03/2016')).getTime(),
                 (new Date('01/06/2016')).getTime(),
                 (new Date('01/10/2016')).getTime()
             ]);
-            axisScaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
+            scaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
 
-            actual = axisScaleMaker._calculateScale();
+            actual = scaleMaker._calculateScale();
             expected = {
                 limit: {
                     min: (new Date('01/01/2016')).getTime(),
                     max: (new Date('01/11/2016')).getTime()
                 },
-                step: axisScaleMaker.millisecondMap.date * 2,
+                step: scaleMaker.millisecondMap.date * 2,
                 valueCount: 5
             };
 
@@ -1095,22 +1095,22 @@ describe('Test for AxisScaleMaker', function() {
         it('axis가 하나 있을 경우에는 chartType을 전달하지 않은 getValues()의 결과를 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
                 value: [1, 2, 3]
             };
-            axisScaleMaker.isSingleYAxis = true;
-            axisScaleMaker.chartType = 'column';
+            scaleMaker.isSingleYAxis = true;
+            scaleMaker.chartType = 'column';
 
-            actual = axisScaleMaker._getValuesForSum();
-            expected = axisScaleMaker.dataProcessor.getValues();
+            actual = scaleMaker._getValuesForSum();
+            expected = scaleMaker.dataProcessor.getValues();
 
             expect(actual).toEqual(expected);
         });
@@ -1118,21 +1118,21 @@ describe('Test for AxisScaleMaker', function() {
         it('axis가 두개 있을 경우에는 chartType을 전달한 getValues() 결과를 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
                 value: [1, 2, 3]
             };
 
-            axisScaleMaker.chartType = 'column';
-            actual = axisScaleMaker._getValuesForSum();
-            expected = axisScaleMaker.dataProcessor.getValues('column');
+            scaleMaker.chartType = 'column';
+            actual = scaleMaker._getValuesForSum();
+            expected = scaleMaker.dataProcessor.getValues('column');
 
             expect(actual).toEqual(expected);
         });
@@ -1142,20 +1142,20 @@ describe('Test for AxisScaleMaker', function() {
         it('values의 음수값의 합을 계산하여 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [-70, 10, -20, 20, 80, 30]
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
                 value: [1, 2, -3]
             };
 
-            axisScaleMaker.isSingleYAxis = true;
-            actual = axisScaleMaker._calculateMinusSum();
+            scaleMaker.isSingleYAxis = true;
+            actual = scaleMaker._calculateMinusSum();
             expected = -93;
 
             expect(actual).toEqual(expected);
@@ -1166,20 +1166,20 @@ describe('Test for AxisScaleMaker', function() {
         it('values의 양수값의 합을 계산합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+            scaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            scaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [-70, 10, -20, 20, 80, 30]
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+            scaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
                 value: [1, 2, -3]
             };
 
-            axisScaleMaker.isSingleYAxis = true;
-            actual = axisScaleMaker._calculatePlusSum();
+            scaleMaker.isSingleYAxis = true;
+            actual = scaleMaker._calculatePlusSum();
             expected = 143;
 
             expect(actual).toEqual(expected);
@@ -1190,9 +1190,9 @@ describe('Test for AxisScaleMaker', function() {
         it('음수의 합이 0일 경우에는 chartConst.PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(0);
+            spyOn(scaleMaker, '_calculateMinusSum').and.returnValue(0);
 
-            actual = axisScaleMaker._getPercentStackedScale();
+            actual = scaleMaker._getPercentStackedScale();
             expected = chartConst.PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
@@ -1201,10 +1201,10 @@ describe('Test for AxisScaleMaker', function() {
         it('양수의 합이 0일 경우에는 chartConst.MINUS_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
-            spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(0);
+            spyOn(scaleMaker, '_calculateMinusSum').and.returnValue(-100);
+            spyOn(scaleMaker, '_calculatePlusSum').and.returnValue(0);
 
-            actual = axisScaleMaker._getPercentStackedScale();
+            actual = scaleMaker._getPercentStackedScale();
             expected = chartConst.MINUS_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
@@ -1213,12 +1213,12 @@ describe('Test for AxisScaleMaker', function() {
         it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 있을 경우에는 chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
-            spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(100);
-            axisScaleMaker.chartType = 'bar';
-            axisScaleMaker.diverging = true;
+            spyOn(scaleMaker, '_calculateMinusSum').and.returnValue(-100);
+            spyOn(scaleMaker, '_calculatePlusSum').and.returnValue(100);
+            scaleMaker.chartType = 'bar';
+            scaleMaker.diverging = true;
 
-            actual = axisScaleMaker._getPercentStackedScale();
+            actual = scaleMaker._getPercentStackedScale();
             expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
@@ -1227,10 +1227,10 @@ describe('Test for AxisScaleMaker', function() {
         it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
-            spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(100);
+            spyOn(scaleMaker, '_calculateMinusSum').and.returnValue(-100);
+            spyOn(scaleMaker, '_calculatePlusSum').and.returnValue(100);
 
-            actual = axisScaleMaker._getPercentStackedScale();
+            actual = scaleMaker._getPercentStackedScale();
             expected = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
@@ -1241,11 +1241,11 @@ describe('Test for AxisScaleMaker', function() {
         it('유효한 percent stack 차트일 경우에는 _getPercentStackedScale()의 수행결과를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(true);
-            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(0);
+            spyOn(scaleMaker, '_isPercentStackChart').and.returnValue(true);
+            spyOn(scaleMaker, '_calculateMinusSum').and.returnValue(0);
 
-            actual = axisScaleMaker._makeScale();
-            expected = axisScaleMaker._getPercentStackedScale();
+            actual = scaleMaker._makeScale();
+            expected = scaleMaker._getPercentStackedScale();
 
             expect(actual).toBe(expected);
         });
@@ -1253,12 +1253,12 @@ describe('Test for AxisScaleMaker', function() {
         it('유효한 percent stack 차트가 아닌 경우에는 _calculateScale()의 수행결과를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(false);
-            boundsMaker.makeSeriesWidth.and.returnValue(400);
-            spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
+            spyOn(scaleMaker, '_isPercentStackChart').and.returnValue(false);
+            boundsMaker.calculateSeriesWidth.and.returnValue(400);
+            spyOn(scaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 
-            actual = axisScaleMaker._makeScale();
-            expected = axisScaleMaker._calculateScale();
+            actual = scaleMaker._makeScale();
+            expected = scaleMaker._calculateScale();
 
             expect(actual).toEqual(expected);
         });

@@ -7,7 +7,6 @@
 'use strict';
 
 var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js');
-var axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 var Tooltip = require('../../src/js/tooltips/tooltip');
 var GroupTooltip = require('../../src/js/tooltips/groupTooltip');
 var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent');
@@ -16,7 +15,7 @@ var BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomE
 describe('Test for ComboChart', function() {
     var componentMap = {};
     var spyObjs = {};
-    var componentManager, dataProcessor, boundsMaker;
+    var componentManager, dataProcessor, boundsMaker, scaleModel;
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
@@ -33,57 +32,12 @@ describe('Test for ComboChart', function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
                                     ['getCategories', 'isCoordinateType', 'addDataRatios', 'addDataRatiosForCoordinateType']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getAxesData']);
+        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisDataMap'])
 
         axisTypeMixer.dataProcessor = dataProcessor;
         axisTypeMixer.boundsMaker = boundsMaker;
+        axisTypeMixer.scaleModel = scaleModel;
         axisTypeMixer.options = {};
-    });
-
-    describe('_makeAxisData()', function() {
-        it('axisSacleMaker가 있으면 axisDataMaker.makeValueAxisData의 수행 결과를 반환합니다.', function() {
-            var axisScaleMaker = 'instance of axisScaleMaker';
-            var actual, expected;
-
-            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
-            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
-            axisTypeMixer.chartType = 'bar';
-
-            actual = axisTypeMixer._makeAxisData(axisScaleMaker, 'options', true);
-            expected = 'value type';
-
-            expect(axisDataMaker.makeValueAxisData).toHaveBeenCalledWith({
-                axisScaleMaker: axisScaleMaker,
-                chartType: 'bar',
-                dataProcessor: dataProcessor,
-                options: 'options',
-                isVertical: true,
-                isPositionRight: false,
-                aligned: false
-            });
-            expect(actual).toBe(expected);
-        });
-
-        it('axisSacleMaker가 없으면 axisDataMaker.makeLabelAxisData의 수행 결과를 반환합니다.', function() {
-            var actual, expected;
-
-            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
-            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
-            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
-            axisTypeMixer.options = {};
-
-            actual = axisTypeMixer._makeAxisData(null, 'options');
-            expected = 'label type';
-
-            expect(axisDataMaker.makeLabelAxisData).toHaveBeenCalledWith({
-                labels: ['cate1', 'cate2'],
-                options: 'options',
-                isVertical: false,
-                isPositionRight: false,
-                aligned: false,
-                addedDataCount: 0
-            });
-            expect(actual).toBe(expected);
-        });
     });
 
     describe('_addAxesComponents', function() {
@@ -219,7 +173,7 @@ describe('Test for ComboChart', function() {
                 actual = axisTypeMixer._getLimitMap({
                     xAxis: xAxis,
                     yAxis: yAxis
-                }, ['bar'], false);
+                }, ['bar']);
             expect(actual.bar).toBe(xAxis.limit);
         });
 
@@ -232,7 +186,7 @@ describe('Test for ComboChart', function() {
             };
             actual = axisTypeMixer._getLimitMap({
                 yAxis: yAxis
-            }, ['column'], true);
+            }, ['column']);
 
             expect(actual.column).toBe(yAxis.limit);
         });
@@ -340,7 +294,7 @@ describe('Test for ComboChart', function() {
             var stackType;
 
             dataProcessor.isCoordinateType.and.returnValue(false);
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 yAxis: {
                     limit: {
                         min: 0,
@@ -374,7 +328,7 @@ describe('Test for ComboChart', function() {
         it('axis type chart의 renderingData를 생성합니다.', function() {
             var actual;
 
-            boundsMaker.getAxesData.and.returnValue({
+            scaleModel.getAxisDataMap.and.returnValue({
                 xAxis: {
                     limit: {},
                     aligned: true,

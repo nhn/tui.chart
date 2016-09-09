@@ -1,5 +1,5 @@
 /**
- * @fileoverview AxisScaleMaker calculates the limit and step into values of processed data and returns it.
+ * @fileoverview ScaleMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
  *       FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -7,17 +7,17 @@
 'use strict';
 
 var chartConst = require('../const');
-var predicate = require('./predicate');
-var calculator = require('./calculator');
-var renderUtil = require('./renderUtil');
+var predicate = require('../helpers/predicate');
+var calculator = require('../helpers/calculator');
+var renderUtil = require('../helpers/renderUtil');
 
 var abs = Math.abs;
 
-var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */{
+var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     /**
-     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
+     * ScaleMaker calculates the limit and step into values of processed data and returns it.
      * @param {object} params parameters
-     * @constructs AxisScaleMaker
+     * @constructs ScaleMaker
      */
     init: function(params) {
         /**
@@ -49,6 +49,8 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
          * @type {?{min: number, max: number}}
          */
         this.limitOption = params.limitOption;
+
+        this.axisOptions = params.axisOptions;
 
         /**
          * axis type
@@ -284,9 +286,9 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         var baseSize;
 
         if (this.isVertical) {
-            baseSize = this.boundsMaker.makeSeriesHeight();
+            baseSize = this.boundsMaker.calculateSeriesHeight();
         } else {
-            baseSize = this.boundsMaker.makeSeriesWidth();
+            baseSize = this.boundsMaker.calculateSeriesWidth();
         }
 
         return baseSize;
@@ -449,7 +451,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             normalized = tui.util.subtraction(min, (min >= 0 ? mod : step + mod));
         }
 
-        return normalized;
+        return Math.round(normalized);
     },
 
     /**
@@ -462,10 +464,11 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeNormalizedMax: function(limit, step, valueCount) {
-        var minMaxDiff = tui.util.multiplication(step, valueCount - 1),
-            normalizedMax = tui.util.addition(limit.min, minMaxDiff),
-            maxDiff = limit.max - normalizedMax,
-            modDiff, divideDiff;
+        var minMaxDiff = tui.util.multiplication(step, valueCount - 1);
+        var normalizedMax = tui.util.addition(limit.min, minMaxDiff);
+        var maxDiff = limit.max - normalizedMax;
+        var modDiff, divideDiff;
+
         // normalize된 max값이 원래의 max값 보다 작을 경우 step을 증가시켜 큰 값으로 만들기
         if (maxDiff > 0) {
             modDiff = maxDiff % step;
@@ -639,8 +642,8 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeCandidateScale: function(baseLimit, dataLimit, valueCount, options) {
-        var limit = tui.util.extend({}, baseLimit),
-            step;
+        var limit = tui.util.extend({}, baseLimit);
+        var step;
 
         // 01. 기본 limit 정보로 step 얻기
         step = calculator.calculateStepFromLimit(limit, valueCount);
@@ -970,4 +973,4 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     }
 });
 
-module.exports = AxisScaleMaker;
+module.exports = ScaleMaker;

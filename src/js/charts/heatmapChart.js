@@ -12,7 +12,6 @@ var ColorSpectrum = require('./colorSpectrum');
 var Series = require('../series/heatmapChartSeries');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
-var axisDataMaker = require('../helpers/axisDataMaker');
 var Legend = require('../legends/spectrumLegend');
 
 var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
@@ -53,16 +52,16 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
     },
 
     /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {object}
+     * Add scale data for x legend.
      * @private
+     * @override
      */
-    _makeAxisScaleMakerMap: function() {
-        return {
-            legend: this._createAxisScaleMaker({}, 'legend', null, this.chartType, {
-                valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-            })
-        };
+    _addScaleDataForLegend: function() {
+        this.scaleModel.addScale('legend', {}, {
+            chartType: this.chartType
+        }, {
+            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
+        });
     },
 
     /**
@@ -71,25 +70,32 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
      * @private
      */
     _addComponents: function() {
+        var seriesTheme = this.theme.series;
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+
         this._addComponentsForAxisType({
             axis: [
                 {
                     name: 'yAxis',
-                    isLabel: true,
                     isVertical: true
                 },
                 {
-                    name: 'xAxis',
-                    isLabel: true
+                    name: 'xAxis'
                 }
             ],
             legend: {
-                LegendClass: Legend
+                LegendClass: Legend,
+                additionalParams: {
+                    colorSpectrum: colorSpectrum
+                }
             },
             series: [
                 {
                     name: 'heatmapSeries',
-                    SeriesClass: Series
+                    SeriesClass: Series,
+                    data: {
+                        colorSpectrum: colorSpectrum
+                    }
                 }
             ],
             tooltip: true,
@@ -106,34 +112,9 @@ tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
  * @override
  */
 HeatmapChart.prototype._addDataRatios = function() {
-    var limit = this._getAxisScaleMakerMap().legend.getLimit();
+    var limit = this.scaleModel.getScaleMap().legend.getLimit();
 
     this.dataProcessor.addDataRatios(limit, null, this.chartType);
-};
-
-/**
- * Make rendering data for delivery to each component.
- * @returns {object}
- * @private
- * @override
- */
-HeatmapChart.prototype._makeRenderingData = function() {
-    var data = axisTypeMixer._makeRenderingData.call(this);
-    var seriesTheme = this.theme.series;
-    var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
-
-    data.legend = {
-        colorSpectrum: colorSpectrum,
-        axesData: axisDataMaker.makeValueAxisData({
-            dataProcessor: this.dataProcessor,
-            chartType: this.chartType,
-            axisScaleMaker: this._getAxisScaleMakerMap().legend,
-            isVertical: true
-        })
-    };
-    data.heatmapSeries.colorSpectrum = colorSpectrum;
-
-    return data;
 };
 
 /**

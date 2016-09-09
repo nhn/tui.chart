@@ -56,14 +56,12 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
     },
 
     /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
+     * Add scale data for y axis.
      * @private
+     * @override
      */
-    _makeAxisScaleMakerMap: function() {
-        return {
-            yAxis: this._createAxisScaleMaker(this.options.yAxis, 'yAxis')
-        };
+    _addScaleDataForYAxis: function() {
+        this.scaleModel.addScale('yAxis', this.options.yAxis);
     },
 
     /**
@@ -80,8 +78,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                     isVertical: true
                 },
                 {
-                    name: 'xAxis',
-                    isLabel: true
+                    name: 'xAxis'
                 }
             ],
             series: [

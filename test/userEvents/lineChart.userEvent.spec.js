@@ -7,7 +7,6 @@
 'use strict';
 
 var dom = require('../../src/js/helpers/domHandler');
-var chartBase = require('../../src/js/charts/chartBase');
 
 describe('Test user events for line chart', function() {
     var rawData = {

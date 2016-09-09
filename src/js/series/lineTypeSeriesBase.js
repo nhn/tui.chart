@@ -25,7 +25,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @override
      */
     render: function() {
-        this.beforeAxes = this.boundsMaker.getAxesData();
+        this.beforeAxes = this.scaleModel.getAxisDataMap();
 
         return Series.prototype.render.apply(this, arguments);
     },
@@ -78,7 +78,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var seriesDataModel = this._getSeriesDataModel();
         var width = seriesWidth || dimension.width || 0;
         var height = dimension.height;
-        var xAxis = this.boundsMaker.getAxesData().xAxis;
+        var xAxis = this.scaleModel.getAxisDataMap().xAxis;
         var additionalLeft = 0;
 
         if (xAxis.sizeRatio) {
@@ -283,16 +283,16 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _isChangedAxisLimit: function() {
         var beforeAxes = this.beforeAxes;
-        var axesData = this.boundsMaker.getAxesData();
+        var axisDataMap = this.scaleModel.getAxisDataMap();
         var changed = true;
 
-        this.beforeAxes = axesData;
+        this.beforeAxes = axisDataMap;
 
         if (beforeAxes) {
-            changed = this._isChangedLimit(beforeAxes.yAxis.limit, axesData.yAxis.limit);
+            changed = this._isChangedLimit(beforeAxes.yAxis.limit, axisDataMap.yAxis.limit);
 
-            if (axesData.xAxis.limit) {
-                changed = changed || this._isChangedLimit(beforeAxes.xAxis.limit, axesData.xAxis.limit);
+            if (axisDataMap.xAxis.limit) {
+                changed = changed || this._isChangedLimit(beforeAxes.xAxis.limit, axisDataMap.xAxis.limit);
             }
         }
 
@@ -436,7 +436,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _makeZeroTopForAddingData: function() {
         var seriesHeight = this.boundsMaker.getDimension('series').height;
-        var limit = this.boundsMaker.getAxesData().yAxis.limit;
+        var limit = this.scaleModel.getAxisDataMap().yAxis.limit;
 
         return this._getLimitDistanceFromZeroPoint(seriesHeight, limit).toMax + chartConst.SERIES_EXPAND_SIZE;
     },
