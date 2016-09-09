@@ -203,45 +203,45 @@ var mod = function(target, modNum) {
 };
 
 /**
- * Addition for floating point operation.
+ * 'add' is function for add operation to floating point.
  * @param {number} a target a
  * @param {number} b target b
- * @returns {number} addition result
+ * @returns {number}
  */
-var addition = function(a, b) {
+var add = function(a, b) {
     var multipleNum = findMultipleNum(a, b);
     return ((a * multipleNum) + (b * multipleNum)) / multipleNum;
 };
 
 /**
- * Subtraction for floating point operation.
+ * 'subtract' is function for subtract operation to floating point.
  * @param {number} a target a
  * @param {number} b target b
- * @returns {number} subtraction result
+ * @returns {number}
  */
-var subtraction = function(a, b) {
+var subtract = function(a, b) {
     var multipleNum = findMultipleNum(a, b);
     return ((a * multipleNum) - (b * multipleNum)) / multipleNum;
 };
 
 /**
- * Multiplication for floating point operation.
+ * 'multiply' is function for multiply operation to floating point.
  * @param {number} a target a
  * @param {number} b target b
- * @returns {number} multiplication result
+ * @returns {number}
  */
-var multiplication = function(a, b) {
+var multiply = function(a, b) {
     var multipleNum = findMultipleNum(a, b);
     return ((a * multipleNum) * (b * multipleNum)) / (multipleNum * multipleNum);
 };
 
 /**
- * Division for floating point operation.
+ * 'divide' is function for divide operation to floating point.
  * @param {number} a target a
  * @param {number} b target b
- * @returns {number} division result
+ * @returns {number}
  */
-var division = function(a, b) {
+var divide = function(a, b) {
     var multipleNum = findMultipleNum(a, b);
     return (a * multipleNum) / (b * multipleNum);
 };
@@ -255,7 +255,7 @@ var sum = function(values) {
     var copyArr = values.slice();
     copyArr.unshift(0);
     return tui.util.reduce(copyArr, function(base, add) {
-        return tui.util.addition(parseFloat(base), parseFloat(add));
+        return tui.util.add(parseFloat(base), parseFloat(add));
     });
 };
 
@@ -304,10 +304,10 @@ tui.util.pivot = pivot;
 tui.util.getDecimalLength = getDecimalLength;
 tui.util.mod = mod;
 tui.util.findMultipleNum = findMultipleNum;
-tui.util.addition = addition;
-tui.util.subtraction = subtraction;
-tui.util.multiplication = multiplication;
-tui.util.division = division;
+tui.util.add = add;
+tui.util.subtract = subtract;
+tui.util.multiply = multiply;
+tui.util.divide = divide;
 tui.util.sum = sum;
 tui.util.properCase = properCase;
 tui.util.deepCopy = deepCopy;

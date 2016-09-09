@@ -82,8 +82,8 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var additionalLeft = 0;
 
         if (xAxis.sizeRatio) {
-            additionalLeft = tui.util.multiplication(width, xAxis.positionRatio);
-            width = tui.util.multiplication(width, xAxis.sizeRatio);
+            additionalLeft = tui.util.multiply(width, xAxis.positionRatio);
+            width = tui.util.multiply(width, xAxis.sizeRatio);
         }
 
         return seriesDataModel.map(function(seriesGroup) {

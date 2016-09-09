@@ -448,7 +448,7 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
         if (mod === 0) {
             normalized = min;
         } else {
-            normalized = tui.util.subtraction(min, (min >= 0 ? mod : step + mod));
+            normalized = tui.util.subtract(min, (min >= 0 ? mod : step + mod));
         }
 
         return Math.round(normalized);
@@ -464,8 +464,8 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
      * @private
      */
     _makeNormalizedMax: function(limit, step, valueCount) {
-        var minMaxDiff = tui.util.multiplication(step, valueCount - 1);
-        var normalizedMax = tui.util.addition(limit.min, minMaxDiff);
+        var minMaxDiff = tui.util.multiply(step, valueCount - 1);
+        var normalizedMax = tui.util.add(limit.min, minMaxDiff);
         var maxDiff = limit.max - normalizedMax;
         var modDiff, divideDiff;
 
@@ -747,9 +747,9 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
             return scale;
         }
 
-        scale.step = tui.util.division(scale.step, divisionNumber);
-        scale.limit.min = tui.util.division(scale.limit.min, divisionNumber);
-        scale.limit.max = tui.util.division(scale.limit.max, divisionNumber);
+        scale.step = tui.util.divide(scale.step, divisionNumber);
+        scale.limit.min = tui.util.divide(scale.limit.min, divisionNumber);
+        scale.limit.max = tui.util.divide(scale.limit.max, divisionNumber);
 
         return scale;
     },
@@ -815,8 +815,8 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     _makeDatetimeInfo: function(dataLimit, count) {
         var dateType = this._findDateType(dataLimit, count);
         var divisionNumber = this.millisecondMap[dateType];
-        var minDate = tui.util.division(dataLimit.min, divisionNumber);
-        var maxDate = tui.util.division(dataLimit.max, divisionNumber);
+        var minDate = tui.util.divide(dataLimit.min, divisionNumber);
+        var maxDate = tui.util.divide(dataLimit.max, divisionNumber);
         var max = maxDate - minDate;
 
         return {
@@ -840,9 +840,9 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     _restoreScaleToDatetimeType: function(scale, minDate, divisionNumber) {
         var limit = scale.limit;
 
-        scale.step = tui.util.multiplication(scale.step, divisionNumber);
-        limit.min = tui.util.multiplication(tui.util.addition(limit.min, minDate), divisionNumber);
-        limit.max = tui.util.multiplication(tui.util.addition(limit.max, minDate), divisionNumber);
+        scale.step = tui.util.multiply(scale.step, divisionNumber);
+        limit.min = tui.util.multiply(tui.util.add(limit.min, minDate), divisionNumber);
+        limit.max = tui.util.multiply(tui.util.add(limit.max, minDate), divisionNumber);
 
         return scale;
     },

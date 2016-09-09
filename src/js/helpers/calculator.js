@@ -84,7 +84,7 @@ var calculator = {
             normalized = this.normalizeAxisNumber(value * 10) * 0.1;
         } else {
             mod = tui.util.mod(value, standard);
-            normalized = tui.util.addition(value, (mod > 0 ? standard - mod : 0));
+            normalized = tui.util.add(value, (mod > 0 ? standard - mod : 0));
         }
 
         normalized *= flag;
@@ -144,7 +144,7 @@ var calculator = {
      * @returns {number} step
      */
     calculateStepFromLimit: function(limit, count) {
-        return tui.util.division(tui.util.subtraction(limit.max, limit.min), (count - 1));
+        return tui.util.divide(tui.util.subtract(limit.max, limit.min), (count - 1));
     },
 
     /**
