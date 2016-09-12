@@ -45,33 +45,42 @@ var addingDynamicDataMixer = {
     },
 
     /**
+     * Calculate animate tick size.
+     * @returns {number}
+     * @private
+     */
+    _calculateAnimateTickSize: function() {
+        var dataProcessor = this.dataProcessor;
+        var xAxisWidth = this.boundsMaker.getDimension('xAxis').width;
+        var tickInterval = this.options.xAxis.tickInterval;
+        var shiftingOption = !!this.options.series.shifting;
+        var tickCount;
+
+        if (dataProcessor.isCoordinateType()) {
+            tickCount = dataProcessor.getValues(this.chartType, 'x').length - 1;
+        } else {
+            tickCount = dataProcessor.getCategoryCount(false) - 1;
+        }
+
+        if (shiftingOption && !predicate.isAutoTickInterval(tickInterval)) {
+            tickCount -= 1;
+        }
+
+        return xAxisWidth / tickCount;
+    },
+
+    /**
      * Animate for adding data.
      * @private
      */
     _animateForAddingData: function() {
         var self = this;
-        var dataProcessor = this.dataProcessor;
-        var boundsMaker = this.boundsMaker;
         var shiftingOption = !!this.options.series.shifting;
-        var xAxisOptions = this.options.xAxis;
 
         this.addedDataCount += 1;
 
         this._render(function() {
-            var xAxisWidth = boundsMaker.getDimension('xAxis').width;
-            var tickCount, tickSize;
-
-            if (dataProcessor.isCoordinateType()) {
-                tickCount = dataProcessor.getValues(self.chartType, 'x').length - 1;
-            } else {
-                tickCount = dataProcessor.getCategoryCount(false) - 1;
-            }
-
-            if (shiftingOption && !predicate.isAutoTickInterval(xAxisOptions.tickInterval)) {
-                tickCount -= 1;
-            }
-
-            tickSize = (xAxisWidth / tickCount);
+            var tickSize = self._calculateAnimateTickSize();
 
             self._renderComponents({
                 tickSize: tickSize,
