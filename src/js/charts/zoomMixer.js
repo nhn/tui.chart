@@ -19,7 +19,6 @@ var zoomMixer = {
     _renderForZoom: function(isResetZoom) {
         var self = this;
 
-        this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {
             renderingData.customEvent.isResetZoom = isResetZoom;
             self._renderComponents(renderingData, 'zoom');

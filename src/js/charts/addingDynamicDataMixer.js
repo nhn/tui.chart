@@ -56,8 +56,6 @@ var addingDynamicDataMixer = {
         var xAxisOptions = this.options.xAxis;
 
         this.addedDataCount += 1;
-        boundsMaker.initBoundsData();
-        this.scaleModel.initScaleData(this.addedDataCount);
 
         this._render(function() {
             var xAxisWidth = boundsMaker.getDimension('xAxis').width;
