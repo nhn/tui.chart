@@ -383,41 +383,6 @@ describe('Test for ChartBase', function() {
             expect(chartBase._render).not.toHaveBeenCalled();
         });
 
-        it('dimension이 변경되었다면, boundsMaker.initBoundsData()에 chart 옵션 정보를 전달하여 bound data를 초기화 합니다.', function() {
-            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
-            spyOn(renderUtil, 'renderDimension');
-            spyOn(chartBase, '_render');
-            chartBase.options = {
-                chart: 'chart options'
-            };
-
-            chartBase.resize({
-                width: 400,
-                height: 300
-            });
-
-            expect(boundsMaker.initBoundsData).toHaveBeenCalledWith('chart options');
-        });
-
-        it('dimension이 변경되었다면, renderUtil.renderDimension()에 chartContainer와 갱신된 dimension 정보를 전달하여 너비, 높이를 설정합니다.', function() {
-            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
-            spyOn(chartBase, '_render');
-            chartBase.options = {
-                chart: 'chart options'
-            };
-            chartBase.chartContainer = 'chart container';
-            spyOn(renderUtil, 'renderDimension');
-            boundsMaker.getDimension.and.returnValue('chart dimension');
-
-
-            chartBase.resize({
-                width: 400,
-                height: 300
-            });
-
-            expect(renderUtil.renderDimension).toHaveBeenCalledWith('chart container', 'chart dimension');
-        });
-
         it('dimension이 변경되었다면, _render()를 호출하여 렌더링을 수행합니다.', function() {
             spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
             spyOn(chartBase, '_render');

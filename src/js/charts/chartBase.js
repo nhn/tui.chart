@@ -371,6 +371,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var bm = this.boundsMaker;
         var sm = this.scaleModel;
 
+        bm.initBoundsData();
         sm.initScaleData(this.addedDataCount);
 
         // 01. base dimension 등록
@@ -533,8 +534,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         this.dataProcessor.initData(rawData);
-        this.scaleModel.initScaleData(this.addedDataCount);
-        this.boundsMaker.initBoundsData();
+
         this._render(function(renderingData) {
             renderingData = self._makeRerenderingData(renderingData, checkedLegends);
             self._renderComponents(renderingData, 'rerender');
@@ -713,7 +713,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        this.boundsMaker.initBoundsData(this.options.chart);
         renderUtil.renderDimension(this.chartContainer, this.boundsMaker.getDimension('chart'));
 
         this._render(function(renderingData) {

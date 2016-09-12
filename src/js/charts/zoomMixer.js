@@ -34,7 +34,6 @@ var zoomMixer = {
     onZoom: function(indexRange) {
         this._pauseAnimationForAddingData();
         this.dataProcessor.updateRawDataForZoom(indexRange);
-        this.scaleModel.initScaleData(this.addedDataCount);
         this._renderForZoom(false);
     },
 
@@ -49,7 +48,6 @@ var zoomMixer = {
             rawData = this._filterCheckedRawData(rawData, this.checkedLegends);
         }
 
-        this.scaleModel.initScaleData(this.addedDataCount);
         this.scaleModel.initForAutoTickInterval();
 
         this.dataProcessor.initData(rawData);

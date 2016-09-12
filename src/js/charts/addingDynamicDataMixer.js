@@ -93,12 +93,6 @@ var addingDynamicDataMixer = {
     _rerenderForAddingData: function() {
         var self = this;
 
-        if (this.options.series.shifting || this.dataProcessor.isCoordinateType()) {
-            this.boundsMaker.initBoundsData();
-        }
-
-        this.scaleModel.initScaleData(this.addedDataCount);
-
         this._render(function(renderingData) {
             renderingData.animatable = false;
             self._renderComponents(renderingData, 'rerender');

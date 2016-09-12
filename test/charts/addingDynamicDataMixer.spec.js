@@ -54,18 +54,6 @@ describe('Test for addingDynamicDataMixer', function() {
             expect(mixer.addedDataCount).toBe(1);
         });
 
-        it('_animateForAddingData 함수를 호출하면 scaleModel.initScaleData를 호출하여 초기화 합니다.', function() {
-            mixer._animateForAddingData();
-
-            expect(scaleModel.initScaleData).toHaveBeenCalledWith(1);
-        });
-
-        it('_animateForAddingData 함수를 호출하면 boundsMaker.initBoundsData를 실행합니다.', function() {
-            mixer._animateForAddingData();
-
-            expect(boundsMaker.initBoundsData).toHaveBeenCalled();
-        });
-
         it('_animateForAddingData 함수를 호출하면 _render 함수를 실행합니다.', function() {
             mixer._animateForAddingData();
 
@@ -124,27 +112,6 @@ describe('Test for addingDynamicDataMixer', function() {
             expect(mixer._renderComponents).toHaveBeenCalledWith({
                 animatable: false
             }, 'rerender');
-        });
-
-        it('if shifting option is ture, execute boundsMaker.initBoundsData', function() {
-            mixer.options.series = {
-                shifting: true
-            };
-
-            mixer._rerenderForAddingData();
-
-            expect(boundsMaker.initBoundsData).toHaveBeenCalled();
-        });
-
-        it('if coordinateType data, execute boundsMaker.initBoundsData', function() {
-            mixer.options.series = {
-                shifting: false
-            };
-            dataProcessor.isCoordinateType.and.returnValue(true);
-
-            mixer._rerenderForAddingData();
-
-            expect(boundsMaker.initBoundsData).toHaveBeenCalled();
         });
     });
 

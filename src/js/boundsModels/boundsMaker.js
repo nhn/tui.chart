@@ -83,7 +83,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * Initialize bounds data.
      * @param {object} chartOption chart option
      */
-    initBoundsData: function(chartOption) {
+    initBoundsData: function() {
         this.dimensionMap = {
             legend: {
                 width: 0
@@ -114,10 +114,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
          * @type {number}
          */
         this.chartLeftPadding = chartConst.CHART_PADDING;
-
-        if (chartOption) {
-            this.options.chart = chartOption;
-        }
 
         this.maxRadiusForBubbleChart = null;
 
