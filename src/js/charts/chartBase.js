@@ -713,9 +713,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        renderUtil.renderDimension(this.chartContainer, this.boundsMaker.getDimension('chart'));
-
         this._render(function(renderingData) {
+            renderUtil.renderDimension(self.chartContainer, self.boundsMaker.getDimension('chart'));
             self._renderComponents(renderingData, 'resize');
         });
     },
