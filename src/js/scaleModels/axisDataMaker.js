@@ -430,7 +430,7 @@ var axisDataMaker = {
      * @param {Array.<string>} validLabelCount - valid label count
      * @param {object} labelTheme - theme for label
      * @param {boolean} isLabelAxis - whether label type axis or not
-     * @param {number} seriesWidth - series width
+     * @param {{series: {width: number}, yAxis: {width: number}}} dimensionMap - dimension map
      * @returns {number}
      */
     makeAdditionalDataForMultilineLabels: function(labels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
@@ -521,7 +521,8 @@ var axisDataMaker = {
      */
     makeAdditionalDataForRotatedLabels: function(validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
         var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(validLabels, labelTheme);
-        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, dimensionMap.series.width, validLabelCount);
+        var seriesWidth = dimensionMap.series.width;
+        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
         var additionalData = null;
         var degree, labelHeight, rotatedHeight, limitWidth, rotatedWidth;
 
