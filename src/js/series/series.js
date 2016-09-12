@@ -175,10 +175,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (!seriesLabelContainer) {
             seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
-            if (!predicate.isMousePositionChart(this.chartType)) {
-                extendedDimension = this.boundsMaker.getDimension('extendedSeries');
-                renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
-            }
+        }
+
+        if (!predicate.isMousePositionChart(this.chartType)) {
+            extendedDimension = this.boundsMaker.getDimension('extendedSeries');
+            renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
         }
 
         this._renderSeriesLabel(seriesLabelContainer);
