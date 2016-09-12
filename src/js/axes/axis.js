@@ -356,8 +356,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makePositionMapForCenterAlign: function() {
-        var offset = this.options.title.offset || {};
-        var titleWidth = renderUtil.getRenderedLabelWidth(offset.text, this.theme.title);
+        var titleOptions = this.options.title;
+        var offset = titleOptions.offset || {};
+        var titleWidth = renderUtil.getRenderedLabelWidth(titleOptions.text, this.theme.title);
         var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
         var left = (yAxisWidth - titleWidth) / 2;
         var bottom = -this.boundsMaker.getDimension('xAxis').height;
