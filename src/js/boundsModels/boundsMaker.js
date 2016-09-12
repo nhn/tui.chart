@@ -184,7 +184,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             dimensionMap = this.dimensionMap;
         }
 
-        return dimensionMap;
+        return JSON.parse(JSON.stringify((dimensionMap)));
     },
 
     /**

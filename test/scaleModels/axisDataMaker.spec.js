@@ -265,7 +265,6 @@ describe('Test for axisDataMaker', function() {
             expect(axisData.startIndex).toBe(1);
             expect(axisData.positionRatio).toBe(0.05263157894736842);
             expect(axisData.sizeRatio).toBe(0.9473684210526316);
-            expect(axisData.lineWidth).toBe(400);
             expect(axisData.interval).toBe(6);
         });
     });
@@ -278,8 +277,7 @@ describe('Test for axisDataMaker', function() {
             };
             var prevUpdatedData = {
                 interval: 6,
-                startIndex: 1,
-                lineWidth: 401
+                startIndex: 1
             };
 
             maker.updateLabelAxisDataForStackingDynamicData(axisData, prevUpdatedData, 4);
@@ -290,7 +288,6 @@ describe('Test for axisDataMaker', function() {
             expect(axisData.startIndex).toBe(1);
             expect(axisData.positionRatio).toBe(0.05);
             expect(axisData.sizeRatio).toBe(0.9);
-            expect(axisData.lineWidth).toBe(401);
             expect(axisData.interval).toBe(6);
         });
     });
@@ -411,7 +408,7 @@ describe('Test for axisDataMaker', function() {
             var validLabels = ['cate1', 'cate2', 'cate3'];
             var validLabelCount = 3;
             var labelTheme = {};
-            var aligned = false;
+            var isLabelAxis = true;
             var dimensionMap = {
                 series: {
                     width: 300
@@ -427,7 +424,7 @@ describe('Test for axisDataMaker', function() {
             spyOn(maker, '_calculateRotatedWidth').and.returnValue(110);
 
             actual = maker.makeAdditionalDataForRotatedLabels(
-                validLabels, validLabelCount, labelTheme, aligned, dimensionMap
+                validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap
             );
 
             expect(actual).toEqual({
@@ -437,11 +434,11 @@ describe('Test for axisDataMaker', function() {
             });
         });
 
-        it('if labelAreaWidth more than maxLabelWidth, returns null', function() {
+        it('make additional data for rotated labels, when has not rotated label', function() {
             var validLabels = ['cate1', 'cate2', 'cate3'];
             var validLabelCount = 3;
             var labelTheme = {};
-            var aligned = false;
+            var isLabelAxis = true;
             var dimensionMap = {
                 series: {
                     width: 400
@@ -452,13 +449,15 @@ describe('Test for axisDataMaker', function() {
             };
             var actual;
 
-            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(120);
 
             actual = maker.makeAdditionalDataForRotatedLabels(
-                validLabels, validLabelCount, labelTheme, aligned, dimensionMap
+                validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap
             );
 
-            expect(actual).toBeNull();
+            expect(actual).toEqual({
+                overflowLeft: -40
+            });
         });
     });
 });

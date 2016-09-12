@@ -310,7 +310,6 @@ var axisDataMaker = {
             tickCount: adjustingBlockCount + 1,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            lineWidth: seriesWidth,
             interval: interval
         });
     },
@@ -344,21 +343,20 @@ var axisDataMaker = {
             tickCount: axisData.labels.length,
             positionRatio: startIndex / beforeBlockCount,
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            lineWidth: prevUpdatedData.lineWidth,
             interval: interval
         });
     },
 
     /**
      * Calculate width for label area for x axis.
-     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isLabelAxis - whether label type axis or not
      * @param {number} seriesWidth - series width
      * @param {number} labelCount - label count
      * @returns {number} limit width
      * @private
      */
-    _calculateXAxisLabelAreaWidth: function(aligned, seriesWidth, labelCount) {
-        if (aligned) {
+    _calculateXAxisLabelAreaWidth: function(isLabelAxis, seriesWidth, labelCount) {
+        if (!isLabelAxis) {
             labelCount -= 1;
         }
 
@@ -431,19 +429,21 @@ var axisDataMaker = {
      * @param {Array.<string>} labels - labels
      * @param {Array.<string>} validLabelCount - valid label count
      * @param {object} labelTheme - theme for label
-     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isLabelAxis - whether label type axis or not
      * @param {number} seriesWidth - series width
      * @returns {number}
      */
-    makeAdditionalDataForMultilineLabels: function(labels, validLabelCount, labelTheme, aligned, seriesWidth) {
-        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(aligned, seriesWidth, validLabelCount);
-        var multilineLabels = this._createMultilineLabels(labels, labelTheme, aligned, seriesWidth);
+    makeAdditionalDataForMultilineLabels: function(labels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
+        var seriesWidth = dimensionMap.series.width;
+        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
+        var multilineLabels = this._createMultilineLabels(labels, labelTheme, seriesWidth);
         var multilineHeight = this._calculateMultilineHeight(multilineLabels, labelTheme, labelAreaWidth);
         var labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
 
         return {
             multilineLabels: multilineLabels,
-            overflowHeight: multilineHeight - labelHeight
+            overflowHeight: multilineHeight - labelHeight,
+            overflowLeft: (labelAreaWidth / 2) - dimensionMap.yAxis.width
         };
     },
 
@@ -495,15 +495,15 @@ var axisDataMaker = {
     /**
      * Calculate limit width for label
      * @param {number} yAxisWidth - y axis width
-     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isLabelAxis - aligned tick and label
      * @param {number} labelAreaWidth - width for label area
      * @returns {number}
      * @private
      */
-    _calculateLimitWidth: function(yAxisWidth, aligned, labelAreaWidth) {
+    _calculateLimitWidth: function(yAxisWidth, isLabelAxis, labelAreaWidth) {
         var limitWidth = yAxisWidth;
 
-        if (!aligned) {
+        if (isLabelAxis) {
             limitWidth += (labelAreaWidth / 2);
         }
 
@@ -515,13 +515,13 @@ var axisDataMaker = {
      * @param {Array.<string>} validLabels - valid labels
      * @param {Array.<string>} validLabelCount - valid label count
      * @param {object} labelTheme - theme for label
-     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isLabelAxis - whether label type axis or not
      * @param {{series: {width: number}, yAxis: {width: number}}} dimensionMap - dimension map
      * @returns {{degree: number, overflowHeight: number, overflowLeft: number}}
      */
-    makeAdditionalDataForRotatedLabels: function(validLabels, validLabelCount, labelTheme, aligned, dimensionMap) {
+    makeAdditionalDataForRotatedLabels: function(validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
         var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(validLabels, labelTheme);
-        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(aligned, dimensionMap.series.width, validLabelCount);
+        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, dimensionMap.series.width, validLabelCount);
         var additionalData = null;
         var degree, labelHeight, rotatedHeight, limitWidth, rotatedWidth;
 
@@ -530,12 +530,17 @@ var axisDataMaker = {
             degree = this._findRotationDegree(labelAreaWidth, maxLabelWidth, labelHeight);
             rotatedHeight = calculator.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
             rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
-            limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, aligned, labelAreaWidth);
+            limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
 
             additionalData = {
                 degree: degree,
                 overflowHeight: rotatedHeight - labelHeight,
                 overflowLeft: rotatedWidth - limitWidth
+            };
+        } else {
+            labelAreaWidth = renderUtil.getRenderedLabelWidth(validLabels[0], labelTheme) / 2;
+            additionalData = {
+                overflowLeft: labelAreaWidth - dimensionMap.yAxis.width
             };
         }
 

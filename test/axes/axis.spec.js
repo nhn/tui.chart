@@ -696,15 +696,6 @@ describe('Test for Axis', function() {
 
             expect(actual.style.left).toBe('10px');
         });
-
-        it('data.lineWidth가 있을 때에는 line size(width or height)를 lineWidth로 설정합니다.', function() {
-            var actual;
-
-            axis.data.lineWidth = 300;
-            actual = axis._renderTickLine(200, true, 0);
-
-            expect(actual.style.width).toBe('300px');
-        });
     });
 
     describe('_renderTicks()', function() {

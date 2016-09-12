@@ -601,13 +601,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             posType = 'left';
         }
 
-        if (axisData.lineWidth) {
-            lineSize = axisData.lineWidth;
-        } else {
-            lineSize = areaSize + tickLineExtend;
-            if (!axisData.sizeRatio) {
-                positionValue += additionalSize;
-            }
+        lineSize = areaSize + tickLineExtend;
+
+        if (!axisData.sizeRatio) {
+            positionValue += additionalSize;
         }
 
         cssMap[posType] = positionValue;
@@ -646,7 +643,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _renderTickArea: function(size, tickCount, additionalSize) {
         var tickContainer = dom.create('DIV', 'tui-chart-tick-area');
-        var isNotDividedXAxis = !this.isVertical && !this.options.divided && !this.data.aligned;
+        var isNotDividedXAxis = !this.isVertical && !this.options.divided;
         var tickLineElement, ticksElement;
 
         additionalSize = additionalSize || 0;

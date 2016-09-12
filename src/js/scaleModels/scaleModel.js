@@ -287,8 +287,7 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
         var axisData = this.getAxisData('xAxis');
         var labels = axisData.labels;
         var dimensionMap = this.boundsMaker.getDimensionMap(['series', 'yAxis']);
-        var seriesWidth = dimensionMap.series.width;
-        var aligned = axisData.aligned;
+        var isLabelAxis = axisData.isLabelAxis;
         var theme = this.theme.xAxis.label;
         var validLabels, validLabelCount, additionalData;
 
@@ -306,13 +305,18 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
             validLabelCount = validLabels.length;
         }
 
+        if (this.options.yAxis.isCenter) {
+            validLabelCount += 1;
+            dimensionMap.yAxis.width = 0;
+        }
+
         if (axisData.options.rotateLabel === false) {
             additionalData = axisDataMaker.makeAdditionalDataForMultilineLabels(
-                labels, validLabelCount, theme, aligned, seriesWidth
+                labels, validLabelCount, theme, isLabelAxis, dimensionMap
             );
         } else {
             additionalData = axisDataMaker.makeAdditionalDataForRotatedLabels(
-                validLabels, validLabelCount, theme, aligned, dimensionMap
+                validLabels, validLabelCount, theme, isLabelAxis, dimensionMap
             );
         }
 
