@@ -241,7 +241,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * Register dimension for legend component.
      */
     registerLegendDimension: function() {
-        var legendLabels = tui.util.pluck(this.dataProcessor.getLegendData(), 'label');
+        var legendLabels = tui.util.pluck(this.dataProcessor.getOriginalLegendData(), 'label');
         var legendOptions = this.options.legend;
         var labelTheme = this.theme.legend.label;
         var chartWidth = this.getDimension('chart').width;
