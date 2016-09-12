@@ -328,7 +328,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @private
      */
     _pickFirstLabelElements: function() {
-        var itemCount = this.dataProcessor.getCategoryCount() - 1;
+        var itemCount = this.dataProcessor.getCategoryCount();
         var seriesLabelContainer = this.seriesLabelContainer;
         var labelElements = seriesLabelContainer.childNodes;
         var filteredElements = [];
