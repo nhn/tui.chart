@@ -196,13 +196,16 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
         var scaleMap = this.scaleMap;
         var options = this.options;
         var theme = this.theme;
+        var yAxisOptions = tui.util.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
         var dataMap = {};
 
         dataMap.xAxis = this._createAxisData(scaleMap.xAxis, options.xAxis, theme.xAxis.label);
-        dataMap.yAxis = this._createAxisData(scaleMap.yAxis, options.yAxis, theme.yAxis.label, true);
+        dataMap.yAxis = this._createAxisData(scaleMap.yAxis, yAxisOptions[0], theme.yAxis.label, true);
 
         if (this.hasRightYAxis) {
-            dataMap.rightYAxis = this._createAxisData(scaleMap.rightYAxis, null, theme.yAxis.label, true, true);
+            dataMap.rightYAxis = this._createAxisData(
+                scaleMap.rightYAxis, yAxisOptions[1], theme.yAxis.label, true, true
+            );
             dataMap.rightYAxis.aligned = dataMap.xAxis.aligned;
         }
 
