@@ -9,6 +9,7 @@
 
 var ChartBase = require('./chartBase');
 var renderUtil = require('../helpers/renderUtil');
+var predicate = require('../helpers/predicate');
 var Axis = require('../axes/axis');
 var Plot = require('../plots/plot');
 var Legend = require('../legends/legend');

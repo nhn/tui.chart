@@ -16,7 +16,7 @@ describe('Test for BubbleChart', function() {
     beforeEach(function() {
         bubbleChart = BubbleChart.prototype;
         componentManager = jasmine.createSpyObj('componentManager', ['register']);
-        dataProcessor = jasmine.createSpyObj('dataProcessor',['addDataRatiosForCoordinateType']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor',['addDataRatiosForCoordinateType', 'isCoordinateType']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getMinimumPixelStepForAxis',
                 'registerBaseDimension', 'registerAxesData']);
         scaleModel = jasmine.createSpyObj('seriesDataModel', ['getScaleMap']);
@@ -66,32 +66,14 @@ describe('Test for BubbleChart', function() {
     });
 
     describe('_addDataRatios()', function() {
-        it('axisScaleMap의 xAxis가 axisScaleMaker를 갖고 있다면 limit을 구해 limitMap.x에 설정한뒤 dataProcessor.addDataRatiosForCoordinateType에 전달합니다', function() {
-            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getLimit']);
+        it('add data ratio, when bubble chart', function() {
+            var limitMap = 'limit map';
 
-            axisScaleMaker.getLimit.and.returnValue('calculated limit by x values');
-            scaleModel.getScaleMap.and.returnValue({
-                xAxis: axisScaleMaker
-            });
-            bubbleChart._addDataRatios();
+            dataProcessor.isCoordinateType.and.returnValue(true);
+            bubbleChart.options = {};
+            bubbleChart._addDataRatios(limitMap);
 
-            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('bubble', {
-                x: 'calculated limit by x values'
-            }, true);
-        });
-
-        it('axisScaleMap의 yAxis가 axisScaleMaker를 갖고 있다면 limit을 구해 limitMap.y에 설정한뒤 dataProcessor.addDataRatiosForCoordinateType에 전달합니다', function() {
-            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getLimit']);
-
-            axisScaleMaker.getLimit.and.returnValue('calculated limit by y values');
-            scaleModel.getScaleMap.and.returnValue({
-                yAxis: axisScaleMaker
-            });
-            bubbleChart._addDataRatios();
-
-            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('bubble', {
-                y: 'calculated limit by y values'
-            }, true);
+            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('bubble', limitMap, true);
         });
     });
 });
