@@ -67,13 +67,18 @@ describe('Test for BubbleChart', function() {
 
     describe('_addDataRatios()', function() {
         it('add data ratio, when bubble chart', function() {
-            var limitMap = 'limit map';
+            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getLimit']);
 
-            dataProcessor.isCoordinateType.and.returnValue(true);
-            bubbleChart.options = {};
-            bubbleChart._addDataRatios(limitMap);
+            axisScaleMaker.getLimit.and.returnValue('calculated limit by x values');
+            scaleModel.getScaleMap.and.returnValue({
+                xAxis: axisScaleMaker
+            });
+            bubbleChart._addDataRatios();
 
-            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('bubble', limitMap, true);
+            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('bubble', {
+                x: 'calculated limit by x values'
+            }, true);
+
         });
     });
 });
