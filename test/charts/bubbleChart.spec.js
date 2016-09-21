@@ -7,7 +7,7 @@
 'use strict';
 
 var BubbleChart = require('../../src/js/charts/bubbleChart');
-var axisDataMaker = require('../../src/js/scaleModels/axisDataMaker');
+var axisDataMaker = require('../../src/js/models/scale/axisDataMaker');
 var CircleLegend = require('../../src/js/legends/circleLegend');
 
 describe('Test for BubbleChart', function() {

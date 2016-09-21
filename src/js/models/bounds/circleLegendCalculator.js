@@ -6,8 +6,8 @@
 
 'use strict';
 
-var chartConst = require('../const');
-var renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../../const');
+var renderUtil = require('../../helpers/renderUtil');
 
 /**
  * Calculator for circle legend.

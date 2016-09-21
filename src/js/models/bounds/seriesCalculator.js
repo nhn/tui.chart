@@ -6,8 +6,8 @@
 
 'use strict';
 
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
+var chartConst = require('../../const');
+var predicate = require('../../helpers/predicate');
 
 /**
  * Calculator for series.

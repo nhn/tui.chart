@@ -7,9 +7,9 @@
 
 'use strict';
 
-var chartConst = require('../const');
-var renderUtil = require('../helpers/renderUtil');
-var calculator = require('../helpers/calculator');
+var chartConst = require('../../const');
+var renderUtil = require('../../helpers/renderUtil');
+var calculator = require('../../helpers/calculator');
 
 var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
     /**

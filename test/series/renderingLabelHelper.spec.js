@@ -8,7 +8,7 @@
 
 var labelHelper = require('../../src/js/series/renderingLabelHelper');
 var TreemapChartSeries = require('../../src/js/series/treemapChartSeries');
-var SeriesDataModel = require('../../src/js/dataModels/seriesDataModelForTreemap');
+var SeriesDataModel = require('../../src/js/models/data/seriesDataModelForTreemap');
 var seriesTemplate = require('../../src/js/series/seriesTemplate');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 

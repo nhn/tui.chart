@@ -6,10 +6,10 @@
 
 'use strict';
 
-var DataProcessor = require('../../src/js/dataModels/dataProcessor.js'),
+var DataProcessor = require('../../src/js/models/data/dataProcessor.js'),
     chartConst = require('../../src/js/const'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    SeriesGroup = require('../../src/js/dataModels/seriesGroup');
+    SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
+    SeriesGroup = require('../../src/js/models/data/seriesGroup');
 
 describe('Test for DataProcessor', function() {
     var dataProcessor;

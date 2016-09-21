@@ -6,8 +6,8 @@
 
 'use strict';
 
-var BoundsMaker = require('../boundsModels/boundsMaker');
-var ScaleModel = require('../scaleModels/scaleModel');
+var BoundsMaker = require('../models/bounds/boundsMaker');
+var ScaleModel = require('../models/scale/scaleModel');
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 

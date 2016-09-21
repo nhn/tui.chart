@@ -6,9 +6,9 @@
 
 'use strict';
 
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
-var renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../../const');
+var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
 var circleLegendCalculator = require('./circleLegendCalculator');
 var axisCalculator = require('./axisCalculator');
 var legendCalculator = require('./legendCalculator');

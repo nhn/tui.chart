@@ -6,7 +6,7 @@
 
 'use strict';
 
-var circleLegendCalculator = require('../../src/js/boundsModels/circleLegendCalculator');
+var circleLegendCalculator = require('../../src/js/models/bounds/circleLegendCalculator');
 var chartConst = require('../../src/js/const');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 

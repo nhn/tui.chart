@@ -6,8 +6,8 @@
 
 'use strict';
 
-var calculator = require('../helpers/calculator');
-var renderUtil = require('../helpers/renderUtil');
+var calculator = require('../../helpers/calculator');
+var renderUtil = require('../../helpers/renderUtil');
 
 var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.prototype */{
     /**

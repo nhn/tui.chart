@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BoundsMaker = require('../../src/js/boundsModels/boundsMaker');
+var BoundsMaker = require('../../src/js/models/bounds/boundsMaker');
 var chartConst = require('../../src/js/const');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 

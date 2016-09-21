@@ -2,7 +2,7 @@
 
 var ScaleDataMaker = require('./scaleDataMaker');
 var axisDataMaker = require('./axisDataMaker');
-var predicate = require('../helpers/predicate');
+var predicate = require('../../helpers/predicate');
 
 var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     /**

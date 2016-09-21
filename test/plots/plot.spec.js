@@ -7,7 +7,7 @@
 'use strict';
 
 var Plot = require('../../src/js/plots/plot.js');
-var DataProcessor = require('../../src/js/dataModels/dataProcessor');
+var DataProcessor = require('../../src/js/models/data/dataProcessor');
 var chartConst = require('../../src/js/const');
 var dom = require('../../src/js/helpers/domHandler.js');
 var renderUtil = require('../../src/js/helpers/renderUtil.js');

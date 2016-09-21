@@ -6,8 +6,8 @@
 
 'use strict';
 
-var ScaleModel = require('../../src/js/scaleModels/scaleModel.js');
-var axisDataMaker = require('../../src/js/scaleModels/axisDataMaker');
+var ScaleModel = require('../../src/js/models/scale/scaleModel.js');
+var axisDataMaker = require('../../src/js/models/scale/axisDataMaker');
 
 describe('Test for ScaleModel', function() {
     var scaleModel, dataProcessor, boundsMaker;

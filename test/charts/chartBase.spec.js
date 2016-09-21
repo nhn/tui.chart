@@ -9,7 +9,7 @@
 var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil'),
-    DataProcessor = require('../../src/js/dataModels/dataProcessor');
+    DataProcessor = require('../../src/js/models/data/dataProcessor');
 
 describe('Test for ChartBase', function() {
     var chartBase, componentManager, boundsMaker;

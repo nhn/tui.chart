@@ -6,9 +6,9 @@
 
 'use strict';
 
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
-var renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../../const');
+var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
 
 /**
  * Calculator for dimension of axis.

@@ -8,13 +8,13 @@
 
 'use strict';
 
-var chartConst = require('../const');
-var SeriesDataModel = require('../dataModels/seriesDataModel');
-var SeriesDataModelForTreemap = require('../dataModels/seriesDataModelForTreemap');
+var chartConst = require('../../const');
+var SeriesDataModel = require('../data/seriesDataModel');
+var SeriesDataModelForTreemap = require('../data/seriesDataModelForTreemap');
 var SeriesGroup = require('./seriesGroup');
-var rawDataHandler = require('../helpers/rawDataHandler');
-var predicate = require('../helpers/predicate');
-var renderUtil = require('../helpers/renderUtil');
+var rawDataHandler = require('../../helpers/rawDataHandler');
+var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
 
 var concat = Array.prototype.concat;
 

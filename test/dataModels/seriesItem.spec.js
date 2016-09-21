@@ -6,7 +6,7 @@
 
 'use strict';
 
-var SeriesItem = require('../../src/js/dataModels/seriesItem');
+var SeriesItem = require('../../src/js/models/data/seriesItem');
 
 describe('Test for SeriesItem', function() {
     var seriesItem;

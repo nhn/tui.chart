@@ -6,10 +6,10 @@
 
 'use strict';
 
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
-var calculator = require('../helpers/calculator');
-var renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../../const');
+var predicate = require('../../helpers/predicate');
+var calculator = require('../../helpers/calculator');
+var renderUtil = require('../../helpers/renderUtil');
 
 /**
  * Axis data maker.

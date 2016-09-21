@@ -7,7 +7,7 @@
 'use strict';
 
 var TreemapChartSeries = require('../../src/js/series/treemapChartSeries.js');
-var SeriesDataModel = require('../../src/js/dataModels/seriesDataModelForTreemap');
+var SeriesDataModel = require('../../src/js/models/data/seriesDataModelForTreemap');
 var chartConst = require('../../src/js/const');
 var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');

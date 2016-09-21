@@ -9,7 +9,7 @@
 
 var SeriesDataModel = require('./seriesDataModel');
 var SeriesItem = require('./seriesItemForTreemap');
-var chartConst = require('../const');
+var chartConst = require('../../const');
 
 var aps = Array.prototype.slice;
 

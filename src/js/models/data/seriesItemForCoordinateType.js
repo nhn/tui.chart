@@ -7,8 +7,8 @@
 
 'use strict';
 
-var predicate = require('../helpers/predicate');
-var renderUtil = require('../helpers/renderUtil');
+var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
 
 var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
     /**

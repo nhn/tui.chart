@@ -36,8 +36,8 @@
 var SeriesGroup = require('./seriesGroup');
 var SeriesItem = require('./seriesItem');
 var SeriesItemForCoordinateType = require('./seriesItemForCoordinateType');
-var predicate = require('../helpers/predicate');
-var calculator = require('../helpers/calculator');
+var predicate = require('../../helpers/predicate');
+var calculator = require('../../helpers/calculator');
 
 var concat = Array.prototype.concat;
 

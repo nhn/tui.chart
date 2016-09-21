@@ -7,7 +7,7 @@
 'use strict';
 
 var ComponentManager = require('./componentManager');
-var DefaultDataProcessor = require('../dataModels/dataProcessor');
+var DefaultDataProcessor = require('../models/data/dataProcessor');
 var dom = require('../helpers/domHandler');
 var renderUtil = require('../helpers/renderUtil');
 var UserEventListener = require('../helpers/userEventListener');

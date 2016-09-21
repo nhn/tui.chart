@@ -6,7 +6,7 @@
 
 'use strict';
 
-var seriesCalculator = require('../../src/js/boundsModels/seriesCalculator');
+var seriesCalculator = require('../../src/js/models/bounds/seriesCalculator');
 var chartConst = require('../../src/js/const');
 
 describe('Test for seriesCalculator', function() {

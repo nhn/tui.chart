@@ -6,7 +6,7 @@
 
 'use strict';
 
-var legendCalculator = require('../../src/js/boundsModels/legendCalculator');
+var legendCalculator = require('../../src/js/models/bounds/legendCalculator');
 var chartConst = require('../../src/js/const');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 

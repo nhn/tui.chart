@@ -6,10 +6,10 @@
 
 'use strict';
 
-var ScaleDataMaker = require('../../src/js/scaleModels/scaleDataMaker.js');
+var ScaleDataMaker = require('../../src/js/models/scale/scaleDataMaker.js');
 var chartConst = require('../../src/js/const');
-var DataProcessor = require('../../src/js/dataModels/dataProcessor.js');
-var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
+var DataProcessor = require('../../src/js/models/data/dataProcessor.js');
+var SeriesDataModel = require('../../src/js/models/data/seriesDataModel');
 
 describe('Test for ScaleDataMaker', function() {
     var scaleDataMaker, boundsMaker;
