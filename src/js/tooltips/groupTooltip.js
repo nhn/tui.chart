@@ -6,13 +6,13 @@
 
 'use strict';
 
-var TooltipBase = require('./tooltipBase'),
-    GroupTooltipPositionModel = require('./groupTooltipPositionModel'),
-    chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    defaultTheme = require('../themes/defaultTheme'),
-    tooltipTemplate = require('./tooltipTemplate');
+var TooltipBase = require('./tooltipBase');
+var GroupTooltipPositionModel = require('./groupTooltipPositionModel');
+var chartConst = require('../const');
+var dom = require('../helpers/domHandler');
+var renderUtil = require('../helpers/renderUtil');
+var defaultTheme = require('../themes/defaultTheme');
+var tooltipTemplate = require('./tooltipTemplate');
 
 /**
  * @classdesc GroupTooltip component.
@@ -71,17 +71,17 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Render tooltip component.
-     * @returns {HTMLElement} tooltip element
+     * @returns {HTMLElement}
      * @override
      */
     render: function() {
-        var el = TooltipBase.prototype.render.call(this),
-            chartDimension = this.boundsMaker.getDimension('chart'),
-            bound = this.boundsMaker.getBound('tooltip');
+        var container = TooltipBase.prototype.render.call(this);
+        var chartDimension = this.boundsMaker.getDimension('chart');
+        var bound = this.boundsMaker.getBound('tooltip');
 
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
 
-        return el;
+        return container;
     },
 
     /**

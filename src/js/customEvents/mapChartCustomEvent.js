@@ -17,6 +17,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * MapChartCustomEvent is event handle layer for map chart.
      * @param {object} params parameters
      *      @param {BoundsMaker} params.boundsMaker boundsMaker instance
+     *      @param {string} params.chartType - chart type
      * @constructs MapChartCustomEvent
      * @extends CustomEventBase
      */

@@ -10,10 +10,10 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     /**
      * ComponentManager manages components of chart.
      * @param {object} params parameters
-     *      @param {object} params.theme theme
-     *      @param {object} params.options options
-     *      @param {DataProcessor} params.dataProcessor data processor
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
+     *      @param {object} params.theme - theme
+     *      @param {object} params.options - options
+     *      @param {DataProcessor} params.dataProcessor - data processor
+     *      @param {boolean} params.hasAxes - whether has axes or not
      * @constructs ComponentManager
      */
     init: function(params) {
@@ -91,8 +91,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {object} params component parameters
      */
     register: function(name, Component, params) {
-        var index,
-            component, componentType;
+        var index, component, componentType;
 
         params = params || {};
 

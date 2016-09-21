@@ -19,12 +19,11 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * CustomEventBase is base class for custom event components.
      * @constructs CustomEventBase
      * @param {object} params parameters
-     *      @param {{
-     *          dimension: {width: number, height: number},
-     *          position: {left: number, top: number}
-     *      }} params.bound bound
-     *      @param {string} params.chartType chart type
-     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {string} params.chartType - chart type
+     *      @param {Array.<string>} params.chartTypes - chart types
+     *      @param {boolean} params.isVertical - whether vertical or not
+     *      @param {DataProcessor} params.dataProcessor - DataProcessor instance
+     *      @param {boolean} params.allowSelect - whether has allowSelect option or not
      */
     init: function(params) {
         var isLineTypeChart;

@@ -688,11 +688,11 @@ describe('PieChartSeries', function() {
 
         it('position.left값이 기준 값(centerLeft)보다 크면 이동없이 반환합니다.', function() {
             var actual = series._moveToOuterPosition(120, {
-                    end: {
-                        left: 140,
-                        top: 50
-                    }
-                }, 'label1');
+                end: {
+                    left: 140,
+                    top: 50
+                }
+            }, 'label1');
 
             expect(actual.left).toBe(145);
         });
@@ -700,8 +700,8 @@ describe('PieChartSeries', function() {
 
     describe('_renderOuterLegend()', function() {
         it('lengend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var labelContainer = dom.create('div'),
-                children;
+            var labelContainer = dom.create('div');
+            var children;
 
             spyOn(series.graphRenderer, 'renderLegendLines');
             series.options.showLegend = true;
@@ -760,8 +760,8 @@ describe('PieChartSeries', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('labelAlign 옵션이 outer면 _renderOuterLegend()가 수행됩니다.', function() {
-            var actual = dom.create('div'),
-                expected = dom.create('div');
+            var actual = dom.create('div');
+            var expected = dom.create('div');
 
             spyOn(series.graphRenderer, 'renderLegendLines');
             series.options.labelAlign = 'outer';
@@ -807,8 +807,8 @@ describe('PieChartSeries', function() {
             expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
         it('labelAlign 옵션이 outer가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
-            var actual = dom.create('div'),
-                expected = dom.create('div');
+            var actual = dom.create('div');
+            var expected = dom.create('div');
 
             spyOn(series.graphRenderer, 'renderLegendLines');
             boundsMaker.getDimension.and.returnValue({

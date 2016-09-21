@@ -122,9 +122,10 @@ describe('Series', function() {
 
     describe('_findLabelElement()', function() {
         it('대상 엘리먼트가 시리즈 라벨(series label) 엘리먼트이면 대상 엘리먼트를 반환합니다.', function() {
-            var elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL),
-                actual = series._findLabelElement(elTarget),
-                expected = elTarget;
+            var elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL);
+            var actual = series._findLabelElement(elTarget);
+            var expected = elTarget;
+
             expect(actual).toBe(expected);
         });
     });

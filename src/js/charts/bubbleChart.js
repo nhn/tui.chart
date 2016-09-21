@@ -130,27 +130,6 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 tui.util.extend(BubbleChart.prototype, axisTypeMixer);
 
 /**
- * Add data ratios.
- * @private
- * @override
- */
-BubbleChart.prototype._addDataRatios = function() {
-    var scaleDataMap = this.scaleModel.getScaleMap();
-
-    var limitMap = {};
-
-    if (scaleDataMap.xAxis) {
-        limitMap.x = scaleDataMap.xAxis.getLimit();
-    }
-
-    if (scaleDataMap.yAxis) {
-        limitMap.y = scaleDataMap.yAxis.getLimit();
-    }
-
-    this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);
-};
-
-/**
  * Add custom event component for normal tooltip.
  * @private
  */

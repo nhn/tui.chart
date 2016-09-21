@@ -39,6 +39,7 @@ describe('MapChartSeries', function() {
                 height: 600
             });
             series._setMapRatio();
+
             actual = series.mapRatio;
             expected = 0.5;
 
@@ -57,6 +58,7 @@ describe('MapChartSeries', function() {
                 height: 600
             });
             series._setMapRatio();
+
             actual = series.mapRatio;
             expected = 0.25;
 
@@ -74,6 +76,7 @@ describe('MapChartSeries', function() {
             });
             series.zoomMagn = 2;
             series._setGraphDimension();
+
             actual = series.graphDimension;
             expected = {
                 width: 800,
@@ -96,8 +99,8 @@ describe('MapChartSeries', function() {
                 width: 800,
                 height: 600
             };
-
             series._setLimitPositionToMoveMap();
+
             actual = series.limitPosition;
             expected = {
                 left: -400,

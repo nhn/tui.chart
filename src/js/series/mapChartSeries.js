@@ -100,10 +100,10 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _setMapRatio: function() {
-        var seriesDimension = this.boundsMaker.getDimension('series'),
-            mapDimension = this.mapModel.getMapDimension(),
-            widthRatio = seriesDimension.width / mapDimension.width,
-            heightRatio = seriesDimension.height / mapDimension.height;
+        var seriesDimension = this.boundsMaker.getDimension('series');
+        var mapDimension = this.mapModel.getMapDimension();
+        var widthRatio = seriesDimension.width / mapDimension.width;
+        var heightRatio = seriesDimension.height / mapDimension.height;
 
         this.mapRatio = Math.min(widthRatio, heightRatio);
     },
@@ -137,8 +137,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _setLimitPositionToMoveMap: function() {
-        var seriesDimension = this.boundsMaker.getDimension('series'),
-            graphDimension = this.graphDimension;
+        var seriesDimension = this.boundsMaker.getDimension('series');
+        var graphDimension = this.graphDimension;
 
         this.limitPosition = {
             left: seriesDimension.width - graphDimension.width,
@@ -460,17 +460,17 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _movePositionForZoom: function(position, changedRatio) {
-        var seriesDimension = this.boundsMaker.getDimension('series'),
-            containerBound = this._getContainerBound(),
-            startPosition = {
-                left: (seriesDimension.width / 2) + containerBound.left,
-                top: (seriesDimension.height / 2) + containerBound.top
-            },
-            movementPosition = {
-                left: position.left - startPosition.left,
-                top: position.top - startPosition.top
-            },
-            endPosition;
+        var seriesDimension = this.boundsMaker.getDimension('series');
+        var containerBound = this._getContainerBound();
+        var startPosition = {
+            left: (seriesDimension.width / 2) + containerBound.left,
+            top: (seriesDimension.height / 2) + containerBound.top
+        };
+        var movementPosition = {
+            left: position.left - startPosition.left,
+            top: position.top - startPosition.top
+        };
+        var endPosition;
 
         changedRatio = changedRatio > 1 ? -(changedRatio / 2) : changedRatio;
 

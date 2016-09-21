@@ -200,9 +200,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series area.
-     * @param {HTMLElement} seriesContainer series area element
-     * @param {object} data data for rendering
-     * @param {function} funcRenderGraph function for graph rendering
+     * @param {HTMLElement} seriesContainer - series area element
+     * @param {object} data - data for rendering
+     * @param {function} funcRenderGraph - function for graph rendering
      * @returns {object}
      * @private
      */

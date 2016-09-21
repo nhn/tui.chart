@@ -181,7 +181,8 @@ var axisTypeMixer = {
         if (this.dataProcessor.isCoordinateType()) {
             limitMap = this._getLimitMapForCoordinateType();
             addDataRatio = function(chartType) {
-                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+                var hasRadius = predicate.isBubbleChart(chartType);
+                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, hasRadius);
             };
         } else {
             axesData = this.scaleModel.getAxisDataMap();
@@ -347,19 +348,19 @@ var axisTypeMixer = {
      * @override
      */
     _attachCustomEvent: function() {
-        var serieses = this.componentManager.where({componentType: 'series'}),
-            customEvent = this.componentManager.get('customEvent'),
-            tooltip = this.componentManager.get('tooltip');
+        var seriesSet = this.componentManager.where({componentType: 'series'});
+        var customEvent = this.componentManager.get('customEvent');
+        var tooltip = this.componentManager.get('tooltip');
 
-        ChartBase.prototype._attachCustomEvent.call(this, serieses);
+        ChartBase.prototype._attachCustomEvent.call(this, seriesSet);
 
         if (this.options.tooltip.grouped) {
-            this._attachCustomEventForGroupTooltip(customEvent, tooltip, serieses);
+            this._attachCustomEventForGroupTooltip(customEvent, tooltip, seriesSet);
         } else {
-            this._attachCustomEventForNormalTooltip(customEvent, tooltip, serieses);
+            this._attachCustomEventForNormalTooltip(customEvent, tooltip, seriesSet);
         }
 
-        this._attachCustomEventForSeriesSelection(customEvent, serieses);
+        this._attachCustomEventForSeriesSelection(customEvent, seriesSet);
     }
 };
 

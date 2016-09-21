@@ -15,10 +15,16 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
-     * @param {object} params parameters
-     *      @param {Array.<number>} params.values converted values
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
-     *      @param {object} params.theme axis theme
+     * @param {object} params - parameters
+     *      @param {string} params.chartType - chart type
+     *      @param {DataProcessor} params.dataProcessor - DataProcessor instance
+     *      @param {object} params.options - tooltip options
+     *      @param {object} params.theme - tooltip theme
+     *      @param {boolean} params.isVertical - whether vertical or not
+     *      @param {object} params.userEvent - UserEventListener instance
+     *      @param {object} params.labelTheme - theme for label
+     *      @param {string} params.xAxisType - xAxis type
+     *      @param {string} params.dateFormat - date format
      */
     init: function(params) {
         var isPieChart = predicate.isPieChart(params.chartType);

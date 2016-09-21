@@ -99,20 +99,6 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
 tui.util.extend(ScatterChart.prototype, axisTypeMixer);
 
 /**
- * Add data ratios.
- * @private
- * @override
- */
-ScatterChart.prototype._addDataRatios = function() {
-    var scaleMakerMap = this.scaleModel.getScaleMap();
-
-    this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, {
-        x: scaleMakerMap.xAxis.getLimit(),
-        y: scaleMakerMap.yAxis.getLimit()
-    }, false);
-};
-
-/**
  * Add custom event component for normal tooltip.
  * @private
  */

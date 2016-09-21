@@ -196,13 +196,11 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @private
      */
     _renderSeriesLabel: function(elSeriesLabelArea) {
-        var self = this,
-            seriesDataModel = this._getSeriesDataModel(),
-            firstLabel = seriesDataModel.getFirstItemLabel(),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
-            htmls;
-
-        htmls = seriesDataModel.map(function(seriesGroup, groupIndex) {
+        var self = this;
+        var seriesDataModel = this._getSeriesDataModel();
+        var firstLabel = seriesDataModel.getFirstItemLabel();
+        var labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label);
+        var htmls = seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var labelHtml = self._makeSeriesLabelHtmlForLineType(groupIndex, index, seriesItem, labelHeight);
 

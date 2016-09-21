@@ -294,14 +294,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Attach custom event.
-     * @param {Array.<object>} serieses serieses
+     * @param {Array.<object>} seriesSet - series set
      * @private
      */
-    _attachCustomEvent: function(serieses) {
+    _attachCustomEvent: function(seriesSet) {
         var legend = this.componentManager.get('legend');
         var customEvent = this.componentManager.get('customEvent');
 
-        serieses = serieses || this.componentManager.where({componentType: 'series'});
+        seriesSet = seriesSet || this.componentManager.where({componentType: 'series'});
 
         if (tui.util.pick(this.options.series, 'zoomable')) {
             customEvent.on('zoom', this.onZoom, this);
@@ -310,7 +310,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         if (legend) {
             legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
-            tui.util.forEach(serieses, function(series) {
+            tui.util.forEach(seriesSet, function(series) {
                 var selectLegendEventName = renderUtil.makeCustomEventName('select', series.chartType, 'legend');
                 legend.on(selectLegendEventName, series.onSelectLegend, series);
             });
@@ -504,13 +504,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _makeRerenderingData: function(renderingData, checkedLegends) {
         var tooltipData = this._makeTooltipData();
-        var serieses = this.componentManager.where({componentType: 'series'});
+        var seriesSet = this.componentManager.where({componentType: 'series'});
 
         renderingData.tooltip = tui.util.extend({
             checkedLegends: checkedLegends
         }, tooltipData, renderingData.tooltip);
 
-        tui.util.forEach(serieses, function(series) {
+        tui.util.forEach(seriesSet, function(series) {
             renderingData[series.componentName] = tui.util.extend({
                 checkedLegends: checkedLegends[series.seriesName] || checkedLegends
             }, renderingData[series.componentName]);
