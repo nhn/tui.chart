@@ -13,16 +13,12 @@ var dom = require('../../src/js/helpers/domHandler.js');
 var renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('Test for Plot', function() {
-    var plot, dataProcessor, boundsMaker, scaleModel;
+    var plot, dataProcessor;
 
     beforeEach(function() {
         dataProcessor = new DataProcessor({}, '', {});
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getPosition', 'getDimension']);
-        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisDataMap', 'getAxisData']);
         plot = new Plot({
             dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker,
-            scaleModel: scaleModel,
             theme: {
                 lineColor: 'black'
             }
@@ -32,10 +28,13 @@ describe('Test for Plot', function() {
 
     describe('_renderPlotArea()', function() {
         it('plotContainer와 dimension정보를 renderDimension()에 전달하여 너비 높이를 렌더링 합니다. ', function() {
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+
+            plot.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             spyOn(renderUtil, 'renderDimension');
             spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderPlotLines');
@@ -49,10 +48,12 @@ describe('Test for Plot', function() {
         });
 
         it('options.showLine을 설정하지 않으면 기본값이 true로 설정되어 line을 렌더링 합니다.', function() {
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+            plot.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             spyOn(renderUtil, 'renderDimension');
             spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderPlotLines');
@@ -66,10 +67,12 @@ describe('Test for Plot', function() {
         });
 
         it('options.showLine이 false이면 _renderLines()을 호출하지 않습니다.', function() {
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+            plot.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             spyOn(renderUtil, 'renderDimension');
             spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderPlotLines');
@@ -83,10 +86,12 @@ describe('Test for Plot', function() {
         });
 
         it('if line type chart, execute _renderOptionalLines function', function() {
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+            plot.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             spyOn(renderUtil, 'renderDimension');
             spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderOptionalLines');
@@ -345,10 +350,12 @@ describe('Test for Plot', function() {
             };
             var actual, expected;
 
-            scaleModel.getAxisData.and.returnValue({
-                dataMin: 20,
-                distance: 200
-            });
+            plot.axisDataMap = {
+                xAxis: {
+                    dataMin: 20,
+                    distance: 200
+                }
+            };
 
             actual = plot._makeOptionalLinesHtml(lines, dimension);
             expected = '<div class="tui-chart-plot-line vertical"' +
@@ -386,10 +393,12 @@ describe('Test for Plot', function() {
                     color: 'blue'
                 }
             ];
-            scaleModel.getAxisData.and.returnValue({
-                dataMin: 20,
-                distance: 200
-            });
+            plot.axisDataMap = {
+                xAxis: {
+                    dataMin: 20,
+                    distance: 200
+                }
+            };
 
             plot._renderOptionalLines(container, dimension);
 
@@ -417,14 +426,14 @@ describe('Test for Plot', function() {
                 dimension: {width: 400, height: 200},
                 position: {top: 5, right: 5}
             };
-            scaleModel.getAxisDataMap.and.returnValue({
+            plot.axisDataMap = {
                 yAxis: {
                     validTickCount: 5
                 },
                 xAxis: {
                     validTickCount: 0
                 }
-            });
+            };
 
             plot._renderPlotLines(container, plot.bound.dimension);
             lineContainer = container.firstChild;
@@ -468,11 +477,11 @@ describe('Test for Plot', function() {
         it('make positions for vertical line', function() {
             var positions;
 
-            scaleModel.getAxisDataMap.and.returnValue({
+            plot.axisDataMap = {
                 yAxis: {
                     validTickCount: 5
                 }
-            });
+            };
             positions = plot._makeVerticalPositions(200);
             expect(positions).toEqual([50, 100, 150, 199]);
         });
@@ -480,11 +489,11 @@ describe('Test for Plot', function() {
         it('if yAxis.validTickCount is zero, returns empty array', function() {
             var actual;
 
-            scaleModel.getAxisDataMap.and.returnValue({
+            plot.axisDataMap = {
                 yAxis: {
                     validTickCount: 0
                 }
-            });
+            };
             actual = plot._makeVerticalPositions(200);
 
             expect(actual).toEqual([]);
@@ -495,9 +504,11 @@ describe('Test for Plot', function() {
         it('make divided positions of plot', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 50
-            });
+            plot.dimensionMap = {
+                yAxis: {
+                    width: 50
+                }
+            };
 
             actual = plot._makeDividedPlotPositions(450, 8);
             expected = [0, 50, 100, 150, 300, 350, 400, 449];
@@ -510,11 +521,12 @@ describe('Test for Plot', function() {
         it('make positions for horizontal line', function() {
             var actual;
 
-            scaleModel.getAxisDataMap.and.returnValue({
+            plot.axisDataMap = {
                 xAxis: {
                     validTickCount: 5
                 }
-            });
+            };
+
             actual = plot._makeHorizontalPositions(200);
 
             expect(actual).toEqual([50, 100, 150, 199]);
@@ -523,11 +535,12 @@ describe('Test for Plot', function() {
         it('if xAxis.validTickCount is zero, returns empty array', function() {
             var actual;
 
-            scaleModel.getAxisDataMap.and.returnValue({
+            plot.axisDataMap = {
                 xAxis: {
                     validTickCount: 0
                 }
-            });
+            };
+
             actual = plot._makeHorizontalPositions(200);
 
             expect(actual).toEqual([]);
@@ -536,14 +549,16 @@ describe('Test for Plot', function() {
         it('if divided option is true, returns result to executing _makeDividedPlotPositions() function', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 50
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
+            plot.dimensionMap = {
+                yAxis: {
+                    width: 50
+                }
+            };
+            plot.axisDataMap = {
                 xAxis: {
                     validTickCount: 5
                 }
-            });
+            };
             plot.options.divided = true;
 
             actual = plot._makeHorizontalPositions(350);
@@ -555,25 +570,29 @@ describe('Test for Plot', function() {
 
     describe('render()', function() {
         it('render for plot area', function() {
-            var container, lineContainer, childNodes;;
-
-            boundsMaker.getPosition.and.returnValue({
-                top: 5,
-                left: 5
-            });
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 200
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
-                yAxis: {
-                    validTickCount: 5
+            var data = {
+                layout: {
+                    dimension: {
+                        width: 400,
+                        height: 200
+                    },
+                    position: {
+                        top: 5,
+                        left: 5
+                    }
                 },
-                xAxis: {
-                    validTickCount: 0
+                axisDataMap: {
+                    yAxis: {
+                        validTickCount: 5
+                    },
+                    xAxis: {
+                        validTickCount: 0
+                    }
                 }
-            });
-            container = plot.render();
+            };
+            var container, lineContainer, childNodes;
+
+            container = plot.render(data);
 
             expect(container.style.width).toBe('400px');
             expect(container.style.height).toBe('200px');

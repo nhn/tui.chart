@@ -36,31 +36,38 @@ var lineTypeMixer = {
             this.options.series.shifting = false;
         }
 
+        /**
+         * scale option for making scale data
+         * @type {{
+         *      xAxis: ?{valueType: string},
+         *      yAxis: ?(boolean|{valueType: string})
+         * }}
+         */
+        this.scaleOption = this._makeScaleOption();
+
         this._addComponents(options.chartType);
     },
 
     /**
-     * Add scale data for y axis.
+     * Make scale option.
+     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @private
-     * @override
      */
-    _addScaleDataForYAxis: function() {
-        this.scaleModel.addScale('yAxis', this.options.yAxis, {
-            valueType: this.dataProcessor.isCoordinateType() ? 'y' : 'value'
-        });
-    },
+    _makeScaleOption: function() {
+        var scaleOption = {};
 
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForXAxis: function() {
         if (this.dataProcessor.isCoordinateType()) {
-            this.scaleModel.addScale('xAxis', this.options.xAxis, {
+            scaleOption.xAxis = {
                 valueType: 'x'
-            });
+            };
+            scaleOption.yAxis = {
+                valueType: 'y'
+            };
+        } else {
+            scaleOption.yAxis = true;
         }
+
+        return scaleOption;
     },
 
     /**

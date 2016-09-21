@@ -12,7 +12,6 @@ var Series = require('../series/treemapChartSeries');
 var Tooltip = require('../tooltips/tooltip');
 var Legend = require('../legends/spectrumLegend');
 var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
-var chartConst = require('../const');
 
 var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
     /**
@@ -40,6 +39,14 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             hasAxes: false,
             isVertical: true
         });
+
+        /**
+         * scale option for making scale data
+         * @type {{legend: boolean}}
+         */
+        this.scaleOption = {
+            legend: true
+        };
 
         /**
          * scale information like limit, step for rendering legend
@@ -85,27 +92,12 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
     },
 
     /**
-     * Add scale data for x legend.
-     * @private
-     * @override
-     */
-    _addScaleDataForLegend: function() {
-        this.scaleModel.addScale('legend', {}, {
-            chartType: this.chart
-        }, {
-            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-        });
-    },
-
-    /**
      * Add data ratios to dataProcessor for rendering graph.
      * @private
      * @override
      */
-    _addDataRatios: function() {
-        var limit = this.scaleModel.getScaleMap().legend.getLimit();
-
-        this.dataProcessor.addDataRatiosForTreemapChart(limit, this.chartType);
+    _addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatiosForTreemapChart(limitMap.legend, this.chartType);
     },
 
     /**
@@ -143,11 +135,11 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @param {number} index - index of target seriesItem
      */
     onZoom: function(index) {
-        this._renderComponents({
+        this.componentManager.render('zoom', {
             'series': {
                 index: index
             }
-        }, 'zoom');
+        });
         this._sendSeriesData();
     }
 });

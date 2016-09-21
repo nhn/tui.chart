@@ -7,7 +7,6 @@
 'use strict';
 
 var ColumnLineComboChart = require('../../src/js/charts/columnLineComboChart.js');
-var chartConst = require('../../src/js/const');
 var defaultTheme = require('../../src/js/themes/defaultTheme.js');
 
 describe('Test for verticalTypeComboChart', function() {
@@ -98,55 +97,6 @@ describe('Test for verticalTypeComboChart', function() {
                 title: 'test'
             }]);
             expect(result).toEqual([]);
-        });
-    });
-
-    describe('_addYAxisScale()', function() {
-        it('add scale for y axis, when single y axis', function() {
-            verticalTypeComboChart.chartTypes = ['line', 'column'];
-            verticalTypeComboChart.yAxisOptionsMap = {
-                line: {
-                    title: 'yAxis title'
-                }
-            };
-            verticalTypeComboChart.options.series = {
-                column: {
-                    stackType: chartConst.NORMAL_STACK_TYPE
-                }
-            };
-
-            verticalTypeComboChart._addYAxisScale('yAxis', 0, true);
-
-            expect(scaleModel.addScale).toHaveBeenCalledWith('yAxis', {
-                title: 'yAxis title'
-            }, {
-                areaType: 'yAxis',
-                chartType: 'line'
-            }, {
-                chartType: 'column',
-                isSingleYAxis: true,
-                stackType: chartConst.NORMAL_STACK_TYPE
-            });
-        });
-
-        it('add scale for y axis, when not single y axis', function() {
-            verticalTypeComboChart.chartTypes = ['line'];
-            verticalTypeComboChart.yAxisOptionsMap = {
-                line: {
-                    title: 'yAxis title'
-                }
-            };
-
-            verticalTypeComboChart._addYAxisScale('yAxis', 0);
-
-            expect(scaleModel.addScale).toHaveBeenCalledWith('yAxis',  {
-                title: 'yAxis title'
-            }, {
-                areaType: 'yAxis',
-                chartType: 'line'
-            }, {
-                isSingleYAxis: false
-            });
         });
     });
 

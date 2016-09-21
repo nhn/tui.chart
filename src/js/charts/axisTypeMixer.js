@@ -134,38 +134,16 @@ var axisTypeMixer = {
         this._addCustomEventComponent();
     },
 
-    /**
-     * Get limit map.
-     * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {Array.<string>} chartTypes chart types
-     * @returns {{column: ?axisLimit, line: ?axisLimit}} limit map
-     * @private
-     */
-    _getLimitMap: function(axesData, chartTypes) {
-        var limitMap = {},
-            yAxisLimit = axesData.yAxis ? axesData.yAxis.limit : axesData.rightYAxis.limit;
+    _findLimit: function(limitMap, seriesIndex) {
+        var limit;
 
-        limitMap[chartTypes[0]] = this.isVertical ? yAxisLimit : axesData.xAxis.limit;
-
-        if (chartTypes.length > 1) {
-            limitMap[chartTypes[1]] = axesData.rightYAxis ? axesData.rightYAxis.limit : yAxisLimit;
+        if (seriesIndex === 0) {
+            limit = this.isVertical ? limitMap.yAxis : limitMap.xAxis;
+        } else {
+            limit = limitMap.rightYAxis ? limitMap.rightYAxis : limitMap.yAxis;
         }
 
-        return limitMap;
-    },
-
-    /**
-     * Get limit map for coordinate type.
-     * @returns {{x: ({min: number, max: number}), y: ({min: number, max: number})}}
-     * @private
-     */
-    _getLimitMapForCoordinateType: function() {
-        var scaleMakerMap = this.scaleModel.getScaleMap();
-
-        return {
-            x: scaleMakerMap.xAxis.getLimit(),
-            y: scaleMakerMap.yAxis.getLimit()
-        };
+        return limit;
     },
 
     /**
@@ -173,25 +151,23 @@ var axisTypeMixer = {
      * @private
      * @override
      */
-    _addDataRatios: function() {
+    _addDataRatios: function(limitMap) {
         var self = this;
         var chartTypes = this.chartTypes || [this.chartType];
         var seriesOption = this.options.series || {};
-        var limitMap, axesData, addDataRatio;
+        var addDataRatio;
 
         if (this.dataProcessor.isCoordinateType()) {
-            limitMap = this._getLimitMapForCoordinateType();
             addDataRatio = function(chartType) {
                 var hasRadius = predicate.isBubbleChart(chartType);
                 self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, hasRadius);
             };
         } else {
-            axesData = this.scaleModel.getAxisDataMap();
-            limitMap = this._getLimitMap(axesData, chartTypes);
-
-            addDataRatio = function(chartType) {
+            addDataRatio = function(chartType, index) {
                 var stackType = (seriesOption[chartType] || seriesOption).stackType;
-                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+                var limit = self._findLimit(limitMap, index);
+
+                self.dataProcessor.addDataRatios(limit, stackType, chartType);
             };
         }
 
@@ -200,22 +176,20 @@ var axisTypeMixer = {
 
     /**
      * Make series data for rendering.
-     * @param {{yAxis: object, xAxis: object}} axesData axes data
      * @param {Array.<string>} chartTypes chart types
-     * @param {boolean} isVertical whether vertical or not
-     * @returns {object} series data
+     * @param {object} limitMap - limit map
+     * @param {boolean} aligned - aligned
+     * @returns {object}
      * @private
      */
-    _makeSeriesDataForRendering: function(axesData, chartTypes) {
-        var limitMap = this._getLimitMap(axesData, chartTypes);
-        var aligned = axesData.xAxis.aligned;
+    _makeSeriesDataForRendering: function(chartTypes, limitMap, aligned) {
+        var self = this;
         var seriesData = {};
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
+        tui.util.forEachArray(chartTypes, function(chartType, index) {
             seriesData[chartType + 'Series'] = {
-                limit: limitMap[chartType],
-                aligned: aligned,
-                hasAxes: true
+                limit: self._findLimit(limitMap, index),
+                aligned: aligned
             };
         });
 
@@ -228,18 +202,16 @@ var axisTypeMixer = {
      * @private
      * @override
      */
-    _makeRenderingData: function() {
-        var axesData = this.scaleModel.getAxisDataMap();
+    _makeRenderingData: function(limitMap, axisDataMap) {
         var optionChartTypes = this.chartTypes || [this.chartType];
-        var seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
-        var yAxis = axesData.yAxis ? axesData.yAxis : axesData.rightYAxis;
-        var xAxis = axesData.xAxis;
+        var seriesData = this._makeSeriesDataForRendering(optionChartTypes, limitMap, axisDataMap.xAxis.aligned);
+        var xAxis = axisDataMap.xAxis;
 
         return tui.util.extend({
             customEvent: {
-                tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : yAxis.tickCount
+                tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : axisDataMap.yAxis.tickCount
             }
-        }, seriesData, axesData);
+        }, seriesData, axisDataMap);
     },
 
     /**

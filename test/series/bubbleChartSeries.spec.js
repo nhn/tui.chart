@@ -10,12 +10,11 @@ var BubbleChartSeries = require('../../src/js/series/bubbleChartSeries'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('BubbleChartSeries', function() {
-    var series, dataProcessor, seriesDataModel, boundsMaker;
+    var series, dataProcessor, seriesDataModel;
 
     beforeAll(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories', 'getCategoryCount', 'isXCountGreaterThanYCount', 'getSeriesDataModel']);
         seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount'])
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
@@ -28,8 +27,7 @@ describe('BubbleChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker
+            dataProcessor: dataProcessor
         });
     });
 
@@ -41,9 +39,11 @@ describe('BubbleChartSeries', function() {
             dataProcessor.isXCountGreaterThanYCount.and.returnValue(true);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategoryCount.and.returnValue(3);
-            boundsMaker.getDimension.and.returnValue({
-                height: 270
-            });
+            series.layout = {
+                dimension: {
+                    height: 270
+                }
+            };
 
             actual = series._calculateStep();
             expected = 90;
@@ -58,9 +58,11 @@ describe('BubbleChartSeries', function() {
             dataProcessor.isXCountGreaterThanYCount.and.returnValue(false);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategoryCount.and.returnValue(3);
-            boundsMaker.getDimension.and.returnValue({
-                width: 210
-            });
+            series.layout = {
+                dimension: {
+                    width: 210
+                }
+            };
 
             actual = series._calculateStep();
             expected = 70;
@@ -73,9 +75,12 @@ describe('BubbleChartSeries', function() {
         it('x ratio(ratioMap.x)값이 있는 경우에는 x ratio와 시리즈 너비 값으로 left를 계산합니다.', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 200
-            });
+            series.layout = {
+                dimension: {
+                    width: 200
+                }
+            };
+
             actual = series._makeBound({
                 x: 0.4
             });
@@ -88,7 +93,9 @@ describe('BubbleChartSeries', function() {
             var positionByStep = 40,
                 actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({});
+            series.layout = {
+                dimension: {}
+            };
             actual = series._makeBound({}, positionByStep);
             expected = 40;
 
@@ -98,9 +105,11 @@ describe('BubbleChartSeries', function() {
         it('y ratio(ratioMap.y)값이 있는 경우에는 y ratio와 시리즈 높이 값으로 top을 계산합니다.', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: 150
-            });
+            series.layout = {
+                dimension: {
+                    height: 150
+                }
+            };
             actual = series._makeBound({
                 y: 0.5
             });
@@ -113,9 +122,11 @@ describe('BubbleChartSeries', function() {
             var positionByStep = 40,
                 actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: 150
-            });
+            series.layout = {
+                dimension: {
+                    height: 150
+                }
+            };
             actual = series._makeBound({}, positionByStep);
             expected = 110;
 

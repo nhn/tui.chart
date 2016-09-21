@@ -13,7 +13,7 @@ var dom = require('../../src/js/helpers/domHandler.js');
 var renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('PieChartSeries', function() {
-    var series, dataProcessor, boundsMaker;
+    var series, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -21,7 +21,6 @@ describe('PieChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstItemLabel']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
 
         dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
         dataProcessor.getFirstItemLabel.and.returnValue('2.2');
@@ -37,8 +36,7 @@ describe('PieChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker
+            dataProcessor: dataProcessor
         });
     });
 
@@ -238,10 +236,12 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 2 ~ 3 사분면인 경우 높이 값을 두배로 하여 너비와 높이값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 600,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 600,
+                    height: 400
+                }
+            };
             series.options.startAngle = 120;
             series.options.endAngle = 220;
 
@@ -253,10 +253,12 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 4 ~ 1 사분면인 경우에도 높이 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 600,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 600,
+                    height: 400
+                }
+            };
             series.options.startAngle = 320;
             series.options.endAngle = 80;
 
@@ -268,10 +270,12 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 1 ~ 2 사분면인 경우 너비 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 300,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 400
+                }
+            };
             series.options.startAngle = 0;
             series.options.endAngle = 180;
 
@@ -283,10 +287,12 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 3 ~ 4 사분면인 경우에도 너비 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 300,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 400
+                }
+            };
             series.options.startAngle = 180;
             series.options.endAngle = 360;
 
@@ -298,10 +304,12 @@ describe('PieChartSeries', function() {
         it('시작 사분변과 종료 사분면이 같은 경우에는 너비, 높이 값 모두 두배로 하여 작은 값을 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 20;
             series.options.endAngle = 80;
 
@@ -313,10 +321,12 @@ describe('PieChartSeries', function() {
         it('콤보 차트의 경우 추가적인 계산 없이 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.isCombo = true;
 
             actual = series._calculateBaseSize();
@@ -329,10 +339,12 @@ describe('PieChartSeries', function() {
         it('시리즈 영역의 너비와 높이 중 작은 값의 반의 80%를 반지름으로 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
 
             actual = series._calculateRadius();
 
@@ -342,10 +354,12 @@ describe('PieChartSeries', function() {
         it('isShowOuterLabel이 true인 경우에는 65%를 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.isShowOuterLabel = true;
 
             actual = series._calculateRadius();
@@ -358,10 +372,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 1사분면에만 존재하면 계산된 cx를 반지름의 반 길이만큼 줄여주고 cy를 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 20;
             series.options.endAngle = 80;
 
@@ -374,10 +390,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 1 ~ 2 사분면에 존재하면 계산된 cx를 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 20;
             series.options.endAngle = 160;
 
@@ -390,10 +408,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 2사분면에만 존재하면 계산된 cx, cy 모두 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 110;
             series.options.endAngle = 180;
 
@@ -406,10 +426,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 2 ~ 3 사분면에 존재하면 계산된 cy를 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 90;
             series.options.endAngle = 270;
 
@@ -422,10 +444,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 3사분면에만 존재하면 계산된 cx를 반지름의 반 길이만큼 늘여주고 cy를 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 220;
             series.options.endAngle = 250;
 
@@ -438,10 +462,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 3 ~ 4 사분면에 존재하면 계산된 cx를 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 250;
             series.options.endAngle = 350;
 
@@ -454,10 +480,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 4 ~ 1 사분면에 존재하면 계산된 cy를 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 280;
             series.options.endAngle = 50;
 
@@ -470,10 +498,12 @@ describe('PieChartSeries', function() {
         it('pie sector가 4사분면에만 존재하면 계산된 cx, cy 모두 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.options.startAngle = 270;
             series.options.endAngle = 360;
 
@@ -486,10 +516,12 @@ describe('PieChartSeries', function() {
         it('콤보차트 인 경우에는 cx, cy에 대해 추가적인 연산을 수행하지 않습니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 500,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 500,
+                    height: 400
+                }
+            };
             series.isCombo = true;
 
             actual = series._calculateCenterXY(320);
@@ -503,10 +535,12 @@ describe('PieChartSeries', function() {
         it('pie 타입 차트(pie, donut)의 circle bounds정보를 생성합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+            series.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             actual = series._makeCircleBound();
 
             expect(actual).toEqual({
@@ -811,9 +845,6 @@ describe('PieChartSeries', function() {
             var expected = dom.create('div');
 
             spyOn(series.graphRenderer, 'renderLegendLines');
-            boundsMaker.getDimension.and.returnValue({
-                width: 220
-            });
             series.seriesData = {
                 sectorData: [
                     {

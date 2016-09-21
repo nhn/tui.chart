@@ -1,5 +1,5 @@
 /**
- * @fileoverview ScaleMaker calculates the limit and step into values of processed data and returns it.
+ * @fileoverview ScaleDataMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
  *       FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -13,7 +13,7 @@ var renderUtil = require('../helpers/renderUtil');
 
 var abs = Math.abs;
 
-var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
+var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     /**
      * ScaleMaker calculates the limit and step into values of processed data and returns it.
      * @param {object} params parameters
@@ -973,4 +973,4 @@ var ScaleMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     }
 });
 
-module.exports = ScaleMaker;
+module.exports = ScaleDataMaker;

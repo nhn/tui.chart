@@ -8,12 +8,10 @@
 
 var ComponentManager = require('./componentManager');
 var DefaultDataProcessor = require('../dataModels/dataProcessor');
-var BoundsMaker = require('../boundsModels/boundsMaker');
 var dom = require('../helpers/domHandler');
-var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 var UserEventListener = require('../helpers/userEventListener');
-var ScaleModel = require('../scaleModels/scaleModel');
+var boundsAndScaleBuilder = require('../models/boundsAndScaleBuilder.js');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -60,19 +58,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.dataProcessor = this._createDataProcessor(params);
 
-        /**
-         * bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = this._createBoundsMaker(params.seriesNames);
-
-        /**
-         * scale model
-         * @type {ScaleModel}
-         */
-        this.scaleModel = this._createScaleModel(params.seriesNames);
-
-        this.boundsMaker.setScaleModel(this.scaleModel);
+        this.seriesNames = params.seriesNames;
 
         /**
          * component manager
@@ -85,6 +71,18 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * @type {object}
          */
         this.userEvent = new UserEventListener();
+
+        /**
+         * Dimension map
+         * @type {null}
+         */
+        this.dimensionMap = null;
+
+        /**
+         * scale option for making scale data
+         * @type {null|object}
+         */
+        this.scaleOption = null;
     },
 
     /**
@@ -217,42 +215,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Create BoundsMaker.
-     * @param {Array.<string>} seriesNames - series names like column, line, area.
-     * @returns {BoundsMaker}
-     * @private
-     */
-    _createBoundsMaker: function(seriesNames) {
-        return new BoundsMaker({
-            chartType: this.chartType,
-            seriesNames: seriesNames,
-            options: this.options,
-            theme: this.theme,
-            dataProcessor: this.dataProcessor,
-            hasAxes: this.hasAxes,
-            isVertical: this.isVertical
-        });
-    },
-
-    /**
-     * Create ScaleModel.
-     * @param {Array.<string>} seriesNames - series names like column, line, area.
-     * @returns {ScaleModel}
-     * @private
-     */
-    _createScaleModel: function(seriesNames) {
-        return new ScaleModel({
-            chartType: this.chartType,
-            seriesNames: seriesNames,
-            options: this.options,
-            theme: this.theme,
-            dataProcessor: this.dataProcessor,
-            boundsMaker: this.boundsMaker,
-            hasRightYAxis: this.hasRightYAxis
-        });
-    },
-
-    /**
      * Create ComponentMananger.
      * @returns {ComponentMananger}
      * @private
@@ -262,8 +224,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             options: this.options,
             theme: this.theme,
             dataProcessor: this.dataProcessor,
-            boundsMaker: this.boundsMaker,
-            scaleModel: this.scaleModel,
             hasAxes: this.hasAxes
         });
     },
@@ -325,99 +285,32 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _addDataRatios: function() {},
 
     /**
-     * Add scale data for y axis.
-     * @private
-     * @abstract
-     */
-    _addScaleDataForYAxis: function() {},
-
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @abstract
-     */
-    _addScaleDataForXAxis: function() {},
-
-    /**
-     * Add scale data for legend.
-     * @private
-     * @abstract
-     */
-    _addScaleDataForLegend: function() {},
-
-    /**
-     * Register dimension for y axis.
-     * @param {string} axisName - axis name like yAxis and rightYAxis
+     * Build bounds and scale data.
+     * @param {boolean} addingDataMode - whether adding data mode or not
+     * @returns {{
+     *      layoutBounds: {
+     *          dimensionMap: object,
+     *          positionMap: object
+     *      },
+     *      limitMap: object,
+     *      axisDataMap: object,
+     *      maxRadius: ?number
+     * }}
      * @private
      */
-    _registerYAxisDimension: function(axisName) {
-        var yAxis = this.componentManager.get(axisName);
-
-        if (!yAxis) {
-            return;
-        }
-
-        this.boundsMaker.registerYAxisDimension(axisName, yAxis.options, yAxis.theme);
-    },
-
-    /**
-     * Set layout bounds and scale.
-     * @param {?boolean} addingDataMode - whether adding data mode or not
-     * @private
-     */
-    _setLayoutBoundsAndScale: function(addingDataMode) {
-        var labelAxisOptions = (this.isVertical ? this.options.xAxis : this.options.yAxis) || {};
-        var cm = this.componentManager;
-        var bm = this.boundsMaker;
-        var sm = this.scaleModel;
-
-        bm.initBoundsData();
-        sm.initScaleData(this.addedDataCount);
-
-        // 01. base dimension 등록
-        if (cm.has('xAxis')) {
-            bm.registerXAxisHeight();
-        }
-
-        if (cm.has('legend')) {
-            bm.registerLegendDimension();
-
-            if (cm.get('legend').colorSpectrum) {
-                bm.updateDimensionForSpectrumLegend();
-            }
-        }
-
-        // 02. y axis, legend scale 추가
-        this._addScaleDataForYAxis();
-        this._addScaleDataForLegend();
-
-        // 03. y axis dimension 등록
-        this._registerYAxisDimension('yAxis');
-        this._registerYAxisDimension('rightYAxis');
-
-        // 04. x axis scale 추가
-        this._addScaleDataForXAxis();
-
-        // 05. series 영역 dimension 등록
-        bm.registerSeriesDimension();
-
-        // 06. circle legend가 있을 경우에 circle legend dimension 등록
-        if (cm.has('circleLegend') && this.options.circleLegend.visible) {
-            bm.registerCircleLegendDimension();
-        }
-
-        if (cm.has('xAxis')) {
-            // 07. 자동 tick 계산 옵션이 있을 경우에 axisData 갱신
-            if (predicate.isAutoTickInterval(labelAxisOptions.tickInterval)) {
-                sm.updateXAxisDataForAutoTickInterval(addingDataMode);
-            }
-
-            // 08. x축 label의 회전 여부 관련한 axisData 갱신
-            sm.updateXAxisDataForLabel(addingDataMode);
-        }
-
-        // 09. 나머지 영역 dimension 등록 및 각 영역의 position 정보 등록
-        bm.registerBoundsData();
+    _buildBoundsAndScaleData: function(addingDataMode) {
+        return boundsAndScaleBuilder.build(this.dataProcessor, this.componentManager, {
+            chartType: this.chartType,
+            seriesNames: this.seriesNames,
+            options: this.options,
+            theme: this.theme,
+            hasAxes: this.hasAxes,
+            scaleOption: this.scaleOption,
+            isVertical: this.isVertical,
+            hasRightYAxis: this.hasRightYAxis,
+            addedDataCount: this.addedDataCount,
+            addingDataMode: addingDataMode
+        });
     },
 
     /**
@@ -427,17 +320,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _render: function(onRender, addingDataMode) {
+        var boundsAndScale = this._buildBoundsAndScaleData(addingDataMode);
         var renderingData;
 
-        // layout bounds, scale 정보 계산 및 등록
-        this._setLayoutBoundsAndScale(addingDataMode);
+        this.dimensionMap = boundsAndScale.dimensionMap;
 
         // 비율값 추가
-        this._addDataRatios();
+        this._addDataRatios(boundsAndScale.limitMap, boundsAndScale.axisDataMap);
 
-        renderingData = this._makeRenderingData();
+        renderingData = this._makeRenderingData(boundsAndScale.limitMap, boundsAndScale.axisDataMap);
 
-        onRender(renderingData);
+        onRender(renderingData, boundsAndScale);
 
         this._sendSeriesData();
     },
@@ -447,23 +340,24 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        var el = dom.create('DIV', this.className),
-            self = this;
+        var self = this;
+        var container = dom.create('DIV', this.className);
 
-        dom.addClass(el, 'tui-chart');
-        this._renderTitle(el);
-        renderUtil.renderDimension(el, this.boundsMaker.getDimension('chart'));
-        renderUtil.renderBackground(el, this.theme.chart.background);
-        renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
+        dom.addClass(container, 'tui-chart');
+        this._renderTitle(container);
 
-        this._render(function(renderingData) {
-            self._renderComponents(renderingData, 'render', el);
+        renderUtil.renderBackground(container, this.theme.chart.background);
+        renderUtil.renderFontFamily(container, this.theme.chart.fontFamily);
+
+        this._render(function(renderingData, boundsAndScale) {
+            renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
+            self.componentManager.render('render', renderingData, boundsAndScale, container);
         });
 
         this._attachCustomEvent();
-        this.chartContainer = el;
+        this.chartContainer = container;
 
-        return el;
+        return container;
     },
 
     /**
@@ -535,9 +429,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this.dataProcessor.initData(rawData);
 
-        this._render(function(renderingData) {
+        this._render(function(renderingData, boundsAndScale) {
             renderingData = self._makeRerenderingData(renderingData, checkedLegends);
-            self._renderComponents(renderingData, 'rerender');
+            self.componentManager.render('rerender', renderingData, boundsAndScale);
         });
     },
 
@@ -584,40 +478,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Render components.
-     * @param {object} renderingData data for rendering
-     * @param {string} funcName function name for execution
-     * @param {HTMLElement} container container element
-     * @private
-     */
-    _renderComponents: function(renderingData, funcName, container) {
-        var paper;
-        var elements = this.componentManager.map(function(component) {
-            var element = null;
-            var data, result;
-
-            if (component[funcName]) {
-                data = renderingData[component.componentName] || renderingData || {};
-                data.paper = paper;
-                result = component[funcName](data);
-
-                if (result && result.container) {
-                    element = result.container;
-                    paper = result.paper;
-                } else {
-                    element = result;
-                }
-            }
-
-            return element;
-        });
-
-        if (container) {
-            dom.append(container, elements);
-        }
-    },
-
-    /**
      * Send series data to custom event component.
      * @param {string} chartType - type of chart
      * @private
@@ -650,11 +510,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Animate chart.
      */
     animateChart: function() {
-        this.componentManager.each(function(component) {
-            if (component.animateComponent) {
-                component.animateComponent();
-            }
-        });
+        this.componentManager.execute('animateComponent');
     },
 
     /**
@@ -706,16 +562,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        this.scaleModel.initForAutoTickInterval();
         updated = this._updateChartDimension(dimension);
 
         if (!updated) {
             return;
         }
 
-        this._render(function(renderingData) {
-            renderUtil.renderDimension(self.chartContainer, self.boundsMaker.getDimension('chart'));
-            self._renderComponents(renderingData, 'resize');
+        this._render(function(renderingData, boundsAndScale) {
+            renderUtil.renderDimension(self.chartContainer, boundsAndScale.dimensionMap.chart);
+            self.componentManager.render('resize', renderingData, boundsAndScale);
         });
     },
 

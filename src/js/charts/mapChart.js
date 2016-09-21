@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var mapFactory = require('../factories/mapFactory');
-var chartConst = require('../const');
 var MapChartMapModel = require('./mapChartMapModel');
 var ColorSpectrum = require('./colorSpectrum');
 var MapChartDataProcessor = require('../dataModels/mapChartDataProcessor');
@@ -44,6 +43,14 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             options: options,
             DataProcessor: MapChartDataProcessor
         });
+
+        /**
+         * scale option for making scale data
+         * @type {{legend: boolean}}
+         */
+        this.scaleOption = {
+            legend: true
+        };
 
         this._addComponents(options);
     },
@@ -85,27 +92,12 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     },
 
     /**
-     * Add scale data for x legend.
-     * @private
-     * @override
-     */
-    _addScaleDataForLegend: function() {
-        this.scaleModel.addScale('legend', {}, {
-            chartType: this.chartType
-        }, {
-            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-        });
-    },
-
-    /**
      * Add data ratios.
      * @private
      * @override
      */
-    _addDataRatios: function() {
-        var axisData = this.scaleModel.getAxisDataMap().legend;
-
-        this.dataProcessor.addDataRatios(axisData.limit);
+    _addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatios(limitMap.legend);
     },
 
     /**

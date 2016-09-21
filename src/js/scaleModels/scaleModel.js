@@ -1,6 +1,6 @@
 'use strict';
 
-var ScaleMaker = require('./scaleMaker');
+var ScaleDataMaker = require('./scaleDataMaker');
 var axisDataMaker = require('./axisDataMaker');
 var predicate = require('../helpers/predicate');
 
@@ -70,7 +70,7 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
         var chartType = typeMap.chartType || this.chartType;
         seriesOptions = seriesOptions[chartType] || seriesOptions;
 
-        return new ScaleMaker(tui.util.extend({
+        return new ScaleDataMaker(tui.util.extend({
             dataProcessor: this.dataProcessor,
             boundsMaker: this.boundsMaker,
             stackType: seriesOptions.stackType,
@@ -88,7 +88,7 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
 
     /**
      * Create value type axis data.
-     * @param {ScaleMaker} scaleData - scale data
+     * @param {ScaleDataMaker} scaleData - scale data
      * @param {object} labelTheme - label theme
      * @param {boolean} aligned - aligned tick and label
      * @param {boolean} isVertical - whether vertical or not
@@ -226,36 +226,15 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
     addScale: function(axisName, axisOptions, typeMap, additionalParams) {
         typeMap = typeMap || {};
         typeMap.areaType = typeMap.areaType || axisName;
+
         this.scaleMap[axisName] = this._createScale(axisOptions, typeMap, additionalParams);
     },
 
     /**
-     * Get scale map.
-     * @returns {object}
+     * Set axis data map.
      */
-    getScaleMap: function() {
-        return this.scaleMap;
-    },
-
-    /**
-     * Get axis data map.
-     * @returns {object}
-     */
-    getAxisDataMap: function() {
-        if (!this.axisDataMap) {
-            this.axisDataMap = this._createAxesData();
-        }
-
-        return this.axisDataMap;
-    },
-
-    /**
-     * Get axis data.
-     * @param {string} axisName - axis name like xAxis, yAxis
-     * @returns {object}
-     */
-    getAxisData: function(axisName) {
-        return this.getAxisDataMap()[axisName];
+    setAxisDataMap: function() {
+        this.axisDataMap = this._createAxesData();
     },
 
     /**
@@ -264,7 +243,7 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
      */
     updateXAxisDataForAutoTickInterval: function(addingDataMode) {
         var shiftingOption = this.options.series.shifting;
-        var xAxisData = this.getAxisData('xAxis');
+        var xAxisData = this.axisDataMap.xAxis;
         var seriesWidth = this.boundsMaker.getDimension('series').width;
         var prevData = this.prevUpdatedData;
         var addedCount = this.addedDataCount;
@@ -287,7 +266,7 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
     updateXAxisDataForLabel: function(addingDataMode) {
-        var axisData = this.getAxisData('xAxis');
+        var axisData = this.axisDataMap.xAxis;
         var labels = axisData.labels;
         var dimensionMap = this.boundsMaker.getDimensionMap(['series', 'yAxis']);
         var isLabelAxis = axisData.isLabelAxis;
@@ -326,6 +305,39 @@ var ScaleModel = tui.util.defineClass(/** @lends ScaleModel.prototype */{
         this.prevValidLabelCount = validLabelCount;
 
         tui.util.extend(axisData, additionalData);
+    },
+
+    /**
+     * Make limit map.
+     * @returns {{
+     *      xAxis: ?{min: number, max: number},
+     *      yAxis: ?{min: number, max: number},
+     *      rightYAxis: ?{min: number, max: number},
+     *      legend: ?{min: number, max: number},
+     * }}
+     * @private
+     */
+    makeLimitMap: function() {
+        var scaleMap = this.scaleMap;
+        var limitMap = {};
+
+        if (scaleMap.xAxis) {
+            limitMap.xAxis = scaleMap.xAxis.getLimit();
+        }
+
+        if (scaleMap.yAxis) {
+            limitMap.yAxis = scaleMap.yAxis.getLimit();
+        }
+
+        if (scaleMap.rightYAxis) {
+            limitMap.rightYAxis = scaleMap.rightYAxis.getLimit();
+        }
+
+        if (scaleMap.legend) {
+            limitMap.legend = scaleMap.legend.getLimit();
+        }
+
+        return limitMap;
     }
 });
 

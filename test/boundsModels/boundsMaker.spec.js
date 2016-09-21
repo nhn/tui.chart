@@ -33,7 +33,6 @@ describe('Test for BoundsMaker', function() {
                 }
             }
         });
-        boundsMaker.setScaleModel(scaleModel);
     });
 
     describe('_registerChartDimension()', function() {

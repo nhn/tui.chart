@@ -100,7 +100,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _setMapRatio: function() {
-        var seriesDimension = this.boundsMaker.getDimension('series');
+        var seriesDimension = this.layout.dimension;
         var mapDimension = this.mapModel.getMapDimension();
         var widthRatio = seriesDimension.width / mapDimension.width;
         var heightRatio = seriesDimension.height / mapDimension.height;
@@ -113,7 +113,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _setGraphDimension: function() {
-        var seriesDimension = this.boundsMaker.getDimension('series');
+        var seriesDimension = this.layout.dimension;
 
         this.graphDimension = {
             width: seriesDimension.width * this.zoomMagn,
@@ -127,9 +127,11 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @returns {HTMLElement} series element
      */
     render: function(data) {
+        var container = Series.prototype.render.call(this, data);
+
         this._setMapRatio();
 
-        return Series.prototype.render.call(this, data);
+        return container;
     },
 
     /**
@@ -137,7 +139,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _setLimitPositionToMoveMap: function() {
-        var seriesDimension = this.boundsMaker.getDimension('series');
+        var seriesDimension = this.layout.dimension;
         var graphDimension = this.graphDimension;
 
         this.limitPosition = {
@@ -460,7 +462,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _movePositionForZoom: function(position, changedRatio) {
-        var seriesDimension = this.boundsMaker.getDimension('series');
+        var seriesDimension = this.layout.dimension;
         var containerBound = this._getContainerBound();
         var startPosition = {
             left: (seriesDimension.width / 2) + containerBound.left,

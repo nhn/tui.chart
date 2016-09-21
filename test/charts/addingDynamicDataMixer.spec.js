@@ -9,18 +9,16 @@
 var mixer = require('../../src/js/charts/addingDynamicDataMixer');
 
 describe('Test for addingDynamicDataMixer', function() {
-    var dataProcessor, boundsMaker, scaleModel;
+    var dataProcessor, componentManager;
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
                     ['getCategoryCount', 'shiftData', 'addDataFromDynamicData', 'getValues', 'isCoordinateType']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker',
-                                ['initBoundsData', 'getAxesData', 'getDimension', 'onAddingDataMode', 'offAddingDataMode']);
-        scaleModel = jasmine.createSpyObj('scaleModel', ['initScaleData', 'initForAutoTickInterval'])
+
+        componentManager = jasmine.createSpyObj('componentManager', ['render']);
 
         mixer.dataProcessor = dataProcessor;
-        mixer.boundsMaker = boundsMaker;
-        mixer.scaleModel = scaleModel;
+        mixer.componentManager = componentManager;
 
         mixer._initForAddingData();
         mixer.options = {
@@ -38,12 +36,14 @@ describe('Test for addingDynamicDataMixer', function() {
         beforeEach(function() {
             dataProcessor.getCategoryCount.and.returnValue(5);
             dataProcessor.isCoordinateType.and.returnValue(false);
-            boundsMaker.getAxesData.and.returnValue({
+            mixer.axisDataMap = {
                 xAxis: {}
-            });
-            boundsMaker.getDimension.and.returnValue({
-                width: 200
-            });
+            };
+            mixer.dimensionMap = {
+                xAxis: {
+                    width: 200
+                }
+            };
         });
 
         it('_animateForAddingData 함수를 호출하면 addesDataCount를 증가시킵니다.', function() {
@@ -80,12 +80,14 @@ describe('Test for addingDynamicDataMixer', function() {
 
         it('_animateForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
             '각 컴포넌트 animateForAddingData함수를 tickSize와 shifting 옵션 값을 전달하며 실행합니다.', function() {
+            var boundsAndScale;
+
             mixer._animateForAddingData();
 
-            expect(mixer._renderComponents).toHaveBeenCalledWith({
+            expect(componentManager.render).toHaveBeenCalledWith('animateForAddingData', {
                 tickSize: 50,
                 shifting: false
-            }, 'animateForAddingData');
+            }, boundsAndScale);
         });
 
         it('shifting 옵션이 있으면 dataProcessor.shiftData 함수를 실행합니다.', function() {
@@ -107,11 +109,13 @@ describe('Test for addingDynamicDataMixer', function() {
 
         it('_rerenderForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
             '각 컴포넌트 rerender함수를 animatable=false 값을 전달하며 실행합니다.', function() {
+            var boundsAndScale;
+
             mixer._rerenderForAddingData();
 
-            expect(mixer._renderComponents).toHaveBeenCalledWith({
+            expect(componentManager.render).toHaveBeenCalledWith('rerender', {
                 animatable: false
-            }, 'rerender');
+            }, boundsAndScale);
         });
     });
 
@@ -162,14 +166,13 @@ describe('Test for addingDynamicDataMixer', function() {
     });
 
     describe('_pauseAnimationForAddingData()', function() {
-        it('_pauseAnimationForAddingData함수를 호출하면 paused값이 true로 설정하고 scaleModel.initForAutoTickInterval함수를 실행합니다.', function() {
+        it('_pauseAnimationForAddingData함수를 호출하면 paused값이 true로 설정합니다.', function() {
             mixer._initForAutoTickInterval = jasmine.createSpy('_initForAutoTickInterval');
 
             mixer.paused = false;
             mixer._pauseAnimationForAddingData();
 
             expect(mixer.paused).toBe(true);
-            expect(scaleModel.initForAutoTickInterval).toHaveBeenCalled();
         });
 
         it('this.rerenderingDelayTimerId 값이 있으면 clearTimeout을 수행하고 this.delayRerender를 null로 설정합니다.', function() {

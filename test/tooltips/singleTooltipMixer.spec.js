@@ -12,7 +12,7 @@ var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Tooltip', function() {
-    var tooltip, dataProcessor, boundsMaker;
+    var tooltip, dataProcessor;
 
     beforeAll(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getFormattedGroupValues', 'getLegendLabels', 'getValue']);
@@ -20,11 +20,8 @@ describe('Tooltip', function() {
         dataProcessor.getFormattedGroupValues.and.returnValue([['10', '20']]);
         dataProcessor.getLegendLabels.and.returnValue(['Density1', 'Density2']);
 
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getPosition']);
-
         tooltip = singleTooltipMixer;
         tooltip.dataProcessor = dataProcessor;
-        tooltip.boundsMaker = boundsMaker;
     });
 
     describe('_setIndexesCustomAttribute()', function() {
@@ -334,14 +331,18 @@ describe('Tooltip', function() {
 
     describe('_adjustPosition()', function() {
         beforeAll(function() {
-            boundsMaker.getDimension.and.returnValue({
-                width: 200,
-                height: 100
-            });
-            boundsMaker.getPosition.and.returnValue({
-                left: 10,
-                top: 10
-            });
+            tooltip.dimensionMap = {
+                chart: {
+                    width: 200,
+                    height: 100
+                }
+            };
+            tooltip.layout = {
+                position: {
+                    left: 10,
+                    top: 10
+                }
+            };
         });
 
         it('차트 왼쪽 영역을 넘어가는 툴팁 포지션의 left값을 보정합니다.', function() {

@@ -14,17 +14,15 @@ var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('TreemapChartSeries', function() {
     var rootId = chartConst.TREEMAP_ROOT_ID;
-    var series, boundsMaker, seriesDataModel;
+    var series, seriesDataModel;
 
     beforeAll(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(30);
     });
 
     beforeEach(function() {
         series = new TreemapChartSeries({
-            boundsMaker: boundsMaker,
             chartType: 'treemap',
             theme: {
                 label: {
@@ -42,10 +40,12 @@ describe('TreemapChartSeries', function() {
         it('make bound map by dimension', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 600,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 600,
+                    height: 400
+                }
+            };
             seriesDataModel.rawSeriesData = [
                 {
                     id: 'id_0',
@@ -91,10 +91,12 @@ describe('TreemapChartSeries', function() {
 
     describe('_makeBounds()', function() {
         beforeEach(function() {
-            boundsMaker.getDimension.and.returnValue({
-                width: 600,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 600,
+                    height: 400
+                }
+            };
             seriesDataModel.rawSeriesData = [
                 {
                     label: 'label1',
@@ -172,10 +174,12 @@ describe('TreemapChartSeries', function() {
 
     describe('_renderSeriesLabel()', function() {
         beforeEach(function() {
-            boundsMaker.getDimension.and.returnValue({
-                width: 600,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 600,
+                    height: 400
+                }
+            };
             seriesDataModel.rawSeriesData = [
                 {
                     label: 'label1',

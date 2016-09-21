@@ -517,7 +517,7 @@ describe('Test for SeriesDataModel', function() {
     describe('addDataRatiosForCoordinateType()', function() {
         it('limitMap.x로 xDistance와 xSubValue를 계산하여 각각의 seriesItem의 addRatio를 호출하여 x ratio를 등록합니다.', function() {
             var limitMap = {
-                x: {
+                xAxis: {
                     min: 0,
                     max: 20
                 }
@@ -533,7 +533,7 @@ describe('Test for SeriesDataModel', function() {
 
         it('limitMap.y로 yDistance와 ySubValue를 계산하여 각각의 seriesItem의 addRatio를 호출하여 y ratio를 등록합니다.', function() {
             var limitMap = {
-                y: {
+                yAxis: {
                     min: 10,
                     max: 50
                 }

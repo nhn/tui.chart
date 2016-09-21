@@ -36,18 +36,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * Bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
-         * Scale model
-         * @type {ScaleModel}
-         */
-        this.scaleModel = params.scaleModel;
-
-        /**
          * Options
          * @type {object}
          */
@@ -84,6 +72,18 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * whether vertical or not
          */
         this.isVertical = params.isVertical;
+
+        /**
+         * layout bounds information for this components
+         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
+         */
+        this.layout = null;
+
+        /**
+         * axis data map
+         * @type {null|object}
+         */
+        this.axisDataMap = null;
     },
 
     /**
@@ -92,10 +92,12 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _renderPlotArea: function(plotContainer) {
-        var dimension = this.boundsMaker.getDimension('plot');
+        var dimension;
+
+        dimension = this.layout.dimension;
 
         renderUtil.renderDimension(plotContainer, dimension);
-        renderUtil.renderPosition(plotContainer, this.boundsMaker.getPosition('plot'));
+        renderUtil.renderPosition(plotContainer, this.layout.position);
 
         if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
             this._renderOptionalLines(plotContainer, dimension);
@@ -107,12 +109,32 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
+     * Set data for rendering.
+     * @param {{
+     *      layout: {
+     *          dimension: {width: number, height: number},
+     *          position: {left: number, top: number}
+     *      },
+     *      axisDataMap: object
+     * }} data - bounds and scale data
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        if (data) {
+            this.layout = data.layout;
+            this.axisDataMap = data.axisDataMap;
+        }
+    },
+
+    /**
      * Render plot component.
+     * @param {object} data - bounds and scale data
      * @returns {HTMLElement} plot element
      */
-    render: function() {
+    render: function(data) {
         var container = dom.create('DIV', this.className);
 
+        this._setDataForRendering(data);
         this._renderPlotArea(container);
         this.plotContainer = container;
 
@@ -121,16 +143,17 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Rerender.
-     * @param {object} data rendering
+     * @param {object} data - bounds and scale data
      */
-    rerender: function() {
+    rerender: function(data) {
         this.plotContainer.innerHTML = '';
+        this._setDataForRendering(data);
         this._renderPlotArea(this.plotContainer);
     },
 
     /**
      * Resize plot component.
-     * @param {object} data rendering data
+     * @param {object} data - bounds and scale data
      */
     resize: function(data) {
         this.rerender(data);
@@ -318,7 +341,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     _makeOptionalLinesHtml: function(lines, dimension) {
         var width = dimension.width;
-        var xAxisData = this.scaleModel.getAxisData('xAxis');
+        var xAxisData = this.axisDataMap.xAxis;
         var templateParams = this._makeVerticalLineTemplateParams({
             height: dimension.height + 'px'
         });
@@ -424,7 +447,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeVerticalPositions: function(height) {
-        var axisDataMap = this.scaleModel.getAxisDataMap();
+        var axisDataMap = this.axisDataMap;
         var yAxis = axisDataMap.yAxis || axisDataMap.rightYAxis;
         var positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
 
@@ -441,7 +464,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeDividedPlotPositions: function(width, tickCount) {
-        var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
+        var yAxisWidth = this.dimensionMap.yAxis.width;
         var leftWidth, rightWidth, leftPositions, rightPositions;
 
         tickCount = parseInt(tickCount / 2, 10) + 1;
@@ -465,7 +488,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeHorizontalPositions: function(width) {
-        var tickCount = this.scaleModel.getAxisDataMap().xAxis.validTickCount;
+        var tickCount = this.axisDataMap.xAxis.validTickCount;
         var positions;
 
         if (this.options.divided) {
@@ -536,7 +559,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
                 self.optionalContainer.style.left = (beforeLeft - left) + 'px';
             });
         } else {
-            areaWidth = this.boundsMaker.getDimension('plot').width;
+            areaWidth = this.layout.dimension.width;
             renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
                 var left = interval * ratio;
                 self.optionalContainer.style.width = (areaWidth - left) + 'px';

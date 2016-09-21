@@ -51,7 +51,7 @@ var addingDynamicDataMixer = {
      */
     _calculateAnimateTickSize: function() {
         var dataProcessor = this.dataProcessor;
-        var xAxisWidth = this.boundsMaker.getDimension('xAxis').width;
+        var xAxisWidth = this.dimensionMap.xAxis.width;
         var tickInterval = this.options.xAxis.tickInterval;
         var shiftingOption = !!this.options.series.shifting;
         var tickCount;
@@ -79,13 +79,12 @@ var addingDynamicDataMixer = {
 
         this.addedDataCount += 1;
 
-        this._render(function() {
+        this._render(function(renderingData, boundsAndScale) {
             var tickSize = self._calculateAnimateTickSize();
-
-            self._renderComponents({
+            self.componentManager.render('animateForAddingData', {
                 tickSize: tickSize,
                 shifting: shiftingOption
-            }, 'animateForAddingData');
+            }, boundsAndScale);
         }, true);
 
         if (shiftingOption) {
@@ -100,9 +99,9 @@ var addingDynamicDataMixer = {
     _rerenderForAddingData: function() {
         var self = this;
 
-        this._render(function(renderingData) {
+        this._render(function(renderingData, boundsAndScale) {
             renderingData.animatable = false;
-            self._renderComponents(renderingData, 'rerender');
+            self.componentManager.render('rerender', renderingData, boundsAndScale);
         });
     },
 
@@ -138,7 +137,6 @@ var addingDynamicDataMixer = {
      */
     _pauseAnimationForAddingData: function() {
         this.paused = true;
-        this.scaleModel.initForAutoTickInterval();
 
         if (this.rerenderingDelayTimerId) {
             clearTimeout(this.rerenderingDelayTimerId);

@@ -1204,7 +1204,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     addDataRatiosForCoordinateType: function(chartType, limitMap, hasRadius) {
         if (predicate.isLineTypeChart(chartType)) {
-            this._addStartValueToAllSeriesItem(limitMap.y, chartType);
+            this._addStartValueToAllSeriesItem(limitMap.yAxis, chartType);
         }
         this.getSeriesDataModel(chartType).addDataRatiosForCoordinateType(limitMap, hasRadius);
     },

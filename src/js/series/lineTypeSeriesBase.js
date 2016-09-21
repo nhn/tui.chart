@@ -25,9 +25,11 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @override
      */
     render: function() {
-        this.beforeAxes = this.scaleModel.getAxisDataMap();
+        var container = Series.prototype.render.apply(this, arguments);
 
-        return Series.prototype.render.apply(this, arguments);
+        this.beforeAxes = this.axisDataMap;
+
+        return container;
     },
     /**
      * Make positions for default data type.
@@ -36,7 +38,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @private
      */
     _makePositionsForDefaultType: function(seriesWidth) {
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var seriesDataModel = this._getSeriesDataModel();
         var width = seriesWidth || dimension.width || 0;
         var height = dimension.height;
@@ -44,7 +46,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var start = chartConst.SERIES_EXPAND_SIZE;
         var step;
 
-        if (this.data.aligned) {
+        if (this.aligned) {
             step = width / (len - 1);
         } else {
             step = width / len;
@@ -74,11 +76,11 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @private
      */
     _makePositionForCoordinateType: function(seriesWidth) {
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var seriesDataModel = this._getSeriesDataModel();
         var width = seriesWidth || dimension.width || 0;
         var height = dimension.height;
-        var xAxis = this.scaleModel.getAxisDataMap().xAxis;
+        var xAxis = this.axisDataMap.xAxis;
         var additionalLeft = 0;
 
         if (xAxis.sizeRatio) {
@@ -156,7 +158,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _makeLabelPosition: function(basePosition, labelHeight, label, value, isStart) {
         var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label);
-        var dimension = this.boundsMaker.getDimension('extendedSeries');
+        var dimension = this.dimensionMap.extendedSeries;
 
         return {
             left: (basePosition.left - (labelWidth / 2)) / dimension.width * 100,
@@ -250,7 +252,8 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         this._cancelMovingAnimation();
         this._clearContainer(data.paper);
-        paper = this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
+        this._setDataForRendering(data);
+        paper = this._renderSeriesArea(this.seriesContainer, data.paper, tui.util.bind(this._renderGraph, this));
         this._showGraphWithoutAnimation();
 
         if (!tui.util.isNull(this.selectedLegendIndex)) {
@@ -281,7 +284,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _isChangedAxisLimit: function() {
         var beforeAxes = this.beforeAxes;
-        var axisDataMap = this.scaleModel.getAxisDataMap();
+        var axisDataMap = this.axisDataMap;
         var changed = true;
 
         this.beforeAxes = axisDataMap;
@@ -380,7 +383,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     _animateForMoving: function(interval) {
         var graphRenderer = this.graphRenderer;
         var childrenForMoving = this.seriesContainer.childNodes;
-        var areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
+        var areaWidth = this.dimensionMap.extendedSeries.width;
         var beforeLeft = 0;
 
         this._hideFirstLabels();
@@ -413,7 +416,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             return;
         }
 
-        areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
+        areaWidth = this.dimensionMap.extendedSeries.width;
 
         if (!this.dataProcessor.isCoordinateType()) {
             animateLabel = function(ratio) {
@@ -433,8 +436,8 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @override
      */
     _makeZeroTopForAddingData: function() {
-        var seriesHeight = this.boundsMaker.getDimension('series').height;
-        var limit = this.scaleModel.getAxisDataMap().yAxis.limit;
+        var seriesHeight = this.layout.dimension.height;
+        var limit = this.axisDataMap.yAxis.limit;
 
         return this._getLimitDistanceFromZeroPoint(seriesHeight, limit).toMax + chartConst.SERIES_EXPAND_SIZE;
     },
@@ -445,8 +448,8 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     animateForAddingData: function(params) {
         var seriesData = this._makeSeriesData();
-        var dimension = this.boundsMaker.getDimension('extendedSeries');
-        var seriesWidth = this.boundsMaker.getDimension('series').width;
+        var dimension = this.dimensionMap.extendedSeries;
+        var seriesWidth = this.layout.dimension.width;
         var paramsForRendering = this._makeParamsForGraphRendering(dimension, seriesData);
         var tickSize = params.tickSize;
         var shiftingOption = this.options.shifting;

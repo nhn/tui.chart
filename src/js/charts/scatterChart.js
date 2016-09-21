@@ -43,29 +43,20 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
             hasAxes: true
         });
 
+        /**
+         * scale option for making scale data
+         * @type {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
+         */
+        this.scaleOption = {
+            xAxis: {
+                valueType: 'x'
+            },
+            yAxis: {
+                valueType: 'y'
+            }
+        };
+
         this._addComponents(options.chartType);
-    },
-
-    /**
-     * Add scale data for y axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForYAxis: function() {
-        this.scaleModel.addScale('yAxis', this.options.yAxis, {
-            valueType: 'y'
-        });
-    },
-
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForXAxis: function() {
-        this.scaleModel.addScale('xAxis', this.options.xAxis, {
-            valueType: 'x'
-        });
     },
 
     /**

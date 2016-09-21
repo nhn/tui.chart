@@ -12,11 +12,7 @@ var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Series', function() {
-    var series, boundsMaker;
-
-    beforeAll(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getBound']);
-    });
+    var series;
 
     beforeEach(function() {
         series = new Series({
@@ -30,7 +26,6 @@ describe('Series', function() {
                 },
                 colors: ['blue']
             },
-            boundsMaker: boundsMaker,
             options: {}
         });
     });
@@ -100,16 +95,26 @@ describe('Series', function() {
 
     describe('render()', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function() {
+            var data = {
+                dimensionMap: {
+                    extendedSeries: {
+                        width: 220,
+                        height: 120
+                    }
+                },
+                positionMap: {
+                    extendedSeries: {
+                        top: 40,
+                        left: 40
+                    }
+                }
+            };
             var actual, seriesContainer;
 
             series.hasAxes = true;
-            boundsMaker.getBound.and.returnValue({
-                dimension: {width: 220, height: 120},
-                position: {top: 40, left: 40}
-            });
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
 
-            actual = series.render({});
+            actual = series.render(data);
             seriesContainer = actual.container;
 
             expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);

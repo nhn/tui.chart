@@ -253,7 +253,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _calculateBaseSize: function() {
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var width = dimension.width;
         var height = dimension.height;
         var quadrantRange;
@@ -292,7 +292,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _calculateCenterXY: function(radius) {
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var halfRadius = radius / 2;
         var cx = dimension.width / 2;
         var cy = dimension.height / 2;
@@ -631,7 +631,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _moveLegendLines: function() {
-        var centerLeft = this.boundsMaker.getDimension('chart').width / 2,
+        var centerLeft = this.dimensionMap.chart.width / 2,
             outerPositions = this._pickPositionsFromSectorData('outerPosition'),
             filteredPositions = tui.util.filter(outerPositions, function(position) {
                 return position;

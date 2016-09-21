@@ -19,9 +19,9 @@ var zoomMixer = {
     _renderForZoom: function(isResetZoom) {
         var self = this;
 
-        this._render(function(renderingData) {
+        this._render(function(renderingData, boundsAndScale) {
             renderingData.customEvent.isResetZoom = isResetZoom;
-            self._renderComponents(renderingData, 'zoom');
+            self.componentManager.render('zoom', renderingData, boundsAndScale);
         });
     },
 
@@ -46,8 +46,6 @@ var zoomMixer = {
         if (this.checkedLegends) {
             rawData = this._filterCheckedRawData(rawData, this.checkedLegends);
         }
-
-        this.scaleModel.initForAutoTickInterval();
 
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();

@@ -10,18 +10,11 @@ var SpectrumLegend = require('../../src/js/legends/spectrumLegend');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for SpectrumLegend', function() {
-    var legend, boundsMaker, scaleModel;
-
-    beforeAll(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
-        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisData']);
-    });
+    var legend;
 
     beforeEach(function() {
         legend = new SpectrumLegend({
-            theme: {},
-            boundsMaker: boundsMaker,
-            scaleModel: scaleModel
+            theme: {}
         });
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
@@ -30,13 +23,18 @@ describe('Test for SpectrumLegend', function() {
         it('tick html을 생성합니다.', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: 200
-            });
-            scaleModel.getAxisData.and.returnValue({
-                labels: [0, 50, 100, 150, 200],
-                tickCount: 5
-            });
+            legend.layout = {
+                dimension: {
+                    height: 200
+                }
+            };
+            legend.axisDataMap = {
+                legend: {
+                    labels: [0, 50, 100, 150, 200],
+                    tickCount: 5
+                }
+            };
+
             actual = legend._makeTickHtml();
             expected = '<div class="tui-chart-map-legend-tick" style="top:0px"></div>' +
                 '<div class="tui-chart-map-legend-tick-label" style="top:-9px">0</div>' +

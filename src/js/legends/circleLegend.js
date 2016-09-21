@@ -31,7 +31,6 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      *      @param {?string} params.libType - library type for graph rendering
      *      @param {string} params.chartType - chart type
      *      @param {DataProcessor} params.dataProcessor - DataProcessor
-     *      @param {BoundsMaker} params.boundsMaker - BoundsMaker
      *      @param {string} params.baseFontFamily - base fontFamily of chart
      */
     init: function(params) {
@@ -50,12 +49,6 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
          * theme for label of circle legend area
          * @type {{fontSize: number, fontFamily: *}}
          */
@@ -69,6 +62,18 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
          * @type {object}
          */
         this.graphRenderer = pluginFactory.get(libType, 'circleLegend');
+
+        /**
+         * layout bounds information for this components
+         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
+         */
+        this.layout = null;
+
+        /**
+         * max radius for rendering circle legend
+         * @type {null|number}
+         */
+        this.maxRadius = null;
     },
 
     /**
@@ -98,10 +103,9 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     _makeLabelHtml: function() {
         var self = this;
-        var boundsMaker = this.boundsMaker;
-        var dimension = boundsMaker.getDimension('circleLegend');
+        var dimension = this.layout.dimension;
         var halfWidth = dimension.width / 2;
-        var maxRadius = boundsMaker.getMaxRadiusForBubbleChart();
+        var maxRadius = this.maxRadius;
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
         var decimalLength = tui.util.getDecimalLength(maxValueRadius);
         var labelHeight = renderUtil.getRenderedLabelHeight(maxValueRadius, this.labelTheme);
@@ -136,44 +140,62 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     _render: function() {
         var circleContainer = dom.create('DIV', 'tui-chart-circle-area');
-        var boundsMaker = this.boundsMaker;
-        var bound = boundsMaker.getBound('circleLegend');
-        var maxRadius = boundsMaker.getMaxRadiusForBubbleChart();
 
         this.container.appendChild(circleContainer);
 
-        this.graphRenderer.render(circleContainer, bound.dimension, maxRadius, this.circleRatios);
+        this.graphRenderer.render(circleContainer, this.layout.dimension, this.maxRadius, this.circleRatios);
 
         this._renderLabelArea();
-        renderUtil.renderPosition(this.container, bound.position);
+        renderUtil.renderPosition(this.container, this.layout.position);
+    },
+
+    /**
+     * Set data for rendering.
+     * @param {{
+     *      layout: {
+     *          dimension: {width: number, height: number},
+     *          position: {left: number, top: number}
+     *      },
+     *      maxRadius: number
+     * }} data - bounds data
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        this.layout = data.layout;
+        this.maxRadius = data.maxRadius;
     },
 
     /**
      * Render.
+     * @param {object} data - bounds data
      * @returns {HTMLElement}
      */
-    render: function() {
+    render: function(data) {
         var container = dom.create('DIV', this.className);
 
         this.container = container;
-        this._render();
+        this._setDataForRendering(data);
+        this._render(data);
 
         return container;
     },
 
     /**
      * Rerender.
+     * @param {object} data - bounds data
      */
-    rerender: function() {
+    rerender: function(data) {
         this.container.innerHTML = '';
+        this._setDataForRendering(data);
         this._render();
     },
 
     /**
      * Resize.
+     * @param {object} data - bounds data
      */
-    resize: function() {
-        this.rerender();
+    resize: function(data) {
+        this.rerender(data);
     }
 });
 

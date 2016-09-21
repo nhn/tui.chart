@@ -14,12 +14,10 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
      * SimpleCustomEvent is event handle layer for simply sending clientX, clientY.
      * @constructs SimpleCustomEvent
      * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker - bounds maker instance
      *      @param {string} params.chartType - chart type
      * @extends CustomEventBase
      */
     init: function(params) {
-        this.boundsMaker = params.boundsMaker;
         this.chartType = params.chartType;
     },
 
@@ -29,9 +27,8 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
      * @private
      */
     _renderCustomEventArea: function(customEventContainer) {
-        var bound = this.boundsMaker.getBound('customEvent');
-        renderUtil.renderDimension(customEventContainer, bound.dimension);
-        renderUtil.renderPosition(customEventContainer, bound.position);
+        renderUtil.renderDimension(customEventContainer, this.layout.dimension);
+        renderUtil.renderPosition(customEventContainer, this.layout.position);
     },
 
     /**

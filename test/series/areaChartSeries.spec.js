@@ -10,20 +10,13 @@ var AreaChartSeries = require('../../src/js/series/areaChartSeries'),
     chartConst = require('../../src/js/const');
 
 describe('AreaChartSeries', function() {
-    var series, boundsMaker, scaleModel;
-
-    beforeAll(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
-        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisDataMap']);
-    });
+    var series;
 
     beforeEach(function() {
         series = new AreaChartSeries({
             chartType: 'area',
             theme: {},
-            options: {},
-            boundsMaker: boundsMaker,
-            scaleModel: scaleModel
+            options: {}
         });
     });
 
@@ -36,15 +29,16 @@ describe('AreaChartSeries', function() {
             var height = 100;
             var actual, expected;
 
-
-            boundsMaker.getDimension.and.returnValue({
-                height: height
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
+            series.layout = {
+                dimension: {
+                    height: height
+                }
+            };
+            series.axisDataMap = {
                 yAxis: {
                     limit: limit
                 }
-            });
+            };
 
             actual = series._makePositionTopOfZeroPoint();
             expected = series._getLimitDistanceFromZeroPoint(height, limit).toMax + chartConst.SERIES_EXPAND_SIZE;
@@ -54,20 +48,22 @@ describe('AreaChartSeries', function() {
 
         it('min, max가 모두 양수인 경우에는 입력 높이에 확장 사이즈를 더하여 반환합니다.', function() {
             var limit = {
-                    min: 0,
-                    max: 10
-                },
-                height = 100,
-                actual, expected;
+                min: 0,
+                max: 10
+            };
+            var height = 100;
+            var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: height
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
+            series.layout = {
+                dimension: {
+                    height: height
+                }
+            };
+            series.axisDataMap = {
                 yAxis: {
                     limit: limit
                 }
-            });
+            };
 
             actual = series._makePositionTopOfZeroPoint();
             expected = height + chartConst.SERIES_EXPAND_SIZE;
@@ -77,20 +73,22 @@ describe('AreaChartSeries', function() {
 
         it('min, max가 모두 음수인 경우에는 확장 사이즈를 반환합니다.', function() {
             var limit = {
-                    min: -20,
-                    max: -10
-                },
-                height = 100,
-                actual, expected;
+                min: -20,
+                max: -10
+            };
+            var height = 100;
+            var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: height
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
+            series.layout = {
+                dimension: {
+                    height: height
+                }
+            };
+            series.axisDataMap = {
                 yAxis: {
                     limit: limit
                 }
-            });
+            };
 
             actual = series._makePositionTopOfZeroPoint();
             expected = chartConst.SERIES_EXPAND_SIZE;
@@ -103,9 +101,11 @@ describe('AreaChartSeries', function() {
         it('영역 chart의 기존 position값에 이전 top을 startTop으로 설정하여 stackType position 정보를 구합니다.', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: 190
-            });
+            series.layout = {
+                dimension: {
+                    height: 190
+                }
+            };
 
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
@@ -121,9 +121,11 @@ describe('AreaChartSeries', function() {
             var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
                 actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: 190
-            });
+            series.layout = {
+                dimension: {
+                    height: 190
+                }
+            };
 
             spyOn(series, '_makeBasicPositions').and.returnValue(basicPositions);
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
@@ -137,9 +139,11 @@ describe('AreaChartSeries', function() {
         it('영역 차트의 position은 stack 차트가 아닌경우 경우 _makeBasicPositions 실행한 결과를 반환합니다.', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: 190
-            });
+            series.layout = {
+                dimension: {
+                    height: 190
+                }
+            };
 
             spyOn(series, '_makeBasicPositions').and.returnValue([[{top: 150}], [{top: 100}], [{top: 180}]]);
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);

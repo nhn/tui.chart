@@ -57,6 +57,14 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             hasAxes: true
         });
 
+        /**
+         * scale option for making scale data
+         * @type {{xAxis: boolean}}
+         */
+        this.scaleOption = {
+            xAxis: true
+        };
+
         this._addComponents(options.chartType);
     },
 
@@ -77,15 +85,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         options.xAxis.divided = isCenter;
         options.series.divided = isCenter;
         options.plot.divided = isCenter;
-    },
-
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForXAxis: function() {
-        this.scaleModel.addScale('xAxis', this.options.xAxis);
     },
 
     /**

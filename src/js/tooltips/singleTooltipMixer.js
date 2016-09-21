@@ -274,8 +274,8 @@ var singleTooltipMixer = {
      * @private
      */
     _adjustPosition: function(tooltipDimension, position) {
-        var chartDimension = this.boundsMaker.getDimension('chart'),
-            areaPosition = this.boundsMaker.getPosition('tooltip');
+        var chartDimension = this.dimensionMap.chart;
+        var areaPosition = this.layout.position;
 
         position.left = Math.max(position.left, -areaPosition.left);
         position.left = Math.min(position.left, chartDimension.width - areaPosition.left - tooltipDimension.width);

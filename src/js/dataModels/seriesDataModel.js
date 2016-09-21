@@ -542,8 +542,8 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @param {boolean} [hasRadius] - whether has radius or not
      */
     addDataRatiosForCoordinateType: function(limitMap, hasRadius) {
-        var xLimit = limitMap.x;
-        var yLimit = limitMap.y;
+        var xLimit = limitMap.xAxis;
+        var yLimit = limitMap.yAxis;
         var maxRadius = hasRadius ? tui.util.max(this.getValues('r')) : 0;
         var xDistance, xSubValue, yDistance, ySubValue;
 

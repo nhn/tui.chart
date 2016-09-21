@@ -12,15 +12,12 @@ var seriesGroup = require('../../src/js/dataModels/seriesGroup');
 var renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
-    var series, dataProcessor, boundsMaker;
+    var series, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
-
-
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
@@ -38,8 +35,7 @@ describe('ColumnChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker
+            dataProcessor: dataProcessor
         });
     });
 
@@ -112,8 +108,8 @@ describe('ColumnChartSeries', function() {
 
     describe('_makeBounds()', function() {
         it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
-            var actual, expected,
-                seriesDataModel = new SeriesDataModel();
+            var actual, expected;
+            var seriesDataModel = new SeriesDataModel();
 
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
@@ -127,10 +123,12 @@ describe('ColumnChartSeries', function() {
                     ratioDistance: 0.6
                 }])
             ];
-            boundsMaker.getDimension.and.returnValue({
-                width: 100,
-                height: 100
-            });
+            series.layout = {
+                dimension: {
+                    width: 100,
+                    height: 100
+                }
+            };
             spyOn(series, '_makeBaseDataForMakingBound').and.returnValue({
                 groupSize: 25,
                 firstAdditionalPosition: 0,

@@ -110,7 +110,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var seriesDataModel = this._getSeriesDataModel();
         var seriesItems;
 
-        dimension = dimension || this.boundsMaker.getDimension('series');
+        dimension = dimension || this.layout.dimension;
         seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
         boundMap = tui.util.extend(boundMap || {}, squarifier.squarify(dimension, seriesItems));
 
@@ -239,7 +239,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         this.rootId = rootId;
         this.startDepth = startDepth;
         this.selectedGroup = group;
-        this._renderSeriesArea(this.seriesContainer, this.data, tui.util.bind(this._renderGraph, this));
+        this._renderSeriesArea(this.seriesContainer, this.paper, tui.util.bind(this._renderGraph, this));
 
         if (predicate.isShowLabel(this.options)) {
             this._showSeriesLabelWithoutAnimation();

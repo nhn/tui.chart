@@ -48,20 +48,15 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             isVertical: true
         });
 
-        this._addComponents(options.chartType);
-    },
+        /**
+         * scale option for making scale data
+         * @type {{legend: boolean}}
+         */
+        this.scaleOption = {
+            legend: true
+        };
 
-    /**
-     * Add scale data for x legend.
-     * @private
-     * @override
-     */
-    _addScaleDataForLegend: function() {
-        this.scaleModel.addScale('legend', {}, {
-            chartType: this.chartType
-        }, {
-            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-        });
+        this._addComponents(options.chartType);
     },
 
     /**
@@ -111,10 +106,8 @@ tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
  * @private
  * @override
  */
-HeatmapChart.prototype._addDataRatios = function() {
-    var limit = this.scaleModel.getScaleMap().legend.getLimit();
-
-    this.dataProcessor.addDataRatios(limit, null, this.chartType);
+HeatmapChart.prototype._addDataRatios = function(limitMap) {
+    this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
 };
 
 /**

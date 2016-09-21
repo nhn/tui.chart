@@ -185,14 +185,12 @@ describe('Test for renderingLabelHelper', function() {
 
     describe('makeLabelsHtmlForTreemap', function() {
         it('make labels html for treemap, when make', function() {
-            var boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
             var seriesDataModel = new SeriesDataModel([], 'treemap');
             var hoverSeriesItem = {
                 id: 'id_0',
                 depth: 1
             };
             var series = new TreemapChartSeries({
-                boundsMaker: boundsMaker,
                 chartType: 'treemap',
                 theme: {
                     label: {
@@ -204,10 +202,12 @@ describe('Test for renderingLabelHelper', function() {
             });
             var shouldDimmed, seriesItems, boundMap, actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 600,
-                height: 400
-            });
+            series.layout = {
+                dimension: {
+                    width: 600,
+                    height: 400
+                }
+            };
             seriesDataModel.rawSeriesData = [
                 {
                     label: 'label1',

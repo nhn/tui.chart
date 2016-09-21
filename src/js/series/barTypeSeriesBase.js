@@ -19,7 +19,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @override
      */
     _makeSeriesData: function() {
-        this.groupBounds = this._makeBounds(this.boundsMaker.getDimension('series'));
+        this.groupBounds = this._makeBounds(this.layout.dimension);
 
         return {
             groupBounds: this.groupBounds,
@@ -130,7 +130,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         optionSize = this._makeOptionSize(barSize, this.options.barWidth);
         additionalPosition = this._calculateAdditionalPosition(barSize, optionSize, itemCount);
         barSize = optionSize || barSize;
-        basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.data.limit).toMin;
+        basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
 
         if (predicate.isColumnChart(this.chartType)) {
             basePosition = baseBarSize - basePosition;

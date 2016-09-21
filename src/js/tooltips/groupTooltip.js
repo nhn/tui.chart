@@ -74,10 +74,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @returns {HTMLElement}
      * @override
      */
-    render: function() {
-        var container = TooltipBase.prototype.render.call(this);
-        var chartDimension = this.boundsMaker.getDimension('chart');
-        var bound = this.boundsMaker.getBound('tooltip');
+    render: function(data) {
+        var container = TooltipBase.prototype.render.call(this, data);
+        var chartDimension = this.dimensionMap.chart;
+        var bound = this.layout;
 
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
 

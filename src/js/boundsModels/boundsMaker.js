@@ -74,8 +74,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
          */
         this.dataProcessor = params.dataProcessor;
 
-        this.scaleModel = null;
-
         this.initBoundsData();
     },
 
@@ -119,10 +117,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         this._registerChartDimension();
         this._registerTitleDimension();
-    },
-
-    setScaleModel: function(scaleModel) {
-        this.scaleModel = scaleModel;
     },
 
     /**
@@ -274,21 +268,21 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register dimension for y axis.
+     * @param {{min: number, max: number}} limit - min, max
      * @param {string} componentName - component name like yAxis, rightYAxis
      * @param {object} options - options for y axis
      * @param {{title: object, label: object}} theme - them for y axis
+     * @param {boolean} isVertical - whether vertical or not
      */
-    registerYAxisDimension: function(componentName, options, theme) {
-        var categories, scaleData, limit;
+    registerYAxisDimension: function(limit, componentName, options, theme, isVertical) {
+        var categories;
 
-        scaleData = this.scaleModel.getScaleMap()[componentName];
-
-        if (!scaleData) {
+        if (limit) {
+            categories = [limit.min, limit.max];
+        } else if (!isVertical) {
             categories = this.dataProcessor.getCategories(true);
         } else {
-            limit = scaleData.getLimit();
-            categories = [limit.min, limit.max];
-            options = scaleData.axisOptions;
+            return;
         }
 
         this._registerDimension(componentName, {
@@ -359,19 +353,20 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register dimension of circle legend.
+     * @param {object} axisDataMap - axisData map
      * @private
      */
-    registerCircleLegendDimension: function() {
+    registerCircleLegendDimension: function(axisDataMap) {
         var seriesDimension = this.getDimension('series');
-        var axisDataMap = this.scaleModel.getAxisDataMap();
         var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
         var fontFamily = this.theme.chart.fontFamily;
         var circleLegendWidth = circleLegendCalculator.calculateCircleLegendWidth(seriesDimension, axisDataMap,
             maxLabel, fontFamily);
         var legendWidth = this.getDimension('calculationLegend').width;
-        var diffWidth = circleLegendWidth - legendWidth;
+        var diffWidth;
 
         circleLegendWidth = Math.min(circleLegendWidth, Math.max(legendWidth, chartConst.MIN_LEGEND_WIDTH));
+        diffWidth = circleLegendWidth - legendWidth;
 
         this._registerDimension('circleLegend', {
             width: circleLegendWidth,
@@ -460,17 +455,16 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Update dimensions for label of x axis.
+     * @param {?object} xAxisData - axis data for x axis.
      * @private
      */
-    _updateDimensionsForXAxisLabel: function() {
-        var axisData = this.scaleModel.getAxisData('xAxis');
-
-        if (axisData.overflowLeft > 0) {
-            this._updateDimensionsWidth(axisData.overflowLeft);
+    _updateDimensionsForXAxisLabel: function(xAxisData) {
+        if (xAxisData.overflowLeft > 0) {
+            this._updateDimensionsWidth(xAxisData.overflowLeft);
         }
 
-        if (axisData.overflowHeight) {
-            this._updateDimensionsHeight(axisData.overflowHeight);
+        if (xAxisData.overflowHeight) {
+            this._updateDimensionsHeight(xAxisData.overflowHeight);
         }
     },
 
@@ -671,13 +665,14 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register bounds data.
+     * @param {?object} xAxisData - axis data for x axis.
      */
-    registerBoundsData: function() {
+    registerBoundsData: function(xAxisData) {
         this._registerCenterComponentsDimension();
 
         if (this.hasAxes) {
             this._registerAxisComponentsDimension();
-            this._updateDimensionsForXAxisLabel();
+            this._updateDimensionsForXAxisLabel(xAxisData);
         }
 
         this._registerPositions();
@@ -689,19 +684,14 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Get max radius for bubble chart.
+     * Calculate max radius.
+     * @param {object} axisDataMap - axisData map
      * @returns {number}
      */
-    getMaxRadiusForBubbleChart: function() {
-        var dimensionMap, axisDataMap;
+    calculateMaxRadius: function(axisDataMap) {
+        var dimensionMap = this.getDimensionMap(['series', 'circleLegend']);
 
-        if (!this.maxRadiusForBubbleChart) {
-            dimensionMap = this.getDimensionMap(['series', 'circleLegend']);
-            axisDataMap = this.scaleModel.getAxisDataMap();
-            this.maxRadiusForBubbleChart = circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap);
-        }
-
-        return this.maxRadiusForBubbleChart;
+        return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap);
     }
 });
 

@@ -52,16 +52,15 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             isVertical: true
         });
 
-        this._addComponents(options.chartType);
-    },
+        /**
+         * scale option for making scale data
+         * @type {{yAxis: boolean}}
+         */
+        this.scaleOption = {
+            yAxis: true
+        };
 
-    /**
-     * Add scale data for y axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForYAxis: function() {
-        this.scaleModel.addScale('yAxis', this.options.yAxis);
+        this._addComponents(options.chartType);
     },
 
     /**

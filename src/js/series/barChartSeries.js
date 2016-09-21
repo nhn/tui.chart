@@ -67,7 +67,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         var additionalLeft = 0;
 
         if (this.options.divided && value > 0) {
-            additionalLeft = this.boundsMaker.getDimension('yAxis').width + chartConst.OVERLAPPING_WIDTH;
+            additionalLeft = this.dimensionMap.yAxis.width + chartConst.OVERLAPPING_WIDTH;
         }
 
         return additionalLeft;
@@ -137,7 +137,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         var self = this;
         var seriesDataModel = this._getSeriesDataModel();
         var isStacked = predicate.isValidStackOption(this.options.stackType);
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {

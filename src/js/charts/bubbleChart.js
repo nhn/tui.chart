@@ -47,7 +47,35 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             hasAxes: true
         });
 
+        /**
+         * scale option for making scale data
+         * @type {{xAxis: ?{valueType: string}, yAxis: ?{valueType: string}}}
+         */
+        this.scaleOption = this._makeScaleOption();
+
         this._addComponents(options.chartType);
+    },
+
+    /**
+     * Make scale option.
+     * @returns {{xAxis: ?{valueType:string}, yAxis: ?{valueType:string}}}
+     * @private
+     */
+    _makeScaleOption: function() {
+        var scaleOption = {};
+
+        if (this.dataProcessor.hasXValue(this.chartType)) {
+            scaleOption.xAxis = {
+                valueType: 'x'
+            };
+        }
+        if (this.dataProcessor.hasYValue(this.chartType)) {
+            scaleOption.yAxis = {
+                valueType: 'y'
+            };
+        }
+
+        return scaleOption;
     },
 
     /**
@@ -62,33 +90,6 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
         if (tui.util.isUndefined(this.options.circleLegend.visible)) {
             this.options.circleLegend.visible = true;
-        }
-    },
-
-
-    /**
-     * Add scale data for y axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForYAxis: function() {
-        if (this.dataProcessor.hasYValue(this.chartType)) {
-            this.scaleModel.addScale('yAxis', this.options.yAxis, {
-                valueType: 'y'
-            });
-        }
-    },
-
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForXAxis: function() {
-        if (this.dataProcessor.hasXValue(this.chartType)) {
-            this.scaleModel.addScale('xAxis', this.options.xAxis, {
-                valueType: 'x'
-            });
         }
     },
 

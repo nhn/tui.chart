@@ -12,7 +12,7 @@ var seriesGroup = require('../../src/js/dataModels/seriesGroup');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('BarChartSeries', function() {
-    var series, dataProcessor, boundsMaker;
+    var series, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -22,8 +22,6 @@ describe('BarChartSeries', function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstItemLabel', 'getFormatFunctions']);
         dataProcessor.getFirstItemLabel.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
-
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
@@ -37,8 +35,7 @@ describe('BarChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker
+            dataProcessor: dataProcessor
         });
     });
 
@@ -71,12 +68,14 @@ describe('BarChartSeries', function() {
 
     describe('_calculateAdditionalLeft()', function() {
         it('divided 옵션이 있고 value가 0보다 크면 additional yAxis 너비와 OVERLAPPING_WIDTH를 더하여 반환합니다.', function() {
-            var value = 10,
-                actual, expected;
+            var value = 10;
+            var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 50
-            });
+            series.dimensionMap = {
+                yAxis: {
+                    width: 50
+                }
+            };
             series.options.divided = true;
             actual = series._calculateAdditionalLeft(value);
             expected = 51;
@@ -85,18 +84,16 @@ describe('BarChartSeries', function() {
         });
 
         it('divided 옵션이 없으면 0을 반환합니다.', function() {
-            var value = 10,
-                actual, expected;
-
-            actual = series._calculateAdditionalLeft(value);
-            expected = 0;
+            var value = 10;
+            var actual = series._calculateAdditionalLeft(value);
+            var expected = 0;
 
             expect(actual).toEqual(expected);
         });
 
         it('divided 옵션이 있어도 value가 0보다 작으면 0을 반환합니다.', function() {
-            var value = -10,
-                actual, expected;
+            var value = -10;
+            var actual, expected;
 
             series.options.divided = true;
             actual = series._calculateAdditionalLeft(value);
@@ -164,10 +161,12 @@ describe('BarChartSeries', function() {
                     ratioDistance: 0.6
                 }])
             ];
-            boundsMaker.getDimension.and.returnValue({
-                width: 100,
-                height: 100
-            });
+            series.layout = {
+                dimension: {
+                    width: 100,
+                    height: 100
+                }
+            };
             spyOn(series, '_makeBaseDataForMakingBound').and.returnValue({
                 groupSize: 25,
                 firstAdditionalPosition: 0,

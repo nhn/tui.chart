@@ -11,11 +11,7 @@ var chartConst = require('../../src/js/const');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('ScatterChartSeries', function() {
-    var series, boundsMaker;
-
-    beforeAll(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
-    });
+    var series;
 
     beforeEach(function() {
         series = new ScatterChartSeries({
@@ -26,8 +22,7 @@ describe('ScatterChartSeries', function() {
                     fontSize: 11
                 }
             },
-            options: {},
-            boundsMaker: boundsMaker
+            options: {}
         });
     });
 
@@ -35,9 +30,12 @@ describe('ScatterChartSeries', function() {
         it('x ratio와 시리즈 너비 값으로 left를 계산합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 200
-            });
+            series.layout = {
+                dimension: {
+                    width: 200
+                }
+            };
+
             actual = series._makeBound({
                 x: 0.4
             });
@@ -48,9 +46,11 @@ describe('ScatterChartSeries', function() {
         it('y ratio와 시리즈 높이 값으로 top을 계산합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({
-                height: 150
-            });
+            series.layout = {
+                dimension: {
+                    height: 150
+                }
+            };
             actual = series._makeBound({
                 y: 0.5
             });
@@ -61,7 +61,9 @@ describe('ScatterChartSeries', function() {
         it('radius는 항상 chartConst.SCATTER_RADIUS를 반환합니다.', function() {
             var actual;
 
-            boundsMaker.getDimension.and.returnValue({});
+            series.layout = {
+                dimension: {}
+            };
             actual = series._makeBound({});
 
             expect(actual.radius).toBe(chartConst.SCATTER_RADIUS);

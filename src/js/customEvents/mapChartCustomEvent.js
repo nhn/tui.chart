@@ -16,13 +16,11 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     /**
      * MapChartCustomEvent is event handle layer for map chart.
      * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker boundsMaker instance
      *      @param {string} params.chartType - chart type
      * @constructs MapChartCustomEvent
      * @extends CustomEventBase
      */
     init: function(params) {
-        this.boundsMaker = params.boundsMaker;
         this.chartType = params.chartType;
         this.isDown = false;
     },
@@ -32,9 +30,8 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * @private
      */
     _renderCustomEventArea: function(customEventContainer) {
-        var bound = this.boundsMaker.getBound('customEvent');
-        renderUtil.renderDimension(customEventContainer, bound.dimension);
-        renderUtil.renderPosition(customEventContainer, bound.position);
+        renderUtil.renderDimension(customEventContainer, this.layout.dimension);
+        renderUtil.renderPosition(customEventContainer, this.layout.position);
     },
 
     /**
