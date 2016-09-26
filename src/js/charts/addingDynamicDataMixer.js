@@ -79,12 +79,12 @@ var addingDynamicDataMixer = {
 
         this.addedDataCount += 1;
 
-        this._render(function(renderingData, boundsAndScale) {
+        this._render(function(boundsAndScale) {
             var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
-            self.componentManager.render('animateForAddingData', {
+            self.componentManager.render('animateForAddingData', boundsAndScale, {
                 tickSize: tickSize,
                 shifting: shiftingOption
-            }, boundsAndScale);
+            });
         }, true);
 
         if (shiftingOption) {
@@ -99,9 +99,8 @@ var addingDynamicDataMixer = {
     _rerenderForAddingData: function() {
         var self = this;
 
-        this._render(function(renderingData, boundsAndScale) {
-            renderingData.animatable = false;
-            self.componentManager.render('rerender', renderingData, boundsAndScale);
+        this._render(function(boundsAndScale) {
+            self.componentManager.render('rerender', boundsAndScale);
         });
     },
 

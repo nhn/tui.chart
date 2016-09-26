@@ -1264,11 +1264,9 @@ describe('Test for Axis', function() {
                 }
             };
             axis.componentName = 'xAxis';
-            axis.axisDataMap = {
-                xAxis: {
-                    labels: ['label1', 'label2', 'label3'],
-                    tickCount: 4
-                }
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
             };
 
             axis._renderAxisArea(container);
@@ -1302,11 +1300,9 @@ describe('Test for Axis', function() {
                 }
             };
             axis.options.divided = true;
-            axis.axisDataMap = {
-                xAxis: {
-                    labels: ['label1', 'label2', 'label3'],
-                    tickCount: 4
-                }
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
             };
 
             axis._renderAxisArea(container);
@@ -1338,11 +1334,9 @@ describe('Test for Axis', function() {
                     width: 80
                 }
             };
-            axis.axisDataMap = {
-                xAxis: {
-                    labels: ['label1', 'label2', 'label3'],
-                    tickCount: 4
-                }
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
             };
 
             axis._renderAxisArea(container);
@@ -1374,8 +1368,12 @@ describe('Test for Axis', function() {
 
             axis.axisContainer = dom.create('DIV');
             axis.options = {};
+            axis.componentName = 'xAxis';
             axis.rerender({
-                options: options
+                options: options,
+                axisDataMap: {
+                    xAxis: {}
+                }
             });
 
             expect(axis.options).toEqual(options);

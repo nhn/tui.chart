@@ -98,15 +98,15 @@ describe('Test for addingDynamicDataMixer', function() {
             }};
 
             mixer._render.and.callFake(function(callback) {
-                callback({}, boundsAndScale);
+                callback(boundsAndScale);
             });
 
             mixer._animateForAddingData();
 
-            expect(componentManager.render).toHaveBeenCalledWith('animateForAddingData', {
+            expect(componentManager.render).toHaveBeenCalledWith('animateForAddingData', boundsAndScale, {
                 tickSize: 50,
                 shifting: false
-            }, boundsAndScale);
+            });
         });
 
         it('shifting 옵션이 있으면 dataProcessor.shiftData 함수를 실행합니다.', function() {
@@ -135,14 +135,12 @@ describe('Test for addingDynamicDataMixer', function() {
             }};
 
             mixer._render.and.callFake(function(callback) {
-                callback({}, boundsAndScale);
+                callback(boundsAndScale);
             });
 
             mixer._rerenderForAddingData();
 
-            expect(componentManager.render).toHaveBeenCalledWith('rerender', {
-                animatable: false
-            }, boundsAndScale);
+            expect(componentManager.render).toHaveBeenCalledWith('rerender', boundsAndScale);
         });
     });
 

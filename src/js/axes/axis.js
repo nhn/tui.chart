@@ -214,11 +214,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderAxisArea: function(axisContainer) {
-        var componentName = this.componentName;
         var dimension = this.layout.dimension;
-        var axisData = this.axisDataMap[componentName];
+        var axisData = this.data;
 
-        this.data = axisData;
         this.isLabel = axisData.isLabelAxis;
 
         this._addCssClasses(axisContainer);
@@ -256,7 +254,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         this.layout = data.layout;
         this.dimensionMap = data.dimensionMap;
-        this.axisDataMap = data.axisDataMap;
+        this.data = data.axisDataMap[this.componentName];
     },
 
     /**

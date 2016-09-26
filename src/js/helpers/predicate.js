@@ -51,7 +51,7 @@ var predicate = {
      * @returns {*|boolean}
      */
     isDivergingChart: function(chartType, diverging) {
-        return this.isBarChart(chartType) && diverging;
+        return this.isBarTypeChart(chartType) && diverging;
     },
 
     /**

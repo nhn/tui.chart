@@ -69,9 +69,9 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      *      stackType: string,
      *      diverging: boolean
      * }} baseOptions - base options
-     * @param axisOptions
-     * @param additionalOptions
-     * @returns {*|{limit: {min: number, max: number}, step: number}}
+     * @param {object} axisOptions - axis options
+     * @param {object} additionalOptions - additional options
+     * @returns {{limit: {min: number, max: number}, step: number}}
      * @private
      */
     _createBaseScaleData: function(typeMap, baseOptions, axisOptions, additionalOptions) {
@@ -133,7 +133,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
 
     /**
      * Create value type axis data.
-     * @param {ScaleDataMaker} scaleData - scale data
+     * @param {{labels: Array.<string>, limit: {min: number, max: number}, step: number}} scaleData - scale data
      * @param {object} labelTheme - label theme
      * @param {boolean} aligned - aligned tick and label
      * @param {boolean} isVertical - whether vertical or not
@@ -351,16 +351,40 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
     },
 
     /**
+     * Find limit from limitMap by seriesIndex
+     * @param {object} limitMap - limit map
+     * @param {number} seriesIndex - series index
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {boolean}
+     * @private
+     */
+    _findLimit: function(limitMap, seriesIndex, isVertical) {
+        var limit;
+
+        if (seriesIndex === 0) {
+            limit = isVertical ? limitMap.yAxis : limitMap.xAxis;
+        } else {
+            limit = limitMap.rightYAxis ? limitMap.rightYAxis : limitMap.yAxis;
+        }
+
+        return limit;
+    },
+
+    /**
      * Make limit map.
+     * @param {Array.<string>} seriesNames - series names like bar, column, line, area
+     * @param {boolean} isVertical - whether vertical or not
      * @returns {{
      *      xAxis: ?{min: number, max: number},
      *      yAxis: ?{min: number, max: number},
      *      rightYAxis: ?{min: number, max: number},
      *      legend: ?{min: number, max: number},
+     *      bar: ?{min: number, max: number}
      * }}
      * @private
      */
-    makeLimitMap: function() {
+    makeLimitMap: function(seriesNames, isVertical) {
+        var self = this;
         var scaleDataMap = this.scaleDataMap;
         var limitMap = {};
 
@@ -379,6 +403,10 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         if (scaleDataMap.legend) {
             limitMap.legend = scaleDataMap.legend.limit;
         }
+
+        tui.util.forEachArray(seriesNames, function(seriesName, index) {
+            limitMap[seriesName] = self._findLimit(limitMap, index, isVertical);
+        });
 
         return limitMap;
     }

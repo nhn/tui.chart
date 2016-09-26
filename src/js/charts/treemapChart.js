@@ -135,10 +135,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @param {number} index - index of target seriesItem
      */
     onZoom: function(index) {
-        this.componentManager.render('zoom', {
-            'series': {
-                index: index
-            }
+        this.componentManager.render('zoom', null, {
+            index: index
         });
         this._sendSeriesData();
     }

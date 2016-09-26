@@ -212,7 +212,7 @@ var boundsAndScaleBuilder = {
         boundsAndScale = {
             dimensionMap: boundsModel.dimensionMap,
             positionMap: boundsModel.positionMap,
-            limitMap: scaleDataModel.makeLimitMap()
+            limitMap: scaleDataModel.makeLimitMap(params.seriesNames || [params.chartType], params.isVertical)
         };
 
         if (scaleDataModel.axisDataMap) {

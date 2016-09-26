@@ -104,7 +104,6 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
 
     /**
      * Make data for rendering.
-     * @param {object} renderingData - data for rendering
      * @param {string} name - component name
      * @param {string} type - component type
      * @param {object} paper - raphael object
@@ -117,13 +116,14 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      *      axisDataMap: object,
      *      maxRadius: ?number
      * }} boundsAndScale - bounds and scale data
+     * @param {?object} additionalData - additional data
      * @returns {object}
      * @private
      */
-    _makeDataForRendering: function(renderingData, name, type, paper, boundsAndScale) {
-        var data = renderingData[name] || renderingData || {};
-
-        data.paper = paper;
+    _makeDataForRendering: function(name, type, paper, boundsAndScale, additionalData) {
+        var data = tui.util.extend({
+            paper: paper
+        }, additionalData);
 
         if (boundsAndScale) {
             tui.util.extend(data, boundsAndScale);
@@ -140,7 +140,6 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     /**
      * Render components.
      * @param {string} funcName - function name for executing
-     * @param {object} renderingData - data for rendering
      * @param {{
      *      layoutBounds: {
      *          dimensionMap: object,
@@ -150,9 +149,10 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      *      axisDataMap: object,
      *      maxRadius: ?number
      * }} boundsAndScale - bounds and scale data
-     * @param {HTMLElement} container - container
+     * @param {?object} additionalData - additional data
+     * @param {?HTMLElement} container - container
      */
-    render: function(funcName, renderingData, boundsAndScale, container) {
+    render: function(funcName, boundsAndScale, additionalData, container) {
         var self = this;
         var name, type, paper;
 
@@ -163,7 +163,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
             if (component[funcName]) {
                 name = component.componentName;
                 type = component.componentType;
-                data = self._makeDataForRendering(renderingData, name, type, paper, boundsAndScale);
+                data = self._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
 
                 result = component[funcName](data);
 

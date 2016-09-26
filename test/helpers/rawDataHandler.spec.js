@@ -6,8 +6,8 @@
 
 'use strict';
 
-var rawDataHandler = require('../../src/js/helpers/rawDataHandler.js'),
-    chartConst = require('../../src/js/const');
+var rawDataHandler = require('../../src/js/models/data/rawDataHandler.js');
+var chartConst = require('../../src/js/const');
 
 describe('Test for rawDataHandler', function() {
     describe('_pickStacks', function() {
@@ -108,7 +108,7 @@ describe('Test for rawDataHandler', function() {
         });
     });
 
-    describe('sortSeriesData()', function() {
+    describe('_sortSeriesData()', function() {
         it('stacks의 stack 순서대로 seriesData를 정렬합니다.', function() {
             var rawSriesData = [{
                     data: [1, 2, 3],
@@ -121,7 +121,7 @@ describe('Test for rawDataHandler', function() {
                     stack: 'st1'
                 }],
                 stacks = ['st1', 'st2'],
-                actual = rawDataHandler.sortSeriesData(rawSriesData, stacks),
+                actual = rawDataHandler._sortSeriesData(rawSriesData, stacks),
                 expected = [{
                     data: [1, 2, 3],
                     stack: 'st1'
@@ -160,6 +160,205 @@ describe('Test for rawDataHandler', function() {
             }, {
                 data: [9, 8, 7]
             }];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeNormalDivergingrawSeriesDataData()', function() {
+        it('stack값이 없는 경우 두번째 요소 까지를 유효한 데이터로 취급합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, 2, 3]
+                },
+                {
+                    data: [4, 5, 6]
+                },
+                {
+                    data: [7, 8, 9]
+                }
+            ];
+            var actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            var expected = [
+                {
+                    data: [-1, -2, -3]
+                },
+                {
+                    data: [4, 5, 6]
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('0번 요소의 data들의 양수는 모두 음수로 변경하고 음수는 모두 0으로 변경합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3]
+                }
+            ];
+            var actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            var expected = [
+                {
+                    data: [-1, 0, -3]
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('1번 요소가 존재할 경우 1번 요소 data들의 음수는 모두 0으로 변경합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3]
+                },
+                {
+                    data: [-4, 5, 6]
+                }
+            ];
+            var actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            var expected = [
+                {
+                    data: [-1, 0, -3]
+                },
+                {
+                    data: [0, 5, 6]
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeRawSeriesDataForStackedDiverging()', function() {
+        it('stacks중 0번 stack값을 갖고있는 요소의 data들의 양수는 음수로 음수는 0으로 변경합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3],
+                    stack: 'stack1'
+                }
+            ];
+            var actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+            var expected = [
+                {
+                    data: [-1, 0, -3],
+                    stack: 'stack1'
+                }
+            ];
+            expect(actual).toEqual(expected);
+        });
+
+        it('stacks중 1번 stack값을 갖고있는 요소의 data들의 음수는 0으로 변경합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3],
+                    stack: 'stack1'
+                },
+                {
+                    data: [-4, 5, 6],
+                    stack: 'stack2'
+                }
+            ];
+            var actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+            var expected = [
+                {
+                    data: [-1, 0, -3],
+                    stack: 'stack1'
+                },
+                {
+                    data: [0, 5, 6],
+                    stack: 'stack2'
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('stacks가 하나일 경우에는 stack값이 없는 data들의 음수를 0으로 변경합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3],
+                    stack: 'stack1'
+                },
+                {
+                    data: [-4, 5, 6]
+                }
+            ];
+            var actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+            var expected = [
+                {
+                    data: [-1, 0, -3],
+                    stack: 'stack1'
+                },
+                {
+                    data: [0, 5, 6]
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeRawSeriesDataForDiverging()', function() {
+        it('stackType옵션이 없을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3],
+                    stack: 'stack1'
+                },
+                {
+                    data: [-4, 5, 6],
+                    stack: 'stack2'
+                },
+                {
+                    data: [7, 8, 9],
+                    stack: 'stack1'
+                }
+            ];
+            var actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData);
+            var expected = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('유효한 stackType옵션이 있을 경우에는 _makeRawSeriesDataForStackedDiverging()의 실행 결과를 반환합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3],
+                    stack: 'stack1'
+                },
+                {
+                    data: [-4, 5, 6],
+                    stack: 'stack2'
+                },
+                {
+                    data: [7, 8, 9],
+                    stack: 'stack1'
+                }
+            ];
+            var actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData, 'normal');
+            var expected = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('유효하지 않은 stackType옵션이 있을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [1, -2, 3],
+                    stack: 'stack1'
+                },
+                {
+                    data: [-4, 5, 6],
+                    stack: 'stack2'
+                },
+                {
+                    data: [7, 8, 9],
+                    stack: 'stack1'
+                }
+            ];
+            var actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData, true);
+            var expected = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
 
             expect(actual).toEqual(expected);
         });

@@ -148,15 +148,38 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
+     * Pick tick count.
+     * @param {{xAxis: object, yAxis: object}} axisDataMap - axis data map
+     * @returns {number}
+     * @private
+     */
+    _pickTickCount: function(axisDataMap) {
+        var tickCount;
+
+        if (this.isVertical) {
+            tickCount = axisDataMap.xAxis.eventTickCount || axisDataMap.xAxis.tickCount;
+        } else {
+            tickCount = axisDataMap.yAxis.tickCount;
+        }
+
+        return tickCount;
+    },
+
+    /**
      * Render for customEvent component.
      * @param {object} data - bounds data and tick count
      * @returns {HTMLElement} container for custom event
      */
     render: function(data) {
         var container = dom.create('DIV', 'tui-chart-series-custom-event-area');
+        var tickCount;
+
+        if (data.axisDataMap.xAxis) {
+            tickCount = this._pickTickCount(data.axisDataMap);
+        }
 
         this._setDataForRendering(data);
-        this._renderCustomEventArea(container, data.tickCount);
+        this._renderCustomEventArea(container, tickCount);
         this.attachEvent(container);
         this.customEventContainer = container;
 
@@ -220,9 +243,15 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {object} data - bounds data and tick count
      */
     rerender: function(data) {
+        var tickCount;
+
+        if (data.axisDataMap.xAxis) {
+            tickCount = this._pickTickCount(data.axisDataMap);
+        }
+
         this.selectedData = null;
         this._setDataForRendering(data);
-        this._renderCustomEventArea(this.customEventContainer, data.tickCount);
+        this._renderCustomEventArea(this.customEventContainer, tickCount);
     },
 
     /**

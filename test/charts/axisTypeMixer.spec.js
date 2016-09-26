@@ -158,59 +158,6 @@ describe('Test for ComboChart', function() {
         });
     });
 
-    describe('_findLimit()', function() {
-
-    });
-
-    describe('_makeSeriesDataForRendering()', function() {
-        it('가로형(!!isVertical === false) 차트의 시리즈 데이터는 x axis의 limit과 aligned를 반환합니다.', function() {
-            var xAxisLimit = {};
-            var yAxisLimit = {};
-            var actual;
-
-            axisTypeMixer.isVertical = false;
-
-            actual = axisTypeMixer._makeSeriesDataForRendering(['bar'], {
-                xAxis: xAxisLimit,
-                yAxis: yAxisLimit
-            }, true);
-
-            expect(actual.barSeries.limit).toBe(xAxisLimit);
-            expect(actual.barSeries.aligned).toBe(true);
-        });
-
-        it('세로형 단일 차트의 시리즈 데이터는 y axis limit과 x axis의 aligned를 반환합니다.', function() {
-            var yAxisLimit = {};
-            var actual;
-
-            axisTypeMixer.isVertical = true;
-
-            actual = axisTypeMixer._makeSeriesDataForRendering(['column'], {
-                yAxis: yAxisLimit
-            }, true);
-
-            expect(actual.columnSeries.limit).toBe(yAxisLimit);
-            expect(actual.columnSeries.aligned).toBe(true);
-        });
-
-        it('세로형 다중 차트의 시리즈 데이터는 option chart type 순서에 따라 chartType + "series" 조합을 key로하는 y axis limit, yr axis limit을 반환합니다.', function() {
-            var yAxisLimit = {};
-            var rightYAxisLimit = {}
-            var actual;
-
-            axisTypeMixer.optionChartTypes = ['column', 'line'];
-            actual = axisTypeMixer._makeSeriesDataForRendering(['column', 'line'], {
-                yAxis: yAxisLimit,
-                rightYAxis: rightYAxisLimit
-            }, true);
-
-            expect(actual.columnSeries.limit).toBe(yAxisLimit);
-            expect(actual.columnSeries.aligned).toBe(true);
-            expect(actual.lineSeries.limit).toBe(rightYAxisLimit);
-            expect(actual.lineSeries.aligned).toBe(true);
-        });
-    });
-
     describe('_addDataRatios()', function() {
         it('add data ratios, when chart is coordinate type', function() {
             dataProcessor.isCoordinateType.and.returnValue(true);
@@ -224,11 +171,11 @@ describe('Test for ComboChart', function() {
 
         it('add data ratios, when chart is not coordinate type', function() {
             var limitMap = {
-                yAxis: {
+                column: {
                     min: 0,
                     max: 100
                 },
-                rightYAxis: {
+                line: {
                     min: 200,
                     max: 800
                 }
@@ -252,34 +199,6 @@ describe('Test for ComboChart', function() {
                 min: 200,
                 max: 800
             }, stackType, 'line');
-        });
-    });
-
-    describe('_makeRenderingData()', function() {
-        it('axis type chart의 renderingData를 생성합니다.', function() {
-            var limitMap = {
-                xAxis: {}
-            };
-            var axisDataMap = {
-                xAxis: {
-                    aligned: true,
-                    validTickCount: 0
-                },
-                yAxis: {
-                    tickCount: 3,
-                    validTickCount: 3
-                }
-            };
-            var actual;
-
-            axisTypeMixer.chartType = 'column';
-            axisTypeMixer.isVertical = false;
-
-            actual = axisTypeMixer._makeRenderingData(limitMap, axisDataMap);
-
-            expect(actual.customEvent.tickCount).toBe(3);
-            expect(actual.columnSeries.limit).toBeDefined();
-            expect(actual.columnSeries.aligned).toBe(true);
         });
     });
 

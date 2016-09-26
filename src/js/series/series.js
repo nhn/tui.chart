@@ -309,8 +309,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _setDataForRendering: function(data) {
         this.paper = data.paper;
-        this.limit = data.limit;
-        this.aligned = data.aligned;
+        this.limit = data.limitMap[this.chartType];
+        if (data.axisDataMap && data.axisDataMap.xAxis) {
+            this.aligned = data.axisDataMap.xAxis.aligned;
+        }
         this.layout = data.layout;
         this.dimensionMap = data.dimensionMap;
         this.positionMap = data.positionMap;
@@ -379,13 +381,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @returns {{container: HTMLElement, paper: object}}
      */
     rerender: function(data) {
-        var paper;
+        var checkedLegends, paper;
 
         this._clearContainer();
 
         if (this.dataProcessor.getGroupCount(this.seriesName)) {
             if (data.checkedLegends) {
-                this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
+                checkedLegends = data.checkedLegends[this.chartType] || data.checkedLegends;
+                this.theme = this._updateTheme(this.orgTheme, checkedLegends);
             }
 
             this._setDataForRendering(data);
@@ -395,7 +398,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 clearInterval(this.labelShowEffector.timerId);
             }
 
-            if (data.checkedLegends) {
+            if (checkedLegends) {
                 this.animateComponent(true);
             } else {
                 this._showGraphWithoutAnimation();

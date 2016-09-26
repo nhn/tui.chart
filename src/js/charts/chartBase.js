@@ -238,15 +238,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Make rendering data for axis type chart.
-     * @returns {object} rendering data.
-     * @private
-     */
-    _makeRenderingData: function() {
-        return {};
-    },
-
-    /**
      * Attach custom event.
      * @param {Array.<object>} seriesSet - series set
      * @private
@@ -315,14 +306,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _render: function(onRender, addingDataMode) {
         var boundsAndScale = this._buildBoundsAndScaleData(addingDataMode);
-        var renderingData;
 
         // 비율값 추가
         this._addDataRatios(boundsAndScale.limitMap);
 
-        renderingData = this._makeRenderingData(boundsAndScale.limitMap, boundsAndScale.axisDataMap);
-
-        onRender(renderingData, boundsAndScale);
+        onRender(boundsAndScale);
 
         this._sendSeriesData();
     },
@@ -341,9 +329,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderBackground(container, this.theme.chart.background);
         renderUtil.renderFontFamily(container, this.theme.chart.fontFamily);
 
-        this._render(function(renderingData, boundsAndScale) {
+        this._render(function(boundsAndScale) {
             renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
-            self.componentManager.render('render', renderingData, boundsAndScale, container);
+            self.componentManager.render('render', boundsAndScale, null, container);
         });
 
         this._attachCustomEvent();
@@ -394,7 +382,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         renderingData.tooltip = tui.util.extend({
             checkedLegends: checkedLegends
-        }, tooltipData, renderingData.tooltip);
+        }, tooltipData);
 
         tui.util.forEach(seriesSet, function(series) {
             renderingData[series.componentName] = tui.util.extend({
@@ -421,9 +409,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this.dataProcessor.initData(rawData);
 
-        this._render(function(renderingData, boundsAndScale) {
-            renderingData = self._makeRerenderingData(renderingData, checkedLegends);
-            self.componentManager.render('rerender', renderingData, boundsAndScale);
+        this._render(function(boundsAndScale) {
+            self.componentManager.render('rerender', boundsAndScale, {
+                checkedLegends: checkedLegends
+            });
         });
     },
 
@@ -560,9 +549,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        this._render(function(renderingData, boundsAndScale) {
+        this._render(function(boundsAndScale) {
             renderUtil.renderDimension(self.chartContainer, boundsAndScale.dimensionMap.chart);
-            self.componentManager.render('resize', renderingData, boundsAndScale);
+            self.componentManager.render('resize', boundsAndScale);
         });
     },
 

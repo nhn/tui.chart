@@ -134,18 +134,6 @@ var axisTypeMixer = {
         this._addCustomEventComponent();
     },
 
-    _findLimit: function(limitMap, seriesIndex) {
-        var limit;
-
-        if (seriesIndex === 0) {
-            limit = this.isVertical ? limitMap.yAxis : limitMap.xAxis;
-        } else {
-            limit = limitMap.rightYAxis ? limitMap.rightYAxis : limitMap.yAxis;
-        }
-
-        return limit;
-    },
-
     /**
      * Add data ratios.
      * @private
@@ -163,55 +151,14 @@ var axisTypeMixer = {
                 self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, hasRadius);
             };
         } else {
-            addDataRatio = function(chartType, index) {
+            addDataRatio = function(chartType) {
                 var stackType = (seriesOption[chartType] || seriesOption).stackType;
-                var limit = self._findLimit(limitMap, index);
 
-                self.dataProcessor.addDataRatios(limit, stackType, chartType);
+                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
             };
         }
 
         tui.util.forEachArray(chartTypes, addDataRatio);
-    },
-
-    /**
-     * Make series data for rendering.
-     * @param {Array.<string>} chartTypes chart types
-     * @param {object} limitMap - limit map
-     * @param {boolean} aligned - aligned
-     * @returns {object}
-     * @private
-     */
-    _makeSeriesDataForRendering: function(chartTypes, limitMap, aligned) {
-        var self = this;
-        var seriesData = {};
-
-        tui.util.forEachArray(chartTypes, function(chartType, index) {
-            seriesData[chartType + 'Series'] = {
-                limit: self._findLimit(limitMap, index),
-                aligned: aligned
-            };
-        });
-
-        return seriesData;
-    },
-
-    /**
-     * Make rendering data for axis type chart.
-     * @returns {object} data for rendering
-     * @private
-     * @override
-     */
-    _makeRenderingData: function(limitMap, axisDataMap) {
-        var optionChartTypes = this.chartTypes || [this.chartType];
-        var seriesData = this._makeSeriesDataForRendering(optionChartTypes, limitMap, axisDataMap.xAxis.aligned);
-        var xAxis = axisDataMap.xAxis;
-
-        return tui.util.extend({
-            customEvent: {
-                tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : axisDataMap.yAxis.tickCount
-            }
-        }, seriesData, axisDataMap);
     },
 
     /**
