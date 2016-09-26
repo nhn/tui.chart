@@ -74,10 +74,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         this.isHorizontal = predicate.isHorizontalLegend(this.options.align);
 
         /**
-         * axis data map
+         * scale data for legend
          * @type {null|object}
          */
-        this.axisDataMap = null;
+        this.scaleData = null;
     },
 
     /**
@@ -87,8 +87,8 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      */
     _makeBaseDataToMakeTickHtml: function() {
         var dimension = this.layout.dimension;
-        var axisData = this.axisDataMap.legend;
-        var stepCount = axisData.tickCount - 1;
+        var scaleData = this.scaleData;
+        var stepCount = scaleData.stepCount || scaleData.tickCount - 1;
         var baseData = {};
         var firstLabel;
 
@@ -100,7 +100,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             baseData.startPositionValue = 0;
             baseData.step = dimension.height / stepCount;
             baseData.positionType = 'top:';
-            firstLabel = axisData.labels[0];
+            firstLabel = scaleData.labels[0];
             baseData.labelSize = parseInt(renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label) / 2, 10) - 1;
         }
 
@@ -115,10 +115,9 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         var self = this;
         var baseData = this._makeBaseDataToMakeTickHtml();
         var positionValue = baseData.startPositionValue;
-        var axisData = this.axisDataMap.legend;
         var htmls;
 
-        htmls = tui.util.map(axisData.labels, function(label) {
+        htmls = tui.util.map(this.scaleData.labels, function(label) {
             var labelSize, html;
 
             if (self.isHorizontal) {
@@ -223,7 +222,9 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      * @private
      */
     _setDataForRendering: function(data) {
+        this.layout = data.layout;
         this.axisDataMap = data.axisDataMap;
+        this.scaleData = data.legendScaleData;
     },
 
     /**

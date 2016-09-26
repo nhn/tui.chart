@@ -6,8 +6,8 @@
 
 'use strict';
 
-var axisCalculator = require('../../src/js/models/bounds/axisCalculator');
-var renderUtil = require('../../src/js/helpers/renderUtil');
+var axisCalculator = require('../../../src/js/models/bounds/axisCalculator');
+var renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('Test for axisCalculator', function() {
     beforeAll(function () {

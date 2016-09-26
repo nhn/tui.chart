@@ -15,6 +15,7 @@ var SeriesGroup = require('./seriesGroup');
 var rawDataHandler = require('../../helpers/rawDataHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+var calculator = require('../../helpers/calculator');
 
 var concat = Array.prototype.concat;
 
@@ -201,8 +202,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.rawData = rawData;
 
         /**
-         * categories
-         * @type {Array.<string>}
+         * categoriesMap
+         * @type {null|object}
          */
         this.categoriesMap = null;
 
@@ -1248,6 +1249,75 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     addDataRatiosForTreemapChart: function(limit, chartType) {
         this.getSeriesDataModel(chartType).addDataRatios(limit);
+    },
+
+    /**
+     * Create base values for normal stackType chart.
+     * @param {string} chartType - chart type
+     * @returns {Array.<number>}
+     * @private
+     */
+    _createBaseValuesForNormalStackedChart: function(chartType) {
+        var seriesDataModel = this.getSeriesDataModel(chartType);
+        var baseValues = [];
+
+        seriesDataModel.each(function(seriesGroup) {
+            var valuesMap = seriesGroup._makeValuesMapPerStack();
+
+            tui.util.forEach(valuesMap, function(values) {
+                var plusSum = calculator.sumPlusValues(values);
+                var minusSum = calculator.sumMinusValues(values);
+                baseValues = baseValues.concat([plusSum, minusSum]);
+            });
+        });
+
+        return baseValues;
+    },
+
+    /**
+     * Create base values for calculating limit
+     * @param {string} chartType - chart type
+     * @param {boolean} isSingleYAxis = whether single y axis or not
+     * @param {string} stackType - stack type
+     * @param {string} valueType - value type
+     * @returns {Array.<number>}
+     */
+    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType) {
+        var baseValues;
+
+        if (isSingleYAxis) {
+            baseValues = this.getValues();
+            if (predicate.isNormalStackChart(chartType, stackType)) {
+                baseValues = baseValues.concat(this._createBaseValuesForNormalStackedChart(chartType));
+            }
+        } else if (predicate.isTreemapChart(chartType)) {
+            baseValues = this.getValues(chartType, 'colorValue');
+        } else if (predicate.isNormalStackChart(chartType, stackType)) {
+            baseValues = this._createBaseValuesForNormalStackedChart(chartType);
+        } else {
+            baseValues = this.getValues(chartType, valueType);
+        }
+
+        return baseValues;
+    },
+
+    /**
+     * Find overflow item than graph area
+     * @param {string} chartType - chart type
+     * @param {string} valueType - value type
+     * @returns {{minItem: SeriesItem, maxItem: SeriesItem}}
+     */
+    findOverflowItem: function(chartType, valueType) {
+        var seriesDataModel = this.getSeriesDataModel(chartType);
+        var maxRadiusValue = seriesDataModel.getMaxValue('r');
+        var isBiggerRatioThanHalfRatio = function(seriesItem) {
+            return (seriesItem.r / maxRadiusValue) > chartConst.HALF_RATIO;
+        };
+
+        return {
+            minItem: seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio),
+            maxItem: seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio)
+        };
     }
 });
 

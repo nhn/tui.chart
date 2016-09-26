@@ -12,11 +12,11 @@ var ChartBase = require('../../src/js/charts/chartBase'),
     DataProcessor = require('../../src/js/models/data/dataProcessor');
 
 describe('Test for ChartBase', function() {
-    var chartBase, componentManager, boundsMaker;
+    var chartBase, componentManager, boundsModel;
 
     beforeAll(function() {
         componentManager = jasmine.createSpyObj('componentManager', ['where']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData', 'getDimension']);
+        boundsModel = jasmine.createSpyObj('boundsModel', ['initBoundsData', 'getDimension']);
     });
 
     beforeEach(function() {
@@ -54,7 +54,7 @@ describe('Test for ChartBase', function() {
             }
         });
         chartBase.componentManager = componentManager;
-        chartBase.boundsMaker = boundsMaker;
+        chartBase.boundsModel = boundsModel;
     });
 
     describe('_setOffsetProperty()', function() {

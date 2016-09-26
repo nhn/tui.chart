@@ -7,25 +7,25 @@
 'use strict';
 
 var BubbleChart = require('../../src/js/charts/bubbleChart');
-var axisDataMaker = require('../../src/js/models/scale/axisDataMaker');
+var axisDataMaker = require('../../src/js/models/scaleData/axisDataMaker');
 var CircleLegend = require('../../src/js/legends/circleLegend');
 
 describe('Test for BubbleChart', function() {
-    var bubbleChart, componentManager, dataProcessor, boundsMaker, scaleModel, sereisDataModel;
+    var bubbleChart, componentManager, dataProcessor, boundsModel, scaleDataModel, sereisDataModel;
 
     beforeEach(function() {
         bubbleChart = BubbleChart.prototype;
         componentManager = jasmine.createSpyObj('componentManager', ['register']);
         dataProcessor = jasmine.createSpyObj('dataProcessor',['addDataRatiosForCoordinateType', 'isCoordinateType']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getMinimumPixelStepForAxis',
+        boundsModel = jasmine.createSpyObj('boundsModel', ['getDimension', 'getMinimumPixelStepForAxis',
                 'registerBaseDimension', 'registerAxesData']);
-        scaleModel = jasmine.createSpyObj('seriesDataModel', ['getScaleMap']);
+        scaleDataModel = jasmine.createSpyObj('seriesDataModel', ['getScaleMap']);
         sereisDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
 
         bubbleChart.componentManager = componentManager;
         bubbleChart.dataProcessor = dataProcessor;
-        bubbleChart.boundsMaker = boundsMaker;
-        bubbleChart.scaleModel = scaleModel;
+        bubbleChart.boundsModel = boundsModel;
+        bubbleChart.scaleDataModel = scaleDataModel;
         bubbleChart.chartType = 'bubble';
     });
 

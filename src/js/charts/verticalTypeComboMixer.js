@@ -114,10 +114,10 @@ var verticalTypeComboMixer = {
 
     /**
      * Set additional parameter for making y axis scale option.
-     * @param {{isSingleYAxis: boolean}} additionalParams - additional parameters
+     * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
      * @private
      */
-    _setAdditionalParams: function(additionalParams) {
+    setAdditionalOptions: function(additionalOptions) {
         var dataProcessor = this.dataProcessor;
 
         tui.util.forEach(this.options.series, function(seriesOption, seriesName) {
@@ -133,8 +133,8 @@ var verticalTypeComboMixer = {
                 return;
             }
 
-            additionalParams.chartType = chartType;
-            additionalParams.stackType = seriesOption.stackType;
+            additionalOptions.chartType = chartType;
+            additionalOptions.stackType = seriesOption.stackType;
         });
     },
 
@@ -148,19 +148,19 @@ var verticalTypeComboMixer = {
      */
     _makeYAxisScaleOption: function(name, chartType, isSingleYAxis) {
         var yAxisOption = this.yAxisOptionsMap[chartType];
-        var additionalParams = {
+        var additionalOptions = {
             isSingleYAxis: !!isSingleYAxis
         };
 
         if (isSingleYAxis && this.options.series) {
-            this._setAdditionalParams(additionalParams);
+            this.setAdditionalOptions(additionalOptions);
         }
 
         return {
             options: yAxisOption,
             areaType: 'yAxis',
             chartType: chartType,
-            additionalParams: additionalParams
+            additionalOptions: additionalOptions
         };
     },
 

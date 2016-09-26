@@ -6,10 +6,10 @@
 
 'use strict';
 
-var DataProcessor = require('../../src/js/models/data/dataProcessor.js'),
-    chartConst = require('../../src/js/const'),
-    SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
-    SeriesGroup = require('../../src/js/models/data/seriesGroup');
+var DataProcessor = require('../../../src/js/models/data/dataProcessor.js');
+var chartConst = require('../../../src/js/const');
+var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
+var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
 
 describe('Test for DataProcessor', function() {
     var dataProcessor;
@@ -1175,6 +1175,132 @@ describe('Test for DataProcessor', function() {
             }, 'bar');
 
             expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(0);
+        });
+    });
+
+    describe('_createBaseValuesForNormalStackedChart()', function() {
+        it('create base values for normal stacked chart', function() {
+            var seriesGroup, actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                bar: new SeriesDataModel()
+            };
+            seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
+            seriesGroup._makeValuesMapPerStack.and.returnValue({
+                st1: [-10, 30, -50],
+                st2: [-20, 40, 60]
+            });
+            dataProcessor.seriesDataModelMap.bar.groups = [
+                seriesGroup
+            ];
+
+            actual = dataProcessor._createBaseValuesForNormalStackedChart(chartConst.CHART_TYPE_BAR);
+            expected = [30, -60, 100, -20];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('createBaseValuesForLimit()', function() {
+        it('create base values for limit.', function() {
+            var chartType = chartConst.CHART_TYPE_BAR;
+            var actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                bar: new SeriesDataModel()
+            };
+            dataProcessor.seriesDataModelMap.bar.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+
+            actual = dataProcessor.createBaseValuesForLimit(chartType);
+            expected = [70, 10, 20, 20, 80, 30];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('create base values for limit, when single yAxis in comboChart.', function() {
+            var chartType = chartConst.CHART_TYPE_BAR;
+            var isSingleYAxis = true;
+            var actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+
+            dataProcessor.seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+            dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, 3]
+            };
+
+
+            actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis);
+            expected = [70, 10, 20, 20, 80, 30, 1, 2, 3];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Make base values, when single yAxis and has stackType option in comboChart.', function() {
+            var chartType = chartConst.CHART_TYPE_COLUMN;
+            var isSingleYAxis = true;
+            var stackType = chartConst.NORMAL_STACK_TYPE;
+            var seriesGroup, actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+
+            dataProcessor.seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
+            dataProcessor.seriesDataModelMap.column.groups = [
+                seriesGroup
+            ];
+            seriesGroup._makeValuesMapPerStack.and.returnValue({
+                st1: [70, 10, 20, 20, 80, 30]
+            });
+            dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+            dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, 3]
+            };
+
+            actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis, stackType);
+            expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Make base values, when stackType is normal.', function() {
+            var chartType = chartConst.CHART_TYPE_COLUMN;
+            var isSingleYAxis = false;
+            var stackType = chartConst.NORMAL_STACK_TYPE;
+            var actual, expected;
+
+            spyOn(dataProcessor, '_createBaseValuesForNormalStackedChart').and.returnValue([
+                80, -10, 20, -30, 80, -40
+            ]);
+
+            actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis, stackType);
+            expected = [80, -10, 20, -30, 80, -40];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Make base values by calling dataProcessor.getValues with arguments(chartType, valueType),' +
+            ' when chartType is treemap.', function() {
+            var chartType = chartConst.CHART_TYPE_TREEMAP;
+
+            spyOn(dataProcessor, 'getValues');
+
+            dataProcessor.createBaseValuesForLimit(chartType);
+
+            expect(dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_TREEMAP, 'colorValue');
         });
     });
 });

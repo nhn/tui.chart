@@ -9,7 +9,7 @@
 var HeatmapChartSeries = require('../../src/js/series/heatmapChartSeries.js');
 
 describe('HeatmapChartSeries', function() {
-    var series, boundsMaker;
+    var series, boundsModel;
 
     beforeEach(function() {
         series = new HeatmapChartSeries({

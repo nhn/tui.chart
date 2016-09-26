@@ -10,10 +10,10 @@ var ColumnLineComboChart = require('../../src/js/charts/columnLineComboChart.js'
 var defaultTheme = require('../../src/js/themes/defaultTheme.js');
 
 describe('Test for verticalTypeComboChart', function() {
-    var verticalTypeComboChart, scaleModel;
+    var verticalTypeComboChart, scaleDataModel;
 
     beforeEach(function() {
-        scaleModel = jasmine.createSpyObj('scaleModel', ['addScale']);
+        scaleDataModel = jasmine.createSpyObj('scaleDataModel', ['addScale']);
         verticalTypeComboChart = new ColumnLineComboChart(
             {
                 series: {
@@ -54,7 +54,7 @@ describe('Test for verticalTypeComboChart', function() {
                 }
             }
         );
-        verticalTypeComboChart.scaleModel = scaleModel;
+        verticalTypeComboChart.scaleDataModel = scaleDataModel;
     });
 
     describe('_getYAxisOptionChartTypes() - y axis 영역 옵션에 설정된 차트 타입을 정렬하여 반환', function() {

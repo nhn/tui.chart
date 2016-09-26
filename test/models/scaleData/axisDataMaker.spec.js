@@ -6,10 +6,10 @@
 
 'use strict';
 
-var maker = require('../../src/js/models/scale/axisDataMaker');
-var chartConst = require('../../src/js/const');
-var renderUtil = require('../../src/js/helpers/renderUtil');
-var calculator = require('../../src/js/helpers/calculator');
+var maker = require('../../../src/js/models/scaleData/axisDataMaker');
+var chartConst = require('../../../src/js/const');
+var renderUtil = require('../../../src/js/helpers/renderUtil');
+var calculator = require('../../../src/js/helpers/calculator');
 
 describe('Test for axisDataMaker', function() {
     describe('_makeLabelsByIntervalOption()', function() {

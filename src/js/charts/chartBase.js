@@ -326,7 +326,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.dimensionMap = boundsAndScale.dimensionMap;
 
         // 비율값 추가
-        this._addDataRatios(boundsAndScale.limitMap, boundsAndScale.axisDataMap);
+        this._addDataRatios(boundsAndScale.limitMap);
 
         renderingData = this._makeRenderingData(boundsAndScale.limitMap, boundsAndScale.axisDataMap);
 

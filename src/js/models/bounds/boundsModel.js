@@ -1,5 +1,5 @@
 /**
- * @fileoverview Bounds maker.
+ * @fileoverview Bounds model.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -30,10 +30,10 @@ var spectrumLegendCalculator = require('./spectrumLegendCalculator');
  * @typedef {{dimension: dimension, position:position}} bound
  */
 
-var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
+var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     /**
      * Bounds maker.
-     * @constructs BoundsMaker
+     * @constructs BoundsModel
      * @param {object} params parameters
      */
     init: function(params) {
@@ -279,7 +279,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         if (limit) {
             categories = [limit.min, limit.max];
-        } else if (!isVertical) {
+        } else if (predicate.isHeatmapChart(this.chartType) || !isVertical) {
             categories = this.dataProcessor.getCategories(true);
         } else {
             return;
@@ -310,6 +310,18 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         return seriesCalculator.calculateHeight(dimensionMap, this.options.legend);
     },
 
+    getBaseSizeForLimit: function(isVertical) {
+        var baseSize;
+
+        if (isVertical) {
+            baseSize = this.calculateSeriesHeight();
+        } else {
+            baseSize = this.calculateSeriesWidth();
+        }
+
+        return baseSize;
+    },
+
     /**
      * Make series dimension.
      * @returns {{width: number, height: number}} series dimension
@@ -332,7 +344,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Update width of legend and series of boundsMaker.
+     * Update width of legend and series of BoundsModel.
      * @param {number} circleLegendWidth - width for circle legend
      * @param {number} diffWidth - difference width
      * @private
@@ -695,4 +707,4 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     }
 });
 
-module.exports = BoundsMaker;
+module.exports = BoundsModel;

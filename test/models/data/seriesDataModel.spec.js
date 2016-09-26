@@ -6,10 +6,10 @@
 
 'use strict';
 
-var SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
-    SeriesGroup = require('../../src/js/models/data/seriesGroup'),
-    SeriesItem = require('../../src/js/models/data/seriesItem'),
-    SeriesItemForCoordinateType = require('../../src/js/models/data/seriesItemForCoordinateType');
+var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
+var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
+var SeriesItem = require('../../../src/js/models/data/seriesItem');
+var SeriesItemForCoordinateType = require('../../../src/js/models/data/seriesItemForCoordinateType');
 
 describe('Test for SeriesDataModel', function() {
     var seriesDataModel;

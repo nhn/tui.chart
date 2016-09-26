@@ -6,8 +6,8 @@
 
 'use strict';
 
-var SeriesGroup = require('../../src/js/models/data/seriesGroup'),
-    SeriesItem = require('../../src/js/models/data/seriesItem');
+var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
+var SeriesItem = require('../../../src/js/models/data/seriesItem');
 
 describe('Test for seriesGroup', function() {
     var seriesGroup;

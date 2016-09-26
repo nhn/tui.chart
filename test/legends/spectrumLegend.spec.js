@@ -28,11 +28,9 @@ describe('Test for SpectrumLegend', function() {
                     height: 200
                 }
             };
-            legend.axisDataMap = {
-                legend: {
-                    labels: [0, 50, 100, 150, 200],
-                    tickCount: 5
-                }
+            legend.scaleData = {
+                labels: [0, 50, 100, 150, 200],
+                stepCount: 4
             };
 
             actual = legend._makeTickHtml();

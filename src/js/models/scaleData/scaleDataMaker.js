@@ -1,5 +1,5 @@
 /**
- * @fileoverview ScaleDataMaker calculates the limit and step into values of processed data and returns it.
+ * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
  *       FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -13,303 +13,24 @@ var renderUtil = require('../../helpers/renderUtil');
 
 var abs = Math.abs;
 
-var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
-    /**
-     * ScaleMaker calculates the limit and step into values of processed data and returns it.
-     * @param {object} params parameters
-     * @constructs ScaleMaker
-     */
-    init: function(params) {
-        /**
-         * Data processor
-         * @type {DataProcessor}
-         */
-        this.dataProcessor = params.dataProcessor;
-
-        /**
-         * Bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
-         * stackType option
-         * @type {?string}
-         */
-        this.stackType = params.stackType;
-
-        /**
-         * diverging option
-         * @type {?boolean}
-         */
-        this.diverging = params.diverging;
-
-        /**
-         * limit option
-         * @type {?{min: number, max: number}}
-         */
-        this.limitOption = params.limitOption;
-
-        this.axisOptions = params.axisOptions;
-
-        /**
-         * axis type
-         * @type {?string}
-         */
-        this.type = params.type;
-
-        /**
-         * date format
-         * @type {?string}
-         */
-        this.dateFormat = params.dateFormat;
-
-        /**
-         * Chart type
-         * @type {string}
-         */
-        this.chartType = params.chartType;
-
-        /**
-         * type of value like value, x, y, r
-         * @type {string}
-         */
-        this.valueType = params.valueType;
-
-        /**
-         * type of area like yAxis, xAxis
-         * @type {string}
-         */
-        this.areaType = params.areaType;
-
-        /**
-         * Whether vertical type or not.
-         * @type {boolean}
-         */
-        this.isVertical = !!params.isVertical;
-
-        /**
-         * Whether single yAxis or not.
-         * @type {boolean}
-         */
-        this.isSingleYAxis = !!params.isSingleYAxis;
-        /**
-         * Count of scale values.
-         * @type {number}
-         */
-        this.valueCounts = params.valueCount ? [params.valueCount] : null;
-
-        /**
-         * Axis scale
-         * @type {{limit: {min: number, max: number}, step: number}}
-         */
-        this.scale = null;
-
-        /**
-         * Formatted scale values.
-         * @type {Array.<string | number>}
-         */
-        this.formattedValues = null;
-    },
-
-    /**
-     * Get scale.
-     * @returns {{limit: {min: number, max: number}, step: number}}
-     * @private
-     */
-    _getScale: function() {
-        if (!this.scale) {
-            this.scale = this._makeScale();
-        }
-
-        return this.scale;
-    },
-
-    /**
-     * Get limit.
-     * @returns {{min: number, max: number}}
-     */
-    getLimit: function() {
-        return this._getScale().limit;
-    },
-
-    /**
-     * Get step.
-     * @returns {number}
-     */
-    getStep: function() {
-        return this._getScale().step;
-    },
-
-    /**
-     * Whether percent stack chart or not.
-     * @returns {boolean}
-     * @private
-     */
-    _isPercentStackChart: function() {
-        var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isPercentStack = predicate.isPercentStack(this.stackType);
-
-        return isAllowedStackOption && isPercentStack;
-    },
-
-    /**
-     * Whether normal stack chart or not.
-     * @returns {boolean}
-     * @private
-     */
-    _isNormalStackChart: function() {
-        var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isNormalStack = predicate.isNormalStack(this.stackType);
-
-        return isAllowedStackOption && isNormalStack;
-    },
-
-    /**
-     * Whether diverging chart or not.
-     * @returns {boolean|*}
-     * @private
-     */
-    _isDivergingChart: function() {
-        return this.diverging && predicate.isBarTypeChart(this.chartType);
-    },
-
-    /**
-     * Get functions for formatting value.
-     * @returns {Array.<function>}
-     * @private
-     */
-    _getFormatFunctions: function() {
-        var formatFunctions;
-
-        if (this._isPercentStackChart()) {
-            formatFunctions = [function(value) {
-                return value + '%';
-            }];
-        } else {
-            formatFunctions = this.dataProcessor.getFormatFunctions();
-        }
-
-        return formatFunctions;
-    },
-
-    /**
-     * Get scale values.
-     * @returns {Array.<number>}
-     * @private
-     */
-    _getScaleValues: function() {
-        var scale = this._getScale(),
-            values = calculator.makeLabelsFromLimit(scale.limit, scale.step);
-
-        return this._isDivergingChart() ? tui.util.map(values, abs) : values;
-    },
-
-    /**
-     * Get formatted scale values.
-     * @returns {Array.<string|number>|*}
-     */
-    getFormattedScaleValues: function() {
-        var chartType = this.chartType;
-        var areaType = this.areaType;
-        var valueType = this.valueType;
-        var values, formatFunctions;
-
-        if (!this.formattedValues) {
-            values = this._getScaleValues();
-
-            if (predicate.isDatetimeType(this.type)) {
-                this.formattedValues = renderUtil.formatDates(values, this.dateFormat);
-            } else {
-                formatFunctions = this._getFormatFunctions();
-                this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
-            }
-        }
-
-        return this.formattedValues;
-    },
-
-    /**
-     * Make base values of normal stackType chart.
-     * @returns {Array.<number>}
-     * @private
-     */
-    _makeBaseValuesForNormalStackedChart: function() {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
-        var baseValues = [];
-
-        seriesDataModel.each(function(seriesGroup) {
-            var valuesMap = seriesGroup._makeValuesMapPerStack();
-
-            tui.util.forEach(valuesMap, function(values) {
-                var plusSum = calculator.sumPlusValues(values);
-                var minusSum = calculator.sumMinusValues(values);
-                baseValues = baseValues.concat([plusSum, minusSum]);
-            });
-        });
-
-        return baseValues;
-    },
-
-    /**
-     * Make base values for making axis scale.
-     * @returns {Array.<number>} base values
-     * @private
-     */
-    _makeBaseValues: function() {
-        var baseValues;
-
-        if (this.isSingleYAxis) {
-            baseValues = this.dataProcessor.getValues();
-            if (this._isNormalStackChart()) {
-                baseValues = baseValues.concat(this._makeBaseValuesForNormalStackedChart());
-            }
-        } else if (predicate.isTreemapChart(this.chartType)) {
-            baseValues = this.dataProcessor.getValues(this.chartType, 'colorValue');
-        } else if (predicate.isMapChart(this.chartType)) {
-            baseValues = this.dataProcessor.getValues();
-        } else if (this._isNormalStackChart()) {
-            baseValues = this._makeBaseValuesForNormalStackedChart();
-        } else {
-            baseValues = this.dataProcessor.getValues(this.chartType, this.valueType);
-        }
-
-        return baseValues;
-    },
-
-    /**
-     * Get base size for calculation candidate value counts.
-     * @returns {number} base size
-     * @private
-     */
-    _getBaseSize: function() {
-        var baseSize;
-
-        if (this.isVertical) {
-            baseSize = this.boundsMaker.calculateSeriesHeight();
-        } else {
-            baseSize = this.boundsMaker.calculateSeriesWidth();
-        }
-
-        return baseSize;
-    },
-
+/**
+ * scaleMaker calculates limit and step into values of processed data and returns it.
+ * @module scaleDataMaker
+ */
+var scaleDataMaker = {
     /**
      * Get candidate counts of value.
      * @memberOf module:axisDataMaker
+     * @param {number} baseSize - base size(width or not)
      * @returns {Array.<number>} value counts
      * @private
      */
-    _getCandidateCountsOfValue: function() {
-        var minStart = 3,
-            valueCounts, baseSize, start, end;
+    _getCandidateCountsOfValue: function(baseSize) {
+        var minStart = 3;
+        var start = Math.max(minStart, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10));
+        var end = Math.max(start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)) + 1;
 
-        baseSize = this._getBaseSize();
-        start = Math.max(minStart, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10));
-        end = Math.max(start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)) + 1;
-        valueCounts = tui.util.range(start, end);
-
-        return valueCounts;
+        return tui.util.range(start, end);
     },
 
     /**
@@ -330,7 +51,8 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     /**
      * Make integer type scale.
      * @memberOf module:axisDataMaker
-     * @param {{min: number, max: number}} limit limit
+     * @param {{min: number, max: number}} limit - limit
+     * @param {?{min: ?number, max: ?number}} limitOption - limit option
      * @returns {{
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
@@ -338,16 +60,17 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
      * }} integer type info
      * @private
      */
-    _makeIntegerTypeScale: function(limit) {
-        var options = this.limitOption || {},
-            min = limit.min,
-            max = limit.max,
-            multipleNum, changedOptions;
+    _makeIntegerTypeScale: function(limit, limitOption) {
+        var min = limit.min;
+        var max = limit.max;
+        var multipleNum, changedOptions;
+
+        limitOption = limitOption || {};
 
         if (abs(min) >= 1 || abs(max) >= 1) {
             return {
                 limit: limit,
-                options: options,
+                limitOption: limitOption,
                 divisionNumber: 1
             };
         }
@@ -355,12 +78,12 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
         multipleNum = tui.util.findMultipleNum(min, max);
         changedOptions = {};
 
-        if (!tui.util.isUndefined(options.min)) {
-            changedOptions.min = options.min * multipleNum;
+        if (!tui.util.isUndefined(limitOption.min)) {
+            changedOptions.min = limitOption.min * multipleNum;
         }
 
-        if (!tui.util.isUndefined(options.max)) {
-            changedOptions.max = options.max * multipleNum;
+        if (!tui.util.isUndefined(limitOption.max)) {
+            changedOptions.max = limitOption.max * multipleNum;
         }
 
         return {
@@ -368,7 +91,7 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
                 min: min * multipleNum,
                 max: max * multipleNum
             },
-            options: changedOptions,
+            limitOption: changedOptions,
             divisionNumber: multipleNum
         };
     },
@@ -399,15 +122,15 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
      * Make base limit
      * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} dataLimit user limit
-     * @param {{min: number, max: number}} options axis options
+     * @param {{min: number, max: number}} limitOption axis options
      * @returns {{min: number, max: number}} base limit
      * @private
      */
-    _makeBaseLimit: function(dataLimit, options) {
-        var isMinusLimit = predicate.isMinusLimit(dataLimit),
-            min = dataLimit.min,
-            max = dataLimit.max,
-            baseLimit, tmpMin;
+    _makeBaseLimit: function(dataLimit, limitOption) {
+        var isMinusLimit = predicate.isMinusLimit(dataLimit);
+        var min = dataLimit.min;
+        var max = dataLimit.max;
+        var baseLimit, tmpMin;
 
         if (min === max) {
             baseLimit = this._makeLimitIfEqualMinMax(dataLimit);
@@ -426,8 +149,8 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
                 baseLimit.max = -tmpMin;
             }
 
-            baseLimit.min = tui.util.isUndefined(options.min) ? baseLimit.min : options.min;
-            baseLimit.max = tui.util.isUndefined(options.max) ? baseLimit.max : options.max;
+            baseLimit.min = tui.util.isUndefined(limitOption.min) ? baseLimit.min : limitOption.min;
+            baseLimit.max = tui.util.isUndefined(limitOption.max) ? baseLimit.max : limitOption.max;
         }
 
         return baseLimit;
@@ -497,21 +220,24 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     /**
      * Decrease minimum value by step value,
      *  when chart type is line or dataMin is minus, options is undefined, minimum values(min, dataMin) are same.
-     * @param {number} min base min
-     * @param {number} dataMin minimum value of user data
-     * @param {number} step scale step
-     * @param {?number} optionMin min option
-     * @returns {number} changed min
+     * @param {number} min - limit min
+     * @param {number} dataMin - minimum value
+     * @param {number} step - scale step
+     * @param {string} chartType - chart type
+     * @param {?number} optionMin - min option
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {number}
      * @private
      */
-    _decreaseMinByStep: function(min, dataMin, step, optionMin) {
-        var isLineChart = predicate.isLineChart(this.chartType);
-        var isAreaChartX = predicate.isAreaChart(this.chartType) && !this.isVertical;
+    _decreaseMinByStep: function(min, dataMin, step, chartType, optionMin, isVertical) {
+        /*eslint max-params: [2, 6]*/
+        var isLineChart = predicate.isLineChart(chartType);
+        var isAreaChartXAxis = predicate.isAreaChart(chartType) && !isVertical;
         var isMinusDataMin = dataMin < 0;
         var isUndefinedMinOption = tui.util.isUndefined(optionMin);
         var isSame = (min === dataMin);
 
-        if ((isLineChart || isAreaChartX || isMinusDataMin) && isUndefinedMinOption && isSame) {
+        if ((isLineChart || isAreaChartXAxis || isMinusDataMin) && isUndefinedMinOption && isSame) {
             min -= step;
         }
 
@@ -521,18 +247,19 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     /**
      * Increase maximum value by step value,
      *  when chart type is line or dataMin is plus, options is undefined, maximum values(max, dataMax) are same.
-     * @param {number} max base max
-     * @param {number} dataMax maximum value of user data
-     * @param {number} step scale step
-     * @param {?number} optionMax max option
-     * @returns {number} changed max
+     * @param {number} max - limit max
+     * @param {number} dataMax - maximum value
+     * @param {number} step - scale step
+     * @param {string} chartType - chart type
+     * @param {?number} optionMax - max option
+     * @returns {number}
      * @private
      */
-    _increaseMaxByStep: function(max, dataMax, step, optionMax) {
-        var isLineChart = predicate.isLineChart(this.chartType),
-            isPlusDataMax = dataMax > 0,
-            isUndefinedMaxOption = tui.util.isUndefined(optionMax),
-            isSame = (max === dataMax);
+    _increaseMaxByStep: function(max, dataMax, step, chartType, optionMax) {
+        var isLineChart = predicate.isLineChart(chartType);
+        var isPlusDataMax = dataMax > 0;
+        var isUndefinedMaxOption = tui.util.isUndefined(optionMax);
+        var isSame = (max === dataMax);
 
         if ((isLineChart || isPlusDataMax) && isUndefinedMaxOption && isSame) {
             max += step;
@@ -608,40 +335,44 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
      * Adjust limit for bubble chart.
      * @param {{min: number, max: number}} limit - limit
      * @param {number} step - step;
+     * @param {object.<string, object>} overflowItem - overflow Item map
      * @private
      */
-    _adjustLimitForBubbleChart: function(limit, step) {
-        var valueType = this.valueType;
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
-        var maxRadiusValue = seriesDataModel.getMaxValue('r');
-        var isBiggerRatioThanHalfRatio = function(seriesItem) {
-            return (seriesItem.r / maxRadiusValue) > chartConst.HALF_RATIO;
-        };
-        var foundMinItem = seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio);
-        var foundMaxItem = seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio);
-
-        if (foundMinItem) {
+    _adjustLimitForBubbleChart: function(limit, step, overflowItem) {
+        if (overflowItem.minItem) {
             limit.min -= step;
         }
 
-        if (foundMaxItem) {
+        if (overflowItem.maxItem) {
             limit.max += step;
         }
     },
 
     /**
      * Make candidate axis scale.
-     * @param {{min: number, max: number}} baseLimit base limit
-     * @param {{min: number, max: number}} dataLimit limit of user data
+     * @param {{
+     *      dataLimit: {min: number, max: number},
+     *      baseLimit: {min: number, max: number}
+     * }} limitMap - limit map
+     * @param {{
+     *      isVertical: boolean,
+     *      chartType: string,
+     *      overflowItem: ?object,
+     *      limitOption: ?{min: ?number, max: ?number}
+     * }} options - options
      * @param {number} valueCount value count
-     * @param {{min: number, max:number}} options limit options of axis
      * @returns {{
      *      limit: {min: number, max: number},
      *      step: number
      * }} scale
      * @private
      */
-    _makeCandidateScale: function(baseLimit, dataLimit, valueCount, options) {
+    _makeCandidateScale: function(limitMap, options, valueCount) {
+        var baseLimit = limitMap.baseLimit;
+        var dataLimit = limitMap.dataLimit;
+        var limitOption = options.limitOption;
+        var isVertical = options.isVertical;
+        var chartType = options.chartType;
         var limit = tui.util.extend({}, baseLimit);
         var step;
 
@@ -655,47 +386,57 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
         limit = this._normalizeLimit(limit, step, valueCount);
 
         // 04. line차트의 경우 사용자의 min값이 limit의 min값과 같을 경우, min값을 1 step 감소 시킴
-        limit.min = this._decreaseMinByStep(limit.min, dataLimit.min, step, options.min);
+        limit.min = this._decreaseMinByStep(limit.min, dataLimit.min, step, chartType, limitOption.min, isVertical);
 
         // 04. 사용자의 max값이 scale max와 같을 경우, max값을 1 step 증가 시킴
-        limit.max = this._increaseMaxByStep(limit.max, dataLimit.max, step, options.max);
+        limit.max = this._increaseMaxByStep(limit.max, dataLimit.max, step, chartType, limitOption.max);
 
         // 05. axis limit이 사용자 min, max와 거리가 멀 경우 조절
-        limit = this._minimizeScaleLimit(limit, dataLimit, step, valueCount, options);
+        limit = this._minimizeScaleLimit(limit, dataLimit, step, valueCount, limitOption);
 
         // 06. 조건에 따라 step값을 반으로 나눔
         step = this._divideScaleStep(limit, step, valueCount);
 
-        if (predicate.isBubbleChart(this.chartType)) {
-            this._adjustLimitForBubbleChart(limit, step);
+        if (options.overflowItem) {
+            this._adjustLimitForBubbleChart(limit, step, options.overflowItem);
         }
 
         return {
             limit: limit,
             step: step,
-            valueCount: abs(limit.max - limit.min) / step
+            stepCount: abs(limit.max - limit.min) / step
         };
     },
 
     /**
-     * Make candidates about axis scale.
+     * Make candidates for axis scale.
      * @param {{
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
      *      divisionNumber: number
      * }} integerTypeScale - integer type axis scale
      * @param {Array.<number>} valueCounts - candidate counts of value
-     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} - candidates scale
+     * @param {{
+     *      isVertical: boolean,
+     *      chartType: string,
+     *      overflowItem: ?object
+     * }} options - options
+     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>}
      * @private
      */
-    _makeCandidateScales: function(integerTypeScale, valueCounts) {
+    _makeCandidateScales: function(integerTypeScale, valueCounts, options) {
         var self = this;
         var dataLimit = integerTypeScale.limit;
-        var options = integerTypeScale.options;
-        var baseLimit = this._makeBaseLimit(dataLimit, options);
+        var limitOption = integerTypeScale.limitOption;
+        var limitMap = {
+            dataLimit: dataLimit,
+            baseLimit: this._makeBaseLimit(dataLimit, limitOption)
+        };
+
+        options.limitOption = limitOption;
 
         return tui.util.map(valueCounts, function(valueCount) {
-            return self._makeCandidateScale(baseLimit, dataLimit, valueCount, options);
+            return self._makeCandidateScale(limitMap, options, valueCount);
         });
     },
 
@@ -712,7 +453,7 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
         var diffMax = abs(candidateScale.limit.max - baseLimit.max);
         var diffMin = abs(baseLimit.min - candidateScale.limit.min);
         // 예상 label count와 차이가 많을 수록 후보 제외 가능성이 높음
-        var diffCount = Math.max(abs(valueCounts[index] - candidateScale.valueCount), 1);
+        var diffCount = Math.max(abs(valueCounts[index] - candidateScale.stepCount), 1);
         // 소수점 이하 길이가 길 수록 후보에서 제외될 가능성이 높음
         var weight = Math.pow(10, tui.util.getDecimalLength(candidateScale.step));
 
@@ -849,18 +590,28 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
 
     /**
      * Calculate scale.
+     * @param {Array.<number>} baseValues - base values for calculating scale data
+     * @param {number} baseSize - base size(width or height) for calculating scale data
+     * @param {string} chartType - chart type
+     * @param {{
+     *      type: string,
+     *      tickCounts: ?Array.<number>,
+     *      limitOption: ?{min: ?number, max: ?number},
+     *      diverging: boolean,
+     *      isVertical: boolean,
+     *      overflowItem: ?object
+     * }} options - options
      * @returns {{limit: {min: number, max: number}, step: number}}
      * @private
      */
-    _calculateScale: function() {
-        var baseValues = this._makeBaseValues();
+    _calculateScale: function(baseValues, baseSize, chartType, options) {
         var dataLimit = {
             min: tui.util.min(baseValues),
             max: tui.util.max(baseValues)
         };
-        var datetimeInfo, integerTypeScale, valueCounts, candidates, scale;
+        var datetimeInfo, integerTypeScale, tickCounts, candidates, scale;
 
-        if (predicate.isDatetimeType(this.type)) {
+        if (predicate.isDatetimeType(options.type)) {
             datetimeInfo = this._makeDatetimeInfo(dataLimit, baseValues.length);
             dataLimit = datetimeInfo.dataLimit;
         }
@@ -869,26 +620,29 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
             dataLimit.max = 5;
         }
 
-        if (this._isDivergingChart()) {
+        if (predicate.isDivergingChart(chartType, options.diverging)) {
             dataLimit = this._makeLimitForDivergingOption(dataLimit);
         }
-
         // 01. limit, options 정보를 정수형으로 변경
-        integerTypeScale = this._makeIntegerTypeScale(dataLimit);
+        integerTypeScale = this._makeIntegerTypeScale(dataLimit, options.limitOption);
 
         // 02. value count 후보군 얻기
-        valueCounts = this.valueCounts || this._getCandidateCountsOfValue();
+        tickCounts = options.tickCounts || this._getCandidateCountsOfValue(baseSize);
 
         // 03. axis scale 후보군 얻기
-        candidates = this._makeCandidateScales(integerTypeScale, valueCounts);
+        candidates = this._makeCandidateScales(integerTypeScale, tickCounts, {
+            chartType: chartType,
+            isVertical: options.isVertical,
+            overflowItem: options.overflowItem
+        });
 
         // 04. axis scale 후보군 중 하나 선택
-        scale = this._selectAxisScale(integerTypeScale.limit, candidates, valueCounts);
+        scale = this._selectAxisScale(integerTypeScale.limit, candidates, tickCounts);
 
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
         scale = this._restoreNumberState(scale, integerTypeScale.divisionNumber);
 
-        if (predicate.isDatetimeType(this.type)) {
+        if (predicate.isDatetimeType(options.type)) {
             scale = this._restoreScaleToDatetimeType(scale, datetimeInfo.minDate, datetimeInfo.divisionNumber);
         }
 
@@ -896,57 +650,21 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     },
 
     /**
-     * Get values for sum.
-     * @returns {Array.<number>}
-     * @private
-     */
-    _getValuesForSum: function() {
-        var values;
-
-        if (this.isSingleYAxis) {
-            values = this.dataProcessor.getValues();
-        } else {
-            values = this.dataProcessor.getValues(this.chartType);
-        }
-
-        return values;
-    },
-
-    /**
-     * Calculate minus sum about group values.
-     * @returns {number}
-     * @private
-     */
-    _calculateMinusSum: function() {
-        var values = this._getValuesForSum();
-
-        return calculator.sumMinusValues(values);
-    },
-
-    /**
-     * Calculate plus sum about group values.
-     * @returns {number}
-     * @private
-     */
-    _calculatePlusSum: function() {
-        var values = this._getValuesForSum();
-
-        return calculator.sumPlusValues(values);
-    },
-
-    /**
      * Get percent stackType scale.
+     * @param {Array.<number>} baseValues - base values
+     * @param {string} chartType - chart type
+     * @param {boolean} diverging - diverging option
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _getPercentStackedScale: function() {
+    _getPercentStackedScale: function(baseValues, chartType, diverging) {
         var scale;
 
-        if (this._calculateMinusSum() === 0) {
+        if (calculator.sumMinusValues(baseValues) === 0) {
             scale = chartConst.PERCENT_STACKED_AXIS_SCALE;
-        } else if (this._calculatePlusSum() === 0) {
+        } else if (calculator.sumPlusValues(baseValues) === 0) {
             scale = chartConst.MINUS_PERCENT_STACKED_AXIS_SCALE;
-        } else if (this._isDivergingChart()) {
+        } else if (predicate.isDivergingChart(chartType, diverging)) {
             scale = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
         } else {
             scale = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;
@@ -956,21 +674,97 @@ var ScaleDataMaker = tui.util.defineClass(/** @lends ScaleMaker.prototype */{
     },
 
     /**
-     * Make scale.
+     * Make scale data.
+     * @param {Array.<number>} baseValues - base values for calculating scale data
+     * @param {number} baseSize - base size(width or height) for calculating scale data
+     * @param {string} chartType - chart type
+     * @param {{
+     *      type: string,
+     *      stackType: string,
+     *      diverging: boolean,
+     *      isVertical: boolean,
+     *      limitOption: ?{min: ?number, max: ?number},
+     *      tickCounts: ?Array.<number>
+     * }} options - options
      * @returns {{limit: {min:number, max:number}, step: number}}
-     * @private
      */
-    _makeScale: function() {
-        var scale;
+    makeScaleData: function(baseValues, baseSize, chartType, options) {
+        var scaleData;
 
-        if (this._isPercentStackChart()) {
-            scale = this._getPercentStackedScale();
+        if (predicate.isPercentStackChart(chartType, options.stackType)) {
+            scaleData = this._getPercentStackedScale(baseValues, chartType, options.diverging);
         } else {
-            scale = this._calculateScale();
+            scaleData = this._calculateScale(baseValues, baseSize, chartType, options);
         }
 
-        return scale;
-    }
-});
+        return scaleData;
+    },
 
-module.exports = ScaleDataMaker;
+    /**
+     * Get functions for formatting value.
+     * @param {string} chartType - chart type
+     * @param {string} stackType - stack type
+     * @param {?Array.<function>} formatFunctions - format functions
+     * @returns {Array.<function>}
+     * @private
+     */
+    _getFormatFunctions: function(chartType, stackType, formatFunctions) {
+        if (predicate.isPercentStackChart(chartType, stackType)) {
+            formatFunctions = [function(value) {
+                return value + '%';
+            }];
+        }
+
+        return formatFunctions;
+    },
+
+    /**
+     * Create scale values.
+     * @param {{limit: {min: number, max: number}, step: number}} scaleData - scale data
+     * @param {string} chartType - chart type
+     * @param {boolean} diverging - diverging option
+     * @returns {Array.<number>}
+     * @private
+     */
+    _createScaleValues: function(scaleData, chartType, diverging) {
+        var values = calculator.makeLabelsFromLimit(scaleData.limit, scaleData.step);
+
+        return predicate.isDivergingChart(chartType, diverging) ? tui.util.map(values, abs) : values;
+    },
+
+    /**
+     * Create formatted scale values.
+     * @param {{limit: {min: number, max: number}, step: number}} scaleData - scale data
+     * @param {{
+     *      chartType: string,
+     *      areaType: string,
+     *      valueType: string
+     * }} typeMap - type map
+     * @param {{
+     *      type: string,
+     *      stackType: string,
+     *      diverging: boolean,
+     *      dateFormat: ?string
+     * }} options - options
+     * @param {?Array.<function>} formatFunctions - format functions
+     * @returns {Array.<string|number>|*}
+     */
+    createFormattedLabels: function(scaleData, typeMap, options, formatFunctions) {
+        var chartType = typeMap.chartType;
+        var areaType = typeMap.areaType;
+        var valueType = typeMap.valueType;
+        var values = this._createScaleValues(scaleData, chartType, options.diverging);
+        var formattedValues;
+
+        if (predicate.isDatetimeType(options.type)) {
+            formattedValues = renderUtil.formatDates(values, options.dateFormat);
+        } else {
+            formatFunctions = this._getFormatFunctions(chartType, options.stackType, formatFunctions);
+            formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+        }
+
+        return formattedValues;
+    }
+};
+
+module.exports = scaleDataMaker;

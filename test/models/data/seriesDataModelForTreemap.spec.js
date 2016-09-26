@@ -6,9 +6,9 @@
 
 'use strict';
 
-var SeriesDataModel = require('../../src/js/models/data/seriesDataModelForTreemap');
-var SeriesGroup = require('../../src/js/models/data/seriesGroup');
-var chartConst = require('../../src/js/const');
+var SeriesDataModel = require('../../../src/js/models/data/seriesDataModelForTreemap');
+var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
+var chartConst = require('../../../src/js/const');
 
 describe('Test for SeriesDataModelForTreemap', function() {
     var rootId = chartConst.TREEMAP_ROOT_ID;
