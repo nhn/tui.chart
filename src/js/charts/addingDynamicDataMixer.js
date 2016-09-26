@@ -46,12 +46,12 @@ var addingDynamicDataMixer = {
 
     /**
      * Calculate animate tick size.
+     * @param {number} xAxisWidth - x axis width
      * @returns {number}
      * @private
      */
-    _calculateAnimateTickSize: function() {
+    _calculateAnimateTickSize: function(xAxisWidth) {
         var dataProcessor = this.dataProcessor;
-        var xAxisWidth = this.dimensionMap.xAxis.width;
         var tickInterval = this.options.xAxis.tickInterval;
         var shiftingOption = !!this.options.series.shifting;
         var tickCount;
@@ -80,7 +80,7 @@ var addingDynamicDataMixer = {
         this.addedDataCount += 1;
 
         this._render(function(renderingData, boundsAndScale) {
-            var tickSize = self._calculateAnimateTickSize();
+            var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
             self.componentManager.render('animateForAddingData', {
                 tickSize: tickSize,
                 shifting: shiftingOption

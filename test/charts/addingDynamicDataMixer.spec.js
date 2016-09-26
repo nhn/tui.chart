@@ -7,6 +7,7 @@
 'use strict';
 
 var mixer = require('../../src/js/charts/addingDynamicDataMixer');
+var chartConst = require('../../src/js/const');
 
 describe('Test for addingDynamicDataMixer', function() {
     var dataProcessor, componentManager;
@@ -26,10 +27,38 @@ describe('Test for addingDynamicDataMixer', function() {
             xAxis: {}
         };
 
-        mixer._render = jasmine.createSpy('_render').and.callFake(function(callback) {
-            callback({});
-        });
+        mixer._render = jasmine.createSpy('_render');
+
         mixer._renderComponents = jasmine.createSpy('_renderComponents');
+    });
+
+    describe('_calculateAnimateTickSize()', function() {
+        it('calculate animate tick size, when is coordinateType chart', function() {
+            var xAxisWidth = 300;
+            var actual;
+
+            dataProcessor.isCoordinateType.and.returnValue(true);
+            dataProcessor.getValues.and.returnValue([10, 20, 30, 40]);
+            mixer.chartType = chartConst.CHART_TYPE_LINE;
+
+            actual = mixer._calculateAnimateTickSize(xAxisWidth);
+
+            expect(dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_LINE, 'x');
+            expect(actual).toBe(100);
+        });
+
+        it('if not coordinateType data, get tickCount from dataProcessor.getCategoryCount function', function() {
+            var xAxisWidth = 300;
+            var actual;
+
+            dataProcessor.isCoordinateType.and.returnValue(false);
+            dataProcessor.getCategoryCount.and.returnValue(4);
+
+            actual = mixer._calculateAnimateTickSize(xAxisWidth);
+
+            expect(dataProcessor.getCategoryCount).toHaveBeenCalledWith(false);
+            expect(actual).toBe(100);
+        });
     });
 
     describe('_animateForAddingData()', function() {
@@ -60,27 +89,17 @@ describe('Test for addingDynamicDataMixer', function() {
             expect(mixer._render).toHaveBeenCalled();
         });
 
-        it('if coordinateType data, get tickCount from dataProcessor.getValue function', function() {
-            dataProcessor.isCoordinateType.and.returnValue(true);
-            dataProcessor.getValues.and.returnValue(10);
-            mixer.chartType = 'line';
-
-            mixer._animateForAddingData();
-
-            expect(dataProcessor.getValues).toHaveBeenCalledWith('line', 'x');
-        });
-
-        it('if not coordinateType data, get tickCount from dataProcessor.getCategoryCount function', function() {
-            dataProcessor.isCoordinateType.and.returnValue(false);
-
-            mixer._animateForAddingData();
-
-            expect(dataProcessor.getCategoryCount).toHaveBeenCalledWith(false);
-        });
-
         it('_animateForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
             '각 컴포넌트 animateForAddingData함수를 tickSize와 shifting 옵션 값을 전달하며 실행합니다.', function() {
-            var boundsAndScale;
+            var boundsAndScale = {dimensionMap: {
+                xAxis: {
+                    width: 200
+                }
+            }};
+
+            mixer._render.and.callFake(function(callback) {
+                callback({}, boundsAndScale);
+            });
 
             mixer._animateForAddingData();
 
@@ -109,7 +128,15 @@ describe('Test for addingDynamicDataMixer', function() {
 
         it('_rerenderForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
             '각 컴포넌트 rerender함수를 animatable=false 값을 전달하며 실행합니다.', function() {
-            var boundsAndScale;
+            var boundsAndScale = {dimensionMap: {
+                xAxis: {
+                    width: 200
+                }
+            }};
+
+            mixer._render.and.callFake(function(callback) {
+                callback({}, boundsAndScale);
+            });
 
             mixer._rerenderForAddingData();
 

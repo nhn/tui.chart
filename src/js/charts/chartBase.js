@@ -73,12 +73,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.userEvent = new UserEventListener();
 
         /**
-         * Dimension map
-         * @type {null}
-         */
-        this.dimensionMap = null;
-
-        /**
          * scale option for making scale data
          * @type {null|object}
          */
@@ -322,8 +316,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _render: function(onRender, addingDataMode) {
         var boundsAndScale = this._buildBoundsAndScaleData(addingDataMode);
         var renderingData;
-
-        this.dimensionMap = boundsAndScale.dimensionMap;
 
         // 비율값 추가
         this._addDataRatios(boundsAndScale.limitMap);
