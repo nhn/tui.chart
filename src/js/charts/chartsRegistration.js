@@ -1,20 +1,20 @@
 'use strict';
 
-var chartConst = require('./const');
-var chartFactory = require('./factories/chartFactory');
-var BarChart = require('./charts/barChart');
-var ColumnChart = require('./charts/columnChart');
-var LineChart = require('./charts/lineChart');
-var AreaChart = require('./charts/areaChart');
-var ColumnLineComboChart = require('./charts/columnLineComboChart');
-var LineAreaComboChart = require('./charts/lineAreaComboChart');
-var PieDonutComboChart = require('./charts/pieDonutComboChart');
-var PieChart = require('./charts/pieChart');
-var BubbleChart = require('./charts/bubbleChart');
-var ScatterChart = require('./charts/scatterChart');
-var HeatmapChart = require('./charts/heatmapChart');
-var TreemapChart = require('./charts/treemapChart');
-var MapChart = require('./charts/mapChart');
+var chartConst = require('../const');
+var chartFactory = require('../factories/chartFactory');
+var BarChart = require('./barChart');
+var ColumnChart = require('./columnChart');
+var LineChart = require('./lineChart');
+var AreaChart = require('./areaChart');
+var ColumnLineComboChart = require('./columnLineComboChart');
+var LineAreaComboChart = require('./lineAreaComboChart');
+var PieDonutComboChart = require('./pieDonutComboChart');
+var PieChart = require('./pieChart');
+var BubbleChart = require('./bubbleChart');
+var ScatterChart = require('./scatterChart');
+var HeatmapChart = require('./heatmapChart');
+var TreemapChart = require('./treemapChart');
+var MapChart = require('./mapChart');
 
 chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);

@@ -9,15 +9,15 @@
 var chartConst = require('./const');
 var chartFactory = require('./factories/chartFactory');
 var pluginFactory = require('./factories/pluginFactory');
-var themeFactory = require('./factories/themeFactory');
+var themeManager = require('./themes/themeManager');
 var mapFactory = require('./factories/mapFactory');
 
 var _createChart;
 
 require('./polyfill');
 require('./code-snippet-util');
-require('./registerCharts');
-require('./registerThemes');
+require('./charts/chartsRegistration');
+require('./themes/defaultThemesRegistration');
 
 /**
  * Raw series datum.
@@ -78,7 +78,7 @@ _createChart = function(container, rawData, options) {
     rawData = tui.util.deepCopy(rawData);
     options = options ? tui.util.deepCopy(options) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
-    theme = themeFactory.get(themeName);
+    theme = themeManager.get(themeName);
 
     chart = chartFactory.get(options.chartType, rawData, theme, options);
     container.appendChild(chart.render());
@@ -1274,7 +1274,7 @@ tui.chart.mapChart = function(container, rawData, options) {
  * tui.chart.registerTheme('newTheme', theme);
  */
 tui.chart.registerTheme = function(themeName, theme) {
-    themeFactory.register(themeName, theme);
+    themeManager.register(themeName, theme);
 };
 
 /**

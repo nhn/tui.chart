@@ -1,14 +1,13 @@
 /**
- * @fileoverview  Theme factory play role register theme.
- *                Also, you can get theme from this factory.
+ * @fileoverview  Theme manager.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var chartConst = require('../const'),
-    defaultTheme = require('../themes/defaultTheme');
+var chartConst = require('../const');
+var defaultTheme = require('./defaultTheme');
 
 var themes = {};
 
