@@ -19,7 +19,7 @@ var seriesCalculator = {
      * @param {{
      *      chart: {width: number},
      *      yAxis: {width: number},
-     *      calculationLegend: {width: number},
+     *      legend: {width: number},
      *      rightYAxis: ?{width: number}
      * }} dimensionMap - dimension map
      * @param {{align: ?string, visible: boolean}} legendOptions - legend options
@@ -28,7 +28,7 @@ var seriesCalculator = {
     calculateWidth: function(dimensionMap, legendOptions) {
         var chartWidth = dimensionMap.chart.width;
         var yAxisWidth = dimensionMap.yAxis.width;
-        var legendDimension = dimensionMap.calculationLegend;
+        var legendDimension = dimensionMap.legend;
         var legendWidth, rightAreaWidth;
 
         if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {

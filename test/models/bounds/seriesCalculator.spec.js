@@ -16,7 +16,7 @@ describe('Test for seriesCalculator', function() {
                 chart: {
                     width: 500
                 },
-                calculationLegend: {
+                legend: {
                     width: 50
                 },
                 yAxis: {
@@ -39,7 +39,7 @@ describe('Test for seriesCalculator', function() {
                 chart: {
                     width: 500
                 },
-                calculationLegend: {
+                legend: {
                     width: 50
                 },
                 yAxis: {

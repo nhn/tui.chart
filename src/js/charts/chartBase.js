@@ -335,8 +335,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _sendSeriesData: function(chartType) {
-        var self = this;
-        var customEvent = this.componentManager.get('customEvent');
+        var componentManager = this.componentManager;
+        var customEvent = componentManager.get('customEvent');
         var seriesInfos, seriesNames;
 
         if (!customEvent) {
@@ -345,10 +345,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         seriesNames = this.seriesNames || [chartType || this.chartType];
         seriesInfos = tui.util.map(seriesNames, function(seriesName) {
-            var component = self.componentManager.get(seriesName + 'Series') || self.componentManager.get('series');
+            var component = componentManager.get(seriesName + 'Series') || componentManager.get('series');
 
             return {
-                chartType: self.dataProcessor.findChartType(seriesName),
+                chartType: component.chartType,
                 data: component.getSeriesData()
             };
         });
@@ -378,8 +378,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        var self = this;
         var container = dom.create('DIV', 'tui-chart ' + this.className);
+        var componentManager = this.componentManager;
 
         this._renderTitle(container);
 
@@ -388,7 +388,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this._render(function(boundsAndScale) {
             renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
-            self.componentManager.render('render', boundsAndScale, null, container);
+            componentManager.render('render', boundsAndScale, null, container);
         });
 
         this.chartContainer = container;

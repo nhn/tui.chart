@@ -80,7 +80,7 @@ var lineTypeMixer = {
             this.options.tooltip.grouped = false;
             this.options.series.shifting = false;
         }
-        
+
         this._addComponentsForAxisType({
             axis: [
                 {

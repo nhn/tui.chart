@@ -58,9 +58,11 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
         options.legend = options.legend || {};
 
-        this.componentManager.register('legend', Legend, {
-            colorSpectrum: colorSpectrum
-        });
+        if (options.legend.visible) {
+            this.componentManager.register('legend', Legend, {
+                colorSpectrum: colorSpectrum
+            });
+        }
 
         this.componentManager.register('tooltip', MapChartTooltip, tui.util.extend({
             mapModel: mapModel
@@ -124,10 +126,12 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             wheel: tui.util.bind(zoom.onWheel, zoom)
         }, mapSeries);
 
-        mapSeries.on({
-            showWedge: legend.onShowWedge,
-            hideWedge: legend.onHideWedge
-        }, legend);
+        if (legend) {
+            mapSeries.on({
+                showWedge: legend.onShowWedge,
+                hideWedge: legend.onHideWedge
+            }, legend);
+        }
 
         mapSeries.on({
             showTooltip: tooltip.onShow,

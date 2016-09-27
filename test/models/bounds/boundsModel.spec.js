@@ -195,7 +195,7 @@ describe('Test for BoundsModel', function() {
                 title: {
                     height: 50
                 },
-                calculationLegend: {
+                legend: {
                     width: 50
                 },
                 xAxis: {
@@ -208,6 +208,7 @@ describe('Test for BoundsModel', function() {
                     width: 0
                 }
             };
+
             actual = boundsModel._makeSeriesDimension();
             expected = {
                 width: 380,

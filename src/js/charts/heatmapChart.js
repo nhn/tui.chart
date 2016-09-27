@@ -124,9 +124,11 @@ HeatmapChart.prototype._attachCustomEvent = function() {
     axisTypeMixer._attachCustomEvent.call(this);
 
     customEvent.on('showTooltip', heatmapSeries.onShowTooltip, heatmapSeries);
-    customEvent.on('hideTooltip', legend.onHideWedge, legend);
 
-    heatmapSeries.on('showWedge', legend.onShowWedge, legend);
+    if (legend) {
+        customEvent.on('hideTooltip', legend.onHideWedge, legend);
+        heatmapSeries.on('showWedge', legend.onShowWedge, legend);
+    }
 };
 
 module.exports = HeatmapChart;

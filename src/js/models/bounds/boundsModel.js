@@ -97,9 +97,6 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
             },
             circleLegend: {
                 width: 0
-            },
-            calculationLegend: {
-                width: 0
             }
         };
 
@@ -238,14 +235,6 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var legendDimension = legendCalculator.calculate(legendOptions, labelTheme, legendLabels, chartWidth);
 
         this._registerDimension('legend', legendDimension);
-
-        if (predicate.isHorizontalLegend(legendOptions.align) || !legendOptions.visible) {
-            return;
-        }
-
-        this._registerDimension('calculationLegend', {
-            width: legendDimension.width
-        });
     },
 
     /**
@@ -263,7 +252,6 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         this._registerDimension('legend', dimension);
-        this._registerDimension('calculationLegend', dimension);
     },
 
     /**
@@ -295,7 +283,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @returns {number} series width
      */
     calculateSeriesWidth: function() {
-        var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'calculationLegend', 'rightYAxis']);
+        var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
 
         return seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
     },
@@ -370,12 +358,18 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      */
     registerCircleLegendDimension: function(axisDataMap) {
         var seriesDimension = this.getDimension('series');
+        var legendOptions = this.options.legend;
         var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
         var fontFamily = this.theme.chart.fontFamily;
         var circleLegendWidth = circleLegendCalculator.calculateCircleLegendWidth(seriesDimension, axisDataMap,
             maxLabel, fontFamily);
-        var legendWidth = this.getDimension('calculationLegend').width;
-        var diffWidth;
+        var legendWidth, diffWidth;
+
+        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
+            legendWidth = this.getDimension('legend').width;
+        } else {
+            legendWidth = 0;
+        }
 
         circleLegendWidth = Math.min(circleLegendWidth, Math.max(legendWidth, chartConst.MIN_LEGEND_WIDTH));
         diffWidth = circleLegendWidth - legendWidth;

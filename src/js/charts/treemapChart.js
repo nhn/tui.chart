@@ -61,7 +61,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             labelTheme: tui.util.pick(this.theme, 'series', 'label')
         }, this._makeTooltipData()));
 
-        if (useColorValue) {
+        if (useColorValue && this.options.legend.visible) {
             this.componentManager.register('legend', Legend, {
                 chartType: this.chartType,
                 userEvent: this.userEvent,
@@ -118,10 +118,10 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
         series.on('afterZoom', customEvent.onAfterZoom, customEvent);
 
-        if (legend) {
-            customEvent.on('showTooltip', series.onShowTooltip, series);
-            customEvent.on('hideTooltip', legend.onHideWedge, legend);
+        customEvent.on('showTooltip', series.onShowTooltip, series);
 
+        if (legend) {
+            customEvent.on('hideTooltip', legend.onHideWedge, legend);
             series.on('showWedge', legend.onShowWedge, legend);
         }
     },
