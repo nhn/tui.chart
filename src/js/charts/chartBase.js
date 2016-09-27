@@ -71,6 +71,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.userEvent = new UserEventListener();
 
         this._addComponents();
+
+        this._attachCustomEvent();
     },
 
     /**
@@ -341,8 +343,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
             self.componentManager.render('render', boundsAndScale, null, container);
         });
-
-        this._attachCustomEvent();
 
         this.chartContainer = container;
 

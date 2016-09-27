@@ -29,12 +29,6 @@ var lineTypeMixer = {
             hasAxes: true,
             isVertical: true
         });
-
-        if (this.dataProcessor.isCoordinateType()) {
-            delete this.options.xAxis.tickInterval;
-            this.options.tooltip.grouped = false;
-            this.options.series.shifting = false;
-        }
     },
 
     /**
@@ -81,6 +75,12 @@ var lineTypeMixer = {
      * @private
      */
     _addComponents: function() {
+        if (this.dataProcessor.isCoordinateType()) {
+            delete this.options.xAxis.tickInterval;
+            this.options.tooltip.grouped = false;
+            this.options.series.shifting = false;
+        }
+        
         this._addComponentsForAxisType({
             axis: [
                 {
