@@ -46,22 +46,15 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             options: options,
             hasAxes: true
         });
-
-        /**
-         * scale option for making scale data
-         * @type {{xAxis: ?{valueType: string}, yAxis: ?{valueType: string}}}
-         */
-        this.scaleOption = this._makeScaleOption();
-
-        this._addComponents(options.chartType);
     },
 
     /**
-     * Make scale option.
+     * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?{valueType:string}}}
      * @private
+     * @override
      */
-    _makeScaleOption: function() {
+    _getScaleOption: function() {
         var scaleOption = {};
 
         if (this.dataProcessor.hasXValue(this.chartType)) {
@@ -95,12 +88,10 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -121,7 +112,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
         if (this.options.circleLegend.visible) {
             this.componentManager.register('circleLegend', CircleLegend, {
-                chartType: chartType,
+                chartType: this.chartType,
                 baseFontFamily: this.theme.chart.fontFamily
             });
         }

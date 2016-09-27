@@ -35,8 +35,6 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
 
         tui.util.extend(this, chartTypesMap);
 
-        this.scaleOption = this._makeScaleOption();
-
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, chartTypesMap);
     }
 });

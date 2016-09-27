@@ -47,21 +47,10 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             hasAxes: true,
             isVertical: true
         });
-
-        /**
-         * scale option for making scale data
-         * @type {{legend: boolean}}
-         */
-        this.scaleOption = {
-            legend: true
-        };
-
-        this._addComponents(options.chartType);
     },
 
     /**
      * Add components.
-     * @param {string} chartType chart type
      * @private
      */
     _addComponents: function() {
@@ -96,6 +85,18 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             tooltip: true,
             customEvent: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{legend: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     }
 });
 

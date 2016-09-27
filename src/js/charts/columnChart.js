@@ -40,16 +40,6 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             hasAxes: true,
             isVertical: true
         });
-
-        /**
-         * scale option for making scale data
-         * @type {{yAxis: boolean}}
-         */
-        this.scaleOption = {
-            yAxis: true
-        };
-
-        this._addComponents(options.chartType);
     },
 
     /**
@@ -67,12 +57,10 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
 
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -93,6 +81,18 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             ],
             plot: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{yAxis: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            yAxis: true
+        };
     }
 });
 

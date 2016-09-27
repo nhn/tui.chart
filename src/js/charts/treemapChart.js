@@ -39,22 +39,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             hasAxes: false,
             isVertical: true
         });
-
-        /**
-         * scale option for making scale data
-         * @type {{legend: boolean}}
-         */
-        this.scaleOption = {
-            legend: true
-        };
-
-        /**
-         * scale information like limit, step for rendering legend
-         * @type {{limit: {min: number, max: number}, step: number}}
-         */
-        this.lengedScale = null;
-
-        this._addComponents(options.chartType);
     },
 
     /**
@@ -89,6 +73,18 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             chartType: this.chartType,
             isVertical: this.isVertical
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{legend: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     },
 
     /**

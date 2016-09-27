@@ -87,14 +87,13 @@ var axisTypeMixer = {
      * Add legend component.
      * @param {null | object} LegendClass - Legend type class
      * @param {Array.<string>} seriesNames - series names
-     * @param {string} chartType - chart type
      * @param {?object} additionalParams - additional params
      * @private
      */
-    _addLegendComponent: function(LegendClass, seriesNames, chartType, additionalParams) {
+    _addLegendComponent: function(LegendClass, seriesNames, additionalParams) {
         this.componentManager.register('legend', LegendClass || Legend, tui.util.extend({
             seriesNames: seriesNames,
-            chartType: chartType,
+            chartType: this.chartType,
             userEvent: this.userEvent
         }, additionalParams));
     },
@@ -126,7 +125,7 @@ var axisTypeMixer = {
         if (options.legend.visible) {
             params.legend = params.legend || {};
             LegendClass = params.legend.LegendClass || null;
-            this._addLegendComponent(LegendClass, params.seriesNames, params.chartType, params.legend.additionalParams);
+            this._addLegendComponent(LegendClass, params.seriesNames, params.legend.additionalParams);
         }
 
         this._addSeriesComponents(params.series, options);

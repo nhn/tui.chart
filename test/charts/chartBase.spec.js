@@ -304,26 +304,6 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_makeRerenderingData()', function() {
-        it('전달받은 rendering data에 rerendering에 필요한 data를 생성하여 추가합니다.', function() {
-            var renderingData = {},
-                checkedLegends = [true],
-                actual;
-
-            componentManager.where.and.returnValue([
-                {
-                    componentName: 'columnSeries',
-                    chartType: 'column'
-                }
-            ]);
-
-            actual = chartBase._makeRerenderingData(renderingData, checkedLegends);
-
-            expect(actual.tooltip.checkedLegends).toEqual([true]);
-            expect(actual.columnSeries.checkedLegends).toEqual([true]);
-        });
-    });
-
     describe('_renderTitle()', function() {
         it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function() {
             var el = dom.create('DIV');

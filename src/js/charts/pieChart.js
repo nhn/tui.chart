@@ -37,8 +37,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             theme: theme,
             options: options
         });
-
-        this._addComponents();
     },
 
     /**

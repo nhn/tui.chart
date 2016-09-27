@@ -35,25 +35,15 @@ var lineTypeMixer = {
             this.options.tooltip.grouped = false;
             this.options.series.shifting = false;
         }
-
-        /**
-         * scale option for making scale data
-         * @type {{
-         *      xAxis: ?{valueType: string},
-         *      yAxis: ?(boolean|{valueType: string})
-         * }}
-         */
-        this.scaleOption = this._makeScaleOption();
-
-        this._addComponents(options.chartType);
     },
 
     /**
-     * Make scale option.
+     * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @private
+     * @override
      */
-    _makeScaleOption: function() {
+    _getScaleOption: function() {
         var scaleOption = {};
 
         if (this.dataProcessor.isCoordinateType()) {
@@ -90,9 +80,8 @@ var lineTypeMixer = {
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -104,7 +93,7 @@ var lineTypeMixer = {
             ],
             series: [
                 {
-                    name: this.options.chartType + 'Series',
+                    name: this.chartType + 'Series',
                     SeriesClass: this.Series
                 }
             ],

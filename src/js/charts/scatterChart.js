@@ -42,31 +42,14 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
             options: options,
             hasAxes: true
         });
-
-        /**
-         * scale option for making scale data
-         * @type {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
-         */
-        this.scaleOption = {
-            xAxis: {
-                valueType: 'x'
-            },
-            yAxis: {
-                valueType: 'y'
-            }
-        };
-
-        this._addComponents(options.chartType);
     },
 
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -84,6 +67,23 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
             ],
             plot: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            xAxis: {
+                valueType: 'x'
+            },
+            yAxis: {
+                valueType: 'y'
+            }
+        };
     }
 });
 

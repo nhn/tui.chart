@@ -58,8 +58,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.dataProcessor = this._createDataProcessor(params);
 
-        this.seriesNames = params.seriesNames;
-
         /**
          * component manager
          * @type {ComponentManager}
@@ -72,11 +70,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.userEvent = new UserEventListener();
 
-        /**
-         * scale option for making scale data
-         * @type {null|object}
-         */
-        this.scaleOption = null;
+        this._addComponents();
     },
 
     /**
@@ -203,7 +197,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var DataProcessor, dataProcessor;
 
         DataProcessor = params.DataProcessor || DefaultDataProcessor;
-        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesNames);
+        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, this.seriesNames);
 
         return dataProcessor;
     },
@@ -238,6 +232,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Add components
+     * @private
+     * @abstract
+     */
+    _addComponents: function() {},
+
+    /**
      * Attach custom event.
      * @param {Array.<object>} seriesSet - series set
      * @private
@@ -270,6 +271,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _addDataRatios: function() {},
 
     /**
+     * Get scale option.
+     * @private
+     * @abstract
+     */
+    _getScaleOption: function() {},
+
+    /**
      * Build bounds and scale data.
      * @param {boolean} addingDataMode - whether adding data mode or not
      * @returns {{
@@ -290,7 +298,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             options: this.options,
             theme: this.theme,
             hasAxes: this.hasAxes,
-            scaleOption: this.scaleOption,
+            scaleOption: this._getScaleOption(),
             isVertical: this.isVertical,
             hasRightYAxis: this.hasRightYAxis,
             addedDataCount: this.addedDataCount,
@@ -335,6 +343,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         });
 
         this._attachCustomEvent();
+
         this.chartContainer = container;
 
         return container;
@@ -367,30 +376,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         return cloneData;
-    },
-
-    /**
-     * Make rerendering data.
-     * @param {object} renderingData rendering data
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @returns {object} rendering data
-     * @private
-     */
-    _makeRerenderingData: function(renderingData, checkedLegends) {
-        var tooltipData = this._makeTooltipData();
-        var seriesSet = this.componentManager.where({componentType: 'series'});
-
-        renderingData.tooltip = tui.util.extend({
-            checkedLegends: checkedLegends
-        }, tooltipData);
-
-        tui.util.forEach(seriesSet, function(series) {
-            renderingData[series.componentName] = tui.util.extend({
-                checkedLegends: checkedLegends[series.seriesName] || checkedLegends
-            }, renderingData[series.componentName]);
-        });
-
-        return renderingData;
     },
 
     /**

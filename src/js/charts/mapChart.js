@@ -43,16 +43,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             options: options,
             DataProcessor: MapChartDataProcessor
         });
-
-        /**
-         * scale option for making scale data
-         * @type {{legend: boolean}}
-         */
-        this.scaleOption = {
-            legend: true
-        };
-
-        this._addComponents(options);
     },
 
     /**
@@ -60,7 +50,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(options) {
+    _addComponents: function() {
+        var options = this.options;
         var seriesTheme = this.theme.series;
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
@@ -89,6 +80,18 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         this.componentManager.register('customEvent', mapChartCustomEvent, {
             chartType: this.chartType
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{legend: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     },
 
     /**

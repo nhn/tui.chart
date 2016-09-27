@@ -45,16 +45,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             options: options,
             hasAxes: true
         });
-
-        /**
-         * scale option for making scale data
-         * @type {{xAxis: boolean}}
-         */
-        this.scaleOption = {
-            xAxis: true
-        };
-
-        this._addComponents(options.chartType);
     },
 
     /**
@@ -89,10 +79,9 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         var axes = [
             {
                 name: 'yAxis',
@@ -110,7 +99,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             });
         }
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: axes,
             series: [
                 {
@@ -120,6 +108,18 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             ],
             plot: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{xAxis: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            xAxis: true
+        };
     },
 
     /**

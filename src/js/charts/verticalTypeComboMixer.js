@@ -24,25 +24,33 @@ var verticalTypeComboMixer = {
      * @param {object} options chart options
      */
     _initForVerticalTypeCombo: function(rawData, theme, options) {
-        var chartTypesMap;
+        var chartTypesMap = this._makeChartTypesMap(rawData.series, options.yAxis, options.chartType);
 
-        chartTypesMap = this._makeChartTypesMap(rawData.series, options.yAxis, options.chartType);
+        /**
+         * chart types map
+         * @type {Object}
+         */
+        this.chartTypes = chartTypesMap.chartTypes;
 
-        tui.util.extend(this, chartTypesMap);
+        /**
+         * series names
+         * @type {Object|Array.<T>}
+         */
+        this.seriesNames = chartTypesMap.seriesNames;
 
+        /**
+         * chart types for options
+         */
+        this.optionChartTypes = chartTypesMap.optionChartTypes;
+
+        /**
+         * whether has right y axis or not
+         * @type {boolean}
+         */
         this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
 
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = true;
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            hasAxes: true,
-            isVertical: true,
-            seriesNames: chartTypesMap.seriesNames
-        });
 
         /**
          * yAxis options map
@@ -50,16 +58,13 @@ var verticalTypeComboMixer = {
          */
         this.yAxisOptionsMap = this._makeYAxisOptionsMap(chartTypesMap.chartTypes, options.yAxis);
 
-        /**
-         * scale option for making scale data
-         * @type {{
-         *      yAxis: {options: Object, areaType: string, chartType: string, additionalParams: Object},
-         *      rightYAxis: {options: Object, areaType: string, chartType: string, additionalParams: Object}
-         * }}
-         */
-        this.scaleOption = this._makeScaleOption();
-
-        this._addComponents(chartTypesMap);
+        ChartBase.call(this, {
+            rawData: rawData,
+            theme: theme,
+            options: options,
+            hasAxes: true,
+            isVertical: true
+        });
     },
 
     /**
@@ -165,14 +170,15 @@ var verticalTypeComboMixer = {
     },
 
     /**
-     * Make scale option.
+     * Get scale option.
      * @returns {{
      *      yAxis: {options: object, areaType: string, chartType: string, additionalParams: object},
      *      rightYAxis: {options: object, areaType: string, chartType: string, additionalParams: object}
      * }}
      * @private
+     * @override
      */
-    _makeScaleOption: function() {
+    _getScaleOption: function() {
         var isSingleYAxis = this.optionChartTypes.length < 2;
         var scaleOption = {
             yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], isSingleYAxis)
@@ -221,34 +227,32 @@ var verticalTypeComboMixer = {
     },
 
     /**
-     * Add components
-     * @param {object} chartTypesMap chart types map
+     * Add components.
      * @private
      */
-    _addComponents: function(chartTypesMap) {
+    _addComponents: function() {
         var axes = [
             {
                 name: 'yAxis',
-                chartType: chartTypesMap.chartTypes[0],
+                chartType: this.chartTypes[0],
                 isVertical: true
             },
             {
                 name: 'xAxis'
             }
         ];
-        var serieses = this._makeDataForAddingSeriesComponent(chartTypesMap.seriesNames);
+        var serieses = this._makeDataForAddingSeriesComponent(this.seriesNames);
 
-        if (chartTypesMap.optionChartTypes.length) {
+        if (this.optionChartTypes.length) {
             axes.push({
                 name: 'rightYAxis',
-                chartType: chartTypesMap.chartTypes[1],
+                chartType: this.chartTypes[1],
                 isVertical: true
             });
         }
 
         this._addComponentsForAxisType({
-            chartType: this.options.chartType,
-            seriesNames: chartTypesMap.seriesNames,
+            seriesNames: this.seriesNames,
             axis: axes,
             series: serieses,
             plot: true
