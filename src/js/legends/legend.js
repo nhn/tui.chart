@@ -19,9 +19,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * Legend component.
      * @constructs Legend
      * @param {object} params parameters
-     *      @param {object} params.theme axis theme
-     *      @param {?Array.<string>} params.chartTypes chart types
-     *      @param {string} params.chart type
+     *      @param {object} params.theme - axis theme
+     *      @param {?Array.<string>} params.seriesNames - series names
+     *      @param {string} params.chart - chart type
      */
     init: function(params) {
         /**

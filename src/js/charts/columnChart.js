@@ -29,8 +29,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        rawDataHandler.updateRawSeriesData(rawData, options.series);
-
+        rawDataHandler.updateRawSeriesDataByOptions(rawData, options.series);
         this._updateOptionsRelatedDiverging(options);
 
         ChartBase.call(this, {

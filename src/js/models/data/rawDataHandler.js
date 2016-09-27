@@ -201,11 +201,11 @@ var rawDataHandler = {
     },
 
     /**
-     * Update raw series data.
+     * Update raw series data by options.
      * @param {object} rawData - raw data
      * @param {{stackType: ?string, diverging: ?boolean}} seriesOptions - series options
      */
-    updateRawSeriesData: function(rawData, seriesOptions) {
+    updateRawSeriesDataByOptions: function(rawData, seriesOptions) {
         seriesOptions = seriesOptions || {};
 
         if (predicate.isValidStackOption(seriesOptions.stackType)) {
