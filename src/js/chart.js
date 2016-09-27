@@ -12,8 +12,6 @@ var pluginFactory = require('./factories/pluginFactory');
 var themeManager = require('./themes/themeManager');
 var mapFactory = require('./factories/mapFactory');
 
-var _createChart;
-
 require('./polyfill');
 require('./code-snippet-util');
 require('./charts/chartsRegistration');
@@ -68,15 +66,17 @@ tui.util.defineNamespace('tui.chart');
  *   },
  *   theme: string
  * }} options - chart options
+ * @param {string} chartType - chart type
  * @returns {object} chart instance.
  * @private
  * @ignore
  */
-_createChart = function(container, rawData, options) {
+function _createChart(container, rawData, options, chartType) {
     var themeName, theme, chart;
 
     rawData = tui.util.deepCopy(rawData);
     options = options ? tui.util.deepCopy(options) : {};
+    options.chartType = chartType;
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeManager.get(themeName);
 
@@ -85,7 +85,7 @@ _createChart = function(container, rawData, options) {
     chart.animateChart();
 
     return chart;
-};
+}
 
 /**
  * Bar chart creator.
@@ -182,10 +182,7 @@ _createChart = function(container, rawData, options) {
  * tui.chart.barChart(container, rawData, options);
  */
 tui.chart.barChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_BAR;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BAR);
 };
 
 /**
@@ -284,87 +281,83 @@ tui.chart.barChart = function(container, rawData, options) {
  * tui.chart.columnChart(container, rawData, options);
  */
 tui.chart.columnChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_COLUMN;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_COLUMN);
 };
 
-tui.chart.lineChart = function(container, rawData, options) {
-    /**
-     * Line chart creator.
-     * @memberOf tui.chart
-     * @param {HTMLElement} container - chart container
-     * @param {rawData} rawData - raw data
-     *      @param {?Array.<string>} rawData.categories - categories
-     *      @param {Array.<Array>} rawData.series - series data
-     * @param {object} options - chart options
-     *      @param {object} options.chart - base options for chart
-     *          @param {number} options.chart.width - chart width
-     *          @param {number} options.chart.height - chart height
-     *          @param {string | object} options.chart.title - title text or title object
-     *              @param {string} options.chart.title.text - title text
-     *              @param {number} options.chart.title.offsetX - title offset x
-     *              @param {number} options.chart.title.offsetY - title offset y
-     *          @param {string | function} options.chart.format - formatter for value
-     *      @param {object} options.yAxis - options for y axis component
-     *          @param {string | object} options.yAxis.title - title text or title object
-     *              @param {string} options.yAxis.title.text - title text
-     *              @param {number} options.yAxis.title.offsetX - title offset x
-     *              @param {number} options.yAxis.title.offsetY - title offset y
-     *          @param {number} options.yAxis.min - minimum value for y axis
-     *          @param {number} options.yAxis.max - maximum value for y axis
-     *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
-     *      @param {object} options.xAxis - options for x axis component
-     *          @param {string | object} options.xAxis.title - title text or title object
-     *              @param {string} options.xAxis.title.text - title text
-     *              @param {number} options.xAxis.title.offsetX - title offset x
-     *              @param {number} options.xAxis.title.offsetY - title offset y
-     *          @param {number} options.xAxis.labelInterval - label interval for x axis
-     *          @param {string} options.xAxis.tickInterval - tick interval for x axis
-     *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
-     *          @param {string} options.xAxis.type - type of axis
-     *          @param {string} options.xAxis.dateFormat - date format
-     *      @param {object} options.series - options for series component
-     *          @param {boolean} options.series.showDot - whether show dot or not
-     *          @param {boolean} options.series.showLabel - whether show label or not
-     *          @param {boolean} options.series.allowSelect - whether allow select or not
-     *          @param {boolean} options.series.spline - whether spline or not
-     *          @param {boolean} options.series.zoomable - whether zoomable or not
-     *          @param {boolean} options.series.shifting - whether shifting or not
-     *      @param {object} options.tooltip - options for tooltip component
-     *          @param {string} options.tooltip.suffix - suffix for tooltip
-     *          @param {function} [options.tooltip.template] - template for tooltip
-     *          @param {string} options.tooltip.align - align option for tooltip
-     *          @param {object} options.tooltip.offsetX - tooltip offset x
-     *          @param {object} options.tooltip.offsetY - tooltip offset y
-     *          @param {object} options.tooltip.position - (deprecated) relative position
-     *              @param {number} options.tooltip.position.left - position left
-     *              @param {number} options.tooltip.position.top - position top
-     *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
-     *      @param {object} options.legend - options for legend component
-     *          @param {string} options.legend.align - align option for legend (top|bottom|left)
-     *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
-     *          @param {boolean} options.legend.visible - whether visible or not (default: true)
-     *      @param {object} options.plot - options for plot component
-     *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
-     *          @param {Array} options.plot.bands - plot bands
-     *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
-     *              @param {string} options.plot.bands.color - band color
-     *              @param {number} options.plot.bands.opacity - band opacity
-     *          @param {Array} options.plot.lines - plot lines
-     *              @param {(string|number|date)} options.plot.lines.value - value for matching
-     *              @param {string} options.plot.lines.color - band color
-     *              @param {number} options.plot.lines.opacity - band opacity
-     *          @param {Array.<{value: (string|number|date), color: ?string, opacity: ?string}>} options.plot.lines
-     *                  - plot lines
-     *      @param {string} options.theme - theme name
-     *      @param {string} options.libType - type of graph library
-     * @returns {object} bar chart
-     * @api
-     * @example
-     * var container = document.getElementById('container-id'),
-     *     rawData = {
+/**
+ * Line chart creator.
+ * @memberOf tui.chart
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {?Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelInterval - label interval for x axis
+ *          @param {string} options.xAxis.tickInterval - tick interval for x axis
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *          @param {string} options.xAxis.type - type of axis
+ *          @param {string} options.xAxis.dateFormat - date format
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showDot - whether show dot or not
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *          @param {boolean} options.series.spline - whether spline or not
+ *          @param {boolean} options.series.zoomable - whether zoomable or not
+ *          @param {boolean} options.series.shifting - whether shifting or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *          @param {Array} options.plot.bands - plot bands
+ *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
+ *              @param {string} options.plot.bands.color - band color
+ *              @param {number} options.plot.bands.opacity - band opacity
+ *          @param {Array} options.plot.lines - plot lines
+ *              @param {(string|number|date)} options.plot.lines.value - value for matching
+ *              @param {string} options.plot.lines.color - band color
+ *              @param {number} options.plot.lines.opacity - band opacity
+ *          @param {Array.<{value: (string|number|date), color: ?string, opacity: ?string}>} options.plot.lines
+ *                  - plot lines
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
+ * @returns {object} bar chart
+ * @api
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
@@ -385,7 +378,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  *         }
  *       ]
  *     },
-     *     options = {
+ *     options = {
  *       chart: {
  *         title: 'Line Chart'
  *       },
@@ -399,12 +392,10 @@ tui.chart.lineChart = function(container, rawData, options) {
  *         showDot: true
  *       }
  *     };
-     * tui.chart.lineChart(container, rawData, options);
-     */
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_LINE;
-
-    return _createChart(container, rawData, options);
+ * tui.chart.lineChart(container, rawData, options);
+ */
+tui.chart.lineChart = function(container, rawData, options) {
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_LINE);
 };
 
 /**
@@ -513,10 +504,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  * tui.chart.areaChart(container, rawData, options);
  */
 tui.chart.areaChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_AREA;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_AREA);
 };
 
 /**
@@ -624,10 +612,7 @@ tui.chart.areaChart = function(container, rawData, options) {
  * tui.chart.bubbleChart(container, rawData, options);
  */
 tui.chart.bubbleChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_BUBBLE;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BUBBLE);
 };
 
 /**
@@ -723,10 +708,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  * tui.chart.scatterChart(container, rawData, options);
  */
 tui.chart.scatterChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_SCATTER;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_SCATTER);
 };
 
 /**
@@ -804,10 +786,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
  * tui.chart.heatmapChart(container, rawData, options);
  */
 tui.chart.heatmapChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_HEATMAP;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_HEATMAP);
 };
 
 /**
@@ -886,10 +865,7 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  * tui.chart.treemapChart(container, rawData, options);
  */
 tui.chart.treemapChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_TREEMAP;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_TREEMAP);
 };
 
 /**
@@ -1030,10 +1006,7 @@ tui.chart.treemapChart = function(container, rawData, options) {
  * tui.chart.comboChart(container, rawData, options);
  */
 tui.chart.comboChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_COMBO;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_COMBO);
 };
 
 /**
@@ -1105,10 +1078,7 @@ tui.chart.comboChart = function(container, rawData, options) {
  * tui.chart.pieChart(container, rawData, options);
  */
 tui.chart.pieChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_PIE;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_PIE);
 };
 
 /**
@@ -1172,10 +1142,7 @@ tui.chart.pieChart = function(container, rawData, options) {
  * tui.chart.mapChart(container, rawData, options);
  */
 tui.chart.mapChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_MAP;
-
-    return _createChart(container, rawData, options);
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_MAP);
 };
 
 /**

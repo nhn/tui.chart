@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var pieTypeMixer = require('./pieTypeMixer');
 var comboTypeMixer = require('./comboTypeMixer');
 var predicate = require('../helpers/predicate');
@@ -121,7 +122,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      */
     onChangeCheckedLegends: function(checkedLegends) {
         var originalRawData = this.dataProcessor.getOriginalRawData();
-        var rawData = this._filterCheckedRawData(originalRawData, checkedLegends);
+        var rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
 
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
             seriesNames: this.seriesNames

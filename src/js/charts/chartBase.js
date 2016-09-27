@@ -8,6 +8,7 @@
 
 var ComponentManager = require('./componentManager');
 var DefaultDataProcessor = require('../models/data/dataProcessor');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var dom = require('../helpers/domHandler');
 var renderUtil = require('../helpers/renderUtil');
 var UserEventListener = require('../helpers/userEventListener');
@@ -266,11 +267,24 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Add data ratios.
+     * Render title.
+     * @param {HTMLElement} container - container
      * @private
-     * @abstract
      */
-    _addDataRatios: function() {},
+    _renderTitle: function(container) {
+        var chartOptions = this.options.chart || {};
+        var title = chartOptions.title || {};
+        var titleElement = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title');
+
+        if (title.offset) {
+            renderUtil.renderPosition(titleElement, {
+                left: title.offset.x,
+                top: title.offset.y
+            });
+        }
+
+        dom.append(container, titleElement);
+    },
 
     /**
      * Get scale option.
@@ -309,6 +323,40 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Add data ratios.
+     * @private
+     * @abstract
+     */
+    _addDataRatios: function() {},
+
+    /**
+     * Send series data to custom event component.
+     * @param {string} chartType - type of chart
+     * @private
+     */
+    _sendSeriesData: function(chartType) {
+        var self = this;
+        var customEvent = this.componentManager.get('customEvent');
+        var seriesInfos, seriesNames;
+
+        if (!customEvent) {
+            return;
+        }
+
+        seriesNames = this.seriesNames || [chartType || this.chartType];
+        seriesInfos = tui.util.map(seriesNames, function(seriesName) {
+            var component = self.componentManager.get(seriesName + 'Series') || self.componentManager.get('series');
+
+            return {
+                chartType: self.dataProcessor.findChartType(seriesName),
+                data: component.getSeriesData()
+            };
+        });
+
+        customEvent.initCustomEventData(seriesInfos);
+    },
+
+    /**
      * Render.
      * @param {function} onRender render callback function
      * @param {?boolean} addingDataMode - whether adding data mode or not
@@ -331,9 +379,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     render: function() {
         var self = this;
-        var container = dom.create('DIV', this.className);
+        var container = dom.create('DIV', 'tui-chart ' + this.className);
 
-        dom.addClass(container, 'tui-chart');
         this._renderTitle(container);
 
         renderUtil.renderBackground(container, this.theme.chart.background);
@@ -350,35 +397,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Filter raw data belong to checked legend.
-     * @param {object} rawData raw data
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @returns {object} rawData
-     * @private
-     */
-    _filterCheckedRawData: function(rawData, checkedLegends) {
-        var cloneData = JSON.parse(JSON.stringify(rawData));
-
-        if (tui.util.isArray(cloneData.series)) {
-            cloneData.series = tui.util.filter(cloneData.series, function(series, index) {
-                return checkedLegends[index];
-            });
-        } else {
-            tui.util.forEach(cloneData.series, function(serieses, chartType) {
-                if (!checkedLegends[chartType]) {
-                    cloneData.series[chartType] = [];
-                } else if (checkedLegends[chartType].length) {
-                    cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
-                        return checkedLegends[chartType][index];
-                    });
-                }
-            });
-        }
-
-        return cloneData;
-    },
-
-    /**
      * Rerender.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
@@ -389,7 +407,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var dataProcessor = this.dataProcessor;
 
         if (!rawData) {
-            rawData = this._filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
+            rawData = rawDataHandler.filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
         }
 
         this.dataProcessor.initData(rawData);
@@ -422,53 +440,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @abstract
      */
     onResetZoom: function() {},
-
-    /**
-     * Render title.
-     * @param {HTMLElement} container - container
-     * @private
-     */
-    _renderTitle: function(container) {
-        var chartOptions = this.options.chart || {};
-        var title = chartOptions.title || {};
-        var titleElement = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title');
-
-        if (title.offset) {
-            renderUtil.renderPosition(titleElement, {
-                left: title.offset.x,
-                top: title.offset.y
-            });
-        }
-
-        dom.append(container, titleElement);
-    },
-
-    /**
-     * Send series data to custom event component.
-     * @param {string} chartType - type of chart
-     * @private
-     */
-    _sendSeriesData: function(chartType) {
-        var self = this;
-        var customEvent = this.componentManager.get('customEvent');
-        var seriesInfos, seriesNames;
-
-        if (!customEvent) {
-            return;
-        }
-
-        seriesNames = this.seriesNames || [chartType || this.chartType];
-        seriesInfos = tui.util.map(seriesNames, function(seriesName) {
-            var component = self.componentManager.get(seriesName + 'Series') || self.componentManager.get('series');
-
-            return {
-                chartType: self.dataProcessor.findChartType(seriesName),
-                data: component.getSeriesData()
-            };
-        });
-
-        customEvent.initCustomEventData(seriesInfos);
-    },
 
     /**
      * Animate chart.

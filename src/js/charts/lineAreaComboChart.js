@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var axisTypeMixer = require('./axisTypeMixer');
 var zoomMixer = require('./zoomMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
@@ -46,7 +47,7 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
      */
     onChangeCheckedLegends: function(checkedLegends) {
         var zoomedRawData = this.dataProcessor.getZoomedRawData();
-        var rawData = this._filterCheckedRawData(zoomedRawData, checkedLegends);
+        var rawData = rawDataHandler.filterCheckedRawData(zoomedRawData, checkedLegends);
         var chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
 
         tui.util.extend(this, chartTypesMap);

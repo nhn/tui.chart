@@ -6,6 +6,8 @@
 
 'use strict';
 
+var rawDataHandler = require('../models/data/rawDataHandler');
+
 /**
  * zoomMixer is mixer of line type chart(line, area).
  * @mixin
@@ -45,7 +47,7 @@ var zoomMixer = {
         var rawData = this.dataProcessor.getOriginalRawData();
 
         if (this.checkedLegends) {
-            rawData = this._filterCheckedRawData(rawData, this.checkedLegends);
+            rawData = rawDataHandler.filterCheckedRawData(rawData, this.checkedLegends);
         }
 
         this.dataProcessor.initData(rawData);

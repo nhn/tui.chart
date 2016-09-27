@@ -277,33 +277,6 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_filterCheckedRawData()', function() {
-        it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterCheckedRawData({
-                    series: ['a', 'b', 'c', 'd']
-                }, [null, true, true]),
-                expected = ['b', 'c'];
-            expect(actual.series).toEqual(expected);
-        });
-
-        it('두가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterCheckedRawData({
-                    series: {
-                        column: ['a', 'b', 'c', 'd'],
-                        line: ['e', 'f', 'g']
-                    }
-                }, {
-                    column: [null, true, null, true],
-                    line: [true]
-                }),
-                expected = {
-                    column: ['b', 'd'],
-                    line: ['e']
-                };
-            expect(actual.series).toEqual(expected);
-        });
-    });
-
     describe('_renderTitle()', function() {
         it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function() {
             var el = dom.create('DIV');

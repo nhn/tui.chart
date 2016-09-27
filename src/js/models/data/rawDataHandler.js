@@ -215,6 +215,34 @@ var rawDataHandler = {
         if (seriesOptions.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, seriesOptions.stackType);
         }
+    },
+
+    /**
+     * Filter raw data belong to checked legend.
+     * @param {object} rawData raw data
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @returns {object} rawData
+     */
+    filterCheckedRawData: function(rawData, checkedLegends) {
+        var cloneData = JSON.parse(JSON.stringify(rawData));
+
+        if (tui.util.isArray(cloneData.series)) {
+            cloneData.series = tui.util.filter(cloneData.series, function(series, index) {
+                return checkedLegends[index];
+            });
+        } else {
+            tui.util.forEach(cloneData.series, function(serieses, chartType) {
+                if (!checkedLegends[chartType]) {
+                    cloneData.series[chartType] = [];
+                } else if (checkedLegends[chartType].length) {
+                    cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
+                        return checkedLegends[chartType][index];
+                    });
+                }
+            });
+        }
+
+        return cloneData;
     }
 };
 

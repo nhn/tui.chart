@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var axisTypeMixer = require('./axisTypeMixer');
 var comboTypeMixer = require('./comboTypeMixer');
 var verticalTypeComboMixer = require('./verticalTypeComboMixer');
@@ -38,7 +39,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
      */
     onChangeCheckedLegends: function(checkedLegends) {
         var originalRawData = this.dataProcessor.getOriginalRawData();
-        var rawData = this._filterCheckedRawData(originalRawData, checkedLegends);
+        var rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
         var chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
 
         tui.util.extend(this, chartTypesMap);

@@ -6,8 +6,8 @@
 
 'use strict';
 
-var rawDataHandler = require('../../src/js/models/data/rawDataHandler.js');
-var chartConst = require('../../src/js/const');
+var rawDataHandler = require('../../../src/js/models/data/rawDataHandler.js');
+var chartConst = require('../../../src/js/const');
 
 describe('Test for rawDataHandler', function() {
     describe('_pickStacks', function() {
@@ -361,6 +361,35 @@ describe('Test for rawDataHandler', function() {
             var expected = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
 
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('filterCheckedRawData()', function() {
+        it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
+            var actual = rawDataHandler.filterCheckedRawData({
+                series: ['a', 'b', 'c', 'd']
+            }, [null, true, true]);
+            var expected = ['b', 'c'];
+
+            expect(actual.series).toEqual(expected);
+        });
+
+        it('두가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
+            var actual = rawDataHandler.filterCheckedRawData({
+                series: {
+                    column: ['a', 'b', 'c', 'd'],
+                    line: ['e', 'f', 'g']
+                }
+            }, {
+                column: [null, true, null, true],
+                line: [true]
+            });
+            var expected = {
+                column: ['b', 'd'],
+                line: ['e']
+            };
+
+            expect(actual.series).toEqual(expected);
         });
     });
 });
