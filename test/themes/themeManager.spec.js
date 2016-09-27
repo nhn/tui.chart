@@ -1,15 +1,15 @@
 /**
- * @fileoverview Test for themeFactory.
+ * @fileoverview Test for themeManager.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var themeFactory = require('../../src/js/factories/themeFactory.js');
+var themeManager = require('../../src/js/themes/themeManager.js');
 
-describe('Test for themeFactory', function() {
-    themeFactory.register('newTheme', {
+describe('Test for themeManager', function() {
+    themeManager.register('newTheme', {
         plot: {
             lineColor: '#e5dbc4',
             background: '#f6f1e5'
@@ -18,7 +18,7 @@ describe('Test for themeFactory', function() {
 
     describe('get()', function() {
         it('등록된 테마를 요청했을 경우에는 테마를 반환합니다.', function() {
-            var theme = themeFactory.get('newTheme');
+            var theme = themeManager.get('newTheme');
 
             expect(theme.plot).toEqual({
                 lineColor: '#e5dbc4',
@@ -28,14 +28,14 @@ describe('Test for themeFactory', function() {
 
         it('등록되지 않은 테마를 요청했을 경우에는 예외를 발생시킵니다.', function() {
             expect(function() {
-                themeFactory.get('newTheme1', 'line');
+                themeManager.get('newTheme1', 'line');
             }).toThrowError('Not exist newTheme1 theme.');
         });
     });
 
     describe('_initTheme()', function() {
         it('기본 테마 정보에 신규 테마 정보를 병합하여 반환합니다.', function() {
-            var actual = themeFactory._initTheme({
+            var actual = themeManager._initTheme({
                 series: {
                     colors: ['gray']
                 }
@@ -47,7 +47,7 @@ describe('Test for themeFactory', function() {
 
     describe('_filterChartTypes()', function() {
         it('chartType을 key로 하는 값들만 걸러낸 결과를 반환합니다.', function() {
-            var result = themeFactory._filterChartTypes({
+            var result = themeManager._filterChartTypes({
                 column: {},
                 line: {},
                 colors: [],
@@ -67,7 +67,7 @@ describe('Test for themeFactory', function() {
                 colors: ['gray'],
                 singleColors: ['blue']
             };
-            themeFactory._concatColors(theme, ['black', 'white']);
+            themeManager._concatColors(theme, ['black', 'white']);
 
             expect(theme).toEqual({
                 colors: ['gray', 'black', 'white'],
@@ -83,7 +83,7 @@ describe('Test for themeFactory', function() {
                     colors: ['gray']
                 }
             };
-            themeFactory._concatDefaultColors(theme, ['red', 'orange']);
+            themeManager._concatDefaultColors(theme, ['red', 'orange']);
             expect(theme).toEqual({
                 series: {
                     colors: ['gray', 'red', 'orange']
@@ -102,7 +102,7 @@ describe('Test for themeFactory', function() {
                     }
                 }
             };
-            themeFactory._concatDefaultColors(theme, ['red', 'orange']);
+            themeManager._concatDefaultColors(theme, ['red', 'orange']);
             expect(theme).toEqual({
                 series: {
                     column: {
@@ -118,7 +118,7 @@ describe('Test for themeFactory', function() {
 
     describe('_overwriteTheme()', function() {
         it('두번째 인자 테마에 첫번째 인자 테마 속성 중 key가 같은 속성을 덮어씌웁니다.', function() {
-            var result = themeFactory._overwriteTheme(
+            var result = themeManager._overwriteTheme(
                 {
                     series: {
                         color: ['blue'],
@@ -142,7 +142,7 @@ describe('Test for themeFactory', function() {
 
     describe('_copyProperty()', function() {
         it('promName에 해당하는 속성을 fromTheme으로 부터 toTheme으로 복사합니다.', function() {
-            var actual = themeFactory._copyProperty({
+            var actual = themeManager._copyProperty({
                 propName: 'series',
                 fromTheme: {
                     series: {
@@ -182,7 +182,7 @@ describe('Test for themeFactory', function() {
                         label: {}
                     }
                 },
-                result = themeFactory._getInheritTargetThemeItems(theme);
+                result = themeManager._getInheritTargetThemeItems(theme);
 
             expect(result).toEqual([
                 theme.title,
@@ -219,7 +219,7 @@ describe('Test for themeFactory', function() {
                         label: {}
                     }
                 },
-                result = themeFactory._getInheritTargetThemeItems(theme);
+                result = themeManager._getInheritTargetThemeItems(theme);
 
             expect(result).toEqual([
                 theme.title,
@@ -246,7 +246,7 @@ describe('Test for themeFactory', function() {
                         title: {}
                     }
                 };
-            themeFactory._inheritThemeFont(theme, [
+            themeManager._inheritThemeFont(theme, [
                 theme.title,
                 theme.xAxis.title
             ]);
@@ -260,7 +260,7 @@ describe('Test for themeFactory', function() {
         it('series 테마의 color 속성들을 legend 테마로 복사합니다.', function() {
             var legendTheme = {};
 
-            themeFactory._copyColorInfoToOther({
+            themeManager._copyColorInfoToOther({
                 colors: ['red', 'orange'],
                 singleColors: ['red', 'orange'],
                 borderColor: 'blue'
@@ -276,7 +276,7 @@ describe('Test for themeFactory', function() {
         it('3번째 인자로 colors를 넘기게 되면 인자로 넘긴 colors를 legend의 colors로 복사합니다..', function() {
             var legendTheme = {};
 
-            themeFactory._copyColorInfoToOther({}, legendTheme, ['black', 'gray']);
+            themeManager._copyColorInfoToOther({}, legendTheme, ['black', 'gray']);
 
             expect(legendTheme.colors).toEqual(['black', 'gray']);
         });
@@ -292,7 +292,7 @@ describe('Test for themeFactory', function() {
                 tooltip: {}
             };
 
-            themeFactory._copyColorInfo(theme);
+            themeManager._copyColorInfo(theme);
 
             expect(theme.legend.colors).toEqual(['red', 'orange']);
             expect(theme.tooltip.colors).toEqual(['red', 'orange']);
@@ -312,7 +312,7 @@ describe('Test for themeFactory', function() {
                 tooltip: {}
             };
 
-            themeFactory._copyColorInfo(theme);
+            themeManager._copyColorInfo(theme);
 
             expect(theme.legend).toEqual({
                 column: {
