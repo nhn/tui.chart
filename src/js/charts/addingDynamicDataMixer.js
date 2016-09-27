@@ -205,7 +205,6 @@ var addingDynamicDataMixer = {
         this.checkedLegends = checkedLegends;
         this._rerender(checkedLegends, rawData, boundsParams);
 
-
         if (!pastPaused) {
             setTimeout(function() {
                 self._restartAnimationForAddingData();

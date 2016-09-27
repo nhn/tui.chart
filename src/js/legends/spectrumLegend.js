@@ -217,13 +217,13 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     /**
      * Set data for rendering.
      * @param {{
-     *      axisDataMap: object
+     *      layout: object,
+     *      legendScaleData: object
      * }} data - scale data
      * @private
      */
     _setDataForRendering: function(data) {
         this.layout = data.layout;
-        this.axisDataMap = data.axisDataMap;
         this.scaleData = data.legendScaleData;
     },
 

@@ -28,8 +28,16 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
      * @param {object} options - chart options
      */
     init: function(rawData, theme, options) {
-        this._initForVerticalTypeCombo(rawData, theme, options);
+        this._initForVerticalTypeCombo(rawData, options);
         this._initForAddingData();
+
+        ChartBase.call(this, {
+            rawData: rawData,
+            theme: theme,
+            options: options,
+            hasAxes: true,
+            isVertical: true
+        });
     },
 
     /**

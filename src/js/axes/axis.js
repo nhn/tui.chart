@@ -248,13 +248,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _setDataForRendering: function(data) {
-        if (data.options) {
-            this.options = data.options;
-        }
-
         this.layout = data.layout;
         this.dimensionMap = data.dimensionMap;
         this.data = data.axisDataMap[this.componentName];
+        this.options = this.data.options;
     },
 
     /**

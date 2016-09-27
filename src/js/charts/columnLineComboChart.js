@@ -21,7 +21,15 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        this._initForVerticalTypeCombo(rawData, theme, options);
+        this._initForVerticalTypeCombo(rawData, options);
+
+        ChartBase.call(this, {
+            rawData: rawData,
+            theme: theme,
+            options: options,
+            hasAxes: true,
+            isVertical: true
+        });
     },
 
     /**
@@ -35,7 +43,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
 
         tui.util.extend(this, chartTypesMap);
 
-        ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, chartTypesMap);
+        this._rerender(checkedLegends, rawData, chartTypesMap);
     }
 });
 

@@ -94,6 +94,23 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         return scaleDataMaker.makeScaleData(baseValues, baseSize, chartType, options);
     },
 
+    /**
+     * Create scale labels.
+     * @param {{limit: {min: number, max: number}, step: number}} baseScaleData - base scale data
+     * @param {{
+     *      chartType: string,
+     *      areaType: string,
+     *      valueType: string
+     * }} typeMap - type map
+     * @param {{
+     *      type: string,
+     *      stackType: string,
+     *      diverging: boolean
+     * }} baseOptions - base options
+     * @param {string} dateFormat - date format
+     * @returns {Array.<string>}
+     * @private
+     */
     _createScaleLabels: function(baseScaleData, typeMap, baseOptions, dateFormat) {
         var formatFunctions = this.dataProcessor.getFormatFunctions();
         var options = tui.util.extend(baseOptions, {

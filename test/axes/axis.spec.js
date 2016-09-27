@@ -1370,9 +1370,10 @@ describe('Test for Axis', function() {
             axis.options = {};
             axis.componentName = 'xAxis';
             axis.rerender({
-                options: options,
                 axisDataMap: {
-                    xAxis: {}
+                    xAxis: {
+                        options: options
+                    }
                 }
             });
 

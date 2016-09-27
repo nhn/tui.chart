@@ -108,7 +108,7 @@ var boundsAndScaleBuilder = {
      */
     _setLayoutBoundsAndScale: function(dataProcessor, componentManager, boundsModel, scaleDataModel, params) {
         var options = params.options;
-        var scaleOption = params.scaleOption;
+        var scaleOption = params.scaleOption || {};
         var addingDataMode = params.addingDataMode;
         var isVertical = params.isVertical;
         var scaleDataMap;

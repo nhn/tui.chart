@@ -451,20 +451,18 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _sendSeriesData: function(chartType) {
         var self = this;
         var customEvent = this.componentManager.get('customEvent');
-        var seriesInfos, chartTypes;
+        var seriesInfos, seriesNames;
 
         if (!customEvent) {
             return;
         }
 
-        chartTypes = this.chartTypes || [chartType || this.chartType];
-        seriesInfos = tui.util.map(chartTypes, function(seriesName) {
-            var _chartType = self.dataProcessor.findChartType(seriesName);
-            var componentName = (seriesName || _chartType) + 'Series';
-            var component = self.componentManager.get(componentName) || self.componentManager.get('series');
+        seriesNames = this.seriesNames || [chartType || this.chartType];
+        seriesInfos = tui.util.map(seriesNames, function(seriesName) {
+            var component = self.componentManager.get(seriesName + 'Series') || self.componentManager.get('series');
 
             return {
-                chartType: _chartType,
+                chartType: self.dataProcessor.findChartType(seriesName),
                 data: component.getSeriesData()
             };
         });

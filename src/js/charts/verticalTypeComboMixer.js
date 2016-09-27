@@ -9,7 +9,6 @@
 var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
-var ChartBase = require('./chartBase');
 var ColumnChartSeries = require('../series/columnChartSeries');
 var LineChartSeries = require('../series/lineChartSeries');
 var AreaChartSeries = require('../series/areaChartSeries');
@@ -20,11 +19,13 @@ var verticalTypeComboMixer = {
      * @constructs verticalTypeComboMixer
      * @extends ChartBase
      * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    _initForVerticalTypeCombo: function(rawData, theme, options) {
+    _initForVerticalTypeCombo: function(rawData, options) {
         var chartTypesMap = this._makeChartTypesMap(rawData.series, options.yAxis, options.chartType);
+
+        options.tooltip = options.tooltip || {};
+        options.tooltip.grouped = true;
 
         /**
          * chart types map
@@ -49,22 +50,11 @@ var verticalTypeComboMixer = {
          */
         this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
 
-        options.tooltip = options.tooltip || {};
-        options.tooltip.grouped = true;
-
         /**
          * yAxis options map
          * @type {object}
          */
         this.yAxisOptionsMap = this._makeYAxisOptionsMap(chartTypesMap.chartTypes, options.yAxis);
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            hasAxes: true,
-            isVertical: true
-        });
     },
 
     /**
