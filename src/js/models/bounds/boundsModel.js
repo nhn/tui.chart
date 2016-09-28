@@ -102,8 +102,6 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         this.positionMap = {};
 
-        //this.xAxisDegree = 0;
-
         /**
          * chart left padding
          * @type {number}
