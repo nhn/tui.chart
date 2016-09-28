@@ -6,6 +6,8 @@
 
 'use strict';
 
+var dom = require('../helpers/domHandler');
+
 var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototype */ {
     /**
      * ComponentManager manages components of chart.
@@ -46,18 +48,6 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
          * @type {DataProcessor}
          */
         this.dataProcessor = params.dataProcessor;
-
-        /**
-         * bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
-         * scale model
-         * @type {ScaleModel}
-         */
-        this.scaleModel = params.scaleModel;
 
         /**
          * whether chart has axes or not
@@ -102,8 +92,6 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         params.options = this._makeComponentOptions(params.options, componentType, index);
 
         params.dataProcessor = this.dataProcessor;
-        params.boundsMaker = this.boundsMaker;
-        params.scaleModel = this.scaleModel;
         params.hasAxes = this.hasAxes;
 
         component = new Component(params);
@@ -115,20 +103,84 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     },
 
     /**
-     * Iterate each components.
-     * @param {function} iteratee iteratee
+     * Make data for rendering.
+     * @param {string} name - component name
+     * @param {string} type - component type
+     * @param {object} paper - raphael object
+     * @param {{
+     *      layoutBounds: {
+     *          dimensionMap: object,
+     *          positionMap: object
+     *      },
+     *      limitMap: object,
+     *      axisDataMap: object,
+     *      maxRadius: ?number
+     * }} boundsAndScale - bounds and scale data
+     * @param {?object} additionalData - additional data
+     * @returns {object}
+     * @private
      */
-    each: function(iteratee) {
-        tui.util.forEachArray(this.components, iteratee);
+    _makeDataForRendering: function(name, type, paper, boundsAndScale, additionalData) {
+        var data = tui.util.extend({
+            paper: paper
+        }, additionalData);
+
+        if (boundsAndScale) {
+            tui.util.extend(data, boundsAndScale);
+
+            data.layout = {
+                dimension: data.dimensionMap[name] || data.dimensionMap[type],
+                position: data.positionMap[name] || data.positionMap[type]
+            };
+        }
+
+        return data;
     },
 
     /**
-     * Return the results of applying the iteratee to each components.
-     *  @param {function} iteratee iteratee
-     * @returns {Array.<object>} components
+     * Render components.
+     * @param {string} funcName - function name for executing
+     * @param {{
+     *      layoutBounds: {
+     *          dimensionMap: object,
+     *          positionMap: object
+     *      },
+     *      limitMap: object,
+     *      axisDataMap: object,
+     *      maxRadius: ?number
+     * }} boundsAndScale - bounds and scale data
+     * @param {?object} additionalData - additional data
+     * @param {?HTMLElement} container - container
      */
-    map: function(iteratee) {
-        return tui.util.map(this.components, iteratee);
+    render: function(funcName, boundsAndScale, additionalData, container) {
+        var self = this;
+        var name, type, paper;
+
+        var elements = tui.util.map(this.components, function(component) {
+            var element = null;
+            var data, result;
+
+            if (component[funcName]) {
+                name = component.componentName;
+                type = component.componentType;
+                data = self._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
+
+                result = component[funcName](data);
+
+                if (result && result.container) {
+                    element = result.container;
+                    paper = result.paper;
+                } else {
+                    element = result;
+                }
+            }
+
+            return element;
+        });
+
+        if (container) {
+            dom.append(container, elements);
+        }
     },
 
     /**
@@ -157,7 +209,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {string} funcName - function name
      */
     execute: function(funcName) {
-        this.each(function(component) {
+        tui.util.forEachArray(this.components, function(component) {
             if (component[funcName]) {
                 component[funcName]();
             }

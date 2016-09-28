@@ -19,9 +19,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * Legend component.
      * @constructs Legend
      * @param {object} params parameters
-     *      @param {object} params.theme axis theme
-     *      @param {?Array.<string>} params.chartTypes chart types
-     *      @param {string} params.chart type
+     *      @param {object} params.theme - axis theme
+     *      @param {?Array.<string>} params.seriesNames - series names
+     *      @param {string} params.chart - chart type
      */
     init: function(params) {
         /**
@@ -65,11 +65,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.checkedIndexes = [];
 
         /**
-         * bounds maker
-         * @type {BoundsMaker}
+         * DataProcessor instance
+         * @type {DataProcessor}
          */
-        this.boundsMaker = params.boundsMaker;
-
         this.dataProcessor = params.dataProcessor;
 
         /**
@@ -82,6 +80,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             seriesNames: this.seriesNames,
             chartType: this.chartType
         });
+
+        /**
+         * layout bounds information for this components
+         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
+         */
+        this.layout = null;
     },
 
     /**
@@ -91,15 +95,32 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _renderLegendArea: function(legendContainer) {
         legendContainer.innerHTML = this._makeLegendHtml(this.legendModel.getData());
-        renderUtil.renderPosition(legendContainer, this.boundsMaker.getPosition('legend'));
+        renderUtil.renderPosition(legendContainer, this.layout.position);
         legendContainer.style.cssText += ';' + renderUtil.makeFontCssText(this.theme.label);
     },
 
     /**
+     * Set data for rendering.
+     * @param {{
+     *      layout: {
+     *          dimension: {width: number, height: number},
+     *          position: {left: number, top: number}
+     *      }
+     * }} data - bounds data
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        if (data) {
+            this.layout = data.layout;
+        }
+    },
+
+    /**
      * Render legend component.
+     * @param {object} data - bounds data
      * @returns {HTMLElement} legend element
      */
-    render: function() {
+    render: function(data) {
         var container = dom.create('DIV', this.className);
 
         this.legendContainer = container;
@@ -108,6 +129,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             dom.addClass(container, 'horizontal');
         }
 
+        this._setDataForRendering(data);
         this._renderLegendArea(container);
         this._attachEvent(container);
 
@@ -116,16 +138,19 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Rerender.
+     * @param {object} data - bounds data
      */
-    rerender: function() {
+    rerender: function(data) {
+        this._setDataForRendering(data);
         this._renderLegendArea(this.legendContainer);
     },
 
     /**
      * Resize legend component.
+     * @param {object} data - bounds data
      */
-    resize: function() {
-        this.rerender();
+    resize: function(data) {
+        this.rerender(data);
     },
 
     /**

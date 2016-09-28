@@ -9,11 +9,15 @@
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
-var barTypeMixer = require('./barTypeMixer');
-var predicate = require('../helpers/predicate');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var Series = require('../series/columnChartSeries');
 
 var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
+    /**
+     * className
+     * @type {string}
+     */
+    className: 'tui-column-chart',
     /**
      * Column chart.
      * @constructs ColumnChart
@@ -23,26 +27,10 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
      */
     init: function(rawData, theme, options) {
-        /**
-         * className
-         * @type {string}
-         */
-        this.className = 'tui-column-chart';
-
-        options.series = options.series || {};
-        options.yAxis = options.yAxis || {};
-
-        if (predicate.isValidStackOption(options.series.stackType)) {
-            rawData.series = this._sortRawSeriesData(rawData.series);
-        }
-
-        if (options.series.diverging) {
-            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stackType);
-            options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
-        }
+        rawDataHandler.updateRawSeriesDataByOptions(rawData, options.series);
+        this._updateOptionsRelatedDiverging(options);
 
         ChartBase.call(this, {
             rawData: rawData,
@@ -51,27 +39,27 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             hasAxes: true,
             isVertical: true
         });
-
-        this._addComponents(options.chartType);
     },
 
     /**
-     * Add scale data for y axis.
+     * Update options related diverging option.
+     * @param {object} options - options
      * @private
-     * @override
      */
-    _addScaleDataForYAxis: function() {
-        this.scaleModel.addScale('yAxis', this.options.yAxis);
+    _updateOptionsRelatedDiverging: function(options) {
+        options.series = options.series || {};
+
+        if (options.series.diverging) {
+            options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
+        }
     },
 
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -92,9 +80,21 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             ],
             plot: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{yAxis: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            yAxis: true
+        };
     }
 });
 
-tui.util.extend(ColumnChart.prototype, axisTypeMixer, barTypeMixer);
+tui.util.extend(ColumnChart.prototype, axisTypeMixer);
 
 module.exports = ColumnChart;

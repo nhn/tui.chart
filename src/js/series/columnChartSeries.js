@@ -119,7 +119,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var self = this;
         var seriesDataModel = this._getSeriesDataModel();
         var isStackType = predicate.isValidStackOption(this.options.stackType);
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {

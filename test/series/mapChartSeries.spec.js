@@ -9,18 +9,16 @@
 var MapChartSeries = require('../../src/js/series/mapChartSeries.js');
 
 describe('MapChartSeries', function() {
-    var series, dataProcessor, boundsMaker, mapModel;
+    var series, dataProcessor, mapModel;
 
     beforeAll(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getValueMap']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
         mapModel = jasmine.createSpyObj('mapModel', ['getMapDimension']);
     });
 
     beforeEach(function() {
         series = new MapChartSeries({
             dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker,
             chartType: 'map'
         });
         series.mapModel = mapModel;
@@ -30,10 +28,12 @@ describe('MapChartSeries', function() {
         it('맵이 그려지는 시리즈의 사이즈 영역의 사이즈를 실제 맵의 사이즈로 나누어 비율값을 구해 mapRatio로 설정합니다. ', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+            series.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             series.mapModel.getMapDimension.and.returnValue({
                 width: 800,
                 height: 600
@@ -49,10 +49,12 @@ describe('MapChartSeries', function() {
         it('너비와 높이의 ratio가 다를 경우 작은 값을 mapRatio로 설정합니다', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 200,
-                height: 300
-            });
+            series.layout = {
+                dimension: {
+                    width: 200,
+                    height: 300
+                }
+            };
             series.mapModel.getMapDimension.and.returnValue({
                 width: 800,
                 height: 600
@@ -70,10 +72,12 @@ describe('MapChartSeries', function() {
         it('시리즈 dimension에 zoomMagn를 곱하여 graphDimension을 구합니다', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+            series.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             series.zoomMagn = 2;
             series._setGraphDimension();
 
@@ -91,10 +95,12 @@ describe('MapChartSeries', function() {
         it('지도 이동 position의 limit을 설정합니다.', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 400,
-                height: 300
-            });
+            series.layout = {
+                dimension: {
+                    width: 400,
+                    height: 300
+                }
+            };
             series.graphDimension = {
                 width: 800,
                 height: 600

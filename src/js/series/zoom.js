@@ -15,18 +15,10 @@ var seriesTemplate = require('./seriesTemplate'),
 var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**
      * Zoom component.
-     * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
      * @constructs Zoom
      */
-    init: function(params) {
+    init: function() {
         this.className = 'tui-chart-zoom-area';
-
-        /**
-         * Bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
 
         /**
          * Magnification.
@@ -43,13 +35,14 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 
     /**
      * Render.
+     * @param {{positionMap: {series: {left: number, top: number}}}} data - data for rendering
      * @returns {HTMLElement} zoom container
      */
-    render: function() {
+    render: function(data) {
         var container = dom.create('DIV', this.className);
 
         container.innerHTML += seriesTemplate.ZOOM_BUTTONS;
-        renderUtil.renderPosition(container, this.boundsMaker.getPosition('series'));
+        renderUtil.renderPosition(container, data.positionMap.series);
         this._attachEvent(container);
 
         return container;

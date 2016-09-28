@@ -11,7 +11,7 @@ var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for Axis', function() {
-    var dataProcessor, boundsMaker, scaleModel, axis;
+    var dataProcessor, axis;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -22,8 +22,7 @@ describe('Test for Axis', function() {
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['registerBaseDimension', 'getDimension', 'getPosition']);
-        scaleModel = jasmine.createSpyObj('scaleModel', ['getMultilineXAxisLabels', 'getAxisData']);
+
         axis = new Axis({
             theme: {
                 title: {
@@ -39,9 +38,7 @@ describe('Test for Axis', function() {
                     text: 'Axis Title'
                 }
             },
-            dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker,
-            scaleModel: scaleModel
+            dataProcessor: dataProcessor
         });
     });
 
@@ -308,16 +305,14 @@ describe('Test for Axis', function() {
         it('make position map for center align option of y axis', function() {
             var actual;
 
-            boundsMaker.getDimension.and.callFake(function(componentType) {
-                return {
-                    xAxis: {
-                        height: 50
-                    },
-                    yAxis: {
-                        width: 100
-                    }
-                }[componentType];
-            });
+            axis.dimensionMap = {
+                xAxis: {
+                    height: 50
+                },
+                yAxis: {
+                    width: 100
+                }
+            };
 
             actual = axis._makePositionMapForCenterAlign();
 
@@ -328,16 +323,15 @@ describe('Test for Axis', function() {
         it('make position map for center align option of y axis, when has title offset option', function() {
             var actual;
 
-            boundsMaker.getDimension.and.callFake(function(componentType) {
-                return {
-                    xAxis: {
-                        height: 50
-                    },
-                    yAxis: {
-                        width: 100
-                    }
-                }[componentType];
-            });
+            axis.dimensionMap = {
+                xAxis: {
+                    height: 50
+                },
+                yAxis: {
+                    width: 100
+                }
+            };
+
             axis.options.title = {
                 offset: {
                     x: 10,
@@ -580,17 +574,14 @@ describe('Test for Axis', function() {
         it('isCenter 옵션으로 인해 중앙에 배치될 경우의 css style을 랜더링 합니다.', function() {
             var elTitle = dom.create('DIV');
 
-            boundsMaker.getDimension.and.callFake(function(type) {
-                if (type === 'yAxis') {
-                    return {
-                        width: 80
-                    };
-                } else if (type === 'xAxis') {
-                    return {
-                        height: 30
-                    };
+            axis.dimensionMap = {
+                yAxis: {
+                    width: 80
+                },
+                xAxis: {
+                    height: 30
                 }
-            });
+            };
             axis.options.title = {
                 text: 'Title'
             };
@@ -1218,10 +1209,11 @@ describe('Test for Axis', function() {
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4
             };
-
-            boundsMaker.getDimension.and.returnValue({
-                width: 50
-            });
+            axis.dimensionMap = {
+                yAxis: {
+                    width: 50
+                }
+            };
 
             axis._renderDividedAxis(container, 300);
 
@@ -1262,17 +1254,20 @@ describe('Test for Axis', function() {
         it('axis의 전체 영역을 렌더링하면 className을 설정하고 dimension과 position을 설정합니다.', function() {
             var container = dom.create('DIV');
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 300,
-                height: 50
-            });
-            boundsMaker.getPosition.and.returnValue({
-                top: 20
-            });
-            scaleModel.getAxisData.and.returnValue({
+            axis.layout = {
+                dimension: {
+                    width: 300,
+                    height: 50
+                },
+                position: {
+                    top: 20
+                }
+            };
+            axis.componentName = 'xAxis';
+            axis.data = {
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4
-            });
+            };
 
             axis._renderAxisArea(container);
 
@@ -1288,29 +1283,27 @@ describe('Test for Axis', function() {
 
             spyOn(axis, '_renderNotDividedAxis');
             spyOn(axis, '_renderDividedAxis');
-            boundsMaker.getDimension.and.callFake(function(type) {
-                if (type === 'yAxis') {
-                    return {
-                        width: 80
-                    };
-                } else if (type === 'xAxis') {
-                    return {
-                        width: 300,
-                        height: 50
-                    };
-                }
-            });
-
-            boundsMaker.getPosition.and.returnValue({
-                top: 20
-            });
 
             axis.componentName = 'xAxis';
+            axis.layout = {
+                dimension: {
+                    width: 300,
+                    height: 50
+                },
+                position: {
+                    top: 20
+                }
+            };
+            axis.dimensionMap = {
+                yAxis: {
+                    width: 80
+                }
+            };
             axis.options.divided = true;
-            scaleModel.getAxisData.and.returnValue({
+            axis.data = {
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4
-            });
+            };
 
             axis._renderAxisArea(container);
 
@@ -1325,28 +1318,26 @@ describe('Test for Axis', function() {
 
             spyOn(axis, '_renderNotDividedAxis');
             spyOn(axis, '_renderDividedAxis');
-            boundsMaker.getDimension.and.callFake(function(type) {
-                if (type === 'yAxis') {
-                    return {
-                        width: 80
-                    };
-                } else if (type === 'xAxis') {
-                    return {
-                        width: 300,
-                        height: 50
-                    };
-                }
-            });
-
-            boundsMaker.getPosition.and.returnValue({
-                top: 20
-            });
 
             axis.componentName = 'xAxis';
-            scaleModel.getAxisData.and.returnValue({
+            axis.layout = {
+                dimension: {
+                    width: 300,
+                    height: 50
+                },
+                position: {
+                    top: 20
+                }
+            };
+            axis.dimensionMap = {
+                yAxis: {
+                    width: 80
+                }
+            };
+            axis.data = {
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4
-            });
+            };
 
             axis._renderAxisArea(container);
 
@@ -1377,8 +1368,13 @@ describe('Test for Axis', function() {
 
             axis.axisContainer = dom.create('DIV');
             axis.options = {};
+            axis.componentName = 'xAxis';
             axis.rerender({
-                options: options
+                axisDataMap: {
+                    xAxis: {
+                        options: options
+                    }
+                }
             });
 
             expect(axis.options).toEqual(options);

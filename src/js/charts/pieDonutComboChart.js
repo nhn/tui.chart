@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var pieTypeMixer = require('./pieTypeMixer');
 var comboTypeMixer = require('./comboTypeMixer');
 var predicate = require('../helpers/predicate');
@@ -31,17 +32,14 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
          * chart types.
          * @type {Array.<string>}
          */
-        this.chartTypes = tui.util.keys(rawData.series).sort();
+        this.seriesNames = tui.util.keys(rawData.series).sort();
 
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,
             options: options,
-            isVertical: true,
-            seriesNames: this.chartTypes
+            isVertical: true
         });
-
-        this._addComponents();
     },
 
     /**
@@ -50,8 +48,8 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @private
      */
     _makeDataForAddingSeriesComponent: function() {
-        var seriesNames = this.chartTypes;
-        var optionsMap = this._makeOptionsMap(this.chartTypes);
+        var seriesNames = this.seriesNames;
+        var optionsMap = this._makeOptionsMap(seriesNames);
         var themeMap = this._makeThemeMap(seriesNames);
         var dataProcessor = this.dataProcessor;
         var isShowOuterLabel = tui.util.any(optionsMap, predicate.isShowOuterLabel);
@@ -80,7 +78,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @private
      */
     _addComponents: function() {
-        this._addLegendComponent(this.chartTypes);
+        this._addLegendComponent(this.seriesNames);
         this._addTooltipComponent();
         this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
         this._addCustomEventComponent();
@@ -93,9 +91,9 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      */
     _addDataRatios: function() {
         var self = this;
-        var chartTypes = this.chartTypes || [this.chartType];
+        var seriesNames = this.seriesNames || [this.chartType];
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
+        tui.util.forEachArray(seriesNames, function(chartType) {
             self.dataProcessor.addDataRatiosOfPieChart(chartType);
         });
     },
@@ -111,7 +109,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
-        serieses = tui.util.map(this.chartTypes, function(seriesName) {
+        serieses = tui.util.map(this.seriesNames, function(seriesName) {
             return componentManager.get(seriesName + 'Series');
         });
         this._attachCustomEventForPieTypeChart(serieses);
@@ -124,10 +122,10 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      */
     onChangeCheckedLegends: function(checkedLegends) {
         var originalRawData = this.dataProcessor.getOriginalRawData();
-        var rawData = this._filterCheckedRawData(originalRawData, checkedLegends);
+        var rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
 
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
-            seriesNames: this.chartTypes
+            seriesNames: this.seriesNames
         });
     }
 });

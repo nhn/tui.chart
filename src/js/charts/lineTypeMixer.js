@@ -29,38 +29,29 @@ var lineTypeMixer = {
             hasAxes: true,
             isVertical: true
         });
-
-        if (this.dataProcessor.isCoordinateType()) {
-            delete this.options.xAxis.tickInterval;
-            this.options.tooltip.grouped = false;
-            this.options.series.shifting = false;
-        }
-
-        this._addComponents(options.chartType);
     },
 
     /**
-     * Add scale data for y axis.
+     * Get scale option.
+     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @private
      * @override
      */
-    _addScaleDataForYAxis: function() {
-        this.scaleModel.addScale('yAxis', this.options.yAxis, {
-            valueType: this.dataProcessor.isCoordinateType() ? 'y' : 'value'
-        });
-    },
+    _getScaleOption: function() {
+        var scaleOption = {};
 
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForXAxis: function() {
         if (this.dataProcessor.isCoordinateType()) {
-            this.scaleModel.addScale('xAxis', this.options.xAxis, {
+            scaleOption.xAxis = {
                 valueType: 'x'
-            });
+            };
+            scaleOption.yAxis = {
+                valueType: 'y'
+            };
+        } else {
+            scaleOption.yAxis = true;
         }
+
+        return scaleOption;
     },
 
     /**
@@ -83,9 +74,14 @@ var lineTypeMixer = {
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
+        if (this.dataProcessor.isCoordinateType()) {
+            delete this.options.xAxis.tickInterval;
+            this.options.tooltip.grouped = false;
+            this.options.series.shifting = false;
+        }
+
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -97,7 +93,7 @@ var lineTypeMixer = {
             ],
             series: [
                 {
-                    name: this.options.chartType + 'Series',
+                    name: this.chartType + 'Series',
                     SeriesClass: this.Series
                 }
             ],

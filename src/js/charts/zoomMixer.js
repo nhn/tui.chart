@@ -6,6 +6,8 @@
 
 'use strict';
 
+var rawDataHandler = require('../models/data/rawDataHandler');
+
 /**
  * zoomMixer is mixer of line type chart(line, area).
  * @mixin
@@ -19,9 +21,10 @@ var zoomMixer = {
     _renderForZoom: function(isResetZoom) {
         var self = this;
 
-        this._render(function(renderingData) {
-            renderingData.customEvent.isResetZoom = isResetZoom;
-            self._renderComponents(renderingData, 'zoom');
+        this._render(function(boundsAndScale) {
+            self.componentManager.render('zoom', boundsAndScale, {
+                isResetZoom: isResetZoom
+            });
         });
     },
 
@@ -44,10 +47,8 @@ var zoomMixer = {
         var rawData = this.dataProcessor.getOriginalRawData();
 
         if (this.checkedLegends) {
-            rawData = this._filterCheckedRawData(rawData, this.checkedLegends);
+            rawData = rawDataHandler.filterCheckedRawData(rawData, this.checkedLegends);
         }
-
-        this.scaleModel.initForAutoTickInterval();
 
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();

@@ -42,12 +42,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * Bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
          * Options
          * @type {object}
          */
@@ -125,6 +119,18 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          */
         this.data = [];
 
+        /**
+         * layout bounds information for this components
+         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
+         */
+        this.layout = null;
+
+        /**
+         * dimension map for layout of chart
+         * @type {null|object}
+         */
+        this.dimensionMap = null;
+
         this._setDefaultTooltipPositionOption();
         this._saveOriginalPositionOptions();
     },
@@ -162,15 +168,33 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     _makeTooltipData: function() {},
 
     /**
+     * Set data for rendering.
+     * @param {{
+     *      layout: {
+     *          dimension: {width: number, height: number},
+     *          position: {left: number, top: number}
+     *      },
+     *      dimensionMap: object
+     * }} data - bounds data
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        this.layout = data.layout;
+        this.dimensionMap = data.dimensionMap;
+    },
+
+    /**
      * Render tooltip component.
+     * @param {object} data - bounds data
      * @returns {HTMLElement} tooltip element
      */
-    render: function() {
+    render: function(data) {
         var el = dom.create('DIV', this.className);
 
+        this._setDataForRendering(data);
         this.data = this._makeTooltipData();
 
-        renderUtil.renderPosition(el, this.boundsMaker.getPosition('tooltip'));
+        renderUtil.renderPosition(el, this.layout.position);
 
         this.tooltipContainer = el;
 
@@ -179,20 +203,24 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Rerender.
+     * @param {object} data - bounds data
      */
-    rerender: function() {
+    rerender: function(data) {
+        this.resize(data);
         this.data = this._makeTooltipData();
-        this.resize();
     },
 
     /**
      * Resize tooltip component.
+     * @param {object} data - bounds data
      * @override
      */
-    resize: function() {
-        renderUtil.renderPosition(this.tooltipContainer, this.boundsMaker.getPosition('tooltip'));
+    resize: function(data) {
+        this._setDataForRendering(data);
+
+        renderUtil.renderPosition(this.tooltipContainer, this.layout.position);
         if (this.positionModel) {
-            this.positionModel.updateBound(this.boundsMaker.getBound('tooltip'));
+            this.positionModel.updateBound(this.layout);
         }
     },
 

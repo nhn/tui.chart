@@ -9,14 +9,14 @@
 var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil'),
-    DataProcessor = require('../../src/js/dataModels/dataProcessor');
+    DataProcessor = require('../../src/js/models/data/dataProcessor');
 
 describe('Test for ChartBase', function() {
-    var chartBase, componentManager, boundsMaker;
+    var chartBase, componentManager, boundsModel;
 
     beforeAll(function() {
         componentManager = jasmine.createSpyObj('componentManager', ['where']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData', 'getDimension']);
+        boundsModel = jasmine.createSpyObj('boundsModel', ['initBoundsData', 'getDimension']);
     });
 
     beforeEach(function() {
@@ -54,7 +54,7 @@ describe('Test for ChartBase', function() {
             }
         });
         chartBase.componentManager = componentManager;
-        chartBase.boundsMaker = boundsMaker;
+        chartBase.boundsModel = boundsModel;
     });
 
     describe('_setOffsetProperty()', function() {
@@ -274,53 +274,6 @@ describe('Test for ChartBase', function() {
             expect(actual.originalRawData).toEqual({
                 categories: ['a', 'b', 'c']
             });
-        });
-    });
-
-    describe('_filterCheckedRawData()', function() {
-        it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterCheckedRawData({
-                    series: ['a', 'b', 'c', 'd']
-                }, [null, true, true]),
-                expected = ['b', 'c'];
-            expect(actual.series).toEqual(expected);
-        });
-
-        it('두가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterCheckedRawData({
-                    series: {
-                        column: ['a', 'b', 'c', 'd'],
-                        line: ['e', 'f', 'g']
-                    }
-                }, {
-                    column: [null, true, null, true],
-                    line: [true]
-                }),
-                expected = {
-                    column: ['b', 'd'],
-                    line: ['e']
-                };
-            expect(actual.series).toEqual(expected);
-        });
-    });
-
-    describe('_makeRerenderingData()', function() {
-        it('전달받은 rendering data에 rerendering에 필요한 data를 생성하여 추가합니다.', function() {
-            var renderingData = {},
-                checkedLegends = [true],
-                actual;
-
-            componentManager.where.and.returnValue([
-                {
-                    componentName: 'columnSeries',
-                    chartType: 'column'
-                }
-            ]);
-
-            actual = chartBase._makeRerenderingData(renderingData, checkedLegends);
-
-            expect(actual.tooltip.checkedLegends).toEqual([true]);
-            expect(actual.columnSeries.checkedLegends).toEqual([true]);
         });
     });
 

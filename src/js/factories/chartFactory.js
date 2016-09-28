@@ -7,7 +7,7 @@
 
 'use strict';
 var chartConst = require('../const');
-var rawDataHandler = require('../helpers/rawDataHandler');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
 
 var charts = {};

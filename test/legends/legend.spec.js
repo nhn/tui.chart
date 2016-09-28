@@ -12,7 +12,7 @@ var Legend = require('../../src/js/legends/legend'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for Legend', function() {
-    var legend, dataProcessor, boundsMaker;
+    var legend, dataProcessor;
 
     beforeAll(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getLegendData', 'findChartType']);
@@ -28,14 +28,12 @@ describe('Test for Legend', function() {
                 label: 'legend2'
             }
         ]);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getPosition']);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
     beforeEach(function() {
         legend = new Legend({
             dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker,
             theme: {
                 label: {
                     fontSize: 12
@@ -133,14 +131,16 @@ describe('Test for Legend', function() {
 
     describe('_renderLegendArea()', function() {
         it('legend 영역 렌더링', function() {
-            var legendContainer = document.createElement('DIV'),
-                expectedElement = document.createElement('DIV'),
-                expectedChildren;
+            var legendContainer = document.createElement('DIV');
+            var expectedElement = document.createElement('DIV');
+            var expectedChildren;
 
-            boundsMaker.getPosition.and.returnValues({
-                top: 20,
-                left: 200
-            });
+            legend.layout = {
+                position: {
+                    top: 20,
+                    left: 200
+                }
+            };
 
             legend._renderLegendArea(legendContainer);
 
@@ -172,10 +172,13 @@ describe('Test for Legend', function() {
         it('render를 수행하면 legendContainer에 className 설정, _renderLegendArea를 실행한 렌더링, click 이벤트 등록 등을 수행한다.', function() {
             var actual, expected;
 
-            boundsMaker.getPosition.and.returnValues({
-                top: 20,
-                right: 10
-            });
+            legend.layout = {
+                position: {
+                    top: 20,
+                    right: 10
+                }
+            };
+
             actual = legend.render();
             expected = document.createElement('DIV');
             legend._renderLegendArea(expected);

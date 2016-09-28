@@ -9,11 +9,16 @@
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
-var barTypeMixer = require('./barTypeMixer');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
 var Series = require('../series/barChartSeries');
 
 var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
+    /**
+     * className
+     * @type {string}
+     */
+    className: 'tui-bar-chart',
     /**
      * Bar chart.
      * @constructs BarChart
@@ -24,31 +29,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        /**
-         * className
-         * @type {string}
-         */
-        this.className = 'tui-bar-chart';
-
-        /**
-         * Whether has right y axis or not.
-         * @type {boolean}
-         */
-        this.hasRightYAxis = false;
-
-        options.yAxis = options.yAxis || {};
-        options.xAxis = options.xAxis || {};
-        options.plot = options.plot || {};
-        options.series = options.series || {};
-
-        if (predicate.isValidStackOption(options.series.stackType)) {
-            rawData.series = this._sortRawSeriesData(rawData.series);
-        }
-
-        if (options.series.diverging) {
-            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stackType);
-            this._updateDivergingOption(options);
-        }
+        rawDataHandler.updateRawSeriesDataByOptions(rawData, options.series);
+        this._updateOptionsRelatedDiverging(options);
 
         ChartBase.call(this, {
             rawData: rawData,
@@ -56,44 +38,47 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             options: options,
             hasAxes: true
         });
-
-        this._addComponents(options.chartType);
     },
 
     /**
-     * Update options for diverging option.
-     * @param {object} options options
+     * Update options related diverging option.
+     * @param {object} options - options
      * @private
      */
-    _updateDivergingOption: function(options) {
+    _updateOptionsRelatedDiverging: function(options) {
         var isCenter;
 
-        options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
-        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+        options.series = options.series || {};
 
-        isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
+        /**
+         * Whether has right y axis or not.
+         * @type {boolean}
+         */
+        this.hasRightYAxis = false;
 
-        options.yAxis.isCenter = isCenter;
-        options.xAxis.divided = isCenter;
-        options.series.divided = isCenter;
-        options.plot.divided = isCenter;
-    },
+        if (options.series.diverging) {
+            options.yAxis = options.yAxis || {};
+            options.xAxis = options.xAxis || {};
+            options.plot = options.plot || {};
 
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForXAxis: function() {
-        this.scaleModel.addScale('xAxis', this.options.xAxis);
+
+            options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
+            this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+
+            isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
+
+            options.yAxis.isCenter = isCenter;
+            options.xAxis.divided = isCenter;
+            options.series.divided = isCenter;
+            options.plot.divided = isCenter;
+        }
     },
 
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         var axes = [
             {
                 name: 'yAxis',
@@ -111,7 +96,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             });
         }
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: axes,
             series: [
                 {
@@ -121,6 +105,18 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             ],
             plot: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{xAxis: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            xAxis: true
+        };
     },
 
     /**
@@ -140,6 +136,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     }
 });
 
-tui.util.extend(BarChart.prototype, axisTypeMixer, barTypeMixer);
+tui.util.extend(BarChart.prototype, axisTypeMixer);
 
 module.exports = BarChart;

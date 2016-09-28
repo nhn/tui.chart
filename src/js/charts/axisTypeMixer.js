@@ -87,14 +87,13 @@ var axisTypeMixer = {
      * Add legend component.
      * @param {null | object} LegendClass - Legend type class
      * @param {Array.<string>} seriesNames - series names
-     * @param {string} chartType - chart type
      * @param {?object} additionalParams - additional params
      * @private
      */
-    _addLegendComponent: function(LegendClass, seriesNames, chartType, additionalParams) {
+    _addLegendComponent: function(LegendClass, seriesNames, additionalParams) {
         this.componentManager.register('legend', LegendClass || Legend, tui.util.extend({
             seriesNames: seriesNames,
-            chartType: chartType,
+            chartType: this.chartType,
             userEvent: this.userEvent
         }, additionalParams));
     },
@@ -126,7 +125,7 @@ var axisTypeMixer = {
         if (options.legend.visible) {
             params.legend = params.legend || {};
             LegendClass = params.legend.LegendClass || null;
-            this._addLegendComponent(LegendClass, params.seriesNames, params.chartType, params.legend.additionalParams);
+            this._addLegendComponent(LegendClass, params.seriesNames, params.legend.additionalParams);
         }
 
         this._addSeriesComponents(params.series, options);
@@ -135,111 +134,30 @@ var axisTypeMixer = {
     },
 
     /**
-     * Get limit map.
-     * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {Array.<string>} chartTypes chart types
-     * @returns {{column: ?axisLimit, line: ?axisLimit}} limit map
-     * @private
-     */
-    _getLimitMap: function(axesData, chartTypes) {
-        var limitMap = {},
-            yAxisLimit = axesData.yAxis ? axesData.yAxis.limit : axesData.rightYAxis.limit;
-
-        limitMap[chartTypes[0]] = this.isVertical ? yAxisLimit : axesData.xAxis.limit;
-
-        if (chartTypes.length > 1) {
-            limitMap[chartTypes[1]] = axesData.rightYAxis ? axesData.rightYAxis.limit : yAxisLimit;
-        }
-
-        return limitMap;
-    },
-
-    /**
-     * Get limit map for coordinate type.
-     * @returns {{x: ({min: number, max: number}), y: ({min: number, max: number})}}
-     * @private
-     */
-    _getLimitMapForCoordinateType: function() {
-        var scaleMakerMap = this.scaleModel.getScaleMap();
-
-        return {
-            x: scaleMakerMap.xAxis.getLimit(),
-            y: scaleMakerMap.yAxis.getLimit()
-        };
-    },
-
-    /**
      * Add data ratios.
      * @private
      * @override
      */
-    _addDataRatios: function() {
+    _addDataRatios: function(limitMap) {
         var self = this;
         var chartTypes = this.chartTypes || [this.chartType];
         var seriesOption = this.options.series || {};
-        var limitMap, axesData, addDataRatio;
+        var addDataRatio;
 
         if (this.dataProcessor.isCoordinateType()) {
-            limitMap = this._getLimitMapForCoordinateType();
             addDataRatio = function(chartType) {
                 var hasRadius = predicate.isBubbleChart(chartType);
                 self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, hasRadius);
             };
         } else {
-            axesData = this.scaleModel.getAxisDataMap();
-            limitMap = this._getLimitMap(axesData, chartTypes);
-
             addDataRatio = function(chartType) {
                 var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
                 self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
             };
         }
 
         tui.util.forEachArray(chartTypes, addDataRatio);
-    },
-
-    /**
-     * Make series data for rendering.
-     * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {Array.<string>} chartTypes chart types
-     * @param {boolean} isVertical whether vertical or not
-     * @returns {object} series data
-     * @private
-     */
-    _makeSeriesDataForRendering: function(axesData, chartTypes) {
-        var limitMap = this._getLimitMap(axesData, chartTypes);
-        var aligned = axesData.xAxis.aligned;
-        var seriesData = {};
-
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            seriesData[chartType + 'Series'] = {
-                limit: limitMap[chartType],
-                aligned: aligned,
-                hasAxes: true
-            };
-        });
-
-        return seriesData;
-    },
-
-    /**
-     * Make rendering data for axis type chart.
-     * @returns {object} data for rendering
-     * @private
-     * @override
-     */
-    _makeRenderingData: function() {
-        var axesData = this.scaleModel.getAxisDataMap();
-        var optionChartTypes = this.chartTypes || [this.chartType];
-        var seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
-        var yAxis = axesData.yAxis ? axesData.yAxis : axesData.rightYAxis;
-        var xAxis = axesData.xAxis;
-
-        return tui.util.extend({
-            customEvent: {
-                tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : yAxis.tickCount
-            }
-        }, seriesData, axesData);
     },
 
     /**

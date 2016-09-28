@@ -42,18 +42,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * Bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
-         * scale model
-         * @type {object}
-         */
-        this.scaleModel = params.scaleModel;
-
-        /**
          * Options
          * @type {object}
          */
@@ -81,6 +69,24 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * @type {object}
          */
         this.data = {};
+
+        /**
+         * layout bounds information for this components
+         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
+         */
+        this.layout = null;
+
+        /**
+         * dimension map for layout of chart
+         * @type {null|object}
+         */
+        this.dimensionMap = null;
+
+        /**
+         * axis data map
+         * @type {null|object}
+         */
+        this.axisDataMap = null;
     },
 
     /**
@@ -169,7 +175,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var categories = axisData.labels;
         var lCategories = categories.slice(0, halfTickCount);
         var rCategories = categories.slice(halfTickCount - 1, tickCount);
-        var additionalWidth = lWidth + this.boundsMaker.getDimension('yAxis').width;
+        var additionalWidth = lWidth + this.dimensionMap.yAxis.width;
         var lContainers = this._renderChildContainers(lWidth, lWidth, halfTickCount, lCategories);
         var rContainers = this._renderChildContainers(rWidth, rWidth, halfTickCount, rCategories, additionalWidth);
         var rTitleContainer = rContainers[0];
@@ -208,17 +214,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderAxisArea: function(axisContainer) {
-        var componentName = this.componentName;
-        var dimension = tui.util.extend({}, this.boundsMaker.getDimension(componentName));
-        var axisData = this.scaleModel.getAxisData(componentName);
+        var dimension = this.layout.dimension;
+        var axisData = this.data;
 
-        this.data = axisData;
         this.isLabel = axisData.isLabelAxis;
 
         this._addCssClasses(axisContainer);
 
         if (this.options.divided) {
-            this.containerWidth = dimension.width + this.boundsMaker.getDimension('yAxis').width;
+            this.containerWidth = dimension.width + this.dimensionMap.yAxis.width;
             this._renderDividedAxis(axisContainer, dimension.width);
             dimension.width = this.containerWidth;
         } else {
@@ -227,17 +231,37 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         }
 
         renderUtil.renderDimension(axisContainer, dimension);
-        renderUtil.renderPosition(axisContainer, this.boundsMaker.getPosition(this.componentName));
+        renderUtil.renderPosition(axisContainer, this.layout.position);
     },
 
     /**
-     * Render axis component.
-     * @param {{isPositionRight: boolean, aligned: aligned}} data rendering data
+     * Set data for rendering.
+     * @param {{
+     *      options: ?object,
+     *      layout: {
+     *          dimension: {width: number, height: number},
+     *          position: {left: number, top: number}
+     *      },
+     *      dimensionMap: object,
+     *      axisDataMap: object
+     * }} data - bounds and scale data
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        this.layout = data.layout;
+        this.dimensionMap = data.dimensionMap;
+        this.data = data.axisDataMap[this.componentName];
+        this.options = this.data.options;
+    },
+
+    /**
+     * @param {object} data - bounds and scale data
      * @returns {HTMLElement} axis area base element
      */
-    render: function() {
+    render: function(data) {
         var container = dom.create('DIV', this.className);
 
+        this._setDataForRendering(data);
         this._renderAxisArea(container);
         this.axisContainer = container;
 
@@ -246,22 +270,20 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Rerender axis component.
-     * @param {object} data - data for rendering
+     * @param {object} data - bounds and scale data
      */
     rerender: function(data) {
         this.axisContainer.innerHTML = '';
 
         if (this._isValidAxis()) {
-            if (data.options) {
-                this.options = data.options;
-            }
+            this._setDataForRendering(data);
             this._renderAxisArea(this.axisContainer);
         }
     },
 
     /**
      * Resize axis component.
-     * @param {object} data - data for rendering
+     * @param {object} data - bounds and scale data
      */
     resize: function(data) {
         this.rerender(data);
@@ -269,7 +291,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Zoom.
-     * @param {object} data - data for rendering
+     * @param {object} data - bounds and scale data
      */
     zoom: function(data) {
         this.rerender(data);
@@ -359,9 +381,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var titleOptions = this.options.title;
         var offset = titleOptions.offset || {};
         var titleWidth = renderUtil.getRenderedLabelWidth(titleOptions.text, this.theme.title);
-        var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
+        var yAxisWidth = this.dimensionMap.yAxis.width;
         var left = (yAxisWidth - titleWidth) / 2;
-        var bottom = -this.boundsMaker.getDimension('xAxis').height;
+        var bottom = -this.dimensionMap.xAxis.height;
 
         bottom -= offset.y || 0;
         left += offset.x || 0;

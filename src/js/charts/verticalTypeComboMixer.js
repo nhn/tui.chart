@@ -9,7 +9,6 @@
 var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
-var ChartBase = require('./chartBase');
 var ColumnChartSeries = require('../series/columnChartSeries');
 var LineChartSeries = require('../series/lineChartSeries');
 var AreaChartSeries = require('../series/areaChartSeries');
@@ -20,53 +19,42 @@ var verticalTypeComboMixer = {
      * @constructs verticalTypeComboMixer
      * @extends ChartBase
      * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    _initForVerticalTypeCombo: function(rawData, theme, options) {
-        var chartTypesMap;
-
-        chartTypesMap = this._makeChartTypesMap(rawData.series, options.yAxis, options.chartType);
-
-        tui.util.extend(this, chartTypesMap);
-
-        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+    _initForVerticalTypeCombo: function(rawData, options) {
+        var chartTypesMap = this._makeChartTypesMap(rawData.series, options.yAxis, options.chartType);
 
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = true;
 
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            hasAxes: true,
-            isVertical: true,
-            seriesNames: chartTypesMap.seriesNames
-        });
+        /**
+         * chart types map
+         * @type {Object}
+         */
+        this.chartTypes = chartTypesMap.chartTypes;
+
+        /**
+         * series names
+         * @type {Object|Array.<T>}
+         */
+        this.seriesNames = chartTypesMap.seriesNames;
+
+        /**
+         * chart types for options
+         */
+        this.optionChartTypes = chartTypesMap.optionChartTypes;
+
+        /**
+         * whether has right y axis or not
+         * @type {boolean}
+         */
+        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
 
         /**
          * yAxis options map
          * @type {object}
          */
         this.yAxisOptionsMap = this._makeYAxisOptionsMap(chartTypesMap.chartTypes, options.yAxis);
-        this._addComponents(chartTypesMap);
-    },
-
-    /**
-     * Make yAxis options map.
-     * @param {Array.<string>} chartTypes chart types
-     * @param {?object} yAxisOptions yAxis options
-     * @returns {{column: ?object, line: ?object}} options map
-     * @private
-     */
-    _makeYAxisOptionsMap: function(chartTypes, yAxisOptions) {
-        var optionsMap = {};
-        yAxisOptions = yAxisOptions || {};
-        tui.util.forEachArray(chartTypes, function(chartType, index) {
-            optionsMap[chartType] = yAxisOptions[index] || yAxisOptions;
-        });
-
-        return optionsMap;
     },
 
     /**
@@ -100,6 +88,97 @@ var verticalTypeComboMixer = {
         }
 
         return chartTypesMap;
+    },
+
+    /**
+     * Make yAxis options map.
+     * @param {Array.<string>} chartTypes chart types
+     * @param {?object} yAxisOptions yAxis options
+     * @returns {{column: ?object, line: ?object}} options map
+     * @private
+     */
+    _makeYAxisOptionsMap: function(chartTypes, yAxisOptions) {
+        var optionsMap = {};
+        yAxisOptions = yAxisOptions || {};
+        tui.util.forEachArray(chartTypes, function(chartType, index) {
+            optionsMap[chartType] = yAxisOptions[index] || yAxisOptions;
+        });
+
+        return optionsMap;
+    },
+
+    /**
+     * Set additional parameter for making y axis scale option.
+     * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
+     * @private
+     */
+    setAdditionalOptions: function(additionalOptions) {
+        var dataProcessor = this.dataProcessor;
+
+        tui.util.forEach(this.options.series, function(seriesOption, seriesName) {
+            var chartType;
+
+            if (!seriesOption.stackType) {
+                return;
+            }
+
+            chartType = dataProcessor.findChartType(seriesName);
+
+            if (!predicate.isAllowedStackOption(chartType)) {
+                return;
+            }
+
+            additionalOptions.chartType = chartType;
+            additionalOptions.stackType = seriesOption.stackType;
+        });
+    },
+
+    /**
+     * Make y axis scale option.
+     * @param {string} name - component name
+     * @param {string} chartType - chart type
+     * @param {boolean} isSingleYAxis - whether single y axis or not
+     * @returns {{options: object, areaType: string, chartType: string, additionalParams: object}}
+     * @private
+     */
+    _makeYAxisScaleOption: function(name, chartType, isSingleYAxis) {
+        var yAxisOption = this.yAxisOptionsMap[chartType];
+        var additionalOptions = {
+            isSingleYAxis: !!isSingleYAxis
+        };
+
+        if (isSingleYAxis && this.options.series) {
+            this.setAdditionalOptions(additionalOptions);
+        }
+
+        return {
+            options: yAxisOption,
+            areaType: 'yAxis',
+            chartType: chartType,
+            additionalOptions: additionalOptions
+        };
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{
+     *      yAxis: {options: object, areaType: string, chartType: string, additionalParams: object},
+     *      rightYAxis: {options: object, areaType: string, chartType: string, additionalParams: object}
+     * }}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        var isSingleYAxis = this.optionChartTypes.length < 2;
+        var scaleOption = {
+            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], isSingleYAxis)
+        };
+
+        if (!isSingleYAxis) {
+            scaleOption.rightYAxis = this._makeYAxisScaleOption('rightYAxis', this.chartTypes[1]);
+        }
+
+        return scaleOption;
     },
 
     /**
@@ -138,34 +217,32 @@ var verticalTypeComboMixer = {
     },
 
     /**
-     * Add components
-     * @param {object} chartTypesMap chart types map
+     * Add components.
      * @private
      */
-    _addComponents: function(chartTypesMap) {
+    _addComponents: function() {
         var axes = [
             {
                 name: 'yAxis',
-                chartType: chartTypesMap.chartTypes[0],
+                chartType: this.chartTypes[0],
                 isVertical: true
             },
             {
                 name: 'xAxis'
             }
         ];
-        var serieses = this._makeDataForAddingSeriesComponent(chartTypesMap.seriesNames);
+        var serieses = this._makeDataForAddingSeriesComponent(this.seriesNames);
 
-        if (chartTypesMap.optionChartTypes.length) {
+        if (this.optionChartTypes.length) {
             axes.push({
                 name: 'rightYAxis',
-                chartType: chartTypesMap.chartTypes[1],
+                chartType: this.chartTypes[1],
                 isVertical: true
             });
         }
 
         this._addComponentsForAxisType({
-            chartType: this.options.chartType,
-            seriesNames: chartTypesMap.seriesNames,
+            seriesNames: this.seriesNames,
             axis: axes,
             series: serieses,
             plot: true
@@ -202,59 +279,6 @@ var verticalTypeComboMixer = {
         }
 
         return resultChartTypes;
-    },
-
-    /**
-     * Add Scale for y axis.
-     * @param {string} name - axis name
-     * @param {number} index - index of this.chartTypes
-     * @param {boolean} isSingleYAxis - whether single y axis or not.
-     * @private
-     */
-    _addYAxisScale: function(name, index, isSingleYAxis) {
-        var chartType = this.chartTypes[index];
-        var yAxisOption = this.yAxisOptionsMap[chartType];
-        var dataProcessor = this.dataProcessor;
-        var additionalParams = {
-            isSingleYAxis: !!isSingleYAxis
-        };
-
-        if (isSingleYAxis && this.options.series) {
-            tui.util.forEach(this.options.series, function(seriesOption, seriesName) {
-                var _chartType;
-
-                if (!seriesOption.stackType) {
-                    return;
-                }
-
-                _chartType = dataProcessor.findChartType(seriesName);
-
-                if (!predicate.isAllowedStackOption(_chartType)) {
-                    return;
-                }
-
-                additionalParams.chartType = _chartType;
-                additionalParams.stackType = seriesOption.stackType;
-            });
-        }
-
-        this.scaleModel.addScale(name, yAxisOption, {
-            areaType: 'yAxis',
-            chartType: chartType
-        }, additionalParams);
-    },
-
-    /**
-     * Add scale data for y axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForYAxis: function() {
-        var isSingleYAxis = this.optionChartTypes.length < 2;
-        this._addYAxisScale('yAxis', 0, isSingleYAxis);
-        if (!isSingleYAxis) {
-            this._addYAxisScale('rightYAxis', 1);
-        }
     },
 
     /**

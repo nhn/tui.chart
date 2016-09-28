@@ -10,14 +10,12 @@ var CircleLegend = require('../../src/js/legends/circleLegend');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for CircleLegend', function() {
-    var circleLegend, dataProcessor, boundsMaker;
+    var circleLegend, dataProcessor;
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormatFunctions', 'getMaxValue', 'getFormattedMaxValue']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getMaxRadiusForBubbleChart', 'getMinimumPixelStepForAxis']);
         circleLegend = new CircleLegend({
-            dataProcessor: dataProcessor,
-            boundsMaker: boundsMaker
+            dataProcessor: dataProcessor
         });
     });
 
@@ -59,11 +57,13 @@ describe('Test for CircleLegend', function() {
         it('circle legend label 영역의 html을 생성합니다.', function() {
             var actual, expected;
 
-            boundsMaker.getDimension.and.returnValue({
-                width: 80,
-                height: 80
-            });
-            boundsMaker.getMaxRadiusForBubbleChart.and.returnValue(30);
+            circleLegend.layout = {
+                dimension: {
+                    width: 80,
+                    height: 80
+                }
+            };
+            circleLegend.maxRadius = 30;
             dataProcessor.getMaxValue.and.returnValue(300);
             spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(12);
             spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(20);

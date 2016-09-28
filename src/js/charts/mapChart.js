@@ -8,10 +8,9 @@
 
 var ChartBase = require('./chartBase');
 var mapFactory = require('../factories/mapFactory');
-var chartConst = require('../const');
 var MapChartMapModel = require('./mapChartMapModel');
 var ColorSpectrum = require('./colorSpectrum');
-var MapChartDataProcessor = require('../dataModels/mapChartDataProcessor');
+var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
 var Series = require('../series/mapChartSeries');
 var Zoom = require('../series/zoom');
 var Legend = require('../legends/spectrumLegend');
@@ -44,8 +43,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             options: options,
             DataProcessor: MapChartDataProcessor
         });
-
-        this._addComponents(options);
     },
 
     /**
@@ -53,16 +50,19 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(options) {
+    _addComponents: function() {
+        var options = this.options;
         var seriesTheme = this.theme.series;
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 
         options.legend = options.legend || {};
 
-        this.componentManager.register('legend', Legend, {
-            colorSpectrum: colorSpectrum
-        });
+        if (options.legend.visible) {
+            this.componentManager.register('legend', Legend, {
+                colorSpectrum: colorSpectrum
+            });
+        }
 
         this.componentManager.register('tooltip', MapChartTooltip, tui.util.extend({
             mapModel: mapModel
@@ -85,16 +85,15 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     },
 
     /**
-     * Add scale data for x legend.
+     * Get scale option.
+     * @returns {{legend: boolean}}
      * @private
      * @override
      */
-    _addScaleDataForLegend: function() {
-        this.scaleModel.addScale('legend', {}, {
-            chartType: this.chartType
-        }, {
-            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-        });
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     },
 
     /**
@@ -102,10 +101,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @private
      * @override
      */
-    _addDataRatios: function() {
-        var axisData = this.scaleModel.getAxisDataMap().legend;
-
-        this.dataProcessor.addDataRatios(axisData.limit);
+    _addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatios(limitMap.legend);
     },
 
     /**
@@ -129,10 +126,12 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             wheel: tui.util.bind(zoom.onWheel, zoom)
         }, mapSeries);
 
-        mapSeries.on({
-            showWedge: legend.onShowWedge,
-            hideWedge: legend.onHideWedge
-        }, legend);
+        if (legend) {
+            mapSeries.on({
+                showWedge: legend.onShowWedge,
+                hideWedge: legend.onHideWedge
+            }, legend);
+        }
 
         mapSeries.on({
             showTooltip: tooltip.onShow,

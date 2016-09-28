@@ -134,7 +134,7 @@ var zoomMixer = {
      */
     _updateDimensionForDragSelection: function(selectionElement) {
         renderUtil.renderDimension(selectionElement, {
-            height: this.boundsMaker.getDimension('customEvent').height
+            height: this.layout.dimension.height
         });
     },
 

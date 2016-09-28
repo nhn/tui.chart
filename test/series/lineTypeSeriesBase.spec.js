@@ -7,13 +7,13 @@
 'use strict';
 
 var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    SeriesGroup = require('../../src/js/dataModels/seriesGroup'),
+    SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
+    SeriesGroup = require('../../src/js/models/data/seriesGroup'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
-    var series, makeSeriesLabelHtml, dataProcessor, boundsMaker, scaleModel;
+    var series, makeSeriesLabelHtml, dataProcessor;
 
     beforeAll(function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
@@ -23,13 +23,9 @@ describe('LineTypeSeriesBase', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstItemLabel', 'isCoordinateType']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
-        scaleModel = jasmine.createSpyObj('scaleModel', ['getAxisDataMap']);
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
         series.dataProcessor = dataProcessor;
-        series.boundsMaker = boundsMaker;
-        series.scaleModel = scaleModel;
         series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
     });
 
@@ -49,16 +45,16 @@ describe('LineTypeSeriesBase', function() {
                 }])
             ];
             spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
-            boundsMaker.getDimension.and.returnValue({
-                width: 300,
-                height: 200
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
-                xAxis: {}
-            });
-            series.data = {
-                aligned: false
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 200
+                }
             };
+            series.axisDataMap = {
+                xAxis: {}
+            };
+            series.aligned = false;
             actual = series._makePositionsForDefaultType();
 
             expect(actual).toEqual([
@@ -94,17 +90,18 @@ describe('LineTypeSeriesBase', function() {
                 }])
             ];
             spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
-            series.data = {
-                aligned: true
+            series.aligned = true;
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 200
+                }
             };
-            boundsMaker.getDimension.and.returnValue({
-                width: 300,
-                height: 200
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
+            series.axisDataMap = {
                 xAxis: {}
-            });
-            actual = series._makeBasicPositions();
+            };
+
+            actual = series._makePositionsForDefaultType();
 
             expect(actual).toEqual([
                 [
@@ -149,16 +146,18 @@ describe('LineTypeSeriesBase', function() {
                     }
                 }])
             ];
-            boundsMaker.getDimension.and.returnValue({
-                width: 300,
-                height: 200
-            });
-            scaleModel.getAxisDataMap.and.returnValue({
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 200
+                }
+            };
+            series.axisDataMap = {
                 xAxis: {
                     sizeRatio: 0.8,
                     positionRatio: 0.08
                 }
-            });
+            };
             actual = series._makePositionForCoordinateType();
 
             expect(actual).toEqual([
@@ -260,9 +259,11 @@ describe('LineTypeSeriesBase', function() {
 
             spyOn(series, '_calculateLabelPositionTop');
             series.theme = {};
-            boundsMaker.getDimension.and.returnValue({
-                width: 200
-            });
+            series.dimensionMap = {
+                extendedSeries: {
+                    width: 200
+                }
+            };
 
             position = series._makeLabelPosition({
                 left: 60
@@ -278,9 +279,11 @@ describe('LineTypeSeriesBase', function() {
 
             spyOn(series, '_calculateLabelPositionTop').and.returnValue(50);
             series.theme = {};
-            boundsMaker.getDimension.and.returnValue({
-                height: 200
-            });
+            series.dimensionMap = {
+                extendedSeries: {
+                    height: 200
+                }
+            };
 
             position = series._makeLabelPosition({
                 left: 60
@@ -387,10 +390,12 @@ describe('LineTypeSeriesBase', function() {
                     ]
                 ]
             };
-            boundsMaker.getDimension.and.returnValue({
-                width: 200,
-                height: 200
-            });
+            series.dimensionMap = {
+                extendedSeries: {
+                    width: 200,
+                    height: 200
+                }
+            };
 
             series._renderSeriesLabel(elLabelArea);
 

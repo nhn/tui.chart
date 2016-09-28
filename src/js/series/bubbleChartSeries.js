@@ -22,6 +22,12 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
          */
         this.prevClickedIndex = null;
 
+        /**
+         * max radius for rendering circle graph
+         * @type {null|number}
+         */
+        this.maxRadius = null;
+
         Series.apply(this, arguments);
     },
 
@@ -36,7 +42,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
         var hasVerticalCategory = this.dataProcessor.isXCountGreaterThanYCount(this.chartType);
 
         if (this.dataProcessor.hasCategories(hasVerticalCategory)) {
-            dimension = this.boundsMaker.getDimension('series');
+            dimension = this.layout.dimension;
             len = this.dataProcessor.getCategoryCount(hasVerticalCategory);
 
             if (hasVerticalCategory) {
@@ -60,7 +66,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      * @private
      */
     _makeBound: function(ratioMap, positionByStep, maxRadius) {
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var left = tui.util.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
         var top = tui.util.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
 
@@ -79,7 +85,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     _makeBounds: function() {
         var self = this;
         var seriesDataModel = this._getSeriesDataModel();
-        var maxRadius = this.boundsMaker.getMaxRadiusForBubbleChart();
+        var maxRadius = this.maxRadius;
         var step = this._calculateStep();
         var start = step ? step / 2 : 0;
 
@@ -92,6 +98,32 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
                 return hasRationMap ? self._makeBound(seriesItem.ratioMap, positionByStep, maxRadius) : null;
             });
         });
+    },
+
+    /**
+     * Set data for rendering.
+     * @param {{
+     *      paper: ?object,
+     *      limit: {
+     *          min: number,
+     *          max: number
+     *      },
+     *      aligned: boolean,
+     *      layout: {
+     *          dimension: {width: number, height: number},
+     *          position: {left: number, top: number}
+     *      },
+     *      dimensionMap: object,
+     *      positionMap: object,
+     *      axisDataMap: object,
+     *      maxRadius: number
+     * }} data - data for rendering
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        this.maxRadius = data.maxRadius;
+
+        Series.prototype._setDataForRendering.call(this, data);
     }
 });
 

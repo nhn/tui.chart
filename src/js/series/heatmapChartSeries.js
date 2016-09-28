@@ -56,7 +56,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
      * @private
      */
     _makeBound: function(blockWidth, blockHeight, x, y) {
-        var height = this.boundsMaker.getDimension('series').height;
+        var height = this.layout.dimension.height;
         var left = (blockWidth * x) + chartConst.SERIES_EXPAND_SIZE;
         var top = height - (blockHeight * (y + 1)) + chartConst.SERIES_EXPAND_SIZE;
 
@@ -78,7 +78,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     _makeBounds: function() {
         var self = this;
         var seriesDataModel = this._getSeriesDataModel();
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
         var blockWidth = dimension.width / this.dataProcessor.getCategoryCount(false);
         var blockHeight = dimension.height / this.dataProcessor.getCategoryCount(true);
 

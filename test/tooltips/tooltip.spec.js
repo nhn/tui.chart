@@ -7,9 +7,9 @@
 'use strict';
 
 var Tooltip = require('../../src/js/tooltips/tooltip'),
-    DataProcessor = require('../../src/js/dataModels/dataProcessor'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    seriesGroup = require('../../src/js/dataModels/seriesGroup');
+    DataProcessor = require('../../src/js/models/data/dataProcessor'),
+    SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
+    seriesGroup = require('../../src/js/models/data/seriesGroup');
 
 describe('Tooltip', function() {
     var tooltip, dataProcessor;

@@ -32,7 +32,7 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
      * @private
      */
     _makeBound: function(ratioMap) {
-        var dimension = this.boundsMaker.getDimension('series');
+        var dimension = this.layout.dimension;
 
         return {
             left: ratioMap.x * dimension.width,

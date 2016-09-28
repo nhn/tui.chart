@@ -47,26 +47,10 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             hasAxes: true,
             isVertical: true
         });
-
-        this._addComponents(options.chartType);
-    },
-
-    /**
-     * Add scale data for x legend.
-     * @private
-     * @override
-     */
-    _addScaleDataForLegend: function() {
-        this.scaleModel.addScale('legend', {}, {
-            chartType: this.chartType
-        }, {
-            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-        });
     },
 
     /**
      * Add components.
-     * @param {string} chartType chart type
      * @private
      */
     _addComponents: function() {
@@ -101,6 +85,18 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             tooltip: true,
             customEvent: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{legend: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     }
 });
 
@@ -111,10 +107,8 @@ tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
  * @private
  * @override
  */
-HeatmapChart.prototype._addDataRatios = function() {
-    var limit = this.scaleModel.getScaleMap().legend.getLimit();
-
-    this.dataProcessor.addDataRatios(limit, null, this.chartType);
+HeatmapChart.prototype._addDataRatios = function(limitMap) {
+    this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
 };
 
 /**
@@ -130,9 +124,11 @@ HeatmapChart.prototype._attachCustomEvent = function() {
     axisTypeMixer._attachCustomEvent.call(this);
 
     customEvent.on('showTooltip', heatmapSeries.onShowTooltip, heatmapSeries);
-    customEvent.on('hideTooltip', legend.onHideWedge, legend);
 
-    heatmapSeries.on('showWedge', legend.onShowWedge, legend);
+    if (legend) {
+        customEvent.on('hideTooltip', legend.onHideWedge, legend);
+        heatmapSeries.on('showWedge', legend.onShowWedge, legend);
+    }
 };
 
 module.exports = HeatmapChart;

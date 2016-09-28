@@ -49,18 +49,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * Bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
-         * Scale model
-         * @type {ScaleModel}
-         */
-        this.scaleModel = params.scaleModel;
-
-        /**
          * User event listener
          * @type {UserEventListener}
          */
@@ -83,12 +71,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {object}
          */
         this.orgTheme = this.theme = params.theme;
-
-        /**
-         * whether chart has axes or not
-         * @type {boolean}
-         */
-        this.hasAxes = !!params.hasAxes;
 
         /**
          * Graph renderer
@@ -131,6 +113,48 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {object}
          */
         this.labelShowEffector = null;
+
+        /**
+         * raphael object
+         * @type {null|object}
+         */
+        this.paper = null;
+
+        /**
+         * limit(min, max) data for series
+         * @type {null|{min:number, max:number}}
+         */
+        this.limit = null;
+
+        /**
+         * aligned
+         * @type {null|boolean}
+         */
+        this.aligned = null;
+
+        /**
+         * layout bounds information for this components
+         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
+         */
+        this.layout = null;
+
+        /**
+         * dimension map for layout of chart
+         * @type {null|object}
+         */
+        this.dimensionMap = null;
+
+        /**
+         * position map for layout of chart
+         * @type {null|object}
+         */
+        this.positionMap = null;
+
+        /**
+         * axis data map
+         * @type {null|object}
+         */
+        this.axisDataMap = null;
     },
 
     /**
@@ -178,7 +202,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         if (!predicate.isMousePositionChart(this.chartType)) {
-            extendedDimension = this.boundsMaker.getDimension('extendedSeries');
+            extendedDimension = this.dimensionMap.extendedSeries;
             renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
         }
 
@@ -201,27 +225,27 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Render series area.
      * @param {HTMLElement} seriesContainer - series area element
-     * @param {object} data - data for rendering
+     * @param {object} paper - raphael object
      * @param {function} funcRenderGraph - function for graph rendering
      * @returns {object}
      * @private
      */
-    _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
-        var extendedBound = this.boundsMaker.getBound('extendedSeries');
-        var seriesData, labelContainer, paper;
+    _renderSeriesArea: function(seriesContainer, paper, funcRenderGraph) {
+        var dimension, position, seriesData, labelContainer;
 
-        this.data = data;
+        dimension = this.dimensionMap.extendedSeries;
+        position = this.positionMap.extendedSeries;
 
         this.seriesData = seriesData = this._makeSeriesData();
 
-        if (!data.paper) {
-            renderUtil.renderDimension(seriesContainer, extendedBound.dimension);
+        if (!paper) {
+            renderUtil.renderDimension(seriesContainer, dimension);
         }
 
-        this._renderPosition(seriesContainer, extendedBound.position);
+        this._renderPosition(seriesContainer, position);
 
         if (funcRenderGraph) {
-            paper = funcRenderGraph(extendedBound.dimension, seriesData, data.paper);
+            paper = funcRenderGraph(dimension, seriesData, paper);
         }
 
         if (predicate.isShowLabel(this.options)) {
@@ -265,8 +289,39 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Set data for rendering.
+     * @param {{
+     *      paper: ?object,
+     *      limit: {
+     *          min: number,
+     *          max: number
+     *      },
+     *      aligned: boolean,
+     *      layout: {
+     *          dimension: {width: number, height: number},
+     *          position: {left: number, top: number}
+     *      },
+     *      dimensionMap: object,
+     *      positionMap: object,
+     *      axisDataMap: object
+     * }} data - data for rendering
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        this.paper = data.paper;
+        this.limit = data.limitMap[this.chartType];
+        if (data.axisDataMap && data.axisDataMap.xAxis) {
+            this.aligned = data.axisDataMap.xAxis.aligned;
+        }
+        this.layout = data.layout;
+        this.dimensionMap = data.dimensionMap;
+        this.positionMap = data.positionMap;
+        this.axisDataMap = data.axisDataMap;
+    },
+
+    /**
      * Render series component.
-     * @param {object} data data for rendering
+     * @param {object} data - data for rendering
      * @returns {HTMLElement} series element
      */
     render: function(data) {
@@ -274,7 +329,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var paper;
 
         this.seriesContainer = container;
-        paper = this._renderSeriesArea(container, data, tui.util.bind(this._renderGraph, this));
+        this._setDataForRendering(data);
+        paper = this._renderSeriesArea(container, data.paper, tui.util.bind(this._renderGraph, this));
 
         return {
             container: container,
@@ -321,26 +377,28 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Rerender.
-     * @param {object} data data for rendering
+     * @param {object} data - data for rendering
      * @returns {{container: HTMLElement, paper: object}}
      */
     rerender: function(data) {
-        var paper;
+        var checkedLegends, paper;
 
         this._clearContainer();
 
         if (this.dataProcessor.getGroupCount(this.seriesName)) {
             if (data.checkedLegends) {
-                this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
+                checkedLegends = data.checkedLegends[this.chartType] || data.checkedLegends;
+                this.theme = this._updateTheme(this.orgTheme, checkedLegends);
             }
 
-            paper = this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
+            this._setDataForRendering(data);
+            paper = this._renderSeriesArea(this.seriesContainer, data.paper, tui.util.bind(this._renderGraph, this));
 
             if (this.labelShowEffector) {
                 clearInterval(this.labelShowEffector.timerId);
             }
 
-            if (data.checkedLegends) {
+            if (checkedLegends) {
                 this.animateComponent(true);
             } else {
                 this._showGraphWithoutAnimation();
@@ -404,7 +462,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     resize: function(data) {
-        this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._resizeGraph, this));
+        this._setDataForRendering(data);
+        this._renderSeriesArea(this.seriesContainer, data.paper, tui.util.bind(this._resizeGraph, this));
     },
 
     /**
@@ -680,7 +739,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.selectedLegendIndex = legendIndex;
 
         if (this._getSeriesDataModel().getGroupCount()) {
-            this._renderSeriesArea(this.seriesContainer, this.data);
+            this._renderSeriesArea(this.seriesContainer, this.paper);
             this.graphRenderer.selectLegend(legendIndex);
         }
     },

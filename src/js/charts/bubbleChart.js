@@ -46,8 +46,29 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             options: options,
             hasAxes: true
         });
+    },
 
-        this._addComponents(options.chartType);
+    /**
+     * Get scale option.
+     * @returns {{xAxis: ?{valueType:string}, yAxis: ?{valueType:string}}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        var scaleOption = {};
+
+        if (this.dataProcessor.hasXValue(this.chartType)) {
+            scaleOption.xAxis = {
+                valueType: 'x'
+            };
+        }
+        if (this.dataProcessor.hasYValue(this.chartType)) {
+            scaleOption.yAxis = {
+                valueType: 'y'
+            };
+        }
+
+        return scaleOption;
     },
 
     /**
@@ -65,41 +86,12 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
         }
     },
 
-
-    /**
-     * Add scale data for y axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForYAxis: function() {
-        if (this.dataProcessor.hasYValue(this.chartType)) {
-            this.scaleModel.addScale('yAxis', this.options.yAxis, {
-                valueType: 'y'
-            });
-        }
-    },
-
-    /**
-     * Add scale data for x axis.
-     * @private
-     * @override
-     */
-    _addScaleDataForXAxis: function() {
-        if (this.dataProcessor.hasXValue(this.chartType)) {
-            this.scaleModel.addScale('xAxis', this.options.xAxis, {
-                valueType: 'x'
-            });
-        }
-    },
-
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -120,7 +112,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
         if (this.options.circleLegend.visible) {
             this.componentManager.register('circleLegend', CircleLegend, {
-                chartType: chartType,
+                chartType: this.chartType,
                 baseFontFamily: this.theme.chart.fontFamily
             });
         }

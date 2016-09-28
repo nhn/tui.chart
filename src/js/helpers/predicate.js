@@ -44,6 +44,45 @@ var predicate = {
     },
 
     /**
+     * Whether diverging chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {boolean} diverging - whether has diverging or not
+     * @returns {*|boolean}
+     */
+    isDivergingChart: function(chartType, diverging) {
+        return this.isBarTypeChart(chartType) && diverging;
+    },
+
+    /**
+     * Whether normal stack chart or not.
+     * @param {string} chartType - type of chart
+     * @param {string} stackType - type of stack
+     * @returns {boolean}
+     * @private
+     */
+    isNormalStackChart: function(chartType, stackType) {
+        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+        var isNormalStack = predicate.isNormalStack(stackType);
+
+        return isAllowedStackOption && isNormalStack;
+    },
+
+    /**
+     * Whether percent stack chart or not.
+     * @param {string} chartType - type of chart
+     * @param {string} stackType - type of stack
+     * @returns {boolean}
+     * @private
+     */
+    isPercentStackChart: function(chartType, stackType) {
+        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+        var isPercentStack = predicate.isPercentStack(stackType);
+
+        return isAllowedStackOption && isPercentStack;
+    },
+
+    /**
      * Whether combo chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart

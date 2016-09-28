@@ -21,7 +21,6 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      *      @param {object} params.theme axis theme
      *      @param {?Array.<string>} params.options legend options
      *      @param {MapChartDataProcessor} params.dataProcessor data processor
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
      */
     init: function(params) {
         var libType = params.libType || chartConst.DEFAULT_PLUGIN;
@@ -57,18 +56,6 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
-         * scale model
-         * @type {ScaleModel}
-         */
-        this.scaleModel = params.scaleModel;
-
-        /**
          * color spectrum
          * @type {ColorSpectrum}
          */
@@ -85,6 +72,12 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
          * @type {boolean}
          */
         this.isHorizontal = predicate.isHorizontalLegend(this.options.align);
+
+        /**
+         * scale data for legend
+         * @type {null|object}
+         */
+        this.scaleData = null;
     },
 
     /**
@@ -93,9 +86,9 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      * @private
      */
     _makeBaseDataToMakeTickHtml: function() {
-        var dimension = this.boundsMaker.getDimension('legend');
-        var axisData = this.scaleModel.getAxisData('legend');
-        var stepCount = axisData.tickCount - 1;
+        var dimension = this.layout.dimension;
+        var scaleData = this.scaleData;
+        var stepCount = scaleData.stepCount || scaleData.tickCount - 1;
         var baseData = {};
         var firstLabel;
 
@@ -107,7 +100,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             baseData.startPositionValue = 0;
             baseData.step = dimension.height / stepCount;
             baseData.positionType = 'top:';
-            firstLabel = axisData.labels[0];
+            firstLabel = scaleData.labels[0];
             baseData.labelSize = parseInt(renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label) / 2, 10) - 1;
         }
 
@@ -122,10 +115,9 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         var self = this;
         var baseData = this._makeBaseDataToMakeTickHtml();
         var positionValue = baseData.startPositionValue;
-        var axisData = this.scaleModel.getAxisData('legend');
         var htmls;
 
-        htmls = tui.util.map(axisData.labels, function(label) {
+        htmls = tui.util.map(this.scaleData.labels, function(label) {
             var labelSize, html;
 
             if (self.isHorizontal) {
@@ -173,7 +165,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     _makeVerticalGraphDimension: function() {
         return {
             width: chartConst.MAP_LEGEND_GRAPH_SIZE,
-            height: this.boundsMaker.getDimension('legend').height
+            height: this.layout.dimension.height
         };
     },
 
@@ -184,7 +176,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      */
     _makeHorizontalGraphDimension: function() {
         return {
-            width: this.boundsMaker.getDimension('legend').width + 10,
+            width: this.layout.dimension.width + 10,
             height: chartConst.MAP_LEGEND_GRAPH_SIZE
         };
     },
@@ -215,7 +207,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         var tickContainer;
 
         container.innerHTML = '';
-        renderUtil.renderPosition(container, this.boundsMaker.getPosition('legend'));
+        renderUtil.renderPosition(container, this.layout.position);
         this._renderGraph(container);
         tickContainer = this._renderTickArea();
         container.appendChild(tickContainer);
@@ -223,14 +215,28 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     },
 
     /**
+     * Set data for rendering.
+     * @param {{
+     *      layout: object,
+     *      legendScaleData: object
+     * }} data - scale data
+     * @private
+     */
+    _setDataForRendering: function(data) {
+        this.layout = data.layout;
+        this.scaleData = data.legendScaleData;
+    },
+
+    /**
      * Render legend component.
-     * @param {{colorSpectrum: ColorSpectrum}} data rendering data
+     * @param {object} data - scale data
      * @returns {HTMLElement} legend element
      */
-    render: function() {
+    render: function(data) {
         var container = dom.create('DIV', this.className);
 
         this.legendContainer = container;
+        this._setDataForRendering(data);
         this._renderLegendArea(container);
 
         return container;
@@ -238,8 +244,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
 
     /**
      * Resize legend component.
+     * @param {object} data - scale data
      */
-    resize: function() {
+    resize: function(data) {
+        this._setDataForRendering(data);
         this._renderLegendArea(this.legendContainer);
     },
 

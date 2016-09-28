@@ -412,6 +412,7 @@ var renderUtil = {
         if (!formatFunctions || !formatFunctions.length) {
             return values;
         }
+
         formatedValues = tui.util.map(values, function(label) {
             return renderUtil.formatValue(label, formatFunctions, chartType, areaType, valueType);
         });

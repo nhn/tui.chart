@@ -46,12 +46,12 @@ var addingDynamicDataMixer = {
 
     /**
      * Calculate animate tick size.
+     * @param {number} xAxisWidth - x axis width
      * @returns {number}
      * @private
      */
-    _calculateAnimateTickSize: function() {
+    _calculateAnimateTickSize: function(xAxisWidth) {
         var dataProcessor = this.dataProcessor;
-        var xAxisWidth = this.boundsMaker.getDimension('xAxis').width;
         var tickInterval = this.options.xAxis.tickInterval;
         var shiftingOption = !!this.options.series.shifting;
         var tickCount;
@@ -79,13 +79,12 @@ var addingDynamicDataMixer = {
 
         this.addedDataCount += 1;
 
-        this._render(function() {
-            var tickSize = self._calculateAnimateTickSize();
-
-            self._renderComponents({
+        this._render(function(boundsAndScale) {
+            var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
+            self.componentManager.render('animateForAddingData', boundsAndScale, {
                 tickSize: tickSize,
                 shifting: shiftingOption
-            }, 'animateForAddingData');
+            });
         }, true);
 
         if (shiftingOption) {
@@ -100,9 +99,8 @@ var addingDynamicDataMixer = {
     _rerenderForAddingData: function() {
         var self = this;
 
-        this._render(function(renderingData) {
-            renderingData.animatable = false;
-            self._renderComponents(renderingData, 'rerender');
+        this._render(function(boundsAndScale) {
+            self.componentManager.render('rerender', boundsAndScale);
         });
     },
 
@@ -138,7 +136,6 @@ var addingDynamicDataMixer = {
      */
     _pauseAnimationForAddingData: function() {
         this.paused = true;
-        this.scaleModel.initForAutoTickInterval();
 
         if (this.rerenderingDelayTimerId) {
             clearTimeout(this.rerenderingDelayTimerId);
@@ -207,7 +204,6 @@ var addingDynamicDataMixer = {
 
         this.checkedLegends = checkedLegends;
         this._rerender(checkedLegends, rawData, boundsParams);
-
 
         if (!pastPaused) {
             setTimeout(function() {

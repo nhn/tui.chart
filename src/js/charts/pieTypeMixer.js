@@ -19,15 +19,15 @@ var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 var pieTypeMixer = {
     /**
      * Add legend component.
-     * @param {Array.<string>} [chartTypes] - chart types
+     * @param {Array.<string>} [seriesNames] - series names
      * @private
      */
-    _addLegendComponent: function(chartTypes) {
+    _addLegendComponent: function(seriesNames) {
         var legendOption = this.options.legend || {};
 
         if (legendOption.visible) {
             this.componentManager.register('legend', Legend, {
-                seriesNames: chartTypes,
+                seriesNames: seriesNames,
                 chartType: this.chartType,
                 userEvent: this.userEvent
             });
