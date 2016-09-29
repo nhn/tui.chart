@@ -7,12 +7,11 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase');
-var renderUtil = require('../helpers/renderUtil');
 var predicate = require('../helpers/predicate');
 var Axis = require('../axes/axis');
 var Plot = require('../plots/plot');
 var Legend = require('../legends/legend');
+var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 var GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent');
 var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
 var Tooltip = require('../tooltips/tooltip');
@@ -161,6 +160,16 @@ var axisTypeMixer = {
     },
 
     /**
+     * Add simple customEvent component.
+     * @private
+     */
+    _addSimpleCustomEventComponent: function() {
+        this.componentManager.register('customEvent', SimpleCustomEvent, {
+            chartType: this.chartType
+        });
+    },
+
+    /**
      * Add grouped event handler layer.
      * @private
      * @override
@@ -194,92 +203,13 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponent: function() {
-        if (this.options.tooltip.grouped) {
+        if (predicate.isCoordinateTypeChart(this.chartType)) {
+            this._addSimpleCustomEventComponent();
+        } else if (this.options.tooltip.grouped) {
             this._addCustomEventComponentForGroupTooltip();
         } else {
             this._addCustomEventComponentForNormalTooltip();
         }
-    },
-
-    /**
-     * Attach coordinate event.
-     * @param {CustomEvent} customEvent custom event component
-     * @param {Tooltip} tooltip tooltip component
-     * @param {Array.<Series>} serieses series components
-     * @private
-     */
-    _attachCustomEventForGroupTooltip: function(customEvent, tooltip, serieses) {
-        customEvent.on('showGroupTooltip', tooltip.onShow, tooltip);
-        customEvent.on('hideGroupTooltip', tooltip.onHide, tooltip);
-
-        tui.util.forEach(serieses, function(series) {
-            if (series.onShowGroupTooltipLine) {
-                tooltip.on('showGroupTooltipLine', series.onShowGroupTooltipLine, series);
-                tooltip.on('hideGroupTooltipLine', series.onHideGroupTooltipLine, series);
-            }
-            tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
-            tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
-        });
-    },
-
-    /**
-     * Attach custom event for normal tooltip.
-     * @param {CustomEvent} customEvent custom event component
-     * @param {Tooltip} tooltip tooltip component
-     * @param {Array.<Series>} serieses series components
-     * @private
-     */
-    _attachCustomEventForNormalTooltip: function(customEvent, tooltip, serieses) {
-        customEvent.on('showTooltip', tooltip.onShow, tooltip);
-        customEvent.on('hideTooltip', tooltip.onHide, tooltip);
-
-        tui.util.forEach(serieses, function(series) {
-            var showAnimationEventName, hideAnimationEventName;
-
-            if (series.onShowAnimation) {
-                showAnimationEventName = renderUtil.makeCustomEventName('show', series.chartType, 'animation');
-                hideAnimationEventName = renderUtil.makeCustomEventName('hide', series.chartType, 'animation');
-                tooltip.on(showAnimationEventName, series.onShowAnimation, series);
-                tooltip.on(hideAnimationEventName, series.onHideAnimation, series);
-            }
-        });
-    },
-
-    /**
-     * Attach custom event for series selection.
-     * @param {CustomEvent} customEvent custom event component
-     * @param {Array.<Series>} serieses series components
-     * @private
-     */
-    _attachCustomEventForSeriesSelection: function(customEvent, serieses) {
-        tui.util.forEach(serieses, function(series) {
-            var selectSeriesEventName = renderUtil.makeCustomEventName('select', series.chartType, 'series'),
-                unselectSeriesEventName = renderUtil.makeCustomEventName('unselect', series.chartType, 'series');
-
-            customEvent.on(selectSeriesEventName, series.onSelectSeries, series);
-            customEvent.on(unselectSeriesEventName, series.onUnselectSeries, series);
-        });
-    },
-
-    /**
-     * Attach custom event.
-     * @private
-     * @override
-     */
-    _attachCustomEvent: function() {
-        var seriesSet = this.componentManager.where({componentType: 'series'});
-        var customEvent = this.componentManager.get('customEvent');
-        var tooltip = this.componentManager.get('tooltip');
-
-        ChartBase.prototype._attachCustomEvent.call(this, seriesSet);
-
-        if (this.options.tooltip.grouped) {
-            this._attachCustomEventForGroupTooltip(customEvent, tooltip, seriesSet);
-        } else {
-            this._attachCustomEventForNormalTooltip(customEvent, tooltip, seriesSet);
-        }
-
-        this._attachCustomEventForSeriesSelection(customEvent, seriesSet);
     }
 };
 

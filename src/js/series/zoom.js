@@ -76,7 +76,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 
         if (changedMagn !== this.magn) {
             this.magn = changedMagn;
-            this.fire('zoom', this.magn, position);
+            this.broadcast('onZoom', this.magn, position);
         }
     },
 
@@ -156,7 +156,5 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
         this.stackedWheelDelta = this.stackedWheelDelta % chartConst.WHEEL_TICK;
     }
 });
-
-tui.util.CustomEvents.mixin(Zoom);
 
 module.exports = Zoom;

@@ -228,7 +228,7 @@ describe('Test for Legend', function() {
                 seriesIndex: 0
             };
 
-            spyOn(legend, 'fire');
+            legend.broadcast = jasmine.createSpy('broadcast');
             spyOn(legend.legendModel, 'getSelectedIndex').and.returnValue(0);
             dataProcessor.findChartType.and.callFake(function(chartType) {
                 return chartType;
@@ -236,7 +236,7 @@ describe('Test for Legend', function() {
 
             legend._fireLegendSelectionEvent(data, true);
 
-            expect(legend.fire).toHaveBeenCalledWith('selectColumnLegend', 'column', 0)
+            expect(legend.broadcast).toHaveBeenCalledWith('onSelectLegend', 'column', 0)
         });
     });
 

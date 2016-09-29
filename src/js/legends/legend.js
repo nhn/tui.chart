@@ -257,7 +257,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _fireLegendCheckboxEvent: function() {
-        this.fire('changeCheckedLegends', this.legendModel.getCheckedIndexes());
+        this.report('onChangeCheckedLegends', this.legendModel.getCheckedIndexes());
     },
 
     /**
@@ -266,15 +266,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _fireLegendSelectionEvent: function(data) {
-        var self = this;
-        var seriesNames = this.seriesNames;
         var index = this.legendModel.getSelectedIndex();
         var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
-        tui.util.forEachArray(seriesNames, function(seriesName) {
-            var chartType = self.dataProcessor.findChartType(seriesName);
-            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
-        });
+        this.broadcast('onSelectLegend', data.chartType, legendIndex);
     },
 
     /**

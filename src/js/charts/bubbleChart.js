@@ -11,7 +11,6 @@ var chartConst = require('../const');
 var Series = require('../series/bubbleChartSeries');
 var CircleLegend = require('../legends/circleLegend');
 var axisTypeMixer = require('./axisTypeMixer');
-var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
     /**
@@ -120,40 +119,5 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 });
 
 tui.util.extend(BubbleChart.prototype, axisTypeMixer);
-
-/**
- * Add custom event component for normal tooltip.
- * @private
- */
-BubbleChart.prototype._attachCustomEvent = function() {
-    var componentManager = this.componentManager;
-    var customEvent = componentManager.get('customEvent');
-    var bubbleSeries = componentManager.get('bubbleSeries');
-    var tooltip = componentManager.get('tooltip');
-
-    axisTypeMixer._attachCustomEvent.call(this);
-
-    customEvent.on({
-        clickBubbleSeries: bubbleSeries.onClickSeries,
-        moveBubbleSeries: bubbleSeries.onMoveSeries
-    }, bubbleSeries);
-
-    bubbleSeries.on({
-        showTooltip: tooltip.onShow,
-        hideTooltip: tooltip.onHide,
-        showTooltipContainer: tooltip.onShowTooltipContainer,
-        hideTooltipContainer: tooltip.onHideTooltipContainer
-    }, tooltip);
-};
-
-/**
- * Add custom event component.
- * @private
- */
-BubbleChart.prototype._addCustomEventComponent = function() {
-    this.componentManager.register('customEvent', SimpleCustomEvent, {
-        chartType: this.chartType
-    });
-};
 
 module.exports = BubbleChart;

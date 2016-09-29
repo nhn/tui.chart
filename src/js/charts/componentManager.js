@@ -54,6 +54,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
          * @type {boolean}
          */
         this.hasAxes = params.hasAxes;
+
+        /**
+         * report to chartBase
+         * @type {function}
+         */
+        this.report = params.report;
     },
 
     /**
@@ -97,6 +103,8 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         component = new Component(params);
         component.componentName = name;
         component.componentType = componentType;
+        component.broadcast = tui.util.bind(this.execute, this);
+        component.report = this.report;
 
         this.components.push(component);
         this.componentMap[name] = component;
@@ -209,9 +217,11 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {string} funcName - function name
      */
     execute: function(funcName) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
         tui.util.forEachArray(this.components, function(component) {
             if (component[funcName]) {
-                component[funcName]();
+                component[funcName].apply(component, args);
             }
         });
     },

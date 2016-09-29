@@ -99,23 +99,6 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
     },
 
     /**
-     * Add custom event.
-     * @private
-     * @override
-     */
-    _attachCustomEvent: function() {
-        var componentManager = this.componentManager;
-        var serieses;
-
-        ChartBase.prototype._attachCustomEvent.call(this);
-
-        serieses = tui.util.map(this.seriesNames, function(seriesName) {
-            return componentManager.get(seriesName + 'Series');
-        });
-        this._attachCustomEventForPieTypeChart(serieses);
-    },
-
-    /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @override

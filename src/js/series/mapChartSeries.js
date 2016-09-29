@@ -334,7 +334,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         var datum = this.mapModel.getDatum(index);
 
         if (!tui.util.isUndefined(datum.ratio)) {
-            this.fire('showWedge', datum.ratio);
+            this.broadcast('onShowWedge', datum.ratio);
         }
     },
 
@@ -345,7 +345,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _showTooltip: function(index, mousePosition) {
-        this.fire('showTooltip', {
+        this.broadcast('onShowTooltip', {
             chartType: this.chartType,
             indexes: {
                 index: index
@@ -379,8 +379,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             if (this.prevMovedIndex !== foundIndex) {
                 if (!tui.util.isNull(this.prevMovedIndex)) {
                     this.graphRenderer.restoreColor(this.prevMovedIndex);
-                    this.fire('hideWedge');
-                    this.fire('hideTooltip');
+                    this.broadcast('onHideTooltip');
                 }
 
                 this.graphRenderer.changeColor(foundIndex);
@@ -398,8 +397,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             this._showWedge(foundIndex);
         } else if (!tui.util.isNull(this.prevMovedIndex)) {
             this.graphRenderer.restoreColor(this.prevMovedIndex);
-            this.fire('hideWedge');
-            this.fire('hideTooltip');
+            this.broadcast('onHideTooltip');
             this.prevMovedIndex = null;
         }
         this.prevPosition = position;
@@ -444,7 +442,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         if (!this.isDrag) {
             this.isDrag = true;
-            this.fire('hideTooltip');
+            this.broadcast('onHideTooltip');
         }
     },
 
@@ -503,7 +501,5 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this.userEvent.fire('zoom', newMagn);
     }
 });
-
-tui.util.CustomEvents.mixin(MapChartSeries);
 
 module.exports = MapChartSeries;

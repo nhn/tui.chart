@@ -72,8 +72,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.userEvent = new UserEventListener();
 
         this._addComponents();
-
-        this._attachCustomEvent();
     },
 
     /**
@@ -206,6 +204,20 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * If exist reported function, execute;
+     * @param {string} funcName - function name
+     * @private
+     */
+    _acceptReport: function(funcName) {
+        var args;
+
+        if (this[funcName]) {
+            args = Array.prototype.slice.call(arguments, 1);
+            this[funcName].apply(this, args);
+        }
+    },
+
+    /**
      * Create ComponentMananger.
      * @returns {ComponentManager}
      * @private
@@ -215,7 +227,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             options: this.options,
             theme: this.theme,
             dataProcessor: this.dataProcessor,
-            hasAxes: this.hasAxes
+            hasAxes: this.hasAxes,
+            report: tui.util.bind(this._acceptReport, this)
         });
     },
 
@@ -240,31 +253,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @abstract
      */
     _addComponents: function() {},
-
-    /**
-     * Attach custom event.
-     * @param {Array.<object>} seriesSet - series set
-     * @private
-     */
-    _attachCustomEvent: function(seriesSet) {
-        var legend = this.componentManager.get('legend');
-        var customEvent = this.componentManager.get('customEvent');
-
-        seriesSet = seriesSet || this.componentManager.where({componentType: 'series'});
-
-        if (tui.util.pick(this.options.series, 'zoomable')) {
-            customEvent.on('zoom', this.onZoom, this);
-            customEvent.on('resetZoom', this.onResetZoom, this);
-        }
-
-        if (legend) {
-            legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
-            tui.util.forEach(seriesSet, function(series) {
-                var selectLegendEventName = renderUtil.makeCustomEventName('select', series.chartType, 'legend');
-                legend.on(selectLegendEventName, series.onSelectLegend, series);
-            });
-        }
-    },
 
     /**
      * Render title.
@@ -330,33 +318,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _addDataRatios: function() {},
 
     /**
-     * Send series data to custom event component.
-     * @param {string} chartType - type of chart
-     * @private
-     */
-    _sendSeriesData: function(chartType) {
-        var componentManager = this.componentManager;
-        var customEvent = componentManager.get('customEvent');
-        var seriesInfos, seriesNames;
-
-        if (!customEvent) {
-            return;
-        }
-
-        seriesNames = this.seriesNames || [chartType || this.chartType];
-        seriesInfos = tui.util.map(seriesNames, function(seriesName) {
-            var component = componentManager.get(seriesName + 'Series') || componentManager.get('series');
-
-            return {
-                chartType: component.chartType,
-                data: component.getSeriesData()
-            };
-        });
-
-        customEvent.initCustomEventData(seriesInfos);
-    },
-
-    /**
      * Render.
      * @param {function} onRender render callback function
      * @param {?boolean} addingDataMode - whether adding data mode or not
@@ -369,8 +330,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._addDataRatios(boundsAndScale.limitMap);
 
         onRender(boundsAndScale);
-
-        this._sendSeriesData();
     },
 
     /**

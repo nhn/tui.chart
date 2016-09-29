@@ -13,7 +13,7 @@ describe('Zoom', function() {
 
     beforeEach(function() {
         zoom = new Zoom({});
-        spyOn(zoom, 'fire');
+        zoom.broadcast = jasmine.createSpy('broadcast');
     });
 
     describe('_zoom()', function() {
@@ -25,7 +25,7 @@ describe('Zoom', function() {
             zoom._zoom(magn);
 
             expect(zoom.magn).toBe(2);
-            expect(zoom.fire).toHaveBeenCalledWith('zoom', 2, position);
+            expect(zoom.broadcast).toHaveBeenCalledWith('onZoom', 2, position);
         });
 
         it('0.5배율 값을 넣으면 0.5배율로 축소됩니다.', function() {
@@ -36,7 +36,7 @@ describe('Zoom', function() {
             zoom._zoom(magn);
 
             expect(zoom.magn).toBe(1);
-            expect(zoom.fire).toHaveBeenCalledWith('zoom', 1, position);
+            expect(zoom.broadcast).toHaveBeenCalledWith('onZoom', 1, position);
         });
 
         it('position 값을 전달하면 magn값의 다음 인자로 전달합니다.', function() {
@@ -50,7 +50,7 @@ describe('Zoom', function() {
             zoom._zoom(magn, position);
 
             expect(zoom.magn).toBe(2);
-            expect(zoom.fire).toHaveBeenCalledWith('zoom', 2, {
+            expect(zoom.broadcast).toHaveBeenCalledWith('onZoom', 2, {
                 left: 10,
                 top: 20
             });

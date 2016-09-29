@@ -268,7 +268,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         }
 
         this._zoom(seriesItem.id, seriesItem.depth + 1, seriesItem.group);
-        this.fire('afterZoom', detectedIndex);
+        this.broadcast('onAfterZoom', detectedIndex);
     },
 
     /**
@@ -291,7 +291,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * To call showAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
-    onShowAnimation: function(indexes) {
+    onHoverSeries: function(indexes) {
         var seriesItem;
 
         if (!predicate.isShowLabel(this.options)) {
@@ -308,7 +308,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * To call hideAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
-    onHideAnimation: function(indexes) {
+    onHoverOffSeries: function(indexes) {
         if (!predicate.isShowLabel(this.options) || !indexes) {
             return;
         }
@@ -327,11 +327,9 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).ratio;
 
         if (ratio > -1) {
-            this.fire('showWedge', ratio);
+            this.broadcast('onShowWedge', ratio);
         }
     }
 });
-
-tui.util.CustomEvents.mixin(TreemapChartSeries);
 
 module.exports = TreemapChartSeries;

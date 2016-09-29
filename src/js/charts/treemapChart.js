@@ -97,36 +97,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
     },
 
     /**
-     * Attach custom event.
-     * @private
-     * @override
-     */
-    _attachCustomEvent: function() {
-        var series = this.componentManager.get('series');
-        var customEvent = this.componentManager.get('customEvent');
-        var tooltip = this.componentManager.get('tooltip');
-        var legend = this.componentManager.get('legend');
-
-        ChartBase.prototype._attachCustomEvent.call(this);
-
-        customEvent.on('selectTreemapSeries', series.onSelectSeries, series);
-        customEvent.on('showTooltip', tooltip.onShow, tooltip);
-        customEvent.on('hideTooltip', tooltip.onHide, tooltip);
-
-        tooltip.on('showTreemapAnimation', series.onShowAnimation, series);
-        tooltip.on('hideTreemapAnimation', series.onHideAnimation, series);
-
-        series.on('afterZoom', customEvent.onAfterZoom, customEvent);
-
-        customEvent.on('showTooltip', series.onShowTooltip, series);
-
-        if (legend) {
-            customEvent.on('hideTooltip', legend.onHideWedge, legend);
-            series.on('showWedge', legend.onShowWedge, legend);
-        }
-    },
-
-    /**
      * On zoom.
      * @param {number} index - index of target seriesItem
      */
@@ -134,7 +104,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         this.componentManager.render('zoom', null, {
             index: index
         });
-        this._sendSeriesData();
     }
 });
 

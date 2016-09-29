@@ -98,7 +98,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var indexes = params.indexes;
         var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index).ratio;
 
-        this.fire('showWedge', ratio);
+        this.broadcast('onShowWedge', ratio);
     },
 
     /**
@@ -130,7 +130,5 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         };
     }
 });
-
-tui.util.CustomEvents.mixin(HeatmapChartSeries);
 
 module.exports = HeatmapChartSeries;

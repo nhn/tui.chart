@@ -134,7 +134,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     _onMousewheel: function(e) {
         var wheelDelta = e.wheelDelta || e.detail * chartConst.FF_WHEELDELTA_ADJUSTING_VALUE;
 
-        this.fire('wheel', wheelDelta, {
+        this.broadcast('onWheel', wheelDelta, {
             left: e.clientX,
             top: e.clientY
         });
@@ -161,7 +161,5 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
         }
     }
 });
-
-tui.util.CustomEvents.mixin(MapChartCustomEvent);
 
 module.exports = MapChartCustomEvent;

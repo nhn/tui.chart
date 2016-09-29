@@ -119,6 +119,7 @@ describe('Series', function() {
 
             series.hasAxes = true;
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
+            series.broadcast = jasmine.createSpy('broadcast');
 
             actual = series.render(data);
             seriesContainer = actual.container;

@@ -16,31 +16,6 @@ var chartConst = require('../const'),
  * @mixin
  */
 var singleTooltipMixer = {
-
-    /**
-     * Fire custom event showAnimation.
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @param {string} chartType chart type
-     * @private
-     */
-    _fireShowAnimation: function(indexes, chartType) {
-        var eventName = renderUtil.makeCustomEventName('show', chartType, 'animation');
-
-        this.fire(eventName, indexes);
-    },
-
-    /**
-     * Fire custom event hideAnimation.
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @param {string} chartType chart type
-     * @private
-     */
-    _fireHideAnimation: function(indexes, chartType) {
-        var eventName = renderUtil.makeCustomEventName('hide', chartType, 'animation');
-
-        this.fire(eventName, indexes);
-    },
-
     /**
      * Set data indexes.
      * @param {HTMLElement} elTooltip tooltip element
@@ -394,7 +369,7 @@ var singleTooltipMixer = {
 
         if (this._isChangedIndexes(prevIndexes, indexes)) {
             prevChartType = elTooltip.getAttribute('data-chart-type');
-            this._fireHideAnimation(prevIndexes, prevChartType);
+            this.broadcast('onHoverOffSeries', prevChartType, prevIndexes);
         }
 
         elTooltip.innerHTML = this._makeSingleTooltipHtml(params.seriesName || params.chartType, indexes);
@@ -417,7 +392,7 @@ var singleTooltipMixer = {
         }, params));
 
         this._moveToPosition(elTooltip, position, prevPosition);
-        this._fireShowAnimation(indexes, params.chartType);
+        this.broadcast('onHoverSeries', params.chartType, indexes);
         this._fireAfterShowTooltip(indexes, {
             element: elTooltip,
             position: position
@@ -473,7 +448,7 @@ var singleTooltipMixer = {
             this._executeHidingTooltip(tooltipElement);
         } else if (chartType) {
             this._setShowedCustomAttribute(tooltipElement, false);
-            this._fireHideAnimation(indexes, chartType);
+            this.broadcast('onHoverOffSeries', chartType, indexes);
 
             if (this._isChangedIndexes(this.prevIndexes, indexes)) {
                 delete this.prevIndexes;

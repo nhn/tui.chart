@@ -95,6 +95,18 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
          * @type {null | {left: number, top: number, right: number, bottom: number}}
          */
         this.containerBound = null;
+
+        /**
+         * series data set
+         * @type {Array}
+         */
+        this.seriesDataSet = [];
+
+        /**
+         * series count
+         * @type {number}
+         */
+        this.seriesCount = predicate.isComboChart(this.chartType) ? 2 : 1;
     },
 
     /**
@@ -232,10 +244,21 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Create BoundsBaseCoordinateModel from seriesBounds for custom event.
-     * @param {Array.<object>} seriesBounds - series bounds
+     * @param {Array.<object>} seriesData - series data
      */
-    initCustomEventData: function(seriesBounds) {
-        this.boundsBaseCoordinateModel = new BoundsBaseCoordinateModel(seriesBounds);
+    onReceiveSeriesData: function(seriesData) {
+        var seriesDataSet = this.seriesDataSet;
+        var seriesCount = this.seriesCount;
+
+        if (seriesDataSet.length === seriesCount) {
+            seriesDataSet = [];
+        }
+
+        seriesDataSet.push(seriesData);
+
+        if (seriesDataSet.length === seriesCount) {
+            this.boundsBaseCoordinateModel = new BoundsBaseCoordinateModel(seriesDataSet);
+        }
     },
 
     /**
@@ -298,16 +321,6 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Unselect selected data.
-     * @private
-     */
-    _unselectSelectedData: function() {
-        var eventName = renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series');
-        this.fire(eventName, this.selectedData);
-        this.selectedData = null;
-    },
-
-    /**
      * Find data.
      * @param {number} clientX - clientX
      * @param {number} clientY - clientY
@@ -354,14 +367,23 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _onMouseEvent: function(eventType, e) {
-        var eventName = renderUtil.makeCustomEventName(eventType, this.chartType, 'series');
+        var eventName = renderUtil.makeCustomEventName('on', eventType, 'series');
 
         dom.addClass(this.customEventContainer, 'hide');
-        this.fire(eventName, {
+        this.broadcast(eventName, {
             left: e.clientX,
             top: e.clientY
         });
         dom.removeClass(this.customEventContainer, 'hide');
+    },
+
+    /**
+     * Unselect selected data.
+     * @private
+     */
+    _unselectSelectedData: function() {
+        this.broadcast('onUnselectSeries', this.selectedData);
+        this.selectedData = null;
     },
 
     /**
@@ -379,8 +401,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
                 this._unselectSelectedData();
             }
 
-            this.fire(renderUtil.makeCustomEventName('select', foundData.chartType, 'series'), foundData);
-
+            this.broadcast('onSelectSeries', foundData);
             if (this.allowSelect) {
                 this.selectedData = foundData;
             }

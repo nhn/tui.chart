@@ -128,6 +128,5 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
 });
 
 CoordinateTypeSeriesBase.mixin(BubbleChartSeries);
-tui.util.CustomEvents.mixin(BubbleChartSeries);
 
 module.exports = BubbleChartSeries;

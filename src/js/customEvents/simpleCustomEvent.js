@@ -35,7 +35,7 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
      * Initialize data of custom event
      * @override
      */
-    initCustomEventData: function() {},
+    onReceiveSeriesData: function() {},
 
     /**
      * On click.
@@ -67,7 +67,5 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
         this._onMouseEvent('move', e);
     }
 });
-
-tui.util.CustomEvents.mixin(SimpleCustomEvent);
 
 module.exports = SimpleCustomEvent;

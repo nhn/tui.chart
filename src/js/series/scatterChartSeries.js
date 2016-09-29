@@ -61,6 +61,5 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
 });
 
 CoordinateTypeSeriesBase.mixin(ScatterChartSeries);
-tui.util.CustomEvents.mixin(ScatterChartSeries);
 
 module.exports = ScatterChartSeries;

@@ -44,7 +44,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @private
      */
     _hideTooltip: function() {
-        this.fire('hideTooltip', this.prevFoundData);
+        this.broadcast('onHideTooltip', this.prevFoundData);
         this.prevFoundData = null;
         this.styleCursor(false);
     },
@@ -92,7 +92,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             this.styleCursor(seriesItem.hasChild);
         }
 
-        this.fire('showTooltip', foundData);
+        this.broadcast('onShowTooltip', foundData);
     },
 
     /**
@@ -103,7 +103,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         var index = this.zoomHistory[this.zoomHistory.length - 2];
 
         this.zoomHistory.pop();
-        this.fire('zoom', index);
+        this.report('onZoom', index);
 
         if (this.zoomHistory.length === 1) {
             this.customEventContainer.removeChild(this.historyBackBtn);
@@ -157,7 +157,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             }
 
             this._hideTooltip();
-            this.fire('zoom', foundData.indexes.index);
+            this.report('onZoom', foundData.indexes.index);
         }
     },
 

@@ -260,13 +260,18 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     },
 
     /**
+     * On hide tooltip.
+     */
+    onHideTooltip: function() {
+        this.onHideWedge();
+    },
+
+    /**
      * On hide wedge.
      */
     onHideWedge: function() {
         this.graphRenderer.hideWedge();
     }
 });
-
-tui.util.CustomEvents.mixin(SpectrumLegend);
 
 module.exports = SpectrumLegend;

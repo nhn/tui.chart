@@ -103,44 +103,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      */
     _addDataRatios: function(limitMap) {
         this.dataProcessor.addDataRatios(limitMap.legend);
-    },
-
-    /**
-     * Attach custom evnet.
-     * @private
-     * @override
-     */
-    _attachCustomEvent: function() {
-        var customEvent = this.componentManager.get('customEvent'),
-            mapSeries = this.componentManager.get('mapSeries'),
-            legend = this.componentManager.get('legend'),
-            tooltip = this.componentManager.get('tooltip'),
-            zoom = this.componentManager.get('zoom');
-
-        customEvent.on({
-            clickMapSeries: mapSeries.onClickSeries,
-            moveMapSeries: mapSeries.onMoveSeries,
-            dragStartMapSeries: mapSeries.onDragStartSeries,
-            dragMapSeries: mapSeries.onDragSeries,
-            dragEndMapSeries: mapSeries.onDragEndSeries,
-            wheel: tui.util.bind(zoom.onWheel, zoom)
-        }, mapSeries);
-
-        if (legend) {
-            mapSeries.on({
-                showWedge: legend.onShowWedge,
-                hideWedge: legend.onHideWedge
-            }, legend);
-        }
-
-        mapSeries.on({
-            showTooltip: tooltip.onShow,
-            hideTooltip: tooltip.onHide,
-            showTooltipContainer: tooltip.onShowTooltipContainer,
-            hideTooltipContainer: tooltip.onHideTooltipContainer
-        }, tooltip);
-
-        zoom.on('zoom', mapSeries.onZoom, mapSeries, mapSeries);
     }
 });
 

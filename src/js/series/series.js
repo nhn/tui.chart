@@ -223,6 +223,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Send boudns to customEvent component.
+     * @param {object} seriesData - series data
+     * @private
+     */
+    _sendBoundsToCustomEvent: function(seriesData) {
+        this.broadcast('onReceiveSeriesData', {
+            chartType: this.chartType,
+            data: seriesData
+        });
+    },
+
+    /**
      * Render series area.
      * @param {HTMLElement} seriesContainer - series area element
      * @param {object} paper - raphael object
@@ -237,6 +249,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         position = this.positionMap.extendedSeries;
 
         this.seriesData = seriesData = this._makeSeriesData();
+
+        this._sendBoundsToCustomEvent(seriesData);
 
         if (!paper) {
             renderUtil.renderDimension(seriesContainer, dimension);
@@ -528,9 +542,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To call showAnimation function of graphRenderer.
+     * @param {string} chartType - chart type
      * @param {{groupIndex: number, index: number}} data data
      */
-    onShowAnimation: function(data) {
+    onHoverSeries: function(chartType, data) {
+        if (chartType !== this.chartType) {
+            return;
+        }
+
         if (!this.graphRenderer.showAnimation) {
             return;
         }
@@ -539,9 +558,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To call hideAnimation function of graphRenderer.
+     * @param {string} chartType - chart type
      * @param {{groupIndex: number, index: number}} data data
      */
-    onHideAnimation: function(data) {
+    onHoverOffSeries: function(chartType, data) {
+        if (chartType !== this.chartType) {
+            return;
+        }
+
         if (!this.graphRenderer.hideAnimation || !data) {
             return;
         }
@@ -684,8 +708,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var isShowLabel = false;
         var result;
 
-        this.fire('hideTooltipContainer');
-
+        this.broadcast('onHideTooltipContainer');
         if (this.seriesLabelContainer && dom.hasClass(this.seriesLabelContainer, 'show')) {
             dom.removeClass(this.seriesLabelContainer, 'show');
             isShowLabel = true;
@@ -697,7 +720,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             dom.addClass(this.seriesLabelContainer, 'show');
         }
 
-        this.fire('showTooltipContainer');
+        this.broadcast('onShowTooltipContainer');
 
         return result;
     },
@@ -708,8 +731,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {?boolean} shouldSelect - whether should select or not
      */
     onSelectSeries: function(seriesData, shouldSelect) {
+        if (seriesData.chartType !== this.chartType) {
+            return;
+        }
+
         this.userEvent.fire('selectSeries', this._makeExportationSeriesData(seriesData));
         shouldSelect = tui.util.isEmpty(shouldSelect) ? true : shouldSelect;
+
         if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
             this.graphRenderer.selectSeries(seriesData.indexes);
         }
@@ -720,6 +748,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} seriesData series data.
      */
     onUnselectSeries: function(seriesData) {
+        if (seriesData.chartType !== this.chartType) {
+            return;
+        }
+
         this.userEvent.fire('unselectSeries', this._makeExportationSeriesData(seriesData));
         if (this.options.allowSelect && this.graphRenderer.unselectSeries) {
             this.graphRenderer.unselectSeries(seriesData.indexes);

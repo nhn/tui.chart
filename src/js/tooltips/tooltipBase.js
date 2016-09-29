@@ -248,10 +248,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * onShow is callback of custom event showTooltip for SeriesView.
+     * onShowTooltip is callback of custom event showTooltip for SeriesView.
      * @param {object} params coordinate event parameters
      */
-    onShow: function(params) {
+    onShowTooltip: function(params) {
         var tooltipElement = this._getTooltipElement(),
             prevPosition;
 
@@ -314,10 +314,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * onHide is callback of custom event hideTooltip for SeriesView
+     * onHideTooltip is callback of custom event hideTooltip for SeriesView
      * @param {number} index index
      */
-    onHide: function(index) {
+    onHideTooltip: function(index) {
         var tooltipElement = this._getTooltipElement();
 
         this._hideTooltip(tooltipElement, index);
@@ -405,7 +405,5 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this._updateOffsetOption(this.options.offset);
     }
 });
-
-tui.util.CustomEvents.mixin(TooltipBase);
 
 module.exports = TooltipBase;

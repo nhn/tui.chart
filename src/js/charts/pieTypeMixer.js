@@ -6,7 +6,6 @@
 
 'use strict';
 
-var renderUtil = require('../helpers/renderUtil');
 var Legend = require('../legends/legend');
 var Tooltip = require('../tooltips/tooltip');
 var PieChartSeries = require('../series/pieChartSeries');
@@ -71,32 +70,6 @@ var pieTypeMixer = {
     _addCustomEventComponent: function() {
         this.componentManager.register('customEvent', SimpleCustomEvent, {
             chartType: this.chartType
-        });
-    },
-
-    /**
-     * Add custom event.
-     * @param {Array.<object>} seriesComponents - series components
-     * @private
-     */
-    _attachCustomEventForPieTypeChart: function(seriesComponents) {
-        var clickEventName = renderUtil.makeCustomEventName('click', this.chartType, 'series');
-        var moveEventName = renderUtil.makeCustomEventName('move', this.chartType, 'series');
-        var customEvent = this.componentManager.get('customEvent');
-        var tooltip = this.componentManager.get('tooltip');
-        var eventMap = {};
-
-        tui.util.forEachArray(seriesComponents, function(series) {
-            eventMap[clickEventName] = series.onClickSeries;
-            eventMap[moveEventName] = series.onMoveSeries;
-            customEvent.on(eventMap, series);
-
-            series.on({
-                showTooltip: tooltip.onShow,
-                hideTooltip: tooltip.onHide,
-                showTooltipContainer: tooltip.onShowTooltipContainer,
-                hideTooltipContainer: tooltip.onHideTooltipContainer
-            }, tooltip);
         });
     }
 };

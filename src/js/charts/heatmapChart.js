@@ -111,24 +111,4 @@ HeatmapChart.prototype._addDataRatios = function(limitMap) {
     this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
 };
 
-/**
- * Attach custom event between components.
- * @private
- * @override
- */
-HeatmapChart.prototype._attachCustomEvent = function() {
-    var customEvent = this.componentManager.get('customEvent');
-    var heatmapSeries = this.componentManager.get('heatmapSeries');
-    var legend = this.componentManager.get('legend');
-
-    axisTypeMixer._attachCustomEvent.call(this);
-
-    customEvent.on('showTooltip', heatmapSeries.onShowTooltip, heatmapSeries);
-
-    if (legend) {
-        customEvent.on('hideTooltip', legend.onHideWedge, legend);
-        heatmapSeries.on('showWedge', legend.onShowWedge, legend);
-    }
-};
-
 module.exports = HeatmapChart;
