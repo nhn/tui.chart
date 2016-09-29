@@ -207,7 +207,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Create ComponentMananger.
-     * @returns {ComponentMananger}
+     * @returns {ComponentManager}
      * @private
      */
     _createComponentManager: function() {

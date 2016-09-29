@@ -65,7 +65,7 @@ describe('Test user events for combo chart', function() {
                 left: 50,
                 top: 40,
                 right: 450,
-                bottom: 340
+                bottom: 380
             });
 
             comboChart.on('selectSeries', function(info) {

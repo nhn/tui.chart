@@ -639,7 +639,7 @@ var scaleDataMaker = {
         // 04. axis scale 후보군 중 하나 선택
         scale = this._selectAxisScale(integerTypeScale.limit, candidates, tickCounts);
 
-        // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
+        // 05. 정수형으로 변경했던 scale을 원래 형태로 변경
         scale = this._restoreNumberState(scale, integerTypeScale.divisionNumber);
 
         if (predicate.isDatetimeType(options.type)) {

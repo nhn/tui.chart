@@ -79,7 +79,6 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
     /**
      * Initialize bounds data.
-     * @param {object} chartOption chart option
      */
     initBoundsData: function() {
         this.dimensionMap = {
