@@ -21,6 +21,7 @@ describe('Tooltip', function() {
     beforeEach(function() {
         tooltip = new Tooltip({
             dataProcessor: dataProcessor,
+            eventBus: new tui.util.CustomEvents(),
             options: {}
         });
     });

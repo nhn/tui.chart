@@ -40,8 +40,10 @@ describe('Test for Legend', function() {
                 },
                 colors: ['red', 'orange']
             },
-            chartType: 'column'
+            chartType: 'column',
+            eventBus: new tui.util.CustomEvents()
         });
+        spyOn(legend.eventBus, 'fire');
     });
 
     describe('_makeLegendRectCssText()', function() {
@@ -221,56 +223,46 @@ describe('Test for Legend', function() {
         });
     });
 
-    describe('_fireLegendSelectionEvent()', function() {
-        it('시리즈에 전달할 legend custom event를 발생시킵니다.', function() {
+    describe('_fireSelectLegendEvent()', function() {
+        it('fire selectLegend event', function() {
             var data = {
                 chartType: 'column',
                 seriesIndex: 0
             };
 
-            legend.broadcast = jasmine.createSpy('broadcast');
             spyOn(legend.legendModel, 'getSelectedIndex').and.returnValue(0);
             dataProcessor.findChartType.and.callFake(function(chartType) {
                 return chartType;
             });
 
-            legend._fireLegendSelectionEvent(data, true);
+            legend._fireSelectLegendEvent(data, true);
 
-            expect(legend.broadcast).toHaveBeenCalledWith('onSelectLegend', 'column', 0)
+            expect(legend.eventBus.fire).toHaveBeenCalledWith('selectLegend', 'column', 0)
         });
     });
 
-    describe('_fireUserEvent()', function() {
-        it('selectLegend 사용자 이벤트를 발생시킵니다.', function() {
+    describe('_fireSelectLegendPublicEvent()', function() {
+        it('fire select legend public event', function() {
             var data = {
-                    label: 'legend',
-                    chartType: 'bar',
-                    index: 1
-                },
-                called = false,
-                args;
-
-            legend.userEvent = {
-                fire: jasmine.createSpy('fire').and.callFake(function() {
-                    called = true;
-                    args = arguments;
-                })
+                label: 'legend',
+                chartType: 'bar',
+                index: 1
             };
 
-            legend._fireUserEvent(data);
+            legend._fireSelectLegendPublicEvent(data);
 
-            expect(called).toBe(true);
-            expect(args[0]).toBe('selectLegend');
-            expect(args[1].legend).toBe(data.label);
-            expect(args[1].chartType).toBe(data.chartType);
-            expect(args[1].index).toBe(data.index);
+            expect(legend.eventBus.fire).toHaveBeenCalledWith(chartConst.PUBLIC_EVENT_PREFIX + 'selectLegend', {
+                legend: 'legend',
+                chartType: 'bar',
+                index: 1
+            });
         });
     });
 
     describe('_getCheckedIndexes()', function() {
         it('체크가된 체크박스의 index정보를 모아서 반환합니다.', function() {
-            var legendContainer = dom.create('DIV'),
-                actual, expected;
+            var legendContainer = dom.create('DIV');
+            var actual, expected;
 
             legendContainer.innerHTML = '<input type="checkbox" checked />' +
                 '<input type="checkbox" />' +

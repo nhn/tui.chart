@@ -27,7 +27,8 @@ describe('BubbleChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor
+            dataProcessor: dataProcessor,
+            eventBus: new tui.util.CustomEvents()
         });
     });
 

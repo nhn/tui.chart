@@ -14,6 +14,7 @@ describe('TooltipBase', function() {
 
     beforeEach(function() {
         tooltip = new TooltipBase({
+            eventBus: new tui.util.CustomEvents(),
             options: {}
         });
     });

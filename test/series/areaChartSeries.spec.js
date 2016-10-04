@@ -16,7 +16,8 @@ describe('AreaChartSeries', function() {
         series = new AreaChartSeries({
             chartType: 'area',
             theme: {},
-            options: {}
+            options: {},
+            eventBus: new tui.util.CustomEvents()
         });
     });
 

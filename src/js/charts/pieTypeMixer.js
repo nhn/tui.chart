@@ -27,8 +27,7 @@ var pieTypeMixer = {
         if (legendOption.visible) {
             this.componentManager.register('legend', Legend, {
                 seriesNames: seriesNames,
-                chartType: this.chartType,
-                userEvent: this.userEvent
+                chartType: this.chartType
             });
         }
     },
@@ -51,8 +50,7 @@ var pieTypeMixer = {
         var seriesBaseParams = {
             libType: this.options.libType,
             componentType: 'series',
-            chartBackground: this.theme.chart.background,
-            userEvent: this.userEvent
+            chartBackground: this.theme.chart.background
         };
 
         tui.util.forEach(seriesData, function(seriesDatum) {

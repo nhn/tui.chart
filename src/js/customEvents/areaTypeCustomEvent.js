@@ -92,7 +92,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @private
      */
     _showTooltip: function(foundData) {
-        this.broadcast('onShowTooltip', foundData);
+        this.eventBus.fire('showTooltip', foundData);
     },
 
     /**
@@ -100,7 +100,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @private
      */
     _hideTooltip: function() {
-        this.broadcast('onHideTooltip', this.prevFoundData);
+        this.eventBus.fire('hideTooltip', this.prevFoundData);
     },
 
     /**

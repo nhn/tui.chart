@@ -53,7 +53,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         this.componentManager.register('series', Series, {
             chartBackground: this.theme.chart.background,
             chartType: this.chartType,
-            userEvent: this.userEvent,
             colorSpectrum: colorSpectrum
         });
 
@@ -64,7 +63,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         if (useColorValue && this.options.legend.visible) {
             this.componentManager.register('legend', Legend, {
                 chartType: this.chartType,
-                userEvent: this.userEvent,
                 colorSpectrum: colorSpectrum
             });
         }

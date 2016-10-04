@@ -30,7 +30,8 @@ describe('TreemapChartSeries', function() {
                     fontFamily: 'Verdana',
                     fontWeight: 'normal'
                 }
-            }
+            },
+            eventBus: new tui.util.CustomEvents()
         });
         seriesDataModel = new SeriesDataModel([], 'treemap');
         spyOn(series, '_getSeriesDataModel').and.returnValue(seriesDataModel);

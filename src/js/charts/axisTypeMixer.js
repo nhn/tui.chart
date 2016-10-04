@@ -62,7 +62,6 @@ var axisTypeMixer = {
             seriesBaseParams = {
                 libType: options.libType,
                 chartType: options.chartType,
-                userEvent: this.userEvent,
                 componentType: 'series',
                 chartBackground: this.theme.chart.background
             };
@@ -92,8 +91,7 @@ var axisTypeMixer = {
     _addLegendComponent: function(LegendClass, seriesNames, additionalParams) {
         this.componentManager.register('legend', LegendClass || Legend, tui.util.extend({
             seriesNames: seriesNames,
-            chartType: this.chartType,
-            userEvent: this.userEvent
+            chartType: this.chartType
         }, additionalParams));
     },
 

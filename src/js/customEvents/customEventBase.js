@@ -58,6 +58,12 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.allowSelect = params.allowSelect;
 
         /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = params.eventBus;
+
+        /**
          * layout bounds information for this components
          * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
          */
@@ -107,6 +113,16 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
          * @type {number}
          */
         this.seriesCount = predicate.isComboChart(this.chartType) ? 2 : 1;
+
+        this._attachToEventBus();
+    },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on('receiveSeriesData', this.onReceiveSeriesData, this);
     },
 
     /**
@@ -367,10 +383,8 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _onMouseEvent: function(eventType, e) {
-        var eventName = renderUtil.makeCustomEventName('on', eventType, 'series');
-
         dom.addClass(this.customEventContainer, 'hide');
-        this.broadcast(eventName, {
+        this.eventBus.fire(eventType + 'Series', {
             left: e.clientX,
             top: e.clientY
         });
@@ -382,7 +396,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _unselectSelectedData: function() {
-        this.broadcast('onUnselectSeries', this.selectedData);
+        this.eventBus.fire('unselectSeries', this.selectedData);
         this.selectedData = null;
     },
 
@@ -401,7 +415,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
                 this._unselectSelectedData();
             }
 
-            this.broadcast('onSelectSeries', foundData);
+            this.eventBus.fire('selectSeries', foundData);
             if (this.allowSelect) {
                 this.selectedData = foundData;
             }

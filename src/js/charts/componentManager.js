@@ -56,10 +56,10 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         this.hasAxes = params.hasAxes;
 
         /**
-         * report to chartBase
-         * @type {function}
+         * event bus for transmitting message
+         * @type {object}
          */
-        this.report = params.report;
+        this.eventBus = params.eventBus;
     },
 
     /**
@@ -99,12 +99,11 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;
+        params.eventBus = this.eventBus;
 
         component = new Component(params);
         component.componentName = name;
         component.componentType = componentType;
-        component.broadcast = tui.util.bind(this.execute, this);
-        component.report = this.report;
 
         this.components.push(component);
         this.componentMap[name] = component;

@@ -98,7 +98,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var indexes = params.indexes;
         var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index).ratio;
 
-        this.broadcast('onShowWedge', ratio);
+        this.eventBus.fire('showWedge', ratio);
     },
 
     /**
@@ -118,7 +118,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     },
 
     /**
-     * Make exportation data for series type userEvent.
+     * Make exportation data for public event of series type.
      * @param {object} seriesData - series data
      * @returns {{x: number, y: number}}
      * @private

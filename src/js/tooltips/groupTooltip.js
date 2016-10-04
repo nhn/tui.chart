@@ -313,7 +313,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
 
         if (isLine) {
-            this.broadcast('onShowGroupTooltipLine', bound);
+            this.eventBus.fire('showGroupTooltipLine', bound);
         } else {
             renderUtil.renderDimension(groupTooltipSector, bound.dimension);
             renderUtil.renderPosition(groupTooltipSector, bound.position);
@@ -324,7 +324,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             index -= 1;
         }
 
-        this.broadcast('onShowGroupAnimation', index);
+        this.eventBus.fire('showGroupAnimation', index);
     },
 
     /**
@@ -336,8 +336,8 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var groupTooltipSector = this._getTooltipSectorElement();
 
         dom.removeClass(groupTooltipSector, 'show');
-        this.broadcast('onHideGroupAnimation', index);
-        this.broadcast('onHideGroupTooltipLine');
+        this.eventBus.fire('hideGroupAnimation', index);
+        this.eventBus.fire('hideGroupTooltipLine');
     },
 
     /**
@@ -353,12 +353,12 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var dimension, position;
 
         if (!tui.util.isNull(this.prevIndex)) {
-            this.broadcast('onHideGroupAnimation', this.prevIndex);
+            this.eventBus.fire('hideGroupAnimation', this.prevIndex);
         }
 
         elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
 
-        this._fireBeforeShowTooltip(params.index, params.range);
+        this._fireBeforeShowTooltipPublicEvent(params.index, params.range);
 
         dom.addClass(elTooltip, 'show');
 
@@ -369,7 +369,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         this._moveToPosition(elTooltip, position, prevPosition);
 
-        this._fireAfterShowTooltip(params.index, params.range, {
+        this._fireAfterShowTooltipPublicEvent(params.index, params.range, {
             element: elTooltip,
             position: position
         });
@@ -378,13 +378,13 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To call beforeShowTooltip callback of userEvent.
+     * To call beforeShowTooltip callback of public event.
      * @param {number} index index
      * @param {{start: number, end: number}} range range
      * @private
      */
-    _fireBeforeShowTooltip: function(index, range) {
-        this.userEvent.fire('beforeShowTooltip', {
+    _fireBeforeShowTooltipPublicEvent: function(index, range) {
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', {
             chartType: this.chartType,
             index: index,
             range: range
@@ -392,14 +392,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To call afterShowTooltip callback of userEvent.
+     * To call afterShowTooltip callback of public event.
      * @param {number} index index
      * @param {{start: number, end: number}} range range
      * @param {object} additionParams addition parameters
      * @private
      */
-    _fireAfterShowTooltip: function(index, range, additionParams) {
-        this.userEvent.fire('afterShowTooltip', tui.util.extend({
+    _fireAfterShowTooltipPublicEvent: function(index, range, additionParams) {
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', tui.util.extend({
             chartType: this.chartType,
             index: index,
             range: range

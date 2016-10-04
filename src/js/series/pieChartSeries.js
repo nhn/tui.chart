@@ -401,7 +401,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {{left: number, top: number}} mousePosition mouse position
      */
     showTooltip: function(params, bound, groupIndex, index, mousePosition) {
-        this.broadcast('onShowTooltip', tui.util.extend({
+        this.eventBus.fire('showTooltip', tui.util.extend({
             indexes: {
                 groupIndex: groupIndex,
                 index: index
@@ -414,7 +414,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * hideTooltip is mouseout event callback on series graph.
      */
     hideTooltip: function() {
-        this.broadcast('onHideTooltip');
+        this.eventBus.fire('hideTooltip');
     },
 
     /**

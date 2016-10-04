@@ -21,9 +21,36 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * @extends CustomEventBase
      */
     init: function(params) {
+        /**
+         * chart type
+         * {string}
+         *
+         */
         this.chartType = params.chartType;
+
+        /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = params.eventBus;
+
+        /**
+         * whether mouse down or not
+         * @type {boolean}
+         */
         this.isDown = false;
+
+        this._attachToEventBus();
     },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on('wheel', this.onWheel, this);
+    },
+
     /**
      * Render event handle layer area
      * @param {HTMLElement} customEventContainer custom event container element
@@ -33,12 +60,6 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
         renderUtil.renderDimension(customEventContainer, this.layout.dimension);
         renderUtil.renderPosition(customEventContainer, this.layout.position);
     },
-
-    /**
-     * Initialize data of custom event
-     * @override
-     */
-    initCustomEventData: function() {},
 
     /**
      * On click.
@@ -55,7 +76,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      */
     _onMousedown: function(e) {
         this.isDown = true;
-        this.fire('dragStartMapSeries', {
+        this.eventBus.fire('dragStartMapSeries', {
             left: e.clientX,
             top: e.clientY
         });
@@ -68,7 +89,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     _dragEnd: function() {
         this.isDrag = false;
         dom.removeClass(this.customEventContainer, 'drag');
-        this.fire('dragEndMapSeries');
+        this.eventBus.fire('dragEndMapSeries');
     },
 
     /**
@@ -101,7 +122,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
                 dom.addClass(this.customEventContainer, 'drag');
             }
             this.isDrag = true;
-            this.fire('dragMapSeries', {
+            this.eventBus.fire('dragMapSeries', {
                 left: e.clientX,
                 top: e.clientY
             });
@@ -134,7 +155,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     _onMousewheel: function(e) {
         var wheelDelta = e.wheelDelta || e.detail * chartConst.FF_WHEELDELTA_ADJUSTING_VALUE;
 
-        this.broadcast('onWheel', wheelDelta, {
+        this.eventBus.fire('wheel', wheelDelta, {
             left: e.clientX,
             top: e.clientY
         });

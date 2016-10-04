@@ -268,11 +268,11 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         }
 
         this._zoom(seriesItem.id, seriesItem.depth + 1, seriesItem.group);
-        this.broadcast('onAfterZoom', detectedIndex);
+        this.eventBus.fire('afterZoom', detectedIndex);
     },
 
     /**
-     * Make exportation data for series type userEvent.
+     * Make exportation data for public event of series type.
      * @param {object} seriesData series data
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
      * @private
@@ -327,7 +327,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).ratio;
 
         if (ratio > -1) {
-            this.broadcast('onShowWedge', ratio);
+            this.eventBus.fire('showWedge', ratio);
         }
     }
 });

@@ -26,7 +26,8 @@ describe('Series', function() {
                 },
                 colors: ['blue']
             },
-            options: {}
+            options: {},
+            eventBus: new tui.util.CustomEvents()
         });
     });
 
@@ -115,11 +116,12 @@ describe('Series', function() {
                     }
                 }
             };
+            var eventBus = jasmine.createSpyObj('eventBus', ['fire']);
             var actual, seriesContainer;
 
             series.hasAxes = true;
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
-            series.broadcast = jasmine.createSpy('broadcast');
+            series.eventBus = eventBus;
 
             actual = series.render(data);
             seriesContainer = actual.container;

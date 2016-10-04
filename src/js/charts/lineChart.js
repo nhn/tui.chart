@@ -28,13 +28,22 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
 
     /**
      * Line chart.
+     * @param {Array.<Array>} rawData - raw data
+     * @param {object} theme - chart theme
+     * @param {object} options - chart options
      * @constructs LineChart
      * @extends ChartBase
      * @mixes axisTypeMixer
      * @mixes lineTypeMixer
      */
-    init: function() {
-        this._lineTypeInit.apply(this, arguments);
+    init: function(rawData, theme, options) {
+        ChartBase.call(this, {
+            rawData: rawData,
+            theme: theme,
+            options: options,
+            hasAxes: true,
+            isVertical: true
+        });
         this._initForAddingData();
     },
 

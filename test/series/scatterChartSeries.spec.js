@@ -22,7 +22,8 @@ describe('ScatterChartSeries', function() {
                     fontSize: 11
                 }
             },
-            options: {}
+            options: {},
+            eventBus: new tui.util.CustomEvents()
         });
     });
 

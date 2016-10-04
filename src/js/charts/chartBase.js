@@ -6,12 +6,12 @@
 
 'use strict';
 
+var chartConst = require('../const');
 var ComponentManager = require('./componentManager');
 var DefaultDataProcessor = require('../models/data/dataProcessor');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var dom = require('../helpers/domHandler');
 var renderUtil = require('../helpers/renderUtil');
-var UserEventListener = require('../helpers/userEventListener');
 var boundsAndScaleBuilder = require('../models/boundsAndScaleBuilder.js');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -60,18 +60,35 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.dataProcessor = this._createDataProcessor(params);
 
         /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = new tui.util.CustomEvents();
+
+        /**
          * component manager
          * @type {ComponentManager}
          */
         this.componentManager = this._createComponentManager();
 
-        /**
-         * user event listener
-         * @type {object}
-         */
-        this.userEvent = new UserEventListener();
-
         this._addComponents();
+
+        this._attachToEventBus();
+    },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
+
+        if (this.onZoom) {
+            this.eventBus.on({
+                zoom: this.onZoom,
+                resetZoom: this.onResetZoom
+            }, this);
+        }
     },
 
     /**
@@ -204,20 +221,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * If exist reported function, execute;
-     * @param {string} funcName - function name
-     * @private
-     */
-    _acceptReport: function(funcName) {
-        var args;
-
-        if (this[funcName]) {
-            args = Array.prototype.slice.call(arguments, 1);
-            this[funcName].apply(this, args);
-        }
-    },
-
-    /**
      * Create ComponentMananger.
      * @returns {ComponentManager}
      * @private
@@ -228,7 +231,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             theme: this.theme,
             dataProcessor: this.dataProcessor,
             hasAxes: this.hasAxes,
-            report: tui.util.bind(this._acceptReport, this)
+            eventBus: this.eventBus
         });
     },
 
@@ -240,7 +243,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _makeTooltipData: function() {
         return {
             isVertical: this.isVertical,
-            userEvent: this.userEvent,
             chartType: this.chartType,
             xAxisType: this.options.xAxis.type,
             dateFormat: this.options.xAxis.dateFormat
@@ -389,18 +391,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * On zoom.
-     * @abstract
-     */
-    onZoom: function() {},
-
-    /**
-     * On reset zoom.
-     * @abstract
-     */
-    onResetZoom: function() {},
-
-    /**
      * Animate chart.
      */
     animateChart: function() {
@@ -413,7 +403,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {function} func event callback
      */
     on: function(eventName, func) {
-        this.userEvent.register(eventName, func);
+        if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
+            this.eventBus.on(chartConst.PUBLIC_EVENT_PREFIX + eventName, func);
+        }
     },
 
     /**

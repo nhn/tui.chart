@@ -342,7 +342,7 @@ var zoomMixer = {
 
         this.prevDistanceOfRange = distanceOfRange;
         this.reverseMove = reverseMove;
-        this.report('onZoom', indexRange);
+        this.eventBus.fire('zoom', indexRange);
     },
 
     /**
@@ -373,7 +373,7 @@ var zoomMixer = {
             if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
                 this._hideTooltip();
                 this.prevDistanceOfRange = null;
-                this.report('onResetZoom');
+                this.eventBus.fire('resetZoom');
             } else {
                 CustomEventBase.prototype._onClick.call(this, e);
             }

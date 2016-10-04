@@ -12,7 +12,9 @@ describe('Test for GroupTypeCustomEvent', function() {
     var groupTypeCustomEvent;
 
     beforeEach(function() {
-        groupTypeCustomEvent = new GroupTypeCustomEvent({});
+        groupTypeCustomEvent = new GroupTypeCustomEvent({
+            eventBus: new tui.util.CustomEvents()
+        });
     });
 
     describe('_isOutPosition()', function() {

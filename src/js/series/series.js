@@ -15,6 +15,11 @@ var pluginFactory = require('../factories/pluginFactory');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
+     * Series component className
+     * @type {string}
+     */
+    className: 'tui-chart-series-area',
+    /**
      * Series base component.
      * @constructs Series
      * @param {object} params parameters
@@ -49,10 +54,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * User event listener
-         * @type {UserEventListener}
+         * event bus for transmitting message
+         * @type {object}
          */
-        this.userEvent = params.userEvent;
+        this.eventBus = params.eventBus;
 
         /**
          * chart background.
@@ -77,12 +82,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {object}
          */
         this.graphRenderer = pluginFactory.get(libType, params.chartType);
-
-        /**
-         * Series view className
-         * @type {string}
-         */
-        this.className = 'tui-chart-series-area';
 
         /**
          * series container
@@ -155,6 +154,48 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {null|object}
          */
         this.axisDataMap = null;
+
+        /**
+         * before axis data map
+         * @type {null|object}
+         */
+        this.beforeAxisDataMap = null;
+
+        this._attachToEventBus();
+    },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on({
+            selectLegend: this.onSelectLegend,
+            selectSeries: this.onSelectSeries,
+            unselectSeries: this.onUnselectSeries,
+            hoverSeries: this.onHoverSeries,
+            hoverOffSeries: this.onHoverOffSeries,
+            showGroupAnimation: this.onShowGroupAnimation,
+            hideGroupAnimation: this.onHideGroupAnimation
+        }, this);
+
+        if (this.onShowTooltip) {
+            this.eventBus.on('showTooltip', this.onShowTooltip, this);
+        }
+
+        if (this.onShowGroupTooltipLine) {
+            this.eventBus.on({
+                showGroupTooltipLine: this.onShowGroupTooltipLine,
+                hideGroupTooltipLine: this.onHideGroupTooltipLine
+            }, this);
+        }
+
+        if (this.onClickSeries) {
+            this.eventBus.on({
+                clickSeries: this.onClickSeries,
+                moveSeries: this.onMoveSeries
+            }, this);
+        }
     },
 
     /**
@@ -228,7 +269,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _sendBoundsToCustomEvent: function(seriesData) {
-        this.broadcast('onReceiveSeriesData', {
+        this.eventBus.fire('receiveSeriesData', {
             chartType: this.chartType,
             data: seriesData
         });
@@ -344,6 +385,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.seriesContainer = container;
         this._setDataForRendering(data);
+        this.beforeAxisDataMap = this.axisDataMap;
+
         paper = this._renderSeriesArea(container, data.paper, tui.util.bind(this._renderGraph, this));
 
         return {
@@ -542,10 +585,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To call showAnimation function of graphRenderer.
-     * @param {string} chartType - chart type
      * @param {{groupIndex: number, index: number}} data data
+     * @param {string} chartType - chart type
      */
-    onHoverSeries: function(chartType, data) {
+    onHoverSeries: function(data, chartType) {
         if (chartType !== this.chartType) {
             return;
         }
@@ -558,10 +601,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To call hideAnimation function of graphRenderer.
-     * @param {string} chartType - chart type
      * @param {{groupIndex: number, index: number}} data data
+     * @param {string} chartType - chart type
      */
-    onHoverOffSeries: function(chartType, data) {
+    onHoverOffSeries: function(data, chartType) {
         if (chartType !== this.chartType) {
             return;
         }
@@ -630,7 +673,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _fireLoadEvent: function(isRerendering) {
         if (!isRerendering) {
-            this.userEvent.fire('load');
+            this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'load');
         }
     },
 
@@ -672,7 +715,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Make exportation data for series type userEvent.
+     * Make exportation data for public event of series type.
      * @param {object} seriesData series data
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
      * @private
@@ -708,7 +751,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var isShowLabel = false;
         var result;
 
-        this.broadcast('onHideTooltipContainer');
+        this.eventBus.fire('hideTooltipContainer');
         if (this.seriesLabelContainer && dom.hasClass(this.seriesLabelContainer, 'show')) {
             dom.removeClass(this.seriesLabelContainer, 'show');
             isShowLabel = true;
@@ -720,22 +763,26 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             dom.addClass(this.seriesLabelContainer, 'show');
         }
 
-        this.broadcast('onShowTooltipContainer');
+        this.eventBus.fire('showTooltipContainer');
 
         return result;
     },
 
     /**
-     * To call selectSeries callback of userEvent.
+     * To call selectSeries callback of public event.
      * @param {object} seriesData - series data
      * @param {?boolean} shouldSelect - whether should select or not
      */
     onSelectSeries: function(seriesData, shouldSelect) {
+        var eventName;
+
         if (seriesData.chartType !== this.chartType) {
             return;
         }
 
-        this.userEvent.fire('selectSeries', this._makeExportationSeriesData(seriesData));
+        eventName = chartConst.PUBLIC_EVENT_PREFIX + 'selectSeries';
+
+        this.eventBus.fire(eventName, this._makeExportationSeriesData(seriesData));
         shouldSelect = tui.util.isEmpty(shouldSelect) ? true : shouldSelect;
 
         if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
@@ -744,15 +791,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To call unselectSeries callback of userEvent.
+     * To call unselectSeries callback of public event.
      * @param {object} seriesData series data.
      */
     onUnselectSeries: function(seriesData) {
+        var eventName;
+
         if (seriesData.chartType !== this.chartType) {
             return;
         }
 
-        this.userEvent.fire('unselectSeries', this._makeExportationSeriesData(seriesData));
+        eventName = chartConst.PUBLIC_EVENT_PREFIX + 'unselectSeries';
+
+        this.eventBus.fire(eventName, this._makeExportationSeriesData(seriesData));
         if (this.options.allowSelect && this.graphRenderer.unselectSeries) {
             this.graphRenderer.unselectSeries(seriesData.indexes);
         }

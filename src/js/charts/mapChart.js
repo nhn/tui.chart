@@ -72,7 +72,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
-            userEvent: this.userEvent,
             mapModel: mapModel,
             colorSpectrum: colorSpectrum
         });

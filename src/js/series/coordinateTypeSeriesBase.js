@@ -38,7 +38,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      * @param {{left: number, top: number}} mousePosition mouse position
      */
     showTooltip: function(params, bound, groupIndex, index, mousePosition) {
-        this.broadcast('onShowTooltip', tui.util.extend({
+        this.eventBus.fire('showTooltip', tui.util.extend({
             indexes: {
                 groupIndex: groupIndex,
                 index: index
@@ -51,7 +51,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      * hideTooltip is mouseout event callback on series graph.
      */
     hideTooltip: function() {
-        this.broadcast('onHideTooltip');
+        this.eventBus.fire('hideTooltip');
     },
 
     /**

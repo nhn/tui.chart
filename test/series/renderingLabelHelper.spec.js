@@ -198,7 +198,8 @@ describe('Test for renderingLabelHelper', function() {
                         fontFamily: 'Verdana',
                         fontWeight: 'normal'
                     }
-                }
+                },
+                eventBus: new tui.util.CustomEvents()
             });
             var shouldDimmed, seriesItems, boundMap, actual, expected;
 

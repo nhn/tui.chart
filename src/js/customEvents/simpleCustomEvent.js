@@ -18,7 +18,17 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
      * @extends CustomEventBase
      */
     init: function(params) {
+        /**
+         * chart type
+         * @type {string}
+         */
         this.chartType = params.chartType;
+
+        /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = params.eventBus;
     },
 
     /**
