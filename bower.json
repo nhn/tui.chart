@@ -6,13 +6,13 @@
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
   "ignore": [
-    "maps",
+    "./maps",
     "samples",
     "src",
     "test",
     "gulpfile.js",
     "index.html",
-    "jsdoc.conf.json",
+    "jsdoc-conf.json",
     "karma.conf.js",
     "package.json"
   ],
