@@ -5,6 +5,17 @@
   ],
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
+  "ignore": [
+    "maps",
+    "samples",
+    "src",
+    "test",
+    "gulpfile.js",
+    "index.html",
+    "jsdoc.conf.json",
+    "karma.conf.js",
+    "package.json"
+  ],
   "dependencies": {
     "raphael": "https://github.com/nhnent/raphael.git#v2.1.4b",
     "tui-component-effects": "~1.1.0",
