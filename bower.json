@@ -6,7 +6,8 @@
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
   "ignore": [
-    "./maps",
+    "maps",
+    "!dist/maps",
     "samples",
     "src",
     "test",
