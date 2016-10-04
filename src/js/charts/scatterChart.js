@@ -11,7 +11,6 @@ var ChartBase = require('./chartBase');
 var chartConst = require('../const');
 var Series = require('../series/scatterChartSeries');
 var axisTypeMixer = require('./axisTypeMixer');
-var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
     /**
@@ -88,40 +87,5 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
 });
 
 tui.util.extend(ScatterChart.prototype, axisTypeMixer);
-
-/**
- * Add custom event component for normal tooltip.
- * @private
- */
-ScatterChart.prototype._attachCustomEvent = function() {
-    var componentManager = this.componentManager;
-    var customEvent = componentManager.get('customEvent');
-    var scatterSeries = componentManager.get('scatterSeries');
-    var tooltip = componentManager.get('tooltip');
-
-    axisTypeMixer._attachCustomEvent.call(this);
-
-    customEvent.on({
-        clickScatterSeries: scatterSeries.onClickSeries,
-        moveScatterSeries: scatterSeries.onMoveSeries
-    }, scatterSeries);
-
-    scatterSeries.on({
-        showTooltip: tooltip.onShow,
-        hideTooltip: tooltip.onHide,
-        showTooltipContainer: tooltip.onShowTooltipContainer,
-        hideTooltipContainer: tooltip.onHideTooltipContainer
-    }, tooltip);
-};
-
-/**
- * Add custom event component.
- * @private
- */
-ScatterChart.prototype._addCustomEventComponent = function() {
-    this.componentManager.register('customEvent', SimpleCustomEvent, {
-        chartType: this.chartType
-    });
-};
 
 module.exports = ScatterChart;

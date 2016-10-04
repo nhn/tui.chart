@@ -21,6 +21,7 @@ describe('GroupTooltip', function() {
     beforeEach(function() {
         tooltip = new GroupTooltip({
             dataProcessor: dataProcessor,
+            eventBus: new tui.util.CustomEvents(),
             options: {}
         });
     });

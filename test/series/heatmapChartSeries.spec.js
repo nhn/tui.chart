@@ -13,7 +13,8 @@ describe('HeatmapChartSeries', function() {
 
     beforeEach(function() {
         series = new HeatmapChartSeries({
-            chartType: 'heatmap'
+            chartType: 'heatmap',
+            eventBus: new tui.util.CustomEvents()
         });
     });
 

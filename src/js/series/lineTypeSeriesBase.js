@@ -10,7 +10,6 @@ var seriesTemplate = require('./seriesTemplate');
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
-var Series = require('./series');
 
 var concat = Array.prototype.concat;
 
@@ -20,17 +19,6 @@ var concat = Array.prototype.concat;
  * @mixin
  */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
-    /**
-     * Render series component.
-     * @override
-     */
-    render: function() {
-        var container = Series.prototype.render.apply(this, arguments);
-
-        this.beforeAxes = this.axisDataMap;
-
-        return container;
-    },
     /**
      * Make positions for default data type.
      * @param {?number} seriesWidth - width of series area
@@ -283,19 +271,19 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @private
      */
     _isChangedAxisLimit: function() {
-        var beforeAxes = this.beforeAxes;
+        var beforeAxisDataMap = this.beforeAxisDataMap;
         var axisDataMap = this.axisDataMap;
         var changed = true;
 
-        this.beforeAxes = axisDataMap;
-
-        if (beforeAxes) {
-            changed = this._isChangedLimit(beforeAxes.yAxis.limit, axisDataMap.yAxis.limit);
+        if (beforeAxisDataMap) {
+            changed = this._isChangedLimit(beforeAxisDataMap.yAxis.limit, axisDataMap.yAxis.limit);
 
             if (axisDataMap.xAxis.limit) {
-                changed = changed || this._isChangedLimit(beforeAxes.xAxis.limit, axisDataMap.xAxis.limit);
+                changed = changed || this._isChangedLimit(beforeAxisDataMap.xAxis.limit, axisDataMap.xAxis.limit);
             }
         }
+
+        this.beforeAxisDataMap = axisDataMap;
 
         return changed;
     },
@@ -444,16 +432,20 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
     /**
      * Animate for adding data.
-     * @param {{tickSize: number}} params - parameters for adding data.
+     * @param {{tickSize: number}} data - parameters for adding data.
      */
-    animateForAddingData: function(params) {
-        var seriesData = this._makeSeriesData();
+    animateForAddingData: function(data) {
         var dimension = this.dimensionMap.extendedSeries;
         var seriesWidth = this.layout.dimension.width;
-        var paramsForRendering = this._makeParamsForGraphRendering(dimension, seriesData);
-        var tickSize = params.tickSize;
+        var tickSize = data.tickSize;
         var shiftingOption = this.options.shifting;
-        var groupPositions, zeroTop;
+        var seriesData, paramsForRendering, groupPositions, zeroTop;
+
+        this.limit = data.limitMap[this.chartType];
+        this.axisDataMap = data.axisDataMap;
+
+        seriesData = this._makeSeriesData();
+        paramsForRendering = this._makeParamsForGraphRendering(dimension, seriesData);
 
         if (shiftingOption) {
             seriesWidth += tickSize;

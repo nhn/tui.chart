@@ -31,15 +31,21 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * Area chart.
      * @constructs AreaChart
      * @extends ChartBase
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
+     * @param {Array.<Array>} rawData - raw data
+     * @param {object} theme - chart theme
+     * @param {object} options - chart options
      * @mixes axisTypeMixer
      * @mixes lineTypeMixer
      */
     init: function(rawData, theme, options) {
         rawDataHandler.removeSeriesStack(rawData.series);
-        this._lineTypeInit(rawData, theme, options);
+        ChartBase.call(this, {
+            rawData: rawData,
+            theme: theme,
+            options: options,
+            hasAxes: true,
+            isVertical: true
+        });
         this._initForAddingData();
     },
 

@@ -350,6 +350,22 @@ var chartConst = {
                 ' M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)"',
         85: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
                 ' M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)"'
+    },
+    /** prefix for public event
+     * @type {string}
+     */
+    PUBLIC_EVENT_PREFIX: 'public_',
+    /** public event map
+     * @type {object}
+     */
+    PUBLIC_EVENT_MAP: {
+        load: true,
+        selectLegend: true,
+        selectSeries: true,
+        unselectSeries: true,
+        beforeShowTooltip: true,
+        afterShowTooltip: true,
+        zoom: true
     }
 };
 module.exports = chartConst;

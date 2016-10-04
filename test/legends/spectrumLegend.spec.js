@@ -14,6 +14,7 @@ describe('Test for SpectrumLegend', function() {
 
     beforeEach(function() {
         legend = new SpectrumLegend({
+            eventBus: new tui.util.CustomEvents(),
             theme: {}
         });
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);

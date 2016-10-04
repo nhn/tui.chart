@@ -19,7 +19,8 @@ describe('MapChartSeries', function() {
     beforeEach(function() {
         series = new MapChartSeries({
             dataProcessor: dataProcessor,
-            chartType: 'map'
+            chartType: 'map',
+            eventBus: new tui.util.CustomEvents()
         });
         series.mapModel = mapModel;
     });

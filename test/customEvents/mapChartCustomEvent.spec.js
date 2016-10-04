@@ -13,8 +13,10 @@ describe('Test for MapChartCustomEvent', function() {
     var customEvent;
 
     beforeEach(function() {
-        customEvent = new MapChartCustomEvent({});
-        spyOn(customEvent, 'fire');
+        customEvent = new MapChartCustomEvent({
+            eventBus: new tui.util.CustomEvents()
+        });
+        spyOn(customEvent.eventBus, 'fire');
         spyOn(customEvent, '_onMouseEvent');
     });
 
@@ -32,7 +34,7 @@ describe('Test for MapChartCustomEvent', function() {
 
             customEvent._onMousedown(eventObject);
 
-            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName, expectedPosition);
+            expect(customEvent.eventBus.fire).toHaveBeenCalledWith(expectedEventName, expectedPosition);
         });
     });
 
@@ -44,7 +46,7 @@ describe('Test for MapChartCustomEvent', function() {
             customEvent.isDrag = true;
             customEvent._onMouseup();
 
-            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName);
+            expect(customEvent.eventBus.fire).toHaveBeenCalledWith(expectedEventName);
             expect(customEvent.customEventContainer.className).toBe('');
         });
 
@@ -79,14 +81,14 @@ describe('Test for MapChartCustomEvent', function() {
             customEvent.isDrag = true;
             customEvent._onMousemove(eventObject);
 
-            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName, expectedPosition);
+            expect(customEvent.eventBus.fire).toHaveBeenCalledWith(expectedEventName, expectedPosition);
         });
 
         it('isDown true이면서 isDrag가 false이면 추가적으로 container에 darg class를 추가합니다.', function() {
             var eventObject = {
-                    clientX: 10,
-                    clientY: 20
-                };
+                clientX: 10,
+                clientY: 20
+            };
 
             customEvent.customEventContainer = dom.create('DIV');
             customEvent.isDown = true;
@@ -119,7 +121,7 @@ describe('Test for MapChartCustomEvent', function() {
             customEvent.isDrag = true;
             customEvent._onMouseout();
 
-            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName);
+            expect(customEvent.eventBus.fire).toHaveBeenCalledWith(expectedEventName);
             expect(customEvent.customEventContainer.className).toBe('');
         });
     });

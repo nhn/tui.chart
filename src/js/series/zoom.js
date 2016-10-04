@@ -14,11 +14,21 @@ var seriesTemplate = require('./seriesTemplate'),
 
 var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**
+     * zoom component className
+     * @type {string}
+     */
+    className: 'tui-chart-zoom-area',
+    /**
      * Zoom component.
+     * @param {{eventBus: object}} params - parameters
      * @constructs Zoom
      */
-    init: function() {
-        this.className = 'tui-chart-zoom-area';
+    init: function(params) {
+        /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = params.eventBus;
 
         /**
          * Magnification.
@@ -31,6 +41,16 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
          * @type {number}
          */
         this.stackedWheelDelta = 0;
+
+        this._attachToEventBus();
+    },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on('wheel', this.onWheel, this);
     },
 
     /**
@@ -76,7 +96,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 
         if (changedMagn !== this.magn) {
             this.magn = changedMagn;
-            this.fire('zoom', this.magn, position);
+            this.eventBus.fire('zoomMap', this.magn, position);
         }
     },
 
@@ -156,7 +176,5 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
         this.stackedWheelDelta = this.stackedWheelDelta % chartConst.WHEEL_TICK;
     }
 });
-
-tui.util.CustomEvents.mixin(Zoom);
 
 module.exports = Zoom;

@@ -7,7 +7,7 @@
   "description": "NHN Ent. Toast UI Chart",
   "dependencies": {
     "raphael": "https://github.com/nhnent/raphael.git#v2.1.4b",
-    "tui-component-effects": "tui-component-effects#~1.1.0",
+    "tui-component-effects": "~1.1.0",
     "tui-code-snippet": "1.0.8"
   }
 }

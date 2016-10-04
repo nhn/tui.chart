@@ -21,7 +21,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      *      @param {object} params.options - tooltip options
      *      @param {object} params.theme - tooltip theme
      *      @param {boolean} params.isVertical - whether vertical or not
-     *      @param {object} params.userEvent - UserEventListener instance
+     *      @param {object} params.public event - tui.util.CustomEvent instance
      *      @param {object} params.labelTheme - theme for label
      *      @param {string} params.xAxisType - xAxis type
      *      @param {string} params.dateFormat - date format
@@ -60,10 +60,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.isVertical = params.isVertical;
 
         /**
-         * User event listener
-         * @type {UserEventListener}
+         * event bus for transmitting message
+         * @type {object}
          */
-        this.userEvent = params.userEvent;
+        this.eventBus = params.eventBus;
 
         /**
          * label theme
@@ -133,6 +133,26 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
         this._setDefaultTooltipPositionOption();
         this._saveOriginalPositionOptions();
+
+        this._attachToEventBus();
+    },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on({
+            showTooltip: this.onShowTooltip,
+            hideTooltip: this.onHideTooltip
+        }, this);
+
+        if (this.onShowTooltipContainer) {
+            this.eventBus.on({
+                showTooltipContainer: this.onShowTooltipContainer,
+                hideTooltipContainer: this.onHideTooltipContainer
+            }, this);
+        }
     },
 
     /**
@@ -248,10 +268,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * onShow is callback of custom event showTooltip for SeriesView.
+     * onShowTooltip is callback of custom event showTooltip for SeriesView.
      * @param {object} params coordinate event parameters
      */
-    onShow: function(params) {
+    onShowTooltip: function(params) {
         var tooltipElement = this._getTooltipElement(),
             prevPosition;
 
@@ -314,10 +334,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * onHide is callback of custom event hideTooltip for SeriesView
+     * onHideTooltip is callback of custom event hideTooltip for SeriesView
      * @param {number} index index
      */
-    onHide: function(index) {
+    onHideTooltip: function(index) {
         var tooltipElement = this._getTooltipElement();
 
         this._hideTooltip(tooltipElement, index);
@@ -405,7 +425,5 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this._updateOffsetOption(this.options.offset);
     }
 });
-
-tui.util.CustomEvents.mixin(TooltipBase);
 
 module.exports = TooltipBase;

@@ -62,6 +62,12 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         this.colorSpectrum = params.colorSpectrum;
 
         /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = params.eventBus;
+
+        /**
          * Graph renderer
          * @type {object}
          */
@@ -78,6 +84,19 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
          * @type {null|object}
          */
         this.scaleData = null;
+
+        this._attachToEventBus();
+    },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on({
+            showWedge: this.onShowWedge,
+            hideTooltip: this.onHideWedge
+        }, this);
     },
 
     /**
@@ -266,7 +285,5 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         this.graphRenderer.hideWedge();
     }
 });
-
-tui.util.CustomEvents.mixin(SpectrumLegend);
 
 module.exports = SpectrumLegend;

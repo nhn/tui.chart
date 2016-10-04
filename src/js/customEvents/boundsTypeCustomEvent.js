@@ -40,11 +40,22 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
     },
 
     /**
+     * Attach to event bus.
+     * @private
+     * @override
+     */
+    _attachToEventBus: function() {
+        CustomEventBase.prototype._attachToEventBus.call(this);
+
+        this.eventBus.on('afterZoom', this.onAfterZoom, this);
+    },
+
+    /**
      * Hide tooltip.
      * @private
      */
     _hideTooltip: function() {
-        this.fire('hideTooltip', this.prevFoundData);
+        this.eventBus.fire('hideTooltip', this.prevFoundData);
         this.prevFoundData = null;
         this.styleCursor(false);
     },
@@ -92,7 +103,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             this.styleCursor(seriesItem.hasChild);
         }
 
-        this.fire('showTooltip', foundData);
+        this.eventBus.fire('showTooltip', foundData);
     },
 
     /**
@@ -103,7 +114,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         var index = this.zoomHistory[this.zoomHistory.length - 2];
 
         this.zoomHistory.pop();
-        this.fire('zoom', index);
+        this.eventBus.fire('zoom', index);
 
         if (this.zoomHistory.length === 1) {
             this.customEventContainer.removeChild(this.historyBackBtn);
@@ -157,7 +168,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             }
 
             this._hideTooltip();
-            this.fire('zoom', foundData.indexes.index);
+            this.eventBus.fire('zoom', foundData.indexes.index);
         }
     },
 

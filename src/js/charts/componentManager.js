@@ -54,6 +54,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
          * @type {boolean}
          */
         this.hasAxes = params.hasAxes;
+
+        /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = params.eventBus;
     },
 
     /**
@@ -93,6 +99,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;
+        params.eventBus = this.eventBus;
 
         component = new Component(params);
         component.componentName = name;
@@ -209,9 +216,11 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {string} funcName - function name
      */
     execute: function(funcName) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
         tui.util.forEachArray(this.components, function(component) {
             if (component[funcName]) {
-                component[funcName]();
+                component[funcName].apply(component, args);
             }
         });
     },

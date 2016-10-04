@@ -40,14 +40,12 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
 
     /**
      * Initialize data of custom event
-     * @param {Array.<object>} seriesInfos series infos
+     * @param {Array.<object>} seriesData - series data
      * @override
      */
-    initCustomEventData: function(seriesInfos) {
-        var seriesInfo = seriesInfos[0];
-
-        this.dataModel = new AreaTypeDataModel(seriesInfo);
-        CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
+    onReceiveSeriesData: function(seriesData) {
+        this.dataModel = new AreaTypeDataModel(seriesData);
+        CustomEventBase.prototype.onReceiveSeriesData.call(this, seriesData);
 
         if (this.zoomable) {
             this._showTooltipAfterZoom();
@@ -94,7 +92,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @private
      */
     _showTooltip: function(foundData) {
-        this.fire('showTooltip', foundData);
+        this.eventBus.fire('showTooltip', foundData);
     },
 
     /**
@@ -102,7 +100,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @private
      */
     _hideTooltip: function() {
-        this.fire('hideTooltip', this.prevFoundData);
+        this.eventBus.fire('hideTooltip', this.prevFoundData);
     },
 
     /**

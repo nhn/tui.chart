@@ -13,7 +13,9 @@ describe('Test for CustomEventBase', function() {
     var customEventBase;
 
     beforeEach(function() {
-        customEventBase = new CustomEventBase({});
+        customEventBase = new CustomEventBase({
+            eventBus: new tui.util.CustomEvents()
+        });
     });
 
     describe('_isChangedSelectData()', function() {

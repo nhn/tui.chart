@@ -16,31 +16,6 @@ var chartConst = require('../const'),
  * @mixin
  */
 var singleTooltipMixer = {
-
-    /**
-     * Fire custom event showAnimation.
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @param {string} chartType chart type
-     * @private
-     */
-    _fireShowAnimation: function(indexes, chartType) {
-        var eventName = renderUtil.makeCustomEventName('show', chartType, 'animation');
-
-        this.fire(eventName, indexes);
-    },
-
-    /**
-     * Fire custom event hideAnimation.
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @param {string} chartType chart type
-     * @private
-     */
-    _fireHideAnimation: function(indexes, chartType) {
-        var eventName = renderUtil.makeCustomEventName('hide', chartType, 'animation');
-
-        this.fire(eventName, indexes);
-    },
-
     /**
      * Set data indexes.
      * @param {HTMLElement} elTooltip tooltip element
@@ -394,7 +369,7 @@ var singleTooltipMixer = {
 
         if (this._isChangedIndexes(prevIndexes, indexes)) {
             prevChartType = elTooltip.getAttribute('data-chart-type');
-            this._fireHideAnimation(prevIndexes, prevChartType);
+            this.eventBus.fire('hoverOffSeries', prevIndexes, prevChartType);
         }
 
         elTooltip.innerHTML = this._makeSingleTooltipHtml(params.seriesName || params.chartType, indexes);
@@ -403,7 +378,7 @@ var singleTooltipMixer = {
         this._setIndexesCustomAttribute(elTooltip, indexes);
         this._setShowedCustomAttribute(elTooltip, true);
 
-        this._fireBeforeShowTooltip(indexes);
+        this._fireBeforeShowTooltipPublicEvent(indexes);
 
         dom.addClass(elTooltip, 'show');
 
@@ -417,34 +392,34 @@ var singleTooltipMixer = {
         }, params));
 
         this._moveToPosition(elTooltip, position, prevPosition);
-        this._fireShowAnimation(indexes, params.chartType);
-        this._fireAfterShowTooltip(indexes, {
+        this.eventBus.fire('hoverSeries', indexes, params.chartType);
+        this._fireAfterShowTooltipPublicEvent(indexes, {
             element: elTooltip,
             position: position
         });
     },
 
     /**
-     * To call beforeShowTooltip callback of userEvent.
+     * To call beforeShowTooltip callback of public event.
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @private
      */
-    _fireBeforeShowTooltip: function(indexes) {
+    _fireBeforeShowTooltipPublicEvent: function(indexes) {
         var params = this._makeShowTooltipParams(indexes);
 
-        this.userEvent.fire('beforeShowTooltip', params);
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', params);
     },
 
     /**
-     * To call afterShowTooltip callback of userEvent.
+     * To call afterShowTooltip callback of public event.
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @param {object} additionParams addition parameters
      * @private
      */
-    _fireAfterShowTooltip: function(indexes, additionParams) {
+    _fireAfterShowTooltipPublicEvent: function(indexes, additionParams) {
         var params = this._makeShowTooltipParams(indexes, additionParams);
 
-        this.userEvent.fire('afterShowTooltip', params);
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', params);
     },
 
     /**
@@ -473,7 +448,7 @@ var singleTooltipMixer = {
             this._executeHidingTooltip(tooltipElement);
         } else if (chartType) {
             this._setShowedCustomAttribute(tooltipElement, false);
-            this._fireHideAnimation(indexes, chartType);
+            this.eventBus.fire('hoverOffSeries', indexes, chartType);
 
             if (this._isChangedIndexes(this.prevIndexes, indexes)) {
                 delete this.prevIndexes;

@@ -6,7 +6,6 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase');
 var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
@@ -14,23 +13,6 @@ var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
  * @mixin
  */
 var lineTypeMixer = {
-    /**
-     * Initialize line type chart.
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     * @private
-     */
-    _lineTypeInit: function(rawData, theme, options) {
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            hasAxes: true,
-            isVertical: true
-        });
-    },
-
     /**
      * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}

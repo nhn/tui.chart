@@ -49,9 +49,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.seriesNames = params.seriesNames || [this.chartType];
 
         /**
-         * user event object
+         * event bus for transmitting message
+         * @type {object}
          */
-        this.userEvent = params.userEvent;
+        this.eventBus = params.eventBus;
 
         /**
          * Legend view className
@@ -253,37 +254,32 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Fire legend checkbox event.
+     * Fire onChangeCheckedLegends event.
      * @private
      */
-    _fireLegendCheckboxEvent: function() {
-        this.fire('changeCheckedLegends', this.legendModel.getCheckedIndexes());
+    _fireChangeCheckedLegendsEvent: function() {
+        this.eventBus.fire('changeCheckedLegends', this.legendModel.getCheckedIndexes());
     },
 
     /**
-     * Fire legend event.
+     * Fire selectLegend event.
      * @param {{chartType: string, index: number}} data data
      * @private
      */
-    _fireLegendSelectionEvent: function(data) {
-        var self = this;
-        var seriesNames = this.seriesNames;
+    _fireSelectLegendEvent: function(data) {
         var index = this.legendModel.getSelectedIndex();
         var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
-        tui.util.forEachArray(seriesNames, function(seriesName) {
-            var chartType = self.dataProcessor.findChartType(seriesName);
-            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
-        });
+        this.eventBus.fire('selectLegend', data.chartType, legendIndex);
     },
 
     /**
-     * Fire user event.
+     * Fire selectLegend public event.
      * @param {{label: string, chartType: string, index: number}} data data
      * @private
      */
-    _fireUserEvent: function(data) {
-        this.userEvent.fire('selectLegend', {
+    _fireSelectLegendPublicEvent: function(data) {
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'selectLegend', {
             legend: data.label,
             chartType: data.chartType,
             index: data.index
@@ -302,13 +298,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         if (!tui.util.isNull(this.legendModel.getSelectedIndex()) && !this.legendModel.isCheckedSelectedIndex()) {
             this.legendModel.checkSelectedIndex();
-            this._fireLegendCheckboxEvent();
+            this._fireChangeCheckedLegendsEvent();
         }
 
         this._renderLegendArea(this.legendContainer);
 
-        this._fireLegendSelectionEvent(data);
-        this._fireUserEvent(data);
+        this._fireSelectLegendEvent(data);
+        this._fireSelectLegendPublicEvent(data);
     },
 
     /**
@@ -351,10 +347,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
             this._renderLegendArea(this.legendContainer);
 
-            this._fireLegendCheckboxEvent();
+            this._fireChangeCheckedLegendsEvent();
 
             if (data) {
-                this._fireLegendSelectionEvent(data, true);
+                this._fireSelectLegendEvent(data);
             }
         }
     },

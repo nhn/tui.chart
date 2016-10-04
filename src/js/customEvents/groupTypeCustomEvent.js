@@ -129,7 +129,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         var index = foundData.indexes.groupIndex;
 
         this.prevIndex = index;
-        this.fire('showGroupTooltip', {
+        this.eventBus.fire('showTooltip', {
             index: index,
             range: this.tickBaseCoordinateModel.makeRange(index),
             size: this.dimension[this.sizeType],
@@ -143,7 +143,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @private
      */
     _hideTooltip: function() {
-        this.fire('hideGroupTooltip', this.prevIndex);
+        this.eventBus.fire('hideTooltip', this.prevIndex);
         this.prevIndex = null;
     },
 

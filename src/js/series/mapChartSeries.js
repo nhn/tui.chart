@@ -7,6 +7,7 @@
 'use strict';
 
 var Series = require('./series');
+var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
@@ -93,6 +94,17 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this.startPosition = null;
 
         Series.call(this, params);
+    },
+
+    _attachToEventBus: function() {
+        Series.prototype._attachToEventBus.call(this);
+
+        this.eventBus.on({
+            dragStartMapSeries: this.onDragStartMapSeries,
+            dragMapSeries: this.onDragMapSeries,
+            dragEndMapSeries: this.onDragEndMapSeries,
+            zoomMap: this.onZoomMap
+        }, this);
     },
 
     /**
@@ -306,7 +318,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 
         if (!tui.util.isNull(foundIndex)) {
-            this.userEvent.fire('selectSeries', {
+            this.eventBus.fire('selectSeries', {
                 chartType: this.chartType,
                 index: foundIndex,
                 code: this.mapModel.getDatum(foundIndex).code
@@ -334,7 +346,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         var datum = this.mapModel.getDatum(index);
 
         if (!tui.util.isUndefined(datum.ratio)) {
-            this.fire('showWedge', datum.ratio);
+            this.eventBus.fire('showWedge', datum.ratio);
         }
     },
 
@@ -345,7 +357,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _showTooltip: function(index, mousePosition) {
-        this.fire('showTooltip', {
+        this.eventBus.fire('showTooltip', {
             chartType: this.chartType,
             indexes: {
                 index: index
@@ -379,8 +391,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             if (this.prevMovedIndex !== foundIndex) {
                 if (!tui.util.isNull(this.prevMovedIndex)) {
                     this.graphRenderer.restoreColor(this.prevMovedIndex);
-                    this.fire('hideWedge');
-                    this.fire('hideTooltip');
+                    this.eventBus.fire('hideTooltip');
                 }
 
                 this.graphRenderer.changeColor(foundIndex);
@@ -398,8 +409,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             this._showWedge(foundIndex);
         } else if (!tui.util.isNull(this.prevMovedIndex)) {
             this.graphRenderer.restoreColor(this.prevMovedIndex);
-            this.fire('hideWedge');
-            this.fire('hideTooltip');
+            this.eventBus.fire('hideTooltip');
             this.prevMovedIndex = null;
         }
         this.prevPosition = position;
@@ -409,7 +419,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * On drag start series.
      * @param {{left: number, top: number}} position position
      */
-    onDragStartSeries: function(position) {
+    onDragStartMapSeries: function(position) {
         this.startPosition = {
             left: position.left,
             top: position.top
@@ -437,21 +447,21 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * On drag series.
      * @param {{left: number, top: number}} position position
      */
-    onDragSeries: function(position) {
+    onDragMapSeries: function(position) {
         this._movePosition(this.startPosition, position);
 
         this.startPosition = position;
 
         if (!this.isDrag) {
             this.isDrag = true;
-            this.fire('hideTooltip');
+            this.eventBus.fire('hideTooltip');
         }
     },
 
     /**
      * On drag end series.
      */
-    onDragEndSeries: function() {
+    onDragEndMapSeries: function() {
         this.isDrag = false;
     },
 
@@ -485,11 +495,11 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * On zoom.
+     * On zoom map.
      * @param {number} newMagn new zoom magnification
      * @param {?{left: number, top: number}} position mouse position
      */
-    onZoom: function(newMagn, position) {
+    onZoomMap: function(newMagn, position) {
         var changedRatio = newMagn / this.zoomMagn;
 
         this.zoomMagn = newMagn;
@@ -500,10 +510,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             this._movePositionForZoom(position, changedRatio);
         }
 
-        this.userEvent.fire('zoom', newMagn);
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'zoom', newMagn);
     }
 });
-
-tui.util.CustomEvents.mixin(MapChartSeries);
 
 module.exports = MapChartSeries;
