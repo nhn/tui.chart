@@ -6,8 +6,6 @@
 
 'use strict';
 
-var defaultTheme = require('../themes/defaultTheme');
-
 var concat = Array.prototype.concat;
 
 var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
@@ -93,25 +91,25 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     /**
      * Make label info that applied theme.
      * @param {Array.<object>} legendData legend data
-     * @param {{colors: Array.<number>, singleColor: ?string, bordercolor: ?string}} theme legend theme
+     * @param {{colors: Array.<number>, singleColor: ?string, bordercolor: ?string}} colorTheme legend theme
      * @param {Array.<boolean>} checkedIndexes checked indexes
      * @returns {Array.<object>} labels
      * @private
      */
-    _makeLabelInfoAppliedTheme: function(legendData, theme, checkedIndexes) {
+    _makeLabelInfoAppliedTheme: function(legendData, colorTheme, checkedIndexes) {
         var seriesIndex = 0;
 
         return tui.util.map(legendData, function(datum, index) {
             var itemTheme = {
-                color: theme.colors[index]
+                color: colorTheme.colors[index]
             };
 
-            if (theme.singleColors && theme.singleColors.length) {
-                itemTheme.singleColor = theme.singleColors[index];
+            if (colorTheme.singleColors && colorTheme.singleColors.length) {
+                itemTheme.singleColor = colorTheme.singleColors[index];
             }
 
-            if (theme.borderColor) {
-                itemTheme.borderColor = theme.borderColor;
+            if (colorTheme.borderColor) {
+                itemTheme.borderColor = colorTheme.borderColor;
             }
 
             datum.theme = itemTheme;
@@ -134,33 +132,26 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      */
     _setData: function() {
         var self = this;
+        var theme = this.theme;
+        var chartType = this.chartType;
+        var seriesNames = this.seriesNames;
         var legendData = this.legendData;
-        var data, defaultLegendTheme, startIndex, startThemeIndex;
+        var checkedIndexesMap = this.checkedIndexesMap;
+        var data, startIndex;
 
-        if (!this.seriesNames || this.seriesNames.length < 2) {
-            data = this._makeLabelInfoAppliedTheme(legendData, this.theme, this.checkedIndexesMap[this.chartType]);
+        if (!seriesNames || seriesNames.length < 2) {
+            data = this._makeLabelInfoAppliedTheme(legendData, theme[chartType], checkedIndexesMap[chartType]);
         } else {
             startIndex = 0;
-            startThemeIndex = 0;
-            defaultLegendTheme = {
-                colors: defaultTheme.series.colors
-            };
-            data = concat.apply([], tui.util.map(this.seriesNames, function(seriesName) {
-                var chartTheme = self.theme[seriesName];
+            data = concat.apply([], tui.util.map(seriesNames, function(seriesName) {
                 var labelLen = self.labels[seriesName].length;
                 var endIndex = startIndex + labelLen;
-                var slicedLegendData, checkedIndexes, themeEndIndex, datum;
-
-                if (!chartTheme) {
-                    themeEndIndex = startThemeIndex + labelLen;
-                    chartTheme = JSON.parse(JSON.stringify(defaultLegendTheme));
-                    chartTheme.colors = chartTheme.colors.slice(startThemeIndex, themeEndIndex);
-                    startThemeIndex = themeEndIndex;
-                }
+                var slicedLegendData, checkedIndexes, datum;
 
                 slicedLegendData = legendData.slice(startIndex, endIndex);
-                checkedIndexes = self.checkedIndexesMap[seriesName];
-                datum = self._makeLabelInfoAppliedTheme(slicedLegendData, chartTheme, checkedIndexes);
+                checkedIndexes = checkedIndexesMap[seriesName];
+
+                datum = self._makeLabelInfoAppliedTheme(slicedLegendData, theme[seriesName], checkedIndexes);
                 startIndex = endIndex;
 
                 return datum;

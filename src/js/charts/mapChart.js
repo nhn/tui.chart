@@ -52,7 +52,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      */
     _addComponents: function() {
         var options = this.options;
-        var seriesTheme = this.theme.series;
+        var seriesTheme = this.theme.series[this.chartType];
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 

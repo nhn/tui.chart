@@ -20,6 +20,9 @@ describe('MapChartSeries', function() {
         series = new MapChartSeries({
             dataProcessor: dataProcessor,
             chartType: 'map',
+            theme: {
+                heatmap: {}
+            },
             eventBus: new tui.util.CustomEvents()
         });
         series.mapModel = mapModel;

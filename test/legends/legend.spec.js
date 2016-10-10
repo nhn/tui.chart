@@ -38,7 +38,9 @@ describe('Test for Legend', function() {
                 label: {
                     fontSize: 12
                 },
-                colors: ['red', 'orange']
+                column: {
+                    colors: ['red', 'orange']
+                }
             },
             chartType: 'column',
             eventBus: new tui.util.CustomEvents()
@@ -159,10 +161,9 @@ describe('Test for Legend', function() {
             expectedElement.style.fontSize = '12px';
 
             expectedChildren = expectedElement.childNodes;
-
             expect(legendContainer.style.cssText).toBe(expectedElement.style.cssText);
 
-            tui.util.forEachArray(legendContainer.childNodes, function (child, index) {
+            tui.util.forEachArray(legendContainer.childNodes, function(child, index) {
                 var tempChild = expectedChildren[index];
                 expect(child.firstChild.cssText).toBe(tempChild.firstChild.cssText);
                 expect(child.lastChild.cssText).toBe(tempChild.lastChild.cssText);

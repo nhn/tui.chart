@@ -67,6 +67,7 @@ var lineTypeMixer = {
             axis: [
                 {
                     name: 'yAxis',
+                    seriesName: this.chartType,
                     isVertical: true
                 },
                 {

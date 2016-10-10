@@ -50,7 +50,6 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
     _makeDataForAddingSeriesComponent: function() {
         var seriesNames = this.seriesNames;
         var optionsMap = this._makeOptionsMap(seriesNames);
-        var themeMap = this._makeThemeMap(seriesNames);
         var dataProcessor = this.dataProcessor;
         var isShowOuterLabel = tui.util.any(optionsMap, predicate.isShowOuterLabel);
         var seriesData = tui.util.map(seriesNames, function(seriesName) {
@@ -60,8 +59,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
                 seriesName: seriesName,
                 options: optionsMap[seriesName],
                 isShowOuterLabel: isShowOuterLabel,
-                isCombo: true,
-                theme: themeMap[seriesName]
+                isCombo: true
             };
 
             return {

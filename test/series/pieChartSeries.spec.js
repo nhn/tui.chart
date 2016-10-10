@@ -30,9 +30,11 @@ describe('PieChartSeries', function() {
         series = new PieChartSeries({
             chartType: 'pie',
             theme: {
-                label: {
-                    fontFamily: 'Verdana',
-                    fontSize: 11
+                pie: {
+                    label: {
+                        fontFamily: 'Verdana',
+                        fontSize: 11
+                    }
                 }
             },
             options: {},

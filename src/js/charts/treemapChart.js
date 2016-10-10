@@ -46,7 +46,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @private
      */
     _addComponents: function() {
-        var seriesTheme = this.theme.series;
+        var seriesTheme = this.theme.series[this.chartType];
         var useColorValue = this.options.series.useColorValue;
         var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
 

@@ -75,7 +75,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * Theme
          * @type {object}
          */
-        this.orgTheme = this.theme = params.theme;
+        this.orgTheme = this.theme = params.theme[this.seriesName];
 
         /**
          * Graph renderer

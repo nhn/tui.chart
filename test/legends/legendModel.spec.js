@@ -34,8 +34,11 @@ describe('Test for LegendModel', function() {
                 label: {
                     fontSize: 12
                 },
-                colors: ['red', 'orange']
-            }
+                column: {
+                    colors: ['red', 'orange']
+                }
+            },
+            chartType: 'column'
         });
     });
 
@@ -132,21 +135,21 @@ describe('Test for LegendModel', function() {
 
     describe('_setData()', function() {
         it('seriesNames 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
-            var legendData = [{}, {}],
-                theme = {
-                    colors: ['red', 'blue'],
-                    singleColors: ['yellow', 'green'],
-                    borderColor: 'black'
-                },
-                actual, expected;
+            var legendData = [{}, {}];
+            var colorTheme = {
+                colors: ['red', 'blue'],
+                singleColors: ['yellow', 'green'],
+                borderColor: 'black'
+            };
+            var actual, expected;
 
             legendModel.legendData = legendData;
-            legendModel.theme = theme;
+            legendModel.theme[legendModel.chartType] = colorTheme;
 
             legendModel._setData();
 
             actual = legendModel.data;
-            expected = legendModel._makeLabelInfoAppliedTheme(legendData, theme);
+            expected = legendModel._makeLabelInfoAppliedTheme(legendData, colorTheme);
 
             expect(actual).toEqual(expected);
         });

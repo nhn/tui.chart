@@ -39,7 +39,7 @@ var axisTypeMixer = {
             var axisParams = {
                 aligned: aligned,
                 isVertical: !!axis.isVertical,
-                chartType: axis.chartType
+                seriesName: axis.seriesName || self.chartType
             };
 
             if (axis.name === 'rightYAxis') {

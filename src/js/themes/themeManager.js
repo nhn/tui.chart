@@ -7,250 +7,227 @@
 'use strict';
 
 var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
 var defaultTheme = require('./defaultTheme');
 
 var themes = {};
 
 module.exports = {
     /**
-     * Get theme.
-     * @param {string} themeName theme name
-     * @returns {object} theme object
-     */
-    get: function(themeName) {
-        var theme = themes[themeName];
-
-        if (!theme) {
-            throw new Error('Not exist ' + themeName + ' theme.');
-        }
-
-        return theme;
-    },
-
-    /**
      * Theme register.
      * @param {string} themeName theme name
      * @param {object} theme theme
      */
     register: function(themeName, theme) {
-        var targetItems;
         theme = JSON.parse(JSON.stringify(theme));
-
-        if (themeName !== chartConst.DEFAULT_THEME_NAME) {
-            theme = this._initTheme(theme);
-        }
-
-        targetItems = this._getInheritTargetThemeItems(theme);
-
-        this._inheritThemeFont(theme, targetItems);
-        this._copyColorInfo(theme);
         themes[themeName] = theme;
     },
 
     /**
-     * Init theme.
-     * @param {object} theme theme
-     * @returns {object} theme
+     * Pick series names from raw series data.
+     * @param {string} chartType - chart type
+     * @param {object} rawSeriesData - raw series data
+     * @returns {Array}
      * @private
-     * @ignore
      */
-    _initTheme: function(theme) {
-        var cloneTheme = JSON.parse(JSON.stringify(defaultTheme)),
-            newTheme;
+    _pickSeriesNames: function(chartType, rawSeriesData) {
+        var seriesNames = [];
+        if (predicate.isComboChart(chartType)) {
+            tui.util.forEach(rawSeriesData, function(data, seriesName) {
+                seriesNames.push(seriesName);
+            });
+        } else {
+            seriesNames.push(chartType);
+        }
 
-        this._concatDefaultColors(theme, cloneTheme.series.colors);
-        newTheme = this._overwriteTheme(theme, cloneTheme);
+        return seriesNames;
+    },
 
-        newTheme = this._copyProperty({
-            propName: 'yAxis',
-            fromTheme: theme,
-            toTheme: newTheme,
-            rejectionProps: chartConst.YAXIS_PROPS
+    /**
+     * Overwrite theme
+     * @param {object} fromTheme - from theme
+     * @param {object} toTheme - to theme
+     * @returns {object} result property
+     * @private
+     */
+    _overwriteTheme: function(fromTheme, toTheme) {
+        var self = this;
+
+        tui.util.forEach(toTheme, function(item, key) {
+            var fromItem = fromTheme[key];
+            if (!fromItem) {
+                return;
+            }
+
+            if (tui.util.isArray(fromItem)) {
+                toTheme[key] = fromItem.slice();
+            } else if (tui.util.isObject(fromItem)) {
+                self._overwriteTheme(fromItem, item);
+            } else {
+                toTheme[key] = fromItem;
+            }
         });
 
-        newTheme = this._copyProperty({
-            propName: 'series',
-            fromTheme: theme,
-            toTheme: newTheme,
-            rejectionProps: chartConst.SERIES_PROPS
+        return toTheme;
+    },
+
+    /**
+     * Pick valid theme properties.
+     * @param {object} theme - theme
+     * @param {string} componentType - component type (series or yAxis)
+     * @returns {object}
+     * @private
+     */
+    _pickValidTheme: function(theme, componentType) {
+        var validTheme = {};
+
+        tui.util.forEachArray(chartConst.THEME_PROPS_MAP[componentType], function(propName) {
+            if (tui.util.isExisty(theme[propName])) {
+                validTheme[propName] = theme[propName];
+            }
+        });
+
+        return validTheme;
+    },
+
+    /**
+     * Create component theme with series name
+     * @param {array.<string>} seriesNames - series names
+     * @param {object} fromTheme - from theme
+     * @param {object} toTheme - to theme
+     * @param {string} componentType - component type
+     * @returns {object}
+     * @private
+     */
+
+    _createComponentThemeWithSeriesName: function(seriesNames, fromTheme, toTheme, componentType) {
+        var self = this;
+        var newTheme = {};
+
+        fromTheme = fromTheme || {};
+
+        tui.util.forEachArray(seriesNames, function(seriesName) {
+            var baseTheme;
+            var theme = fromTheme[seriesName] || self._pickValidTheme(fromTheme, componentType);
+
+            if (tui.util.keys(theme).length) {
+                baseTheme = JSON.parse(JSON.stringify(defaultTheme[componentType]));
+                newTheme[seriesName] = self._overwriteTheme(theme, baseTheme);
+            } else {
+                newTheme[seriesName] = JSON.parse(JSON.stringify(toTheme));
+            }
         });
 
         return newTheme;
     },
 
     /**
-     * Filter chart types.
-     * @param {object} target target charts
-     * @param {Array.<string>} rejectionProps reject property
-     * @returns {Object} filtered charts.
+     * Set colors theme.
+     * @param {object} theme - theme
+     * @param {object} rawTheme - raw theme
+     * @param {Array.<string>} baseColors - base colors
      * @private
      */
-    _filterChartTypes: function(target, rejectionProps) {
-        var result;
-        if (!target) {
-            return [];
-        }
-
-        result = tui.util.filter(target, function(item, name) {
-            return tui.util.inArray(name, rejectionProps) === -1;
-        });
-
-        return result;
-    },
-
-    /**
-     * Concat colors.
-     * @param {object} theme theme
-     * @param {Array.<string>} seriesColors series colors
-     * @private
-     */
-    _concatColors: function(theme, seriesColors) {
-        if (theme.colors) {
-            theme.colors = theme.colors.concat(seriesColors);
-        }
-
-        if (theme.singleColors) {
-            theme.singleColors = theme.singleColors.concat(seriesColors);
-        }
-    },
-
-    /**
-     * Concat default colors.
-     * @param {object} theme theme
-     * @param {Array.<string>} seriesColors series colors
-     * @private
-     */
-    _concatDefaultColors: function(theme, seriesColors) {
-        var self = this,
-            chartTypes;
-
-        if (!theme.series) {
-            return;
-        }
-
-        chartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
-
-        if (!tui.util.keys(chartTypes).length) {
-            this._concatColors(theme.series, seriesColors);
+    _setColorsTheme: function(theme, rawTheme, baseColors) {
+        if (rawTheme.colors) {
+            theme.colors = rawTheme.colors.concat(baseColors);
         } else {
-            tui.util.forEach(chartTypes, function(item) {
-                self._concatColors(item, seriesColors);
-            });
+            theme.colors = baseColors;
+        }
+
+        if (rawTheme.singleColors) {
+            theme.singleColors = rawTheme.singleColors.concat(baseColors);
         }
     },
 
     /**
-     * Overwrite theme
-     * @param {object} from from theme property
-     * @param {object} to to theme property
-     * @returns {object} result property
+     * Set series colors theme.
+     * @param {Array.<string>} seriesNames - series names
+     * @param {object} seriesThemeMap - series theme map
+     * @param {object} rawSeriesThemeMap - raw series theme map
+     * @param {object} rawSeriesData - raw series data
      * @private
      */
-    _overwriteTheme: function(from, to) {
+    _setSeriesColors: function(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData) {
         var self = this;
+        var baseColors = JSON.parse(JSON.stringify(defaultTheme.series.colors));
+        var startThemeIndex;
 
-        tui.util.forEach(to, function(item, key) {
-            var fromItem = from[key];
-            if (!fromItem) {
-                return;
-            }
+        rawSeriesThemeMap = rawSeriesThemeMap || {};
 
-            if (tui.util.isArray(fromItem)) {
-                to[key] = fromItem.slice();
-            } else if (tui.util.isObject(fromItem)) {
-                self._overwriteTheme(fromItem, item);
-            } else {
-                to[key] = fromItem;
-            }
+        if (seriesNames.length === 1) {
+            this._setColorsTheme(seriesThemeMap[seriesNames[0]], rawSeriesThemeMap, baseColors);
+        } else {
+            startThemeIndex = 0;
+            tui.util.forEachArray(seriesNames, function(seriesName) {
+                var rawSeriesTheme = rawSeriesThemeMap[seriesName] || {};
+                var legendCount = rawSeriesData[seriesName].length;
+                var colorsCount = rawSeriesTheme.colors ? rawSeriesTheme.colors.length : 0;
+                var additionalColors = [];
+                var endThemeIndex;
+
+                if (colorsCount < legendCount) {
+                    endThemeIndex = startThemeIndex + (legendCount - colorsCount);
+                    additionalColors = baseColors.slice(startThemeIndex, endThemeIndex);
+                    startThemeIndex = endThemeIndex;
+                }
+
+                self._setColorsTheme(seriesThemeMap[seriesName], rawSeriesTheme, additionalColors);
+            });
+        }
+    },
+
+    /**
+     * Init theme.
+     * @param {string} themeName - theme name
+     * @param {object} rawTheme - raw theme
+     * @param {array.<string>} seriesNames - series names
+     * @param {object} rawSeriesData - raw series data
+     * @returns {object}
+     * @private
+     * @ignore
+     */
+    _initTheme: function(themeName, rawTheme, seriesNames, rawSeriesData) {
+        var baseTheme = JSON.parse(JSON.stringify(defaultTheme));
+        var theme;
+
+
+        if (themeName !== chartConst.DEFAULT_THEME_NAME) {
+            theme = this._overwriteTheme(rawTheme, baseTheme);
+        } else {
+            theme = JSON.parse(JSON.stringify(rawTheme));
+        }
+
+        theme.yAxis = this._createComponentThemeWithSeriesName(seriesNames, rawTheme.yAxis, theme.yAxis, 'yAxis');
+        theme.series = this._createComponentThemeWithSeriesName(seriesNames, rawTheme.series, theme.series, 'series');
+
+        this._setSeriesColors(seriesNames, theme.series, rawTheme.series, rawSeriesData);
+
+        return theme;
+    },
+
+    /**
+     * Create target themes for font inherit.
+     * @param {object} theme - theme
+     * @returns {Array.<object>}
+     * @private
+     */
+    _createInheritTargetThemes: function(theme) {
+        var items = [
+            theme.title,
+            theme.xAxis.title,
+            theme.xAxis.label,
+            theme.legend.label
+        ];
+
+        tui.util.forEach(theme.yAxis, function(_theme) {
+            items.push(_theme.title);
+            items.push(_theme.label);
         });
 
-        return to;
-    },
-
-    /**
-     * Copy property.
-     * @param {object} params parameters
-     *      @param {string} params.propName property name
-     *      @param {object} params.fromTheme from property
-     *      @param {object} params.toTheme tp property
-     *      @param {Array.<string>} params.rejectionProps reject property name
-     * @returns {object} copied property
-     * @private
-     */
-    _copyProperty: function(params) {
-        var self = this,
-            chartTypes;
-
-        if (!params.toTheme[params.propName]) {
-            return params.toTheme;
-        }
-
-        chartTypes = this._filterChartTypes(params.fromTheme[params.propName], params.rejectionProps);
-        if (tui.util.keys(chartTypes).length) {
-            tui.util.forEach(chartTypes, function(item, key) {
-                var cloneTheme = JSON.parse(JSON.stringify(defaultTheme[params.propName]));
-                params.fromTheme[params.propName][key] = self._overwriteTheme(item, cloneTheme);
-            });
-
-            params.toTheme[params.propName] = params.fromTheme[params.propName];
-        }
-
-        return params.toTheme;
-    },
-
-    /**
-     * Copy color info to legend
-     * @param {object} seriesTheme series theme
-     * @param {object} legendTheme legend theme
-     * @param {Array.<string>} colors colors
-     * @private
-     */
-    _copyColorInfoToOther: function(seriesTheme, legendTheme, colors) {
-        legendTheme.colors = colors || seriesTheme.colors;
-        if (seriesTheme.singleColors) {
-            legendTheme.singleColors = seriesTheme.singleColors;
-        }
-        if (seriesTheme.borderColor) {
-            legendTheme.borderColor = seriesTheme.borderColor;
-        }
-        if (seriesTheme.selectionColor) {
-            legendTheme.selectionColor = seriesTheme.selectionColor;
-        }
-    },
-
-    /**
-     * Get target items about font inherit.
-     * @param {object} theme theme
-     * @returns {Array.<object>} target items
-     * @private
-     */
-    _getInheritTargetThemeItems: function(theme) {
-        var items = [
-                theme.title,
-                theme.xAxis.title,
-                theme.xAxis.label,
-                theme.legend.label
-            ],
-            yAxisChartTypeThems = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS),
-            seriesChartTypeThemes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
-
-        if (!tui.util.keys(yAxisChartTypeThems).length) {
-            items.push(theme.yAxis.title);
-            items.push(theme.yAxis.label);
-        } else {
-            tui.util.forEach(yAxisChartTypeThems, function(chatTypeTheme) {
-                items.push(chatTypeTheme.title);
-                items.push(chatTypeTheme.label);
-            });
-        }
-
-        if (!tui.util.keys(seriesChartTypeThemes).length) {
-            items.push(theme.series.label);
-        } else {
-            tui.util.forEach(seriesChartTypeThemes, function(chatTypeTheme) {
-                items.push(chatTypeTheme.label);
-            });
-        }
+        tui.util.forEach(theme.series, function(_theme) {
+            items.push(_theme.label);
+        });
 
         return items;
     },
@@ -261,10 +238,11 @@ module.exports = {
      * @param {Array.<object>} targetItems target theme items
      * @private
      */
-    _inheritThemeFont: function(theme, targetItems) {
+    _inheritThemeFont: function(theme) {
+        var targetThemes = this._createInheritTargetThemes(theme);
         var baseFont = theme.chart.fontFamily;
 
-        tui.util.forEachArray(targetItems, function(item) {
+        tui.util.forEachArray(targetThemes, function(item) {
             if (!item.fontFamily) {
                 item.fontFamily = baseFont;
             }
@@ -272,27 +250,58 @@ module.exports = {
     },
 
     /**
-     * Copy color info.
+     * Copy color theme to otherTheme from seriesTheme.
+     * @param {object} seriesTheme - series theme
+     * @param {object} otherTheme - other theme
+     * @param {object} seriesName - series name
+     * @private
+     */
+    _copySeriesColorTheme: function(seriesTheme, otherTheme, seriesName) {
+        otherTheme[seriesName] = tui.util.extend({}, {
+            colors: seriesTheme.colors,
+            singleColors: seriesTheme.singleColors,
+            borderColor: seriesTheme.borderColor,
+            selectionColor: seriesTheme.selectionColor
+        });
+    },
+
+    /**
+     * Copy series color theme to other components.
      * @param {object} theme theme
      * @private
      * @ignore
      */
-    _copyColorInfo: function(theme) {
-        var self = this,
-            seriesNames = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+    _copySeriesColorThemeToOther: function(theme) {
+        var self = this;
 
-        if (!tui.util.keys(seriesNames).length) {
-            this._copyColorInfoToOther(theme.series, theme.legend);
-            this._copyColorInfoToOther(theme.series, theme.tooltip);
-        } else {
-            tui.util.forEach(seriesNames, function(item, chartType) {
-                theme.legend[chartType] = {};
-                theme.tooltip[chartType] = {};
-                self._copyColorInfoToOther(item, theme.legend[chartType], item.colors || theme.legend.colors);
-                self._copyColorInfoToOther(item, theme.tooltip[chartType], item.colors || theme.tooltip.colors);
-                delete theme.legend.colors;
-                delete theme.tooltip.colors;
-            });
+        tui.util.forEach(theme.series, function(seriesTheme, seriesName) {
+            self._copySeriesColorTheme(seriesTheme, theme.legend, seriesName);
+            self._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesName);
+        });
+    },
+
+    /**
+     * Get theme.
+     * @param {string} themeName - theme name
+     * @param {string} chartType - chart type
+     * @param {object} rawSeriesData - raw series data
+     * @returns {object}
+     */
+    get: function(themeName, chartType, rawSeriesData) {
+        var rawTheme = themes[themeName];
+        var theme, seriesNames;
+
+        if (!rawTheme) {
+            throw new Error('Not exist ' + themeName + ' theme.');
         }
+
+        seriesNames = this._pickSeriesNames(chartType, rawSeriesData);
+
+        theme = this._initTheme(themeName, rawTheme, seriesNames, rawSeriesData);
+
+        this._inheritThemeFont(theme, seriesNames);
+        this._copySeriesColorThemeToOther(theme);
+
+        return theme;
     }
 };

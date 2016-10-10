@@ -28,10 +28,12 @@ describe('BarChartSeries', function() {
         series = new BarChartSeries({
             chartType: 'bar',
             theme: {
-                label: {
-                    fontFamily: 'Verdana',
-                    fontSize: 11,
-                    fontWeight: 'normal'
+                bar: {
+                    label: {
+                        fontFamily: 'Verdana',
+                        fontSize: 11,
+                        fontWeight: 'normal'
+                    }
                 }
             },
             options: {},

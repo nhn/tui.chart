@@ -28,10 +28,12 @@ describe('ColumnChartSeries', function() {
         series = new ColumnChartSeries({
             chartType: 'column',
             theme: {
-                label: {
-                    fontFamily: 'Verdana',
-                    fontSize: 11,
-                    fontWeight: 'normal'
+                column: {
+                    label: {
+                        fontFamily: 'Verdana',
+                        fontSize: 11,
+                        fontWeight: 'normal'
+                    }
                 }
             },
             options: {},

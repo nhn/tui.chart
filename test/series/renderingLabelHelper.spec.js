@@ -193,10 +193,12 @@ describe('Test for renderingLabelHelper', function() {
             var series = new TreemapChartSeries({
                 chartType: 'treemap',
                 theme: {
-                    label: {
-                        fontSize: 12,
-                        fontFamily: 'Verdana',
-                        fontWeight: 'normal'
+                    treemap: {
+                        label: {
+                            fontSize: 12,
+                            fontFamily: 'Verdana',
+                            fontWeight: 'normal'
+                        }
                     }
                 },
                 eventBus: new tui.util.CustomEvents()
