@@ -47,7 +47,6 @@ module.exports = {
      * Overwrite theme
      * @param {object} fromTheme - from theme
      * @param {object} toTheme - to theme
-     * @returns {object} result property
      * @private
      */
     _overwriteTheme: function(fromTheme, toTheme) {
@@ -67,8 +66,6 @@ module.exports = {
                 toTheme[key] = fromItem;
             }
         });
-
-        return toTheme;
     },
 
     /**
@@ -107,12 +104,11 @@ module.exports = {
         fromTheme = fromTheme || {};
 
         tui.util.forEachArray(seriesNames, function(seriesName) {
-            var baseTheme;
             var theme = fromTheme[seriesName] || self._pickValidTheme(fromTheme, componentType);
 
             if (tui.util.keys(theme).length) {
-                baseTheme = JSON.parse(JSON.stringify(defaultTheme[componentType]));
-                newTheme[seriesName] = self._overwriteTheme(theme, baseTheme);
+                newTheme[seriesName] = JSON.parse(JSON.stringify(defaultTheme[componentType]));
+                self._overwriteTheme(theme, newTheme[seriesName]);
             } else {
                 newTheme[seriesName] = JSON.parse(JSON.stringify(toTheme));
             }
@@ -155,9 +151,9 @@ module.exports = {
 
         rawSeriesThemeMap = rawSeriesThemeMap || {};
 
-        if (seriesNames.length === 1) {
+        if (seriesNames.length === 1) { // single chart
             this._setColorsTheme(seriesThemeMap[seriesNames[0]], rawSeriesThemeMap, baseColors);
-        } else {
+        } else { // combo chart
             startThemeIndex = 0;
             tui.util.forEachArray(seriesNames, function(seriesName) {
                 var rawSeriesTheme = rawSeriesThemeMap[seriesName] || {};
@@ -188,12 +184,11 @@ module.exports = {
      * @ignore
      */
     _initTheme: function(themeName, rawTheme, seriesNames, rawSeriesData) {
-        var baseTheme = JSON.parse(JSON.stringify(defaultTheme));
         var theme;
 
-
         if (themeName !== chartConst.DEFAULT_THEME_NAME) {
-            theme = this._overwriteTheme(rawTheme, baseTheme);
+            theme = JSON.parse(JSON.stringify(defaultTheme));
+            this._overwriteTheme(rawTheme, theme);
         } else {
             theme = JSON.parse(JSON.stringify(rawTheme));
         }
@@ -212,7 +207,7 @@ module.exports = {
      * @returns {Array.<object>}
      * @private
      */
-    _createInheritTargetThemes: function(theme) {
+    _createTargetThemesForFontInherit: function(theme) {
         var items = [
             theme.title,
             theme.xAxis.title,
@@ -221,8 +216,7 @@ module.exports = {
         ];
 
         tui.util.forEach(theme.yAxis, function(_theme) {
-            items.push(_theme.title);
-            items.push(_theme.label);
+            items.push(_theme.title, _theme.label);
         });
 
         tui.util.forEach(theme.series, function(_theme) {
@@ -235,11 +229,10 @@ module.exports = {
     /**
      * Inherit theme font.
      * @param {object} theme theme
-     * @param {Array.<object>} targetItems target theme items
      * @private
      */
     _inheritThemeFont: function(theme) {
-        var targetThemes = this._createInheritTargetThemes(theme);
+        var targetThemes = this._createTargetThemesForFontInherit(theme);
         var baseFont = theme.chart.fontFamily;
 
         tui.util.forEachArray(targetThemes, function(item) {
@@ -257,12 +250,12 @@ module.exports = {
      * @private
      */
     _copySeriesColorTheme: function(seriesTheme, otherTheme, seriesName) {
-        otherTheme[seriesName] = tui.util.extend({}, {
+        otherTheme[seriesName] = {
             colors: seriesTheme.colors,
             singleColors: seriesTheme.singleColors,
             borderColor: seriesTheme.borderColor,
             selectionColor: seriesTheme.selectionColor
-        });
+        };
     },
 
     /**

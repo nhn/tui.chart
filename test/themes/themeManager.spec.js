@@ -33,9 +33,10 @@ describe('Test for themeManager', function() {
                     color: ['red']
                 }
             };
-            var result = themeManager._overwriteTheme(fromTheme, toTheme);
 
-            expect(result).toEqual({
+            themeManager._overwriteTheme(fromTheme, toTheme);
+
+            expect(toTheme).toEqual({
                 series: {
                     color: ['blue']
                 }
@@ -101,12 +102,11 @@ describe('Test for themeManager', function() {
             var actual = themeManager._createComponentThemeWithSeriesName(
                 seriesNames, fromTheme, toTheme, componentType
             );
-            var baseTheme = JSON.parse(JSON.stringify(defaultTheme[componentType]));
-            var expected = {
-                column: themeManager._overwriteTheme(fromTheme.column, baseTheme)
-            };
+            var expected = JSON.parse(JSON.stringify(defaultTheme[componentType]));
 
-            expect(actual).toEqual(expected);
+            themeManager._overwriteTheme(fromTheme.column, expected);
+
+            expect(actual.column).toEqual(expected);
         });
 
         it('create component theme with series name, when fromTheme map has not key of series name', function() {
@@ -260,7 +260,7 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_createInheritTargetThemes()', function() {
+    describe('_createTargetThemesForFontInherit()', function() {
         it('create target theme for font inherit, when single chart', function() {
             var theme = {
                 title: {},
@@ -283,7 +283,7 @@ describe('Test for themeManager', function() {
                     label: {}
                 }
             };
-            var actual = themeManager._createInheritTargetThemes(theme);
+            var actual = themeManager._createTargetThemesForFontInherit(theme);
 
             expect(actual).toEqual([
                 theme.title,
@@ -325,7 +325,7 @@ describe('Test for themeManager', function() {
                     label: {}
                 }
             };
-            var actual = themeManager._createInheritTargetThemes(theme);
+            var actual = themeManager._createTargetThemesForFontInherit(theme);
 
             expect(actual).toEqual([
                 theme.title,
