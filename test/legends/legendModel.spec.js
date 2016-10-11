@@ -85,17 +85,18 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('_makeLabelInfoAppliedTheme()', function() {
-        it('테마가 전달받은 레이블 정보에 테마 정보와 index를 적용하여 반환합니다.', function() {
-            var labelInfos = [{}, {}],
-                theme = {
-                    colors: ['red', 'blue'],
-                    singleColors: ['yellow', 'green'],
-                    borderColor: 'black'
-                },
-                actual = legendModel._makeLabelInfoAppliedTheme(labelInfos, theme);
+    describe('_setThemeToLegendData()', function() {
+        it('테마가 전달받은 레이블 정보에 테마 정보와 index를 설정합니다.', function() {
+            var legendData = [{}, {}];
+            var theme = {
+                colors: ['red', 'blue'],
+                singleColors: ['yellow', 'green'],
+                borderColor: 'black'
+            };
 
-            expect(actual[0]).toEqual({
+            legendModel._setThemeToLegendData(legendData, theme);
+
+            expect(legendData[0]).toEqual({
                 theme: {
                     color: 'red',
                     singleColor: 'yellow',
@@ -104,7 +105,7 @@ describe('Test for LegendModel', function() {
                 index: 0,
                 seriesIndex: 0
             });
-            expect(actual[1]).toEqual({
+            expect(legendData[1]).toEqual({
                 theme: {
                     color: 'blue',
                     singleColor: 'green',
@@ -116,26 +117,26 @@ describe('Test for LegendModel', function() {
         });
 
         it('세번째 파라미터(checkedIndexes)에 값이 있을 경우 해당하는 index에 대해서는 증가값을 부여하고 해당하지 않는 index에 대해서는 -1을 할당합니다.', function() {
-            var labelInfos = [{}, {}],
-                theme = {
-                    colors: ['red', 'blue'],
-                    singleColors: ['yellow', 'green'],
-                    borderColor: 'black'
-                },
-                checkedIndexes = [],
-                actual;
+            var legendData = [{}, {}];
+            var theme = {
+                colors: ['red', 'blue'],
+                singleColors: ['yellow', 'green'],
+                borderColor: 'black'
+            };
+            var checkedIndexes = [];
 
-                checkedIndexes[1] = true;
-                actual = legendModel._makeLabelInfoAppliedTheme(labelInfos, theme, checkedIndexes);
+            checkedIndexes[1] = true;
+            legendModel._setThemeToLegendData(legendData, theme, checkedIndexes);
 
-            expect(actual[0].seriesIndex).toEqual(-1);
-            expect(actual[1].seriesIndex).toEqual(0);
+            expect(legendData[0].seriesIndex).toEqual(-1);
+            expect(legendData[1].seriesIndex).toEqual(0);
         });
     });
 
     describe('_setData()', function() {
         it('seriesNames 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
             var legendData = [{}, {}];
+            var expected = [{}, {}];
             var colorTheme = {
                 colors: ['red', 'blue'],
                 singleColors: ['yellow', 'green'],
@@ -149,7 +150,7 @@ describe('Test for LegendModel', function() {
             legendModel._setData();
 
             actual = legendModel.data;
-            expected = legendModel._makeLabelInfoAppliedTheme(legendData, colorTheme);
+            legendModel._setThemeToLegendData(expected, colorTheme);
 
             expect(actual).toEqual(expected);
         });

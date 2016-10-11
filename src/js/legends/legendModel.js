@@ -89,17 +89,16 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     },
 
     /**
-     * Make label info that applied theme.
-     * @param {Array.<object>} legendData legend data
-     * @param {{colors: Array.<number>, singleColor: ?string, bordercolor: ?string}} colorTheme legend theme
-     * @param {Array.<boolean>} checkedIndexes checked indexes
-     * @returns {Array.<object>} labels
+     * Set theme to legend data.
+     * @param {Array.<object>} legendData - legend data
+     * @param {{colors: Array.<number>, singleColor: ?string, bordercolor: ?string}} colorTheme - legend theme
+     * @param {Array.<boolean>} checkedIndexes - checked indexes
      * @private
      */
-    _makeLabelInfoAppliedTheme: function(legendData, colorTheme, checkedIndexes) {
+    _setThemeToLegendData: function(legendData, colorTheme, checkedIndexes) {
         var seriesIndex = 0;
 
-        return tui.util.map(legendData, function(datum, index) {
+        tui.util.forEachArray(legendData, function(datum, index) {
             var itemTheme = {
                 color: colorTheme.colors[index]
             };
@@ -121,8 +120,6 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             } else {
                 datum.seriesIndex = -1;
             }
-
-            return datum;
         });
     },
 
@@ -140,21 +137,21 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
         var data, startIndex;
 
         if (!seriesNames || seriesNames.length < 2) {
-            data = this._makeLabelInfoAppliedTheme(legendData, theme[chartType], checkedIndexesMap[chartType]);
+            this._setThemeToLegendData(legendData, theme[chartType], checkedIndexesMap[chartType]);
+            data = legendData;
         } else {
             startIndex = 0;
             data = concat.apply([], tui.util.map(seriesNames, function(seriesName) {
                 var labelLen = self.labels[seriesName].length;
                 var endIndex = startIndex + labelLen;
-                var slicedLegendData, checkedIndexes, datum;
+                var slicedLegendData, checkedIndexes;
 
                 slicedLegendData = legendData.slice(startIndex, endIndex);
                 checkedIndexes = checkedIndexesMap[seriesName];
-
-                datum = self._makeLabelInfoAppliedTheme(slicedLegendData, theme[seriesName], checkedIndexes);
                 startIndex = endIndex;
+                self._setThemeToLegendData(slicedLegendData, theme[seriesName], checkedIndexes);
 
-                return datum;
+                return slicedLegendData;
             }));
         }
 
