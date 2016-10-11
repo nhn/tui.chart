@@ -171,15 +171,15 @@ var chartConst = {
     DOT_RADIUS: 4,
     /** radius for circle of scatter chart*/
     SCATTER_RADIUS: 5,
-    /** yAxis properties
-     * @type {Array.<string>}
+    /**
+     * theme properties
+     * @type {{yAxis: Array.<string>, series: Array.<string>}}
      */
-    YAXIS_PROPS: ['tickColor', 'title', 'label'], // yaxis theme의 속성 - chart type filtering할 때 사용됨
-    /** series properties
-     * @type {Array.<string>}
-     */
-    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors',
-        'selectionColor', 'startColor', 'endColor', 'overColor'], // series theme의 속성 - chart type filtering할 때 사용됨
+    THEME_PROPS_MAP: {
+        yAxis: ['tickColor', 'title', 'label'],
+        series: ['label', 'colors', 'borderColor', 'singleColors',
+            'selectionColor', 'startColor', 'endColor', 'overColor']
+    },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
     /** top margin of x axis label */

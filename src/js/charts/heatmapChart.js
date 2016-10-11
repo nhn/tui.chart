@@ -54,7 +54,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
      * @private
      */
     _addComponents: function() {
-        var seriesTheme = this.theme.series;
+        var seriesTheme = this.theme.series[this.chartType];
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
         this._addComponentsForAxisType({

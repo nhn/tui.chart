@@ -78,7 +78,7 @@ function _createChart(container, rawData, options, chartType) {
     options = options ? tui.util.deepCopy(options) : {};
     options.chartType = chartType;
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
-    theme = themeManager.get(themeName);
+    theme = themeManager.get(themeName, chartType, rawData.series);
 
     chart = chartFactory.get(options.chartType, rawData, theme, options);
     container.appendChild(chart.render());

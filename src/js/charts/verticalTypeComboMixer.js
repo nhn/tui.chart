@@ -194,7 +194,6 @@ var verticalTypeComboMixer = {
             area: AreaChartSeries
         };
         var optionsMap = this._makeOptionsMap(seriesNames);
-        var themeMap = this._makeThemeMap(seriesNames);
         var dataProcessor = this.dataProcessor;
         var serieses = tui.util.map(seriesNames, function(seriesName) {
             var chartType = dataProcessor.findChartType(seriesName);
@@ -202,8 +201,7 @@ var verticalTypeComboMixer = {
                 allowNegativeTooltip: true,
                 chartType: chartType,
                 seriesName: seriesName,
-                options: optionsMap[seriesName],
-                theme: themeMap[seriesName]
+                options: optionsMap[seriesName]
             };
 
             return {
@@ -224,7 +222,7 @@ var verticalTypeComboMixer = {
         var axes = [
             {
                 name: 'yAxis',
-                chartType: this.chartTypes[0],
+                seriesName: this.seriesNames[0],
                 isVertical: true
             },
             {
@@ -236,7 +234,7 @@ var verticalTypeComboMixer = {
         if (this.optionChartTypes.length) {
             axes.push({
                 name: 'rightYAxis',
-                chartType: this.chartTypes[1],
+                seriesName: this.seriesNames[1],
                 isVertical: true
             });
         }

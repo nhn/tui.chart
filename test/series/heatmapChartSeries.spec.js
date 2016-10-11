@@ -9,11 +9,14 @@
 var HeatmapChartSeries = require('../../src/js/series/heatmapChartSeries.js');
 
 describe('HeatmapChartSeries', function() {
-    var series, boundsModel;
+    var series;
 
     beforeEach(function() {
         series = new HeatmapChartSeries({
             chartType: 'heatmap',
+            theme: {
+                heatmap: {}
+            },
             eventBus: new tui.util.CustomEvents()
         });
     });

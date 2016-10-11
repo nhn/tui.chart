@@ -30,12 +30,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.className = 'tui-chart-axis-area';
 
         /**
-         * Chart type
-         * @type {string}
-         */
-        this.chartType = params.chartType;
-
-        /**
          * Data processor
          * @type {DataProcessor}
          */
@@ -51,7 +45,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Theme
          * @type {object}
          */
-        this.theme = params.theme || {};
+        this.theme = params.theme[params.seriesName] || params.theme;
 
         /**
          * Whether label type or not.
