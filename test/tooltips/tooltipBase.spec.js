@@ -6,7 +6,7 @@
 
 'use strict';
 
-var TooltipBase = require('../../src/js/tooltips/tooltipBase'),
+var TooltipBase = require('../../src/js/components/tooltips/tooltipBase'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('TooltipBase', function() {

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var singleTooltipMixer = require('../../src/js/tooltips/singleTooltipMixer');
+var singleTooltipMixer = require('../../src/js/components/tooltips/singleTooltipMixer');
 var chartConst = require('../../src/js/const');
 var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');

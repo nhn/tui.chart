@@ -6,7 +6,7 @@
 
 'use strict';
 
-var MapChartCustomEvent = require('../../src/js/customEvents/mapChartCustomEvent'),
+var MapChartCustomEvent = require('../../src/js/components/customEvents/mapChartCustomEvent'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('Test for MapChartCustomEvent', function() {

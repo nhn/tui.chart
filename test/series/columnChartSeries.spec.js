@@ -6,7 +6,7 @@
 
 'use strict';
 
-var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js');
+var ColumnChartSeries = require('../../src/js/components/series/columnChartSeries.js');
 var SeriesDataModel = require('../../src/js/models/data/seriesDataModel');
 var seriesGroup = require('../../src/js/models/data/seriesGroup');
 var renderUtil = require('../../src/js/helpers/renderUtil.js');

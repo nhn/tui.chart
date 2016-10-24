@@ -11,7 +11,7 @@ var lineTypeMixer = require('./lineTypeMixer');
 var zoomMixer = require('./zoomMixer');
 var axisTypeMixer = require('./axisTypeMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
-var Series = require('../series/lineChartSeries');
+var Series = require('../components/series/lineChartSeries');
 
 var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**

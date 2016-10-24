@@ -8,7 +8,7 @@
 
 var BubbleChart = require('../../src/js/charts/bubbleChart');
 var axisDataMaker = require('../../src/js/models/scaleData/axisDataMaker');
-var CircleLegend = require('../../src/js/legends/circleLegend');
+var CircleLegend = require('../../src/js/components/legends/circleLegend');
 
 describe('Test for BubbleChart', function() {
     var bubbleChart, componentManager, dataProcessor, boundsModel, scaleDataModel, sereisDataModel;

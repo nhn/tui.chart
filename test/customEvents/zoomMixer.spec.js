@@ -6,8 +6,8 @@
 
 'use strict';
 
-var zoomMixer = require('../../src/js/customEvents/zoomMixer');
-var CustomEventBase = require('../../src/js/customEvents/customEventBase');
+var zoomMixer = require('../../src/js/components/customEvents/zoomMixer');
+var CustomEventBase = require('../../src/js/components/customEvents/customEventBase');
 var chartConst = require('../../src/js/const');
 var dom = require('../../src/js/helpers/domHandler');
 

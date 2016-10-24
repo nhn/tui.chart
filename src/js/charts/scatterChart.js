@@ -9,7 +9,7 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var Series = require('../series/scatterChartSeries');
+var Series = require('../components/series/scatterChartSeries');
 var axisTypeMixer = require('./axisTypeMixer');
 
 var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {

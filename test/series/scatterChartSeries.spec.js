@@ -6,7 +6,7 @@
 
 'use strict';
 
-var ScatterChartSeries = require('../../src/js/series/scatterChartSeries');
+var ScatterChartSeries = require('../../src/js/components/series/scatterChartSeries');
 var chartConst = require('../../src/js/const');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 

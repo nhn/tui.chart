@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BarChartSeries = require('../../src/js/series/barChartSeries');
+var BarChartSeries = require('../../src/js/components/series/barChartSeries');
 var SeriesDataModel = require('../../src/js/models/data/seriesDataModel');
 var seriesGroup = require('../../src/js/models/data/seriesGroup');
 var renderUtil = require('../../src/js/helpers/renderUtil');

@@ -8,10 +8,10 @@
 
 var ChartBase = require('./chartBase');
 var ColorSpectrum = require('./colorSpectrum');
-var Series = require('../series/treemapChartSeries');
-var Tooltip = require('../tooltips/tooltip');
-var Legend = require('../legends/spectrumLegend');
-var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
+var Series = require('../components/series/treemapChartSeries');
+var Tooltip = require('../components/tooltips/tooltip');
+var Legend = require('../components/legends/spectrumLegend');
+var BoundsTypeCustomEvent = require('../components/customEvents//boundsTypeCustomEvent');
 
 var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
     /**
@@ -28,7 +28,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        options.series = options.series || {};
+        //options.series = options.series || {};
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = false;
 
@@ -56,6 +56,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             colorSpectrum: colorSpectrum
         });
 
+        // TODO
         this.componentManager.register('tooltip', Tooltip, tui.util.extend({
             labelTheme: tui.util.pick(this.theme, 'series', 'label')
         }, this._makeTooltipData()));

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var AreaTypeDataModel = require('../../src/js/customEvents/areaTypeDataModel');
+var AreaTypeDataModel = require('../../src/js/components/customEvents/areaTypeDataModel');
 
 describe('Test for AreaTypeDataModel', function() {
     var dataModel;

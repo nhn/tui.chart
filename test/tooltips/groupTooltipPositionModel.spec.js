@@ -6,7 +6,7 @@
 
 'use strict';
 
-var GroupTooltipPositionModel = require('../../src/js/tooltips/groupTooltipPositionModel'),
+var GroupTooltipPositionModel = require('../../src/js/components/tooltips/groupTooltipPositionModel'),
     chartConst = require('../../src/js/const');
 
 describe('GroupTooltipPositionModel', function() {

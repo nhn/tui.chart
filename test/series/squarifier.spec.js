@@ -6,7 +6,7 @@
 
 'use strict';
 
-var squarifier = require('../../src/js/series/squarifier');
+var squarifier = require('../../src/js/components/series/squarifier');
 
 describe('test for squarifier', function() {
     describe('_calculateScale()', function() {

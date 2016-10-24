@@ -9,10 +9,10 @@
 
 var ChartBase = require('./chartBase');
 var ColorSpectrum = require('./colorSpectrum');
-var Series = require('../series/heatmapChartSeries');
+var Series = require('../components/series/heatmapChartSeries');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
-var Legend = require('../legends/spectrumLegend');
+var Legend = require('../components/legends/spectrumLegend');
 
 var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
     /**

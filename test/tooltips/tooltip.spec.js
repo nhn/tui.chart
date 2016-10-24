@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Tooltip = require('../../src/js/tooltips/tooltip'),
+var Tooltip = require('../../src/js/components/tooltips/tooltip'),
     DataProcessor = require('../../src/js/models/data/dataProcessor'),
     SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
     seriesGroup = require('../../src/js/models/data/seriesGroup');

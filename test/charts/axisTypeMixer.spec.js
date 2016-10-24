@@ -7,10 +7,10 @@
 'use strict';
 
 var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js');
-var Tooltip = require('../../src/js/tooltips/tooltip');
-var GroupTooltip = require('../../src/js/tooltips/groupTooltip');
-var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent');
-var BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
+var Tooltip = require('../../src/js/components/tooltips/tooltip');
+var GroupTooltip = require('../../src/js/components/tooltips/groupTooltip');
+var GroupTypeCustomEvent = require('../../src/js/components/customEvents/groupTypeCustomEvent');
+var BoundsTypeCustomEvent = require('../../src/js/components/customEvents/boundsTypeCustomEvent');
 
 describe('Test for ComboChart', function() {
     var componentMap = {};

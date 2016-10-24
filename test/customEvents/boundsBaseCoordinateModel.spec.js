@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BoundsBaseCoordinateModel = require('../../src/js/customEvents/boundsBaseCoordinateModel');
+var BoundsBaseCoordinateModel = require('../../src/js/components/customEvents/boundsBaseCoordinateModel');
 
 describe('Test for BoundsBaseCoordinateModel', function() {
     var coordinateModel;

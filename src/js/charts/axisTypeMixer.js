@@ -8,14 +8,14 @@
 'use strict';
 
 var predicate = require('../helpers/predicate');
-var Axis = require('../axes/axis');
-var Plot = require('../plots/plot');
-var Legend = require('../legends/legend');
-var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
-var GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent');
-var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
-var Tooltip = require('../tooltips/tooltip');
-var GroupTooltip = require('../tooltips/groupTooltip');
+var Axis = require('../components/axes/axis');
+var Plot = require('../components/plots/plot');
+var Legend = require('../components/legends/legend');
+var SimpleCustomEvent = require('../components/customEvents/simpleCustomEvent');
+var GroupTypeCustomEvent = require('../components/customEvents/groupTypeCustomEvent');
+var BoundsTypeCustomEvent = require('../components/customEvents/boundsTypeCustomEvent');
+var Tooltip = require('../components/tooltips/tooltip');
+var GroupTooltip = require('../components/tooltips/groupTooltip');
 
 /**
  * Axis limit value.

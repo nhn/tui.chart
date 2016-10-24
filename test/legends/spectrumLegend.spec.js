@@ -6,7 +6,7 @@
 
 'use strict';
 
-var SpectrumLegend = require('../../src/js/legends/spectrumLegend');
+var SpectrumLegend = require('../../src/js/components/legends/spectrumLegend');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for SpectrumLegend', function() {

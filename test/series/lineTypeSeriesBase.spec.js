@@ -6,7 +6,7 @@
 
 'use strict';
 
-var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
+var LineTypeSeriesBase = require('../../src/js/components/series/lineTypeSeriesBase'),
     SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
     SeriesGroup = require('../../src/js/models/data/seriesGroup'),
     dom = require('../../src/js/helpers/domHandler'),

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var LegendModel = require('../../src/js/legends/legendModel'),
+var LegendModel = require('../../src/js/components/legends/legendModel'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for LegendModel', function() {

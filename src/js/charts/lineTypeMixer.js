@@ -6,7 +6,7 @@
 
 'use strict';
 
-var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
+var AreaTypeCustomEvent = require('../components/customEvents//areaTypeCustomEvent');
 
 /**
  * lineTypeMixer is mixer of line type chart(line, area).

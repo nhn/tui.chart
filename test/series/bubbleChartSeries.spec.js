@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BubbleChartSeries = require('../../src/js/series/bubbleChartSeries'),
+var BubbleChartSeries = require('../../src/js/components/series/bubbleChartSeries'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('BubbleChartSeries', function() {

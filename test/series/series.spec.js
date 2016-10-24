@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Series = require('../../src/js/series/series');
+var Series = require('../../src/js/components/series/series');
 var chartConst = require('../../src/js/const');
 var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');

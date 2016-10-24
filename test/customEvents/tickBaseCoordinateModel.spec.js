@@ -6,7 +6,7 @@
 
 'use strict';
 
-var TickBaseCoordinateModel = require('../../src/js/customEvents/tickBaseCoordinateModel');
+var TickBaseCoordinateModel = require('../../src/js/components/customEvents/tickBaseCoordinateModel');
 
 describe('Test for TickBaseCoordinateModel', function() {
     var coordinateModel;

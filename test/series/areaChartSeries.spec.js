@@ -6,7 +6,7 @@
 
 'use strict';
 
-var AreaChartSeries = require('../../src/js/series/areaChartSeries'),
+var AreaChartSeries = require('../../src/js/components/series/areaChartSeries'),
     chartConst = require('../../src/js/const');
 
 describe('AreaChartSeries', function() {

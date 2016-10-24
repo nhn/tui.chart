@@ -7,15 +7,15 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var mapFactory = require('../factories/mapFactory');
+var mapManager = require('../factories/mapManager');
 var MapChartMapModel = require('./mapChartMapModel');
 var ColorSpectrum = require('./colorSpectrum');
 var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
-var Series = require('../series/mapChartSeries');
-var Zoom = require('../series/zoom');
-var Legend = require('../legends/spectrumLegend');
-var MapChartTooltip = require('../tooltips/mapChartTooltip');
-var mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
+var Series = require('../components/series/mapChartSeries');
+var Zoom = require('../components/series/zoom');
+var Legend = require('../components/legends/spectrumLegend');
+var MapChartTooltip = require('../components/tooltips/mapChartTooltip');
+var mapChartCustomEvent = require('../components/customEvents/mapChartCustomEvent');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
@@ -33,7 +33,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
          */
         this.className = 'tui-map-chart';
 
-        options.map = mapFactory.get(options.map);
+        options.map = mapManager.get(options.map);
         options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
 

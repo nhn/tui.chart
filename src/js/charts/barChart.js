@@ -11,7 +11,7 @@ var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
-var Series = require('../series/barChartSeries');
+var Series = require('../components/series/barChartSeries');
 
 var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
     /**

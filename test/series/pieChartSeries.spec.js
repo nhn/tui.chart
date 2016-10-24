@@ -6,7 +6,7 @@
 
 'use strict';
 
-var PieChartSeries = require('../../src/js/series/pieChartSeries.js');
+var PieChartSeries = require('../../src/js/components/series/pieChartSeries.js');
 var SeriesDataModel = require('../../src/js/models/data/seriesDataModel');
 var SeriesGroup = require('../../src/js/models/data/seriesGroup');
 var dom = require('../../src/js/helpers/domHandler.js');

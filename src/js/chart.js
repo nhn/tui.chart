@@ -10,7 +10,7 @@ var chartConst = require('./const');
 var chartFactory = require('./factories/chartFactory');
 var pluginFactory = require('./factories/pluginFactory');
 var themeManager = require('./themes/themeManager');
-var mapFactory = require('./factories/mapFactory');
+var mapManager = require('./factories/mapManager');
 
 require('./polyfill');
 require('./code-snippet-util');
@@ -1265,7 +1265,7 @@ tui.chart.registerTheme = function(themeName, theme) {
  * tui.chart.registerMap('newMap', data);
  */
 tui.chart.registerMap = function(mapName, data) {
-    mapFactory.register(mapName, data);
+    mapManager.register(mapName, data);
 };
 
 /**

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var CircleLegend = require('../../src/js/legends/circleLegend');
+var CircleLegend = require('../../src/js/components/legends/circleLegend');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for CircleLegend', function() {

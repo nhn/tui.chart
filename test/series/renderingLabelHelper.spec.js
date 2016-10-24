@@ -6,10 +6,10 @@
 
 'use strict';
 
-var labelHelper = require('../../src/js/series/renderingLabelHelper');
-var TreemapChartSeries = require('../../src/js/series/treemapChartSeries');
+var labelHelper = require('../../src/js/components/series/renderingLabelHelper');
+var TreemapChartSeries = require('../../src/js/components/series/treemapChartSeries');
 var SeriesDataModel = require('../../src/js/models/data/seriesDataModelForTreemap');
-var seriesTemplate = require('../../src/js/series/seriesTemplate');
+var seriesTemplate = require('../../src/js/components/series/seriesTemplate');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for renderingLabelHelper', function() {

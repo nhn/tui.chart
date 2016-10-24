@@ -9,9 +9,9 @@
 var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
-var ColumnChartSeries = require('../series/columnChartSeries');
-var LineChartSeries = require('../series/lineChartSeries');
-var AreaChartSeries = require('../series/areaChartSeries');
+var ColumnChartSeries = require('../components/series/columnChartSeries');
+var LineChartSeries = require('../components/series/lineChartSeries');
+var AreaChartSeries = require('../components/series/areaChartSeries');
 
 var verticalTypeComboMixer = {
     /**

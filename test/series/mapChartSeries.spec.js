@@ -6,7 +6,7 @@
 
 'use strict';
 
-var MapChartSeries = require('../../src/js/series/mapChartSeries.js');
+var MapChartSeries = require('../../src/js/components/series/mapChartSeries.js');
 
 describe('MapChartSeries', function() {
     var series, dataProcessor, mapModel;

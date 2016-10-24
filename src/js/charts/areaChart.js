@@ -12,7 +12,7 @@ var zoomMixer = require('./zoomMixer');
 var axisTypeMixer = require('./axisTypeMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
 var rawDataHandler = require('../models/data/rawDataHandler');
-var Series = require('../series/areaChartSeries');
+var Series = require('../components/series/areaChartSeries');
 
 var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent');
+var GroupTypeCustomEvent = require('../../src/js/components/customEvents/groupTypeCustomEvent');
 
 describe('Test for GroupTypeCustomEvent', function() {
     var groupTypeCustomEvent;

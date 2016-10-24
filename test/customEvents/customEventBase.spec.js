@@ -6,7 +6,7 @@
 
 'use strict';
 
-var CustomEventBase = require('../../src/js/customEvents/customEventBase');
+var CustomEventBase = require('../../src/js/components/customEvents/customEventBase');
 var chartConst = require('../../src/js/const');
 
 describe('Test for CustomEventBase', function() {

@@ -8,8 +8,8 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var Series = require('../series/bubbleChartSeries');
-var CircleLegend = require('../legends/circleLegend');
+var Series = require('../components/series/bubbleChartSeries');
+var CircleLegend = require('../components/legends/circleLegend');
 var axisTypeMixer = require('./axisTypeMixer');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {

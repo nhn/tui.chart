@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Legend = require('../../src/js/legends/legend'),
+var Legend = require('../../src/js/components/legends/legend'),
     chartConst = require('../../src/js/const'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');

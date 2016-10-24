@@ -6,7 +6,7 @@
 
 'use strick';
 
-var Zoom = require('../../src/js/series/zoom');
+var Zoom = require('../../src/js/components/series/zoom');
 
 describe('Zoom', function() {
     var zoom;

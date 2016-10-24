@@ -6,7 +6,7 @@
 
 'use strict';
 
-var HeatmapChartSeries = require('../../src/js/series/heatmapChartSeries.js');
+var HeatmapChartSeries = require('../../src/js/components/series/heatmapChartSeries.js');
 
 describe('HeatmapChartSeries', function() {
     var series;

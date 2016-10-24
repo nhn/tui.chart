@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BarTypeSeriesBase = require('../../src/js/series/barTypeSeriesBase.js'),
+var BarTypeSeriesBase = require('../../src/js/components/series/barTypeSeriesBase.js'),
     SeriesDataModel = require('../../src/js/models/data/seriesDataModel'),
     SeriesGroup = require('../../src/js/models/data/seriesGroup'),
     dom = require('../../src/js/helpers/domHandler.js'),

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Axis = require('../../src/js/axes/axis');
+var Axis = require('../../src/js/components/axes/axis');
 var dom = require('../../src/js/helpers/domHandler');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 

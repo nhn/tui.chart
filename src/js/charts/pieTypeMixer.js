@@ -6,10 +6,10 @@
 
 'use strict';
 
-var Legend = require('../legends/legend');
-var Tooltip = require('../tooltips/tooltip');
-var PieChartSeries = require('../series/pieChartSeries');
-var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
+var Legend = require('../components/legends/legend');
+var Tooltip = require('../components/tooltips/tooltip');
+var PieChartSeries = require('../components/series/pieChartSeries');
+var SimpleCustomEvent = require('../components/customEvents/simpleCustomEvent');
 
 /**
  * pieTypeMixer is mixer of pie type chart.
