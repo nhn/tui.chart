@@ -37,6 +37,12 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         this.stack = params.stack || chartConst.DEFAULT_STACK;
 
         /**
+         * whether diverging chart or not
+         * @type {boolean}
+         */
+        this.isDivergingChart = params.isDivergingChart;
+
+        /**
          * format functions
          * @type {Array.<function>}
          */
@@ -113,18 +119,24 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
 
     /**
      * Initialize values of item.
-     * @param {number} value - value
+     * @param {number|Array.<number>} rawValue - raw value
      * @param {number} index - raw data index
      * @private
      */
-    _initValues: function(value, index) {
-        var values = this._createValues(value);
+    _initValues: function(rawValue, index) {
+        var values = this._createValues(rawValue);
         var areaType = 'makingSeriesLabel';
         var hasStart = values.length > 1;
+        var value = values[0];
 
-        this.value = this.end = values[0];
+        this.value = this.end = value;
         this.index = index;
-        this.label = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
+
+        if (this.isDivergingChart) {
+            value = Math.abs(value);
+        }
+
+        this.label = renderUtil.formatValue(value, this.formatFunctions, this.chartType, areaType);
         this.endLabel = this.label;
 
         if (hasStart) {

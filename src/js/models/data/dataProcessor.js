@@ -58,8 +58,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {Array.<string>} seriesNames chart types
      */
     init: function(rawData, chartType, options, seriesNames) {
-        var seriesOption = options.series || {};
-
         /**
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
@@ -83,12 +81,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * @type {Array.<string>}
          */
         this.seriesNames = seriesNames;
-
-        /**
-         * diverging option
-         * @type {boolean}
-         */
-        this.divergingOption = predicate.isBarTypeChart(options.chartType) && seriesOption.diverging;
 
         /**
          * legend data for rendering legend of group tooltip

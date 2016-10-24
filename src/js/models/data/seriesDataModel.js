@@ -97,6 +97,14 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
          */
         this.groups = null;
 
+        this.options.series = this.options.series || {};
+
+        /**
+         * whether diverging chart or not.
+         * @type {boolean}
+         */
+        this.isDivergingChart = predicate.isDivergingChart(chartType, this.options.series.diverging);
+
         /**
          * map of values by value type like value, x, y, r.
          * @type {object.<string, Array.<number>>}
@@ -141,6 +149,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         var chartType = this.chartType;
         var formatFunctions = this.formatFunctions;
         var xAxisOption = this.options.xAxis;
+        var isDivergingChart = this.isDivergingChart;
         var sortValues, SeriesItemClass;
 
         if (this.isCoordinateType) {
@@ -168,6 +177,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                     formatFunctions: formatFunctions,
                     index: index,
                     stack: stack,
+                    isDivergingChart: isDivergingChart,
                     xAxisType: xAxisOption.type,
                     dateFormat: xAxisOption.dateFormat
                 });
@@ -515,7 +525,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         if (isAllowedStackOption && predicate.isNormalStack(stackType)) {
             this._addRatiosWhenNormalStacked(limit);
         } else if (isAllowedStackOption && predicate.isPercentStack(stackType)) {
-            if (this.divergingOption) {
+            if (this.isDivergingChart) {
                 this._addRatiosWhenDivergingStacked();
             } else {
                 this._addRatiosWhenPercentStacked();

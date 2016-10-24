@@ -478,7 +478,7 @@ describe('Test for SeriesDataModel', function() {
 
         it('stackType option이 유효한 차트의 옵션이 diverging percent stackType인 경우에는 _addRatiosWhenDivergingStacked()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenDivergingStacked');
-            seriesDataModel.divergingOption = true;
+            seriesDataModel.isDivergingChart = true;
             seriesDataModel.chartType = 'bar';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
 

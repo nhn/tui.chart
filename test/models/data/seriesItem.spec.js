@@ -16,7 +16,7 @@ describe('Test for SeriesItem', function() {
     });
 
     describe('_initValues()', function() {
-        it('seriesItem의 value들을 초기화 합니다.', function() {
+        it('initialize values of item, when raw value is number', function() {
             seriesItem.formatFunctions = [function(value) {
                 return '00' + value;
             }];
@@ -29,7 +29,7 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.isRange).toBe(false);
         });
 
-        it('value가 배열값이면 start도 초기화하고 label도 변경 합니다.', function() {
+        it('initialize values of item, when raw value is array', function() {
             seriesItem.formatFunctions = [function(value) {
                 return '00' + value;
             }];
@@ -42,6 +42,14 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.endLabel).toBe('0040');
             expect(seriesItem.startLabel).toBe('0010');
             expect(seriesItem.isRange).toBe(true);
+        });
+
+        it('if diverging chart, label is plus value', function() {
+            seriesItem.isDivergingChart = true;
+            seriesItem._initValues(-10);
+
+            expect(seriesItem.value).toBe(-10);
+            expect(seriesItem.label).toBe('10');
         });
     });
 
