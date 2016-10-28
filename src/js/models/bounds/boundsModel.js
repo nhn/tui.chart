@@ -204,7 +204,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      */
     _registerTitleDimension: function() {
         var chartOptions = this.options.chart || {},
-            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, this.theme.title),
+            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title.text, this.theme.title),
             dimension = {
                 height: titleHeight + chartConst.TITLE_PADDING
             };

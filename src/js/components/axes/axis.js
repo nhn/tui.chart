@@ -170,7 +170,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var lCategories = categories.slice(0, halfTickCount);
         var rCategories = categories.slice(halfTickCount - 1, tickCount);
         var additionalWidth = lWidth + this.dimensionMap.yAxis.width;
-        var lContainers = this._renderChildContainers(lWidth, lWidth, halfTickCount, lCategories);
+        var lContainers = this._renderChildContainers(lWidth, lWidth, halfTickCount, lCategories, 0);
         var rContainers = this._renderChildContainers(rWidth, rWidth, halfTickCount, rCategories, additionalWidth);
         var rTitleContainer = rContainers[0];
 
@@ -722,6 +722,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var labelsHtml;
 
         if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)) {
+            additionalSize -= ((labelSize * options.labelInterval / 2) - (labelSize / 2))
             labelSize *= options.labelInterval;
         }
 

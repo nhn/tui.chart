@@ -148,10 +148,10 @@ var scaleDataMaker = {
                 baseLimit.min = -baseLimit.max;
                 baseLimit.max = -tmpMin;
             }
-
-            baseLimit.min = tui.util.isUndefined(limitOption.min) ? baseLimit.min : limitOption.min;
-            baseLimit.max = tui.util.isUndefined(limitOption.max) ? baseLimit.max : limitOption.max;
         }
+
+        baseLimit.min = tui.util.isUndefined(limitOption.min) ? baseLimit.min : limitOption.min;
+        baseLimit.max = tui.util.isUndefined(limitOption.max) ? baseLimit.max : limitOption.max;
 
         return baseLimit;
     },
@@ -623,6 +623,7 @@ var scaleDataMaker = {
         if (predicate.isDivergingChart(chartType, options.diverging)) {
             dataLimit = this._makeLimitForDivergingOption(dataLimit);
         }
+
         // 01. limit, options 정보를 정수형으로 변경
         integerTypeScale = this._makeIntegerTypeScale(dataLimit, options.limitOption);
 

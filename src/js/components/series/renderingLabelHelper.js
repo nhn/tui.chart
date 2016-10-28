@@ -268,23 +268,35 @@ var renderingLabelHelper = {
      * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
      * @param {object} theme - theme for series label
      * @param {function} shouldDimmed - returns whether should dimmed or not
+     * @param {function} template - label template
      * @returns {string}
      */
-    makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed) {
+    makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed, template) {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-        var makePosition = tui.util.bind(this._makePositionForBoundType, this);
+        var total;
+
+        if (template) {
+            total = tui.util.sum(tui.util.pluck(seriesItems, 'value'));
+        }
 
         var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
             var bound = boundMap[seriesItem.id];
             var html = '';
-            var position, compareIndex;
+            var position, compareIndex, label;
 
             if (bound) {
-                position = self._makePositionMap(seriesItem, bound, labelHeight, theme, makePosition).end;
                 compareIndex = shouldDimmed(seriesItem) ? -1 : null;
 
-                html = self.makeSeriesLabelHtml(position, seriesItem.label, theme, index, compareIndex);
+                if (template) {
+                    label = template(seriesItem.pickLabelTemplateData(total));
+                    labelHeight = renderUtil.getRenderedLabelHeight(label, theme);
+                } else {
+                    label = seriesItem.label;
+                }
+
+                position = self._makePositionForBoundType(bound, labelHeight, label, theme, seriesItem.value >= 0);
+                html = self.makeSeriesLabelHtml(position, label, theme, index, compareIndex);
             }
 
             return html;
