@@ -184,7 +184,7 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('makeLabelsHtmlForTreemap', function() {
-        it('make labels html for treemap, when make', function() {
+        it('make labels html for treemap', function() {
             var seriesDataModel = new SeriesDataModel([], 'treemap');
             var hoverSeriesItem = {
                 id: 'id_0',
@@ -262,6 +262,97 @@ describe('Test for renderingLabelHelper', function() {
                 ' style="left:275px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">label1-2-1-1</div>' +
             '<div class="tui-chart-series-label"' +
                 ' style="left:387.5px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">label1-2-1-2</div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('make labels html for treemap, when has labelTemplate', function() {
+            var seriesDataModel = new SeriesDataModel([], 'treemap');
+            var hoverSeriesItem = {
+                id: 'id_0',
+                depth: 1
+            };
+            var series = new TreemapChartSeries({
+                chartType: 'treemap',
+                theme: {
+                    treemap: {
+                        label: {
+                            fontSize: 12,
+                            fontFamily: 'Verdana',
+                            fontWeight: 'normal'
+                        }
+                    }
+                },
+                eventBus: new tui.util.CustomEvents()
+            });
+            var labelTemplate = function(data) {
+                return '<div>' + data.label + '</div>';
+            };
+            var shouldDimmed, seriesItems, boundMap, actual, expected;
+
+            series.layout = {
+                dimension: {
+                    width: 600,
+                    height: 400
+                }
+            };
+            seriesDataModel.rawSeriesData = [
+                {
+                    label: 'label1',
+                    children: [
+                        {
+                            label: 'label1-1',
+                            value: 6
+                        }, {
+                            label: 'label1-2',
+                            children: [
+                                {
+                                    label: 'label1-2-1',
+                                    children: [
+                                        {
+                                            label: 'label1-2-1-1',
+                                            value: 2
+                                        },
+                                        {
+                                            label: 'label1-2-1-2',
+                                            value: 1
+                                        }
+                                    ]
+                                },
+                                {
+                                    label: 'label3-2',
+                                    value: 3
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    label: 'lable2',
+                    value: 4
+                }
+            ];
+
+            spyOn(series, '_getSeriesDataModel').and.returnValue(seriesDataModel);
+            shouldDimmed = tui.util.bind(series._shouldDimmed, series, seriesDataModel, hoverSeriesItem);
+            seriesItems = seriesDataModel.findLeafSeriesItems(0);
+            boundMap = series._getBoundMap();
+
+            actual = labelHelper.makeLabelsHtmlForTreemap(
+                seriesItems, boundMap, series.theme.label, shouldDimmed, labelTemplate
+            );
+            expected = '<div class="tui-chart-series-label"' +
+                    ' style="left:87.5px;top:191px;font-family:Verdana;font-size:12px;font-weight:normal">' +
+                    '<div>label1-1</div></div>' +
+                '<div class="tui-chart-series-label"' +
+                    ' style="left:312.5px;top:291px;font-family:Verdana;font-size:12px;font-weight:normal">' +
+                    '<div>label3-2</div></div>' +
+                '<div class="tui-chart-series-label"' +
+                    ' style="left:275px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">' +
+                    '<div>label1-2-1-1</div></div>' +
+                '<div class="tui-chart-series-label"' +
+                    ' style="left:387.5px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">' +
+                    '<div>label1-2-1-2</div></div>';
 
             expect(actual).toBe(expected);
 
