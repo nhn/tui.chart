@@ -122,6 +122,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     _setDataForRendering: function(data) {
         if (data) {
             this.layout = data.layout;
+            this.dimensionMap = data.dimensionMap;
             this.axisDataMap = data.axisDataMap;
         }
     },

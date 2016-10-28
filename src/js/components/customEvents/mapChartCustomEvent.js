@@ -39,16 +39,6 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
          * @type {boolean}
          */
         this.isDown = false;
-
-        this._attachToEventBus();
-    },
-
-    /**
-     * Attach to event bus.
-     * @private
-     */
-    _attachToEventBus: function() {
-        this.eventBus.on('wheel', this.onWheel, this);
     },
 
     /**

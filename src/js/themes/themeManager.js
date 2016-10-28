@@ -131,7 +131,7 @@ module.exports = {
             theme.colors = baseColors;
         }
 
-        if (rawTheme.singleColors) {
+        if (rawTheme.singleColors && rawTheme.singleColors.length) {
             theme.singleColors = rawTheme.singleColors.concat(baseColors);
         }
     },
