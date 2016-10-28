@@ -100,7 +100,7 @@ describe('Test for ScaleDataModel', function() {
             spyOn(axisDataMaker, 'updateLabelAxisDataForAutoTickInterval');
             scaleDataModel.addedDataCount = 0;
 
-            scaleDataModel.updateXAxisDataForAutoTickInterval(false);
+            scaleDataModel.updateXAxisDataForAutoTickInterval({}, false);
 
             expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0, false);
         });
@@ -112,21 +112,22 @@ describe('Test for ScaleDataModel', function() {
             spyOn(axisDataMaker, 'updateLabelAxisDataForAutoTickInterval');
             scaleDataModel.addedDataCount = 0;
 
-            scaleDataModel.updateXAxisDataForAutoTickInterval(false);
+            scaleDataModel.updateXAxisDataForAutoTickInterval({}, false);
 
             expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0, false);
         });
 
         it('update xAxisData, when has not shifting option and has prevUpdatedData', function() {
+            var prevXAxisData = 'previous xAxis data';
+
             scaleDataModel.options.series = {};
-            scaleDataModel.prevUpdatedData = 'previous updated data';
             scaleDataModel.firstTickCount = 5;
             spyOn(axisDataMaker, 'updateLabelAxisDataForStackingDynamicData');
 
-            scaleDataModel.updateXAxisDataForAutoTickInterval();
+            scaleDataModel.updateXAxisDataForAutoTickInterval(prevXAxisData);
 
             expect(axisDataMaker.updateLabelAxisDataForStackingDynamicData).toHaveBeenCalledWith(
-                {}, 'previous updated data', 5
+                {}, 'previous xAxis data', 5
             );
         });
     });

@@ -57,6 +57,7 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @override
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        this._initForAddingData();
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
     }
 });

@@ -66,6 +66,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.eventBus = new tui.util.CustomEvents();
 
         /**
+         * previous xAxis data
+         * @type {null|object}
+         */
+        this.prevXAxisData = null;
+
+        /**
          * component manager
          * @type {ComponentManager}
          */
@@ -285,6 +291,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Build bounds and scale data.
+     * @param {object} prevXAxisData - previous xAxis data
      * @param {boolean} addingDataMode - whether adding data mode or not
      * @returns {{
      *      layoutBounds: {
@@ -297,7 +304,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * }}
      * @private
      */
-    _buildBoundsAndScaleData: function(addingDataMode) {
+    _buildBoundsAndScaleData: function(prevXAxisData, addingDataMode) {
         return boundsAndScaleBuilder.build(this.dataProcessor, this.componentManager, {
             chartType: this.chartType,
             seriesNames: this.seriesNames,
@@ -308,6 +315,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             isVertical: this.isVertical,
             hasRightYAxis: this.hasRightYAxis,
             addedDataCount: this.addedDataCount,
+            prevXAxisData: prevXAxisData,
             addingDataMode: addingDataMode
         });
     },
@@ -326,7 +334,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _render: function(onRender, addingDataMode) {
-        var boundsAndScale = this._buildBoundsAndScaleData(addingDataMode);
+        var boundsAndScale = this._buildBoundsAndScaleData(this.prevXAxisData, addingDataMode);
+
+        if (boundsAndScale.axisDataMap.xAxis) {
+            this.prevXAxisData = boundsAndScale.axisDataMap.xAxis;
+        }
 
         // 비율값 추가
         this._addDataRatios(boundsAndScale.limitMap);

@@ -52,6 +52,7 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
 
         tui.util.extend(this, chartTypesMap);
 
+        this._initForAddingData();
         this._changeCheckedLegends(checkedLegends, rawData, chartTypesMap);
     }
 });

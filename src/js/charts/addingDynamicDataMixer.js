@@ -42,6 +42,12 @@ var addingDynamicDataMixer = {
          * @type {null | Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}}
          */
         this.checkedLegends = null;
+
+        /**
+         * previous xAxis data
+         * @type {null|object}
+         */
+        this.prevXAxisData = null;
     },
 
     /**
@@ -81,6 +87,7 @@ var addingDynamicDataMixer = {
 
         this._render(function(boundsAndScale) {
             var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
+
             self.componentManager.render('animateForAddingData', boundsAndScale, {
                 tickSize: tickSize,
                 shifting: shiftingOption
@@ -119,6 +126,9 @@ var addingDynamicDataMixer = {
         }
 
         if (this.paused) {
+            if (this.options.series.shifting) {
+                this.dataProcessor.shiftData();
+            }
             return;
         }
 
@@ -196,6 +206,7 @@ var addingDynamicDataMixer = {
      */
     _changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         var self = this;
+        var shiftingOption = !!this.options.series.shifting;
         var pastPaused = this.paused;
 
         if (!pastPaused) {
@@ -207,6 +218,7 @@ var addingDynamicDataMixer = {
 
         if (!pastPaused) {
             setTimeout(function() {
+                self.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
                 self._restartAnimationForAddingData();
             }, chartConst.RERENDER_TIME);
         }

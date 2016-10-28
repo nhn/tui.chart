@@ -172,7 +172,7 @@ var boundsAndScaleBuilder = {
         if (componentManager.has('xAxis')) {
             // 08. 자동 tick 계산 옵션이 있을 경우에 axisData 갱신
             if (predicate.isAutoTickInterval(options.xAxis.tickInterval)) {
-                scaleDataModel.updateXAxisDataForAutoTickInterval(addingDataMode);
+                scaleDataModel.updateXAxisDataForAutoTickInterval(params.prevXAxisData, addingDataMode);
             }
 
             // 09. x축 label의 회전 여부 관련한 axisData 갱신

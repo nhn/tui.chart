@@ -14,7 +14,8 @@ describe('Test for addingDynamicDataMixer', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-                    ['getCategoryCount', 'shiftData', 'addDataFromDynamicData', 'getValues', 'isCoordinateType']);
+                    ['getCategoryCount', 'shiftData', 'addDataFromDynamicData',
+                        'addDataFromRemainDynamicData', 'getValues', 'isCoordinateType']);
 
         componentManager = jasmine.createSpyObj('componentManager', ['render']);
 

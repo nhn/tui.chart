@@ -38,7 +38,6 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      * Initialize for auto tick interval.
      */
     initForAutoTickInterval: function() {
-        this.prevUpdatedData = null;
         this.firstTickCount = null;
     },
 
@@ -301,20 +300,17 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      * Update x axis data for auto tick interval.
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
-    updateXAxisDataForAutoTickInterval: function(addingDataMode) {
+    updateXAxisDataForAutoTickInterval: function(prevXAxisData, addingDataMode) {
         var shiftingOption = this.options.series.shifting;
         var xAxisData = this.axisDataMap.xAxis;
         var seriesWidth = this.boundsModel.getDimension('series').width;
-        var prevData = this.prevUpdatedData;
         var addedCount = this.addedDataCount;
 
-        if (shiftingOption || !prevData) {
+        if (shiftingOption || !prevXAxisData) {
             axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, addedCount, addingDataMode);
         } else {
-            axisDataMaker.updateLabelAxisDataForStackingDynamicData(xAxisData, prevData, this.firstTickCount);
+            axisDataMaker.updateLabelAxisDataForStackingDynamicData(xAxisData, prevXAxisData, this.firstTickCount);
         }
-
-        this.prevUpdatedData = xAxisData;
 
         if (!this.firstTickCount) {
             this.firstTickCount = xAxisData.tickCount;
