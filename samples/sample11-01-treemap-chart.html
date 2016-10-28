@@ -11,7 +11,7 @@
 <div id="chart-area"></div>
 <div class="custom-area">
     <div class="apply-btn-area">
-        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        <input type="checkbox" id="use-theme" checked disabled><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
         <input type="hidden" id="type" value="treemapChart" />
@@ -88,7 +88,13 @@
     "series": {
         "showLabel": true,
         "zoomable": true,
-        "useLeafLabel": false
+        "useLeafLabel": false,
+        "labelTemplate": function(data) {
+            var percentage = (data.ratio * 100).toFixed(0);
+            return '<div>' + data.label + '</div>' +
+                    '<div>-</div>' +
+                    '<div style="font-size:24px;color:#555555;">'+ percentage + '%</div>';
+        }
     },
     "tooltip": {
         "suffix": "GB"
@@ -100,13 +106,14 @@
             <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
         </div>
     </div>
-    <div id="theme-area">
+    <div id="theme-area" style="display:block">
         <div>Chart Theme</div>
         <textarea id="theme">
 {
     "series": {
             "colors": ["#63A69F", "#F2E1AC", "#F2836B"],
-            "borderColor": "#F4511E"
+            "borderColor": "#cccccc",
+            "borderWidth": 5
     }
 }
         </textarea>
@@ -185,7 +192,13 @@
         series: {
             showLabel: true,
             zoomable: true,
-            useLeafLabel: false
+            useLeafLabel: false,
+            labelTemplate: function(data) {
+                var percentage = (data.ratio * 100).toFixed(0);
+                return '<div>' + data.label + '</div>' +
+                        '<div>-</div>' +
+                        '<div style="font-size:24px;color:#555555;">'+ percentage + '%</div>';
+            }
         },
         tooltip: {
             suffix: 'GB'
