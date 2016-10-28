@@ -195,7 +195,7 @@ var boundsAndScaleBuilder = {
      *          xAxis: ?{min: number, max: number},
      *          yAxis: ?{min: number, max: number},
      *          rightYAxis: ?{min: number, max: number},
-     *          legend: ?{min: number, max: number},
+     *          legend: ?{min: number, max: number}
      *      },
      *      axisDataMap: ?object,
      *      maxRadius: ?number,

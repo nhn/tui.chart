@@ -216,7 +216,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
         var result = null;
         var candidates;
 
-        if (groupIndex > -1) {
+        if (groupIndex > -1 && this.data[groupIndex]) {
             // layerX, layerY를 포함하는 data 추출
             candidates = this._findCandidates(this.data[groupIndex], layerX, layerY);
 

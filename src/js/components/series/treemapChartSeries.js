@@ -212,7 +212,9 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         }
 
         shouldDimmed = tui.util.bind(this._shouldDimmed, this, seriesDataModel, hoverSeriesItem);
-        html = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, this.theme.label, shouldDimmed);
+        html = labelHelper.makeLabelsHtmlForTreemap(
+            seriesItems, boundMap, this.theme.label, shouldDimmed, this.options.labelTemplate
+        );
 
         labelContainer.innerHTML = html;
     },

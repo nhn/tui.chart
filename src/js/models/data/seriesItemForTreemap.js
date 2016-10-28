@@ -65,6 +65,26 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
             value: this.value,
             label: label
         };
+    },
+
+    /**
+     * Pick data for label template.
+     * @param {number} total - value total
+     * @returns {{value: number, ratio: number, label: string, colorValue: ?number, colorValueRatio: ?number}}
+     */
+    pickLabelTemplateData: function(total) {
+        var templateData = {
+            value: this.value,
+            ratio: (this.value / total),
+            label: this.label
+        };
+
+        if (tui.util.isExisty(this.colorValue)) {
+            templateData.colorValue = this.colorValue;
+            templateData.colorValueRatio = this.ratio;
+        }
+
+        return templateData;
     }
 });
 

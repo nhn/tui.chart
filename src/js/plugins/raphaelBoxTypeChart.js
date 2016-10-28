@@ -63,6 +63,11 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         this.borderColor = this.theme.borderColor || 'none';
 
         /**
+         * border width for rendering box
+         */
+        this.borderWidth = this.theme.borderWidth;
+
+        /**
          * group bounds
          * @type {Array.<Array.<object>>|object.<string, object>}
          */
@@ -188,6 +193,27 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
     },
 
     /**
+     * Get stroke width.
+     * @param {?number} depth - depth
+     * @param {number} startDepth - start depth
+     * @returns {number}
+     * @private
+     */
+    _getStrokeWidth: function(depth, startDepth) {
+        var strokeWidth;
+
+        if (this.borderWidth) {
+            strokeWidth = this.borderWidth;
+        } else if (tui.util.isExisty(depth)) {
+            strokeWidth = Math.max(MIN_BORDER_WIDTH, MAX_BORDER_WIDTH - (depth - startDepth));
+        } else {
+            strokeWidth = MIN_BORDER_WIDTH;
+        }
+
+        return strokeWidth;
+    },
+
+    /**
      * Render boxes.
      * @param {SeriesDataModel} seriesDataModel - seriesDataModel
      * @param {number} startDepth - start depth
@@ -210,12 +236,8 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var result = null;
-                var strokeWidth = MIN_BORDER_WIDTH;
+                var strokeWidth = self._getStrokeWidth(seriesItem.depth, startDepth);
                 var bound, color;
-
-                if (tui.util.isExisty(seriesItem.depth)) {
-                    strokeWidth = Math.max(MIN_BORDER_WIDTH, MAX_BORDER_WIDTH - (seriesItem.depth - startDepth));
-                }
 
                 seriesItem.groupIndex = groupIndex;
                 seriesItem.index = index;
