@@ -7,16 +7,15 @@
 'use strict';
 
 var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js');
-var axisDataMaker = require('../../src/js/helpers/axisDataMaker');
-var Tooltip = require('../../src/js/tooltips/tooltip');
-var GroupTooltip = require('../../src/js/tooltips/groupTooltip');
-var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent');
-var BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
+var Tooltip = require('../../src/js/components/tooltips/tooltip');
+var GroupTooltip = require('../../src/js/components/tooltips/groupTooltip');
+var GroupTypeCustomEvent = require('../../src/js/components/customEvents/groupTypeCustomEvent');
+var BoundsTypeCustomEvent = require('../../src/js/components/customEvents/boundsTypeCustomEvent');
 
 describe('Test for ComboChart', function() {
     var componentMap = {};
     var spyObjs = {};
-    var componentManager, dataProcessor, boundsMaker;
+    var componentManager, dataProcessor;
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
@@ -32,58 +31,9 @@ describe('Test for ComboChart', function() {
 
         dataProcessor = jasmine.createSpyObj('dataProcessor',
                                     ['getCategories', 'isCoordinateType', 'addDataRatios', 'addDataRatiosForCoordinateType']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getAxesData']);
 
         axisTypeMixer.dataProcessor = dataProcessor;
-        axisTypeMixer.boundsMaker = boundsMaker;
         axisTypeMixer.options = {};
-    });
-
-    describe('_makeAxisData()', function() {
-        it('axisSacleMaker가 있으면 axisDataMaker.makeValueAxisData의 수행 결과를 반환합니다.', function() {
-            var axisScaleMaker = 'instance of axisScaleMaker';
-            var actual, expected;
-
-            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
-            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
-            axisTypeMixer.chartType = 'bar';
-
-            actual = axisTypeMixer._makeAxisData(axisScaleMaker, 'options', true);
-            expected = 'value type';
-
-            expect(axisDataMaker.makeValueAxisData).toHaveBeenCalledWith({
-                axisScaleMaker: axisScaleMaker,
-                chartType: 'bar',
-                dataProcessor: dataProcessor,
-                options: 'options',
-                isVertical: true,
-                isPositionRight: false,
-                aligned: false
-            });
-            expect(actual).toBe(expected);
-        });
-
-        it('axisSacleMaker가 없으면 axisDataMaker.makeLabelAxisData의 수행 결과를 반환합니다.', function() {
-            var actual, expected;
-
-            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
-            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
-            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
-            axisTypeMixer.options = {};
-
-            actual = axisTypeMixer._makeAxisData(null, 'options');
-            expected = 'label type';
-
-            expect(axisDataMaker.makeLabelAxisData).toHaveBeenCalledWith({
-                labels: ['cate1', 'cate2'],
-                options: 'options',
-                isVertical: false,
-                isPositionRight: false,
-                aligned: false,
-                addedDataCount: 0
-            });
-            expect(actual).toBe(expected);
-        });
     });
 
     describe('_addAxesComponents', function() {
@@ -208,156 +158,38 @@ describe('Test for ComboChart', function() {
         });
     });
 
-    describe('_getLimitMap()', function() {
-        it('가로형 차트에서는 xAxis의 limit 정보를 chart type을 키로하여 반환합니다.', function() {
-            var xAxis = {
-                    limit: {}
-                },
-                yAxis = {
-                    limit: {}
-                },
-                actual = axisTypeMixer._getLimitMap({
-                    xAxis: xAxis,
-                    yAxis: yAxis
-                }, ['bar'], false);
-            expect(actual.bar).toBe(xAxis.limit);
-        });
-
-        it('세로형 차트에서는 yAxis의 limit 정보를 chart type을 키로하여 반환합니다.', function() {
-            var yAxis, actual;
-
-            axisTypeMixer.isVertical = true;
-            yAxis = {
-                limit: {}
-            };
-            actual = axisTypeMixer._getLimitMap({
-                yAxis: yAxis
-            }, ['column'], true);
-
-            expect(actual.column).toBe(yAxis.limit);
-        });
-
-        it('chart type이 두가지인(콤보차트) 세로형 차트에서는 마지막에 오는 chartType을 키로 rightYAxis의 limit 정보를 포함하는 데이터도 포함됩니다.', function() {
-            var yAxis, rightYAxis, actual;
-
-            axisTypeMixer.isVertical = true;
-            yAxis = {
-                limit: {}
-            };
-            rightYAxis = {
-                limit: {}
-            };
-            actual = axisTypeMixer._getLimitMap({
-                yAxis: yAxis,
-                rightYAxis: rightYAxis
-            }, ['column', 'line']);
-
-            expect(actual.column).toBe(yAxis.limit);
-            expect(actual.line).toBe(rightYAxis.limit);
-        });
-    });
-
-    describe('_makeSeriesDataForRendering()', function() {
-        it('가로형(!!isVertical === false) 차트의 시리즈 데이터는 x axis의 limit과 aligned를 반환합니다.', function() {
-            var xAxis, yAxis, actual;
-
-            axisTypeMixer.isVertical = false;
-            xAxis = {
-                limit: {},
-                aligned: true
-            };
-            yAxis = {
-                limit: {}
-            };
-            actual = axisTypeMixer._makeSeriesDataForRendering({
-                xAxis: xAxis,
-                yAxis: yAxis
-            }, ['bar']);
-
-            expect(actual.barSeries.limit).toBe(xAxis.limit);
-            expect(actual.barSeries.aligned).toBe(xAxis.aligned);
-        });
-
-        it('세로형 단일 차트의 시리즈 데이터는 y axis limit과 x axis의 aligned를 반환합니다.', function() {
-            var xAxis, yAxis, actual;
-
-            axisTypeMixer.isVertical = true;
-            xAxis = {
-                aligned: true
-            };
-            yAxis = {
-                limit: {}
-            };
-
-            actual = axisTypeMixer._makeSeriesDataForRendering({
-                xAxis: xAxis,
-                yAxis: yAxis
-            }, ['column'], true);
-
-            expect(actual.columnSeries.limit).toBe(yAxis.limit);
-            expect(actual.columnSeries.aligned).toBe(xAxis.aligned);
-        });
-
-        it('세로형 다중 차트의 시리즈 데이터는 option chart type 순서에 따라 chartType + "series" 조합을 key로하는 y axis limit, yr axis limit을 반환합니다.', function() {
-            var xAxis = {
-                    aligned: true
-                },
-                yAxis = {
-                    limit: {}
-                },
-                rightYAxis = {
-                    limit: {}
-                },
-                actual;
-
-            axisTypeMixer.optionChartTypes = ['column', 'line'];
-            actual = axisTypeMixer._makeSeriesDataForRendering({
-                xAxis: xAxis,
-                yAxis: yAxis,
-                rightYAxis: rightYAxis
-            }, ['column', 'line'], true);
-
-            expect(actual.columnSeries.limit).toBe(yAxis.limit);
-            expect(actual.columnSeries.aligned).toBe(xAxis.aligned);
-            expect(actual.lineSeries.limit).toBe(rightYAxis.limit);
-            expect(actual.lineSeries.aligned).toBe(xAxis.aligned);
-        });
-    });
-
     describe('_addDataRatios()', function() {
         it('add data ratios, when chart is coordinate type', function() {
             dataProcessor.isCoordinateType.and.returnValue(true);
-            spyOn(axisTypeMixer, '_getLimitMapForCoordinateType').and.returnValue('limitMap');
             axisTypeMixer.chartType = 'line';
             axisTypeMixer.options = {};
 
-            axisTypeMixer._addDataRatios();
+            axisTypeMixer._addDataRatios('limitMap');
 
             expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('line', 'limitMap', false);
         });
 
         it('add data ratios, when chart is not coordinate type', function() {
+            var limitMap = {
+                column: {
+                    min: 0,
+                    max: 100
+                },
+                line: {
+                    min: 200,
+                    max: 800
+                }
+            };
             var stackType;
 
             dataProcessor.isCoordinateType.and.returnValue(false);
-            boundsMaker.getAxesData.and.returnValue({
-                yAxis: {
-                    limit: {
-                        min: 0,
-                        max: 100
-                    }
-                },
-                rightYAxis: {
-                    limit: {
-                        min: 200,
-                        max: 800
-                    }
-                }
-            });
+            axisTypeMixer.axisDataMap = {
+
+            };
             axisTypeMixer.chartTypes = ['column', 'line'];
             axisTypeMixer.isVertical = true;
 
-            axisTypeMixer._addDataRatios();
+            axisTypeMixer._addDataRatios(limitMap);
 
             expect(dataProcessor.addDataRatios).toHaveBeenCalledWith({
                 min: 0,
@@ -367,32 +199,6 @@ describe('Test for ComboChart', function() {
                 min: 200,
                 max: 800
             }, stackType, 'line');
-        });
-    });
-
-    describe('_makeRenderingData()', function() {
-        it('axis type chart의 renderingData를 생성합니다.', function() {
-            var actual;
-
-            boundsMaker.getAxesData.and.returnValue({
-                xAxis: {
-                    limit: {},
-                    aligned: true,
-                    validTickCount: 0
-                },
-                yAxis: {
-                    tickCount: 3,
-                    validTickCount: 3
-                }
-            });
-            axisTypeMixer.chartType = 'column';
-            axisTypeMixer.isVertical = false;
-
-            actual = axisTypeMixer._makeRenderingData();
-
-            expect(actual.customEvent.tickCount).toBe(3);
-            expect(actual.columnSeries.limit).toBeDefined();
-            expect(actual.columnSeries.aligned).toBe(true);
         });
     });
 

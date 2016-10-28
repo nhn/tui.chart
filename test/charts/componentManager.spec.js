@@ -7,7 +7,7 @@
 'use strict';
 
 var ComponentManager = require('../../src/js/charts/componentManager'),
-    Plot = require('../../src/js/plots/plot');
+    Plot = require('../../src/js/components/plots/plot');
 
 describe('Test for ComponentManager', function() {
     var componentManager;

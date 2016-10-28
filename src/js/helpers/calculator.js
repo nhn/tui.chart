@@ -84,7 +84,7 @@ var calculator = {
             normalized = this.normalizeAxisNumber(value * 10) * 0.1;
         } else {
             mod = tui.util.mod(value, standard);
-            normalized = tui.util.addition(value, (mod > 0 ? standard - mod : 0));
+            normalized = tui.util.add(value, (mod > 0 ? standard - mod : 0));
         }
 
         normalized *= flag;
@@ -144,7 +144,7 @@ var calculator = {
      * @returns {number} step
      */
     calculateStepFromLimit: function(limit, count) {
-        return tui.util.division(tui.util.subtraction(limit.max, limit.min), (count - 1));
+        return tui.util.divide(tui.util.subtract(limit.max, limit.min), (count - 1));
     },
 
     /**
@@ -178,6 +178,34 @@ var calculator = {
      */
     calculateOpposite: function(degree, hypotenuse) {
         return Math.sin(degree * chartConst.RAD) * hypotenuse;
+    },
+
+    /**
+     * Calculate rotated width.
+     * @param {number} degree - degree
+     * @param {number} width - width
+     * @param {number} height - height
+     * @returns {number}
+     */
+    calculateRotatedWidth: function(degree, width, height) {
+        var centerHalf = calculator.calculateAdjacent(degree, width / 2);
+        var sideHalf = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
+
+        return (centerHalf + sideHalf) * 2;
+    },
+
+    /**
+     * Calculate rotated height
+     * @param {number} degree - degree
+     * @param {number} width - width
+     * @param {number} height - height
+     * @returns {number}
+     */
+    calculateRotatedHeight: function(degree, width, height) {
+        var centerHalf = calculator.calculateOpposite(degree, width / 2);
+        var sideHalf = calculator.calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
+
+        return (centerHalf + sideHalf) * 2;
     },
 
     /**

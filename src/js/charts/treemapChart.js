@@ -8,12 +8,10 @@
 
 var ChartBase = require('./chartBase');
 var ColorSpectrum = require('./colorSpectrum');
-var Series = require('../series/treemapChartSeries');
-var Tooltip = require('../tooltips/tooltip');
-var Legend = require('../legends/spectrumLegend');
-var axisDataMaker = require('../helpers/axisDataMaker');
-var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
-var chartConst = require('../const');
+var Series = require('../components/series/treemapChartSeries');
+var Tooltip = require('../components/tooltips/tooltip');
+var Legend = require('../components/legends/spectrumLegend');
+var BoundsTypeCustomEvent = require('../components/customEvents//boundsTypeCustomEvent');
 
 var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
     /**
@@ -30,7 +28,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        options.series = options.series || {};
+        //options.series = options.series || {};
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = false;
 
@@ -41,14 +39,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             hasAxes: false,
             isVertical: true
         });
-
-        /**
-         * scale information like limit, step for rendering legend
-         * @type {{limit: {min: number, max: number}, step: number}}
-         */
-        this.lengedScale = null;
-
-        this._addComponents(options.chartType);
     },
 
     /**
@@ -56,22 +46,25 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @private
      */
     _addComponents: function() {
-        var useColorValue = tui.util.pick(this.options, 'series', 'useColorValue');
+        var seriesTheme = this.theme.series[this.chartType];
+        var useColorValue = this.options.series.useColorValue;
+        var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
 
         this.componentManager.register('series', Series, {
             chartBackground: this.theme.chart.background,
             chartType: this.chartType,
-            userEvent: this.userEvent
+            colorSpectrum: colorSpectrum
         });
 
+        // TODO
         this.componentManager.register('tooltip', Tooltip, tui.util.extend({
             labelTheme: tui.util.pick(this.theme, 'series', 'label')
         }, this._makeTooltipData()));
 
-        if (useColorValue) {
+        if (useColorValue && this.options.legend.visible) {
             this.componentManager.register('legend', Legend, {
                 chartType: this.chartType,
-                userEvent: this.userEvent
+                colorSpectrum: colorSpectrum
             });
         }
 
@@ -82,18 +75,15 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
     },
 
     /**
-     * Get legend scale
-     * @returns {Object.<string, AxisScaleMaker>}
+     * Get scale option.
+     * @returns {{legend: boolean}}
      * @private
+     * @override
      */
-    _getLegendScale: function() {
-        if (!this.lengedScale) {
-            this.lengedScale = this._createAxisScaleMaker({}, 'legend', null, this.chartType, {
-                valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-            });
-        }
-
-        return this.lengedScale;
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     },
 
     /**
@@ -101,68 +91,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @private
      * @override
      */
-    _addDataRatios: function() {
-        var limit = this._getLegendScale().getLimit();
-
-        this.dataProcessor.addDataRatiosForTreemapChart(limit, this.chartType);
-    },
-
-    /**
-     * Make rendering data for delivery to each component.
-     * @returns {object}
-     * @private
-     * @override
-     */
-    _makeRenderingData: function() {
-        var data = {};
-        var seriesTheme = this.theme.series;
-        var useColorValue = tui.util.pick(this.options, 'series', 'useColorValue');
-        var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
-
-        data.legend = {
-            colorSpectrum: colorSpectrum,
-            axesData: axisDataMaker.makeValueAxisData({
-                dataProcessor: this.dataProcessor,
-                chartType: this.chartType,
-                axisScaleMaker: this._getLegendScale(),
-                isVertical: true
-            })
-        };
-        data.series = {
-            colorSpectrum: colorSpectrum
-        };
-
-        return data;
-    },
-
-    /**
-     * Attach custom event.
-     * @private
-     * @override
-     */
-    _attachCustomEvent: function() {
-        var series = this.componentManager.get('series');
-        var customEvent = this.componentManager.get('customEvent');
-        var tooltip = this.componentManager.get('tooltip');
-        var legend = this.componentManager.get('legend');
-
-        ChartBase.prototype._attachCustomEvent.call(this);
-
-        customEvent.on('selectTreemapSeries', series.onSelectSeries, series);
-        customEvent.on('showTooltip', tooltip.onShow, tooltip);
-        customEvent.on('hideTooltip', tooltip.onHide, tooltip);
-
-        tooltip.on('showTreemapAnimation', series.onShowAnimation, series);
-        tooltip.on('hideTreemapAnimation', series.onHideAnimation, series);
-
-        series.on('afterZoom', customEvent.onAfterZoom, customEvent);
-
-        if (legend) {
-            customEvent.on('showTooltip', series.onShowTooltip, series);
-            customEvent.on('hideTooltip', legend.onHideWedge, legend);
-
-            series.on('showWedge', legend.onShowWedge, legend);
-        }
+    _addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatiosForTreemapChart(limitMap.legend, this.chartType);
     },
 
     /**
@@ -170,12 +100,9 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @param {number} index - index of target seriesItem
      */
     onZoom: function(index) {
-        this._renderComponents({
-            'series': {
-                index: index
-            }
-        }, 'zoom');
-        this._sendSeriesData();
+        this.componentManager.render('zoom', null, {
+            index: index
+        });
     }
 });
 

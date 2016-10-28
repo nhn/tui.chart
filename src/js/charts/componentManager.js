@@ -6,14 +6,16 @@
 
 'use strict';
 
+var dom = require('../helpers/domHandler');
+
 var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototype */ {
     /**
      * ComponentManager manages components of chart.
      * @param {object} params parameters
-     *      @param {object} params.theme theme
-     *      @param {object} params.options options
-     *      @param {DataProcessor} params.dataProcessor data processor
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
+     *      @param {object} params.theme - theme
+     *      @param {object} params.options - options
+     *      @param {DataProcessor} params.dataProcessor - data processor
+     *      @param {boolean} params.hasAxes - whether has axes or not
      * @constructs ComponentManager
      */
     init: function(params) {
@@ -48,16 +50,16 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         this.dataProcessor = params.dataProcessor;
 
         /**
-         * bounds maker
-         * @type {BoundsMaker}
-         */
-        this.boundsMaker = params.boundsMaker;
-
-        /**
          * whether chart has axes or not
          * @type {boolean}
          */
         this.hasAxes = params.hasAxes;
+
+        /**
+         * event bus for transmitting message
+         * @type {object}
+         */
+        this.eventBus = params.eventBus;
     },
 
     /**
@@ -85,8 +87,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {object} params component parameters
      */
     register: function(name, Component, params) {
-        var index,
-            component, componentType;
+        var index, component, componentType;
 
         params = params || {};
 
@@ -97,8 +98,8 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         params.options = this._makeComponentOptions(params.options, componentType, index);
 
         params.dataProcessor = this.dataProcessor;
-        params.boundsMaker = this.boundsMaker;
         params.hasAxes = this.hasAxes;
+        params.eventBus = this.eventBus;
 
         component = new Component(params);
         component.componentName = name;
@@ -109,20 +110,84 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     },
 
     /**
-     * Iterate each components.
-     * @param {function} iteratee iteratee
+     * Make data for rendering.
+     * @param {string} name - component name
+     * @param {string} type - component type
+     * @param {object} paper - raphael object
+     * @param {{
+     *      layoutBounds: {
+     *          dimensionMap: object,
+     *          positionMap: object
+     *      },
+     *      limitMap: object,
+     *      axisDataMap: object,
+     *      maxRadius: ?number
+     * }} boundsAndScale - bounds and scale data
+     * @param {?object} additionalData - additional data
+     * @returns {object}
+     * @private
      */
-    each: function(iteratee) {
-        tui.util.forEachArray(this.components, iteratee);
+    _makeDataForRendering: function(name, type, paper, boundsAndScale, additionalData) {
+        var data = tui.util.extend({
+            paper: paper
+        }, additionalData);
+
+        if (boundsAndScale) {
+            tui.util.extend(data, boundsAndScale);
+
+            data.layout = {
+                dimension: data.dimensionMap[name] || data.dimensionMap[type],
+                position: data.positionMap[name] || data.positionMap[type]
+            };
+        }
+
+        return data;
     },
 
     /**
-     * Return the results of applying the iteratee to each components.
-     *  @param {function} iteratee iteratee
-     * @returns {Array.<object>} components
+     * Render components.
+     * @param {string} funcName - function name for executing
+     * @param {{
+     *      layoutBounds: {
+     *          dimensionMap: object,
+     *          positionMap: object
+     *      },
+     *      limitMap: object,
+     *      axisDataMap: object,
+     *      maxRadius: ?number
+     * }} boundsAndScale - bounds and scale data
+     * @param {?object} additionalData - additional data
+     * @param {?HTMLElement} container - container
      */
-    map: function(iteratee) {
-        return tui.util.map(this.components, iteratee);
+    render: function(funcName, boundsAndScale, additionalData, container) {
+        var self = this;
+        var name, type, paper;
+
+        var elements = tui.util.map(this.components, function(component) {
+            var element = null;
+            var data, result;
+
+            if (component[funcName]) {
+                name = component.componentName;
+                type = component.componentType;
+                data = self._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
+
+                result = component[funcName](data);
+
+                if (result && result.container) {
+                    element = result.container;
+                    paper = result.paper;
+                } else {
+                    element = result;
+                }
+            }
+
+            return element;
+        });
+
+        if (container) {
+            dom.append(container, elements);
+        }
     },
 
     /**
@@ -147,12 +212,35 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     },
 
     /**
+     * Execute components.
+     * @param {string} funcName - function name
+     */
+    execute: function(funcName) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        tui.util.forEachArray(this.components, function(component) {
+            if (component[funcName]) {
+                component[funcName].apply(component, args);
+            }
+        });
+    },
+
+    /**
      * Get component.
      * @param {string} name component name
      * @returns {object} component instance
      */
     get: function(name) {
         return this.componentMap[name];
+    },
+
+    /**
+     * Whether has component or not.
+     * @param {string} name - comopnent name
+     * @returns {boolean}
+     */
+    has: function(name) {
+        return !!this.get(name);
     }
 });
 

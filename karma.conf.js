@@ -32,6 +32,7 @@ module.exports = function(config) {
     autoWatch: true,
     files: [
       'lib/tui-code-snippet/code-snippet.min.js',
+      'lib/tui-component-effects/effects.min.js',
       'lib/raphael/raphael-min.js',
       'src/js/**/*.js',
       'test/**/*.spec.js'

@@ -1,6 +1,7 @@
 'use strict';
 
 var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
 
 /**
  * addingDynamicData is mixer for adding dynamic data.
@@ -41,6 +42,37 @@ var addingDynamicDataMixer = {
          * @type {null | Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}}
          */
         this.checkedLegends = null;
+
+        /**
+         * previous xAxis data
+         * @type {null|object}
+         */
+        this.prevXAxisData = null;
+    },
+
+    /**
+     * Calculate animate tick size.
+     * @param {number} xAxisWidth - x axis width
+     * @returns {number}
+     * @private
+     */
+    _calculateAnimateTickSize: function(xAxisWidth) {
+        var dataProcessor = this.dataProcessor;
+        var tickInterval = this.options.xAxis.tickInterval;
+        var shiftingOption = !!this.options.series.shifting;
+        var tickCount;
+
+        if (dataProcessor.isCoordinateType()) {
+            tickCount = dataProcessor.getValues(this.chartType, 'x').length - 1;
+        } else {
+            tickCount = dataProcessor.getCategoryCount(false) - 1;
+        }
+
+        if (shiftingOption && !predicate.isAutoTickInterval(tickInterval)) {
+            tickCount -= 1;
+        }
+
+        return xAxisWidth / tickCount;
     },
 
     /**
@@ -49,36 +81,18 @@ var addingDynamicDataMixer = {
      */
     _animateForAddingData: function() {
         var self = this;
-        var boundsMaker = this.boundsMaker;
-        var dataProcessor = this.dataProcessor;
         var shiftingOption = !!this.options.series.shifting;
-        var beforeAxesData = boundsMaker.getAxesData();
 
         this.addedDataCount += 1;
-        this.axisScaleMakerMap = null;
-        boundsMaker.initBoundsData();
 
-        this._render(function() {
-            var xAxisWidth = boundsMaker.getDimension('xAxis').width;
-            var tickCount, tickSize;
+        this._render(function(boundsAndScale) {
+            var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
 
-            if (dataProcessor.isCoordinateType()) {
-                tickCount = dataProcessor.getValues(self.chartType, 'x').length - 1;
-            } else {
-                tickCount = dataProcessor.getCategoryCount(false) - 1;
-            }
-
-            if (shiftingOption) {
-                tickCount -= 1;
-            }
-
-            tickSize = (xAxisWidth / tickCount);
-
-            self._renderComponents({
+            self.componentManager.render('animateForAddingData', boundsAndScale, {
                 tickSize: tickSize,
                 shifting: shiftingOption
-            }, 'animateForAddingData');
-        }, beforeAxesData);
+            });
+        }, true);
 
         if (shiftingOption) {
             this.dataProcessor.shiftData();
@@ -92,15 +106,8 @@ var addingDynamicDataMixer = {
     _rerenderForAddingData: function() {
         var self = this;
 
-        if (this.options.series.shifting || this.dataProcessor.isCoordinateType()) {
-            this.boundsMaker.initBoundsData();
-        }
-
-        this.axisScaleMakerMap = null;
-
-        this._render(function(renderingData) {
-            renderingData.animatable = false;
-            self._renderComponents(renderingData, 'rerender');
+        this._render(function(boundsAndScale) {
+            self.componentManager.render('rerender', boundsAndScale);
         });
     },
 
@@ -119,14 +126,15 @@ var addingDynamicDataMixer = {
         }
 
         if (this.paused) {
+            if (this.options.series.shifting) {
+                this.dataProcessor.shiftData();
+            }
             return;
         }
 
-        this.boundsMaker.onAddingDataMode();
         this._animateForAddingData();
         this.rerenderingDelayTimerId = setTimeout(function() {
             self.rerenderingDelayTimerId = null;
-            self.boundsMaker.offAddingDataMode();
             self._rerenderForAddingData();
             self._checkForAddedData();
         }, 400);
@@ -138,7 +146,6 @@ var addingDynamicDataMixer = {
      */
     _pauseAnimationForAddingData: function() {
         this.paused = true;
-        this._initForAutoTickInterval();
 
         if (this.rerenderingDelayTimerId) {
             clearTimeout(this.rerenderingDelayTimerId);
@@ -199,6 +206,7 @@ var addingDynamicDataMixer = {
      */
     _changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         var self = this;
+        var shiftingOption = !!this.options.series.shifting;
         var pastPaused = this.paused;
 
         if (!pastPaused) {
@@ -208,9 +216,9 @@ var addingDynamicDataMixer = {
         this.checkedLegends = checkedLegends;
         this._rerender(checkedLegends, rawData, boundsParams);
 
-
         if (!pastPaused) {
             setTimeout(function() {
+                self.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
                 self._restartAnimationForAddingData();
             }, chartConst.RERENDER_TIME);
         }

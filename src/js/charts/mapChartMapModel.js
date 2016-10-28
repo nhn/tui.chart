@@ -46,12 +46,6 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
         };
 
         /**
-         * Map data.
-         * @type {Array}
-         */
-        this.mapData = [];
-
-        /**
          * Map dimension
          * @type {{width: number, height: number}}
          */
@@ -63,7 +57,17 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
          */
         this.dataProcessor = dataProcessor;
 
-        this._createMapData(rawMapData);
+        /**
+         * Raw map data
+         * @type {Array.<{name: string, path: string, labelCoordinate: ?{x: number, y: number}}>}
+         */
+        this.rawMapData = rawMapData;
+
+        /**
+         * Map data.
+         * @type {null|Array.<object>}
+         */
+        this.mapData = null;
     },
 
     /**
@@ -281,12 +285,13 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
     /**
      * Create map data.
      * @param {Array.<{name: string, path: string, labelCoordinate: ?{x: number, y:number}}>} rawMapData raw map data
+     * @returns {Array.<object>}
      * @private
      */
     _createMapData: function(rawMapData) {
         var self = this;
 
-        this.mapData = tui.util.map(rawMapData, function(datum) {
+        return tui.util.map(rawMapData, function(datum) {
             var coordinate = self._makeCoordinatesFromPath(datum.path),
                 bound = self._findBoundFromCoordinates(coordinate),
                 userData = self.dataProcessor.getValueMapDatum(datum.code),
@@ -319,12 +324,25 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
         });
     },
 
+    /**
+     * Get map data.
+     * @returns {Array.<object>}
+     */
     getMapData: function() {
+        if (!this.mapData) {
+            this.mapData = this._createMapData(this.rawMapData);
+        }
+
         return this.mapData;
     },
 
+    /**
+     * Get map datum.
+     * @param {number} index - index
+     * @returns {object}
+     */
     getDatum: function(index) {
-        return this.mapData[index];
+        return this.getMapData()[index];
     },
 
     /**
@@ -334,10 +352,11 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      *          position: {top: number, left: number}}, labelPosition: {width: number, height: number}}>} map data
      */
     getLabelData: function(ratio) {
-        var self = this,
-            labelData = tui.util.filter(this.mapData, function(datum) {
-                return self.dataProcessor.getValueMapDatum(datum.code);
-            });
+        var self = this;
+        var mapData = this.getMapData();
+        var labelData = tui.util.filter(mapData, function(datum) {
+            return self.dataProcessor.getValueMapDatum(datum.code);
+        });
 
         return tui.util.map(labelData, function(datum) {
             return {
@@ -356,19 +375,19 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _makeMapDimension: function() {
-        var mapData = this.mapData,
-            lefts = tui.util.map(mapData, function(datum) {
-                return datum.bound.position.left;
-            }),
-            rights = tui.util.map(mapData, function(datum) {
-                return datum.bound.position.left + datum.bound.dimension.width;
-            }),
-            tops = tui.util.map(mapData, function(datum) {
-                return datum.bound.position.top;
-            }),
-            bottoms = tui.util.map(mapData, function(datum) {
-                return datum.bound.position.top + datum.bound.dimension.height;
-            });
+        var mapData = this.getMapData();
+        var lefts = tui.util.map(mapData, function(datum) {
+            return datum.bound.position.left;
+        });
+        var rights = tui.util.map(mapData, function(datum) {
+            return datum.bound.position.left + datum.bound.dimension.width;
+        });
+        var tops = tui.util.map(mapData, function(datum) {
+            return datum.bound.position.top;
+        });
+        var bottoms = tui.util.map(mapData, function(datum) {
+            return datum.bound.position.top + datum.bound.dimension.height;
+        });
 
         return {
             width: tui.util.max(rights) - tui.util.min(lefts),

@@ -9,11 +9,10 @@
 
 var ChartBase = require('./chartBase');
 var ColorSpectrum = require('./colorSpectrum');
-var Series = require('../series/heatmapChartSeries');
+var Series = require('../components/series/heatmapChartSeries');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
-var axisDataMaker = require('../helpers/axisDataMaker');
-var Legend = require('../legends/spectrumLegend');
+var Legend = require('../components/legends/spectrumLegend');
 
 var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
     /**
@@ -48,53 +47,56 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             hasAxes: true,
             isVertical: true
         });
-
-        this._addComponents(options.chartType);
-    },
-
-    /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {object}
-     * @private
-     */
-    _makeAxisScaleMakerMap: function() {
-        return {
-            legend: this._createAxisScaleMaker({}, 'legend', null, this.chartType, {
-                valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-            })
-        };
     },
 
     /**
      * Add components.
-     * @param {string} chartType chart type
      * @private
      */
     _addComponents: function() {
+        var seriesTheme = this.theme.series[this.chartType];
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+
         this._addComponentsForAxisType({
             axis: [
                 {
                     name: 'yAxis',
-                    isLabel: true,
                     isVertical: true
                 },
                 {
-                    name: 'xAxis',
-                    isLabel: true
+                    name: 'xAxis'
                 }
             ],
             legend: {
-                LegendClass: Legend
+                LegendClass: Legend,
+                additionalParams: {
+                    colorSpectrum: colorSpectrum
+                }
             },
             series: [
                 {
                     name: 'heatmapSeries',
-                    SeriesClass: Series
+                    SeriesClass: Series,
+                    data: {
+                        colorSpectrum: colorSpectrum
+                    }
                 }
             ],
             tooltip: true,
             customEvent: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{legend: boolean}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     }
 });
 
@@ -105,53 +107,8 @@ tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
  * @private
  * @override
  */
-HeatmapChart.prototype._addDataRatios = function() {
-    var limit = this._getAxisScaleMakerMap().legend.getLimit();
-
-    this.dataProcessor.addDataRatios(limit, null, this.chartType);
-};
-
-/**
- * Make rendering data for delivery to each component.
- * @returns {object}
- * @private
- * @override
- */
-HeatmapChart.prototype._makeRenderingData = function() {
-    var data = axisTypeMixer._makeRenderingData.call(this);
-    var seriesTheme = this.theme.series;
-    var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
-
-    data.legend = {
-        colorSpectrum: colorSpectrum,
-        axesData: axisDataMaker.makeValueAxisData({
-            dataProcessor: this.dataProcessor,
-            chartType: this.chartType,
-            axisScaleMaker: this._getAxisScaleMakerMap().legend,
-            isVertical: true
-        })
-    };
-    data.heatmapSeries.colorSpectrum = colorSpectrum;
-
-    return data;
-};
-
-/**
- * Attach custom event between components.
- * @private
- * @override
- */
-HeatmapChart.prototype._attachCustomEvent = function() {
-    var customEvent = this.componentManager.get('customEvent');
-    var heatmapSeries = this.componentManager.get('heatmapSeries');
-    var legend = this.componentManager.get('legend');
-
-    axisTypeMixer._attachCustomEvent.call(this);
-
-    customEvent.on('showTooltip', heatmapSeries.onShowTooltip, heatmapSeries);
-    customEvent.on('hideTooltip', legend.onHideWedge, legend);
-
-    heatmapSeries.on('showWedge', legend.onShowWedge, legend);
+HeatmapChart.prototype._addDataRatios = function(limitMap) {
+    this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
 };
 
 module.exports = HeatmapChart;

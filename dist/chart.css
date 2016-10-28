@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.3.0
+ * @version 2.4.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
  */
@@ -633,7 +633,8 @@
   padding: 0;
   line-height: 1;
 }
-.tui-chart-size-check-element span {
+.tui-chart-size-check-element > span {
+  display: inline-block;
   box-sizing: border-box;
   text-align: center;
   padding: 0;

@@ -9,14 +9,14 @@
 var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil'),
-    DataProcessor = require('../../src/js/dataModels/dataProcessor');
+    DataProcessor = require('../../src/js/models/data/dataProcessor');
 
 describe('Test for ChartBase', function() {
-    var chartBase, componentManager, boundsMaker;
+    var chartBase, componentManager, boundsModel;
 
     beforeAll(function() {
         componentManager = jasmine.createSpyObj('componentManager', ['where']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData', 'getDimension']);
+        boundsModel = jasmine.createSpyObj('boundsModel', ['initBoundsData', 'getDimension']);
     });
 
     beforeEach(function() {
@@ -54,7 +54,7 @@ describe('Test for ChartBase', function() {
             }
         });
         chartBase.componentManager = componentManager;
-        chartBase.boundsMaker = boundsMaker;
+        chartBase.boundsModel = boundsModel;
     });
 
     describe('_setOffsetProperty()', function() {
@@ -277,53 +277,6 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_filterCheckedRawData()', function() {
-        it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterCheckedRawData({
-                    series: ['a', 'b', 'c', 'd']
-                }, [null, true, true]),
-                expected = ['b', 'c'];
-            expect(actual.series).toEqual(expected);
-        });
-
-        it('두가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterCheckedRawData({
-                    series: {
-                        column: ['a', 'b', 'c', 'd'],
-                        line: ['e', 'f', 'g']
-                    }
-                }, {
-                    column: [null, true, null, true],
-                    line: [true]
-                }),
-                expected = {
-                    column: ['b', 'd'],
-                    line: ['e']
-                };
-            expect(actual.series).toEqual(expected);
-        });
-    });
-
-    describe('_makeRerenderingData()', function() {
-        it('전달받은 rendering data에 rerendering에 필요한 data를 생성하여 추가합니다.', function() {
-            var renderingData = {},
-                checkedLegends = [true],
-                actual;
-
-            componentManager.where.and.returnValue([
-                {
-                    componentName: 'columnSeries',
-                    chartType: 'column'
-                }
-            ]);
-
-            actual = chartBase._makeRerenderingData(renderingData, checkedLegends);
-
-            expect(actual.tooltip.checkedLegends).toEqual([true]);
-            expect(actual.columnSeries.checkedLegends).toEqual([true]);
-        });
-    });
-
     describe('_renderTitle()', function() {
         it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function() {
             var el = dom.create('DIV');
@@ -381,41 +334,6 @@ describe('Test for ChartBase', function() {
             });
 
             expect(chartBase._render).not.toHaveBeenCalled();
-        });
-
-        it('dimension이 변경되었다면, boundsMaker.initBoundsData()에 chart 옵션 정보를 전달하여 bound data를 초기화 합니다.', function() {
-            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
-            spyOn(renderUtil, 'renderDimension');
-            spyOn(chartBase, '_render');
-            chartBase.options = {
-                chart: 'chart options'
-            };
-
-            chartBase.resize({
-                width: 400,
-                height: 300
-            });
-
-            expect(boundsMaker.initBoundsData).toHaveBeenCalledWith('chart options');
-        });
-
-        it('dimension이 변경되었다면, renderUtil.renderDimension()에 chartContainer와 갱신된 dimension 정보를 전달하여 너비, 높이를 설정합니다.', function() {
-            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
-            spyOn(chartBase, '_render');
-            chartBase.options = {
-                chart: 'chart options'
-            };
-            chartBase.chartContainer = 'chart container';
-            spyOn(renderUtil, 'renderDimension');
-            boundsMaker.getDimension.and.returnValue('chart dimension');
-
-
-            chartBase.resize({
-                width: 400,
-                height: 300
-            });
-
-            expect(renderUtil.renderDimension).toHaveBeenCalledWith('chart container', 'chart dimension');
         });
 
         it('dimension이 변경되었다면, _render()를 호출하여 렌더링을 수행합니다.', function() {

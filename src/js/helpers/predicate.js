@@ -44,6 +44,45 @@ var predicate = {
     },
 
     /**
+     * Whether diverging chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {boolean} diverging - whether has diverging or not
+     * @returns {*|boolean}
+     */
+    isDivergingChart: function(chartType, diverging) {
+        return this.isBarTypeChart(chartType) && diverging;
+    },
+
+    /**
+     * Whether normal stack chart or not.
+     * @param {string} chartType - type of chart
+     * @param {string} stackType - type of stack
+     * @returns {boolean}
+     * @private
+     */
+    isNormalStackChart: function(chartType, stackType) {
+        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+        var isNormalStack = predicate.isNormalStack(stackType);
+
+        return isAllowedStackOption && isNormalStack;
+    },
+
+    /**
+     * Whether percent stack chart or not.
+     * @param {string} chartType - type of chart
+     * @param {string} stackType - type of stack
+     * @returns {boolean}
+     * @private
+     */
+    isPercentStackChart: function(chartType, stackType) {
+        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+        var isPercentStack = predicate.isPercentStack(stackType);
+
+        return isAllowedStackOption && isPercentStack;
+    },
+
+    /**
      * Whether combo chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
@@ -296,9 +335,9 @@ var predicate = {
     },
 
     /**
-     * Whether horizontal legend align or not.
+     * Whether horizontal legend or not.
      * @memberOf module:predicate
-     * @param {string} align - align of legend
+     * @param {string} align - align option for legend
      * @returns {boolean}
      */
     isHorizontalLegend: function(align) {
@@ -306,14 +345,13 @@ var predicate = {
     },
 
     /**
-     * Whether has width for vertical type legend or not.
-     * @param {{align: string, visible: boolean}} legendOption - option for legend component
+     * Whether vertical legend or not.
+     * @memberOf module:predicate
+     * @param {string} align - align option for legend
      * @returns {boolean}
      */
-    hasVerticalLegendWidth: function(legendOption) {
-        legendOption = legendOption || {};
-
-        return !predicate.isHorizontalLegend(legendOption.align) && legendOption.visible;
+    isVerticalLegend: function(align) {
+        return !predicate.isHorizontalLegend(align);
     },
 
     /**

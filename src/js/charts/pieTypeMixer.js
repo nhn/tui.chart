@@ -6,11 +6,10 @@
 
 'use strict';
 
-var renderUtil = require('../helpers/renderUtil');
-var Legend = require('../legends/legend');
-var Tooltip = require('../tooltips/tooltip');
-var PieChartSeries = require('../series/pieChartSeries');
-var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
+var Legend = require('../components/legends/legend');
+var Tooltip = require('../components/tooltips/tooltip');
+var PieChartSeries = require('../components/series/pieChartSeries');
+var SimpleCustomEvent = require('../components/customEvents/simpleCustomEvent');
 
 /**
  * pieTypeMixer is mixer of pie type chart.
@@ -19,17 +18,16 @@ var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 var pieTypeMixer = {
     /**
      * Add legend component.
-     * @param {Array.<string>} [chartTypes] - chart types
+     * @param {Array.<string>} [seriesNames] - series names
      * @private
      */
-    _addLegendComponent: function(chartTypes) {
+    _addLegendComponent: function(seriesNames) {
         var legendOption = this.options.legend || {};
 
         if (legendOption.visible) {
             this.componentManager.register('legend', Legend, {
-                seriesNames: chartTypes,
-                chartType: this.chartType,
-                userEvent: this.userEvent
+                seriesNames: seriesNames,
+                chartType: this.chartType
             });
         }
     },
@@ -52,8 +50,7 @@ var pieTypeMixer = {
         var seriesBaseParams = {
             libType: this.options.libType,
             componentType: 'series',
-            chartBackground: this.theme.chart.background,
-            userEvent: this.userEvent
+            chartBackground: this.theme.chart.background
         };
 
         tui.util.forEach(seriesData, function(seriesDatum) {
@@ -71,32 +68,6 @@ var pieTypeMixer = {
     _addCustomEventComponent: function() {
         this.componentManager.register('customEvent', SimpleCustomEvent, {
             chartType: this.chartType
-        });
-    },
-
-    /**
-     * Add custom event.
-     * @param {Array.<object>} seriesComponents - series components
-     * @private
-     */
-    _attachCustomEventForPieTypeChart: function(seriesComponents) {
-        var clickEventName = renderUtil.makeCustomEventName('click', this.chartType, 'series');
-        var moveEventName = renderUtil.makeCustomEventName('move', this.chartType, 'series');
-        var customEvent = this.componentManager.get('customEvent');
-        var tooltip = this.componentManager.get('tooltip');
-        var eventMap = {};
-
-        tui.util.forEachArray(seriesComponents, function(series) {
-            eventMap[clickEventName] = series.onClickSeries;
-            eventMap[moveEventName] = series.onMoveSeries;
-            customEvent.on(eventMap, series);
-
-            series.on({
-                showTooltip: tooltip.onShow,
-                hideTooltip: tooltip.onHide,
-                showTooltipContainer: tooltip.onShowTooltipContainer,
-                hideTooltipContainer: tooltip.onHideTooltipContainer
-            }, tooltip);
         });
     }
 };

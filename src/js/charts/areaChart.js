@@ -8,12 +8,11 @@
 
 var ChartBase = require('./chartBase');
 var lineTypeMixer = require('./lineTypeMixer');
-var autoTickMixer = require('./autoTickMixer');
 var zoomMixer = require('./zoomMixer');
 var axisTypeMixer = require('./axisTypeMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
-var rawDataHandler = require('../helpers/rawDataHandler');
-var Series = require('../series/areaChartSeries');
+var rawDataHandler = require('../models/data/rawDataHandler');
+var Series = require('../components/series/areaChartSeries');
 
 var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
@@ -32,16 +31,21 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * Area chart.
      * @constructs AreaChart
      * @extends ChartBase
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
+     * @param {Array.<Array>} rawData - raw data
+     * @param {object} theme - chart theme
+     * @param {object} options - chart options
      * @mixes axisTypeMixer
      * @mixes lineTypeMixer
      */
     init: function(rawData, theme, options) {
         rawDataHandler.removeSeriesStack(rawData.series);
-        this._lineTypeInit(rawData, theme, options);
-        this._initForAutoTickInterval();
+        ChartBase.call(this, {
+            rawData: rawData,
+            theme: theme,
+            options: options,
+            hasAxes: true,
+            isVertical: true
+        });
         this._initForAddingData();
     },
 
@@ -53,23 +57,12 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @override
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        this._initForAddingData();
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
-    },
-
-    /**
-     * Resize.
-     * @param {object} dimension dimension
-     *      @param {number} dimension.width width
-     *      @param {number} dimension.height height
-     * @override
-     */
-    resize: function(dimension) {
-        this._initForAutoTickInterval();
-        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 
 tui.util.extend(AreaChart.prototype,
-    axisTypeMixer, lineTypeMixer, autoTickMixer, zoomMixer, addingDynamicDataMixer);
+    axisTypeMixer, lineTypeMixer, zoomMixer, addingDynamicDataMixer);
 
 module.exports = AreaChart;

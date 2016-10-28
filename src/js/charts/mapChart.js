@@ -7,17 +7,15 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var mapFactory = require('../factories/mapFactory');
-var chartConst = require('../const');
+var mapManager = require('../factories/mapManager');
 var MapChartMapModel = require('./mapChartMapModel');
 var ColorSpectrum = require('./colorSpectrum');
-var MapChartDataProcessor = require('../dataModels/mapChartDataProcessor');
-var axisDataMaker = require('../helpers/axisDataMaker');
-var Series = require('../series/mapChartSeries');
-var Zoom = require('../series/zoom');
-var Legend = require('../legends/spectrumLegend');
-var MapChartTooltip = require('../tooltips/mapChartTooltip');
-var mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
+var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
+var Series = require('../components/series/mapChartSeries');
+var Zoom = require('../components/series/zoom');
+var Legend = require('../components/legends/spectrumLegend');
+var MapChartTooltip = require('../components/tooltips/mapChartTooltip');
+var mapChartCustomEvent = require('../components/customEvents/mapChartCustomEvent');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
@@ -35,7 +33,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
          */
         this.className = 'tui-map-chart';
 
-        options.map = mapFactory.get(options.map);
+        options.map = mapManager.get(options.map);
         options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
 
@@ -45,8 +43,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             options: options,
             DataProcessor: MapChartDataProcessor
         });
-
-        this._addComponents(options);
     },
 
     /**
@@ -54,18 +50,30 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(options) {
+    _addComponents: function() {
+        var options = this.options;
+        var seriesTheme = this.theme.series[this.chartType];
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+        var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
+
         options.legend = options.legend || {};
 
-        this.componentManager.register('legend', Legend);
+        if (options.legend.visible) {
+            this.componentManager.register('legend', Legend, {
+                colorSpectrum: colorSpectrum
+            });
+        }
 
-        this.componentManager.register('tooltip', MapChartTooltip, this._makeTooltipData());
+        this.componentManager.register('tooltip', MapChartTooltip, tui.util.extend({
+            mapModel: mapModel
+        }, this._makeTooltipData()));
 
         this.componentManager.register('mapSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
-            userEvent: this.userEvent
+            mapModel: mapModel,
+            colorSpectrum: colorSpectrum
         });
 
         this.componentManager.register('zoom', Zoom);
@@ -76,21 +84,15 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     },
 
     /**
-     * Make axes data
-     * @returns {object} axes data
+     * Get scale option.
+     * @returns {{legend: boolean}}
      * @private
+     * @override
      */
-    _makeAxesData: function() {
-        var axisScaleMaker = this._createAxisScaleMaker({}, 'legend', null, this.chartType, {
-            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
-        });
-
-        return axisDataMaker.makeValueAxisData({
-            dataProcessor: this.dataProcessor,
-            chartType: this.chartType,
-            axisScaleMaker: axisScaleMaker,
-            isVertical: true
-        });
+    _getScaleOption: function() {
+        return {
+            legend: true
+        };
     },
 
     /**
@@ -98,73 +100,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @private
      * @override
      */
-    _addDataRatios: function() {
-        var axesData = this.boundsMaker.getAxesData();
-
-        this.dataProcessor.addDataRatios(axesData.limit);
-    },
-
-    /**
-     * Make rendering data for map chart.
-     * @returns {object} data for rendering
-     * @private
-     * @override
-     */
-    _makeRenderingData: function() {
-        var axesData = this.boundsMaker.getAxesData();
-        var seriesTheme = this.theme.series;
-        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
-        var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
-
-        return {
-            legend: {
-                colorSpectrum: colorSpectrum,
-                axesData: axesData
-            },
-            mapSeries: {
-                mapModel: mapModel,
-                colorSpectrum: colorSpectrum
-            },
-            tooltip: {
-                mapModel: mapModel
-            }
-        };
-    },
-
-    /**
-     * Attach custom evnet.
-     * @private
-     * @override
-     */
-    _attachCustomEvent: function() {
-        var customEvent = this.componentManager.get('customEvent'),
-            mapSeries = this.componentManager.get('mapSeries'),
-            legend = this.componentManager.get('legend'),
-            tooltip = this.componentManager.get('tooltip'),
-            zoom = this.componentManager.get('zoom');
-
-        customEvent.on({
-            clickMapSeries: mapSeries.onClickSeries,
-            moveMapSeries: mapSeries.onMoveSeries,
-            dragStartMapSeries: mapSeries.onDragStartSeries,
-            dragMapSeries: mapSeries.onDragSeries,
-            dragEndMapSeries: mapSeries.onDragEndSeries,
-            wheel: tui.util.bind(zoom.onWheel, zoom)
-        }, mapSeries);
-
-        mapSeries.on({
-            showWedge: legend.onShowWedge,
-            hideWedge: legend.onHideWedge
-        }, legend);
-
-        mapSeries.on({
-            showTooltip: tooltip.onShow,
-            hideTooltip: tooltip.onHide,
-            showTooltipContainer: tooltip.onShowTooltipContainer,
-            hideTooltipContainer: tooltip.onHideTooltipContainer
-        }, tooltip);
-
-        zoom.on('zoom', mapSeries.onZoom, mapSeries, mapSeries);
+    _addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatios(limitMap.legend);
     }
 });
 

@@ -171,15 +171,15 @@ var chartConst = {
     DOT_RADIUS: 4,
     /** radius for circle of scatter chart*/
     SCATTER_RADIUS: 5,
-    /** yAxis properties
-     * @type {Array.<string>}
+    /**
+     * theme properties
+     * @type {{yAxis: Array.<string>, series: Array.<string>}}
      */
-    YAXIS_PROPS: ['tickColor', 'title', 'label'], // yaxis theme의 속성 - chart type filtering할 때 사용됨
-    /** series properties
-     * @type {Array.<string>}
-     */
-    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors',
-        'selectionColor', 'startColor', 'endColor', 'overColor'], // series theme의 속성 - chart type filtering할 때 사용됨
+    THEME_PROPS_MAP: {
+        yAxis: ['tickColor', 'title', 'label'],
+        series: ['label', 'colors', 'borderColor', 'borderWidth', 'singleColors',
+            'selectionColor', 'startColor', 'endColor', 'overColor']
+    },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
     /** top margin of x axis label */
@@ -350,6 +350,22 @@ var chartConst = {
                 ' M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)"',
         85: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
                 ' M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)"'
+    },
+    /** prefix for public event
+     * @type {string}
+     */
+    PUBLIC_EVENT_PREFIX: 'public_',
+    /** public event map
+     * @type {object}
+     */
+    PUBLIC_EVENT_MAP: {
+        load: true,
+        selectLegend: true,
+        selectSeries: true,
+        unselectSeries: true,
+        beforeShowTooltip: true,
+        afterShowTooltip: true,
+        zoom: true
     }
 };
 module.exports = chartConst;

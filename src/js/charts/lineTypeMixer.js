@@ -6,8 +6,7 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase');
-var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
+var AreaTypeCustomEvent = require('../components/customEvents//areaTypeCustomEvent');
 
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
@@ -15,51 +14,26 @@ var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
  */
 var lineTypeMixer = {
     /**
-     * Initialize line type chart.
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
+     * Get scale option.
+     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @private
+     * @override
      */
-    _lineTypeInit: function(rawData, theme, options) {
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            hasAxes: true,
-            isVertical: true
-        });
+    _getScaleOption: function() {
+        var scaleOption = {};
 
         if (this.dataProcessor.isCoordinateType()) {
-            delete this.options.xAxis.tickInterval;
-            this.options.tooltip.grouped = false;
-            this.options.series.shifting = false;
-        }
-
-        this._addComponents(options.chartType);
-    },
-
-    /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
-     * @private
-     */
-    _makeAxisScaleMakerMap: function() {
-        var options = this.options;
-        var scaleMap;
-
-        if (this.dataProcessor.isCoordinateType()) {
-            scaleMap = {
-                xAxis: this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x'),
-                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y')
+            scaleOption.xAxis = {
+                valueType: 'x'
+            };
+            scaleOption.yAxis = {
+                valueType: 'y'
             };
         } else {
-            scaleMap = {
-                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis')
-            };
+            scaleOption.yAxis = true;
         }
 
-        return scaleMap;
+        return scaleOption;
     },
 
     /**
@@ -82,27 +56,72 @@ var lineTypeMixer = {
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
+        if (this.dataProcessor.isCoordinateType()) {
+            delete this.options.xAxis.tickInterval;
+            this.options.tooltip.grouped = false;
+            this.options.series.shifting = false;
+        }
+
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
+                    seriesName: this.chartType,
                     isVertical: true
                 },
                 {
-                    name: 'xAxis',
-                    isLabel: true
+                    name: 'xAxis'
                 }
             ],
             series: [
                 {
-                    name: this.options.chartType + 'Series',
+                    name: this.chartType + 'Series',
                     SeriesClass: this.Series
                 }
             ],
             plot: true
         });
+    },
+
+    /**
+     * Add plot line.
+     * @param {{index: number, color: string, id: string}} data - data
+     * @override
+     * @api
+     */
+    addPlotLine: function(data) {
+        this.componentManager.get('plot').addPlotLine(data);
+    },
+
+    /**
+     * Add plot band.
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     * @override
+     * @api
+     */
+    addPlotBand: function(data) {
+        this.componentManager.get('plot').addPlotBand(data);
+    },
+
+    /**
+     * Remove plot line.
+     * @param {string} id - line id
+     * @override
+     * @api
+     */
+    removePlotLine: function(id) {
+        this.componentManager.get('plot').removePlotLine(id);
+    },
+
+    /**
+     * Remove plot band.
+     * @param {string} id - band id
+     * @override
+     * @api
+     */
+    removePlotBand: function(id) {
+        this.componentManager.get('plot').removePlotBand(id);
     }
 };
 

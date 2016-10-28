@@ -37,8 +37,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             theme: theme,
             options: options
         });
-
-        this._addComponents();
     },
 
     /**
@@ -73,18 +71,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      */
     _sendSeriesData: function() {
         ChartBase.prototype._sendSeriesData.call(this, chartConst.CHART_TYPE_PIE);
-    },
-
-    /**
-     * Attach custom event.
-     * @private
-     * @override
-     */
-    _attachCustomEvent: function() {
-        var pieSeries = this.componentManager.get('pieSeries');
-
-        this._attachCustomEventForPieTypeChart([pieSeries]);
-        ChartBase.prototype._attachCustomEvent.call(this);
     }
 });
 

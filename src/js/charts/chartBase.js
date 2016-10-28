@@ -6,14 +6,13 @@
 
 'use strict';
 
+var chartConst = require('../const');
 var ComponentManager = require('./componentManager');
-var DefaultDataProcessor = require('../dataModels/dataProcessor');
-var BoundsMaker = require('../helpers/boundsMaker');
-var AxisScaleMaker = require('../helpers/axisScaleMaker');
+var DefaultDataProcessor = require('../models/data/dataProcessor');
+var rawDataHandler = require('../models/data/rawDataHandler');
 var dom = require('../helpers/domHandler');
-var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
-var UserEventListener = require('../helpers/userEventListener');
+var boundsAndScaleBuilder = require('../models/boundsAndScaleBuilder.js');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -61,36 +60,41 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.dataProcessor = this._createDataProcessor(params);
 
         /**
-         * bounds maker
-         * @type {BoundsMaker}
+         * event bus for transmitting message
+         * @type {object}
          */
-        this.boundsMaker = new BoundsMaker({
-            options: this.options,
-            theme: this.theme,
-            dataProcessor: this.dataProcessor,
-            hasAxes: this.hasAxes,
-            isVertical: this.isVertical,
-            chartType: this.chartType,
-            chartTypes: params.seriesNames
-        });
+        this.eventBus = new tui.util.CustomEvents();
+
+        /**
+         * previous xAxis data
+         * @type {null|object}
+         */
+        this.prevXAxisData = null;
 
         /**
          * component manager
          * @type {ComponentManager}
          */
-        this.componentManager = new ComponentManager({
-            dataProcessor: this.dataProcessor,
-            options: this.options,
-            theme: this.theme,
-            boundsMaker: this.boundsMaker,
-            hasAxes: this.hasAxes
-        });
+        this.componentManager = this._createComponentManager();
 
-        /**
-         * user event listener
-         * @type {object}
-         */
-        this.userEvent = new UserEventListener();
+        this._addComponents();
+
+        this._attachToEventBus();
+    },
+
+    /**
+     * Attach to event bus.
+     * @private
+     */
+    _attachToEventBus: function() {
+        this.eventBus.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
+
+        if (this.onZoom) {
+            this.eventBus.on({
+                zoom: this.onZoom,
+                resetZoom: this.onResetZoom
+            }, this);
+        }
     },
 
     /**
@@ -217,57 +221,24 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var DataProcessor, dataProcessor;
 
         DataProcessor = params.DataProcessor || DefaultDataProcessor;
-        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesNames);
+        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, this.seriesNames);
 
         return dataProcessor;
     },
 
     /**
-     * Pick limit from options.
-     * @param {{min: number, max: number, title: string}} options - axis options
-     * @returns {{min: ?number, max: ?number}}
+     * Create ComponentMananger.
+     * @returns {ComponentManager}
      * @private
      */
-    _pickLimitFromOptions: function(options) {
-        options = options || {};
-
-        return {
-            min: options.min,
-            max: options.max
-        };
-    },
-
-    /**
-     * Create AxisScaleMaker.
-     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
-     * @param {{title: string, min: number, max: number}} axisOptions - options for axis
-     * @param {string} areaType - type of area like series, xAxis, yAxis, circleLegend, legend
-     * @param {string} valueType - type of value like value, x, y, r
-     * @param {string} chartType - type of chart
-     * @param {?object} additionalParams additional parameters
-     * @returns {AxisScaleMaker}
-     * @private
-     */
-    _createAxisScaleMaker: function(axisOptions, areaType, valueType, chartType, additionalParams) {
-        var limit = this._pickLimitFromOptions(axisOptions);
-        var seriesOptions = this.options.series;
-
-        chartType = chartType || this.chartType;
-        seriesOptions = seriesOptions[chartType] || seriesOptions;
-
-        return new AxisScaleMaker(tui.util.extend({
+    _createComponentManager: function() {
+        return new ComponentManager({
+            options: this.options,
+            theme: this.theme,
             dataProcessor: this.dataProcessor,
-            boundsMaker: this.boundsMaker,
-            stackType: seriesOptions.stackType,
-            diverging: seriesOptions.diverging,
-            limitOption: limit,
-            type: axisOptions.type,
-            dateFormat: axisOptions.dateFormat,
-            isVertical: areaType !== 'xAxis',
-            areaType: areaType,
-            valueType: valueType,
-            chartType: chartType
-        }, additionalParams));
+            hasAxes: this.hasAxes,
+            eventBus: this.eventBus
+        });
     },
 
     /**
@@ -278,7 +249,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _makeTooltipData: function() {
         return {
             isVertical: this.isVertical,
-            userEvent: this.userEvent,
             chartType: this.chartType,
             xAxisType: this.options.xAxis.type,
             dateFormat: this.options.xAxis.dateFormat
@@ -286,241 +256,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Make rendering data for axis type chart.
-     * @returns {object} rendering data.
-     * @private
-     */
-    _makeRenderingData: function() {
-        return {};
-    },
-
-    /**
-     * Attach custom event.
-     * @param {Array.<object>} serieses serieses
-     * @private
-     */
-    _attachCustomEvent: function(serieses) {
-        var legend = this.componentManager.get('legend');
-        var customEvent = this.componentManager.get('customEvent');
-
-        serieses = serieses || this.componentManager.where({componentType: 'series'});
-
-        if (tui.util.pick(this.options.series, 'zoomable')) {
-            customEvent.on('zoom', this.onZoom, this);
-            customEvent.on('resetZoom', this.onResetZoom, this);
-        }
-
-        if (legend) {
-            legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
-            tui.util.forEach(serieses, function(series) {
-                var selectLegendEventName = renderUtil.makeCustomEventName('select', series.chartType, 'legend');
-                legend.on(selectLegendEventName, series.onSelectLegend, series);
-            });
-        }
-    },
-
-    /**
-     * Make axes data, used in a axis component like yAxis, xAxis, rightYAxis.
-     * @abstract
-     * @private
-     */
-    _makeAxesData: function() {},
-
-    /**
-     * Update dimensions.
-     * @abstract
-     * @private
-     */
-    _updateDimensions: function() {},
-
-    /**
-     * Add data ratios.
+     * Add components
      * @private
      * @abstract
      */
-    _addDataRatios: function() {},
-
-    /**
-     * Execute component function.
-     * @param {string} funcName function name
-     * @private
-     */
-    _executeComponentFunc: function(funcName) {
-        this.componentManager.each(function(component) {
-            if (component[funcName]) {
-                component[funcName]();
-            }
-        });
-    },
-
-    /**
-     * Register axes data, used in a axis component like yAxis, xAxis.
-     * @private
-     */
-    _registerAxesData: function() {
-        var axesData = this._makeAxesData();
-
-        this.boundsMaker.registerAxesData(axesData);
-    },
-
-    /**
-     * Update axesData.
-     * @private
-     * @abstract
-     */
-    _updateAxesData: function() {},
-
-    /**
-     * Render.
-     * @param {function} onRender render callback function
-     * @private
-     */
-    _render: function(onRender) {
-        var labelAxisOptions = (this.isVertical ? this.options.xAxis : this.options.yAxis) || {};
-        var renderingData;
-
-        this._executeComponentFunc('registerDimension');
-        this._registerAxesData();
-        this._executeComponentFunc('registerAdditionalDimension');
-        this.boundsMaker.registerSeriesDimension();
-
-        if (this.hasAxes && predicate.isAutoTickInterval(labelAxisOptions.tickInterval)) {
-            this._updateAxesData();
-        }
-
-        this._updateDimensions();
-
-        this.boundsMaker.registerBoundsData();
-        this._addDataRatios();
-
-        renderingData = this._makeRenderingData();
-
-        onRender(renderingData);
-
-        this._sendSeriesData();
-    },
-
-    /**
-     * Render chart.
-     * @returns {HTMLElement} chart element
-     */
-    render: function() {
-        var el = dom.create('DIV', this.className),
-            self = this;
-
-        dom.addClass(el, 'tui-chart');
-        this._renderTitle(el);
-        renderUtil.renderDimension(el, this.boundsMaker.getDimension('chart'));
-        renderUtil.renderBackground(el, this.theme.chart.background);
-        renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
-
-        this._render(function(renderingData) {
-            self._renderComponents(renderingData, 'render', el);
-        });
-
-        this._attachCustomEvent();
-        this.chartContainer = el;
-
-        return el;
-    },
-
-    /**
-     * Filter raw data belong to checked legend.
-     * @param {object} rawData raw data
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @returns {object} rawData
-     * @private
-     */
-    _filterCheckedRawData: function(rawData, checkedLegends) {
-        var cloneData = JSON.parse(JSON.stringify(rawData));
-
-        if (tui.util.isArray(cloneData.series)) {
-            cloneData.series = tui.util.filter(cloneData.series, function(series, index) {
-                return checkedLegends[index];
-            });
-        } else {
-            tui.util.forEach(cloneData.series, function(serieses, chartType) {
-                if (!checkedLegends[chartType]) {
-                    cloneData.series[chartType] = [];
-                } else if (checkedLegends[chartType].length) {
-                    cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
-                        return checkedLegends[chartType][index];
-                    });
-                }
-            });
-        }
-
-        return cloneData;
-    },
-
-    /**
-     * Make rerendering data.
-     * @param {object} renderingData rendering data
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @returns {object} rendering data
-     * @private
-     */
-    _makeRerenderingData: function(renderingData, checkedLegends) {
-        var tooltipData = this._makeTooltipData();
-        var serieses = this.componentManager.where({componentType: 'series'});
-
-        renderingData.tooltip = tui.util.extend({
-            checkedLegends: checkedLegends
-        }, tooltipData, renderingData.tooltip);
-
-        tui.util.forEach(serieses, function(series) {
-            renderingData[series.componentName] = tui.util.extend({
-                checkedLegends: checkedLegends[series.seriesName] || checkedLegends
-            }, renderingData[series.componentName]);
-        });
-
-        return renderingData;
-    },
-
-    /**
-     * Rerender.
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @param {?object} rawData rawData
-     * @private
-     */
-    _rerender: function(checkedLegends, rawData) {
-        var self = this;
-        var dataProcessor = this.dataProcessor;
-
-        if (!rawData) {
-            rawData = this._filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
-        }
-
-        this.axisScaleMakerMap = null;
-        this.dataProcessor.initData(rawData);
-        this.boundsMaker.initBoundsData();
-        this._render(function(renderingData) {
-            renderingData = self._makeRerenderingData(renderingData, checkedLegends);
-            self._renderComponents(renderingData, 'rerender');
-        });
-    },
-
-    /**
-     * On change checked legend.
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @param {?object} rawData rawData
-     * @param {?object} boundsParams addition params for calculating bounds
-     */
-    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-        this._rerender(checkedLegends, rawData, boundsParams);
-    },
-
-    /**
-     * On zoom.
-     * @abstract
-     */
-    onZoom: function() {},
-
-    /**
-     * On reset zoom.
-     * @abstract
-     */
-    onResetZoom: function() {},
+    _addComponents: function() {},
 
     /**
      * Render title.
@@ -543,88 +283,130 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Render components.
-     * @param {object} renderingData data for rendering
-     * @param {string} funcName function name for execution
-     * @param {HTMLElement} container container element
+     * Get scale option.
+     * @private
+     * @abstract
+     */
+    _getScaleOption: function() {},
+
+    /**
+     * Build bounds and scale data.
+     * @param {object} prevXAxisData - previous xAxis data
+     * @param {boolean} addingDataMode - whether adding data mode or not
+     * @returns {{
+     *      layoutBounds: {
+     *          dimensionMap: object,
+     *          positionMap: object
+     *      },
+     *      limitMap: object,
+     *      axisDataMap: object,
+     *      maxRadius: ?number
+     * }}
      * @private
      */
-    _renderComponents: function(renderingData, funcName, container) {
-        var paper;
-        var elements = this.componentManager.map(function(component) {
-            var element = null;
-            var data, result;
-
-            if (component[funcName]) {
-                data = renderingData[component.componentName] || renderingData || {};
-                data.paper = paper;
-                result = component[funcName](data);
-
-                if (result && result.container) {
-                    element = result.container;
-                    paper = result.paper;
-                } else {
-                    element = result;
-                }
-            }
-
-            return element;
+    _buildBoundsAndScaleData: function(prevXAxisData, addingDataMode) {
+        return boundsAndScaleBuilder.build(this.dataProcessor, this.componentManager, {
+            chartType: this.chartType,
+            seriesNames: this.seriesNames,
+            options: this.options,
+            theme: this.theme,
+            hasAxes: this.hasAxes,
+            scaleOption: this._getScaleOption(),
+            isVertical: this.isVertical,
+            hasRightYAxis: this.hasRightYAxis,
+            addedDataCount: this.addedDataCount,
+            prevXAxisData: prevXAxisData,
+            addingDataMode: addingDataMode
         });
-
-        if (container) {
-            dom.append(container, elements);
-        }
     },
 
     /**
-     * Send series data to custom event component.
-     * @param {string} chartType - type of chart
+     * Add data ratios.
+     * @private
+     * @abstract
+     */
+    _addDataRatios: function() {},
+
+    /**
+     * Render.
+     * @param {function} onRender render callback function
+     * @param {?boolean} addingDataMode - whether adding data mode or not
      * @private
      */
-    _sendSeriesData: function(chartType) {
+    _render: function(onRender, addingDataMode) {
+        var boundsAndScale = this._buildBoundsAndScaleData(this.prevXAxisData, addingDataMode);
+
+        if (boundsAndScale.axisDataMap.xAxis) {
+            this.prevXAxisData = boundsAndScale.axisDataMap.xAxis;
+        }
+
+        // 비율값 추가
+        this._addDataRatios(boundsAndScale.limitMap);
+
+        onRender(boundsAndScale);
+    },
+
+    /**
+     * Render chart.
+     * @returns {HTMLElement} chart element
+     */
+    render: function() {
+        var container = dom.create('DIV', 'tui-chart ' + this.className);
+        var componentManager = this.componentManager;
+
+        this._renderTitle(container);
+
+        renderUtil.renderBackground(container, this.theme.chart.background);
+        renderUtil.renderFontFamily(container, this.theme.chart.fontFamily);
+
+        this._render(function(boundsAndScale) {
+            renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
+            componentManager.render('render', boundsAndScale, null, container);
+        });
+
+        this.chartContainer = container;
+
+        return container;
+    },
+
+    /**
+     * Rerender.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @private
+     */
+    _rerender: function(checkedLegends, rawData) {
         var self = this;
-        var customEvent = this.componentManager.get('customEvent');
-        var seriesInfos, chartTypes;
+        var dataProcessor = this.dataProcessor;
 
-        if (!customEvent) {
-            return;
+        if (!rawData) {
+            rawData = rawDataHandler.filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
         }
 
-        chartTypes = this.chartTypes || [chartType || this.chartType];
-        seriesInfos = tui.util.map(chartTypes, function(seriesName) {
-            var _chartType = self.dataProcessor.findChartType(seriesName);
-            var componentName = (seriesName || _chartType) + 'Series';
-            var component = self.componentManager.get(componentName) || self.componentManager.get('series');
+        this.dataProcessor.initData(rawData);
 
-            return {
-                chartType: _chartType,
-                data: component.getSeriesData()
-            };
+        this._render(function(boundsAndScale) {
+            self.componentManager.render('rerender', boundsAndScale, {
+                checkedLegends: checkedLegends
+            });
         });
-
-        customEvent.initCustomEventData(seriesInfos);
     },
 
     /**
-     * Make event name for animation.
-     * @param {string} chartType chart type
-     * @param {string} prefix prefix
-     * @returns {string} event name
-     * @private
+     * On change checked legend.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @param {?object} boundsParams addition params for calculating bounds
      */
-    _makeAnimationEventName: function(chartType, prefix) {
-        return prefix + chartType.substring(0, 1).toUpperCase() + chartType.substring(1) + 'Animation';
+    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        this._rerender(checkedLegends, rawData, boundsParams);
     },
 
     /**
      * Animate chart.
      */
     animateChart: function() {
-        this.componentManager.each(function(component) {
-            if (component.animateComponent) {
-                component.animateComponent();
-            }
-        });
+        this.componentManager.execute('animateComponent');
     },
 
     /**
@@ -633,7 +415,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {function} func event callback
      */
     on: function(eventName, func) {
-        this.userEvent.register(eventName, func);
+        if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
+            this.eventBus.on(chartConst.PUBLIC_EVENT_PREFIX + eventName, func);
+        }
     },
 
     /**
@@ -644,15 +428,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _updateChartDimension: function(dimension) {
         var updated = false;
-        var chartOptions = this.options.chart;
+        var options = this.options;
 
-        if (dimension.width && chartOptions.width !== dimension.width) {
-            chartOptions.width = dimension.width;
+        options.chart = options.chart || {};
+
+        if (dimension.width && dimension.width > 0 && options.chart.width !== dimension.width) {
+            options.chart.width = dimension.width;
             updated = true;
         }
 
-        if (dimension.height && chartOptions.height !== dimension.height) {
-            chartOptions.height = dimension.height;
+        if (dimension.height && dimension.height > 0 && options.chart.height !== dimension.height) {
+            options.chart.height = dimension.height;
             updated = true;
         }
 
@@ -680,11 +466,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        this.boundsMaker.initBoundsData(this.options.chart);
-        renderUtil.renderDimension(this.chartContainer, this.boundsMaker.getDimension('chart'));
-
-        this._render(function(renderingData) {
-            self._renderComponents(renderingData, 'resize');
+        this._render(function(boundsAndScale) {
+            renderUtil.renderDimension(self.chartContainer, boundsAndScale.dimensionMap.chart);
+            self.componentManager.render('resize', boundsAndScale);
         });
     },
 
@@ -750,9 +534,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     showSeriesLabel: function() {
-        var serieses = this.componentManager.where({componentType: 'series'});
+        var seriesSet = this.componentManager.where({componentType: 'series'});
 
-        tui.util.forEachArray(serieses, function(series) {
+        tui.util.forEachArray(seriesSet, function(series) {
             series.showLabel();
         });
     },
@@ -762,9 +546,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     hideSeriesLabel: function() {
-        var serieses = this.componentManager.where({componentType: 'series'});
+        var seriesSet = this.componentManager.where({componentType: 'series'});
 
-        tui.util.forEachArray(serieses, function(series) {
+        tui.util.forEachArray(seriesSet, function(series) {
             series.hideLabel();
         });
     },
@@ -777,51 +561,27 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Add plot line.
-     * @param {{index: number, color: string, id: string}} data - data
+     * @abstract
      */
-    addPlotLine: function(data) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.addPlotLine(data);
-        }
-    },
+    addPlotLine: function() {},
 
     /**
      * Add plot band.
-     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     * @abstract
      */
-    addPlotBand: function(data) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.addPlotBand(data);
-        }
-    },
+    addPlotBand: function() {},
 
     /**
      * Remove plot line.
-     * @param {string} id - line id
+     * @abstract
      */
-    removePlotLine: function(id) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.removePlotLine(id);
-        }
-    },
+    removePlotLine: function() {},
 
     /**
      * Remove plot band.
-     * @param {string} id - band id
+     * @abstract
      */
-    removePlotBand: function(id) {
-        var plot = this.componentManager.get('plot');
-
-        if (plot) {
-            plot.removePlotBand(id);
-        }
-    }
+    removePlotBand: function() {}
 });
 
 module.exports = ChartBase;

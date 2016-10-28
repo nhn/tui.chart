@@ -9,9 +9,8 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var Series = require('../series/scatterChartSeries');
+var Series = require('../components/series/scatterChartSeries');
 var axisTypeMixer = require('./axisTypeMixer');
-var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
     /**
@@ -32,8 +31,6 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
     init: function(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
 
-        this.axisScaleMakerMap = null;
-
         if (!options.tooltip.align) {
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
@@ -44,32 +41,14 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
             options: options,
             hasAxes: true
         });
-
-        this._addComponents(options.chartType);
-    },
-
-    /**
-     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
-     * @private
-     */
-    _makeAxisScaleMakerMap: function() {
-        var options = this.options;
-
-        return {
-            xAxis: this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x'),
-            yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y')
-        };
     },
 
     /**
      * Add components
-     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(chartType) {
+    _addComponents: function() {
         this._addComponentsForAxisType({
-            chartType: chartType,
             axis: [
                 {
                     name: 'yAxis',
@@ -87,58 +66,26 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
             ],
             plot: true
         });
+    },
+
+    /**
+     * Get scale option.
+     * @returns {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
+     * @private
+     * @override
+     */
+    _getScaleOption: function() {
+        return {
+            xAxis: {
+                valueType: 'x'
+            },
+            yAxis: {
+                valueType: 'y'
+            }
+        };
     }
 });
 
 tui.util.extend(ScatterChart.prototype, axisTypeMixer);
-
-/**
- * Add data ratios.
- * @private
- * @override
- */
-ScatterChart.prototype._addDataRatios = function() {
-    var scaleMakerMap = this._getAxisScaleMakerMap();
-
-    this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, {
-        x: scaleMakerMap.xAxis.getLimit(),
-        y: scaleMakerMap.yAxis.getLimit()
-    }, false);
-};
-
-/**
- * Add custom event component for normal tooltip.
- * @private
- */
-ScatterChart.prototype._attachCustomEvent = function() {
-    var componentManager = this.componentManager;
-    var customEvent = componentManager.get('customEvent');
-    var scatterSeries = componentManager.get('scatterSeries');
-    var tooltip = componentManager.get('tooltip');
-
-    axisTypeMixer._attachCustomEvent.call(this);
-
-    customEvent.on({
-        clickScatterSeries: scatterSeries.onClickSeries,
-        moveScatterSeries: scatterSeries.onMoveSeries
-    }, scatterSeries);
-
-    scatterSeries.on({
-        showTooltip: tooltip.onShow,
-        hideTooltip: tooltip.onHide,
-        showTooltipContainer: tooltip.onShowTooltipContainer,
-        hideTooltipContainer: tooltip.onHideTooltipContainer
-    }, tooltip);
-};
-
-/**
- * Add custom event component.
- * @private
- */
-ScatterChart.prototype._addCustomEventComponent = function() {
-    this.componentManager.register('customEvent', SimpleCustomEvent, {
-        chartType: this.chartType
-    });
-};
 
 module.exports = ScatterChart;

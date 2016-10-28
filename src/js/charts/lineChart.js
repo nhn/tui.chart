@@ -8,11 +8,10 @@
 
 var ChartBase = require('./chartBase');
 var lineTypeMixer = require('./lineTypeMixer');
-var autoTickMixer = require('./autoTickMixer');
 var zoomMixer = require('./zoomMixer');
 var axisTypeMixer = require('./axisTypeMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
-var Series = require('../series/lineChartSeries');
+var Series = require('../components/series/lineChartSeries');
 
 var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
@@ -29,14 +28,22 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
 
     /**
      * Line chart.
+     * @param {Array.<Array>} rawData - raw data
+     * @param {object} theme - chart theme
+     * @param {object} options - chart options
      * @constructs LineChart
      * @extends ChartBase
      * @mixes axisTypeMixer
      * @mixes lineTypeMixer
      */
-    init: function() {
-        this._lineTypeInit.apply(this, arguments);
-        this._initForAutoTickInterval();
+    init: function(rawData, theme, options) {
+        ChartBase.call(this, {
+            rawData: rawData,
+            theme: theme,
+            options: options,
+            hasAxes: true,
+            isVertical: true
+        });
         this._initForAddingData();
     },
 
@@ -48,23 +55,12 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @override
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        this._initForAddingData();
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
-    },
-
-    /**
-     * Resize.
-     * @param {object} dimension dimension
-     *      @param {number} dimension.width width
-     *      @param {number} dimension.height height
-     * @override
-     */
-    resize: function(dimension) {
-        this._initForAutoTickInterval();
-        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 
 tui.util.extend(LineChart.prototype,
-    axisTypeMixer, lineTypeMixer, autoTickMixer, zoomMixer, addingDynamicDataMixer);
+    axisTypeMixer, lineTypeMixer, zoomMixer, addingDynamicDataMixer);
 
 module.exports = LineChart;

@@ -200,7 +200,7 @@ var renderUtil = {
 
     /**
      * Get Rendered Labels Max Size(width or height).
-     * @memberOf module:boundsMaker
+     * @memberOf module:renderUtil
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @param {function} iteratee iteratee
@@ -223,7 +223,7 @@ var renderUtil = {
 
     /**
      * Get rendered labels max width.
-     * @memberOf module:boundsMaker
+     * @memberOf module:renderUtil
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max width
@@ -238,7 +238,7 @@ var renderUtil = {
 
     /**
      * Get rendered labels max height.
-     * @memberOf module:boundsMaker
+     * @memberOf module:renderUtil
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max height
@@ -412,6 +412,7 @@ var renderUtil = {
         if (!formatFunctions || !formatFunctions.length) {
             return values;
         }
+
         formatedValues = tui.util.map(values, function(label) {
             return renderUtil.formatValue(label, formatFunctions, chartType, areaType, valueType);
         });
