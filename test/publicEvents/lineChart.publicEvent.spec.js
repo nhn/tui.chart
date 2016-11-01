@@ -50,7 +50,8 @@ describe('Test user events for line chart', function() {
         it('select series', function(done) {
             var customEvent = lineChart.componentManager.get('customEvent');
 
-            spyOn(customEvent, '_getContainerBound').and.returnValue({
+            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -76,7 +77,8 @@ describe('Test user events for line chart', function() {
         it('unselect series', function(done) {
             var customEvent = lineChart.componentManager.get('customEvent');
 
-            spyOn(customEvent, '_getContainerBound').and.returnValue({
+            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,

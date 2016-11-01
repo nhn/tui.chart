@@ -106,12 +106,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         this.overlay = this._renderOverlay();
 
         /**
-         * bound of container
-         * @type {{left: number, top: number}}
-         */
-        this.containerBound = null;
-
-        /**
          * selected previous sector
          * @type {object}
          */
@@ -467,7 +461,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         this.circleBound = circleBound;
         this.paper.setSize(dimension.width, dimension.height);
-        this.containerBound = null;
 
         tui.util.forEachArray(this.sectorInfos, function(sectorInfo) {
             var angles = sectorInfo.angles;
@@ -511,19 +504,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * Get series container bound.
-     * @returns {{left: number, top: number}} container bound
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.container.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Whether changed or not.
      * @param {{left: number, top: number}} prevPosition previous position
      * @param {{left: number, top: number}} position position
@@ -541,7 +521,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _showTooltip: function(sector, position) {
-        var containerBound = this._getContainerBound();
+        var containerBound = this.container.getBoundingClientRect();
         var args = [{}, 0, sector.data('index'), {
             left: position.left - containerBound.left,
             top: position.top - containerBound.top

@@ -177,7 +177,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @override
      */
     _onMouseout: function(e) {
-        var bound = this._getContainerBound();
+        // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+        var bound = this.customEventContainer.getBoundingClientRect();
         var clientX = e.clientX;
         var clientY = e.clientY;
 

@@ -53,7 +53,8 @@ describe('Test user events for bar chart', function() {
         it('select series', function(done) {
             var customEvent = barChart.componentManager.get('customEvent');
 
-            spyOn(customEvent, '_getContainerBound').and.returnValue({
+            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -80,7 +81,8 @@ describe('Test user events for bar chart', function() {
         it('unselect series', function(done) {
             var customEvent = barChart.componentManager.get('customEvent');
 
-            spyOn(customEvent, '_getContainerBound').and.returnValue({
+            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -134,7 +136,8 @@ describe('Test user events for bar chart', function() {
         it('before show tooltip', function(done) {
             var customEvent = barChart.componentManager.get('customEvent');
 
-            spyOn(customEvent, '_getContainerBound').and.returnValue({
+            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -161,7 +164,8 @@ describe('Test user events for bar chart', function() {
         it('after show tooltip', function(done) {
             var customEvent = barChart.componentManager.get('customEvent');
 
-            spyOn(customEvent, '_getContainerBound').and.returnValue({
+            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,

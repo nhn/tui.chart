@@ -97,12 +97,6 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.expandSize = isLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
 
         /**
-         * container bound
-         * @type {null | {left: number, top: number, right: number, bottom: number}}
-         */
-        this.containerBound = null;
-
-        /**
          * series data set
          * @type {Array}
          */
@@ -215,19 +209,6 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Get container bound.
-     * @returns {ClientRect}
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.customEventContainer.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Calculate layer position by client position.
      * @param {number} clientX - clientX
      * @param {number} [clientY] - clientY
@@ -236,7 +217,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _calculateLayerPosition: function(clientX, clientY, checkLimit) {
-        var bound = this._getContainerBound();
+        var bound = this.customEventContainer.getBoundingClientRect();
         var layerPosition = {};
         var expandSize = this.expandSize;
         var maxLeft, minLeft;
