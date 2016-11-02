@@ -326,7 +326,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     onShowTooltip: function(params) {
         var seriesDataModel = this._getSeriesDataModel();
         var indexes = params.indexes;
-        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).ratio;
+        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).colorRatio;
 
         if (ratio > -1) {
             this.eventBus.fire('showWedge', ratio);

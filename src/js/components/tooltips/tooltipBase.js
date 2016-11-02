@@ -272,8 +272,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {object} params coordinate event parameters
      */
     onShowTooltip: function(params) {
-        var tooltipElement = this._getTooltipElement(),
-            prevPosition;
+        var tooltipElement = this._getTooltipElement();
+        var prevPosition;
 
         if (!predicate.isMousePositionChart(params.chartType) && tooltipElement.offsetWidth) {
             prevPosition = {

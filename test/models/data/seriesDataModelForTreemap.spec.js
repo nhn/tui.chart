@@ -191,6 +191,66 @@ describe('Test for SeriesDataModelForTreemap', function() {
         });
     });
 
+    describe('_setRatio()', function() {
+        it('set ratio', function() {
+            var flatSeriesData = [
+                {
+                    parent: rootId,
+                    value: 20
+                },
+                {
+                    parent: rootId,
+                    value: 30
+                },
+                {
+                    parent: rootId,
+                    value: 50
+                }
+            ];
+            seriesDataModel._setRatio(flatSeriesData, rootId);
+
+            expect(flatSeriesData[0].ratio).toBe(0.2);
+            expect(flatSeriesData[1].ratio).toBe(0.3);
+            expect(flatSeriesData[2].ratio).toBe(0.5);
+        });
+
+        it('set ratio, when two depth seriesData', function() {
+            var flatSeriesData = [
+                {
+                    id: '1_1',
+                    parent: rootId,
+                    value: 20
+                },
+                {
+                    id: '1_2',
+                    parent: rootId,
+                    value: 30
+                },
+                {
+                    id: '1_3',
+                    parent: rootId,
+                    value: 50,
+                    hasChild: true
+                },
+                {
+                    parent: '1_3',
+                    value: 20
+                },
+                {
+                    parent: '1_3',
+                    value: 30
+                }
+            ];
+            seriesDataModel._setRatio(flatSeriesData, rootId);
+
+            expect(flatSeriesData[0].ratio).toBe(0.2);
+            expect(flatSeriesData[1].ratio).toBe(0.3);
+            expect(flatSeriesData[2].ratio).toBe(0.5);
+            expect(flatSeriesData[3].ratio).toBe(0.4);
+            expect(flatSeriesData[4].ratio).toBe(0.6);
+        });
+    });
+
     describe('_makeCacheKey()', function() {
         it('make cache key for caching found SeriesItems', function() {
             var actual = seriesDataModel._makeCacheKey('prefix_', 1, 2, 3);

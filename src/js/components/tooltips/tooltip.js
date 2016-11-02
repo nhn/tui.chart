@@ -124,28 +124,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * Format value of valueMap
-     * @param {object} valueMap - map of value like value, x, y, r
-     * @returns {{}}
-     * @private
-     */
-    _formatValueMap: function(valueMap) {
-        var formatFunctions = this.dataProcessor.getFormatFunctions();
-        var chartType = this.chartType;
-        var formattedMap = {};
-
-        tui.util.forEach(valueMap, function(value, valueType) {
-            if (tui.util.isNumber(value)) {
-                value = renderUtil.formatValue(value, formatFunctions, chartType, 'tooltip', valueType);
-            }
-
-            formattedMap[valueType] = value;
-        });
-
-        return formattedMap;
-    },
-
-    /**
      * Make tooltip datum.
      * @param {Array.<string>} legendLabels - legend labels
      * @param {string} category - category
@@ -159,7 +137,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var legend = legendLabels[chartType][index] || '';
         var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
         var label = seriesItem.tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
-        var valueMap = this._formatValueMap(seriesItem.pickValueMap());
 
         if (category && predicate.isDatetimeType(this.xAxisType)) {
             category = renderUtil.formatDate(category, this.dateFormat);
@@ -169,7 +146,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             category: category || '',
             legend: legend,
             label: label
-        }, valueMap);
+        }, seriesItem.pickValueMapForTooltip());
     },
 
     /**

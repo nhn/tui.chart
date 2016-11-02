@@ -110,17 +110,35 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
     },
 
     /**
-     * Pick value map.
+     * Get formatted value for tooltip.
+     * @param {string} valueType - value type
+     * @returns {string}
+     * @private
+     */
+    _getFormattedValueForTooltip: function(valueType) {
+        var ratio = this.ratioMap[valueType];
+        var value = this[valueType];
+        return ratio ? renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType) : null;
+    },
+
+    /**
+     * Pick value map for tooltip.
      * @returns {{x: (number | null), y: (number | null), r: (number | null)}}
      */
-    pickValueMap: function() {
+    pickValueMapForTooltip: function() {
         var formatFunctions = this.formatFunctions;
         var chartType = this.chartType;
         var valueMap = {
-            x: this.ratioMap.x ? this.x : null,
-            y: this.ratioMap.y ? this.y : null,
-            r: this.ratioMap.r ? this.r : null
+            x: this._getFormattedValueForTooltip('x'),
+            y: this._getFormattedValueForTooltip('y'),
+            xRatio: this.ratioMap.x,
+            yRatio: this.ratioMap.y
         };
+
+        if (tui.util.isExisty(this.r)) {
+            valueMap.r = this._getFormattedValueForTooltip('r');
+            valueMap.rRatio = this.ratioMap.r;
+        }
 
         if (predicate.isLineTypeChart(this.chartType)) {
             if (predicate.isDatetimeType(this.xAxisType)) {

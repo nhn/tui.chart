@@ -147,7 +147,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         var color;
 
         if (!seriesItem.hasChild) {
-            color = this.colorSpectrum.getColor(seriesItem.ratio) || this.chartBackground;
+            color = this.colorSpectrum.getColor(seriesItem.colorRatio) || this.chartBackground;
         } else {
             color = 'none';
         }
