@@ -4,6 +4,7 @@
  * @version 2.4.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
+ * bundle created at "Wed Nov 02 2016 17:45:18 GMT+0900 (KST)
  */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
@@ -6035,7 +6036,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var labelsHtml;
 
         if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)) {
-            additionalSize -= ((labelSize * options.labelInterval / 2) - (labelSize / 2))
+            additionalSize -= ((labelSize * options.labelInterval / 2) - (labelSize / 2));
             labelSize *= options.labelInterval;
         }
 
@@ -7033,7 +7034,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @override
      */
     _onMouseout: function(e) {
-        var bound = this._getContainerBound();
+        // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+        var bound = this.customEventContainer.getBoundingClientRect();
         var clientX = e.clientX;
         var clientY = e.clientY;
 
@@ -7168,12 +7170,6 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.expandSize = isLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
 
         /**
-         * container bound
-         * @type {null | {left: number, top: number, right: number, bottom: number}}
-         */
-        this.containerBound = null;
-
-        /**
          * series data set
          * @type {Array}
          */
@@ -7286,19 +7282,6 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Get container bound.
-     * @returns {ClientRect}
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.customEventContainer.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Calculate layer position by client position.
      * @param {number} clientX - clientX
      * @param {number} [clientY] - clientY
@@ -7307,7 +7290,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _calculateLayerPosition: function(clientX, clientY, checkLimit) {
-        var bound = this._getContainerBound();
+        var bound = this.customEventContainer.getBoundingClientRect();
         var layerPosition = {};
         var expandSize = this.expandSize;
         var maxLeft, minLeft;
@@ -12665,19 +12648,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * Get series container bound.
-     * @returns {{left: number, top: number}} container bound
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.seriesContainer.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * On move series.
      * @param {{left: number, top: number}} position position
      */
@@ -12696,7 +12666,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             }
 
             if (this._isChangedPosition(this.prevPosition, position)) {
-                containerBound = this._getContainerBound();
+                // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+                containerBound = this.seriesContainer.getBoundingClientRect();
                 this._showTooltip(foundIndex, {
                     left: position.left - containerBound.left,
                     top: position.top - containerBound.top
@@ -12771,7 +12742,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _movePositionForZoom: function(position, changedRatio) {
         var seriesDimension = this.layout.dimension;
-        var containerBound = this._getContainerBound();
+        var containerBound = this.seriesContainer.getBoundingClientRect();
         var startPosition = {
             left: (seriesDimension.width / 2) + containerBound.left,
             top: (seriesDimension.height / 2) + containerBound.top
@@ -13799,13 +13770,13 @@ var renderingLabelHelper = {
     makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed, template) {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-        var total;
+        var total, labelsHtml;
 
         if (template) {
             total = tui.util.sum(tui.util.pluck(seriesItems, 'value'));
         }
 
-        var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
+        labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
             var bound = boundMap[seriesItem.id];
             var html = '';
             var position, compareIndex, label;
@@ -15395,7 +15366,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     onShowTooltip: function(params) {
         var seriesDataModel = this._getSeriesDataModel();
         var indexes = params.indexes;
-        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).ratio;
+        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).colorRatio;
 
         if (ratio > -1) {
             this.eventBus.fire('showWedge', ratio);
@@ -17206,28 +17177,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * Format value of valueMap
-     * @param {object} valueMap - map of value like value, x, y, r
-     * @returns {{}}
-     * @private
-     */
-    _formatValueMap: function(valueMap) {
-        var formatFunctions = this.dataProcessor.getFormatFunctions();
-        var chartType = this.chartType;
-        var formattedMap = {};
-
-        tui.util.forEach(valueMap, function(value, valueType) {
-            if (tui.util.isNumber(value)) {
-                value = renderUtil.formatValue(value, formatFunctions, chartType, 'tooltip', valueType);
-            }
-
-            formattedMap[valueType] = value;
-        });
-
-        return formattedMap;
-    },
-
-    /**
      * Make tooltip datum.
      * @param {Array.<string>} legendLabels - legend labels
      * @param {string} category - category
@@ -17241,7 +17190,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var legend = legendLabels[chartType][index] || '';
         var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
         var label = seriesItem.tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
-        var valueMap = this._formatValueMap(seriesItem.pickValueMap());
 
         if (category && predicate.isDatetimeType(this.xAxisType)) {
             category = renderUtil.formatDate(category, this.dateFormat);
@@ -17251,7 +17199,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             category: category || '',
             legend: legend,
             label: label
-        }, valueMap);
+        }, seriesItem.pickValueMapForTooltip());
     },
 
     /**
@@ -17572,8 +17520,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {object} params coordinate event parameters
      */
     onShowTooltip: function(params) {
-        var tooltipElement = this._getTooltipElement(),
-            prevPosition;
+        var tooltipElement = this._getTooltipElement();
+        var prevPosition;
 
         if (!predicate.isMousePositionChart(params.chartType) && tooltipElement.offsetWidth) {
             prevPosition = {
@@ -24223,16 +24171,16 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
 
     /**
      * Set tree properties like depth, group in raw series data.
-     * @param {Array.<object>} rawSeriesData - raw series data
+     * @param {Array.<object>} flatSeriesData - flat series data
      * @param {number} depth - tree depth
      * @param {number} parent - parent id
      * @param {number} group - tree group
      * @returns {Array.<object>}
      * @private
      */
-    _setTreeProperties: function(rawSeriesData, depth, parent, group) {
+    _setTreeProperties: function(flatSeriesData, depth, parent, group) {
         var self = this;
-        var parted = this._partitionRawSeriesDataByParent(rawSeriesData, parent);
+        var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
         var filtered = parted[0];
         var rejected = parted[1];
         var childDepth = depth + 1;
@@ -24262,6 +24210,28 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     },
 
     /**
+     * Set ratio.
+     * @param {Array.<object>} flatSeriesData - raw series data
+     * @param {string} parent - parent id
+     * @private
+     */
+    _setRatio: function(flatSeriesData, parent) {
+        var self = this;
+        var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
+        var filtered = parted[0];
+        var rejected = parted[1];
+        var total = tui.util.sum(tui.util.pluck(filtered, 'value'));
+
+        tui.util.forEachArray(filtered, function(datum) {
+            datum.ratio = datum.value / total;
+
+            if (datum.hasChild) {
+                self._setRatio(rejected, datum.id);
+            }
+        });
+    },
+
+    /**
      * Create base groups.
      * @returns {Array.<Array.<SeriesItem>>}
      * @private
@@ -24269,14 +24239,13 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      */
     _createBaseGroups: function() {
         var chartType = this.chartType;
-        var rawSeriesData = this.rawSeriesData;
         var seriesItemMap = this.seriesItemMap;
         var formatFunctions = this.formatFunctions;
+        var flatSeriesData = this._flattenHierarchicalData(this.rawSeriesData);
+        flatSeriesData = this._setTreeProperties(flatSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
+        this._setRatio(flatSeriesData, chartConst.TREEMAP_ROOT_ID);
 
-        rawSeriesData = this._flattenHierarchicalData(rawSeriesData);
-        rawSeriesData = this._setTreeProperties(rawSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
-
-        return [tui.util.map(rawSeriesData, function(rawDatum) {
+        return [tui.util.map(flatSeriesData, function(rawDatum) {
             var seriesItem = new SeriesItem(rawDatum, formatFunctions, chartType);
 
             seriesItemMap[seriesItem.id] = seriesItem;
@@ -24878,22 +24847,40 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
 
         this.ratio = this.endRatio = calculator.calculateRatio(this.value, divNumber, subNumber, baseRatio);
 
-        if (!tui.util.isNull(this.start)) {
+        if (tui.util.isExisty(this.start)) {
             this.startRatio = calculator.calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
     },
 
     /**
-     * Pick value map.
+     * Get formatted value for tooltip.
+     * @param {string} valueType - value type
+     * @returns {string}
+     * @private
+     */
+    _getFormattedValueForTooltip: function(valueType) {
+        return renderUtil.formatValue(this[valueType], this.formatFunctions, this.chartType, 'tooltip', valueType);
+    },
+
+    /**
+     * Pick value map for tooltip.
      * @returns {{value: number, start: ?number, end: ?number}}
      */
-    pickValueMap: function() {
-        return {
-            value: this.value,
-            start: this.start,
-            end: this.end
+    pickValueMapForTooltip: function() {
+        var valueMap = {
+            value: this._getFormattedValueForTooltip('value'),
+            ratio: this.ratio
         };
+
+        if (tui.util.isExisty(this.start)) {
+            valueMap.start = this._getFormattedValueForTooltip('start');
+            valueMap.end = this._getFormattedValueForTooltip('end');
+            valueMap.startRatio = this.startRatio;
+            valueMap.endRatio = this.endRatio;
+        }
+
+        return valueMap;
     }
 });
 
@@ -25012,17 +24999,35 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
     },
 
     /**
-     * Pick value map.
+     * Get formatted value for tooltip.
+     * @param {string} valueType - value type
+     * @returns {string}
+     * @private
+     */
+    _getFormattedValueForTooltip: function(valueType) {
+        var ratio = this.ratioMap[valueType];
+        var value = this[valueType];
+        return ratio ? renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType) : null;
+    },
+
+    /**
+     * Pick value map for tooltip.
      * @returns {{x: (number | null), y: (number | null), r: (number | null)}}
      */
-    pickValueMap: function() {
+    pickValueMapForTooltip: function() {
         var formatFunctions = this.formatFunctions;
         var chartType = this.chartType;
         var valueMap = {
-            x: this.ratioMap.x ? this.x : null,
-            y: this.ratioMap.y ? this.y : null,
-            r: this.ratioMap.r ? this.r : null
+            x: this._getFormattedValueForTooltip('x'),
+            y: this._getFormattedValueForTooltip('y'),
+            xRatio: this.ratioMap.x,
+            yRatio: this.ratioMap.y
         };
+
+        if (tui.util.isExisty(this.r)) {
+            valueMap.r = this._getFormattedValueForTooltip('r');
+            valueMap.rRatio = this.ratioMap.r;
+        }
 
         if (predicate.isLineTypeChart(this.chartType)) {
             if (predicate.isDatetimeType(this.xAxisType)) {
@@ -25073,6 +25078,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         this.id = rawSeriesDatum.id;
         this.parent = rawSeriesDatum.parent;
         this.value = rawSeriesDatum.value;
+        this.ratio = rawSeriesDatum.ratio;
         this.colorValue = rawSeriesDatum.colorValue;
         this.depth = rawSeriesDatum.depth;
         this.label = rawSeriesDatum.label || '';
@@ -25090,22 +25096,31 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         divNumber = divNumber || 1;
         subNumber = subNumber || 0;
 
-        this.ratio = calculator.calculateRatio(this.colorValue, divNumber, subNumber, 1) || -1;
+        this.colorRatio = calculator.calculateRatio(this.colorValue, divNumber, subNumber, 1) || -1;
     },
 
     /**
-     * Pick value map.
+     * Pick value map for tooltip.
      * @returns {{value: number, label: string}}
      */
-    pickValueMap: function() {
-        var areaType = 'makingTooltipLabel';
-        var formattedValue = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
+    pickValueMapForTooltip: function() {
+        var formatFunctions = this.formatFunctions;
+        var chartType = this.chartType;
+        var colorValue = this.colorValue;
+        var formattedValue = renderUtil.formatValue(this.value, formatFunctions, chartType, 'tooltipValue');
         var label = (this.label ? this.label + ': ' : '') + formattedValue;
-
-        return {
-            value: this.value,
-            label: label
+        var valueMap = {
+            value: formattedValue,
+            label: label,
+            ratio: this.ratio
         };
+
+        if (tui.util.isExisty(colorValue)) {
+            valueMap.colorValue = renderUtil.formatValue(colorValue, formatFunctions, chartType, 'tooltipColorValue');
+            valueMap.colorRatio = this.colorRatio;
+        }
+
+        return valueMap;
     },
 
     /**
@@ -25113,10 +25128,10 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
      * @param {number} total - value total
      * @returns {{value: number, ratio: number, label: string, colorValue: ?number, colorValueRatio: ?number}}
      */
-    pickLabelTemplateData: function(total) {
+    pickLabelTemplateData: function() {
         var templateData = {
             value: this.value,
-            ratio: (this.value / total),
+            ratio: this.ratio,
             label: this.label
         };
 
@@ -26759,6 +26774,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
 
     /**
      * Update x axis data for auto tick interval.
+     * @param {object} prevXAxisData - previous xAxis data
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
     updateXAxisDataForAutoTickInterval: function(prevXAxisData, addingDataMode) {
@@ -28026,7 +28042,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         var color;
 
         if (!seriesItem.hasChild) {
-            color = this.colorSpectrum.getColor(seriesItem.ratio) || this.chartBackground;
+            color = this.colorSpectrum.getColor(seriesItem.colorRatio) || this.chartBackground;
         } else {
             color = 'none';
         }
@@ -28592,19 +28608,6 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     },
 
     /**
-     * Get series container bound.
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.container.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Whether changed or not.
      * @param {{left: number, top: number}} prevPosition - previous position
      * @param {{left: number, top: number}} position - position
@@ -28693,7 +28696,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         var containerBound, isChanged, groupIndex, index, args;
 
         if (circle && tui.util.isExisty(circle.data('groupIndex'))) {
-            containerBound = this._getContainerBound();
+            containerBound = this.container.getBoundingClientRect();
             isChanged = (this.prevOverCircle !== circle);
             groupIndex = circle.data('groupIndex');
             index = circle.data('index');
@@ -30091,12 +30094,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         this.overlay = this._renderOverlay();
 
         /**
-         * bound of container
-         * @type {{left: number, top: number}}
-         */
-        this.containerBound = null;
-
-        /**
          * selected previous sector
          * @type {object}
          */
@@ -30452,7 +30449,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         this.circleBound = circleBound;
         this.paper.setSize(dimension.width, dimension.height);
-        this.containerBound = null;
 
         tui.util.forEachArray(this.sectorInfos, function(sectorInfo) {
             var angles = sectorInfo.angles;
@@ -30496,19 +30492,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * Get series container bound.
-     * @returns {{left: number, top: number}} container bound
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.container.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Whether changed or not.
      * @param {{left: number, top: number}} prevPosition previous position
      * @param {{left: number, top: number}} position position
@@ -30526,7 +30509,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _showTooltip: function(sector, position) {
-        var containerBound = this._getContainerBound();
+        var containerBound = this.container.getBoundingClientRect();
         var args = [{}, 0, sector.data('index'), {
             left: position.left - containerBound.left,
             top: position.top - containerBound.top
