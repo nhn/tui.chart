@@ -722,7 +722,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var labelsHtml;
 
         if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)) {
-            additionalSize -= ((labelSize * options.labelInterval / 2) - (labelSize / 2))
+            additionalSize -= ((labelSize * options.labelInterval / 2) - (labelSize / 2));
             labelSize *= options.labelInterval;
         }
 

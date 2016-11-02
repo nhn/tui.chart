@@ -274,13 +274,13 @@ var renderingLabelHelper = {
     makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed, template) {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-        var total;
+        var total, labelsHtml;
 
         if (template) {
             total = tui.util.sum(tui.util.pluck(seriesItems, 'value'));
         }
 
-        var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
+        labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
             var bound = boundMap[seriesItem.id];
             var html = '';
             var position, compareIndex, label;

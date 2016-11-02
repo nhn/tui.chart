@@ -298,6 +298,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
 
     /**
      * Update x axis data for auto tick interval.
+     * @param {object} prevXAxisData - previous xAxis data
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
     updateXAxisDataForAutoTickInterval: function(prevXAxisData, addingDataMode) {
