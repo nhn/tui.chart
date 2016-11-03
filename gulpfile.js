@@ -16,6 +16,7 @@ var del = require('del');
 var eslint = require('gulp-eslint');
 var pkg = require('./package.json');
 
+var readableTimestamp = (new Date()).toString();
 var banner = [
     '/**',
     ' * @fileoverview ${name}',
@@ -23,6 +24,7 @@ var banner = [
     ' * @version ${version}',
     ' * @license ${license}',
     ' * @link ${repository.url}',
+    ' * bundle created at "' + readableTimestamp,
     ' */',
     ''
 ].join('\n');
