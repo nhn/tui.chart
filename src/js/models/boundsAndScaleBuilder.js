@@ -153,7 +153,7 @@ var boundsAndScaleBuilder = {
         if (scaleOption.xAxis) {
             scaleDataModel.addScale('xAxis', options.xAxis, {
                 valueType: scaleOption.xAxis.valueType || 'value'
-            });
+            }, scaleOption.xAxis.additionalOptions);
         }
 
         // 05. axis data map 생성 및 설정

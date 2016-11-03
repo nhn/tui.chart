@@ -273,9 +273,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     onShowTooltip: function(params) {
         var tooltipElement = this._getTooltipElement();
+        var isScatterCombo = predicate.isComboChart(this.chartType) && predicate.isScatterChart(params.chartType);
         var prevPosition;
 
-        if (!predicate.isMousePositionChart(params.chartType) && tooltipElement.offsetWidth) {
+        if ((!predicate.isMousePositionChart(params.chartType) || isScatterCombo) && tooltipElement.offsetWidth) {
             prevPosition = {
                 left: tooltipElement.offsetLeft,
                 top: tooltipElement.offsetTop

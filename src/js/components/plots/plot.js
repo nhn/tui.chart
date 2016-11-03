@@ -45,10 +45,10 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.options.bands = this.options.bands || [];
 
         /**
-         * x axis type
+         * x axis type option
          * @type {?string}
          */
-        this.xAxisType = params.xAxisType;
+        this.xAxisTypeOption = params.xAxisTypeOption;
 
         /**
          * Theme
@@ -67,11 +67,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * @type {Array.<string>}
          */
         this.chartTypes = params.chartTypes;
-
-        /**
-         * whether vertical or not
-         */
-        this.isVertical = params.isVertical;
 
         /**
          * layout bounds information for this components
@@ -213,7 +208,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     _createOptionalLineValueRange: function(optionalLineData) {
         var range = optionalLineData.range || [optionalLineData.value];
 
-        if (predicate.isDatetimeType(this.xAxisType)) {
+        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
             range = tui.util.map(range, function(value) {
                 var date = new Date(value);
 

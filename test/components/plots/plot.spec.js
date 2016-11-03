@@ -161,7 +161,7 @@ describe('Test for Plot', function() {
             };
             var actual;
 
-            plot.xAxisType = chartConst.AXIS_TYPE_DATETIME;
+            plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
             actual = plot._createOptionalLineValueRange(optionalLineData);
 
             expect(actual).toEqual([

@@ -85,7 +85,7 @@ describe('BubbleChartSeries', function() {
             actual = series._makeBound({
                 x: 0.4
             });
-            expected = 80;
+            expected = 90;
 
             expect(actual.left).toBe(expected);
         });
@@ -98,7 +98,7 @@ describe('BubbleChartSeries', function() {
                 dimension: {}
             };
             actual = series._makeBound({}, positionByStep);
-            expected = 40;
+            expected = 50;
 
             expect(actual.left).toBe(expected);
         });
@@ -114,7 +114,7 @@ describe('BubbleChartSeries', function() {
             actual = series._makeBound({
                 y: 0.5
             });
-            expected = 75;
+            expected = 85;
 
             expect(actual.top).toBe(expected);
         });
@@ -129,7 +129,7 @@ describe('BubbleChartSeries', function() {
                 }
             };
             actual = series._makeBound({}, positionByStep);
-            expected = 110;
+            expected = 120;
 
             expect(actual.top).toBe(expected);
         });

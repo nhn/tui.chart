@@ -12,22 +12,30 @@ describe('Test for AreaTypeDataModel', function() {
     var dataModel;
 
     beforeEach(function() {
-        dataModel = new AreaTypeDataModel({
+        dataModel = new AreaTypeDataModel([{
+            chartType: 'line',
             data: {
                 groupPositions: []
-            },
-            chartType: 'line'
-        });
+            }
+        }]);
     });
 
     describe('_makeData()', function() {
         it('make data for detecting mouse event', function() {
-            var actual = dataModel._makeData([[
+            var seriesItemBoundsData = [
                 {
-                    left: 10,
-                    top: 10
+                    chartType: 'line',
+                    data: {
+                        groupPositions: [[
+                            {
+                                left: 10,
+                                top: 10
+                            }
+                        ]]
+                    }
                 }
-            ]], 'line');
+            ];
+            var actual = dataModel._makeData(seriesItemBoundsData);
 
             expect(actual[0].chartType).toBe('line');
             expect(actual[0].indexes.groupIndex).toBe(0);
@@ -60,7 +68,7 @@ describe('Test for AreaTypeDataModel', function() {
                 x: 17,
                 y: 10
             });
-            expected = dataModel.data[1];
+            expected = dataModel.data[0];
             expect(actual).toBe(expected);
         });
     });

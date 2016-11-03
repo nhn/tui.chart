@@ -46,6 +46,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_COLUMN_LINE_COMBO: 'columnLineCombo',
     /** @type {string} */
+    CHART_TYPE_LINE_SCATTER_COMBO: 'lineScatterCombo',
+    /** @type {string} */
     CHART_TYPE_LINE_AREA_COMBO: 'lineAreaCombo',
     /** @type {string} */
     CHART_TYPE_PIE_DONUT_COMBO: 'pieDonutCombo',

@@ -928,9 +928,10 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_createValues()', function() {
-        it('chartType이 chartConst.DUMMY_KEY일 경우에는 모든 chartType에 속한 sereisItem의 value를 추출 하여 반환합니다.', function() {
+        it('combo 차트 경우에는 모든 chartType에 속한 sereisItem의 value를 추출 하여 반환합니다.', function() {
             var actual, expected;
 
+            dataProcessor.chartType = chartConst.CHART_TYPE_COMBO;
             dataProcessor.seriesNames = ['column', 'line'];
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
@@ -955,13 +956,13 @@ describe('Test for DataProcessor', function() {
                 }])
             ];
 
-            actual = dataProcessor._createValues(chartConst.DUMMY_KEY);
+            actual = dataProcessor._createValues(chartConst.CHART_TYPE_COMBO);
             expected = [10, 20, 30, 40];
 
             expect(actual).toEqual(expected);
         });
 
-        it('chartType이 정상적인 chart type일 경우에는 해당하는 chartType에 속하는 sereisItem의 value를 추출 하여 반환합니다.', function() {
+        it('single chart인 경우에는 해당하는 chartType에 속하는 sereisItem의 value를 추출 하여 반환합니다.', function() {
             var actual, expected;
 
             dataProcessor.chartType = 'column';
@@ -1220,7 +1221,7 @@ describe('Test for DataProcessor', function() {
         });
 
         it('create base values for limit, when single yAxis in comboChart.', function() {
-            var chartType = chartConst.CHART_TYPE_BAR;
+            var chartType = chartConst.CHART_TYPE_COMBO;
             var isSingleYAxis = true;
             var actual, expected;
 
@@ -1245,7 +1246,6 @@ describe('Test for DataProcessor', function() {
         });
 
         it('Make base values, when single yAxis and has stackType option in comboChart.', function() {
-            var chartType = chartConst.CHART_TYPE_COLUMN;
             var isSingleYAxis = true;
             var stackType = chartConst.NORMAL_STACK_TYPE;
             var seriesGroup, actual, expected;
@@ -1255,6 +1255,7 @@ describe('Test for DataProcessor', function() {
                 line: new SeriesDataModel()
             };
 
+            dataProcessor.chartType = chartConst.CHART_TYPE_COMBO;
             dataProcessor.seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
             dataProcessor.seriesDataModelMap.column.groups = [
@@ -1270,7 +1271,7 @@ describe('Test for DataProcessor', function() {
                 value: [1, 2, 3]
             };
 
-            actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis, stackType);
+            actual = dataProcessor.createBaseValuesForLimit(chartConst.CHART_TYPE_COLUMN, isSingleYAxis, stackType);
             expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
 
             expect(actual).toEqual(expected);

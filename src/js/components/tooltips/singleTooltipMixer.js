@@ -365,10 +365,10 @@ var singleTooltipMixer = {
         var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
         var offset = this.options.offset || {};
         var positionOption = {};
-        var prevChartType, position;
+        var prevChartType = elTooltip && elTooltip.getAttribute('data-chart-type');
+        var position;
 
-        if (this._isChangedIndexes(prevIndexes, indexes)) {
-            prevChartType = elTooltip.getAttribute('data-chart-type');
+        if (this._isChangedIndexes(prevIndexes, indexes) || prevChartType !== params.chartType) {
             this.eventBus.fire('hoverOffSeries', prevIndexes, prevChartType);
         }
 
@@ -445,6 +445,7 @@ var singleTooltipMixer = {
         var chartType = tooltipElement.getAttribute('data-chart-type');
 
         if (predicate.isMousePositionChart(chartType)) {
+            this.eventBus.fire('hoverOffSeries', indexes, chartType);
             this._executeHidingTooltip(tooltipElement);
         } else if (chartType) {
             this._setShowedCustomAttribute(tooltipElement, false);

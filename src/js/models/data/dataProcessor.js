@@ -514,8 +514,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         if (!tui.util.isExisty(coordinateType)) {
             coordinateType = predicate.isCoordinateTypeChart(chartType);
-            coordinateType = coordinateType ||
-                (predicate.isLineTypeChart(chartType) && !this.hasCategories());
+            coordinateType = coordinateType || predicate.isLineScatterComboChart(chartType, this.seriesNames);
+            coordinateType = coordinateType || (predicate.isLineTypeChart(chartType) && !this.hasCategories());
             this.coordinateType = coordinateType;
         }
 
@@ -861,7 +861,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     _createValues: function(chartType, valueType) {
         var values;
 
-        if (chartType === chartConst.DUMMY_KEY) {
+        if (predicate.isComboChart(chartType)) {
             values = [];
             this._eachByAllSeriesDataModel(function(seriesDataModel) {
                 values = values.concat(seriesDataModel.getValues(valueType));
@@ -882,7 +882,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getValues: function(chartType, valueType) {
         var mapKey;
 
-        chartType = chartType || chartConst.DUMMY_KEY;
+        //chartType = chartType || chartConst.DUMMY_KEY;
         mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {
@@ -1277,8 +1277,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType) {
         var baseValues;
 
-        if (isSingleYAxis) {
-            baseValues = this.getValues();
+        if (predicate.isComboChart(this.chartType) && isSingleYAxis) {
+            baseValues = this.getValues(this.chartType, valueType);
             if (predicate.isNormalStackChart(chartType, stackType)) {
                 baseValues = baseValues.concat(this._createBaseValuesForNormalStackedChart(chartType));
             }

@@ -143,6 +143,21 @@ var predicate = {
     },
 
     /**
+     * Whether line and scatter combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} subChartTypes - types of chart
+     * @returns {boolean}
+     */
+    isLineScatterComboChart: function(chartType, subChartTypes) {
+        var isAllLineType = tui.util.all(subChartTypes || [], function(subChartType) {
+            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
+        });
+
+        return predicate.isComboChart(chartType) && isAllLineType;
+    },
+
+    /**
      * Whether line type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
@@ -267,6 +282,7 @@ var predicate = {
 
     /**
      * Whether mouse position chart or not.
+     * TODO: 설명
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
      * @returns {boolean}

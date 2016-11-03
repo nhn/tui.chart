@@ -40,12 +40,22 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
 
     /**
      * Initialize data of custom event
-     * @param {Array.<object>} seriesData - series data
+     * @param {Array.<object>} seriesItemBoundsDatum - series item bounds datum
      * @override
      */
-    onReceiveSeriesData: function(seriesData) {
-        this.dataModel = new AreaTypeDataModel(seriesData);
-        CustomEventBase.prototype.onReceiveSeriesData.call(this, seriesData);
+    onReceiveSeriesData: function(seriesItemBoundsDatum) {
+        var seriesItemBoundsData = this.seriesItemBoundsData;
+        var seriesCount = this.seriesCount;
+
+        if (seriesItemBoundsData.length === seriesCount) {
+            seriesItemBoundsData = [];
+        }
+
+        seriesItemBoundsData.push(seriesItemBoundsDatum);
+
+        if (seriesItemBoundsData.length === seriesCount) {
+            this.dataModel = new AreaTypeDataModel(seriesItemBoundsData);
+        }
 
         if (this.zoomable) {
             this._showTooltipAfterZoom();

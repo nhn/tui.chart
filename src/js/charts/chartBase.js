@@ -301,7 +301,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *      limitMap: object,
      *      axisDataMap: object,
      *      maxRadius: ?number
-     * }}
+     * }} // TODO 설명 필요
      * @private
      */
     _buildBoundsAndScaleData: function(prevXAxisData, addingDataMode) {

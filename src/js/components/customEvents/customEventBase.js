@@ -97,10 +97,10 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.expandSize = isLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
 
         /**
-         * series data set
+         * series item bounds data
          * @type {Array}
          */
-        this.seriesDataSet = [];
+        this.seriesItemBoundsData = [];
 
         /**
          * series count
@@ -241,20 +241,20 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Create BoundsBaseCoordinateModel from seriesBounds for custom event.
-     * @param {Array.<object>} seriesData - series data
+     * @param {{chartType: string, data: object}} seriesItemBoundsDatum - series item bounds datum
      */
-    onReceiveSeriesData: function(seriesData) {
-        var seriesDataSet = this.seriesDataSet;
+    onReceiveSeriesData: function(seriesItemBoundsDatum) {
+        var seriesItemBoundsData = this.seriesItemBoundsData;
         var seriesCount = this.seriesCount;
 
-        if (seriesDataSet.length === seriesCount) {
-            seriesDataSet = [];
+        if (seriesItemBoundsData.length === seriesCount) {
+            seriesItemBoundsData = [];
         }
 
-        seriesDataSet.push(seriesData);
+        seriesItemBoundsData.push(seriesItemBoundsDatum);
 
-        if (seriesDataSet.length === seriesCount) {
-            this.boundsBaseCoordinateModel = new BoundsBaseCoordinateModel(seriesDataSet);
+        if (seriesItemBoundsData.length === seriesCount) {
+            this.boundsBaseCoordinateModel = new BoundsBaseCoordinateModel(seriesItemBoundsData);
         }
     },
 

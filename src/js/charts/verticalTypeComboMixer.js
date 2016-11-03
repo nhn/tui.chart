@@ -12,6 +12,7 @@ var renderUtil = require('../helpers/renderUtil');
 var ColumnChartSeries = require('../components/series/columnChartSeries');
 var LineChartSeries = require('../components/series/lineChartSeries');
 var AreaChartSeries = require('../components/series/areaChartSeries');
+var ScatterChartSeries = require('../components/series/scatterChartSeries');
 
 var verticalTypeComboMixer = {
     /**
@@ -38,11 +39,6 @@ var verticalTypeComboMixer = {
          * @type {Object|Array.<T>}
          */
         this.seriesNames = chartTypesMap.seriesNames;
-
-        /**
-         * chart types for options
-         */
-        this.optionChartTypes = chartTypesMap.optionChartTypes;
 
         /**
          * whether has right y axis or not
@@ -76,14 +72,12 @@ var verticalTypeComboMixer = {
         if (validChartTypes.length === 1) {
             chartTypesMap = {
                 chartTypes: validChartTypes,
-                seriesNames: validChartTypes,
-                optionChartTypes: !optionChartTypes.length ? optionChartTypes : validChartTypes
+                seriesNames: validChartTypes
             };
         } else {
             chartTypesMap = {
                 chartTypes: chartTypes,
-                seriesNames: seriesNames,
-                optionChartTypes: optionChartTypes
+                seriesNames: seriesNames
             };
         }
 
@@ -169,12 +163,11 @@ var verticalTypeComboMixer = {
      * @override
      */
     _getScaleOption: function() {
-        var isSingleYAxis = this.optionChartTypes.length < 2;
         var scaleOption = {
-            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], isSingleYAxis)
+            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
         };
 
-        if (!isSingleYAxis) {
+        if (this.hasRightYAxis) {
             scaleOption.rightYAxis = this._makeYAxisScaleOption('rightYAxis', this.chartTypes[1]);
         }
 
@@ -191,7 +184,8 @@ var verticalTypeComboMixer = {
         var seriesClasses = {
             column: ColumnChartSeries,
             line: LineChartSeries,
-            area: AreaChartSeries
+            area: AreaChartSeries,
+            scatter: ScatterChartSeries
         };
         var optionsMap = this._makeOptionsMap(seriesNames);
         var dataProcessor = this.dataProcessor;
@@ -231,7 +225,7 @@ var verticalTypeComboMixer = {
         ];
         var serieses = this._makeDataForAddingSeriesComponent(this.seriesNames);
 
-        if (this.optionChartTypes.length) {
+        if (this.hasRightYAxis) {
             axes.push({
                 name: 'rightYAxis',
                 seriesName: this.seriesNames[1],
@@ -311,17 +305,7 @@ var verticalTypeComboMixer = {
         } else if (tickCountDiff < 0) {
             this._increaseYAxisTickCount(-tickCountDiff, rightYAxisData);
         }
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
-
 
 module.exports = verticalTypeComboMixer;
