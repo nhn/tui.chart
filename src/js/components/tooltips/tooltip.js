@@ -8,7 +8,7 @@
 
 var TooltipBase = require('./tooltipBase');
 var singleTooltipMixer = require('./singleTooltipMixer');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var tooltipTemplate = require('./tooltipTemplate');

@@ -83,7 +83,7 @@ var axisTypeMixer = {
 
     /**
      * Add legend component.
-     * @param {{?LegendClass: function, ?additionalParams: object}} legendData - data for register legend
+     * @param {{LegendClass: ?function, additionalParams: ?object}} legendData - data for register legend
      * @private
      */
     _addLegendComponent: function(legendData) {

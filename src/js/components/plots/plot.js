@@ -6,7 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');

@@ -6,11 +6,11 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories//pluginFactory');
+var pluginFactory = require('../../factories/pluginFactory');
 var legendTemplate = require('./legendTemplate');
 
 var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */ {

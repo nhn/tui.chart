@@ -8,7 +8,7 @@
 
 var Series = require('./series');
 var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 
 var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
     /**

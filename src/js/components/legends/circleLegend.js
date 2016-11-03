@@ -7,10 +7,10 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories//pluginFactory');
+var pluginFactory = require('../../factories/pluginFactory');
 var legendTemplate = require('./legendTemplate');
 
 var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {

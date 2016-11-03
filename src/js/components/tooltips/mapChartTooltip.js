@@ -6,7 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../../const/'),
+var chartConst = require('../../const'),
     TooltipBase = require('./tooltipBase'),
     singleTooltipMixer = require('./singleTooltipMixer'),
     tooltipTemplate = require('./tooltipTemplate');

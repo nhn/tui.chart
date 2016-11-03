@@ -6,11 +6,11 @@
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase'),
-    chartConst = require('../../const/'),
-    eventListener = require('../../helpers/eventListener'),
-    dom = require('../../helpers/domHandler'),
-    renderUtil = require('../../helpers/renderUtil');
+var CustomEventBase = require('./customEventBase');
+var chartConst = require('../../const');
+var eventListener = require('../../helpers/eventListener');
+var dom = require('../../helpers/domHandler');
+var renderUtil = require('../../helpers/renderUtil');
 
 var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapChartCustomEvent.prototype */ {
     /**

@@ -94,7 +94,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
                 this.label = renderUtil.formatValue(this.x, this.formatFunctions, this.chartType, 'series');
             }
 
-            this.label += ',&nbsp;' + renderUtil.formatValue(this.y , this.formatFunctions, this.chartType, 'series');
+            this.label += ',&nbsp;' + renderUtil.formatValue(this.y, this.formatFunctions, this.chartType, 'series');
         }
     },
 

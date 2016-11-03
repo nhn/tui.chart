@@ -8,7 +8,7 @@
 
 var Series = require('./series');
 var LineTypeSeriesBase = require('./lineTypeSeriesBase');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 
 var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {

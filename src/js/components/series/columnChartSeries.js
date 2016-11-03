@@ -8,7 +8,7 @@
 
 var Series = require('./series');
 var BarTypeSeriesBase = require('./barTypeSeriesBase');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');

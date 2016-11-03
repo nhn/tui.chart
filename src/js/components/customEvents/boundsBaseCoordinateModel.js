@@ -41,7 +41,7 @@
  *}} seriesInfo
  */
 
-var chartConst = require('../../const/'),
+var chartConst = require('../../const'),
     predicate = require('../../helpers/predicate');
 
 var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {

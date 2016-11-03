@@ -6,7 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var labelHelper = require('./renderingLabelHelper');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');

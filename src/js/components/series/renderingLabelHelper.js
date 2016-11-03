@@ -6,7 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var renderUtil = require('../../helpers/renderUtil');
 var seriesTemplate = require('./seriesTemplate');
 

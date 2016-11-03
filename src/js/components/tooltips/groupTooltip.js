@@ -8,7 +8,7 @@
 
 var TooltipBase = require('./tooltipBase');
 var GroupTooltipPositionModel = require('./groupTooltipPositionModel');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var defaultTheme = require('../../themes/defaultTheme');

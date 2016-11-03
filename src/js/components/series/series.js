@@ -7,11 +7,11 @@
 'use strict';
 
 var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories//pluginFactory');
+var pluginFactory = require('../../factories/pluginFactory');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**

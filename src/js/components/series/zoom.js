@@ -6,11 +6,11 @@
 
 'use strict';
 
-var seriesTemplate = require('./seriesTemplate'),
-    chartConst = require('../../const/'),
-    dom = require('../../helpers/domHandler'),
-    renderUtil = require('../../helpers/renderUtil'),
-    eventListener = require('../../helpers/eventListener');
+var seriesTemplate = require('./seriesTemplate');
+var chartConst = require('../../const');
+var dom = require('../../helpers/domHandler');
+var renderUtil = require('../../helpers/renderUtil');
+var eventListener = require('../../helpers/eventListener');
 
 var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**

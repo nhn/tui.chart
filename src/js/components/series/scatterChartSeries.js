@@ -8,7 +8,7 @@
 
 var Series = require('./series');
 var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 
 var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
     /**

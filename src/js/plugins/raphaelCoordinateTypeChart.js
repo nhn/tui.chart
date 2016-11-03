@@ -359,11 +359,10 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      */
     moveMouseOnSeries: function(position) {
         var circle = this._findCircle(position);
-        var containerBound, isChanged, groupIndex, index, args;
+        var containerBound, groupIndex, index, args;
 
         if (circle && tui.util.isExisty(circle.data('groupIndex'))) {
             containerBound = this.container.getBoundingClientRect();
-            //isChanged = (this.prevOverCircle !== circle);
             groupIndex = circle.data('groupIndex');
             index = circle.data('index');
             args = [{}, groupIndex, index, {

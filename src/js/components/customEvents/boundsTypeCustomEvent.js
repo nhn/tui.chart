@@ -7,7 +7,7 @@
 'use strict';
 
 var CustomEventBase = require('./customEventBase');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var dom = require('../../helpers/domHandler');
 
