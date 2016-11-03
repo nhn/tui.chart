@@ -274,13 +274,7 @@ var renderingLabelHelper = {
     makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed, template) {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-        var total, labelsHtml;
-
-        if (template) {
-            total = tui.util.sum(tui.util.pluck(seriesItems, 'value'));
-        }
-
-        labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
+        var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
             var bound = boundMap[seriesItem.id];
             var html = '';
             var position, compareIndex, label;
@@ -289,7 +283,7 @@ var renderingLabelHelper = {
                 compareIndex = shouldDimmed(seriesItem) ? -1 : null;
 
                 if (template) {
-                    label = template(seriesItem.pickLabelTemplateData(total));
+                    label = template(seriesItem.pickLabelTemplateData());
                     labelHeight = renderUtil.getRenderedLabelHeight(label, theme);
                 } else {
                     label = seriesItem.label;
