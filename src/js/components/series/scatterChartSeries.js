@@ -35,8 +35,8 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
         var dimension = this.layout.dimension;
 
         return {
-            left: ratioMap.x * dimension.width,
-            top: dimension.height - (ratioMap.y * dimension.height),
+            left: ratioMap.x * dimension.width + chartConst.SERIES_EXPAND_SIZE,
+            top: dimension.height - (ratioMap.y * dimension.height) + chartConst.SERIES_EXPAND_SIZE,
             radius: chartConst.SCATTER_RADIUS
         };
     },

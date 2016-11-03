@@ -41,7 +41,7 @@ describe('ScatterChartSeries', function() {
                 x: 0.4
             });
 
-            expect(actual.left).toBe(80);
+            expect(actual.left).toBe(90);
         });
 
         it('y ratio와 시리즈 높이 값으로 top을 계산합니다.', function() {
@@ -56,7 +56,7 @@ describe('ScatterChartSeries', function() {
                 y: 0.5
             });
 
-            expect(actual.top).toBe(75);
+            expect(actual.top).toBe(85);
         });
 
         it('radius는 항상 chartConst.SCATTER_RADIUS를 반환합니다.', function() {

@@ -83,16 +83,29 @@ var axisTypeMixer = {
 
     /**
      * Add legend component.
-     * @param {null | object} LegendClass - Legend type class
-     * @param {Array.<string>} seriesNames - series names
-     * @param {?object} additionalParams - additional params
+     * @param {{?LegendClass: function, ?additionalParams: object}} legendData - data for register legend
      * @private
      */
-    _addLegendComponent: function(LegendClass, seriesNames, additionalParams) {
-        this.componentManager.register('legend', LegendClass || Legend, tui.util.extend({
-            seriesNames: seriesNames,
+    _addLegendComponent: function(legendData) {
+        var LegendClass = legendData.LegendClass || Legend;
+
+        this.componentManager.register('legend', LegendClass, tui.util.extend({
+            seriesNames: this.seriesNames,
             chartType: this.chartType
-        }, additionalParams));
+        }, legendData.additionalParams));
+    },
+
+    /**
+     * Add plot component.
+     * @param {?string} xAxisTypeOption - xAxis type option like 'datetime'
+     * @private
+     */
+    _addPlotComponent: function(xAxisTypeOption) {
+        this.componentManager.register('plot', Plot, {
+            chartType: this.chartType,
+            chartTypes: this.chartTypes,
+            xAxisTypeOption: xAxisTypeOption
+        });
     },
 
     /**
@@ -106,23 +119,15 @@ var axisTypeMixer = {
     _addComponentsForAxisType: function(params) {
         var options = this.options;
         var aligned = !!params.aligned;
-        var LegendClass;
 
         if (params.plot) {
-            this.componentManager.register('plot', Plot, {
-                isVertical: this.isVertical,
-                chartType: this.chartType,
-                chartTypes: this.chartTypes,
-                xAxisType: options.xAxis.type
-            });
+            this._addPlotComponent(options.xAxis.type);
         }
 
         this._addAxisComponents(params.axis, aligned);
 
         if (options.legend.visible) {
-            params.legend = params.legend || {};
-            LegendClass = params.legend.LegendClass || null;
-            this._addLegendComponent(LegendClass, params.seriesNames, params.legend.additionalParams);
+            this._addLegendComponent(params.legend || {}, params.seriesNames);
         }
 
         this._addSeriesComponents(params.series, options);

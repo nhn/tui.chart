@@ -338,9 +338,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _renderGraph: function(dimension, seriesData, paper) {
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        paper = this.graphRenderer.render(this.seriesContainer, params, paper);
-
-        return paper;
+        return this.graphRenderer.render(this.seriesContainer, params, paper);
     },
 
     /**
@@ -596,6 +594,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.graphRenderer.showAnimation) {
             return;
         }
+
         this.graphRenderer.showAnimation(data);
     },
 
@@ -612,6 +611,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.graphRenderer.hideAnimation || !data) {
             return;
         }
+
         this.graphRenderer.hideAnimation(data);
     },
 

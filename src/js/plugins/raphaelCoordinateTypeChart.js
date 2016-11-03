@@ -285,13 +285,13 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     },
 
     /**
-     * Show overlay when mouse over a circle.
-     * @param {number} groupIndex - index of circles group
-     * @param {number} index - index of circles
-     * @private
+     * Show overlay with animation.
+     * @param {object} indexes - indexes
+     *      @param {number} indexes.groupIndex - index of circles group
+     *      @param {number} indexes.index - index of circles
      */
-    _showOverlay: function(groupIndex, index) {
-        var circleInfo = this.groupCircleInfos[groupIndex][index];
+    showAnimation: function(indexes) {
+        var circleInfo = this.groupCircleInfos[indexes.groupIndex][indexes.index];
         var bound = circleInfo.bound;
 
         this.overlay.attr({
@@ -304,10 +304,10 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     },
 
     /**
-     * Hide overlay.
+     * Hide overlay with animation.
      * @private
      */
-    _hideOverlay: function() {
+    hideAnimation: function() {
         this.overlay.attr({
             cx: 0,
             cy: 0,
@@ -363,7 +363,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
         if (circle && tui.util.isExisty(circle.data('groupIndex'))) {
             containerBound = this.container.getBoundingClientRect();
-            isChanged = (this.prevOverCircle !== circle);
+            //isChanged = (this.prevOverCircle !== circle);
             groupIndex = circle.data('groupIndex');
             index = circle.data('index');
             args = [{}, groupIndex, index, {
@@ -371,16 +371,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
                 top: position.top - containerBound.top
             }];
 
-            if (isChanged) {
-                this._showOverlay(groupIndex, index);
-            }
-
             if (this._isChangedPosition(this.prevPosition, position)) {
                 this.callbacks.showTooltip.apply(null, args);
                 this.prevOverCircle = circle;
             }
         } else if (this.prevOverCircle) {
-            this._hideOverlay();
             this.callbacks.hideTooltip();
             this.prevOverCircle = null;
         }
