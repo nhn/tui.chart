@@ -12,6 +12,7 @@ var pluginFactory = require('./factories/pluginFactory');
 var themeManager = require('./themes/themeManager');
 var mapManager = require('./factories/mapManager');
 
+require('../less/style.less');
 require('./polyfill');
 require('./code-snippet-util');
 require('./charts/chartsRegistration');
@@ -1282,3 +1283,5 @@ tui.chart.registerMap = function(mapName, data) {
 tui.chart.registerPlugin = function(libType, plugin) {
     pluginFactory.register(libType, plugin);
 };
+
+require('./plugins/pluginRaphael');

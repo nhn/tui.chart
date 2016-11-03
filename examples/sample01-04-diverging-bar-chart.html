@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Bar Chart] diverging</title>
+    <link rel="stylesheet" type="text/css" href="../dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="barChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["100 ~", "90 ~ 99", "80 ~ 89", "70 ~ 79", "60 ~ 69", "50 ~ 59", "40 ~ 49", "30 ~ 39", "20 ~ 29", "10 ~ 19", "0 ~ 9"],
+    "series": [
+        {
+            "name": "Male",
+            "data": [3832, 38696, 395906, 1366738, 2482657, 4198869, 4510524, 3911135, 3526321, 2966126, 2362433]
+        },
+        {
+            "name": "Female",
+            "data": [12550, 128464, 839761, 1807901, 2630336, 4128479, 4359815, 3743214, 3170926, 2724383, 2232516]
+        }
+    ]
+}
+            
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Population Distribution",
+        "format": "1,000"
+    },
+    "yAxis": [{
+        "title": "Age group"
+    }, {
+        "title": "Age group"
+    }],
+    "series": {
+        "diverging": true
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#63A69F", "#F2836B"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.0.8/code-snippet.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.effects/1.1.0/effects.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/raphael/v2.1.4b/raphael-min.js"></script>
+<script src="../dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+    data = {
+        categories: ['100 ~', '90 ~ 99', '80 ~ 89', '70 ~ 79', '60 ~ 69', '50 ~ 59', '40 ~ 49', '30 ~ 39', '20 ~ 29', '10 ~ 19', '0 ~ 9'],
+        series: [
+            {
+                name: 'Male',
+                data: [3832, 38696, 395906, 1366738, 2482657, 4198869, 4510524, 3911135, 3526321, 2966126, 2362433]
+            },
+            {
+                name: 'Female',
+                data: [12550, 128464, 839761, 1807901, 2630336, 4128479, 4359815, 3743214, 3170926, 2724383, 2232516]
+            }
+        ]
+    },
+    options = {
+        chart: {
+            width: 700,
+            height: 400,
+            title: 'Population Distribution',
+            format: '1,000'
+        },
+        yAxis: [{
+            title: 'Age Group'
+        }, {
+            title: 'Age Group'
+        }],
+        series: {
+            diverging: true
+        }
+    };
+    tui.chart.barChart(container, data, options);
+</script>
+</body>
+</html>

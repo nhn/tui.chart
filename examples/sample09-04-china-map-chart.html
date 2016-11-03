@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Map chart] china map</title>
+    <link rel="stylesheet" type="text/css" href="../dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="mapChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "series": [
+      {
+        "code": "CN-AH",
+        "data": 975
+      },
+      {
+        "code": "CN-BJ",
+        "data": 577
+      },
+      {
+        "code": "CN-CQ",
+        "data": 1138
+      },
+      {
+        "code": "CN-FJ",
+        "data": 1347
+      },
+      {
+        "code": "CN-GD",
+        "data": 1682
+      },
+      {
+        "code": "CN-GA",
+        "data": 316
+      },
+      {
+        "code": "CN-GZ",
+        "data": 1854
+      },
+      {
+        "code": "CN-GH",
+        "data": 1109
+      },
+      {
+        "code": "CN-HN",
+        "data": 1625
+      },
+      {
+        "code": "CN-HB",
+        "data": 528
+      },
+      {
+        "code": "CN-HE",
+        "data": 645
+      },
+      {
+        "code": "CN-HK",
+        "data": 2215
+      },
+      {
+        "code": "CN-HL",
+        "data": 521
+      },
+      {
+        "code": "CN-HN",
+        "data": 1377
+      },
+      {
+        "code": "CN-HU",
+        "data": 1222
+      },
+      {
+        "code": "CN-JL",
+        "data": 578
+      },
+      {
+        "code": "CN-JS",
+        "data": 1036
+      },
+      {
+        "code": "CN-JX",
+        "data": 1521
+      },
+      {
+        "code": "CN-LN",
+        "data": 684
+      },
+      {
+        "code": "CN-NM",
+        "data": 402
+      },
+      {
+        "code": "CN-NH",
+        "data": 194
+      },
+      {
+        "code": "CN-QH",
+        "data": 368
+      },
+      {
+        "code": "CN-SA",
+        "data": 573
+      },
+      {
+        "code": "CN-SH",
+        "data": 921
+      },
+      {
+        "code": "CN-SD",
+        "data": 720
+      },
+      {
+        "code": "CN-SI",
+        "data": 1111
+      },
+      {
+        "code": "CN-SX",
+        "data": 457
+      },
+      {
+        "code": "CN-TJ",
+        "data": 561
+      },
+      {
+        "code": "CN-TW",
+        "data": 1714
+      },
+      {
+        "code": "CN-XY",
+        "data": 236
+      },
+      {
+        "code": "CN-TB",
+        "data": 420
+      },
+      {
+        "code": "CN-YN",
+        "data": 1007
+      },
+      {
+        "code": "CN-ZJ",
+        "data": 1376
+      }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 550,
+        "height": 500,
+        "title": "Average annual precipitation of China (per mm)",
+        "format": "1,000"
+    },
+    "map": "china",
+    "legend": {
+        "align": "top"
+    },
+    "tooltip": {
+        "suffix": "mm"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+            "startColor": "#ffefef",
+            "endColor": "#ac4142",
+            "overColor": "#75b5aa"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.0.8/code-snippet.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.effects/1.1.0/effects.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/raphael/v2.1.4b/raphael-min.js"></script>
+<script src="../dist/chart.min.js"></script>
+<script src="dist/maps/china.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            series: [
+                {
+                    code: 'CN-AH',
+                    data: 975
+                },
+                {
+                    code: 'CN-BJ',
+                    data: 577
+                },
+                {
+                    code: 'CN-CQ',
+                    data: 1138
+                },
+                {
+                    code: 'CN-FJ',
+                    data: 1347
+                },
+                {
+                    code: 'CN-GD',
+                    data: 1682
+                },
+                {
+                    code: 'CN-GA',
+                    data: 316
+                },
+                {
+                    code: 'CN-GZ',
+                    data: 1854
+                },
+                {
+                    code: 'CN-GH',
+                    data: 1109
+                },
+                {
+                    code: 'CN-HN',
+                    data: 1625
+                },
+                {
+                    code: 'CN-HB',
+                    data: 528
+                },
+                {
+                    code: 'CN-HE',
+                    data: 645
+                },
+                {
+                    code: 'CN-HK',
+                    data: 2215
+                },
+                {
+                    code: 'CN-HL',
+                    data: 521
+                },
+                {
+                    code: 'CN-HN',
+                    data: 1377
+                },
+                {
+                    code: 'CN-HU',
+                    data: 1222
+                },
+                {
+                    code: 'CN-JL',
+                    data: 578
+                },
+                {
+                    code: 'CN-JS',
+                    data: 1036
+                },
+                {
+                    code: 'CN-JX',
+                    data: 1521
+                },
+                {
+                    code: 'CN-LN',
+                    data: 684
+                },
+                {
+                    code: 'CN-NM',
+                    data: 402
+                },
+                {
+                    code: 'CN-NH',
+                    data: 194
+                },
+                {
+                    code: 'CN-QH',
+                    data: 368
+                },
+                {
+                    code: 'CN-SA',
+                    data: 573
+                },
+                {
+                    code: 'CN-SH',
+                    data: 921
+                },
+                {
+                    code: 'CN-SD',
+                    data: 720
+                },
+                {
+                    code: 'CN-SI',
+                    data: 1111
+                },
+                {
+                    code: 'CN-SX',
+                    data: 457
+                },
+                {
+                    code: 'CN-TJ',
+                    data: 561
+                },
+                {
+                    code: 'CN-TW',
+                    data: 1714
+                },
+                {
+                    code: 'CN-XY',
+                    data: 236
+                },
+                {
+                    code: 'CN-TB',
+                    data: 420
+                },
+                {
+                    code: 'CN-YN',
+                    data: 1007
+                },
+                {
+                    code: 'CN-ZJ',
+                    data: 1376
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 550,
+                height: 500,
+                title: 'Average annual precipitation of China (mm)',
+                format: '1,000'
+            },
+            map: 'china',
+            legend: {
+                align: 'top'
+            },
+            tooltip: {
+                suffix: 'mm'
+            }
+        };
+    tui.chart.mapChart(container, data, options);
+</script>
+</body>
+</html>
