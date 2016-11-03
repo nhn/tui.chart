@@ -1,10 +1,10 @@
 /**
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.4.0
+ * @version 2.4.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Nov 02 2016 17:45:18 GMT+0900 (KST)
+ * bundle created at "Thu Nov 03 2016 14:54:17 GMT+0900 (KST)
  */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
@@ -13770,13 +13770,7 @@ var renderingLabelHelper = {
     makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed, template) {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-        var total, labelsHtml;
-
-        if (template) {
-            total = tui.util.sum(tui.util.pluck(seriesItems, 'value'));
-        }
-
-        labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
+        var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
             var bound = boundMap[seriesItem.id];
             var html = '';
             var position, compareIndex, label;
@@ -13785,7 +13779,7 @@ var renderingLabelHelper = {
                 compareIndex = shouldDimmed(seriesItem) ? -1 : null;
 
                 if (template) {
-                    label = template(seriesItem.pickLabelTemplateData(total));
+                    label = template(seriesItem.pickLabelTemplateData());
                     labelHeight = renderUtil.getRenderedLabelHeight(label, theme);
                 } else {
                     label = seriesItem.label;
