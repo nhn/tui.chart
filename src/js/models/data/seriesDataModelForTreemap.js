@@ -106,16 +106,16 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
 
     /**
      * Set tree properties like depth, group in raw series data.
-     * @param {Array.<object>} rawSeriesData - raw series data
+     * @param {Array.<object>} flatSeriesData - flat series data
      * @param {number} depth - tree depth
      * @param {number} parent - parent id
      * @param {number} group - tree group
      * @returns {Array.<object>}
      * @private
      */
-    _setTreeProperties: function(rawSeriesData, depth, parent, group) {
+    _setTreeProperties: function(flatSeriesData, depth, parent, group) {
         var self = this;
-        var parted = this._partitionRawSeriesDataByParent(rawSeriesData, parent);
+        var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
         var filtered = parted[0];
         var rejected = parted[1];
         var childDepth = depth + 1;
@@ -145,6 +145,28 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     },
 
     /**
+     * Set ratio.
+     * @param {Array.<object>} flatSeriesData - raw series data
+     * @param {string} parent - parent id
+     * @private
+     */
+    _setRatio: function(flatSeriesData, parent) {
+        var self = this;
+        var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
+        var filtered = parted[0];
+        var rejected = parted[1];
+        var total = tui.util.sum(tui.util.pluck(filtered, 'value'));
+
+        tui.util.forEachArray(filtered, function(datum) {
+            datum.ratio = datum.value / total;
+
+            if (datum.hasChild) {
+                self._setRatio(rejected, datum.id);
+            }
+        });
+    },
+
+    /**
      * Create base groups.
      * @returns {Array.<Array.<SeriesItem>>}
      * @private
@@ -152,14 +174,13 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      */
     _createBaseGroups: function() {
         var chartType = this.chartType;
-        var rawSeriesData = this.rawSeriesData;
         var seriesItemMap = this.seriesItemMap;
         var formatFunctions = this.formatFunctions;
+        var flatSeriesData = this._flattenHierarchicalData(this.rawSeriesData);
+        flatSeriesData = this._setTreeProperties(flatSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
+        this._setRatio(flatSeriesData, chartConst.TREEMAP_ROOT_ID);
 
-        rawSeriesData = this._flattenHierarchicalData(rawSeriesData);
-        rawSeriesData = this._setTreeProperties(rawSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
-
-        return [tui.util.map(rawSeriesData, function(rawDatum) {
+        return [tui.util.map(flatSeriesData, function(rawDatum) {
             var seriesItem = new SeriesItem(rawDatum, formatFunctions, chartType);
 
             seriesItemMap[seriesItem.id] = seriesItem;

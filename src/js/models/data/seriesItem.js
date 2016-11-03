@@ -201,22 +201,40 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
 
         this.ratio = this.endRatio = calculator.calculateRatio(this.value, divNumber, subNumber, baseRatio);
 
-        if (!tui.util.isNull(this.start)) {
+        if (tui.util.isExisty(this.start)) {
             this.startRatio = calculator.calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
     },
 
     /**
-     * Pick value map.
+     * Get formatted value for tooltip.
+     * @param {string} valueType - value type
+     * @returns {string}
+     * @private
+     */
+    _getFormattedValueForTooltip: function(valueType) {
+        return renderUtil.formatValue(this[valueType], this.formatFunctions, this.chartType, 'tooltip', valueType);
+    },
+
+    /**
+     * Pick value map for tooltip.
      * @returns {{value: number, start: ?number, end: ?number}}
      */
-    pickValueMap: function() {
-        return {
-            value: this.value,
-            start: this.start,
-            end: this.end
+    pickValueMapForTooltip: function() {
+        var valueMap = {
+            value: this._getFormattedValueForTooltip('value'),
+            ratio: this.ratio
         };
+
+        if (tui.util.isExisty(this.start)) {
+            valueMap.start = this._getFormattedValueForTooltip('start');
+            valueMap.end = this._getFormattedValueForTooltip('end');
+            valueMap.startRatio = this.startRatio;
+            valueMap.endRatio = this.endRatio;
+        }
+
+        return valueMap;
     }
 });
 

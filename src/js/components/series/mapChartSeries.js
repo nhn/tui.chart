@@ -367,19 +367,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * Get series container bound.
-     * @returns {{left: number, top: number}} container bound
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.seriesContainer.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * On move series.
      * @param {{left: number, top: number}} position position
      */
@@ -398,7 +385,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             }
 
             if (this._isChangedPosition(this.prevPosition, position)) {
-                containerBound = this._getContainerBound();
+                // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+                containerBound = this.seriesContainer.getBoundingClientRect();
                 this._showTooltip(foundIndex, {
                     left: position.left - containerBound.left,
                     top: position.top - containerBound.top
@@ -473,7 +461,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _movePositionForZoom: function(position, changedRatio) {
         var seriesDimension = this.layout.dimension;
-        var containerBound = this._getContainerBound();
+        var containerBound = this.seriesContainer.getBoundingClientRect();
         var startPosition = {
             left: (seriesDimension.width / 2) + containerBound.left,
             top: (seriesDimension.height / 2) + containerBound.top

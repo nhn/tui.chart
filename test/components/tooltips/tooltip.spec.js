@@ -34,7 +34,7 @@ describe('Tooltip', function() {
             };
             var seriesItem = {
                 label: 'label1',
-                pickValueMap: jasmine.createSpy('pickValueMap').and.returnValue({})
+                pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
             actual = tooltip._makeTooltipDatum(legendLabels, '', 'column', seriesItem, 0);
@@ -50,7 +50,7 @@ describe('Tooltip', function() {
             };
             var seriesItem = {
                 label: 'label1',
-                pickValueMap: jasmine.createSpy('pickValueMap').and.returnValue({})
+                pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
             actual = tooltip._makeTooltipDatum(legendLabels, '', 'column', seriesItem, 0);
@@ -59,17 +59,17 @@ describe('Tooltip', function() {
             expect(actual.label).toBe(expected);
         });
 
-        it('seriesItem의 pickValueMap 함수가 valueMap을 반환하면, 결과값에 추가하여 반환합니다.', function() {
+        it('seriesItem의 pickValueMapForTooltip 함수가 valueMap을 반환하면, 결과값에 추가하여 반환합니다.', function() {
             var actual, expected;
             var legendLabels = {
                 'column': ['legend1']
             };
             var seriesItem = {
                 label: 'label1',
-                pickValueMap: jasmine.createSpy('pickValueMap').and.returnValue({
-                    x: 10,
-                    y: 20,
-                    r: 30
+                pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({
+                    x: '10',
+                    y: '20',
+                    r: '30'
                 })
             };
 
@@ -91,7 +91,7 @@ describe('Tooltip', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function() {
             var actual, expected;
             var seriesDataModel = new SeriesDataModel();
-            var pickValueMap = jasmine.createSpy('pickValueMap').and.returnValue({});
+            var pickValueMapForTooltip = jasmine.createSpy('pickValueMapForTooltip').and.returnValue({});
 
             spyOn(dataProcessor, 'makeTooltipCategory').and.returnValue('Silver');
             spyOn(dataProcessor, 'getLegendLabels').and.returnValue(['Density1', 'Density2']);
@@ -99,10 +99,10 @@ describe('Tooltip', function() {
                 new seriesGroup([
                     {
                         label: '10',
-                        pickValueMap: pickValueMap
+                        pickValueMapForTooltip: pickValueMapForTooltip
                     }, {
                         label: '20',
-                        pickValueMap: pickValueMap
+                        pickValueMapForTooltip: pickValueMapForTooltip
                     }
                 ])
             ];

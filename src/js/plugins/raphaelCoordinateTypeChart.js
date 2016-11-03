@@ -274,19 +274,6 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     },
 
     /**
-     * Get series container bound.
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.container.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Whether changed or not.
      * @param {{left: number, top: number}} prevPosition - previous position
      * @param {{left: number, top: number}} position - position
@@ -375,7 +362,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         var containerBound, isChanged, groupIndex, index, args;
 
         if (circle && tui.util.isExisty(circle.data('groupIndex'))) {
-            containerBound = this._getContainerBound();
+            containerBound = this.container.getBoundingClientRect();
             isChanged = (this.prevOverCircle !== circle);
             groupIndex = circle.data('groupIndex');
             index = circle.data('index');

@@ -32,6 +32,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         this.id = rawSeriesDatum.id;
         this.parent = rawSeriesDatum.parent;
         this.value = rawSeriesDatum.value;
+        this.ratio = rawSeriesDatum.ratio;
         this.colorValue = rawSeriesDatum.colorValue;
         this.depth = rawSeriesDatum.depth;
         this.label = rawSeriesDatum.label || '';
@@ -49,22 +50,31 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         divNumber = divNumber || 1;
         subNumber = subNumber || 0;
 
-        this.ratio = calculator.calculateRatio(this.colorValue, divNumber, subNumber, 1) || -1;
+        this.colorRatio = calculator.calculateRatio(this.colorValue, divNumber, subNumber, 1) || -1;
     },
 
     /**
-     * Pick value map.
+     * Pick value map for tooltip.
      * @returns {{value: number, label: string}}
      */
-    pickValueMap: function() {
-        var areaType = 'makingTooltipLabel';
-        var formattedValue = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
+    pickValueMapForTooltip: function() {
+        var formatFunctions = this.formatFunctions;
+        var chartType = this.chartType;
+        var colorValue = this.colorValue;
+        var formattedValue = renderUtil.formatValue(this.value, formatFunctions, chartType, 'tooltipValue');
         var label = (this.label ? this.label + ': ' : '') + formattedValue;
-
-        return {
-            value: this.value,
-            label: label
+        var valueMap = {
+            value: formattedValue,
+            label: label,
+            ratio: this.ratio
         };
+
+        if (tui.util.isExisty(colorValue)) {
+            valueMap.colorValue = renderUtil.formatValue(colorValue, formatFunctions, chartType, 'tooltipColorValue');
+            valueMap.colorRatio = this.colorRatio;
+        }
+
+        return valueMap;
     },
 
     /**
@@ -72,10 +82,10 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
      * @param {number} total - value total
      * @returns {{value: number, ratio: number, label: string, colorValue: ?number, colorValueRatio: ?number}}
      */
-    pickLabelTemplateData: function(total) {
+    pickLabelTemplateData: function() {
         var templateData = {
             value: this.value,
-            ratio: (this.value / total),
+            ratio: this.ratio,
             label: this.label
         };
 

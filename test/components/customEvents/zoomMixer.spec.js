@@ -22,10 +22,14 @@ describe('Test for zoomMixer', function() {
     });
 
     describe('_showDragSelection()', function() {
+        beforeEach(function() {
+            zoomMixer.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+        });
+
         it('clinetX값을 전달하여 layerX를 구해 left와 width를 설정합니다.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 100;
-            zoomMixer._getContainerBound.and.returnValue({
+            zoomMixer.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
             });
@@ -40,7 +44,7 @@ describe('Test for zoomMixer', function() {
         it('layerX가 startLayerX보다 클 경우에는 left값을 startLayerX로 설정합니다.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
-            zoomMixer._getContainerBound.and.returnValue({
+            zoomMixer.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
             });
@@ -54,7 +58,7 @@ describe('Test for zoomMixer', function() {
         it('_showLayerSelection을 수행하면 dragSelectionElement에 show 스타일 클래스가 설정됩니다.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
-            zoomMixer._getContainerBound.and.returnValue({
+            zoomMixer.customEventContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
             });
