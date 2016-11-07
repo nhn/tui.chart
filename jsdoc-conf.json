@@ -8,7 +8,7 @@
         "excludePattern": "(^|\\/|\\\\)_"
     },
     "plugins": ["plugins/markdown"],
-    "template": {
+    "templates": {
         "name": "Chart"
     },
     "opts": {
