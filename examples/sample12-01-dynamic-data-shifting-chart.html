@@ -8,12 +8,16 @@
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
 <body>
-<div id="chart-area"></div>
+<div class='wrap'>
+    <div class='code-html'>
+<div id='chart-area'></div>
+    </div>
+</div>
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.0.8/code-snippet.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.effects/1.1.0/effects.min.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/raphael/v2.1.4b/raphael-min.js"></script>
 <script src="../dist/chart.min.js"></script>
-<script>
+<script class='code-js'>
     function getRandom(start, end) {
         return start + (Math.floor(Math.random() * (end - start + 1)));
     }
