@@ -1,4 +1,4 @@
-q/**
+/**
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  * @fileoverview webpack 설정파일
  */
