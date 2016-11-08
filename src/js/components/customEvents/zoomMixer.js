@@ -124,7 +124,9 @@ var zoomMixer = {
             lastDataBeforeZoom = this._getLastData(this.dragEndIndexes.index);
         }
 
-        this._showTooltip(lastDataBeforeZoom);
+        if (lastDataBeforeZoom) {
+            this._showTooltip(lastDataBeforeZoom);
+        }
     },
 
     /**

@@ -20,6 +20,12 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      */
     init: function(seriesItemBoundsData) {
         this.data = this._makeData(seriesItemBoundsData);
+
+        /**
+         * last group index
+         * @type {number}
+         */
+        this.lastGroupIndex = 0;
     },
 
     /**
@@ -29,6 +35,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * @private
      */
     _makeData: function(seriesItemBoundsData) {
+        var lastGroupIndex = 0;
         var data = tui.util.map(seriesItemBoundsData, function(seriesDatum) {
             var groupPositions = seriesDatum.data.groupPositions || seriesDatum.data.groupBounds;
             var chartType = seriesDatum.chartType;
@@ -37,6 +44,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
                 groupPositions = tui.util.pivot(groupPositions);
             }
 
+            lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
             return tui.util.map(groupPositions, function(positions, groupIndex) {
                 return tui.util.map(positions, function(position, index) {
                     var datum = null;
@@ -58,6 +66,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
         });
 
         data = concat.apply([], data);
+        this.lastGroupIndex = lastGroupIndex;
 
         return tui.util.filter(concat.apply([], data), function(datum) {
             return !!datum;
@@ -123,9 +132,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * @returns {object}
      */
     getLastData: function(index) {
-        var lastGroupIndex = this.data.length - 1;
-
-        return this._findDataByIndexes(lastGroupIndex, index);
+        return this._findDataByIndexes(this.lastGroupIndex, index);
     }
 });
 
