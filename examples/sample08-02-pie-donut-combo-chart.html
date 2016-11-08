@@ -8,7 +8,11 @@
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
 <body>
-<div id="chart-area"></div>
+<div class='wrap'>
+    <div class='code-html'>
+<div id='chart-area'></div>
+    </div>
+</div>
 <div class="custom-area">
     <div class="apply-btn-area">
         <input type="checkbox" id="use-theme" checked disabled><label for="use-theme">&nbsp;Theme</label>
@@ -155,7 +159,7 @@
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/raphael/v2.1.4b/raphael-min.js"></script>
 <script src="../dist/chart.min.js"></script>
 <script src="js/sample.js"></script>
-<script>
+<script class='code-js'>
     var container = document.getElementById('chart-area'),
         data = {
             categories: ['Browser'],
