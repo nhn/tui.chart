@@ -129,6 +129,7 @@ var addingDynamicDataMixer = {
             if (this.options.series.shifting) {
                 this.dataProcessor.shiftData();
             }
+
             return;
         }
 

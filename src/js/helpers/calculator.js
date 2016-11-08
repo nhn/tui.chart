@@ -6,10 +6,9 @@
 
 'use strict';
 
-/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 10, 20, 6, 0.1]}]*/
-
 var chartConst = require('../const');
 var arrayUtil = require('./arrayUtil');
+var PERCENT_DIVISOR = 100;
 
 /**
  * Calculator.
@@ -109,7 +108,7 @@ var calculator = {
             positions = tui.util.map(tui.util.range(0, count), function(index) {
                 var ratio = index === 0 ? 0 : (index / (count - 1));
 
-                return ratio * size + additionalPosition;
+                return (ratio * size) + additionalPosition;
             });
             positions[positions.length - 1] -= 1;
         }
@@ -241,7 +240,7 @@ var calculator = {
      * @returns {number}
      */
     makePercentageValue: function(value, totalValue) {
-        return value / totalValue * 100;
+        return value / totalValue * PERCENT_DIVISOR;
     },
 
     /**

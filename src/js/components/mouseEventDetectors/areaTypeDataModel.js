@@ -46,6 +46,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
             }
 
             lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
+
             return tui.util.map(groupPositions, function(positions, groupIndex) {
                 return tui.util.map(positions, function(position, index) {
                     var datum = null;

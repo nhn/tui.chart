@@ -125,7 +125,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             top;
 
         if (predicate.isValidStackOption(this.options.stackType)) {
-            top = (basePosition.startTop + baseTop - labelHeight) / 2 + 1;
+            top = ((basePosition.startTop + baseTop - labelHeight) / 2) + 1;
         } else if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
             top = baseTop - labelHeight - chartConst.SERIES_LABEL_PADDING;
         } else {

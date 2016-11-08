@@ -879,7 +879,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     getValues: function(chartType, valueType) {
         var mapKey;
 
-        //chartType = chartType || chartConst.DUMMY_KEY;
+        // chartType = chartType || chartConst.DUMMY_KEY;
         mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {

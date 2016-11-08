@@ -82,7 +82,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         a = fromPos.top < pos.top ? Math.PI - a : a;
         b = nextPos.top < pos.top ? Math.PI - b : b;
-        alpha = Math.PI / 2 - ((a + b) % (Math.PI * 2)) / 2;
+        alpha = (Math.PI / 2) - (((a + b) % (Math.PI * 2)) / 2);
         dx1 = l1 * Math.sin(alpha + a);
         dy1 = l1 * Math.cos(alpha + a);
         dx2 = l2 * Math.sin(alpha + b);

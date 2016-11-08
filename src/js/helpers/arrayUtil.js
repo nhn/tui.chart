@@ -81,6 +81,7 @@ var any = function(collection, condition, context) {
 
         return !result;
     });
+
     return result;
 };
 

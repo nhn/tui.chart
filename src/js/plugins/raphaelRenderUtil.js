@@ -153,7 +153,6 @@ var raphaelRenderUtil = {
      * @returns {string} changed color
      */
     makeChangedLuminanceColor: function(hex, lum) {
-        /*eslint no-magic-numbers: 0*/
         var changedHex;
 
         hex = hex.replace('#', '');

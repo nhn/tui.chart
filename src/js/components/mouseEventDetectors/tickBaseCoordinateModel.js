@@ -41,8 +41,8 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
             halfInterval = tickInterval / 2,
             ranges = tui.util.map(tui.util.range(0, tickCount), function(index) {
                 return {
-                    min: index * tickInterval - halfInterval,
-                    max: index * tickInterval + halfInterval
+                    min: (index * tickInterval) - halfInterval,
+                    max: (index * tickInterval) + halfInterval
                 };
             });
         ranges[tickCount - 1].max -= 1;
@@ -135,7 +135,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
         var limit = this.data[index],
             range, center;
         if (this.isLineType) {
-            center = parseInt(limit.max - (limit.max - limit.min) / 2, 10);
+            center = parseInt(limit.max - ((limit.max - limit.min) / 2), 10);
             range = {
                 start: center,
                 end: center

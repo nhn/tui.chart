@@ -4,8 +4,6 @@
  */
 'use strict';
 
-/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 4, 16]}]*/
-
 var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 
 /**

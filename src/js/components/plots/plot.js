@@ -196,6 +196,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
         templateParams.positionValue = percentagePosition + '%';
         templateParams.opacity = templateParams.opacity || '';
+
         return plotTemplate.tplPlotLine(templateParams);
     },
 

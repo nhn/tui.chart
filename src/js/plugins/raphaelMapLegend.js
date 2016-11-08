@@ -6,8 +6,6 @@
 
 'use strict';
 
-/*eslint no-magic-numbers: 0*/
-
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;

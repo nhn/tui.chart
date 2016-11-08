@@ -63,7 +63,7 @@ module.exports = (function() {
     };
 
     if (!isProduction) {
-        //Dev server setting
+        // Dev server setting
         Object.assign(config, {
             devtool: '#inline-source-map',
             debug: true,

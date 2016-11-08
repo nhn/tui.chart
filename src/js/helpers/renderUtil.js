@@ -6,8 +6,6 @@
 
 'use strict';
 
-/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 7, 8]}]*/
-
 var chartConst = require('./../const');
 var dom = require('./domHandler');
 var arrayUtil = require('./arrayUtil');
@@ -358,8 +356,8 @@ var renderUtil = {
 
         return {
             dimension: {
-                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-                height: dimension.height + chartConst.SERIES_EXPAND_SIZE * 2
+                width: dimension.width + (chartConst.SERIES_EXPAND_SIZE * 2),
+                height: dimension.height + (chartConst.SERIES_EXPAND_SIZE * 2)
             },
             position: {
                 left: position.left - chartConst.SERIES_EXPAND_SIZE,
@@ -553,13 +551,14 @@ var renderUtil = {
      * @returns {string} formatted value
      */
     formatToDecimal: function(value, len) {
+        var DECIMAL = 10;
         var pow;
 
         if (len === 0) {
             return Math.round(value);
         }
 
-        pow = Math.pow(10, len);
+        pow = Math.pow(DECIMAL, len);
         value = Math.round(value * pow) / pow;
         value = parseFloat(value).toFixed(len);
 

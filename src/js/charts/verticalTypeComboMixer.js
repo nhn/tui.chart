@@ -251,7 +251,7 @@ var verticalTypeComboMixer = {
             });
 
             tui.util.forEachArray(optionChartTypes, function(chartType, index) {
-                isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
+                isReverse = isReverse || ((chartType && resultChartTypes[index] !== chartType) || false);
             });
 
             if (isReverse) {
