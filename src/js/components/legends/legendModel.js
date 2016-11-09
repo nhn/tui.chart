@@ -1,5 +1,6 @@
 /**
  * @fileoverview LegendModel is legend model.
+ * 각 범례 힝목의 체크와 선택 여부를 관리하는 모델
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */

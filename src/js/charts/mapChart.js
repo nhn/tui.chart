@@ -46,8 +46,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     },
 
     /**
-     * Add components
-     * @param {object} options chart options
+     * Add components.
      * @private
      */
     _addComponents: function() {

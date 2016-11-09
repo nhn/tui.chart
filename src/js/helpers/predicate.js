@@ -281,13 +281,12 @@ var predicate = {
     },
 
     /**
-     * Whether mouse position chart or not.
-     * TODO: 설명
+     * Whether chart to detect mouse events on series or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isMousePositionChart: function(chartType) {
+    isChartToDetectMouseEventOnSeries: function(chartType) {
         return predicate.isPieTypeChart(chartType) || predicate.isMapChart(chartType)
             || predicate.isCoordinateTypeChart(chartType);
     },

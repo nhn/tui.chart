@@ -39,7 +39,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     },
 
     /**
-     * Initialize data of custom event
+     * Create areaTypeDataModel from seriesItemBoundsData for custom event.
      * @param {Array.<object>} seriesItemBoundsDatum - series item bounds datum
      * @override
      */

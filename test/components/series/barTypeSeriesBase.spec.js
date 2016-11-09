@@ -66,23 +66,23 @@ describe('BarTypeSeriesBase', function() {
         });
     });
 
-    describe('_makeBarSize()', function() {
+    describe('_calculateBarSize()', function() {
         it('bar size는 bar group size에서 간격정보를 빼고 아이템수 + 1로 나누어 계산됩니다.', function() {
-            var actual = series._makeBarSize(100, 4, 5),
+            var actual = series._calculateBarSize(100, 4, 5),
                 expected = 14;
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeOptionSize()', function() {
+    describe('_getBarWidthOptionSize()', function() {
         it('optionBarWidth(옵션값,두번째인자)가 barSize(첫번째 인자)보다 작을 경우에는 옵션 값을 반환합니다.', function() {
-            var actual = series._makeOptionSize(14, 10),
+            var actual = series._getBarWidthOptionSize(14, 10),
                 expected = 10;
             expect(actual).toBe(expected);
         });
 
         it('optionBarWidth가 barSize보다 클 경우에는 barSize를 반환합니다.', function() {
-            var actual = series._makeOptionSize(14, 20),
+            var actual = series._getBarWidthOptionSize(14, 20),
                 expected = 14;
             expect(actual).toBe(expected);
         });

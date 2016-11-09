@@ -20,9 +20,9 @@ describe('Test for BoundsBaseCoordinateModel', function() {
         }]);
     });
 
-    describe('_makeRectTypeCoordinateData()', function() {
+    describe('_makeRectTypePositionData()', function() {
         it('rect 형태의 그래프로 된 series들의 좌표 data를 생성합니다.', function() {
-            var actual = coordinateModel._makeRectTypeCoordinateData([[
+            var actual = coordinateModel._makeRectTypePositionData([[
                 {
                     end: {
                         left: 10,
@@ -51,9 +51,9 @@ describe('Test for BoundsBaseCoordinateModel', function() {
         });
     });
 
-    describe('_makeDotTypeCoordinateData()', function() {
+    describe('_makeDotTypePositionData()', function() {
         it('dot 형태의 그래프로 된 series들의 좌표 data를 생성합니다.', function() {
-            var actual = coordinateModel._makeDotTypeCoordinateData([[
+            var actual = coordinateModel._makeDotTypePositionData([[
                 {
                     left: 10,
                     top: 10

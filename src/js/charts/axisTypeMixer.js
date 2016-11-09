@@ -173,7 +173,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * Add grouped event handler layer.
+     * Add customEvent components for group tooltip.
      * @private
      * @override
      */
@@ -190,7 +190,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * Add custom event component for normal tooltip.
+     * Add custom event component for normal(single) tooltip.
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {

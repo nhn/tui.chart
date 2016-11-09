@@ -32,7 +32,7 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
     },
 
     /**
-     * Render event handle layer area
+     * Render custom event area
      * @param {HTMLElement} customEventContainer - container element for custom event
      * @private
      */

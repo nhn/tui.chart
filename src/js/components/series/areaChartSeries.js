@@ -46,7 +46,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     },
 
     /**
-     * Make stackType positions.
+     * Make positions, when has stackType option.
      * @param {Array.<Array.<{left: number, top: number}>>} groupPositions group positions
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private
@@ -73,7 +73,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     },
 
     /**
-     * Make positions.
+     * Make series positions.
      * @param {number} seriesWidth - width of series area
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private

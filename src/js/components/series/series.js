@@ -242,7 +242,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
         }
 
-        if (!predicate.isMousePositionChart(this.chartType)) {
+        if (!predicate.isChartToDetectMouseEventOnSeries(this.chartType)) {
             extendedDimension = this.dimensionMap.extendedSeries;
             renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
         }

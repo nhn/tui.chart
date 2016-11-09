@@ -168,7 +168,7 @@ var addingDynamicDataMixer = {
     },
 
     /**
-     * Start lookup.
+     * Start lookup for checking added data.
      * @private
      */
     _startLookup: function() {

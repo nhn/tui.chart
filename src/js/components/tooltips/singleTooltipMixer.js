@@ -444,7 +444,7 @@ var singleTooltipMixer = {
         var indexes = this._getIndexesCustomAttribute(tooltipElement);
         var chartType = tooltipElement.getAttribute('data-chart-type');
 
-        if (predicate.isMousePositionChart(chartType)) {
+        if (predicate.isChartToDetectMouseEventOnSeries(chartType)) {
             this.eventBus.fire('hoverOffSeries', indexes, chartType);
             this._executeHidingTooltip(tooltipElement);
         } else if (chartType) {
