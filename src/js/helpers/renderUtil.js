@@ -104,12 +104,6 @@ var renderUtil = {
     },
 
     /**
-     * Size cache.
-     * @type {object}
-     */
-    sizeCache: {},
-
-    /**
      * Add css style.
      * @param {HTMLElement} div div element
      * @param {{fontSize: number, fontFamily: string, cssText: string}} theme theme
@@ -130,6 +124,12 @@ var renderUtil = {
             div.style.cssText += theme.cssText;
         }
     },
+
+    /**
+     * Size cache.
+     * @type {object}
+     */
+    sizeCache: {},
 
     /**
      * Get rendered label size (width or height).
