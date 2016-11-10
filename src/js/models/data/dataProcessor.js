@@ -272,7 +272,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Escape categories
+     * Escape categories.
      * @param {Array.<string, number>} categories - cetegories
      * @returns {*|Array.<Object>|Array}
      * @private
@@ -304,7 +304,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Process categories
+     * Process categories.
      * @param {string} type - category type (x or y)
      * @returns {null | Array.<string>} processed categories
      * @private
@@ -476,7 +476,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Get stacks.
+     * Get stacks from raw series data.
      * @returns {Array.<string>}
      */
     getStacks: function() {
@@ -496,7 +496,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Find stack index.
+     * Find stack index from stack list by stack value.
      * @param {string} stack stack
      * @returns {number}
      */

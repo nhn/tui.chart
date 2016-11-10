@@ -31,7 +31,7 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
     },
 
     /**
-     * Make positions.
+     * Make positions for rendering graph and sending to custom event.
      * @param {number} [seriesWidth] - series width
      * @returns {Array.<Array.<{left: number, top: number}>>} positions
      * @private
@@ -41,7 +41,7 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
     },
 
     /**
-     * Make series data.
+     * Make series data for rendering graph and sending to custom event.
      * @returns {object} series data
      * @private
      * @override

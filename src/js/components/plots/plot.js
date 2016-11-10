@@ -397,8 +397,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
         return this._makeLinesHtml(positions, dimension.width, templateParams);
     },
+
     /**
-     * Maker html for horizontal lines
+     * Maker html for horizontal lines.
      * @param {{width: number, height: number}} dimension - dimension
      * @param {string} lineColor - line color
      * @returns {string}

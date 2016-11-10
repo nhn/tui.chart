@@ -396,7 +396,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
-     * Register center componets dimension.
+     * Register center components dimension.
      * @private
      */
     _registerCenterComponentsDimension: function() {
@@ -504,7 +504,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
-     * Make legend bound.
+     * Make legend position.
      * @returns {{dimension: {width: number, height: number}, position: {top: number, left: number}}} legend bound
      * @private
      */

@@ -17,7 +17,7 @@ describe('Test for GroupTypeCustomEvent', function() {
         });
     });
 
-    describe('_isOutPosition()', function() {
+    describe('_isOuterPosition()', function() {
 
         beforeEach(function() {
             groupTypeCustomEvent.bound = {
@@ -29,7 +29,7 @@ describe('Test for GroupTypeCustomEvent', function() {
         });
 
         it('layerX 값이 음수이면 true를 반환합니다.', function() {
-            var actual = groupTypeCustomEvent._isOutPosition(-1, 0),
+            var actual = groupTypeCustomEvent._isOuterPosition(-1, 0),
                 expected = true;
 
             expect(actual).toBe(expected);
@@ -41,7 +41,7 @@ describe('Test for GroupTypeCustomEvent', function() {
             groupTypeCustomEvent.dimension = {
                 width: 200
             };
-            actual = groupTypeCustomEvent._isOutPosition(301, 0);
+            actual = groupTypeCustomEvent._isOuterPosition(301, 0);
             expected = true;
 
             expect(actual).toBe(expected);
@@ -53,7 +53,7 @@ describe('Test for GroupTypeCustomEvent', function() {
             groupTypeCustomEvent.dimension = {
                 width: 200
             };
-            actual = groupTypeCustomEvent._isOutPosition(0, -1);
+            actual = groupTypeCustomEvent._isOuterPosition(0, -1);
             expected = true;
 
             expect(actual).toBe(expected);
@@ -66,7 +66,7 @@ describe('Test for GroupTypeCustomEvent', function() {
                 width: 200,
                 height: 100
             };
-            actual = groupTypeCustomEvent._isOutPosition(0, 201);
+            actual = groupTypeCustomEvent._isOuterPosition(0, 201);
             expected = true;
 
             expect(actual).toBe(expected);

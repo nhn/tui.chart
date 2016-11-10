@@ -1,5 +1,5 @@
 /**
- * @fileoverview BoundsTypeCustomEvent is event handle layer for bounds.
+ * @fileoverview BoundsTypeCustomEvent is event handle layer for bounds type charts like bar, column, heatmap, treemap.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -13,7 +13,7 @@ var dom = require('../../helpers/domHandler');
 
 var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends BoundsTypeCustomEvent.prototype */ {
     /**
-     * BoundsTypeCustomEvent is event handle layer for line type chart.
+     * BoundsTypeCustomEvent is event handle layer for bounds type charts like bar, column, heatmap, treemap.
      * @constructs BoundsTypeCustomEvent
      * @extends CustomEventBase
      */

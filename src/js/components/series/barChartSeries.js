@@ -129,7 +129,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * Make bounds of bar chart.
+     * Make series bounds for rendering
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */

@@ -56,7 +56,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             colorSpectrum: colorSpectrum
         });
 
-        // TODO
         this.componentManager.register('tooltip', Tooltip, tui.util.extend({
             labelTheme: tui.util.pick(this.theme, 'series', 'label')
         }, this._makeTooltipData()));

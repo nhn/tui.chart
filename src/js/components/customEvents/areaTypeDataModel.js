@@ -16,7 +16,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     /**
      * AreaTypeDataModel is data mode for custom event of area type.
      * @constructs AreaTypeDataModel
-     * @param {object} seriesItemBoundsData - series item bounds data
+     * @param {Array} seriesItemBoundsData - series item bounds data
      */
     init: function(seriesItemBoundsData) {
         this.data = this._makeData(seriesItemBoundsData);
@@ -74,7 +74,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     },
 
     /**
-     * Find Data.
+     * Find Data by layer position.
      * @param {{x: number, y: number}} layerPosition - layer position
      * @returns {object}
      */

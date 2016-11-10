@@ -240,7 +240,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Create BoundsBaseCoordinateModel from seriesBounds for custom event.
+     * Create BoundsBaseCoordinateModel from seriesItemBoundsData for custom event.
      * @param {{chartType: string, data: object}} seriesItemBoundsDatum - series item bounds datum
      */
     onReceiveSeriesData: function(seriesItemBoundsDatum) {
@@ -259,7 +259,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Rerender for customEvent component.
+     * Rerender custom event component.
      * @param {object} data - bounds data and tick count
      */
     rerender: function(data) {
@@ -275,7 +275,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Resize for customEvent component.
+     * Rerender, when resizing chart.
      * @param {object} data - bounds data and tick count
      */
     resize: function(data) {
@@ -358,7 +358,8 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * On mouse event.
+     * Send mouse position data to series component, when occur mouse event like move, click.
+     * 이벤트 발생시 시리즈 엘리먼트 감지가 가능하도록 customEvent container를 일시적으로 숨긴다.
      * @param {string} eventType - custom event type
      * @param {MouseEvent} e - mouse event
      * @private
@@ -382,7 +383,8 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * On click
+     * Call 'selectSeries' event, when changed found position data.
+     * And call 'unselectSeries' event, when not changed found position data.
      * @param {MouseEvent} e - mouse event
      * @private
      */
@@ -418,7 +420,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     _onMouseup: function() {},
 
     /**
-     * On mouse move
+     * Store client position, when occur mouse move event.
      * @param {MouseEvent} e - mouse event
      * @private
      */
@@ -430,7 +432,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * On mouse out
+     * Initialize prevClientPosition and prevFoundData, when occur mouse out.
      * @private
      */
     _onMouseout: function() {
@@ -439,7 +441,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Attach event
+     * Attach mouse event.
      * @param {HTMLElement} target - target element
      */
     attachEvent: function(target) {

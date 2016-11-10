@@ -94,7 +94,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * Get last data
+     * Get last data.
      * @returns {{indexes: {groupIndex: number}}} - data
      * @private
      */
@@ -107,13 +107,13 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * Whether out position or not.
+     * Whether outer position or not.
      * @param {number} layerX layerX
      * @param {number} layerY layerY
      * @returns {boolean} result boolean
      * @private
      */
-    _isOutPosition: function(layerX, layerY) {
+    _isOuterPosition: function(layerX, layerY) {
         var dimension = this.dimension;
 
         return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
@@ -148,7 +148,8 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * On mousemove.
+     * If found position data by client position, show tooltip.
+     * And if not found, call onMouseout function.
      * @param {MouseEvent} e mouse event object
      * @private
      * @override
@@ -174,7 +175,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * On mouseout.
+     * If mouse position gets out custom event area, hide tooltip.
      * @override
      */
     _onMouseout: function(e) {
@@ -182,7 +183,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
 
         layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
 
-        if (this._isOutPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
+        if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
             this._hideTooltip();
         }
 

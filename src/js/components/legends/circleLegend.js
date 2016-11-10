@@ -77,7 +77,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     },
 
     /**
-     * Format label
+     * Format label.
      * @param {number} label - label
      * @param {number} decimalLength - decimal length
      * @returns {string}

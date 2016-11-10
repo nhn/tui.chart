@@ -147,7 +147,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Resize legend component.
+     * Rerender, when resizing chart.
      * @param {object} data - bounds data
      */
     resize: function(data) {

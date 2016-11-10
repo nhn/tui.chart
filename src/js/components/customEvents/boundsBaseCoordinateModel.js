@@ -1,5 +1,5 @@
 /**
- * @fileoverview BoundsBaseCoordinateModel is data mode for custom event of point type.
+ * @fileoverview BoundsBaseCoordinateModel is data model for custom event of bounds type.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -46,22 +46,22 @@ var chartConst = require('../../const'),
 
 var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
     /**
-     * BoundsBaseCoordinateModel is data mode for custom event of point type.
+     * BoundsBaseCoordinateModel is data mode for custom event of bounds type.
      * @constructs BoundsBaseCoordinateModel
-     * @param {Array.<seriesInfo>} seriesInfos series infos
+     * @param {Array} seriesItemBoundsData - series item bounds data
      */
-    init: function(seriesInfos) {
-        this.data = this._makeData(seriesInfos);
+    init: function(seriesItemBoundsData) {
+        this.data = this._makeData(seriesItemBoundsData);
     },
 
     /**
-     * Make coordinate data about bar type graph
+     * Make position data for rect type graph
      * @param {groupBound} groupBounds group bounds
      * @param {string} chartType chart type
-     * @returns {Array} coordinate data
+     * @returns {Array}
      * @private
      */
-    _makeRectTypeCoordinateData: function(groupBounds, chartType) {
+    _makeRectTypePositionData: function(groupBounds, chartType) {
         var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
 
         return tui.util.map(groupBounds, function(bounds, groupIndex) {
@@ -95,13 +95,13 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     },
 
     /**
-     * Make coordinate data about dot type graph
+     * Make position data for dot type graph
      * @param {groupPositions} groupPositions group positions
      * @param {string} chartType chart type
-     * @returns {Array.<Array.<object>>} coordinate data
+     * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makeDotTypeCoordinateData: function(groupPositions, chartType) {
+    _makeDotTypePositionData: function(groupPositions, chartType) {
         if (!groupPositions) {
             return [];
         }
@@ -133,22 +133,22 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
 
     /**
      * Join data.
-     * @param {Array.<Array.<Array.<object>>>} groupData group data
+     * @param {Array.<Array.<Array.<object>>>} dataGroupSet data group set
      * @returns {Array.<Array.<object>>} joined data
      * @private
      */
-    _joinData: function(groupData) {
+    _joinData: function(dataGroupSet) {
         var results = [];
-        tui.util.forEachArray(groupData, function(coordData) {
-            tui.util.forEachArray(coordData, function(data, index) {
-                var addtionalIndex;
+        tui.util.forEachArray(dataGroupSet, function(dataGroup) {
+            tui.util.forEachArray(dataGroup, function(data, index) {
+                var additionalIndex;
 
                 if (!results[index]) {
                     results[index] = data;
                 } else {
-                    addtionalIndex = results[index].length;
+                    additionalIndex = results[index].length;
                     tui.util.forEachArray(data, function(datum) {
-                        datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + addtionalIndex;
+                        datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + additionalIndex;
                     });
                     results[index] = results[index].concat(data);
                 }
@@ -159,25 +159,25 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     },
 
     /**
-     * Make coordinate data.
-     * @param {Array.<seriesInfo>} seriesInfos series infos
+     * Make data for detecting mouse event.
+     * @param {Array} seriesItemBoundsData - series item bounds data
      * @returns {Array.<Array.<object>>} coordinate data
      * @private
      */
-    _makeData: function(seriesInfos) {
+    _makeData: function(seriesItemBoundsData) {
         var self = this;
-        var coordinateData = tui.util.map(seriesInfos, function(info) {
+        var data = tui.util.map(seriesItemBoundsData, function(info) {
             var result;
             if (predicate.isLineTypeChart(info.chartType)) {
-                result = self._makeDotTypeCoordinateData(info.data.groupPositions, info.chartType);
+                result = self._makeDotTypePositionData(info.data.groupPositions, info.chartType);
             } else {
-                result = self._makeRectTypeCoordinateData(info.data.groupBounds, info.chartType);
+                result = self._makeRectTypePositionData(info.data.groupBounds, info.chartType);
             }
 
             return result;
         });
 
-        return this._joinData(coordinateData);
+        return this._joinData(data);
     },
 
     /**
@@ -205,7 +205,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     },
 
     /**
-     * Find tooltip data.
+     * Find data.
      * @param {number} groupIndex group index
      * @param {number} layerX mouse position x
      * @param {number} layerY mouse position y

@@ -28,7 +28,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     },
 
     /**
-     * Make series data.
+     * Make series data for rendering graph and sending to custom event.
      * @returns {{
      *      groupBounds: Array.<Array.<{left: number, top: number, radius: number}>>,
      *      seriesDataModel: SeriesDataModel
@@ -90,7 +90,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     },
 
     /**
-     * On show tooltip for calling showWedge.
+     * Call showWedge event of spectrum legend, when call showTooltip event.
      * @param {{indexes: {groupIndex: number, index: number}}} params - parameters
      */
     onShowTooltip: function(params) {

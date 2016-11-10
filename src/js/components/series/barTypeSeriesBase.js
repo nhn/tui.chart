@@ -51,25 +51,25 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make bar size.
+     * Calculate bar size.
      * @param {number} groupSize bar group size
      * @param {number} barGutter bar padding
      * @param {number} itemCount group item count
      * @returns {number} bar size (width or height)
      * @private
      */
-    _makeBarSize: function(groupSize, barGutter, itemCount) {
+    _calculateBarSize: function(groupSize, barGutter, itemCount) {
         return (groupSize - (barGutter * (itemCount - 1))) / (itemCount + 1);
     },
 
     /**
-     * Make option size.
+     * Get bar width option size.
      * @param {number} barSize bar size
      * @param {?number} optionBarWidth barWidth option
      * @returns {number} option size
      * @private
      */
-    _makeOptionSize: function(barSize, optionBarWidth) {
+    _getBarWidthOptionSize: function(barSize, optionBarWidth) {
         var optionsSize = 0;
 
         if (optionBarWidth) {
@@ -126,8 +126,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         }
 
         barGutter = this._makeBarGutter(groupSize, itemCount);
-        barSize = this._makeBarSize(groupSize, barGutter, itemCount);
-        optionSize = this._makeOptionSize(barSize, this.options.barWidth);
+        barSize = this._calculateBarSize(groupSize, barGutter, itemCount);
+        optionSize = this._getBarWidthOptionSize(barSize, this.options.barWidth);
         additionalPosition = this._calculateAdditionalPosition(barSize, optionSize, itemCount);
         barSize = optionSize || barSize;
         basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
@@ -205,7 +205,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make stackType labels html.
+     * Make labels html, when has stackType option.
      * @param {object} params parameters
      *      @param {number} params.groupIndex group index
      *      @param {Array.<object>} params.bounds bounds,
@@ -249,7 +249,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Render stackType series label.
+     * Render series label, when has stackType option.
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */

@@ -29,7 +29,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
     },
 
     /**
-     * showTooltip is mouseover event callback on series graph.
+     * showTooltip is callback of mouseover event to series element.
      * @param {object} params parameters
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
@@ -48,7 +48,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
     },
 
     /**
-     * hideTooltip is mouseout event callback on series graph.
+     * hideTooltip is callback of mouseout event to series element.
      */
     hideTooltip: function() {
         this.eventBus.fire('hideTooltip');
@@ -113,7 +113,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
     },
 
     /**
-     * On click series.
+     * If click series, showing selected state.
      * @param {{left: number, top: number}} position - mouse position
      */
     onClickSeries: function(position) {
@@ -150,7 +150,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
     },
 
     /**
-     * On move series.
+     * If mouse move series, call 'moveMouseOnSeries' of graph render.
      * @param {{left: number, top: number}} position mouse position
      */
     onMoveSeries: function(position) {

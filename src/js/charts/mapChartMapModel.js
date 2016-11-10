@@ -58,7 +58,7 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
         this.dataProcessor = dataProcessor;
 
         /**
-         * Raw map data
+         * Raw map data.
          * @type {Array.<{name: string, path: string, labelCoordinate: ?{x: number, y: number}}>}
          */
         this.rawMapData = rawMapData;

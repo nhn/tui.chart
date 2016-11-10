@@ -59,7 +59,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     _onClick: function() {},
 
     /**
-     * On mouse down
+     * Call 'dragStartMapSeries' event, when occur mouse down event.
      * @param {mouseevent} e mouse event
      * @private
      * @override
@@ -83,7 +83,8 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     },
 
     /**
-     * On mouse up
+     * If drag, call dragEnd function.
+     * But if not drag, occur click event.
      * @param {mouseevent} e mouse event
      * @private
      * @override
@@ -101,7 +102,8 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     },
 
     /**
-     * On mouse move.
+     * If mouse downed, set drag mode.
+     * But if not downed, set move mode.
      * @param {mouseevent} e mouse event
      * @private
      * @override
@@ -123,7 +125,8 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     },
 
     /**
-     * On mouse out
+     * If drag mode, call dragEnd.
+     * But if not drag mode, occur move event.
      * @private
      * @override
      */
@@ -158,7 +161,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     },
 
     /**
-     * Attach event
+     * Attach event.
      * @param {HTMLElement} target target element
      * @override
      */
