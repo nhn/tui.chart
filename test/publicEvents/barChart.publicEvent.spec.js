@@ -51,10 +51,10 @@ describe('Test user events for bar chart', function() {
 
     describe('selectSeries', function() {
         it('select series', function(done) {
-            var customEvent = barChart.componentManager.get('customEvent');
+            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -70,7 +70,7 @@ describe('Test user events for bar chart', function() {
                 done();
             });
 
-            customEvent._onClick({
+            mouseEventDetector._onClick({
                 clientX: 100,
                 clientY: 100
             });
@@ -79,10 +79,10 @@ describe('Test user events for bar chart', function() {
 
     describe('unselectSeries', function() {
         it('unselect series', function(done) {
-            var customEvent = barChart.componentManager.get('customEvent');
+            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -99,14 +99,14 @@ describe('Test user events for bar chart', function() {
             });
 
             // select
-            customEvent._onClick({
+            mouseEventDetector._onClick({
                 clientX: 100,
                 clientY: 100
             });
 
             setTimeout(function() {
                 // unselect
-                customEvent._onClick({
+                mouseEventDetector._onClick({
                     clientX: 100,
                     clientY: 100
                 });
@@ -134,10 +134,10 @@ describe('Test user events for bar chart', function() {
 
     describe('beforeShowTooltip', function() {
         it('before show tooltip', function(done) {
-            var customEvent = barChart.componentManager.get('customEvent');
+            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -153,7 +153,7 @@ describe('Test user events for bar chart', function() {
                 done();
             });
 
-            customEvent._onMousemove({
+            mouseEventDetector._onMousemove({
                 clientX: 100,
                 clientY: 100
             });
@@ -162,10 +162,10 @@ describe('Test user events for bar chart', function() {
 
     describe('afterShowTooltip', function() {
         it('after show tooltip', function(done) {
-            var customEvent = barChart.componentManager.get('customEvent');
+            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -184,7 +184,7 @@ describe('Test user events for bar chart', function() {
                 done();
             });
 
-            customEvent._onMousemove({
+            mouseEventDetector._onMousemove({
                 clientX: 100,
                 clientY: 100
             });

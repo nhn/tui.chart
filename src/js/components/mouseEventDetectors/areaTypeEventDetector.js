@@ -1,24 +1,24 @@
 /**
- * @fileoverview AreaTypeCustomEvent is event handle layer for line type chart.
+ * @fileoverview AreaTypeEventDetector is mouse event detector for line type chart.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase');
+var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var zoomMixer = require('./zoomMixer');
 var AreaTypeDataModel = require('./areaTypeDataModel');
 
-var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaTypeCustomEvent.prototype */ {
+var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends AreaTypeEventDetector.prototype */ {
     /**
-     * AreaTypeCustomEvent is custom event for line type chart.
+     * AreaTypeEventDetector is mouse event detector for line type chart.
      * @param {object} params parameters
-     * @constructs AreaTypeCustomEvent
-     * @extends CustomEventBase
+     * @constructs AreaTypeEventDetector
+     * @extends MouseEventDetectorBase
      */
     init: function(params) {
-        CustomEventBase.call(this, params);
+        MouseEventDetectorBase.call(this, params);
 
         /**
          * previous found data
@@ -39,7 +39,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     },
 
     /**
-     * Create areaTypeDataModel from seriesItemBoundsData for custom event.
+     * Create areaTypeDataModel from seriesItemBoundsData for mouse event detector.
      * @param {Array.<object>} seriesItemBoundsDatum - series item bounds datum
      * @override
      */
@@ -122,7 +122,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     _onMousemove: function(e) {
         var dragMoseupResult, foundData;
 
-        CustomEventBase.prototype._onMousemove.call(this, e);
+        MouseEventDetectorBase.prototype._onMousemove.call(this, e);
 
         foundData = this._findData(e.clientX, e.clientY);
 
@@ -153,8 +153,8 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
             this._hideTooltip();
         }
 
-        CustomEventBase.prototype._onMouseout.call(this);
+        MouseEventDetectorBase.prototype._onMouseout.call(this);
     }
 });
 
-module.exports = AreaTypeCustomEvent;
+module.exports = AreaTypeEventDetector;

@@ -83,7 +83,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
                 }
             ],
             tooltip: true,
-            customEvent: true
+            mouseEventDetector: true
         });
     },
 

@@ -368,13 +368,13 @@ var renderUtil = {
     },
 
     /**
-     * Make custom event name.
+     * Make mouse event detector name.
      * @param {string} prefix prefix
      * @param {string} value value
      * @param {string} suffix suffix
-     * @returns {string} custom event name
+     * @returns {string} mouse event detector name
      */
-    makeCustomEventName: function(prefix, value, suffix) {
+    makeMouseEventDetectorName: function(prefix, value, suffix) {
         return prefix + tui.util.properCase(value) + tui.util.properCase(suffix);
     },
 

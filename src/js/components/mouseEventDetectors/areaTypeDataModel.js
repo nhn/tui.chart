@@ -1,5 +1,5 @@
 /**
- * @fileoverview AreaTypeDataModel is data model for custom event of area type.
+ * @fileoverview AreaTypeDataModel is data model for mouse event detector of area type.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -14,7 +14,7 @@ var AREA_THRESHHOLD = 50;
 
 var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.prototype */ {
     /**
-     * AreaTypeDataModel is data mode for custom event of area type.
+     * AreaTypeDataModel is data mode for mouse event detector of area type.
      * @constructs AreaTypeDataModel
      * @param {Array} seriesItemBoundsData - series item bounds data
      */

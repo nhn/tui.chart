@@ -15,7 +15,7 @@ var Series = require('../components/series/mapChartSeries');
 var Zoom = require('../components/series/zoom');
 var Legend = require('../components/legends/spectrumLegend');
 var MapChartTooltip = require('../components/tooltips/mapChartTooltip');
-var mapChartCustomEvent = require('../components/customEvents/mapChartCustomEvent');
+var mapChartEventDetector = require('../components/mouseEventDetectors/mapChartEventDetector');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
@@ -77,7 +77,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
         this.componentManager.register('zoom', Zoom);
 
-        this.componentManager.register('customEvent', mapChartCustomEvent, {
+        this.componentManager.register('mouseEventDetector', mapChartEventDetector, {
             chartType: this.chartType
         });
     },

@@ -1,5 +1,5 @@
 /**
- * @fileoverview CustomEventBase is base class for event handle layers.
+ * @fileoverview MouseEventDetectorBase is base class for mouse event detector components.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -14,10 +14,10 @@ var predicate = require('../../helpers/predicate');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 
-var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype */ {
+var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
     /**
-     * CustomEventBase is base class for custom event components.
-     * @constructs CustomEventBase
+     * MouseEventDetectorBase is base class for mouse event detector components.
+     * @constructs MouseEventDetectorBase
      * @param {object} params parameters
      *      @param {string} params.chartType - chart type
      *      @param {Array.<string>} params.chartTypes - chart types
@@ -139,11 +139,11 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Render event handle layer area.
-     * @param {HTMLElement} customEventContainer - container element for custom event
+     * @param {HTMLElement} mouseEventDetectorContainer - container element for mouse event detector
      * @param {number} tickCount - tick count
      * @private
      */
-    _renderCustomEventArea: function(customEventContainer, tickCount) {
+    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer, tickCount) {
         var dimension = this.layout.dimension;
         var renderingBound, tbcm;
 
@@ -151,8 +151,8 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         tbcm = new TickBaseCoordinateModel(dimension, tickCount, this.chartType, this.isVertical, this.chartTypes);
         this.tickBaseCoordinateModel = tbcm;
         renderingBound = this._getRenderingBound();
-        renderUtil.renderDimension(customEventContainer, renderingBound.dimension);
-        renderUtil.renderPosition(customEventContainer, renderingBound.position);
+        renderUtil.renderDimension(mouseEventDetectorContainer, renderingBound.dimension);
+        renderUtil.renderPosition(mouseEventDetectorContainer, renderingBound.position);
     },
 
     /**
@@ -188,9 +188,9 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Render for customEvent component.
+     * Render for mouseEventDetector component.
      * @param {object} data - bounds data and tick count
-     * @returns {HTMLElement} container for custom event
+     * @returns {HTMLElement} container for mouse event detector
      */
     render: function(data) {
         var container = dom.create('DIV', 'tui-chart-series-custom-event-area');
@@ -201,9 +201,9 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         }
 
         this._setDataForRendering(data);
-        this._renderCustomEventArea(container, tickCount);
+        this._renderMouseEventDetectorArea(container, tickCount);
         this.attachEvent(container);
-        this.customEventContainer = container;
+        this.mouseEventDetectorContainer = container;
 
         return container;
     },
@@ -217,7 +217,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _calculateLayerPosition: function(clientX, clientY, checkLimit) {
-        var bound = this.customEventContainer.getBoundingClientRect();
+        var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
         var layerPosition = {};
         var expandSize = this.expandSize;
         var maxLeft, minLeft;
@@ -240,7 +240,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Create BoundsBaseCoordinateModel from seriesItemBoundsData for custom event.
+     * Create BoundsBaseCoordinateModel from seriesItemBoundsData for mouse event detector.
      * @param {{chartType: string, data: object}} seriesItemBoundsDatum - series item bounds datum
      */
     onReceiveSeriesData: function(seriesItemBoundsDatum) {
@@ -259,7 +259,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * Rerender custom event component.
+     * Rerender mouse event detector component.
      * @param {object} data - bounds data and tick count
      */
     rerender: function(data) {
@@ -271,7 +271,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
         this.selectedData = null;
         this._setDataForRendering(data);
-        this._renderCustomEventArea(this.customEventContainer, tickCount);
+        this._renderMouseEventDetectorArea(this.mouseEventDetectorContainer, tickCount);
     },
 
     /**
@@ -359,18 +359,18 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Send mouse position data to series component, when occur mouse event like move, click.
-     * 이벤트 발생시 시리즈 엘리먼트 감지가 가능하도록 customEvent container를 일시적으로 숨긴다.
-     * @param {string} eventType - custom event type
+     * 이벤트 발생시 시리즈 엘리먼트 감지가 가능하도록 mouseEventDetector container를 일시적으로 숨긴다.
+     * @param {string} eventType - mouse event detector type
      * @param {MouseEvent} e - mouse event
      * @private
      */
     _onMouseEvent: function(eventType, e) {
-        dom.addClass(this.customEventContainer, 'hide');
+        dom.addClass(this.mouseEventDetectorContainer, 'hide');
         this.eventBus.fire(eventType + 'Series', {
             left: e.clientX,
             top: e.clientY
         });
-        dom.removeClass(this.customEventContainer, 'hide');
+        dom.removeClass(this.mouseEventDetectorContainer, 'hide');
     },
 
     /**
@@ -455,6 +455,6 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     }
 });
 
-tui.util.CustomEvents.mixin(CustomEventBase);
+tui.util.CustomEvents.mixin(MouseEventDetectorBase);
 
-module.exports = CustomEventBase;
+module.exports = MouseEventDetectorBase;

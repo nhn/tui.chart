@@ -80,7 +80,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     /**
      * Register component.
      * The component refers to a component of the chart.
-     * The component types are axis, legend, plot, series and customEvent.
+     * The component types are axis, legend, plot, series and mouseEventDetector.
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
      * @param {function} Component component constructor

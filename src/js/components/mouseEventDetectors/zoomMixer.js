@@ -1,12 +1,12 @@
 /**
- * @fileoverview  Mixer for zoom event of area type custom event.
+ * @fileoverview  Mixer for zoom event of area type mouse event detector.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase');
+var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
@@ -14,7 +14,7 @@ var renderUtil = require('../../helpers/renderUtil');
 var eventListener = require('../../helpers/eventListener');
 
 /**
- * Mixer for zoom event of area type custom event.
+ * Mixer for zoom event of area type mouse event detector.
  * @mixin
  */
 var zoomMixer = {
@@ -160,7 +160,7 @@ var zoomMixer = {
      * @override
      */
     render: function(data) {
-        var container = CustomEventBase.prototype.render.call(this, data);
+        var container = MouseEventDetectorBase.prototype.render.call(this, data);
         var selectionElement = this._renderDragSelection();
 
         dom.append(container, selectionElement);
@@ -176,7 +176,7 @@ var zoomMixer = {
      */
     resize: function(data) {
         this.containerBound = null;
-        CustomEventBase.prototype.resize.call(this, data);
+        MouseEventDetectorBase.prototype.resize.call(this, data);
         this._updateDimensionForDragSelection(this.dragSelectionElement);
     },
 
@@ -213,7 +213,7 @@ var zoomMixer = {
         }
 
         eventListener.on(document, 'mousemove', this._onDrag, this);
-        eventListener.off(this.customEventContainer, 'mouseup', this._onMouseup, this);
+        eventListener.off(this.mouseEventDetectorContainer, 'mouseup', this._onMouseup, this);
         eventListener.on(document, 'mouseup', this._onMouseupAfterDrag, this);
     },
 
@@ -228,7 +228,7 @@ var zoomMixer = {
 
         eventListener.off(document, 'mousemove', this._onDrag, this);
         eventListener.off(document, 'mouseup', this._onMouseupAfterDrag, this);
-        eventListener.on(this.customEventContainer, 'mouseup', this._onMouseup, this);
+        eventListener.on(this.mouseEventDetectorContainer, 'mouseup', this._onMouseup, this);
     },
 
     /**
@@ -328,7 +328,7 @@ var zoomMixer = {
     },
 
     /**
-     * Fire zoom custom event.
+     * Fire zoom mouse event detector.
      * @param {number} startIndex - start index
      * @param {number} endIndex - end index
      * @private
@@ -377,7 +377,7 @@ var zoomMixer = {
                 this.prevDistanceOfRange = null;
                 this.eventBus.fire('resetZoom');
             } else {
-                CustomEventBase.prototype._onClick.call(this, e);
+                MouseEventDetectorBase.prototype._onClick.call(this, e);
             }
         } else {
             this.dragEndIndexes = this._findDataForZoomable(e.clientX, e.clientY).indexes;
@@ -415,9 +415,9 @@ var zoomMixer = {
 
         if (!this.resetZoomBtn) {
             this.resetZoomBtn = this._renderResetZoomBtn();
-            dom.append(this.customEventContainer, this.resetZoomBtn);
+            dom.append(this.mouseEventDetectorContainer, this.resetZoomBtn);
         } else if (data.isResetZoom) {
-            this.customEventContainer.removeChild(this.resetZoomBtn);
+            this.mouseEventDetectorContainer.removeChild(this.resetZoomBtn);
             this.resetZoomBtn = null;
         }
     }

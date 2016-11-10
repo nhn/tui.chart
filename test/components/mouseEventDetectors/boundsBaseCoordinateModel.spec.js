@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BoundsBaseCoordinateModel = require('../../../src/js/components/customEvents/boundsBaseCoordinateModel');
+var BoundsBaseCoordinateModel = require('../../../src/js/components/mouseEventDetectors/boundsBaseCoordinateModel');
 
 describe('Test for BoundsBaseCoordinateModel', function() {
     var coordinateModel;

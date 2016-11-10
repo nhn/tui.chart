@@ -1,21 +1,21 @@
 /**
- * @fileoverview SimpleCustomEvent is event handle layer for simply sending clientX, clientY.
+ * @fileoverview SimpleEventDetector is event handle layer for simply sending clientX, clientY.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase');
+var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var renderUtil = require('../../helpers/renderUtil');
 
-var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleCustomEvent.prototype */ {
+var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
     /**
-     * SimpleCustomEvent is event handle layer for simply sending clientX, clientY.
-     * @constructs SimpleCustomEvent
+     * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
+     * @constructs SimpleEventDetector
      * @param {object} params parameters
      *      @param {string} params.chartType - chart type
-     * @extends CustomEventBase
+     * @extends MouseEventDetectorBase
      */
     init: function(params) {
         /**
@@ -32,17 +32,17 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
     },
 
     /**
-     * Render custom event area
-     * @param {HTMLElement} customEventContainer - container element for custom event
+     * Render mouse event detector area
+     * @param {HTMLElement} mouseEventDetectorContainer - container element for mouse event detector
      * @private
      */
-    _renderCustomEventArea: function(customEventContainer) {
-        renderUtil.renderDimension(customEventContainer, this.layout.dimension);
-        renderUtil.renderPosition(customEventContainer, this.layout.position);
+    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
+        renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
+        renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
     },
 
     /**
-     * Initialize data of custom event
+     * Initialize data of mouse event detector
      * @override
      */
     onReceiveSeriesData: function() {},
@@ -78,4 +78,4 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
     }
 });
 
-module.exports = SimpleCustomEvent;
+module.exports = SimpleEventDetector;

@@ -1,5 +1,5 @@
 /**
- * @fileoverview BoundsBaseCoordinateModel is data model for custom event of bounds type.
+ * @fileoverview BoundsBaseCoordinateModel is data model for mouse event detector of bounds type.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -46,7 +46,7 @@ var chartConst = require('../../const'),
 
 var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
     /**
-     * BoundsBaseCoordinateModel is data mode for custom event of bounds type.
+     * BoundsBaseCoordinateModel is data mode for mouse event detector of bounds type.
      * @constructs BoundsBaseCoordinateModel
      * @param {Array} seriesItemBoundsData - series item bounds data
      */

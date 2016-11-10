@@ -6,15 +6,15 @@
 
 'use strict';
 
-var zoomMixer = require('../../../src/js/components/customEvents/zoomMixer');
-var CustomEventBase = require('../../../src/js/components/customEvents/customEventBase');
+var zoomMixer = require('../../../src/js/components/mouseEventDetectors/zoomMixer');
+var MouseEventDetectorBase = require('../../../src/js/components/mouseEventDetectors/mouseEventDetectorBase');
 var chartConst = require('../../../src/js/const');
 var dom = require('../../../src/js/helpers/domHandler');
 
 describe('Test for zoomMixer', function() {
     beforeAll(function() {
         zoomMixer._getContainerBound = jasmine.createSpy('_getContainerBound');
-        zoomMixer._calculateLayerPosition = CustomEventBase.prototype._calculateLayerPosition;
+        zoomMixer._calculateLayerPosition = MouseEventDetectorBase.prototype._calculateLayerPosition;
     });
 
     beforeEach(function() {
@@ -23,13 +23,13 @@ describe('Test for zoomMixer', function() {
 
     describe('_showDragSelection()', function() {
         beforeEach(function() {
-            zoomMixer.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
+            zoomMixer.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
         });
 
         it('clinetX값을 전달하여 layerX를 구해 left와 width를 설정합니다.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 100;
-            zoomMixer.customEventContainer.getBoundingClientRect.and.returnValue({
+            zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
             });
@@ -44,7 +44,7 @@ describe('Test for zoomMixer', function() {
         it('layerX가 startLayerX보다 클 경우에는 left값을 startLayerX로 설정합니다.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
-            zoomMixer.customEventContainer.getBoundingClientRect.and.returnValue({
+            zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
             });
@@ -58,7 +58,7 @@ describe('Test for zoomMixer', function() {
         it('_showLayerSelection을 수행하면 dragSelectionElement에 show 스타일 클래스가 설정됩니다.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
-            zoomMixer.customEventContainer.getBoundingClientRect.and.returnValue({
+            zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
             });

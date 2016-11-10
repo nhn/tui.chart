@@ -264,11 +264,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Send boudns to customEvent component.
+     * Send boudns to mouseEventDetector component.
      * @param {object} seriesData - series data
      * @private
      */
-    _sendBoundsToCustomEvent: function(seriesData) {
+    _sendBoundsToMouseEventDetector: function(seriesData) {
         this.eventBus.fire('receiveSeriesData', {
             chartType: this.chartType,
             data: seriesData
@@ -291,7 +291,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.seriesData = seriesData = this._makeSeriesData();
 
-        this._sendBoundsToCustomEvent(seriesData);
+        this._sendBoundsToMouseEventDetector(seriesData);
 
         if (!paper) {
             renderUtil.renderDimension(seriesContainer, dimension);

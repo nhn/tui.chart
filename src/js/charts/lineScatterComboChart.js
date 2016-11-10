@@ -12,7 +12,7 @@ var comboTypeMixer = require('./comboTypeMixer');
 
 var LineSeries = require('../components/series/lineChartSeries');
 var ScatterSeries = require('../components/series/scatterChartSeries');
-var CustomEvent = require('../components/customEvents/areaTypeCustomEvent');
+var MouseEventDetector = require('../components/mouseEventDetectors/areaTypeEventDetector');
 
 var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
     /**
@@ -87,7 +87,7 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
             }
         ], this.options);
 
-        this.componentManager.register('customEvent', CustomEvent, {
+        this.componentManager.register('mouseEventDetector', MouseEventDetector, {
             chartType: this.chartType,
             isVertical: this.isVertical,
             allowSelect: this.options.series.allowSelect

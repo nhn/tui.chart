@@ -11,7 +11,7 @@ var ColorSpectrum = require('./colorSpectrum');
 var Series = require('../components/series/treemapChartSeries');
 var Tooltip = require('../components/tooltips/tooltip');
 var Legend = require('../components/legends/spectrumLegend');
-var BoundsTypeCustomEvent = require('../components/customEvents//boundsTypeCustomEvent');
+var BoundsTypeEventDetector = require('../components/mouseEventDetectors//boundsTypeEventDetector');
 
 var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
     /**
@@ -67,7 +67,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             });
         }
 
-        this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
+        this.componentManager.register('mouseEventDetector', BoundsTypeEventDetector, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });

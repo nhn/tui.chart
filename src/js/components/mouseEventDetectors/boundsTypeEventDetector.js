@@ -1,24 +1,25 @@
 /**
- * @fileoverview BoundsTypeCustomEvent is event handle layer for bounds type charts like bar, column, heatmap, treemap.
+ * @fileoverview BoundsTypeEventDetector is mouse event detector for bounds type charts
+ *                                                                              like bar, column, heatmap, treemap.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase');
+var EventDetectorBase = require('./mouseEventDetectorBase');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var dom = require('../../helpers/domHandler');
 
-var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends BoundsTypeCustomEvent.prototype */ {
+var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends BoundsTypeEventDetector.prototype */ {
     /**
-     * BoundsTypeCustomEvent is event handle layer for bounds type charts like bar, column, heatmap, treemap.
-     * @constructs BoundsTypeCustomEvent
-     * @extends CustomEventBase
+     * BoundsTypeEventDetector is mouse event detector for bounds type charts like bar, column, heatmap, treemap.
+     * @constructs BoundsTypeEventDetector
+     * @extends EventDetectorBase
      */
     init: function() {
-        CustomEventBase.apply(this, arguments);
+        EventDetectorBase.apply(this, arguments);
 
         /**
          * previous found data
@@ -45,7 +46,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @override
      */
     _attachToEventBus: function() {
-        CustomEventBase.prototype._attachToEventBus.call(this);
+        EventDetectorBase.prototype._attachToEventBus.call(this);
 
         this.eventBus.on('afterZoom', this.onAfterZoom, this);
     },
@@ -65,7 +66,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @param {boolean} hasChild - whether has child or not
      */
     styleCursor: function(hasChild) {
-        var container = this.customEventContainer;
+        var container = this.mouseEventDetectorContainer;
         if (hasChild) {
             container.style.cursor = 'pointer';
         } else {
@@ -117,7 +118,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         this.eventBus.fire('zoom', index);
 
         if (this.zoomHistory.length === 1) {
-            this.customEventContainer.removeChild(this.historyBackBtn);
+            this.mouseEventDetectorContainer.removeChild(this.historyBackBtn);
             this.historyBackBtn = null;
         }
     },
@@ -144,7 +145,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         var target = e.target || e.srcElement;
         var layerPosition, foundData, seriesItem;
 
-        CustomEventBase.prototype._onClick.call(this, e);
+        EventDetectorBase.prototype._onClick.call(this, e);
 
         if (!predicate.isTreemapChart(this.chartType)) {
             return;
@@ -178,7 +179,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      */
     _onMouseout: function(e) {
         // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
-        var bound = this.customEventContainer.getBoundingClientRect();
+        var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
         var clientX = e.clientX;
         var clientY = e.clientY;
 
@@ -191,7 +192,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             this._hideTooltip();
         }
 
-        CustomEventBase.prototype._onMouseout.call(this);
+        EventDetectorBase.prototype._onMouseout.call(this);
     },
 
     /**
@@ -202,7 +203,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         if (!this.historyBackBtn) {
             this.historyBackBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
             this.historyBackBtn.innerHTML = '< Back';
-            dom.append(this.customEventContainer, this.historyBackBtn);
+            dom.append(this.mouseEventDetectorContainer, this.historyBackBtn);
         }
 
         if (this.zoomHistory[this.zoomHistory.length - 1] !== index) {
@@ -211,4 +212,4 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
     }
 });
 
-module.exports = BoundsTypeCustomEvent;
+module.exports = BoundsTypeEventDetector;

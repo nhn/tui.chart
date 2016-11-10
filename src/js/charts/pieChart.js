@@ -52,7 +52,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
                 chartType: this.chartType
             }
         }]);
-        this._addCustomEventComponent();
+        this._addMouseEventDetectorComponent();
     },
 
     /**

@@ -301,7 +301,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *              rightYAxis: {width: number, height: number},
      *              series: {width: number, height: number},
      *              extendedSeries: {width: number, height: number},
-     *              customEvent: {width: number, height: number},
+     *              mouseEventDetector: {width: number, height: number},
      *              legend: {width: number, height: number},
      *              tooltip: {width: number, height: number}
      *          },
@@ -311,7 +311,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *              rightYAxis: {left: number, top: number},
      *              series: {left: number, top: number},
      *              extendedSeries: {left: number, top: number},
-     *              customEvent: {left: number, top: number},
+     *              mouseEventDetector: {left: number, top: number},
      *              legend: {left: number, top: number},
      *              tooltip: {left: number, top: number}
      *          },

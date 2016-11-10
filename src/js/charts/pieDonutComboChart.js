@@ -79,7 +79,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         this._addLegendComponent(this.seriesNames);
         this._addTooltipComponent();
         this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
-        this._addCustomEventComponent();
+        this._addMouseEventDetectorComponent();
     },
 
     /**

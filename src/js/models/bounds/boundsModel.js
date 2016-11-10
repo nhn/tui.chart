@@ -403,7 +403,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var seriesDimension = this.getDimension('series');
 
         this._registerDimension('tooltip', seriesDimension);
-        this._registerDimension('customEvent', seriesDimension);
+        this._registerDimension('mouseEventDetector', seriesDimension);
     },
 
     /**
@@ -437,7 +437,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         this.chartLeftPadding += overflowLeft;
         this.dimensionMap.plot.width -= overflowLeft;
         this.dimensionMap.series.width -= overflowLeft;
-        this.dimensionMap.customEvent.width -= overflowLeft;
+        this.dimensionMap.mouseEventDetector.width -= overflowLeft;
         this.dimensionMap.xAxis.width -= overflowLeft;
     },
 
@@ -449,7 +449,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     _updateDimensionsHeight: function(diffHeight) {
         this.dimensionMap.plot.height -= diffHeight;
         this.dimensionMap.series.height -= diffHeight;
-        this.dimensionMap.customEvent.height -= diffHeight;
+        this.dimensionMap.mouseEventDetector.height -= diffHeight;
         this.dimensionMap.tooltip.height -= diffHeight;
         this.dimensionMap.yAxis.height -= diffHeight;
         this.dimensionMap.rightYAxis.height -= diffHeight;
@@ -586,7 +586,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var seriesPosition = this.getPosition('series');
         var tooltipPosition;
 
-        this.positionMap.customEvent = tui.util.extend({}, seriesPosition);
+        this.positionMap.mouseEventDetector = tui.util.extend({}, seriesPosition);
         this.positionMap.legend = this._makeLegendPosition();
 
         if (this.getDimension('circleLegend').width) {
@@ -655,7 +655,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         this.dimensionMap.extendedSeries.width += yAxisWidth;
         this.dimensionMap.xAxis.width += chartConst.OVERLAPPING_WIDTH;
         this.dimensionMap.plot.width += yAxisWidth + chartConst.OVERLAPPING_WIDTH;
-        this.dimensionMap.customEvent.width += yAxisWidth;
+        this.dimensionMap.mouseEventDetector.width += yAxisWidth;
         this.dimensionMap.tooltip.width += yAxisWidth;
 
         this.positionMap.series.left -= (yAxisWidth - additionalLeft);
@@ -663,7 +663,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         this.positionMap.plot.left -= xAxisDecreasingLeft;
         this.positionMap.yAxis.left += yAxisExtensibleLeft;
         this.positionMap.xAxis.left -= xAxisDecreasingLeft;
-        this.positionMap.customEvent.left -= xAxisDecreasingLeft;
+        this.positionMap.mouseEventDetector.left -= xAxisDecreasingLeft;
         this.positionMap.tooltip.left -= xAxisDecreasingLeft;
     },
 

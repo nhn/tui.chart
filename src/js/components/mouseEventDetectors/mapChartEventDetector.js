@@ -1,24 +1,24 @@
 /**
- * @fileoverview MapChartCustomEvent is event handle layer for map chart.
+ * @fileoverview MapChartEventDetector is mouse event detector for map chart.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase');
+var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var chartConst = require('../../const');
 var eventListener = require('../../helpers/eventListener');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 
-var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapChartCustomEvent.prototype */ {
+var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
     /**
-     * MapChartCustomEvent is event handle layer for map chart.
+     * MapChartEventDetector is mouse event detector for map chart.
      * @param {object} params parameters
      *      @param {string} params.chartType - chart type
-     * @constructs MapChartCustomEvent
-     * @extends CustomEventBase
+     * @constructs MapChartEventDetector
+     * @extends MouseEventDetectorBase
      */
     init: function(params) {
         /**
@@ -43,12 +43,12 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
 
     /**
      * Render event handle layer area
-     * @param {HTMLElement} customEventContainer custom event container element
+     * @param {HTMLElement} mouseEventDetectorContainer mouse event detector container element
      * @private
      */
-    _renderCustomEventArea: function(customEventContainer) {
-        renderUtil.renderDimension(customEventContainer, this.layout.dimension);
-        renderUtil.renderPosition(customEventContainer, this.layout.position);
+    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
+        renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
+        renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
     },
 
     /**
@@ -78,7 +78,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      */
     _dragEnd: function() {
         this.isDrag = false;
-        dom.removeClass(this.customEventContainer, 'drag');
+        dom.removeClass(this.mouseEventDetectorContainer, 'drag');
         this.eventBus.fire('dragEndMapSeries');
     },
 
@@ -111,7 +111,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     _onMousemove: function(e) {
         if (this.isDown) {
             if (!this.isDrag) {
-                dom.addClass(this.customEventContainer, 'drag');
+                dom.addClass(this.mouseEventDetectorContainer, 'drag');
             }
             this.isDrag = true;
             this.eventBus.fire('dragMapSeries', {
@@ -166,7 +166,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * @override
      */
     attachEvent: function(target) {
-        CustomEventBase.prototype.attachEvent.call(this, target);
+        MouseEventDetectorBase.prototype.attachEvent.call(this, target);
 
         if (tui.util.browser.firefox) {
             eventListener.on(target, 'DOMMouseScroll', this._onMousewheel, this);
@@ -176,4 +176,4 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     }
 });
 
-module.exports = MapChartCustomEvent;
+module.exports = MapChartEventDetector;

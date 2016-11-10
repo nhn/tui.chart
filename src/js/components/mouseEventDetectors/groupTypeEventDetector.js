@@ -1,23 +1,23 @@
 /**
- * @fileoverview GroupTypeCustomEvent is event handle layer for grouped tooltip option.
+ * @fileoverview GroupTypeEventDetector is mouse event detector for grouped tooltip.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase');
+var EventDetectorBase = require('./mouseEventDetectorBase');
 var zoomMixer = require('./zoomMixer');
 
-var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
+var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
     /**
-     * GroupTypeCustomEvent is event handle layer for grouped tooltip option.
+     * GroupTypeEventDetector is mouse event detector for grouped tooltip.
      * @param {object} params parameters
-     * @constructs GroupTypeCustomEvent
-     * @extends CustomEventBase
+     * @constructs GroupTypeEventDetector
+     * @extends EventDetectorBase
      */
     init: function(params) {
-        CustomEventBase.call(this, params);
+        EventDetectorBase.call(this, params);
 
         /**
          * previous index of group data
@@ -44,12 +44,12 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * Initialize data of custom event
+     * Initialize data of mouse event detector
      * @param {Array.<object>} seriesInfos series infos
      * @override
      */
-    initCustomEventData: function(seriesInfos) {
-        CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
+    initMouseEventDetectorData: function(seriesInfos) {
+        EventDetectorBase.prototype.initMouseEventDetectorData.call(this, seriesInfos);
 
         if (this.zoomable) {
             this._showTooltipAfterZoom();
@@ -157,7 +157,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     _onMousemove: function(e) {
         var foundData, index;
 
-        CustomEventBase.prototype._onMousemove.call(this, e);
+        EventDetectorBase.prototype._onMousemove.call(this, e);
 
         if (this.zoomable && this._isAfterDragMouseup()) {
             return;
@@ -175,7 +175,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * If mouse position gets out custom event area, hide tooltip.
+     * If mouse position gets out mouse event detector area, hide tooltip.
      * @override
      */
     _onMouseout: function(e) {
@@ -187,8 +187,8 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             this._hideTooltip();
         }
 
-        CustomEventBase.prototype._onMouseout.call(this);
+        EventDetectorBase.prototype._onMouseout.call(this);
     }
 });
 
-module.exports = GroupTypeCustomEvent;
+module.exports = GroupTypeEventDetector;

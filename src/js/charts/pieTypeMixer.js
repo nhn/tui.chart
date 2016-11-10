@@ -9,7 +9,7 @@
 var Legend = require('../components/legends/legend');
 var Tooltip = require('../components/tooltips/tooltip');
 var PieChartSeries = require('../components/series/pieChartSeries');
-var SimpleCustomEvent = require('../components/customEvents/simpleCustomEvent');
+var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEventDetector');
 
 /**
  * pieTypeMixer is mixer of pie type chart.
@@ -61,12 +61,12 @@ var pieTypeMixer = {
     },
 
     /**
-     * Add custom event component.
+     * Add mouse event detector component.
      * @private
      * @override
      */
-    _addCustomEventComponent: function() {
-        this.componentManager.register('customEvent', SimpleCustomEvent, {
+    _addMouseEventDetectorComponent: function() {
+        this.componentManager.register('mouseEventDetector', SimpleEventDetector, {
             chartType: this.chartType
         });
     }

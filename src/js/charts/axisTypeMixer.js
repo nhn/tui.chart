@@ -11,9 +11,9 @@ var predicate = require('../helpers/predicate');
 var Axis = require('../components/axes/axis');
 var Plot = require('../components/plots/plot');
 var Legend = require('../components/legends/legend');
-var SimpleCustomEvent = require('../components/customEvents/simpleCustomEvent');
-var GroupTypeCustomEvent = require('../components/customEvents/groupTypeCustomEvent');
-var BoundsTypeCustomEvent = require('../components/customEvents/boundsTypeCustomEvent');
+var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEventDetector');
+var GroupTypeEventDetector = require('../components/mouseEventDetectors/groupTypeEventDetector');
+var BoundsTypeEventDetector = require('../components/mouseEventDetectors/boundsTypeEventDetector');
 var Tooltip = require('../components/tooltips/tooltip');
 var GroupTooltip = require('../components/tooltips/groupTooltip');
 
@@ -132,7 +132,7 @@ var axisTypeMixer = {
 
         this._addSeriesComponents(params.series, options);
         this._addTooltipComponent();
-        this._addCustomEventComponent();
+        this._addMouseEventDetectorComponent();
     },
 
     /**
@@ -163,24 +163,24 @@ var axisTypeMixer = {
     },
 
     /**
-     * Add simple customEvent component.
+     * Add simple mouseEventDetector component.
      * @private
      */
-    _addSimpleCustomEventComponent: function() {
-        this.componentManager.register('customEvent', SimpleCustomEvent, {
+    _addSimpleEventDetectorComponent: function() {
+        this.componentManager.register('mouseEventDetector', SimpleEventDetector, {
             chartType: this.chartType
         });
     },
 
     /**
-     * Add customEvent components for group tooltip.
+     * Add mouseEventDetector components for group tooltip.
      * @private
      * @override
      */
-    _addCustomEventComponentForGroupTooltip: function() {
+    _addMouseEventDetectorComponentForGroupTooltip: function() {
         var seriesOptions = this.options.series;
 
-        this.componentManager.register('customEvent', GroupTypeCustomEvent, {
+        this.componentManager.register('mouseEventDetector', GroupTypeEventDetector, {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
@@ -190,11 +190,11 @@ var axisTypeMixer = {
     },
 
     /**
-     * Add custom event component for normal(single) tooltip.
+     * Add mouse event detector component for normal(single) tooltip.
      * @private
      */
-    _addCustomEventComponentForNormalTooltip: function() {
-        this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
+    _addMouseEventDetectorComponentForNormalTooltip: function() {
+        this.componentManager.register('mouseEventDetector', BoundsTypeEventDetector, {
             chartType: this.chartType,
             isVertical: this.isVertical,
             allowSelect: this.options.series.allowSelect
@@ -202,16 +202,16 @@ var axisTypeMixer = {
     },
 
     /**
-     * Add custom event component.
+     * Add mouse event detector component.
      * @private
      */
-    _addCustomEventComponent: function() {
+    _addMouseEventDetectorComponent: function() {
         if (predicate.isCoordinateTypeChart(this.chartType)) {
-            this._addSimpleCustomEventComponent();
+            this._addSimpleEventDetectorComponent();
         } else if (this.options.tooltip.grouped) {
-            this._addCustomEventComponentForGroupTooltip();
+            this._addMouseEventDetectorComponentForGroupTooltip();
         } else {
-            this._addCustomEventComponentForNormalTooltip();
+            this._addMouseEventDetectorComponentForNormalTooltip();
         }
     }
 };

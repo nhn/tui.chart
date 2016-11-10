@@ -74,7 +74,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * Make tick base data for custom event.
+     * Make tick base data for mouse event detector.
      * @param {{width: number, height: number}} dimension dimension
      * @param {number} tickCount tick count
      * @param {boolean} isVertical whether vertical or not

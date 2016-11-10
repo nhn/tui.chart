@@ -6,7 +6,7 @@
 
 'use strict';
 
-var AreaTypeCustomEvent = require('../components/customEvents//areaTypeCustomEvent');
+var AreaTypeEventDetector = require('../components/mouseEventDetectors//areaTypeEventDetector');
 
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
@@ -37,13 +37,13 @@ var lineTypeMixer = {
     },
 
     /**
-     * Add custom event component for normal tooltip.
+     * Add mouse event detector component for normal tooltip.
      * @private
      */
-    _addCustomEventComponentForNormalTooltip: function() {
+    _addMouseEventDetectorComponentForNormalTooltip: function() {
         var seriesOptions = this.options.series;
 
-        this.componentManager.register('customEvent', AreaTypeCustomEvent, {
+        this.componentManager.register('mouseEventDetector', AreaTypeEventDetector, {
             chartType: this.chartType,
             isVertical: this.isVertical,
             zoomable: seriesOptions.zoomable,

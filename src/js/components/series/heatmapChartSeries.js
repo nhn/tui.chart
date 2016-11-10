@@ -28,7 +28,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     },
 
     /**
-     * Make series data for rendering graph and sending to custom event.
+     * Make series data for rendering graph and sending to mouse event detector.
      * @returns {{
      *      groupBounds: Array.<Array.<{left: number, top: number, radius: number}>>,
      *      seriesDataModel: SeriesDataModel
