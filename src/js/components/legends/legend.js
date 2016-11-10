@@ -12,6 +12,7 @@ var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var eventListener = require('../../helpers/eventListener');
 var renderUtil = require('../../helpers/renderUtil');
+var arrayUtil = require('../../helpers/arrayUtil');
 var legendTemplate = require('./legendTemplate');
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
@@ -331,7 +332,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _checkLegend: function() {
         var checkedIndexes = this._getCheckedIndexes();
         var checkedCount = checkedIndexes.length;
-        var isPieTypeCharts = tui.util.all(this.seriesNames, predicate.isPieTypeChart);
+        var isPieTypeCharts = arrayUtil.all(this.seriesNames, predicate.isPieTypeChart);
         var data;
 
         if ((isPieTypeCharts && checkedCount === 1) || checkedCount === 0) {

@@ -9,6 +9,7 @@
 var seriesTemplate = require('./seriesTemplate');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 
 var concat = Array.prototype.concat;
@@ -72,8 +73,8 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var additionalLeft = 0;
 
         if (xAxis.sizeRatio) {
-            additionalLeft = tui.util.multiply(width, xAxis.positionRatio);
-            width = tui.util.multiply(width, xAxis.sizeRatio);
+            additionalLeft = calculator.multiply(width, xAxis.positionRatio);
+            width = calculator.multiply(width, xAxis.sizeRatio);
         }
 
         return seriesDataModel.map(function(seriesGroup) {

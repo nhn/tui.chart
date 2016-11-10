@@ -9,6 +9,7 @@
 var chartConst = require('../../const');
 var labelHelper = require('./renderingLabelHelper');
 var predicate = require('../../helpers/predicate');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
@@ -180,7 +181,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @returns {number} sum result.
      */
     _makeSumValues: function(values) {
-        var sum = tui.util.sum(values);
+        var sum = calculator.sum(values);
 
         return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), this.chartType, 'seires');
     },

@@ -7,6 +7,7 @@
 'use strict';
 
 var predicate = require('../../helpers/predicate');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.prototype */ {
     /**
@@ -62,7 +63,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
         var prev = 0;
 
         return tui.util.map(tui.util.range(0, len), function(index) {
-            var max = tui.util.min([size, (index + 1) * tickInterval]);
+            var max = arrayUtil.min([size, (index + 1) * tickInterval]);
             var limit = {
                 min: prev,
                 max: max

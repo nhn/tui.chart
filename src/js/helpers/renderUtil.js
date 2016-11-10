@@ -8,8 +8,9 @@
 
 /*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 7, 8]}]*/
 
-var dom = require('./domHandler'),
-    chartConst = require('./../const');
+var chartConst = require('./../const');
+var dom = require('./domHandler');
+var arrayUtil = require('./arrayUtil');
 
 var concat = Array.prototype.concat;
 
@@ -215,7 +216,7 @@ var renderUtil = {
             sizes = tui.util.map(labels, function(label) {
                 return iteratee(label, theme);
             });
-            maxSize = tui.util.max(sizes);
+            maxSize = arrayUtil.max(sizes);
         }
 
         return maxSize;
@@ -368,6 +369,15 @@ var renderUtil = {
     },
 
     /**
+     * Proper case.
+     * @param {string} value - string value
+     * @returns {string}
+     */
+    _properCase: function(value) {
+        return value.substring(0, 1).toUpperCase() + value.substring(1);
+    },
+
+    /**
      * Make mouse event detector name.
      * @param {string} prefix prefix
      * @param {string} value value
@@ -375,7 +385,7 @@ var renderUtil = {
      * @returns {string} mouse event detector name
      */
     makeMouseEventDetectorName: function(prefix, value, suffix) {
-        return prefix + tui.util.properCase(value) + tui.util.properCase(suffix);
+        return prefix + this._properCase(value) + this._properCase(suffix);
     },
 
     /**

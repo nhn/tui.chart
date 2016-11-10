@@ -16,6 +16,8 @@ var rawDataHandler = require('../../models/data/rawDataHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
+var arrayUtil = require('../../helpers/arrayUtil');
+var objectUtil = require('../../helpers/objectUtil');
 
 var concat = Array.prototype.concat;
 
@@ -62,7 +64,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.originalRawData = tui.util.deepCopy(rawData);
+        this.originalRawData = objectUtil.deepCopy(rawData);
 
         /**
          * chart type
@@ -103,7 +105,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {rawData} raw data
      */
     getOriginalRawData: function() {
-        return tui.util.deepCopy(this.originalRawData);
+        return objectUtil.deepCopy(this.originalRawData);
     },
 
     /**
@@ -113,7 +115,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getZoomedRawData: function() {
         var zoomedRawData = this.zoomedRawData;
         if (zoomedRawData) {
-            zoomedRawData = tui.util.deepCopy(zoomedRawData);
+            zoomedRawData = objectUtil.deepCopy(zoomedRawData);
         } else {
             zoomedRawData = this.getOriginalRawData();
         }
@@ -899,7 +901,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {number}
      */
     getMaxValue: function(chartType, valueType) {
-        return tui.util.max(this.getValues(chartType, valueType));
+        return arrayUtil.max(this.getValues(chartType, valueType));
     },
 
     /**
@@ -1071,7 +1073,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var max = 0;
 
         tui.util.forEachArray(values, function(value) {
-            var len = tui.util.getDecimalLength(value);
+            var len = calculator.getDecimalLength(value);
             if (len > max) {
                 max = len;
             }

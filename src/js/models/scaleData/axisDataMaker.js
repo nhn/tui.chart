@@ -10,6 +10,7 @@ var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 /**
  * Axis data maker.
@@ -141,8 +142,8 @@ var axisDataMaker = {
     makeAdditionalDataForCoordinateLineType: function(labels, values, limit, step, tickCount) {
         var sizeRatio = 1;
         var positionRatio = 0;
-        var min = tui.util.min(values);
-        var max = tui.util.max(values);
+        var min = arrayUtil.min(values);
+        var max = arrayUtil.max(values);
         var distance;
 
         distance = max - min;
@@ -242,7 +243,7 @@ var axisDataMaker = {
         var intervalInfo = null;
 
         if (candidates.length) {
-            intervalInfo = tui.util.min(candidates, function(candidate) {
+            intervalInfo = arrayUtil.min(candidates, function(candidate) {
                 return candidate.blockCount;
             });
         }
@@ -254,7 +255,7 @@ var axisDataMaker = {
      * Make filtered labels by interval.
      * @param {Array.<string>} labels - labels
      * @param {number} startIndex - start index
-     * @param {numbrer} interval - interval
+     * @param {number} interval - interval
      * @returns {Array.<string>}
      * @private
      */

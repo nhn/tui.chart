@@ -351,7 +351,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _getPivotGroupDots: function() {
         if (!this.pivotGroupDots) {
-            this.pivotGroupDots = tui.util.pivot(this.groupDots);
+            this.pivotGroupDots = tui.chart.arrayUtil.pivot(this.groupDots);
         }
 
         return this.pivotGroupDots;

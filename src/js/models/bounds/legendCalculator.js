@@ -8,7 +8,9 @@
 
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 /**
  * Calculator for dimension of legend.
@@ -32,7 +34,7 @@ var legendCalculator = {
     _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
         var legendMargin = this.legendMargin;
 
-        return tui.util.sum(tui.util.map(labels, function(label) {
+        return calculator.sum(tui.util.map(labels, function(label) {
             var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + checkboxWidth;
 
             return labelWidth + legendMargin;
@@ -81,7 +83,7 @@ var legendCalculator = {
             return self._calculateLegendsWidthSum(labels, labelTheme, checkboxWidth);
         });
 
-        return tui.util.max(lineWidths);
+        return arrayUtil.max(lineWidths);
     },
 
     /**
@@ -127,7 +129,7 @@ var legendCalculator = {
      * @private
      */
     _calculateHorizontalLegendHeight: function(dividedLabels, labelTheme) {
-        return tui.util.sum(tui.util.map(dividedLabels, function(labels) {
+        return calculator.sum(tui.util.map(dividedLabels, function(labels) {
             return renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
         }));
     },

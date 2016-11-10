@@ -7,6 +7,8 @@
 
 'use strict';
 
+var calculator = require('../../helpers/calculator');
+
 /**
  * SeriesItem is a element of SeriesGroup.items.
  * SeriesItem has processed terminal data like value, ratio, etc.
@@ -140,7 +142,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
             sumMap = {};
 
         tui.util.forEach(valuesMap, function(values, key) {
-            sumMap[key] = tui.util.sum(tui.util.map(values, function(value) {
+            sumMap[key] = calculator.sum(tui.util.map(values, function(value) {
                 return Math.abs(value);
             }));
         });

@@ -41,8 +41,9 @@
  *}} seriesInfo
  */
 
-var chartConst = require('../../const'),
-    predicate = require('../../helpers/predicate');
+var chartConst = require('../../const');
+var predicate = require('../../helpers/predicate');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
     /**
@@ -106,7 +107,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
             return [];
         }
 
-        return tui.util.map(tui.util.pivot(groupPositions), function(positions, groupIndex) {
+        return tui.util.map(arrayUtil.pivot(groupPositions), function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
                 if (!position) {
                     return null;

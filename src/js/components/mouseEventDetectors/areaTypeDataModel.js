@@ -7,6 +7,7 @@
 'use strict';
 
 var predicate = require('../../helpers/predicate');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 var concat = Array.prototype.concat;
 
@@ -41,7 +42,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
             var chartType = seriesDatum.chartType;
 
             if (predicate.isLineTypeChart(chartType)) {
-                groupPositions = tui.util.pivot(groupPositions);
+                groupPositions = arrayUtil.pivot(groupPositions);
             }
 
             lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);

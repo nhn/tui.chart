@@ -9,6 +9,7 @@
 
 var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
 var legendTemplate = require('./legendTemplate');
@@ -107,7 +108,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
         var halfWidth = dimension.width / 2;
         var maxRadius = this.maxRadius;
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
-        var decimalLength = tui.util.getDecimalLength(maxValueRadius);
+        var decimalLength = calculator.getDecimalLength(maxValueRadius);
         var labelHeight = renderUtil.getRenderedLabelHeight(maxValueRadius, this.labelTheme);
 
         return tui.util.map(this.circleRatios, function(ratio) {

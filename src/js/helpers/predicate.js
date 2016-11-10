@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const');
+var arrayUtil = require('./arrayUtil');
 
 /**
  * predicate.
@@ -100,7 +101,7 @@ var predicate = {
      * @returns {boolean}
      */
     isPieDonutComboChart: function(chartType, subChartTypes) {
-        var isAllPieType = tui.util.all(subChartTypes, function(subChartType) {
+        var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
             return predicate.isPieTypeChart(subChartType);
         });
 
@@ -135,7 +136,7 @@ var predicate = {
      * @returns {boolean}
      */
     isLineAreaComboChart: function(chartType, subChartTypes) {
-        var isAllLineType = tui.util.all(subChartTypes || [], function(subChartType) {
+        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
             return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
         });
 
@@ -150,7 +151,7 @@ var predicate = {
      * @returns {boolean}
      */
     isLineScatterComboChart: function(chartType, subChartTypes) {
-        var isAllLineType = tui.util.all(subChartTypes || [], function(subChartType) {
+        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
             return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
         });
 

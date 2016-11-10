@@ -38,6 +38,7 @@ var SeriesItem = require('./seriesItem');
 var SeriesItemForCoordinateType = require('./seriesItemForCoordinateType');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 var concat = Array.prototype.concat;
 
@@ -211,7 +212,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         var baseGroups = this._getBaseGroups();
 
         if (isPivot) {
-            baseGroups = tui.util.pivot(baseGroups);
+            baseGroups = arrayUtil.pivot(baseGroups);
         }
 
         return tui.util.map(baseGroups, function(items) {
@@ -314,7 +315,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @returns {number}
      */
     getMinValue: function(valueType) {
-        return tui.util.min(this.getValues(valueType));
+        return arrayUtil.min(this.getValues(valueType));
     },
 
     /**
@@ -323,7 +324,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @returns {number}
      */
     getMaxValue: function(valueType) {
-        return tui.util.max(this.getValues(valueType));
+        return arrayUtil.max(this.getValues(valueType));
     },
 
     /**
@@ -540,7 +541,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     addDataRatiosOfPieChart: function() {
         this.each(function(seriesGroup) {
-            var sum = tui.util.sum(seriesGroup.pluck('value'));
+            var sum = calculator.sum(seriesGroup.pluck('value'));
 
             seriesGroup.addRatios(sum);
         });
@@ -554,7 +555,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     addDataRatiosForCoordinateType: function(limitMap, hasRadius) {
         var xLimit = limitMap.xAxis;
         var yLimit = limitMap.yAxis;
-        var maxRadius = hasRadius ? tui.util.max(this.getValues('r')) : 0;
+        var maxRadius = hasRadius ? arrayUtil.max(this.getValues('r')) : 0;
         var xDistance, xSubValue, yDistance, ySubValue;
 
         if (xLimit) {

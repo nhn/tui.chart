@@ -8,6 +8,7 @@
 
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 /**
  * Raw data Handler.
@@ -27,7 +28,7 @@ var rawDataHandler = {
             return seriesDatum.stack;
         });
 
-        uniqStacks = tui.util.unique(stacks);
+        uniqStacks = arrayUtil.unique(stacks);
 
         if (divergingOption) {
             uniqStacks = uniqStacks.slice(0, 2);
