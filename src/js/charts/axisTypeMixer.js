@@ -8,14 +8,6 @@
 'use strict';
 
 var predicate = require('../helpers/predicate');
-var Axis = require('../components/axes/axis');
-var Plot = require('../components/plots/plot');
-var Legend = require('../components/legends/legend');
-var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEventDetector');
-var GroupTypeEventDetector = require('../components/mouseEventDetectors/groupTypeEventDetector');
-var BoundsTypeEventDetector = require('../components/mouseEventDetectors/boundsTypeEventDetector');
-var Tooltip = require('../components/tooltips/tooltip');
-var GroupTooltip = require('../components/tooltips/groupTooltip');
 
 /**
  * Axis limit value.
@@ -39,7 +31,8 @@ var axisTypeMixer = {
             var axisParams = {
                 aligned: aligned,
                 isVertical: !!axis.isVertical,
-                seriesName: axis.seriesName || self.chartType
+                seriesName: axis.seriesName || self.chartType,
+                classType: 'axis'
             };
 
             if (axis.name === 'rightYAxis') {
@@ -47,7 +40,7 @@ var axisTypeMixer = {
                 axisParams.index = 1;
             }
 
-            self.componentManager.register(axis.name, Axis, axisParams);
+            self.componentManager.register(axis.name, axisParams);
         });
     },
 
@@ -68,7 +61,9 @@ var axisTypeMixer = {
 
         tui.util.forEach(seriesSet, function(series) {
             var seriesParams = tui.util.extend(seriesBaseParams, series.data);
-            self.componentManager.register(series.name, series.SeriesClass, seriesParams);
+
+            seriesParams.classType = series.name;
+            self.componentManager.register(series.name, seriesParams);
         });
     },
 
@@ -77,8 +72,8 @@ var axisTypeMixer = {
      * @private
      */
     _addTooltipComponent: function() {
-        var TooltipClass = this.options.tooltip.grouped ? GroupTooltip : Tooltip;
-        this.componentManager.register('tooltip', TooltipClass, this._makeTooltipData());
+        var classType = this.options.tooltip.grouped ? 'groupTooltip' : 'tooltip';
+        this.componentManager.register('tooltip', this._makeTooltipData(classType));
     },
 
     /**
@@ -87,11 +82,12 @@ var axisTypeMixer = {
      * @private
      */
     _addLegendComponent: function(legendData) {
-        var LegendClass = legendData.LegendClass || Legend;
+        var classType = legendData.classType || 'legend';
 
-        this.componentManager.register('legend', LegendClass, tui.util.extend({
+        this.componentManager.register('legend', tui.util.extend({
             seriesNames: this.seriesNames,
-            chartType: this.chartType
+            chartType: this.chartType,
+            classType: classType
         }, legendData.additionalParams));
     },
 
@@ -101,10 +97,11 @@ var axisTypeMixer = {
      * @private
      */
     _addPlotComponent: function(xAxisTypeOption) {
-        this.componentManager.register('plot', Plot, {
+        this.componentManager.register('plot', {
             chartType: this.chartType,
             chartTypes: this.chartTypes,
-            xAxisTypeOption: xAxisTypeOption
+            xAxisTypeOption: xAxisTypeOption,
+            classType: 'plot'
         });
     },
 
@@ -127,7 +124,7 @@ var axisTypeMixer = {
         this._addAxisComponents(params.axis, aligned);
 
         if (options.legend.visible) {
-            this._addLegendComponent(params.legend || {}, params.seriesNames);
+            this._addLegendComponent(params.legend || {});
         }
 
         this._addSeriesComponents(params.series, options);
@@ -167,8 +164,9 @@ var axisTypeMixer = {
      * @private
      */
     _addSimpleEventDetectorComponent: function() {
-        this.componentManager.register('mouseEventDetector', SimpleEventDetector, {
-            chartType: this.chartType
+        this.componentManager.register('mouseEventDetector', {
+            chartType: this.chartType,
+            classType: 'simpleEventDetector'
         });
     },
 
@@ -180,12 +178,13 @@ var axisTypeMixer = {
     _addMouseEventDetectorComponentForGroupTooltip: function() {
         var seriesOptions = this.options.series;
 
-        this.componentManager.register('mouseEventDetector', GroupTypeEventDetector, {
+        this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
             zoomable: seriesOptions.zoomable,
-            allowSelect: seriesOptions.allowSelect
+            allowSelect: seriesOptions.allowSelect,
+            classType: 'groupTypeEventDetector'
         });
     },
 
@@ -194,10 +193,11 @@ var axisTypeMixer = {
      * @private
      */
     _addMouseEventDetectorComponentForNormalTooltip: function() {
-        this.componentManager.register('mouseEventDetector', BoundsTypeEventDetector, {
+        this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            allowSelect: this.options.series.allowSelect
+            allowSelect: this.options.series.allowSelect,
+            classType: 'boundsTypeEventDetector'
         });
     },
 

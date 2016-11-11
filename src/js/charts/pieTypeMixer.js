@@ -6,11 +6,6 @@
 
 'use strict';
 
-var Legend = require('../components/legends/legend');
-var Tooltip = require('../components/tooltips/tooltip');
-var PieChartSeries = require('../components/series/pieChartSeries');
-var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEventDetector');
-
 /**
  * pieTypeMixer is mixer of pie type chart.
  * @mixin
@@ -25,9 +20,10 @@ var pieTypeMixer = {
         var legendOption = this.options.legend || {};
 
         if (legendOption.visible) {
-            this.componentManager.register('legend', Legend, {
+            this.componentManager.register('legend', {
                 seriesNames: seriesNames,
-                chartType: this.chartType
+                chartType: this.chartType,
+                classType: 'legend'
             });
         }
     },
@@ -37,7 +33,7 @@ var pieTypeMixer = {
      * @private
      */
     _addTooltipComponent: function() {
-        this.componentManager.register('tooltip', Tooltip, this._makeTooltipData());
+        this.componentManager.register('tooltip', this._makeTooltipData('tooltip'));
     },
 
     /**
@@ -50,13 +46,14 @@ var pieTypeMixer = {
         var seriesBaseParams = {
             libType: this.options.libType,
             componentType: 'series',
-            chartBackground: this.theme.chart.background
+            chartBackground: this.theme.chart.background,
+            classType: 'pieSeries'
         };
 
         tui.util.forEach(seriesData, function(seriesDatum) {
             var seriesParams = tui.util.extend(seriesBaseParams, seriesDatum.additionalParams);
 
-            componentManager.register(seriesDatum.name, PieChartSeries, seriesParams);
+            componentManager.register(seriesDatum.name, seriesParams);
         });
     },
 
@@ -66,8 +63,9 @@ var pieTypeMixer = {
      * @override
      */
     _addMouseEventDetectorComponent: function() {
-        this.componentManager.register('mouseEventDetector', SimpleEventDetector, {
-            chartType: this.chartType
+        this.componentManager.register('mouseEventDetector', {
+            chartType: this.chartType,
+            classType: 'simpleEventDetector'
         });
     }
 };

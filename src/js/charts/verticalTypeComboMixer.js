@@ -9,10 +9,6 @@
 var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
-var ColumnChartSeries = require('../components/series/columnChartSeries');
-var LineChartSeries = require('../components/series/lineChartSeries');
-var AreaChartSeries = require('../components/series/areaChartSeries');
-var ScatterChartSeries = require('../components/series/scatterChartSeries');
 
 var verticalTypeComboMixer = {
     /**
@@ -181,12 +177,6 @@ var verticalTypeComboMixer = {
      * @private
      */
     _makeDataForAddingSeriesComponent: function(seriesNames) {
-        var seriesClasses = {
-            column: ColumnChartSeries,
-            line: LineChartSeries,
-            area: AreaChartSeries,
-            scatter: ScatterChartSeries
-        };
         var optionsMap = this._makeOptionsMap(seriesNames);
         var dataProcessor = this.dataProcessor;
         var serieses = tui.util.map(seriesNames, function(seriesName) {
@@ -200,7 +190,6 @@ var verticalTypeComboMixer = {
 
             return {
                 name: seriesName + 'Series',
-                SeriesClass: seriesClasses[chartType],
                 data: data
             };
         });

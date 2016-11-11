@@ -89,7 +89,7 @@ var any = function(collection, condition, context) {
  * @memberOf module:arrayUtil
  * @param {Array} collection target collection
  * @param {function} condition condition function
- * @param {[object]} context target context
+ * @param {?object} context target context
  * @returns {boolean} result boolean
  */
 var all = function(collection, condition, context) {

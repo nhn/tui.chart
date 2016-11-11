@@ -6,8 +6,6 @@
 
 'use strict';
 
-var AreaTypeEventDetector = require('../components/mouseEventDetectors//areaTypeEventDetector');
-
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
  * @mixin
@@ -43,11 +41,12 @@ var lineTypeMixer = {
     _addMouseEventDetectorComponentForNormalTooltip: function() {
         var seriesOptions = this.options.series;
 
-        this.componentManager.register('mouseEventDetector', AreaTypeEventDetector, {
+        this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,
             isVertical: this.isVertical,
             zoomable: seriesOptions.zoomable,
-            allowSelect: seriesOptions.allowSelect
+            allowSelect: seriesOptions.allowSelect,
+            classType: 'areaTypeEventDetector'
         });
     },
 
@@ -76,8 +75,7 @@ var lineTypeMixer = {
             ],
             series: [
                 {
-                    name: this.chartType + 'Series',
-                    SeriesClass: this.Series
+                    name: this.chartType + 'Series'
                 }
             ],
             plot: true

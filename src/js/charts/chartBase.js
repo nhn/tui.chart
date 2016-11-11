@@ -243,15 +243,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Make data for initialize tooltip component.
+     * @param {string} classType - component class type
      * @returns {object} tooltip data
      * @private
      */
-    _makeTooltipData: function() {
+    _makeTooltipData: function(classType) {
         return {
             isVertical: this.isVertical,
             chartType: this.chartType,
             xAxisType: this.options.xAxis.type,
-            dateFormat: this.options.xAxis.dateFormat
+            dateFormat: this.options.xAxis.dateFormat,
+            classType: classType || 'tooltip'
         };
     },
 
@@ -314,7 +316,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *              mouseEventDetector: {left: number, top: number},
      *              legend: {left: number, top: number},
      *              tooltip: {left: number, top: number}
-     *          },
+     *          }
      *      },
      *      limitMap: {
      *          xAxis: {min: number, max: number},

@@ -63,7 +63,7 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
                 name: 'xAxis'
             }
         ], false);
-        this._addLegendComponent({}, this.seriesNames);
+        this._addLegendComponent({});
         this._addSeriesComponents([
             {
                 name: 'lineSeries',

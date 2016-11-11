@@ -26,11 +26,6 @@ var chartConst = {
     CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
     /** @type {string} */
     CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
-    /**
-     * chart types
-     * @type {Array.<string>}
-     */
-    COMBO_CHART_TYPES: ['column', 'line', 'area', 'pie'],
     /** chart type
      * @type {string}
      */

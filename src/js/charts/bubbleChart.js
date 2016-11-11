@@ -8,8 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var Series = require('../components/series/bubbleChartSeries');
-var CircleLegend = require('../components/legends/circleLegend');
 var axisTypeMixer = require('./axisTypeMixer');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
@@ -102,16 +100,16 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             ],
             series: [
                 {
-                    name: 'bubbleSeries',
-                    SeriesClass: Series
+                    name: 'bubbleSeries'
                 }
             ],
             plot: true
         });
 
         if (this.options.circleLegend.visible) {
-            this.componentManager.register('circleLegend', CircleLegend, {
+            this.componentManager.register('circleLegend', {
                 chartType: this.chartType,
+                classType: 'circleLegend',
                 baseFontFamily: this.theme.chart.fontFamily
             });
         }

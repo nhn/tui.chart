@@ -19,14 +19,16 @@ describe('Test for ComboChart', function() {
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
-        spyObjs._makeTooltipData.and.returnValue({});
+        spyObjs._makeTooltipData.and.callFake(function(classType) {
+            return classType;
+        });
 
         tui.util.extend(axisTypeMixer, spyObjs);
 
         componentManager = jasmine.createSpyObj('componentManager', ['register']);
         axisTypeMixer.componentManager = componentManager;
-        componentManager.register.and.callFake(function(name, ComponentClass) {
-            componentMap[name] = ComponentClass;
+        componentManager.register.and.callFake(function(name, params) {
+            componentMap[name] = params;
         });
 
         dataProcessor = jasmine.createSpyObj('dataProcessor',
@@ -105,8 +107,8 @@ describe('Test for ComboChart', function() {
                     grouped: true
                 }
             };
-            axisTypeMixer._addTooltipComponent({}, {});
-            expect(componentMap.tooltip).toEqual(GroupTooltip);
+            axisTypeMixer._addTooltipComponent();
+            expect(componentMap.tooltip).toBe('groupTooltip');
         });
 
         it('if grouped option is false, use Tooltip class', function() {
@@ -115,8 +117,8 @@ describe('Test for ComboChart', function() {
                     grouped: false
                 }
             };
-            axisTypeMixer._addTooltipComponent({}, {});
-            expect(componentMap.tooltip).toEqual(Tooltip);
+            axisTypeMixer._addTooltipComponent();
+            expect(componentMap.tooltip).toBe('tooltip');
         });
     });
 
@@ -154,7 +156,7 @@ describe('Test for ComboChart', function() {
             expect(componentMap.legend).toBeDefined();
             expect(componentMap.columnSreies).toBeDefined();
             expect(componentMap.lineSeries).toBeDefined();
-            expect(componentMap.tooltip).toEqual(Tooltip);
+            expect(componentMap.tooltip).toEqual('tooltip');
         });
     });
 
@@ -207,7 +209,7 @@ describe('Test for ComboChart', function() {
             axisTypeMixer.options.series = {};
             axisTypeMixer._addMouseEventDetectorComponentForGroupTooltip();
 
-            expect(componentMap.mouseEventDetector).toBe(GroupTypeEventDetector);
+            expect(componentMap.mouseEventDetector.classType).toBe('groupTypeEventDetector');
         });
     });
 
@@ -216,7 +218,7 @@ describe('Test for ComboChart', function() {
             axisTypeMixer.options.series = {};
             axisTypeMixer._addMouseEventDetectorComponentForNormalTooltip();
 
-            expect(componentMap.mouseEventDetector).toBe(BoundsTypeEventDetector);
+            expect(componentMap.mouseEventDetector.classType).toBe('boundsTypeEventDetector');
         });
     });
 });
