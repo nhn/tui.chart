@@ -119,10 +119,10 @@ var boundsAndScaleBuilder = {
         }
 
         if (componentManager.has('legend')) {
-            boundsModel.registerLegendDimension();
-
             if (componentManager.get('legend').colorSpectrum) {
-                boundsModel.updateDimensionForSpectrumLegend();
+                boundsModel.registerSpectrumLegendDimension();
+            } else {
+                boundsModel.registerLegendDimension();
             }
         }
 

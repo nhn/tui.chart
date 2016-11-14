@@ -235,9 +235,9 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
-     * Update dimension for SpectrumLegend.
+     * Register dimension for spectrum legend component.
      */
-    updateDimensionForSpectrumLegend: function() {
+    registerSpectrumLegendDimension: function() {
         var maxValue = this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
         var labelTheme = this.theme.label;
         var dimension;
