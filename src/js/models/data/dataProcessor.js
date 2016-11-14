@@ -17,7 +17,6 @@ var rawDataHandler = require('../../models/data/rawDataHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
-var arrayUtil = require('../../helpers/arrayUtil');
 var objectUtil = require('../../helpers/objectUtil');
 
 var concat = Array.prototype.concat;
