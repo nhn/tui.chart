@@ -335,7 +335,7 @@ var singleTooltipMixer = {
             tooltipSizeHalf = params.dimension[sizeType] / 2;
             barPosition = bound[positionType];
             barSizeHalf = bound[sizeType] / 2;
-            movedPositionValue = (barPosition + barSizeHalf - tooltipSizeHalf) * 2 - position[positionType];
+            movedPositionValue = ((barPosition + barSizeHalf - tooltipSizeHalf) * 2) - position[positionType];
             position[positionType] = movedPositionValue;
         }
 

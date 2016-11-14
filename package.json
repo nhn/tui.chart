@@ -11,7 +11,8 @@
     "test:ne": "karma start karma.conf.ne.js",
     "docs": "npm run docs:jsdoc && npm run docs:copy",
     "docs:jsdoc": "./node_modules/.bin/jsdoc -t ./node_modules/tui-doc-template -c ./jsdoc-conf.json",
-    "docs:copy": "cpy dist/*.js doc/dist && cpy dist/*.css doc/dist && cpy dist/maps/*.js doc/dist/maps"
+    "docs:copy": "cpy dist/*.js doc/dist && cpy dist/*.css doc/dist && cpy dist/maps/*.js doc/dist/maps",
+    "eslint": "eslint src/js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,7 @@
     "cpy-cli": "^1.0.1",
     "css-loader": "^0.25.0",
     "es5-shim": "^4.5.9",
-    "eslint": "^3.7.1",
+    "eslint": "3.7.1",
     "eslint-loader": "^1.5.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "jasmine-core": "^2.5.2",

@@ -231,7 +231,7 @@ var scaleDataMaker = {
      * @private
      */
     _decreaseMinByStep: function(min, dataMin, step, chartType, optionMin, isVertical) {
-        /*eslint max-params: [2, 6]*/
+        /* eslint max-params: [2, 6]*/
         var isLineChart = predicate.isLineChart(chartType);
         var isAreaChartXAxis = predicate.isAreaChart(chartType) && !isVertical;
         var isMinusDataMin = dataMin < 0;

@@ -117,6 +117,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
         return tui.util.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
+
             return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
         });
     },

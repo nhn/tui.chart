@@ -147,10 +147,10 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
         var startRadian = startAngle * RAD;
         var endRadian = endAngle * RAD;
-        var x1 = cx + r * Math.sin(startRadian); // 원 호의 시작 x 좌표
-        var y1 = cy - r * Math.cos(startRadian); // 원 호의 시작 y 좌표
-        var x2 = cx + r * Math.sin(endRadian); // 원 호의 종료 x 좌표
-        var y2 = cy - r * Math.cos(endRadian); // 원 호의 종료 y 좌표
+        var x1 = cx + (r * Math.sin(startRadian)); // 원 호의 시작 x 좌표
+        var y1 = cy - (r * Math.cos(startRadian)); // 원 호의 시작 y 좌표
+        var x2 = cx + (r * Math.sin(endRadian)); // 원 호의 종료 x 좌표
+        var y2 = cy - (r * Math.cos(endRadian)); // 원 호의 종료 y 좌표
         var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
         var path = ['M', cx, cy,
             'L', x1, y1,
@@ -176,18 +176,18 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _makeDonutSectorPath: function(cx, cy, r, startAngle, endAngle, holeRadius) {
-        /*eslint max-params: [2, 6]*/
+        /* eslint max-params: [2, 6]*/
         var startRadian = startAngle * RAD;
         var endRadian = endAngle * RAD;
         var r2 = holeRadius || (r * this.holeRatio); // 구멍 반지름
-        var x1 = cx + r * Math.sin(startRadian);
-        var y1 = cy - r * Math.cos(startRadian);
-        var x2 = cx + r2 * Math.sin(startRadian);
-        var y2 = cy - r2 * Math.cos(startRadian);
-        var x3 = cx + r * Math.sin(endRadian);
-        var y3 = cy - r * Math.cos(endRadian);
-        var x4 = cx + r2 * Math.sin(endRadian);
-        var y4 = cy - r2 * Math.cos(endRadian);
+        var x1 = cx + (r * Math.sin(startRadian));
+        var y1 = cy - (r * Math.cos(startRadian));
+        var x2 = cx + (r2 * Math.sin(startRadian));
+        var y2 = cy - (r2 * Math.cos(startRadian));
+        var x3 = cx + (r * Math.sin(endRadian));
+        var y3 = cy - (r * Math.cos(endRadian));
+        var x4 = cx + (r2 * Math.sin(endRadian));
+        var y4 = cy - (r2 * Math.cos(endRadian));
         var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
         var path = [
             'M', x1, y1,

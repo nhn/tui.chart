@@ -220,7 +220,7 @@ var renderingLabelHelper = {
      * @returns {string}
      */
     makeSeriesLabelHtml: function(position, label, theme, index, selectedIndex, tplCssText, isStart) {
-        /*eslint max-params: [2, 7]*/
+        /* eslint max-params: [2, 7]*/
         var cssText = this._makeLabelCssText(position, theme, index, selectedIndex, tplCssText);
         var rangeLabelAttribute = '';
 

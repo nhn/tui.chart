@@ -24,7 +24,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        //options.series = options.series || {};
+        // options.series = options.series || {};
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = false;
 

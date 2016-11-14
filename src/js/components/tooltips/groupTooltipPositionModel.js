@@ -208,7 +208,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else if (data.direction === chartConst.TOOLTIP_DIRECTION_BACKWARD) {
             value += range.start - tooltipSize - padding;
         } else if (isLine) {
-            value += range.start - tooltipSize / 2;
+            value += range.start - (tooltipSize / 2);
         } else {
             value += range.start + ((range.end - range.start - tooltipSize) / 2);
         }
