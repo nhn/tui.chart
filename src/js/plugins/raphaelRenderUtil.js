@@ -140,11 +140,13 @@ var raphaelRenderUtil = {
      * @param {function} funcRenderItem function
      */
     forEach2dArray: function(groupItems, funcRenderItem) {
-        tui.util.forEachArray(groupItems, function(items, groupIndex) {
-            tui.util.forEachArray(items, function(item, index) {
-                funcRenderItem(item, groupIndex, index);
+        if (groupItems) {
+            tui.util.forEachArray(groupItems, function(items, groupIndex) {
+                tui.util.forEachArray(items, function(item, index) {
+                    funcRenderItem(item, groupIndex, index);
+                });
             });
-        });
+        }
     },
 
     /**

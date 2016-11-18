@@ -24,10 +24,12 @@ describe('Test for LegendModel', function() {
             ],
             legendData: [
                 {
-                    label: 'legend1'
+                    label: 'legend1',
+                    visible: true
                 },
                 {
-                    label: 'legend2'
+                    label: 'legend2',
+                    visible: true
                 }
             ],
             theme: {
@@ -44,27 +46,20 @@ describe('Test for LegendModel', function() {
 
     describe('_addSendingDatum()', function() {
         it('chartType이 column이고 index가 1인 sending datum을 하나 추가합니다.', function() {
-            var actual, expected;
-
             legendModel.data[1] = {
                 chartType: 'column',
                 index: 1
             };
             legendModel._addSendingDatum(1);
 
-            actual = legendModel.checkedIndexesMap.column[1];
-            expected = true;
-
-            expect(actual).toBe(expected);
+            expect(legendModel.checkedIndexesMap.column[1]).toBe(true);
         });
     });
 
 
     describe('_initCheckedIndexes()', function() {
         it('범례 checkbox 기능에 사용되는 checkedIndexes를 초기화 합니다.', function() {
-            var actual,
-                expected;
-
+            spyOn(legendModel, 'updateCheckedLegendsWith');
             legendModel.labelInfos = [
                 {
                     chartType: 'column',
@@ -78,10 +73,8 @@ describe('Test for LegendModel', function() {
 
             legendModel._initCheckedIndexes();
 
-            actual = legendModel.checkedWholeIndexes;
-            expected = [true, true];
-
-            expect(actual).toEqual(expected);
+            expect(legendModel.checkedWholeIndexes).toEqual([true, true]);
+            expect(legendModel.updateCheckedLegendsWith).toHaveBeenCalledWith([0, 1]);
         });
     });
 
@@ -142,7 +135,7 @@ describe('Test for LegendModel', function() {
                 singleColors: ['yellow', 'green'],
                 borderColor: 'black'
             };
-            var actual, expected;
+            var actual;
 
             legendModel.legendData = legendData;
             legendModel.theme[legendModel.chartType] = colorTheme;
@@ -155,22 +148,23 @@ describe('Test for LegendModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('seriesNames값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다. index는 chartType 별로 구분되서 설정됩니다.', function() {
-            var legendData = [{}, {}],
-                seriesNames = ['column', 'line'],
-                labelMap = {
-                    column: ['legend1'],
-                    line: ['lgend2']
+        it('seriesNames값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다.' +
+            ' index는 chartType 별로 구분되서 설정됩니다.', function() {
+            var legendData = [{}, {}];
+            var seriesNames = ['column', 'line'];
+            var labelMap = {
+                column: ['legend1'],
+                line: ['legend2']
+            };
+            var theme = {
+                column: {
+                    colors: ['red']
                 },
-                theme = {
-                    column: {
-                        colors: ['red']
-                    },
-                    line: {
-                        colors: ['blue']
-                    }
-                },
-                actual, expected;
+                line: {
+                    colors: ['blue']
+                }
+            };
+            var expected;
 
             legendModel.legendData = legendData;
             legendModel.theme = theme;
@@ -179,7 +173,6 @@ describe('Test for LegendModel', function() {
 
             legendModel._setData();
 
-            actual = legendModel.data;
             expected = [
                 {
                     theme: {
@@ -197,70 +190,60 @@ describe('Test for LegendModel', function() {
                 }
             ];
 
-            expect(actual).toEqual(expected);
+            expect(legendModel.data).toEqual(expected);
         });
     });
 
     describe('toggleSelectedIndex()', function() {
         it('selectedIndex와 index가 같지 않으면 index를 selectedIndex에 셋팅합니다.', function() {
-            var actual, expected;
-
             legendModel.toggleSelectedIndex(0);
-            actual = legendModel.selectedIndex;
-            expected = 0;
 
-            expect(actual).toBe(expected);
+            expect(legendModel.selectedIndex).toBe(0);
         });
 
         it('selectedIndex와 index가 같으면 null을 셋팅합니다.', function() {
-            var actual;
-
             legendModel.selectedIndex = 0;
             legendModel.toggleSelectedIndex(0);
-            actual = legendModel.selectedIndex;
 
-            expect(actual).toBeNull();
+            expect(legendModel.selectedIndex).toBeNull();
         });
     });
 
     describe('getCheckedIndexes()', function() {
         it('단일 차트의 경우는 체크여부 정보가 담겨있는 단순 배열을 반환합니다.', function() {
-            var actual, expected;
+            var checkedLegends = [true, true];
 
             legendModel.checkedIndexesMap = {
-                'pie': [true, true]
+                'pie': checkedLegends
             };
             legendModel.chartType = 'pie';
 
-            actual = legendModel.getCheckedIndexes();
-            expected = [true, true];
-
-            expect(actual).toEqual(expected);
+            expect(legendModel.getCheckedIndexes()).toEqual(checkedLegends);
         });
 
         it('콤보 차트의 경우는 차트 종류를 키로하는 체크여부 정보가 담겨있는 배열을 담고있는 객체를 반환합니다.', function() {
-            var actual, expected;
-
-            legendModel.checkedIndexesMap = {
+            var checkedIndexesMap = {
                 'column': [true, true],
                 'line': [true]
             };
+
+            legendModel.checkedIndexesMap = checkedIndexesMap;
             legendModel.chartType = 'combo';
 
-            actual = legendModel.getCheckedIndexes();
-            expected = {
-                'column': [true, true],
-                'line': [true]
-            };
-
-            expect(actual).toEqual(expected);
+            expect(legendModel.getCheckedIndexes()).toEqual(checkedIndexesMap);
         });
     });
 
     describe('updateCheckedData()', function() {
         it('checkbox 기능에 해당하는 data를 update 합니다.', function() {
-            var actualCheckedIndexesMap, actualCheckedWholeIndexes,
-                expectedCheckedIndexesMap, expectedCheckedIndexes;
+            var checkedIndexes = [];
+            var checkedIndexesMap = {
+                column: [true],
+                line: [true]
+            };
+
+            checkedIndexes[0] = true;
+            checkedIndexes[2] = true;
 
             legendModel.data = [
                 {
@@ -277,17 +260,10 @@ describe('Test for LegendModel', function() {
                 }
             ];
 
-            legendModel.updateCheckedData([0, 2]);
+            legendModel.updateCheckedLegendsWith([0, 2]);
 
-            actualCheckedIndexesMap = legendModel.checkedIndexesMap;
-            actualCheckedWholeIndexes = legendModel.checkedWholeIndexes;
-            expectedCheckedIndexesMap = {column: [true], line: [true]};
-            expectedCheckedIndexes = [];
-            expectedCheckedIndexes[0] = true;
-            expectedCheckedIndexes[2] = true;
-
-            expect(actualCheckedIndexesMap).toEqual(expectedCheckedIndexesMap);
-            expect(actualCheckedWholeIndexes).toEqual(expectedCheckedIndexes);
+            expect(legendModel.checkedIndexesMap).toEqual(checkedIndexesMap);
+            expect(legendModel.checkedWholeIndexes).toEqual(checkedIndexes);
         });
     });
 });

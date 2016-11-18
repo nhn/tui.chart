@@ -300,7 +300,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this._renderPosition(seriesContainer, position);
 
-        if (funcRenderGraph) {
+        if (funcRenderGraph && hasDataForRendering(seriesData)) {
             paper = funcRenderGraph(dimension, seriesData, paper);
         }
 
@@ -380,11 +380,17 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     render: function(data) {
         var container = dom.create('DIV', this.className);
-        var paper;
+        var checkedLegends, paper;
 
         this.seriesContainer = container;
         this._setDataForRendering(data);
         this.beforeAxisDataMap = this.axisDataMap;
+
+
+        if (data.checkedLegends && data.checkedLegends.length > 0) {
+            checkedLegends = data.checkedLegends[this.chartType] || data.checkedLegends;
+            this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
+        }
 
         paper = this._renderSeriesArea(container, data.paper, tui.util.bind(this._renderGraph, this));
 
@@ -395,13 +401,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Update theme.
+     * Get checked series theme.
      * @param {object} theme legend theme
      * @param {?Array.<?boolean>} checkedLegends checked legends
-     * @returns {object} updated theme
+     * @returns {object} checked series theme
      * @private
      */
-    _updateTheme: function(theme, checkedLegends) {
+    _getCheckedSeriesTheme: function(theme, checkedLegends) {
         var cloneTheme;
 
         if (!checkedLegends.length) {
@@ -417,11 +423,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Clear container.
-     * @param {object} paper - raphael object
+     * Clear series container.
+     * @param {object} paper - Raphael object for series rendering area
      * @private
      */
-    _clearContainer: function(paper) {
+    _clearSeriesContainer: function(paper) {
         if (this.graphRenderer.clear && !paper) {
             this.graphRenderer.clear();
         }
@@ -432,19 +438,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Rerender.
+     * Rerender series
      * @param {object} data - data for rendering
      * @returns {{container: HTMLElement, paper: object}}
      */
     rerender: function(data) {
         var checkedLegends, paper;
 
-        this._clearContainer();
+        this._clearSeriesContainer();
 
         if (this.dataProcessor.getGroupCount(this.seriesName)) {
             if (data.checkedLegends) {
                 checkedLegends = data.checkedLegends[this.chartType] || data.checkedLegends;
-                this.theme = this._updateTheme(this.orgTheme, checkedLegends);
+                this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
             }
 
             this._setDataForRendering(data);
@@ -472,11 +478,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Whether use label or not.
+     * Return whether label visible or not.
      * @returns {boolean}
      * @private
      */
-    _useLabel: function() {
+    _isLabelVisible: function() {
         return this.seriesLabelContainer && (this.options.showLabel || this.options.showLegend);
     },
 
@@ -495,15 +501,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _showGraphWithoutAnimation: function() {
         this.graphRenderer.showGraph();
 
-        if (this._useLabel()) {
+        if (this._isLabelVisible()) {
             this._showSeriesLabelWithoutAnimation();
         }
     },
 
     /**
-     * Resize raphael graph.
-     * @param {{width: number, height: number}} dimension dimension
-     * @param {object} seriesData series data
+     * Resize raphael graph by given dimension and series data
+     * @param {{width: number, height: number}} dimension - chart dimension
+     * @param {object} seriesData - series data
      * @private
      */
     _resizeGraph: function(dimension, seriesData) {
@@ -523,9 +529,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Render bounds
-     * @param {HTMLElement} el series element
-     * @param {{top: number, left: number}} position series position
+     * Set element's top, left given top, left position
+     * @param {HTMLElement} el - series element
+     * @param {{top: number, left: number}} position - series top, left position
      * @private
      */
     _renderPosition: function(el, position) {
@@ -685,7 +691,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     animateSeriesLabelArea: function(isRerendering) {
         var self = this;
 
-        if (!this._useLabel()) {
+        if (!this._isLabelVisible()) {
             this._fireLoadEvent(isRerendering);
 
             return;
@@ -856,5 +862,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
     }
 });
+
+/**
+ * Return boolean value whether seriesData contains data
+ * @param {object} seriesData seriesData object
+ * @returns {boolean}
+ */
+function hasDataForRendering(seriesData) {
+    return !!(seriesData && (seriesData.groupPositions || seriesData.seriesDataModel.rawSeriesData.length > 0));
+}
 
 module.exports = Series;

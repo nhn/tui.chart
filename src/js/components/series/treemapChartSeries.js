@@ -237,7 +237,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * @private
      */
     _zoom: function(rootId, startDepth, group) {
-        this._clearContainer();
+        this._clearSeriesContainer();
         this.boundMap = null;
         this.rootId = rootId;
         this.startDepth = startDepth;

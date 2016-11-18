@@ -76,6 +76,39 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_makeBaseDataForMakingBound()', function() {
+        it('return undefined when empty rawSeriesData.', function() {
+            var baseGroupSize = 60;
+            var baseBarSize = 60;
+            var seriesDataModel = new SeriesDataModel();
+            var actual;
+
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
+
+            seriesDataModel.groups = [
+                new SeriesGroup([{
+                    value: 10
+                }, {
+                    value: 20
+                }])
+            ];
+
+            series.options = {};
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 80
+                }
+            };
+
+            series._getLimitDistanceFromZeroPoint =
+                jasmine.createSpy('_getLimitDistanceFromZeroPoint').and.returnValue({
+                    toMin: 0
+                });
+
+            actual = series._makeBaseDataForMakingBound(baseGroupSize, baseBarSize);
+
+            expect(actual).toBe();
+        });
         it('바, 컬럼 차트의 bound를 계산하기 위한 baseData를 생성합니다.', function() {
             var baseGroupSize = 60;
             var baseBarSize = 60;
@@ -84,6 +117,7 @@ describe('BarTypeSeriesBase', function() {
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
 
+            seriesDataModel.rawSeriesData = [10, 20];
             seriesDataModel.groups = [
                 new SeriesGroup([{
                     value: 10

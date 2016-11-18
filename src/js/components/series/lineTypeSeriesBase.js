@@ -241,7 +241,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var paper;
 
         this._cancelMovingAnimation();
-        this._clearContainer(data.paper);
+        this._clearSeriesContainer(data.paper);
         this._setDataForRendering(data);
         paper = this._renderSeriesArea(this.seriesContainer, data.paper, tui.util.bind(this._renderGraph, this));
         this._showGraphWithoutAnimation();

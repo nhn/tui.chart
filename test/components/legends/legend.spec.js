@@ -78,6 +78,7 @@ describe('Test for Legend', function() {
         it('렌더링 될 범례 html을 생성합니다.', function() {
             var actual, expected;
             spyOn(legend, '_makeLegendRectCssText').and.returnValue('');
+            spyOn(legend.legendModel, 'isCheckedIndex').and.returnValue(true);
 
             actual = legend._makeLegendHtml([
                 {

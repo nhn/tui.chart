@@ -914,28 +914,50 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     },
 
     /**
-     * Pick legend labels from raw data.
-     * @returns {string[]} labels
+     * Pick legend visibility.
+     * @param {object} item item
+     * @returns {boolean}
+     * @private
      */
-    _pickLegendLabels: function() {
-        var self = this;
-        var seriesData = this.rawData.series;
-        var legendLabels;
-
-        if (tui.util.isArray(seriesData)) {
-            legendLabels = tui.util.map(seriesData, this._pickLegendLabel);
-        } else {
-            legendLabels = {};
-            tui.util.forEach(seriesData, function(seriesDatum, type) {
-                legendLabels[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
-            });
+    _isVisibleLegend: function(item) {
+        var visibility = true;
+        if (tui.util.isExisty(item.visible) && item.visible === false) {
+            visibility = false;
         }
 
-        legendLabels = tui.util.filter(legendLabels, function(label) {
-            return tui.util.isExisty(label);
-        });
+        return visibility;
+    },
 
-        return legendLabels;
+    /**
+     * Pick legend labels or visibilities from raw data.
+     * @param {string} dataType data type of picking values
+     * @returns {string[]|boolean[]} labels or visibilities
+     * @private
+     */
+    _pickLegendData: function(dataType) {
+        var seriesData = this.rawData.series;
+        var resultArray, pickerMethod;
+
+        if (dataType === 'visibility') {
+            pickerMethod = this._isVisibleLegend;
+        } else if (dataType === 'label') {
+            pickerMethod = this._pickLegendLabel;
+        }
+
+        if (pickerMethod) {
+            if (tui.util.isArray(seriesData)) {
+                resultArray = tui.util.map(seriesData, pickerMethod);
+            } else {
+                resultArray = {};
+                tui.util.forEach(seriesData, function(seriesDatum, type) {
+                    resultArray[type] = tui.util.map(seriesDatum, pickerMethod);
+                });
+            }
+
+            resultArray = tui.util.filter(resultArray, tui.util.isExisty);
+        }
+
+        return resultArray;
     },
 
     /**
@@ -945,10 +967,23 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     getLegendLabels: function(chartType) {
         if (!this.legendLabels) {
-            this.legendLabels = this._pickLegendLabels();
+            this.legendLabels = this._pickLegendData('label');
         }
 
         return this.legendLabels[chartType] || this.legendLabels;
+    },
+
+    /**
+     * Get legend visibility.
+     * @param {?string} chartType chart type
+     * @returns {Array.<string> | {column: ?Array.<string>, line: ?Array.<string>}} legend labels
+     */
+    getLegendVisibility: function(chartType) {
+        if (!this.legendVisibilities) {
+            this.legendVisibilities = this._pickLegendData('visibility');
+        }
+
+        return this.legendVisibilities[chartType] || this.legendVisibilities;
     },
 
     /**
@@ -957,9 +992,10 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @private
      */
     _makeLegendData: function() {
-        var legendLabels = this.getLegendLabels(),
-            seriesNames = this.seriesNames || [this.chartType],
-            legendLabelsMap, legendData;
+        var legendLabels = this.getLegendLabels();
+        var legendVisibilities = this.getLegendVisibility();
+        var seriesNames = this.seriesNames || [this.chartType];
+        var legendLabelsMap, legendData;
 
         if (tui.util.isArray(legendLabels)) {
             legendLabelsMap = [this.chartType];
@@ -970,10 +1006,13 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         }
 
         legendData = tui.util.map(seriesNames, function(chartType) {
-            return tui.util.map(legendLabelsMap[chartType], function(label) {
+            return tui.util.map(legendLabelsMap[chartType], function(label, index) {
+                var is2DArray = tui.util.isArray(legendVisibilities[chartType]);
+
                 return {
                     chartType: chartType,
-                    label: label
+                    label: label,
+                    visible: is2DArray ? legendVisibilities[chartType][index] : legendVisibilities[index]
                 };
             });
         });
@@ -1067,7 +1106,6 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @param {{min: number, max: number}} limit axis limit
      * @param {string} stackType stackType option
      * @param {string} chartType chart type
-     * @private
      */
     addDataRatios: function(limit, stackType, chartType) {
         var seriesDataModel = this.getSeriesDataModel(chartType);
