@@ -203,11 +203,13 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @private
      */
     _registerTitleDimension: function() {
-        var chartOptions = this.options.chart || {},
-            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, this.theme.title),
-            dimension = {
-                height: titleHeight + chartConst.TITLE_PADDING
-            };
+        var chartOptions = this.options.chart || {title: {}};
+        var hasTitleOption = tui.util.isExisty(chartOptions.title);
+        var titleHeight =
+            hasTitleOption ? renderUtil.getRenderedLabelHeight(chartOptions.title.text, this.theme.title) : 0;
+        var dimension = {
+            height: titleHeight + chartConst.TITLE_PADDING
+        };
 
         this._registerDimension('title', dimension);
     },

@@ -744,9 +744,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _getRenderedTitleHeight: function() {
-        var title = this.options.title,
-            theme = this.theme.title,
-            result = title ? renderUtil.getRenderedLabelHeight(title, theme) : 0;
+        var title = this.options.title;
+        var theme = this.theme.title;
+        var result = title ? renderUtil.getRenderedLabelHeight(title.text, theme) : 0;
 
         return result;
     },
@@ -754,7 +754,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make cssText of label.
      * @param {number} labelSize label size (width or height)
-     * @returns {string[]} cssTexts
+     * @returns {string} cssText
      * @private
      */
     _makeLabelCssText: function(labelSize) {
