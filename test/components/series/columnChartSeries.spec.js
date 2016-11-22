@@ -74,8 +74,7 @@ describe('ColumnChartSeries', function() {
                     baseBarSize: 100,
                     basePosition: 40,
                     barSize: 20,
-                    step: 20,
-                    additionalPosition: 0
+                    pointInterval: 20
                 },
                 iterationData = {
                     baseLeft: 10,
@@ -93,13 +92,13 @@ describe('ColumnChartSeries', function() {
                 expected = {
                     start: {
                         top: 50,
-                        left: 10,
+                        left: 20,
                         width: 20,
                         height: 0
                     },
                     end: {
                         top: 10,
-                        left: 10,
+                        left: 20,
                         width: 20,
                         height: 40
                     }
@@ -138,8 +137,7 @@ describe('ColumnChartSeries', function() {
                 baseBarSize: 100,
                 basePosition: 60,
                 barSize: 20,
-                step: 20,
-                additionalPosition: 0
+                pointInterval: 20
             });
 
             actual = series._makeBounds();
@@ -147,26 +145,26 @@ describe('ColumnChartSeries', function() {
                 {
                     start: {
                         top: 70,
-                        left: 10,
+                        left: 20,
                         width: 20,
                         height: 0
                     },
                     end: {
                         top: 30,
-                        left: 10,
+                        left: 20,
                         width: 20,
                         height: 40
                     }
                 }, {
                     start: {
                         top: 70,
-                        left: 30,
+                        left: 40,
                         width: 20,
                         height: 0
                     },
                     end: {
                         top: 10,
-                        left: 30,
+                        left: 40,
                         width: 20,
                         height: 60
                     }

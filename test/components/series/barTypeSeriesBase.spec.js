@@ -40,51 +40,22 @@ describe('BarTypeSeriesBase', function() {
             left: 0,
             top: 0
         });
-        series._makeSeriesLabelHtml = jasmine.createSpy('_makeSeriesLabelHtml').and.returnValue('<div></div>');;
-        series._makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');;
-        series._makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');;
+        series._makeSeriesLabelHtml = jasmine.createSpy('_makeSeriesLabelHtml').and.returnValue('<div></div>');
+        series._makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');
+        series._makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');
         series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
     });
 
-    describe('_makeBarGutter()', function() {
-        it('계산되는 bar의 사이즈(group bar 너비 / (itemCount + 1) / 2)가 2보다 작거나 같다면 bar gutter(bar와 bar 사이의 간격)은 0입니다.', function() {
-            var actual = series._makeBarGutter(20, 5),
-                expected = 0;
-            expect(actual).toBe(expected);
-        });
-
-        it('계산되는 bar의 사이즈가 2보다 크고 6보다 작거나 같다면 bar gutter는 2입니다.', function() {
-            var actual = series._makeBarGutter(60, 5),
-                expected = 2;
-            expect(actual).toBe(expected);
-        });
-
-        it('계산되는 bar의 사이즈가 6보다 크다면 bar gutter는 4입니다.', function() {
-            var actual = series._makeBarGutter(100, 5),
-                expected = 4;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_calculateBarSize()', function() {
-        it('bar size는 bar group size에서 간격정보를 빼고 아이템수 + 1로 나누어 계산됩니다.', function() {
-            var actual = series._calculateBarSize(100, 4, 5),
-                expected = 14;
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_getBarWidthOptionSize()', function() {
-        it('optionBarWidth(옵션값,두번째인자)가 barSize(첫번째 인자)보다 작을 경우에는 옵션 값을 반환합니다.', function() {
-            var actual = series._getBarWidthOptionSize(14, 10),
-                expected = 10;
-            expect(actual).toBe(expected);
+        it('optionBarWidth 가 (pointInterval * 2) 보다 작을 경우에는 옵션 값을 반환합니다.', function() {
+            expect(series._getBarWidthOptionSize(14, 27)).toBe(27);
         });
 
-        it('optionBarWidth가 barSize보다 클 경우에는 barSize를 반환합니다.', function() {
-            var actual = series._getBarWidthOptionSize(14, 20),
-                expected = 14;
-            expect(actual).toBe(expected);
+        it('(optionBarWidth / 2) >= pointInterval 인경우에는 (pointInterval * 2)를 반환합니다.', function() {
+            expect(series._getBarWidthOptionSize(14, 50)).toBe(28);
+        });
+        it('optionBarWidth < 0 인경우에는 0을 반환합니다.', function() {
+            expect(series._getBarWidthOptionSize(14, -2)).toBe(0);
         });
     });
 
@@ -96,7 +67,8 @@ describe('BarTypeSeriesBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('optionsSize(두번째인자) 값이 있으면서 barSize보다 작으면 barSize(첫번째인자)을 반으로 나눈 값에 barSize와의 차를 itemCount(세번째인자)로 곱하고 2로 나눈 값을 더하여 반환합니다.', function() {
+        it('optionsSize(두번째인자) 값이 있으면서 barSize보다 작으면 barSize(첫번째인자)을 반으로 나눈 값에' +
+            'barSize와의 차를 itemCount(세번째인자)로 곱하고 2로 나눈 값을 더하여 반환합니다.', function() {
             var actual = series._calculateAdditionalPosition(14, 10, 4);
             var expected = 15;
             expect(actual).toBe(expected);
@@ -105,8 +77,8 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_makeBaseDataForMakingBound()', function() {
         it('바, 컬럼 차트의 bound를 계산하기 위한 baseData를 생성합니다.', function() {
-            var baseGroupSize = 100;
-            var baseBarSize = 100;
+            var baseGroupSize = 60;
+            var baseBarSize = 60;
             var seriesDataModel = new SeriesDataModel();
             var actual, expected;
 
@@ -128,18 +100,18 @@ describe('BarTypeSeriesBase', function() {
                 }
             };
 
-            series._getLimitDistanceFromZeroPoint = jasmine.createSpy('_getLimitDistanceFromZeroPoint').and.returnValue({
-                toMin: 0
-            });
+            series._getLimitDistanceFromZeroPoint =
+                jasmine.createSpy('_getLimitDistanceFromZeroPoint').and.returnValue({
+                    toMin: 0
+                });
 
             actual = series._makeBaseDataForMakingBound(baseGroupSize, baseBarSize);
             expected = {
-                baseBarSize: 100,
-                groupSize: 100,
-                barSize: 32,
-                step: 36,
-                firstAdditionalPosition: 16,
-                additionalPosition: 0,
+                baseBarSize: 60,
+                groupSize: 60,
+                barSize: 16,
+                pointInterval: 20,
+                firstAdditionalPosition: 20,
                 basePosition: 0
             };
 
@@ -191,7 +163,9 @@ describe('BarTypeSeriesBase', function() {
         it('두번째 인자에 포맷팅 함수 배열을 넘기면 합한 결과를 전달한 함수 배열들로 포맷팅 하여 반환합니다.', function() {
             var actual;
 
-            dataProcessor.getFormatFunctions.and.returnValue([function(value) { return '00' + value; }]);
+            dataProcessor.getFormatFunctions.and.returnValue([function(value) {
+                return '00' + value;
+            }]);
 
             actual = series._makeSumValues([10, 20, 30]);
             expect(actual).toBe('0060');

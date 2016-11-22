@@ -76,11 +76,12 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     /**
      * Make bar chart bound.
      * @param {{
-     *      baseSize: number,
-     *      basePosition: number,
-     *      step: number,
-     *      additionalPosition: ?number,
-     *      barSize: number
+     *      baseBarSize: number,
+     *      groupSize: number,
+     *      barSize: number,
+     *      pointInterval: number,
+     *      firstAdditionalPosition: number,
+     *      basePosition: number
      * }} baseData base data for making bound
      * @param {{
      *      baseTop: number,
@@ -99,16 +100,16 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @private
      */
     _makeBarChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
-        var barWidth = baseData.baseBarSize * seriesItem.ratioDistance,
-            additionalLeft = this._calculateAdditionalLeft(seriesItem.value),
-            barStartLeft = baseData.baseBarSize * seriesItem.startRatio,
-            startLeft = baseData.basePosition + barStartLeft + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
-            changedStack = (seriesItem.stack !== iterationData.prevStack),
-            stepCount, endLeft, bound;
+        var barWidth = baseData.baseBarSize * seriesItem.ratioDistance;
+        var additionalLeft = this._calculateAdditionalLeft(seriesItem.value);
+        var barStartLeft = baseData.baseBarSize * seriesItem.startRatio;
+        var startLeft = baseData.basePosition + barStartLeft + additionalLeft + chartConst.SERIES_EXPAND_SIZE;
+        var changedStack = (seriesItem.stack !== iterationData.prevStack);
+        var pointCount, endLeft, bound, boundTop;
 
         if (!isStackType || (!this.options.diverging && changedStack)) {
-            stepCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
-            iterationData.top = (baseData.step * stepCount) + iterationData.baseTop + baseData.additionalPosition;
+            pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
+            iterationData.top = iterationData.baseTop + (baseData.pointInterval * pointCount);
             iterationData.plusLeft = 0;
             iterationData.minusLeft = 0;
         }
@@ -122,8 +123,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         }
 
         iterationData.prevStack = seriesItem.stack;
-
-        bound = this._makeBound(barWidth, baseData.barSize, iterationData.top, startLeft, endLeft);
+        boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2);
+        bound = this._makeBound(barWidth, baseData.barSize, boundTop, startLeft, endLeft);
 
         return bound;
     },
@@ -141,16 +142,15 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         var baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var baseTop = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
-                        + chartConst.SERIES_EXPAND_SIZE,
-                iterationData = {
-                    baseTop: baseTop,
-                    top: baseTop,
-                    plusLeft: 0,
-                    minusLeft: 0,
-                    prevStack: null
-                },
-                iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
+            var baseTop = (groupIndex * baseData.groupSize) + chartConst.SERIES_EXPAND_SIZE;
+            var iterationData = {
+                baseTop: baseTop,
+                top: baseTop,
+                plusLeft: 0,
+                minusLeft: 0,
+                prevStack: null
+            };
+            var iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
 
             return seriesGroup.map(iteratee);
         });
