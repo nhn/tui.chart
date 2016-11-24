@@ -89,19 +89,6 @@ var zoomMixer = {
          * @type {null | HTMLElement}
          */
         this.resetZoomBtn = null;
-
-        /**
-         * Find data for zoomable
-         * @param {number} clientX - clientX
-         * @param {number} clientY - clientY
-         * @returns {object}
-         * @private
-         */
-        if (predicate.isComboChart(this.chartType)) {
-            this._findDataForZoomable = this._findGroupData;
-        } else {
-            this._findDataForZoomable = this._findData;
-        }
     },
 
     /**

@@ -11,8 +11,6 @@ var arrayUtil = require('../../helpers/arrayUtil');
 
 var concat = Array.prototype.concat;
 
-var AREA_THRESHHOLD = 50;
-
 var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.prototype */ {
     /**
      * AreaTypeDataModel is data mode for mouse event detector of area type.
@@ -78,18 +76,21 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     /**
      * Find Data by layer position.
      * @param {{x: number, y: number}} layerPosition - layer position
+     * @param {number} [distanceLimit] distance limitation to find data
      * @returns {object}
      */
-    findData: function(layerPosition) {
+    findData: function(layerPosition, distanceLimit) {
         var min = 100000;
         var foundData;
+
+        distanceLimit = distanceLimit || Number.MAX_VALUE;
 
         tui.util.forEach(this.data, function(datum) {
             var xDiff = layerPosition.x - datum.bound.left;
             var yDiff = layerPosition.y - datum.bound.top;
             var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-            if (distance < AREA_THRESHHOLD && distance < min) {
+            if (distance < distanceLimit && distance < min) {
                 min = distance;
                 foundData = datum;
             }

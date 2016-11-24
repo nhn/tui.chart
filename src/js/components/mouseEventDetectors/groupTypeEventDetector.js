@@ -80,6 +80,10 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
         };
     },
 
+    _findDataForZoomable: function(clientX, clientY) {
+        return this._findGroupData(clientX, clientY);
+    },
+
     /**
      * Get first data.
      * @returns {{indexes: {groupIndex: number}}} - data

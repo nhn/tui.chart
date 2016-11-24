@@ -10,6 +10,8 @@ var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var zoomMixer = require('./zoomMixer');
 var AreaTypeDataModel = require('./areaTypeDataModel');
 
+var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
+
 var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends AreaTypeEventDetector.prototype */ {
     /**
      * AreaTypeEventDetector is mouse event detector for line type chart.
@@ -71,6 +73,12 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
      * @override
      */
     _findData: function(clientX, clientY) {
+        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+
+        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
+    },
+
+    _findDataForZoomable: function(clientX, clientY) {
         var layerPosition = this._calculateLayerPosition(clientX, clientY);
 
         return this.dataModel.findData(layerPosition);
