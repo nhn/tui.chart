@@ -78,6 +78,13 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
         return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
     },
 
+    /**
+     * Find data by client position for zoomable
+     * @param {number} clientX - clientX
+     * @param {number} clientY - clientY
+     * @returns {object}
+     * @private
+     */
     _findDataForZoomable: function(clientX, clientY) {
         var layerPosition = this._calculateLayerPosition(clientX, clientY);
 
