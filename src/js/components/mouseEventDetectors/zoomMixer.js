@@ -9,7 +9,6 @@
 var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
-var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var eventListener = require('../../helpers/eventListener');
 
