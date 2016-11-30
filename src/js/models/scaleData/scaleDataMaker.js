@@ -208,12 +208,22 @@ var scaleDataMaker = {
      * @param {{min: number, max: number}} limit base limit
      * @param {number} step scale step
      * @param {number} valueCount value count
+     * @param {{max:number, min:number}} limitOption limitOption
      * @returns {{min: number, max: number}} normalized limit
      * @private
      */
-    _normalizeLimit: function(limit, step, valueCount) {
-        limit.min = this._normalizeMin(limit.min, step);
-        limit.max = this._makeNormalizedMax(limit, step, valueCount);
+    _normalizeLimitIfNeed: function(limit, step, valueCount, limitOption) {
+        if (limitOption && tui.util.isExisty(limitOption.min)) {
+            limit.min = limitOption.min;
+        } else {
+            limit.min = this._normalizeMin(limit.min, step);
+        }
+
+        if (limitOption && tui.util.isExisty(limitOption.max)) {
+            limit.max = limitOption.max;
+        } else {
+            limit.max = this._makeNormalizedMax(limit, step, valueCount);
+        }
 
         return limit;
     },
@@ -384,7 +394,7 @@ var scaleDataMaker = {
         step = calculator.normalizeAxisNumber(step);
 
         // 03. limit 정규화 시키기
-        limit = this._normalizeLimit(limit, step, valueCount);
+        limit = this._normalizeLimitIfNeed(limit, step, valueCount, limitOption);
 
         // 04. line차트의 경우 사용자의 min값이 limit의 min값과 같을 경우, min값을 1 step 감소 시킴
         limit.min = this._decreaseMinByStep(limit.min, dataLimit.min, step, chartType, limitOption.min, isVertical);
