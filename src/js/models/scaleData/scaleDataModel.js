@@ -303,11 +303,12 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      */
     updateXAxisDataForAutoTickInterval: function(prevXAxisData, addingDataMode) {
         var shiftingOption = this.options.series.shifting;
+        var zoomableOption = this.options.series.zoomable;
         var xAxisData = this.axisDataMap.xAxis;
         var seriesWidth = this.boundsModel.getDimension('series').width;
         var addedCount = this.addedDataCount;
 
-        if (shiftingOption || !prevXAxisData) {
+        if (shiftingOption || !prevXAxisData || zoomableOption) {
             axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, addedCount, addingDataMode);
         } else {
             axisDataMaker.updateLabelAxisDataForStackingDynamicData(xAxisData, prevXAxisData, this.firstTickCount);
