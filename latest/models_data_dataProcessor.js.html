@@ -1,0 +1,1239 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Chart</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        <img src="img/toast-ui.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Chart</a></h1>
+        
+            <span class="version">v2.5.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    <ol class="lnb-tab">
+        <li id="api-tab">
+            <a href="#"><h4>API</h4></a>
+        </li>
+        <li id="examples-tab">
+            <a href="#"><h4>Examples</h4></a>
+        </li>
+    </ol>
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-sample01-01-bar-chart.html">[Bar Chart] basic</a><div class="hidden" id="sample01-01-bar-chart_sub"></div></li><li><a href="tutorial-sample01-02-negative-bar-chart.html">[Bar Chart] negative data</a><div class="hidden" id="sample01-02-negative-bar-chart_sub"></div></li><li><a href="tutorial-sample01-03-normal-stacked-bar-chart.html">[Bar Chart] normal stacked</a><div class="hidden" id="sample01-03-normal-stacked-bar-chart_sub"></div></li><li><a href="tutorial-sample01-04-diverging-bar-chart.html">[Bar Chart] diverging</a><div class="hidden" id="sample01-04-diverging-bar-chart_sub"></div></li><li><a href="tutorial-sample01-05-diverging-center-yaxis-bar-chart.html">[Bar Chart] diverging and center yAxis</a><div class="hidden" id="sample01-05-diverging-center-yaxis-bar-chart_sub"></div></li><li><a href="tutorial-sample01-06-range-bar-chart.html">[Bar Chart] range data</a><div class="hidden" id="sample01-06-range-bar-chart_sub"></div></li><li><a href="tutorial-sample02-01-column-chart.html">[Column Chart] basic</a><div class="hidden" id="sample02-01-column-chart_sub"></div></li><li><a href="tutorial-sample02-02-negative-column-chart.html">[Column Chart] negative data</a><div class="hidden" id="sample02-02-negative-column-chart_sub"></div></li><li><a href="tutorial-sample02-03-percent-stacked-column-chart.html">[Column Chart] percent stacked</a><div class="hidden" id="sample02-03-percent-stacked-column-chart_sub"></div></li><li><a href="tutorial-sample02-04-group-stacked-column-chart.html">[Column Chart] group stack data</a><div class="hidden" id="sample02-04-group-stacked-column-chart_sub"></div></li><li><a href="tutorial-sample02-05-stacked-diverging-column-chart.html">[Column Chart] diverging and stacked</a><div class="hidden" id="sample02-05-stacked-diverging-column-chart_sub"></div></li><li><a href="tutorial-sample03-01-line-chart.html">[Line Chart] basic</a><div class="hidden" id="sample03-01-line-chart_sub"></div></li><li><a href="tutorial-sample03-02-spline-line-chart.html">[Line Chart] spline</a><div class="hidden" id="sample03-02-spline-line-chart_sub"></div></li><li><a href="tutorial-sample03-03-coordinate-data-line-chart.html">[Line Chart] coordinate data</a><div class="hidden" id="sample03-03-coordinate-data-line-chart_sub"></div></li><li><a href="tutorial-sample04-01-area-chart.html">[Area Chart] basic</a><div class="hidden" id="sample04-01-area-chart_sub"></div></li><li><a href="tutorial-sample04-02-stacked-area-chart.html">[Area Chart] normal stacked</a><div class="hidden" id="sample04-02-stacked-area-chart_sub"></div></li><li><a href="tutorial-sample04-03-range-area-chart.html">[Area Chart] range data</a><div class="hidden" id="sample04-03-range-area-chart_sub"></div></li><li><a href="tutorial-sample04-04-autotick-zoomable-area-chart.html">[Area Chart] auto tick and zoomable</a><div class="hidden" id="sample04-04-autotick-zoomable-area-chart_sub"></div></li><li><a href="tutorial-sample05-01-bubble-chart.html">[Bubble Chart] basic</a><div class="hidden" id="sample05-01-bubble-chart_sub"></div></li><li><a href="tutorial-sample06-01-scatter-chart.html">[Scatter Chart] basic</a><div class="hidden" id="sample06-01-scatter-chart_sub"></div></li><li><a href="tutorial-sample07-01-pie-chart.html">[Pie Chart] basic</a><div class="hidden" id="sample07-01-pie-chart_sub"></div></li><li><a href="tutorial-sample07-02-center-legend-pie-chart.html">[Pie Chart] center legend</a><div class="hidden" id="sample07-02-center-legend-pie-chart_sub"></div></li><li><a href="tutorial-sample07-03-outer-legend-pie-chart.html">[Pie Chart] outer legend</a><div class="hidden" id="sample07-03-outer-legend-pie-chart_sub"></div></li><li><a href="tutorial-sample07-04-donut-chart.html">[Pie Chart] donut</a><div class="hidden" id="sample07-04-donut-chart_sub"></div></li><li><a href="tutorial-sample07-05-semi-circle-donut-chart.html">[Pie Chart] semi circle donut</a><div class="hidden" id="sample07-05-semi-circle-donut-chart_sub"></div></li><li><a href="tutorial-sample08-01-column-line-combo-chart.html">[Combo Chart] column and line</a><div class="hidden" id="sample08-01-column-line-combo-chart_sub"></div></li><li><a href="tutorial-sample08-02-pie-donut-combo-chart.html">[Combo Chart] pie and donut</a><div class="hidden" id="sample08-02-pie-donut-combo-chart_sub"></div></li><li><a href="tutorial-sample08-03-line-area-combo-chart.html">[Combo Chart] line and area</a><div class="hidden" id="sample08-03-line-area-combo-chart_sub"></div></li><li><a href="tutorial-sample08-04-line-scatter-combo-chart.html">[Combo Chart] line and scatter</a><div class="hidden" id="sample08-04-line-scatter-combo-chart_sub"></div></li><li><a href="tutorial-sample09-01-world-map-chart.html">[Map chart] world map</a><div class="hidden" id="sample09-01-world-map-chart_sub"></div></li><li><a href="tutorial-sample09-02-south-korea-map-chart.html">[Map chart] south korea map</a><div class="hidden" id="sample09-02-south-korea-map-chart_sub"></div></li><li><a href="tutorial-sample09-03-usa-map-chart.html">[Map chart] USA map</a><div class="hidden" id="sample09-03-usa-map-chart_sub"></div></li><li><a href="tutorial-sample09-04-china-map-chart.html">[Map chart] china map</a><div class="hidden" id="sample09-04-china-map-chart_sub"></div></li><li><a href="tutorial-sample09-05-japan-map-chart.html">[Map chart] japan map</a><div class="hidden" id="sample09-05-japan-map-chart_sub"></div></li><li><a href="tutorial-sample09-06-singapore-map-chart.html">[Map chart] singapore map</a><div class="hidden" id="sample09-06-singapore-map-chart_sub"></div></li><li><a href="tutorial-sample09-07-thailand-map-chart.html">[Map chart] thailand map</a><div class="hidden" id="sample09-07-thailand-map-chart_sub"></div></li><li><a href="tutorial-sample09-08-taiwan-map-chart.html">[Map chart] taiwan map</a><div class="hidden" id="sample09-08-taiwan-map-chart_sub"></div></li><li><a href="tutorial-sample10-01-heatmap-chart.html">[Heatmap chart] basic</a><div class="hidden" id="sample10-01-heatmap-chart_sub"></div></li><li><a href="tutorial-sample11-01-treemap-chart.html">[Treemap chart] basic</a><div class="hidden" id="sample11-01-treemap-chart_sub"></div></li><li><a href="tutorial-sample11-02-color-value-treemap-chart.html">[Treemap chart] useColorValue option</a><div class="hidden" id="sample11-02-color-value-treemap-chart_sub"></div></li><li><a href="tutorial-sample12-01-dynamic-data-shifting-chart.html">[Dynamic chart] dynamic data and spline</a><div class="hidden" id="sample12-01-dynamic-data-shifting-chart_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a><div class="hidden" id="AreaChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="AreaChart.html#chartType">chartType</a></li><li><a href="AreaChart.html#className">className</a></li><li><a href="AreaChart.html#componentManager">componentManager</a></li><li><a href="AreaChart.html#dataProcessor">dataProcessor</a></li><li><a href="AreaChart.html#eventBus">eventBus</a></li><li><a href="AreaChart.html#hasAxes">hasAxes</a></li><li><a href="AreaChart.html#isVertical">isVertical</a></li><li><a href="AreaChart.html#options">options</a></li><li><a href="AreaChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="AreaChart.html#Series">Series</a></li><li><a href="AreaChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="AreaChart.html#addData">addData</a></li><li><a href="AreaChart.html#addPlotBand">addPlotBand</a></li><li><a href="AreaChart.html#addPlotLine">addPlotLine</a></li><li><a href="AreaChart.html#animateChart">animateChart</a></li><li><a href="AreaChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="AreaChart.html#on">on</a></li><li><a href="AreaChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="AreaChart.html#removePlotBand">removePlotBand</a></li><li><a href="AreaChart.html#removePlotLine">removePlotLine</a></li><li><a href="AreaChart.html#render">render</a></li><li><a href="AreaChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="AreaChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="AreaChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="AreaChart.html#resize">resize</a></li><li><a href="AreaChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="AreaChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="AreaChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="AreaChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="BarChart.html">BarChart</a><div class="hidden" id="BarChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BarChart.html#chartType">chartType</a></li><li><a href="BarChart.html#className">className</a></li><li><a href="BarChart.html#componentManager">componentManager</a></li><li><a href="BarChart.html#dataProcessor">dataProcessor</a></li><li><a href="BarChart.html#eventBus">eventBus</a></li><li><a href="BarChart.html#hasAxes">hasAxes</a></li><li><a href="BarChart.html#hasRightYAxis">hasRightYAxis</a></li><li><a href="BarChart.html#isVertical">isVertical</a></li><li><a href="BarChart.html#options">options</a></li><li><a href="BarChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="BarChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BarChart.html#addData">addData</a></li><li><a href="BarChart.html#addPlotBand">addPlotBand</a></li><li><a href="BarChart.html#addPlotLine">addPlotLine</a></li><li><a href="BarChart.html#animateChart">animateChart</a></li><li><a href="BarChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="BarChart.html#on">on</a></li><li><a href="BarChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="BarChart.html#removePlotBand">removePlotBand</a></li><li><a href="BarChart.html#removePlotLine">removePlotLine</a></li><li><a href="BarChart.html#render">render</a></li><li><a href="BarChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="BarChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="BarChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="BarChart.html#resize">resize</a></li><li><a href="BarChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="BarChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="BarChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="BarChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="BubbleChart.html">BubbleChart</a><div class="hidden" id="BubbleChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BubbleChart.html#chartType">chartType</a></li><li><a href="BubbleChart.html#className">className</a></li><li><a href="BubbleChart.html#componentManager">componentManager</a></li><li><a href="BubbleChart.html#dataProcessor">dataProcessor</a></li><li><a href="BubbleChart.html#eventBus">eventBus</a></li><li><a href="BubbleChart.html#hasAxes">hasAxes</a></li><li><a href="BubbleChart.html#isVertical">isVertical</a></li><li><a href="BubbleChart.html#options">options</a></li><li><a href="BubbleChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="BubbleChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BubbleChart.html#addData">addData</a></li><li><a href="BubbleChart.html#addPlotBand">addPlotBand</a></li><li><a href="BubbleChart.html#addPlotLine">addPlotLine</a></li><li><a href="BubbleChart.html#animateChart">animateChart</a></li><li><a href="BubbleChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="BubbleChart.html#on">on</a></li><li><a href="BubbleChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="BubbleChart.html#removePlotBand">removePlotBand</a></li><li><a href="BubbleChart.html#removePlotLine">removePlotLine</a></li><li><a href="BubbleChart.html#render">render</a></li><li><a href="BubbleChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="BubbleChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="BubbleChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="BubbleChart.html#resize">resize</a></li><li><a href="BubbleChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="BubbleChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="BubbleChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="BubbleChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="ChartBase.html">ChartBase</a><div class="hidden" id="ChartBase_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ChartBase.html#chartType">chartType</a></li><li><a href="ChartBase.html#componentManager">componentManager</a></li><li><a href="ChartBase.html#dataProcessor">dataProcessor</a></li><li><a href="ChartBase.html#eventBus">eventBus</a></li><li><a href="ChartBase.html#hasAxes">hasAxes</a></li><li><a href="ChartBase.html#isVertical">isVertical</a></li><li><a href="ChartBase.html#options">options</a></li><li><a href="ChartBase.html#prevXAxisData">prevXAxisData</a></li><li><a href="ChartBase.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ChartBase.html#addData">addData</a></li><li><a href="ChartBase.html#addPlotBand">addPlotBand</a></li><li><a href="ChartBase.html#addPlotLine">addPlotLine</a></li><li><a href="ChartBase.html#animateChart">animateChart</a></li><li><a href="ChartBase.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ChartBase.html#on">on</a></li><li><a href="ChartBase.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ChartBase.html#removePlotBand">removePlotBand</a></li><li><a href="ChartBase.html#removePlotLine">removePlotLine</a></li><li><a href="ChartBase.html#render">render</a></li><li><a href="ChartBase.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ChartBase.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ChartBase.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ChartBase.html#resize">resize</a></li><li><a href="ChartBase.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ChartBase.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ChartBase.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ChartBase.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="ColumnChart.html">ColumnChart</a><div class="hidden" id="ColumnChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ColumnChart.html#chartType">chartType</a></li><li><a href="ColumnChart.html#className">className</a></li><li><a href="ColumnChart.html#componentManager">componentManager</a></li><li><a href="ColumnChart.html#dataProcessor">dataProcessor</a></li><li><a href="ColumnChart.html#eventBus">eventBus</a></li><li><a href="ColumnChart.html#hasAxes">hasAxes</a></li><li><a href="ColumnChart.html#isVertical">isVertical</a></li><li><a href="ColumnChart.html#options">options</a></li><li><a href="ColumnChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="ColumnChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ColumnChart.html#addData">addData</a></li><li><a href="ColumnChart.html#addPlotBand">addPlotBand</a></li><li><a href="ColumnChart.html#addPlotLine">addPlotLine</a></li><li><a href="ColumnChart.html#animateChart">animateChart</a></li><li><a href="ColumnChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ColumnChart.html#on">on</a></li><li><a href="ColumnChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ColumnChart.html#removePlotBand">removePlotBand</a></li><li><a href="ColumnChart.html#removePlotLine">removePlotLine</a></li><li><a href="ColumnChart.html#render">render</a></li><li><a href="ColumnChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ColumnChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ColumnChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ColumnChart.html#resize">resize</a></li><li><a href="ColumnChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ColumnChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ColumnChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ColumnChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a><div class="hidden" id="ColumnLineComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ColumnLineComboChart.html#chartType">chartType</a></li><li><a href="ColumnLineComboChart.html#componentManager">componentManager</a></li><li><a href="ColumnLineComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="ColumnLineComboChart.html#eventBus">eventBus</a></li><li><a href="ColumnLineComboChart.html#hasAxes">hasAxes</a></li><li><a href="ColumnLineComboChart.html#isVertical">isVertical</a></li><li><a href="ColumnLineComboChart.html#options">options</a></li><li><a href="ColumnLineComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="ColumnLineComboChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ColumnLineComboChart.html#addData">addData</a></li><li><a href="ColumnLineComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="ColumnLineComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="ColumnLineComboChart.html#animateChart">animateChart</a></li><li><a href="ColumnLineComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ColumnLineComboChart.html#on">on</a></li><li><a href="ColumnLineComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ColumnLineComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="ColumnLineComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="ColumnLineComboChart.html#render">render</a></li><li><a href="ColumnLineComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ColumnLineComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ColumnLineComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ColumnLineComboChart.html#resize">resize</a></li><li><a href="ColumnLineComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ColumnLineComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ColumnLineComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ColumnLineComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="HeatmapChart.html">HeatmapChart</a><div class="hidden" id="HeatmapChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="HeatmapChart.html#chartType">chartType</a></li><li><a href="HeatmapChart.html#className">className</a></li><li><a href="HeatmapChart.html#componentManager">componentManager</a></li><li><a href="HeatmapChart.html#dataProcessor">dataProcessor</a></li><li><a href="HeatmapChart.html#eventBus">eventBus</a></li><li><a href="HeatmapChart.html#hasAxes">hasAxes</a></li><li><a href="HeatmapChart.html#isVertical">isVertical</a></li><li><a href="HeatmapChart.html#options">options</a></li><li><a href="HeatmapChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="HeatmapChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="HeatmapChart.html#addData">addData</a></li><li><a href="HeatmapChart.html#addPlotBand">addPlotBand</a></li><li><a href="HeatmapChart.html#addPlotLine">addPlotLine</a></li><li><a href="HeatmapChart.html#animateChart">animateChart</a></li><li><a href="HeatmapChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="HeatmapChart.html#on">on</a></li><li><a href="HeatmapChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="HeatmapChart.html#removePlotBand">removePlotBand</a></li><li><a href="HeatmapChart.html#removePlotLine">removePlotLine</a></li><li><a href="HeatmapChart.html#render">render</a></li><li><a href="HeatmapChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="HeatmapChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="HeatmapChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="HeatmapChart.html#resize">resize</a></li><li><a href="HeatmapChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="HeatmapChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="HeatmapChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="HeatmapChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a><div class="hidden" id="LineAreaComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LineAreaComboChart.html#chartType">chartType</a></li><li><a href="LineAreaComboChart.html#className">className</a></li><li><a href="LineAreaComboChart.html#componentManager">componentManager</a></li><li><a href="LineAreaComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="LineAreaComboChart.html#eventBus">eventBus</a></li><li><a href="LineAreaComboChart.html#hasAxes">hasAxes</a></li><li><a href="LineAreaComboChart.html#isVertical">isVertical</a></li><li><a href="LineAreaComboChart.html#options">options</a></li><li><a href="LineAreaComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="LineAreaComboChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LineAreaComboChart.html#addData">addData</a></li><li><a href="LineAreaComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="LineAreaComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="LineAreaComboChart.html#animateChart">animateChart</a></li><li><a href="LineAreaComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="LineAreaComboChart.html#on">on</a></li><li><a href="LineAreaComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="LineAreaComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="LineAreaComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="LineAreaComboChart.html#render">render</a></li><li><a href="LineAreaComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="LineAreaComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="LineAreaComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="LineAreaComboChart.html#resize">resize</a></li><li><a href="LineAreaComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="LineAreaComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="LineAreaComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="LineAreaComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="LineChart.html">LineChart</a><div class="hidden" id="LineChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LineChart.html#chartType">chartType</a></li><li><a href="LineChart.html#className">className</a></li><li><a href="LineChart.html#componentManager">componentManager</a></li><li><a href="LineChart.html#dataProcessor">dataProcessor</a></li><li><a href="LineChart.html#eventBus">eventBus</a></li><li><a href="LineChart.html#hasAxes">hasAxes</a></li><li><a href="LineChart.html#isVertical">isVertical</a></li><li><a href="LineChart.html#options">options</a></li><li><a href="LineChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="LineChart.html#Series">Series</a></li><li><a href="LineChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LineChart.html#addData">addData</a></li><li><a href="LineChart.html#addPlotBand">addPlotBand</a></li><li><a href="LineChart.html#addPlotLine">addPlotLine</a></li><li><a href="LineChart.html#animateChart">animateChart</a></li><li><a href="LineChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="LineChart.html#on">on</a></li><li><a href="LineChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="LineChart.html#removePlotBand">removePlotBand</a></li><li><a href="LineChart.html#removePlotLine">removePlotLine</a></li><li><a href="LineChart.html#render">render</a></li><li><a href="LineChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="LineChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="LineChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="LineChart.html#resize">resize</a></li><li><a href="LineChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="LineChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="LineChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="LineChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a><div class="hidden" id="LineScatterComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LineScatterComboChart.html#chartType">chartType</a></li><li><a href="LineScatterComboChart.html#chartTypes">chartTypes</a></li><li><a href="LineScatterComboChart.html#componentManager">componentManager</a></li><li><a href="LineScatterComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="LineScatterComboChart.html#eventBus">eventBus</a></li><li><a href="LineScatterComboChart.html#hasAxes">hasAxes</a></li><li><a href="LineScatterComboChart.html#isVertical">isVertical</a></li><li><a href="LineScatterComboChart.html#options">options</a></li><li><a href="LineScatterComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="LineScatterComboChart.html#seriesNames">seriesNames</a></li><li><a href="LineScatterComboChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LineScatterComboChart.html#addData">addData</a></li><li><a href="LineScatterComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="LineScatterComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="LineScatterComboChart.html#animateChart">animateChart</a></li><li><a href="LineScatterComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="LineScatterComboChart.html#on">on</a></li><li><a href="LineScatterComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="LineScatterComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="LineScatterComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="LineScatterComboChart.html#render">render</a></li><li><a href="LineScatterComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="LineScatterComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="LineScatterComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="LineScatterComboChart.html#resize">resize</a></li><li><a href="LineScatterComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="LineScatterComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="LineScatterComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="LineScatterComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="MapChart.html">MapChart</a><div class="hidden" id="MapChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MapChart.html#chartType">chartType</a></li><li><a href="MapChart.html#className">className</a></li><li><a href="MapChart.html#componentManager">componentManager</a></li><li><a href="MapChart.html#dataProcessor">dataProcessor</a></li><li><a href="MapChart.html#eventBus">eventBus</a></li><li><a href="MapChart.html#hasAxes">hasAxes</a></li><li><a href="MapChart.html#isVertical">isVertical</a></li><li><a href="MapChart.html#options">options</a></li><li><a href="MapChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="MapChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MapChart.html#addData">addData</a></li><li><a href="MapChart.html#addPlotBand">addPlotBand</a></li><li><a href="MapChart.html#addPlotLine">addPlotLine</a></li><li><a href="MapChart.html#animateChart">animateChart</a></li><li><a href="MapChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="MapChart.html#on">on</a></li><li><a href="MapChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="MapChart.html#removePlotBand">removePlotBand</a></li><li><a href="MapChart.html#removePlotLine">removePlotLine</a></li><li><a href="MapChart.html#render">render</a></li><li><a href="MapChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="MapChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="MapChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="MapChart.html#resize">resize</a></li><li><a href="MapChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="MapChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="MapChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="MapChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="MapChartMapModel.html">MapChartMapModel</a><div class="hidden" id="MapChartMapModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MapChartMapModel.html#commandFuncMap">commandFuncMap</a></li><li><a href="MapChartMapModel.html#dataProcessor">dataProcessor</a></li><li><a href="MapChartMapModel.html#ignoreCommandMap">ignoreCommandMap</a></li><li><a href="MapChartMapModel.html#mapData">mapData</a></li><li><a href="MapChartMapModel.html#mapDimension">mapDimension</a></li><li><a href="MapChartMapModel.html#rawMapData">rawMapData</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MapChartMapModel.html#getDatum">getDatum</a></li><li><a href="MapChartMapModel.html#getLabelData">getLabelData</a></li><li><a href="MapChartMapModel.html#getMapData">getMapData</a></li><li><a href="MapChartMapModel.html#getMapDimension">getMapDimension</a></li></ul></div></li><li><a href="PieChart.html">PieChart</a><div class="hidden" id="PieChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PieChart.html#chartType">chartType</a></li><li><a href="PieChart.html#className">className</a></li><li><a href="PieChart.html#componentManager">componentManager</a></li><li><a href="PieChart.html#dataProcessor">dataProcessor</a></li><li><a href="PieChart.html#eventBus">eventBus</a></li><li><a href="PieChart.html#hasAxes">hasAxes</a></li><li><a href="PieChart.html#isVertical">isVertical</a></li><li><a href="PieChart.html#options">options</a></li><li><a href="PieChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="PieChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PieChart.html#addData">addData</a></li><li><a href="PieChart.html#addPlotBand">addPlotBand</a></li><li><a href="PieChart.html#addPlotLine">addPlotLine</a></li><li><a href="PieChart.html#animateChart">animateChart</a></li><li><a href="PieChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="PieChart.html#on">on</a></li><li><a href="PieChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="PieChart.html#removePlotBand">removePlotBand</a></li><li><a href="PieChart.html#removePlotLine">removePlotLine</a></li><li><a href="PieChart.html#render">render</a></li><li><a href="PieChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="PieChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="PieChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="PieChart.html#resize">resize</a></li><li><a href="PieChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="PieChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="PieChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="PieChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a><div class="hidden" id="PieDonutComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PieDonutComboChart.html#chartType">chartType</a></li><li><a href="PieDonutComboChart.html#className">className</a></li><li><a href="PieDonutComboChart.html#componentManager">componentManager</a></li><li><a href="PieDonutComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="PieDonutComboChart.html#eventBus">eventBus</a></li><li><a href="PieDonutComboChart.html#hasAxes">hasAxes</a></li><li><a href="PieDonutComboChart.html#isVertical">isVertical</a></li><li><a href="PieDonutComboChart.html#options">options</a></li><li><a href="PieDonutComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="PieDonutComboChart.html#seriesNames">seriesNames</a></li><li><a href="PieDonutComboChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PieDonutComboChart.html#addData">addData</a></li><li><a href="PieDonutComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="PieDonutComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="PieDonutComboChart.html#animateChart">animateChart</a></li><li><a href="PieDonutComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="PieDonutComboChart.html#on">on</a></li><li><a href="PieDonutComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="PieDonutComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="PieDonutComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="PieDonutComboChart.html#render">render</a></li><li><a href="PieDonutComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="PieDonutComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="PieDonutComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="PieDonutComboChart.html#resize">resize</a></li><li><a href="PieDonutComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="PieDonutComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="PieDonutComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="PieDonutComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="ScatterChart.html">ScatterChart</a><div class="hidden" id="ScatterChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ScatterChart.html#chartType">chartType</a></li><li><a href="ScatterChart.html#className">className</a></li><li><a href="ScatterChart.html#componentManager">componentManager</a></li><li><a href="ScatterChart.html#dataProcessor">dataProcessor</a></li><li><a href="ScatterChart.html#eventBus">eventBus</a></li><li><a href="ScatterChart.html#hasAxes">hasAxes</a></li><li><a href="ScatterChart.html#isVertical">isVertical</a></li><li><a href="ScatterChart.html#options">options</a></li><li><a href="ScatterChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="ScatterChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ScatterChart.html#addData">addData</a></li><li><a href="ScatterChart.html#addPlotBand">addPlotBand</a></li><li><a href="ScatterChart.html#addPlotLine">addPlotLine</a></li><li><a href="ScatterChart.html#animateChart">animateChart</a></li><li><a href="ScatterChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ScatterChart.html#on">on</a></li><li><a href="ScatterChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ScatterChart.html#removePlotBand">removePlotBand</a></li><li><a href="ScatterChart.html#removePlotLine">removePlotLine</a></li><li><a href="ScatterChart.html#render">render</a></li><li><a href="ScatterChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ScatterChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ScatterChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ScatterChart.html#resize">resize</a></li><li><a href="ScatterChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ScatterChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ScatterChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ScatterChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="TreemapChart.html">TreemapChart</a><div class="hidden" id="TreemapChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="TreemapChart.html#chartType">chartType</a></li><li><a href="TreemapChart.html#className">className</a></li><li><a href="TreemapChart.html#componentManager">componentManager</a></li><li><a href="TreemapChart.html#dataProcessor">dataProcessor</a></li><li><a href="TreemapChart.html#eventBus">eventBus</a></li><li><a href="TreemapChart.html#hasAxes">hasAxes</a></li><li><a href="TreemapChart.html#isVertical">isVertical</a></li><li><a href="TreemapChart.html#options">options</a></li><li><a href="TreemapChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="TreemapChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="TreemapChart.html#addData">addData</a></li><li><a href="TreemapChart.html#addPlotBand">addPlotBand</a></li><li><a href="TreemapChart.html#addPlotLine">addPlotLine</a></li><li><a href="TreemapChart.html#animateChart">animateChart</a></li><li><a href="TreemapChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="TreemapChart.html#on">on</a></li><li><a href="TreemapChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="TreemapChart.html#onZoom">onZoom</a></li><li><a href="TreemapChart.html#removePlotBand">removePlotBand</a></li><li><a href="TreemapChart.html#removePlotLine">removePlotLine</a></li><li><a href="TreemapChart.html#render">render</a></li><li><a href="TreemapChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="TreemapChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="TreemapChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="TreemapChart.html#resize">resize</a></li><li><a href="TreemapChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="TreemapChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="TreemapChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="TreemapChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="tui.chart.html">tui.chart</a><div class="hidden" id="tui.chart_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="tui.chart.html#.areaChart">areaChart</a></li><li><a href="tui.chart.html#.barChart">barChart</a></li><li><a href="tui.chart.html#.bubbleChart">bubbleChart</a></li><li><a href="tui.chart.html#.columnChart">columnChart</a></li><li><a href="tui.chart.html#.comboChart">comboChart</a></li><li><a href="tui.chart.html#.heatmapChart">heatmapChart</a></li><li><a href="tui.chart.html#.lineChart">lineChart</a></li><li><a href="tui.chart.html#.mapChart">mapChart</a></li><li><a href="tui.chart.html#.pieChart">pieChart</a></li><li><a href="tui.chart.html#.registerMap">registerMap</a></li><li><a href="tui.chart.html#.registerPlugin">registerPlugin</a></li><li><a href="tui.chart.html#.registerTheme">registerTheme</a></li><li><a href="tui.chart.html#.scatterChart">scatterChart</a></li><li><a href="tui.chart.html#.treemapChart">treemapChart</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li class="hidden"><a href="global.html#axisLimit">axisLimit</a></li><li class="hidden"><a href="global.html#bound">bound</a></li><li class="hidden"><a href="global.html#circleInfo">circleInfo</a></li><li class="hidden"><a href="global.html#dimension">dimension</a></li><li class="hidden"><a href="global.html#groupBound">groupBound</a></li><li class="hidden"><a href="global.html#groupPosition">groupPosition</a></li><li class="hidden"><a href="global.html#position">position</a></li><li class="hidden"><a href="global.html#rawData">rawData</a></li><li class="hidden"><a href="global.html#rawSeriesData">rawSeriesData</a></li><li class="hidden"><a href="global.html#rawSeriesDatum">rawSeriesDatum</a></li><li class="hidden"><a href="global.html#seriesInfo">seriesInfo</a></li><li class="hidden"><a href="global.html#valueMap">valueMap</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview DataProcessor process rawData.
+ * rawData.categories --> categories
+ * rawData.series --> SeriesDataModel, legendLabels, legendData
+ * @author NHN Ent.
+ *         FE Development Lab &lt;dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var chartConst = require('../../const');
+var DataProcessorBase = require('./dataProcessorBase');
+var SeriesDataModel = require('../data/seriesDataModel');
+var SeriesDataModelForTreemap = require('../data/seriesDataModelForTreemap');
+var SeriesGroup = require('./seriesGroup');
+var rawDataHandler = require('../../models/data/rawDataHandler');
+var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
+var calculator = require('../../helpers/calculator');
+var objectUtil = require('../../helpers/objectUtil');
+
+var concat = Array.prototype.concat;
+
+/*
+ * Raw series datum.
+ * @typedef {{name: ?string, data: Array.&lt;number>, stack: ?string}} rawSeriesDatum
+ */
+
+/*
+ * Raw series data.
+ * @typedef {Array.&lt;rawSeriesDatum>} rawSeriesData
+ */
+
+/*
+ * Raw data by user.
+ * @typedef {{
+ *      categories: ?Array.&lt;string>,
+ *      series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})
+ * }} rawData
+ */
+
+/*
+ * SeriesDataModel is base model for drawing graph of chart series area,
+ *      and create from rawSeriesData by user,
+ * SeriesDataModel.groups has SeriesGroups.
+ */
+
+/*
+ * SeriesGroup is a element of SeriesDataModel.groups.
+ * SeriesGroup.items has SeriesItem.
+ */
+
+var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProcessor.prototype */{
+    /**
+     * Data processor.
+     * @constructs DataProcessor
+     * @private
+     * @param {rawData} rawData raw data
+     * @param {string} chartType chart type
+     * @param {object} options options
+     * @param {Array.&lt;string>} seriesNames chart types
+     */
+    init: function(rawData, chartType, options, seriesNames) {
+        /**
+         * original raw data.
+         * @type {{categories: ?Array.&lt;string>, series: Array.&lt;object>}}
+         */
+        this.originalRawData = objectUtil.deepCopy(rawData);
+
+        /**
+         * chart type
+         * @type {string}
+         */
+        this.chartType = chartType;
+
+        /**
+         * chart options
+         * @type {Object}
+         */
+        this.options = options;
+
+        /**
+         * seriesNames is sorted chart types for rendering series area of combo chart.
+         * @type {Array.&lt;string>}
+         */
+        this.seriesNames = seriesNames;
+
+        /**
+         * legend data for rendering legend of group tooltip
+         * @type {Array.&lt;{chartType: string, label: string}>}
+         */
+        this.originalLegendData = null;
+
+        /**
+         * dynamic data array for adding data.
+         * @type {Array.&lt;{category: string | number, values: Array.&lt;number>}>}
+         */
+        this.dynamicData = [];
+
+        this.initData(rawData);
+        this.initZoomedRawData();
+        this.baseInit();
+    },
+
+    /**
+     * Get original raw data.
+     * @returns {rawData} raw data
+     */
+    getOriginalRawData: function() {
+        return objectUtil.deepCopy(this.originalRawData);
+    },
+
+    /**
+     * Get zoomed raw data.
+     * @returns {*|null}
+     */
+    getZoomedRawData: function() {
+        var zoomedRawData = this.zoomedRawData;
+        if (zoomedRawData) {
+            zoomedRawData = objectUtil.deepCopy(zoomedRawData);
+        } else {
+            zoomedRawData = this.getOriginalRawData();
+        }
+
+        return zoomedRawData;
+    },
+
+    /**
+     * Filter seriesData by index range.
+     * @param {Array.&lt;{data: Array}>} seriesData - series data
+     * @param {number} startIndex - start index
+     * @param {number} endIndex - end index
+     * @returns {Array.&lt;Array.&lt;object>>}
+     * @private
+     */
+    _filterSeriesDataByIndexRange: function(seriesData, startIndex, endIndex) {
+        tui.util.forEachArray(seriesData, function(seriesDatum) {
+            seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
+        });
+
+        return seriesData;
+    },
+
+    /**
+     * Filter raw data by index range.
+     * @param {{series: Array.&lt;object>, categories: Array.&lt;string>}} rawData - raw data
+     * @param {Array.&lt;number>} indexRange - index range for zoom
+     * @returns {*}
+     * @private
+     */
+    _filterRawDataByIndexRange: function(rawData, indexRange) {
+        var self = this;
+        var startIndex = indexRange[0];
+        var endIndex = indexRange[1];
+
+        if (tui.util.isArray(rawData.series)) {
+            rawData.series = this._filterSeriesDataByIndexRange(rawData.series, startIndex, endIndex);
+        } else {
+            tui.util.forEach(rawData.series, function(seriesDataSet, seriesName) {
+                rawData.series[seriesName] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+            });
+        }
+
+        rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+
+        return rawData;
+    },
+
+    /**
+     * Update raw data for zoom
+     * @param {Array.&lt;number>} indexRange - index range for zoom
+     */
+    updateRawDataForZoom: function(indexRange) {
+        var rawData = this.getRawData();
+        var zoomedRawData = this.getZoomedRawData();
+
+        this.zoomedRawData = this._filterRawDataByIndexRange(zoomedRawData, indexRange);
+        rawData = this._filterRawDataByIndexRange(rawData, indexRange);
+        this.initData(rawData);
+    },
+
+    /**
+     * Init zoomed raw data.
+     */
+    initZoomedRawData: function() {
+        this.zoomedRawData = null;
+    },
+
+    /**
+     * Initialize data.
+     * @param {rawData} rawData raw data
+     */
+    initData: function(rawData) {
+        /**
+         * raw data
+         * @type {rawData}
+         */
+        this.rawData = rawData;
+
+        /**
+         * categoriesMap
+         * @type {null|object}
+         */
+        this.categoriesMap = null;
+
+        /**
+         * stacks
+         * @type {Array.&lt;number>}
+         */
+        this.stacks = null;
+
+        /**
+         * seriesDataModel map
+         * @type {object.&lt;string, SeriesDataModel>}
+         */
+        this.seriesDataModelMap = {};
+
+        /**
+         * SeriesGroups
+         * @type {Array.&lt;SeriesGroup>}
+         */
+        this.seriesGroups = null;
+
+        /**
+         * map of values of SeriesItems
+         * @type {Object.&lt;string, Array.&lt;number>>}
+         */
+        this.valuesMap = {};
+
+        /**
+         * legend labels for rendering legend area
+         * @type {{column: Array.&lt;string>, line: Array.&lt;string> | Array.&lt;string>}}
+         */
+        this.legendLabels = null;
+
+        /**
+         * legend data for rendering legend
+         * @type {Array.&lt;{chartType: string, label: string}>}
+         */
+        this.legendData = null;
+
+        /**
+         * multiline categories
+         * @type {Array.&lt;string>}
+         */
+        this.multilineCategories = null;
+
+        /**
+         * whether coordinate type data or not
+         * @type {null|boolean}
+         */
+        this.coordinateType = null;
+    },
+
+    /**
+     * Get raw data.
+     * @returns {rawData}
+     */
+    getRawData: function() {
+        return this.rawData;
+    },
+
+    /**
+     * Find chart type from series name.
+     * @param {string} seriesName - series name
+     * @returns {*}
+     */
+    findChartType: function(seriesName) {
+        return rawDataHandler.findChartType(this.rawData.seriesAlias, seriesName);
+    },
+
+    /**
+     * Escape categories.
+     * @param {Array.&lt;string, number>} categories - cetegories
+     * @returns {*|Array.&lt;Object>|Array}
+     * @private
+     */
+    _escapeCategories: function(categories) {
+        return tui.util.map(categories, function(category) {
+            return tui.util.encodeHTMLEntity(String(category));
+        });
+    },
+
+    /**
+     * Map categories.
+     * @param {Array.&lt;string | number>} categories - categories
+     * @returns {Array.&lt;string | number>}
+     * @private
+     */
+    _mapCategories: function(categories) {
+        if (predicate.isDatetimeType(this.options.xAxis.type)) {
+            categories = tui.util.map(categories, function(value) {
+                var date = new Date(value);
+
+                return date.getTime() || value;
+            });
+        } else {
+            categories = this._escapeCategories(categories);
+        }
+
+        return categories;
+    },
+
+    /**
+     * Process categories.
+     * @param {string} type - category type (x or y)
+     * @returns {null | Array.&lt;string>} processed categories
+     * @private
+     */
+    _processCategories: function(type) {
+        var rawCategories = this.rawData.categories;
+        var categoriesMap = {};
+
+        if (tui.util.isArray(rawCategories)) {
+            categoriesMap[type] = this._mapCategories(rawCategories);
+        } else if (rawCategories) {
+            if (rawCategories.x) {
+                categoriesMap.x = this._mapCategories(rawCategories.x);
+            }
+
+            if (rawCategories.y) {
+                categoriesMap.y = this._mapCategories(rawCategories.y).reverse();
+            }
+        }
+
+        return categoriesMap;
+    },
+
+    /**
+     * Get Categories
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {Array.&lt;string>}}
+     */
+    getCategories: function(isVertical) {
+        var type = isVertical ? 'y' : 'x';
+        var foundCategories = [];
+
+        if (!this.categoriesMap) {
+            this.categoriesMap = this._processCategories(type);
+        }
+
+        if (tui.util.isExisty(isVertical)) {
+            foundCategories = this.categoriesMap[type] || [];
+        } else {
+            tui.util.forEach(this.categoriesMap, function(categories) {
+                foundCategories = categories;
+
+                return false;
+            });
+        }
+
+        return foundCategories;
+    },
+
+    /**
+     * Get category count.
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {*}
+     */
+    getCategoryCount: function(isVertical) {
+        var categories = this.getCategories(isVertical);
+
+        return categories ? categories.length : 0;
+    },
+
+    /**
+     * Whether has categories or not.
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {boolean}
+     */
+    hasCategories: function(isVertical) {
+        return !!this.getCategoryCount(isVertical);
+    },
+
+    /**
+     * Whether count of x data grater than count of y data.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isXCountGreaterThanYCount: function(chartType) {
+        var seriesDataModel = this.getSeriesDataModel(chartType);
+
+        return seriesDataModel.isXCountGreaterThanYCount();
+    },
+
+    /**
+     * Whether has x value or not.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    hasXValue: function(chartType) {
+        var hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
+
+        return !this.hasCategories(hasVerticalCategory) || hasVerticalCategory;
+    },
+
+    /**
+     * Whether has y value or not.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    hasYValue: function(chartType) {
+        var hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
+
+        return !this.hasCategories(hasVerticalCategory) || !hasVerticalCategory;
+    },
+
+    /**
+     * Get category.
+     * @param {number} index index
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {string} category
+     */
+    getCategory: function(index, isVertical) {
+        return this.getCategories(isVertical)[index];
+    },
+
+    /**
+     * Find category index by value
+     * @param {string} value - category value
+     * @returns {null|number}
+     */
+    findCategoryIndex: function(value) {
+        var categories = this.getCategories();
+        var foundIndex = null;
+
+        tui.util.forEachArray(categories, function(category, index) {
+            if (category === value) {
+                foundIndex = index;
+            }
+
+            return tui.util.isNull(foundIndex);
+        });
+
+        return foundIndex;
+    },
+
+    /**
+     * Get tooltip category.
+     * @param {number} categoryIndex - category index
+     * @param {boolean} isVertical - whether vertical category or not
+     * @returns {string}
+     * @private
+     */
+    _getTooltipCategory: function(categoryIndex, isVertical) {
+        var category = this.getCategory(categoryIndex, isVertical);
+        var axisType = isVertical ? 'yAxis' : 'xAxis';
+        var options = this.options[axisType] || {};
+
+        if (predicate.isDatetimeType(options.type)) {
+            category = renderUtil.formatDate(category, options.dateFormat);
+        }
+
+        return category;
+    },
+
+    /**
+     * Make category for tooltip.
+     * @param {number} categoryIndex - category index
+     * @param {number} oppositeIndex - opposite index
+     * @param {boolean} isVerticalChart - whether vertical chart or not
+     * @returns {string}
+     */
+    makeTooltipCategory: function(categoryIndex, oppositeIndex, isVerticalChart) {
+        var isVertical = !isVerticalChart;
+        var category = this._getTooltipCategory(categoryIndex, isVertical);
+        var categoryCount = this.getCategoryCount(!isVertical);
+
+        if (categoryCount) {
+            category += ', ' + this._getTooltipCategory(categoryCount - oppositeIndex - 1, !isVertical);
+        }
+
+        return category;
+    },
+
+    /**
+     * Get stacks from raw series data.
+     * @returns {Array.&lt;string>}
+     */
+    getStacks: function() {
+        if (!this.stacks) {
+            this.stacks = rawDataHandler.pickStacks(this.rawData.series);
+        }
+
+        return this.stacks;
+    },
+
+    /**
+     * Get stack count.
+     * @returns {Number}
+     */
+    getStackCount: function() {
+        return this.getStacks().length;
+    },
+
+    /**
+     * Find stack index from stack list by stack value.
+     * @param {string} stack stack
+     * @returns {number}
+     */
+    findStackIndex: function(stack) {
+        return tui.util.inArray(stack, this.getStacks());
+    },
+
+    /**
+     * Whether coordinate type or not.
+     * @returns {boolean}
+     */
+    isCoordinateType: function() {
+        var chartType = this.chartType;
+        var coordinateType = this.coordinateType;
+
+        if (!tui.util.isExisty(coordinateType)) {
+            coordinateType = predicate.isCoordinateTypeChart(chartType);
+            coordinateType = coordinateType || predicate.isLineScatterComboChart(chartType, this.seriesNames);
+            coordinateType = coordinateType || (predicate.isLineTypeChart(chartType) &amp;&amp; !this.hasCategories());
+            this.coordinateType = coordinateType;
+        }
+
+        return coordinateType;
+    },
+
+    /**
+     * Get SeriesDataModel.
+     * @param {string} seriesName - series name
+     * @returns {SeriesDataModel}
+     */
+    getSeriesDataModel: function(seriesName) {
+        var rawSeriesData, chartType, SeriesDataModelClass;
+
+        if (!this.seriesDataModelMap[seriesName]) {
+            chartType = this.findChartType(seriesName);
+            rawSeriesData = this.rawData.series[seriesName] || this.rawData.series;
+
+            if (predicate.isTreemapChart(this.chartType)) {
+                SeriesDataModelClass = SeriesDataModelForTreemap;
+            } else {
+                SeriesDataModelClass = SeriesDataModel;
+            }
+
+            this.seriesDataModelMap[seriesName] = new SeriesDataModelClass(rawSeriesData, chartType,
+                this.options, this.getFormatFunctions(), this.isCoordinateType());
+        }
+
+        return this.seriesDataModelMap[seriesName];
+    },
+
+    /**
+     * Get group count.
+     * @param {string} chartType chart type
+     * @returns {number}
+     */
+    getGroupCount: function(chartType) {
+        return this.getSeriesDataModel(chartType).getGroupCount();
+    },
+
+    /**
+     * Push category.
+     * @param {string} category - category
+     * @private
+     */
+    _pushCategory: function(category) {
+        if (this.rawData.categories) {
+            this.rawData.categories.push(category);
+            this.originalRawData.categories.push(category);
+        }
+    },
+
+    /**
+     * Shift category.
+     * @private
+     */
+    _shiftCategory: function() {
+        if (this.rawData.categories) {
+            this.rawData.categories.shift();
+            this.originalRawData.categories.shift();
+        }
+    },
+
+    /**
+     * Find raw series datum by name.
+     * @param {string} name - legend name
+     * @param {string} [seriesName] - series name
+     * @returns {object}
+     * @private
+     */
+    _findRawSeriesDatumByName: function(name, seriesName) {
+        var foundSeriesDatum = null;
+        var seriesData = seriesName ? this.rawData.series[seriesName] : this.rawData.series;
+
+        tui.util.forEachArray(seriesData, function(seriesDatum) {
+            var isEqual = seriesDatum.name === name;
+
+            if (isEqual) {
+                foundSeriesDatum = seriesDatum;
+            }
+
+            return !isEqual;
+        });
+
+        return foundSeriesDatum;
+    },
+
+    /**
+     * Push value to data property of series.
+     * @param {{name: string, data: Array}} seriesDatum - series datum
+     * @param {Array.&lt;number>|{x: number, y: number, r: number}|number} value - value
+     * @param {string} seriesName - sereis name
+     * @private
+     */
+    _pushValue: function(seriesDatum, value, seriesName) {
+        var rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+
+        seriesDatum.data.push(value);
+
+        if (rawSeriesDatum) {
+            rawSeriesDatum.data.push(value);
+        }
+    },
+
+    /**
+     * Push values to series of originalRawData and series of rawData.
+     * @param {Array.&lt;{name: string, data: Array}>} seriesData - series data
+     * @param {Array} values - values
+     * @param {string} [seriesName] - series name
+     * @private
+     */
+    _pushValues: function(seriesData, values, seriesName) {
+        var self = this;
+
+        tui.util.forEachArray(seriesData, function(seriesDatum, index) {
+            self._pushValue(seriesDatum, values[index], seriesName);
+        });
+    },
+
+    /**
+     * Push series data.
+     * @param {Array.&lt;number>} values - values
+     * @private
+     */
+    _pushSeriesData: function(values) {
+        var self = this;
+
+        if (tui.util.isArray(this.originalRawData.series)) {
+            this._pushValues(this.originalRawData.series, values);
+        } else {
+            tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
+                self._pushValues(seriesData, values[seriesName], seriesName);
+            });
+        }
+    },
+
+    /**
+     * Shift values.
+     * @param {Array.&lt;{name: string, data: Array}>} seriesData - series data
+     * @param {string} seriesName - series name
+     * @private
+     */
+    _shiftValues: function(seriesData, seriesName) {
+        var self = this;
+
+        tui.util.forEachArray(seriesData, function(seriesDatum) {
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+
+            seriesDatum.data.shift();
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.shift();
+            }
+        });
+    },
+
+    /**
+     * Shift series data.
+     * @private
+     */
+    _shiftSeriesData: function() {
+        var self = this;
+
+        if (tui.util.isArray(this.originalRawData.series)) {
+            this._shiftValues(this.originalRawData.series);
+        } else {
+            tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
+                self._shiftValues(seriesData, seriesName);
+            });
+        }
+    },
+
+    /**
+     * Add dynamic data.
+     * @param {string} category - category
+     * @param {Array.&lt;number>} values - values
+     */
+    addDynamicData: function(category, values) {
+        this.dynamicData.push({
+            category: category,
+            values: values
+        });
+    },
+
+    /**
+     * Push dynamic data.
+     * @param {{category: string, values: Array.&lt;number>}} data - adding data
+     * @private
+     */
+    _pushDynamicData: function(data) {
+        this._pushCategory(data.category);
+        this._pushSeriesData(data.values);
+    },
+
+    /**
+     * Push dynamic data for coordinate type.
+     * @param {object.&lt;string, Array.&lt;number>|object.&lt;string, number>>} data - adding data
+     * @private
+     */
+    _pushDynamicDataForCoordinateType: function(data) {
+        var self = this;
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
+            self._pushValue(seriesDatum, data[seriesDatum.name]);
+        });
+    },
+
+    /**
+     * Add data from dynamic data.
+     * @returns {boolean}
+     */
+    addDataFromDynamicData: function() {
+        var datum = this.dynamicData.shift();
+
+        if (datum) {
+            if (this.isCoordinateType()) {
+                this._pushDynamicDataForCoordinateType(datum.values);
+            } else {
+                this._pushDynamicData(datum);
+            }
+
+            this.initData(this.rawData);
+        }
+
+        return !!datum;
+    },
+
+    /**
+     * Shift data.
+     */
+    shiftData: function() {
+        this._shiftCategory();
+        this._shiftSeriesData();
+
+        this.initData(this.rawData);
+    },
+
+    /**
+     * Add data from remain dynamic data.
+     * @param {boolean} shiftingOption - whether has shifting option or not.
+     */
+    addDataFromRemainDynamicData: function(shiftingOption) {
+        var self = this;
+        var dynamicData = this.dynamicData;
+
+        this.dynamicData = [];
+
+        tui.util.forEach(dynamicData, function(datum) {
+            self._pushCategory(datum.category);
+            self._pushSeriesData(datum.values);
+            if (shiftingOption) {
+                self._shiftCategory();
+                self._shiftSeriesData();
+            }
+        });
+
+        this.initData(this.rawData);
+    },
+
+    /**
+     * Traverse all SeriesDataModel by seriesNames, and executes iteratee function.
+     * @param {function} iteratee iteratee function
+     * @private
+     */
+    _eachByAllSeriesDataModel: function(iteratee) {
+        var self = this,
+            seriesNames = this.seriesNames || [this.chartType];
+
+        tui.util.forEachArray(seriesNames, function(chartType) {
+            return iteratee(self.getSeriesDataModel(chartType), chartType);
+        });
+    },
+
+    /**
+     * Whether valid all SeriesDataModel or not.
+     * @returns {boolean}
+     */
+    isValidAllSeriesDataModel: function() {
+        var isValid = true;
+
+        this._eachByAllSeriesDataModel(function(seriesDataModel) {
+            isValid = !!seriesDataModel.getGroupCount();
+
+            return isValid;
+        });
+
+        return isValid;
+    },
+
+    /**
+     * Make SeriesGroups.
+     * @returns {Array.&lt;SeriesGroup>}
+     * @private
+     */
+    _makeSeriesGroups: function() {
+        var joinedGroups = [],
+            seriesGroups;
+
+        this._eachByAllSeriesDataModel(function(seriesDataModel) {
+            seriesDataModel.each(function(seriesGroup, index) {
+                if (!joinedGroups[index]) {
+                    joinedGroups[index] = [];
+                }
+                joinedGroups[index] = joinedGroups[index].concat(seriesGroup.items);
+            });
+        });
+
+        seriesGroups = tui.util.map(joinedGroups, function(items) {
+            return new SeriesGroup(items);
+        });
+
+        return seriesGroups;
+    },
+
+    /**
+     * Get SeriesGroups.
+     * @returns {Array.&lt;SeriesGroup>}
+     */
+    getSeriesGroups: function() {
+        if (!this.seriesGroups) {
+            this.seriesGroups = this._makeSeriesGroups();
+        }
+
+        return this.seriesGroups;
+    },
+
+    /**
+     * Get value.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {?string} chartType chart type
+     * @returns {number} value
+     */
+    getValue: function(groupIndex, index, chartType) {
+        return this.getSeriesDataModel(chartType).getValue(groupIndex, index);
+    },
+
+    /**
+     * Create values that picked value from SeriesItems of specific SeriesDataModel.
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value like value, x, y, r.
+     * @returns {Array.&lt;number>}
+     * @private
+     */
+    _createValues: function(chartType, valueType) {
+        var values;
+
+        if (predicate.isComboChart(chartType)) {
+            values = [];
+            this._eachByAllSeriesDataModel(function(seriesDataModel) {
+                values = values.concat(seriesDataModel.getValues(valueType));
+            });
+        } else {
+            values = this.getSeriesDataModel(chartType).getValues(valueType);
+        }
+
+        return values;
+    },
+
+    /**
+     * Get values from valuesMap.
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value like value, x, y, r.
+     * @returns {Array.&lt;number>}
+     */
+    getValues: function(chartType, valueType) {
+        var mapKey;
+
+        // chartType = chartType || chartConst.DUMMY_KEY;
+        mapKey = chartType + valueType;
+
+        if (!this.valuesMap[mapKey]) {
+            this.valuesMap[mapKey] = this._createValues(chartType, valueType);
+        }
+
+        return this.valuesMap[mapKey];
+    },
+
+    /**
+     * Traverse SeriesGroup of all SeriesDataModel, and executes iteratee function.
+     * @param {function} iteratee iteratee function
+     * @param {boolean} [isPivot] - whether pivot or not
+     */
+    eachBySeriesGroup: function(iteratee, isPivot) {
+        this._eachByAllSeriesDataModel(function(seriesDataModel, chartType) {
+            seriesDataModel.each(function(seriesGroup, groupIndex) {
+                iteratee(seriesGroup, groupIndex, chartType);
+            }, isPivot);
+        });
+    },
+
+    /**
+     * Pick legend label.
+     * @param {object} item item
+     * @returns {string} label
+     * @private
+     */
+    _pickLegendLabel: function(item) {
+        return item.name ? tui.util.encodeHTMLEntity(item.name) : null;
+    },
+
+    /**
+     * Pick legend labels from raw data.
+     * @returns {string[]} labels
+     */
+    _pickLegendLabels: function() {
+        var self = this;
+        var seriesData = this.rawData.series;
+        var legendLabels;
+
+        if (tui.util.isArray(seriesData)) {
+            legendLabels = tui.util.map(seriesData, this._pickLegendLabel);
+        } else {
+            legendLabels = {};
+            tui.util.forEach(seriesData, function(seriesDatum, type) {
+                legendLabels[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
+            });
+        }
+
+        legendLabels = tui.util.filter(legendLabels, function(label) {
+            return tui.util.isExisty(label);
+        });
+
+        return legendLabels;
+    },
+
+    /**
+     * Get legend labels.
+     * @param {?string} chartType chart type
+     * @returns {Array.&lt;string> | {column: ?Array.&lt;string>, line: ?Array.&lt;string>}} legend labels
+     */
+    getLegendLabels: function(chartType) {
+        if (!this.legendLabels) {
+            this.legendLabels = this._pickLegendLabels();
+        }
+
+        return this.legendLabels[chartType] || this.legendLabels;
+    },
+
+    /**
+     * Make legend data.
+     * @returns {Array} labels
+     * @private
+     */
+    _makeLegendData: function() {
+        var legendLabels = this.getLegendLabels(),
+            seriesNames = this.seriesNames || [this.chartType],
+            legendLabelsMap, legendData;
+
+        if (tui.util.isArray(legendLabels)) {
+            legendLabelsMap = [this.chartType];
+            legendLabelsMap[this.chartType] = legendLabels;
+        } else {
+            seriesNames = this.seriesNames;
+            legendLabelsMap = legendLabels;
+        }
+
+        legendData = tui.util.map(seriesNames, function(chartType) {
+            return tui.util.map(legendLabelsMap[chartType], function(label) {
+                return {
+                    chartType: chartType,
+                    label: label
+                };
+            });
+        });
+
+        return concat.apply([], legendData);
+    },
+
+    /**
+     * Get legend data.
+     * @returns {Array.&lt;{chartType: string, label: string}>} legend data
+     */
+    getLegendData: function() {
+        if (!this.legendData) {
+            this.legendData = this._makeLegendData();
+        }
+
+        if (!this.originalLegendData) {
+            this.originalLegendData = this.legendData;
+        }
+
+        return this.legendData;
+    },
+
+    /**
+     * get original legend data.
+     * @returns {Array.&lt;{chartType: string, label: string}>}
+     */
+    getOriginalLegendData: function() {
+        return this.originalLegendData;
+    },
+
+    /**
+     * Get legend item.
+     * @param {number} index index
+     * @returns {{chartType: string, label: string}} legend data
+     */
+    getLegendItem: function(index) {
+        return this.getLegendData()[index];
+    },
+
+    /**
+     * Get first label of SeriesItem.
+     * @param {?string} chartType chartType
+     * @returns {string} formatted value
+     */
+    getFirstItemLabel: function(chartType) {
+        return this.getSeriesDataModel(chartType).getFirstItemLabel();
+    },
+
+    /**
+     * Add data ratios of pie chart.
+     * @param {string} chartType - type of chart.
+     */
+    addDataRatiosOfPieChart: function(chartType) {
+        this.getSeriesDataModel(chartType).addDataRatiosOfPieChart();
+    },
+
+    /**
+     * Add data ratios for chart of coordinate type.
+     * @param {string} chartType - type of chart.
+     * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     * @param {boolean} [hasRadius] - whether has radius or not
+     */
+    addDataRatiosForCoordinateType: function(chartType, limitMap, hasRadius) {
+        if (predicate.isLineTypeChart(chartType)) {
+            this._addStartValueToAllSeriesItem(limitMap.yAxis, chartType);
+        }
+        this.getSeriesDataModel(chartType).addDataRatiosForCoordinateType(limitMap, hasRadius);
+    },
+
+    /**
+     * Add start value to all series item.
+     * @param {{min: number, max: number}} limit - limit
+     * @param {string} chartType - chart type
+     * @private
+     */
+    _addStartValueToAllSeriesItem: function(limit, chartType) {
+        var start = 0;
+
+        if (limit.min >= 0) {
+            start = limit.min;
+        } else if (limit.max &lt;= 0) {
+            start = limit.max;
+        }
+
+        this.getSeriesDataModel(chartType).addStartValueToAllSeriesItem(start);
+    },
+
+    /**
+     * Register percent values.
+     * @param {{min: number, max: number}} limit axis limit
+     * @param {string} stackType stackType option
+     * @param {string} chartType chart type
+     * @private
+     */
+    addDataRatios: function(limit, stackType, chartType) {
+        var seriesDataModel = this.getSeriesDataModel(chartType);
+
+        this._addStartValueToAllSeriesItem(limit, chartType);
+        seriesDataModel.addDataRatios(limit, stackType);
+    },
+
+    /**
+     * Add data ratios for treemap chart.
+     * @param {{min: number, max: number}} limit - limit
+     * @param {string} chartType - chart type
+     */
+    addDataRatiosForTreemapChart: function(limit, chartType) {
+        this.getSeriesDataModel(chartType).addDataRatios(limit);
+    },
+
+    /**
+     * Create base values for normal stackType chart.
+     * @param {string} chartType - chart type
+     * @returns {Array.&lt;number>}
+     * @private
+     */
+    _createBaseValuesForNormalStackedChart: function(chartType) {
+        var seriesDataModel = this.getSeriesDataModel(chartType);
+        var baseValues = [];
+
+        seriesDataModel.each(function(seriesGroup) {
+            var valuesMap = seriesGroup._makeValuesMapPerStack();
+
+            tui.util.forEach(valuesMap, function(values) {
+                var plusSum = calculator.sumPlusValues(values);
+                var minusSum = calculator.sumMinusValues(values);
+                baseValues = baseValues.concat([plusSum, minusSum]);
+            });
+        });
+
+        return baseValues;
+    },
+
+    /**
+     * Create base values for calculating limit
+     * @param {string} chartType - chart type
+     * @param {boolean} isSingleYAxis = whether single y axis or not
+     * @param {string} stackType - stack type
+     * @param {string} valueType - value type
+     * @returns {Array.&lt;number>}
+     */
+    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType) {
+        var baseValues;
+
+        if (predicate.isComboChart(this.chartType) &amp;&amp; isSingleYAxis) {
+            baseValues = this.getValues(this.chartType, valueType);
+            if (predicate.isNormalStackChart(chartType, stackType)) {
+                baseValues = baseValues.concat(this._createBaseValuesForNormalStackedChart(chartType));
+            }
+        } else if (predicate.isTreemapChart(chartType)) {
+            baseValues = this.getValues(chartType, 'colorValue');
+        } else if (predicate.isNormalStackChart(chartType, stackType)) {
+            baseValues = this._createBaseValuesForNormalStackedChart(chartType);
+        } else {
+            baseValues = this.getValues(chartType, valueType);
+        }
+
+        return baseValues;
+    },
+
+    /**
+     * Find overflow item than graph area
+     * @param {string} chartType - chart type
+     * @param {string} valueType - value type
+     * @returns {{minItem: SeriesItem, maxItem: SeriesItem}}
+     */
+    findOverflowItem: function(chartType, valueType) {
+        var seriesDataModel = this.getSeriesDataModel(chartType);
+        var maxRadiusValue = seriesDataModel.getMaxValue('r');
+        var isBiggerRatioThanHalfRatio = function(seriesItem) {
+            return (seriesItem.r / maxRadiusValue) > chartConst.HALF_RATIO;
+        };
+
+        return {
+            minItem: seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio),
+            maxItem: seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio)
+        };
+    }
+});
+
+module.exports = DataProcessor;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
