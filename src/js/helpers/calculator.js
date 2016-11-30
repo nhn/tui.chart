@@ -13,7 +13,7 @@ var PERCENT_DIVISOR = 100;
 /**
  * Calculator.
  * @module calculator
- */
+ * @private */
 var calculator = {
     /**
      * Calculate limit from chart min, max data.

@@ -15,6 +15,7 @@ var PADDING = 10;
 /**
  * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
  * @class RaphaelMapLegend
+ * @private
  */
 var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototype */ {
     /**

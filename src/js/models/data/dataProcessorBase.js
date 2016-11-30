@@ -13,6 +13,7 @@ var calculator = require('../../helpers/calculator');
 /**
  * @classdesc data processor base.
  * @class DataProcessorBase
+ * @private
  */
 var DataProcessorBase = tui.util.defineClass(/** @lends DataProcessorBase.prototype */{
     /**

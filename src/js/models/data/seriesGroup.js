@@ -9,16 +9,12 @@
 
 var calculator = require('../../helpers/calculator');
 
-/**
- * SeriesItem is a element of SeriesGroup.items.
- * SeriesItem has processed terminal data like value, ratio, etc.
- */
-
 var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     /**
      * SeriesGroup is a element of SeriesDataModel.groups.
      * SeriesGroup.items has SeriesItem.
      * @constructs SeriesGroup
+     * @private
      * @param {Array.<SeriesItem>} seriesItems - series items
      */
     init: function(seriesItems) {

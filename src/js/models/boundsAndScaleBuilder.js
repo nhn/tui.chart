@@ -14,7 +14,7 @@ var predicate = require('../helpers/predicate');
 /**
  * Bounds and scale data builder.
  * @module boundsAndScaleBuilder
- */
+ * @private */
 var boundsAndScaleBuilder = {
     /**
      * Create BoundsModel.

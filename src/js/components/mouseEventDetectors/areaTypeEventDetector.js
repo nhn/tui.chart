@@ -17,6 +17,7 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
      * AreaTypeEventDetector is mouse event detector for line type chart.
      * @param {object} params parameters
      * @constructs AreaTypeEventDetector
+     * @private
      * @extends MouseEventDetectorBase
      */
     init: function(params) {

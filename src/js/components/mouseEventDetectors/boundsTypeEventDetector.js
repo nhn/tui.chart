@@ -16,6 +16,7 @@ var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends
     /**
      * BoundsTypeEventDetector is mouse event detector for bounds type charts like bar, column, heatmap, treemap.
      * @constructs BoundsTypeEventDetector
+     * @private
      * @extends EventDetectorBase
      */
     init: function() {

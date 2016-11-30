@@ -21,6 +21,7 @@ var concat = Array.prototype.concat;
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
  * @class RaphaelLineTypeBase
+ * @private
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**

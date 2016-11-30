@@ -6,6 +6,7 @@ var predicate = require('../helpers/predicate');
 /**
  * addingDynamicData is mixer for adding dynamic data.
  * @mixin
+ * @private
  */
 var addingDynamicDataMixer = {
     /**

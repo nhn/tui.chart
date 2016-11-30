@@ -12,7 +12,7 @@ var renderUtil = require('../../helpers/renderUtil');
 /**
  * Calculator for spectrum legend.
  * @module spectrumLegendCalculator
- */
+ * @private */
 var spectrumLegendCalculator = {
     /**
      * Make vertical dimension.

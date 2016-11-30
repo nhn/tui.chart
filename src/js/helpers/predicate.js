@@ -12,7 +12,7 @@ var arrayUtil = require('./arrayUtil');
 /**
  * predicate.
  * @module predicate
- */
+ * @private */
 var predicate = {
     /**
      * Whether bar chart or not.

@@ -12,6 +12,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     /**
      * GroupTooltipPositionModel is position model for group tooltip.
      * @constructs GroupTooltipPositionModel
+     * @private
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{
      *      dimension: {width: number, height: number},

@@ -17,7 +17,7 @@ var abs = Math.abs;
 /**
  * scaleMaker calculates limit and step into values of processed data and returns it.
  * @module scaleDataMaker
- */
+ * @private */
 var scaleDataMaker = {
     /**
      * Get candidate counts of value.

@@ -17,8 +17,9 @@ var concat = Array.prototype.concat;
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
  * @class LineTypeSeriesBase
+ * @private
  * @mixin
- */
+ * @private */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
      * Make positions for default data type.

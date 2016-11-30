@@ -37,7 +37,7 @@ var deepCopy = function(origin) {
 /**
  * util for object
  * @module objectUtil
- */
+ * @private */
 var objectUtil = {
     deepCopy: deepCopy
 };

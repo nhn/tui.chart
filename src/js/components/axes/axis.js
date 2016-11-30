@@ -17,6 +17,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Axis component.
      * @constructs Axis
+     * @private
      * @param {object} params parameters
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme

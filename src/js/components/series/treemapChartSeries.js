@@ -16,6 +16,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     /**
      * Series component for rendering graph of treemap chart.
      * @constructs TreemapChartSeries
+     * @private
      * @param {object} params - parameters
      * @extends Series
      */

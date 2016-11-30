@@ -14,10 +14,11 @@ var calculator = require('../../helpers/calculator');
 
 var aps = Array.prototype.slice;
 
-var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
+var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends SeriesDataModelForTreeMap.prototype */{
     /**
      * SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
      * @constructs SeriesDataModelForTreemap
+     * @private
      */
     init: function() {
         SeriesDataModel.apply(this, arguments);
@@ -299,4 +300,4 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     }
 });
 
-module.exports = SeriesDataModelForTreemap;
+module.exports = SeriesDataModelForTreeMap;

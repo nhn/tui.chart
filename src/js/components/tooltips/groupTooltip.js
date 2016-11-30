@@ -17,11 +17,13 @@ var tooltipTemplate = require('./tooltipTemplate');
 /**
  * @classdesc GroupTooltip component.
  * @class GroupTooltip
+ * @private
  */
 var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
+     * @private
      * @override
      */
     init: function() {

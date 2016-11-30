@@ -16,11 +16,13 @@ var tooltipTemplate = require('./tooltipTemplate');
 /**
  * @classdesc Tooltip component.
  * @class Tooltip
+ * @private
  */
 var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     /**
      * Tooltip component.
      * @constructs Tooltip
+     * @private
      * @override
      */
     init: function() {

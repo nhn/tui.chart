@@ -23,6 +23,7 @@ var OVERLAY_ID = 'overlay';
 /**
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
  * @class RaphaelPieChart
+ * @private
  */
 var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**

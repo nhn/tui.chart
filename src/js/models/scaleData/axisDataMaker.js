@@ -15,7 +15,7 @@ var arrayUtil = require('../../helpers/arrayUtil');
 /**
  * Axis data maker.
  * @module axisDataMaker
- */
+ * @private */
 var axisDataMaker = {
     /**
      * Makes labels by labelInterval option.

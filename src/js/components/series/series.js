@@ -22,6 +22,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Series base component.
      * @constructs Series
+     * @private
      * @param {object} params parameters
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme

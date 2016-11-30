@@ -13,7 +13,7 @@ var arrayUtil = require('../../helpers/arrayUtil');
 /**
  * Raw data Handler.
  * @module rawDataHandler
- */
+ * @private */
 var rawDataHandler = {
     /**
      * Pick stacks.

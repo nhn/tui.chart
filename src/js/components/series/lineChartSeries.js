@@ -13,6 +13,7 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
     /**
      * Line chart series component.
      * @constructs LineChartSeries
+     * @private
      * @extends Series
      * @mixes LineTypeSeriesBase
      * @param {object} params parameters

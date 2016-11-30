@@ -19,7 +19,7 @@ var browser = tui.util.browser,
 /**
  * Util for rendering.
  * @module renderUtil
- */
+ * @private */
 var renderUtil = {
     /**
      * Concat string.

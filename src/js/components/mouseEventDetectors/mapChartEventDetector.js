@@ -18,6 +18,7 @@ var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
      * @param {object} params parameters
      *      @param {string} params.chartType - chart type
      * @constructs MapChartEventDetector
+     * @private
      * @extends MouseEventDetectorBase
      */
     init: function(params) {

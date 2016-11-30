@@ -77,6 +77,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      *      @param {DataProcessor} params.dataProcessor - data processor
      *      @param {boolean} params.hasAxes - whether has axes or not
      * @constructs ComponentManager
+     * @private
      */
     init: function(params) {
         /**

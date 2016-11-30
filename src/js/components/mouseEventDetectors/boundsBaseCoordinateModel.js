@@ -49,6 +49,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     /**
      * BoundsBaseCoordinateModel is data mode for mouse event detector of bounds type.
      * @constructs BoundsBaseCoordinateModel
+     * @private
      * @param {Array} seriesItemBoundsData - series item bounds data
      */
     init: function(seriesItemBoundsData) {

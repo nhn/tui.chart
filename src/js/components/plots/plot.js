@@ -17,6 +17,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Plot component.
      * @constructs Plot
+     * @private
      * @param {object} params parameters
      *      @param {number} params.vTickCount vertical tick count
      *      @param {number} params.hTickCount horizontal tick count

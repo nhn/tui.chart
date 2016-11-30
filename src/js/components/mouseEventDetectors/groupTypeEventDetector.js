@@ -14,6 +14,7 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
      * GroupTypeEventDetector is mouse event detector for grouped tooltip.
      * @param {object} params parameters
      * @constructs GroupTypeEventDetector
+     * @private
      * @extends EventDetectorBase
      */
     init: function(params) {

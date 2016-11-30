@@ -18,6 +18,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @param {boolean} isVertical whether vertical or not
      * @param {Array.<string>} [chartTypes] - chart types of combo chart
      * @constructs TickBaseDataModel
+     * @private
      */
     init: function(dimension, tickCount, chartType, isVertical, chartTypes) {
         /**

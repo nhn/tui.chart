@@ -13,7 +13,7 @@ var renderUtil = require('../../helpers/renderUtil');
 /**
  * Calculator for dimension of axis.
  * @module axisCalculator
- */
+ * @private */
 var axisCalculator = {
     /**
      * Calculate height for x axis.

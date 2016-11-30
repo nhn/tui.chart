@@ -26,6 +26,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends M
      * @param {string} chartType chart type
      * @param {object} options options
      * @constructs MapChartDataProcessor
+     * @private
      * @extends DataProcessor
      */
     init: function(rawData, chartType, options) {

@@ -8,27 +8,27 @@
 
 'use strict';
 
-/**
+/*
  * Raw series datum.
  * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
  */
 
-/**
+/*
  * Raw series data.
  * @typedef {Array.<rawSeriesDatum>} rawSeriesData
  */
 
-/**
+/*
  * Groups.
  * @typedef {Array.<SeriesGroup>} groups
  */
 
-/**
+/*
  * SeriesGroup is a element of SeriesDataModel.groups.
  * SeriesGroup.items has SeriesItem.
  */
 
-/**
+/*
  * SeriesItem is a element of SeriesGroup.items.
  * SeriesItem has processed terminal data like value, ratio, etc.
  */
@@ -48,6 +48,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      *      and create from rawSeriesData by user.
      * SeriesDataModel.groups has SeriesGroups.
      * @constructs SeriesDataModel
+     * @private
      * @param {rawSeriesData} rawSeriesData - raw series data
      * @param {string} chartType - chart type
      * @param {object} options - options

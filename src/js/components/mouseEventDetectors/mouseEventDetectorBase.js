@@ -18,6 +18,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
     /**
      * MouseEventDetectorBase is base class for mouse event detector components.
      * @constructs MouseEventDetectorBase
+     * @private
      * @param {object} params parameters
      *      @param {string} params.chartType - chart type
      *      @param {Array.<string>} params.chartTypes - chart types

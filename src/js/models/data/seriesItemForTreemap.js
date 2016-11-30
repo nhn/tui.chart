@@ -13,6 +13,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
     /**
      * SeriesItem for treemap.
      * @constructs SeriesItemForTreemap
+     * @private
      * @param {object} rawSeriesDatum - value
      * @param {?Array.<function>} formatFunctions - format functions
      * @param {string} chartType - type of chart

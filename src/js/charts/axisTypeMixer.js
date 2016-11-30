@@ -17,7 +17,7 @@ var predicate = require('../helpers/predicate');
 /**
  * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, column&line combo.
  * @mixin
- */
+ * @private */
 var axisTypeMixer = {
     /**
      * Add axis components.

@@ -14,7 +14,7 @@ var chartConst = require('../../const'),
 /**
  * singleTooltipMixer is single tooltip mixer of map chart.
  * @mixin
- */
+ * @private */
 var singleTooltipMixer = {
     /**
      * Set data indexes.

@@ -17,6 +17,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     /**
      * Spectrum Legend component.
      * @constructs SpectrumLegend
+     * @private
      * @param {object} params parameters
      *      @param {object} params.theme axis theme
      *      @param {?Array.<string>} params.options legend options

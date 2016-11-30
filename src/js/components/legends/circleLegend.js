@@ -28,6 +28,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     /**
      * Circle legend component render a legend in the form of overlapping circles by representative radius values.
      * @constructs CircleLegend
+     * @private
      * @param {object} params parameters
      *      @param {?string} params.libType - library type for graph rendering
      *      @param {string} params.chartType - chart type

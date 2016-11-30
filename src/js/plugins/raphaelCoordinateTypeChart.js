@@ -30,6 +30,7 @@ var OVERLAY_BORDER_WIDTH = 2;
 /**
  * @classdesc RaphaelBubbleChart is graph renderer for bubble chart.
  * @class RaphaelBubbleChart
+ * @private
  */
 var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prototype */ {
     /**

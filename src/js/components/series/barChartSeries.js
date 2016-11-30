@@ -17,6 +17,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     /**
      * Bar chart series component.
      * @constructs BarChartSeries
+     * @private
      * @extends Series
      * @param {object} params parameters
      *      @param {object} params.model series model

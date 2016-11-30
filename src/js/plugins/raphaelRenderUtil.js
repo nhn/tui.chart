@@ -9,6 +9,7 @@
 /**
  * Util for raphael rendering.
  * @module raphaelRenderUtil
+ * @private
  */
 var raphaelRenderUtil = {
     /**

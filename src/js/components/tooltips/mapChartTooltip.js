@@ -14,11 +14,13 @@ var chartConst = require('../../const'),
 /**
  * @classdesc MapChartTooltip component.
  * @class MapChartTooltip
+ * @private
  */
 var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartTooltip.prototype */ {
     /**
      * Map chart tooltip component.
      * @constructs MapChartTooltip
+     * @private
      * @override
      */
     init: function(params) {

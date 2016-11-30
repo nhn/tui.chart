@@ -20,6 +20,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelLineChart
+     * @private
+     * @private
      * @extends RaphaelLineTypeBase
      */
     init: function() {

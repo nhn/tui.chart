@@ -9,7 +9,7 @@
 /**
  * pieTypeMixer is mixer of pie type chart.
  * @mixin
- */
+ * @private */
 var pieTypeMixer = {
     /**
      * Add legend component.

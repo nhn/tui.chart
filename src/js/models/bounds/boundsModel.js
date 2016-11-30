@@ -34,6 +34,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     /**
      * Bounds maker.
      * @constructs BoundsModel
+     * @private
      * @param {object} params parameters
      */
     init: function(params) {

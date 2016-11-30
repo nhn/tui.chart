@@ -17,6 +17,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     /**
      * Column chart series component.
      * @constructs ColumnChartSeries
+     * @private
      * @extends Series
      * @param {object} params parameters
      *      @param {object} params.model series model

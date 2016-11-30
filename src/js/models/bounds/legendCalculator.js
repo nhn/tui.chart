@@ -15,7 +15,7 @@ var arrayUtil = require('../../helpers/arrayUtil');
 /**
  * Calculator for dimension of legend.
  * @module legendCalculator
- */
+ * @private */
 var legendCalculator = {
     /**
      * Legend margin.

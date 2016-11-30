@@ -14,6 +14,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     /**
      * Bubble chart series component.
      * @constructs BubbleChartSeries
+     * @private
      * @extends Series
      */
     init: function() {

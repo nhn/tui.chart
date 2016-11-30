@@ -16,6 +16,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * Map chart series component.
      * @constructs MapChartSeries
+     * @private
      * @extends Series
      * @param {object} params parameters
      *      @param {object} params.options series options

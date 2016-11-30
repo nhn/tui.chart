@@ -9,7 +9,7 @@
 /**
  * comboTypeMixer is mixer of combo type chart.
  * @mixin
- */
+ * @private */
 var comboTypeMixer = {
     /**
      * Get base series options.

@@ -9,6 +9,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      * ScaleDataModel is scale model for scale data and axis data.
      * @param {object} params - parameters
      * @constructs ScaleDataModel
+     * @private
      */
     init: function(params) {
         this.chartType = params.chartType;

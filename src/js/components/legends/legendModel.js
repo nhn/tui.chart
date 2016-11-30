@@ -13,6 +13,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     /**
      * LegendModel is legend model.
      * @constructs LegendModel
+     * @private
      * @param {object} params parameters
      *      @param {number} params.labels legend labels
      *      @param {object} params.bound axis bound

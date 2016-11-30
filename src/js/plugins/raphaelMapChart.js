@@ -16,6 +16,7 @@ var ANIMATION_DURATION = 100;
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
  * @class RaphaelMapChart
+ * @private
  */
 var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype */ {
     /**

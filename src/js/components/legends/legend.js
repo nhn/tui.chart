@@ -19,6 +19,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
      * Legend component.
      * @constructs Legend
+     * @private
      * @param {object} params parameters
      *      @param {object} params.theme - axis theme
      *      @param {?Array.<string>} params.seriesNames - series names

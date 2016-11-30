@@ -177,6 +177,7 @@ var pivot = function(arr2d) {
 /**
  * Util for array.
  * @module arrayUtil
+ * @private
  */
 var arrayUtil = {
     min: min,

@@ -14,6 +14,7 @@ var verticalTypeComboMixer = {
     /**
      * Column and Line Combo chart.
      * @constructs verticalTypeComboMixer
+     * @private
      * @extends ChartBase
      * @param {Array.<Array>} rawData raw data
      * @param {object} options chart options

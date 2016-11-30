@@ -9,7 +9,7 @@
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
  * @mixin
- */
+ * @private */
 var lineTypeMixer = {
     /**
      * Get scale option.

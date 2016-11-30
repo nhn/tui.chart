@@ -12,6 +12,8 @@ var seriesTemplate = require('./seriesTemplate');
 
 /**
  * renderingLabelHelper is helper for rendering of series label.
+ * @module renderingLabelHelper
+ * @private
  */
 var renderingLabelHelper = {
     /**

@@ -15,6 +15,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Line chart series component.
      * @constructs PieChartSeries
+     * @private
      * @extends Series
      * @param {object} params parameters
      *      @param {object} params.model series model

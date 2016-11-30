@@ -15,6 +15,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     /**
      * AreaTypeDataModel is data mode for mouse event detector of area type.
      * @constructs AreaTypeDataModel
+     * @private
      * @param {Array} seriesItemBoundsData - series item bounds data
      */
     init: function(seriesItemBoundsData) {

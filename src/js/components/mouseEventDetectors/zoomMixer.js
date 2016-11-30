@@ -15,7 +15,7 @@ var eventListener = require('../../helpers/eventListener');
 /**
  * Mixer for zoom event of area type mouse event detector.
  * @mixin
- */
+ * @private */
 var zoomMixer = {
     /**
      * Initialize for zoom.

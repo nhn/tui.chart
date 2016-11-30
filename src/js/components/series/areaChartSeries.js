@@ -15,6 +15,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     /**
      * Area chart series component.
      * @constructs AreaChartSeries
+     * @private
      * @extends Series
      * @mixes LineTypeSeriesBase
      */

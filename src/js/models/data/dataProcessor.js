@@ -21,17 +21,17 @@ var objectUtil = require('../../helpers/objectUtil');
 
 var concat = Array.prototype.concat;
 
-/**
+/*
  * Raw series datum.
  * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
  */
 
-/**
+/*
  * Raw series data.
  * @typedef {Array.<rawSeriesDatum>} rawSeriesData
  */
 
-/**
+/*
  * Raw data by user.
  * @typedef {{
  *      categories: ?Array.<string>,
@@ -39,13 +39,13 @@ var concat = Array.prototype.concat;
  * }} rawData
  */
 
-/**
+/*
  * SeriesDataModel is base model for drawing graph of chart series area,
  *      and create from rawSeriesData by user,
  * SeriesDataModel.groups has SeriesGroups.
  */
 
-/**
+/*
  * SeriesGroup is a element of SeriesDataModel.groups.
  * SeriesGroup.items has SeriesItem.
  */
@@ -54,6 +54,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     /**
      * Data processor.
      * @constructs DataProcessor
+     * @private
      * @param {rawData} rawData raw data
      * @param {string} chartType chart type
      * @param {object} options options

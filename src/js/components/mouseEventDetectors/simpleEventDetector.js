@@ -13,6 +13,7 @@ var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lend
     /**
      * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
      * @constructs SimpleEventDetector
+     * @private
      * @param {object} params parameters
      *      @param {string} params.chartType - chart type
      * @extends MouseEventDetectorBase

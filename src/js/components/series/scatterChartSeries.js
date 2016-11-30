@@ -14,6 +14,7 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
     /**
      * Scatter chart series component.
      * @constructs ScatterChartSeries
+     * @private
      * @extends Series
      */
     init: function() {

@@ -12,7 +12,7 @@ var renderUtil = require('../../helpers/renderUtil');
 /**
  * Calculator for circle legend.
  * @module circleLegendCalculator
- */
+ * @private */
 var circleLegendCalculator = {
     /**
      * Calculate step of pixel unit.

@@ -15,6 +15,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
+     * @private
      * @param {object} params - parameters
      *      @param {string} params.chartType - chart type
      *      @param {DataProcessor} params.dataProcessor - DataProcessor instance

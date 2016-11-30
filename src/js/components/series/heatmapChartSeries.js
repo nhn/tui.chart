@@ -14,6 +14,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     /**
      * Series component for rendering graph of heatmap chart.
      * @constructs HeatmapChartSeries
+     * @private
      * @param {object} params - parameters
      * @extends Series
      */

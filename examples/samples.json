@@ -83,6 +83,9 @@
   "sample08-03-line-area-combo-chart": {
     "title": "[Combo Chart] line and area"
   },
+  "sample08-04-line-scatter-combo-chart": {
+    "title": "[Combo Chart] line and scatter"
+  },
   "sample09-01-world-map-chart": {
     "title": "[Map chart] world map"
   },

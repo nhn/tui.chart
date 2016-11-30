@@ -10,6 +10,7 @@
  * Chart const
  * @readonly
  * @enum {number}
+ * @private
  */
 var chartConst = {
     /** tui class names

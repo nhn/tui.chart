@@ -22,6 +22,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * Zoom component.
      * @param {{eventBus: object}} params - parameters
      * @constructs Zoom
+     * @private
      */
     init: function(params) {
         /**
