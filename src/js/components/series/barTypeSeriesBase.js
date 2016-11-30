@@ -6,10 +6,13 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var labelHelper = require('./renderingLabelHelper');
 var predicate = require('../../helpers/predicate');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+
+var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
@@ -28,52 +31,22 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make bar gutter.
-     * @param {number} groupSize bar group size
-     * @param {number} itemCount group item count
-     * @returns {number} bar gutter
-     * @private
-     */
-    _makeBarGutter: function(groupSize, itemCount) {
-        var baseSize = groupSize / (itemCount + 1) / 2;
-        var standardSize = 6;
-        var gutter;
-
-        if (baseSize <= 2) {
-            gutter = 0;
-        } else if (baseSize <= standardSize) {
-            gutter = 2;
-        } else {
-            gutter = 4;
-        }
-
-        return gutter;
-    },
-
-    /**
-     * Make bar size.
-     * @param {number} groupSize bar group size
-     * @param {number} barGutter bar padding
-     * @param {number} itemCount group item count
-     * @returns {number} bar size (width or height)
-     * @private
-     */
-    _makeBarSize: function(groupSize, barGutter, itemCount) {
-        return (groupSize - (barGutter * (itemCount - 1))) / (itemCount + 1);
-    },
-
-    /**
-     * Make option size.
-     * @param {number} barSize bar size
+     * Get bar width option size.
+     * @param {number} pointInterval point interval
      * @param {?number} optionBarWidth barWidth option
      * @returns {number} option size
      * @private
      */
-    _makeOptionSize: function(barSize, optionBarWidth) {
+    _getBarWidthOptionSize: function(pointInterval, optionBarWidth) {
         var optionsSize = 0;
 
         if (optionBarWidth) {
-            optionsSize = Math.min(barSize, optionBarWidth);
+            if ((optionBarWidth / 2) >= pointInterval) {
+                optionBarWidth = pointInterval * 2;
+            } else if (optionBarWidth < 0) {
+                optionBarWidth = 0;
+            }
+            optionsSize = optionBarWidth;
         }
 
         return optionsSize;
@@ -105,9 +78,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      *      baseBarSize: number,
      *      groupSize: number,
      *      barSize: number,
-     *      step: number,
+     *      pointInterval: number,
      *      firstAdditionalPosition: number,
-     *      additionalPosition: number,
      *      basePosition: number
      * }}
      * @private
@@ -116,8 +88,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var isStackType = predicate.isValidStackOption(this.options.stackType);
         var seriesDataModel = this._getSeriesDataModel();
         var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
-        var firstAdditionalPosition = 0;
-        var itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
+        var itemCount, barSize, optionSize, basePosition, pointInterval;
 
         if (!isStackType) {
             itemCount = seriesDataModel.getFirstSeriesGroup().getSeriesItemCount();
@@ -125,28 +96,22 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
         }
 
-        barGutter = this._makeBarGutter(groupSize, itemCount);
-        barSize = this._makeBarSize(groupSize, barGutter, itemCount);
-        optionSize = this._makeOptionSize(barSize, this.options.barWidth);
-        additionalPosition = this._calculateAdditionalPosition(barSize, optionSize, itemCount);
-        barSize = optionSize || barSize;
+        pointInterval = groupSize / (itemCount + 1);
+        barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
+        optionSize = this.options.barWidth;
+        barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
         basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
 
         if (predicate.isColumnChart(this.chartType)) {
             basePosition = baseBarSize - basePosition;
         }
 
-        if (!this.options.barWidth || barSize < this.options.barWidth) {
-            firstAdditionalPosition = (barSize / 2) + additionalPosition;
-        }
-
         return {
             baseBarSize: baseBarSize,
             groupSize: groupSize,
             barSize: barSize,
-            step: barGutter + barSize,
-            firstAdditionalPosition: firstAdditionalPosition,
-            additionalPosition: additionalPosition,
+            pointInterval: pointInterval,
+            firstAdditionalPosition: pointInterval,
             basePosition: basePosition
         };
     },
@@ -180,7 +145,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @returns {number} sum result.
      */
     _makeSumValues: function(values) {
-        var sum = tui.util.sum(values);
+        var sum = calculator.sum(values);
 
         return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), this.chartType, 'seires');
     },
@@ -205,7 +170,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make stackType labels html.
+     * Make labels html, when has stackType option.
      * @param {object} params parameters
      *      @param {number} params.groupIndex group index
      *      @param {Array.<object>} params.bounds bounds,
@@ -249,7 +214,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Render stackType series label.
+     * Render series label, when has stackType option.
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */

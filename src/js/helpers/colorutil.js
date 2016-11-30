@@ -4,8 +4,6 @@
  */
 'use strict';
 
-/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 4, 16]}]*/
-
 var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 
 /**
@@ -13,6 +11,7 @@ var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
  * http://stackoverflow.com/questions/1573053/javascript-function-to-convert-color-names-to-hex-codes
  * http://www.w3schools.com/HTML/html_colornames.asp
  * @type {object}
+ * @ignore
  */
 var colorMap = {
     'aliceblue': '#f0f8ff',

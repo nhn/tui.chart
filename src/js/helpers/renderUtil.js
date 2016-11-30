@@ -6,10 +6,9 @@
 
 'use strict';
 
-/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 7, 8]}]*/
-
-var dom = require('./domHandler'),
-    chartConst = require('./../const');
+var chartConst = require('./../const');
+var dom = require('./domHandler');
+var arrayUtil = require('./arrayUtil');
 
 var concat = Array.prototype.concat;
 
@@ -20,7 +19,7 @@ var browser = tui.util.browser,
 /**
  * Util for rendering.
  * @module renderUtil
- */
+ * @private */
 var renderUtil = {
     /**
      * Concat string.
@@ -104,12 +103,6 @@ var renderUtil = {
     },
 
     /**
-     * Size cache.
-     * @type {object}
-     */
-    sizeCache: {},
-
-    /**
      * Add css style.
      * @param {HTMLElement} div div element
      * @param {{fontSize: number, fontFamily: string, cssText: string}} theme theme
@@ -130,6 +123,12 @@ var renderUtil = {
             div.style.cssText += theme.cssText;
         }
     },
+
+    /**
+     * Size cache.
+     * @type {object}
+     */
+    sizeCache: {},
 
     /**
      * Get rendered label size (width or height).
@@ -215,7 +214,7 @@ var renderUtil = {
             sizes = tui.util.map(labels, function(label) {
                 return iteratee(label, theme);
             });
-            maxSize = tui.util.max(sizes);
+            maxSize = arrayUtil.max(sizes);
         }
 
         return maxSize;
@@ -357,8 +356,8 @@ var renderUtil = {
 
         return {
             dimension: {
-                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-                height: dimension.height + chartConst.SERIES_EXPAND_SIZE * 2
+                width: dimension.width + (chartConst.SERIES_EXPAND_SIZE * 2),
+                height: dimension.height + (chartConst.SERIES_EXPAND_SIZE * 2)
             },
             position: {
                 left: position.left - chartConst.SERIES_EXPAND_SIZE,
@@ -368,14 +367,23 @@ var renderUtil = {
     },
 
     /**
-     * Make custom event name.
+     * Proper case.
+     * @param {string} value - string value
+     * @returns {string}
+     */
+    _properCase: function(value) {
+        return value.substring(0, 1).toUpperCase() + value.substring(1);
+    },
+
+    /**
+     * Make mouse event detector name.
      * @param {string} prefix prefix
      * @param {string} value value
      * @param {string} suffix suffix
-     * @returns {string} custom event name
+     * @returns {string} mouse event detector name
      */
-    makeCustomEventName: function(prefix, value, suffix) {
-        return prefix + tui.util.properCase(value) + tui.util.properCase(suffix);
+    makeMouseEventDetectorName: function(prefix, value, suffix) {
+        return prefix + this._properCase(value) + this._properCase(suffix);
     },
 
     /**
@@ -543,13 +551,14 @@ var renderUtil = {
      * @returns {string} formatted value
      */
     formatToDecimal: function(value, len) {
+        var DECIMAL = 10;
         var pow;
 
         if (len === 0) {
             return Math.round(value);
         }
 
-        pow = Math.pow(10, len);
+        pow = Math.pow(DECIMAL, len);
         value = Math.round(value * pow) / pow;
         value = parseFloat(value).toFixed(len);
 

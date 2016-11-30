@@ -9,8 +9,8 @@
 var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js');
 var Tooltip = require('../../src/js/components/tooltips/tooltip');
 var GroupTooltip = require('../../src/js/components/tooltips/groupTooltip');
-var GroupTypeCustomEvent = require('../../src/js/components/customEvents/groupTypeCustomEvent');
-var BoundsTypeCustomEvent = require('../../src/js/components/customEvents/boundsTypeCustomEvent');
+var GroupTypeEventDetector = require('../../src/js/components/mouseEventDetectors/groupTypeEventDetector');
+var BoundsTypeEventDetector = require('../../src/js/components/mouseEventDetectors/boundsTypeEventDetector');
 
 describe('Test for ComboChart', function() {
     var componentMap = {};
@@ -19,14 +19,16 @@ describe('Test for ComboChart', function() {
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
-        spyObjs._makeTooltipData.and.returnValue({});
+        spyObjs._makeTooltipData.and.callFake(function(classType) {
+            return classType;
+        });
 
         tui.util.extend(axisTypeMixer, spyObjs);
 
         componentManager = jasmine.createSpyObj('componentManager', ['register']);
         axisTypeMixer.componentManager = componentManager;
-        componentManager.register.and.callFake(function(name, ComponentClass) {
-            componentMap[name] = ComponentClass;
+        componentManager.register.and.callFake(function(name, params) {
+            componentMap[name] = params;
         });
 
         dataProcessor = jasmine.createSpyObj('dataProcessor',
@@ -105,8 +107,8 @@ describe('Test for ComboChart', function() {
                     grouped: true
                 }
             };
-            axisTypeMixer._addTooltipComponent({}, {});
-            expect(componentMap.tooltip).toEqual(GroupTooltip);
+            axisTypeMixer._addTooltipComponent();
+            expect(componentMap.tooltip).toBe('groupTooltip');
         });
 
         it('if grouped option is false, use Tooltip class', function() {
@@ -115,8 +117,8 @@ describe('Test for ComboChart', function() {
                     grouped: false
                 }
             };
-            axisTypeMixer._addTooltipComponent({}, {});
-            expect(componentMap.tooltip).toEqual(Tooltip);
+            axisTypeMixer._addTooltipComponent();
+            expect(componentMap.tooltip).toBe('tooltip');
         });
     });
 
@@ -154,7 +156,7 @@ describe('Test for ComboChart', function() {
             expect(componentMap.legend).toBeDefined();
             expect(componentMap.columnSreies).toBeDefined();
             expect(componentMap.lineSeries).toBeDefined();
-            expect(componentMap.tooltip).toEqual(Tooltip);
+            expect(componentMap.tooltip).toEqual('tooltip');
         });
     });
 
@@ -202,21 +204,21 @@ describe('Test for ComboChart', function() {
         });
     });
 
-    describe('_addCustomEventComponentForGroupTooltip()', function() {
-        it('그룹 툴팁을 위한 custom event 컴포넌트는 GroupTypeCustomEvent 클래스로 생성합니다.', function() {
+    describe('_addMouseEventDetectorComponentForGroupTooltip()', function() {
+        it('그룹 툴팁을 위한 custom event 컴포넌트는 GroupTypeEventDetector 클래스로 생성합니다.', function() {
             axisTypeMixer.options.series = {};
-            axisTypeMixer._addCustomEventComponentForGroupTooltip();
+            axisTypeMixer._addMouseEventDetectorComponentForGroupTooltip();
 
-            expect(componentMap.customEvent).toBe(GroupTypeCustomEvent);
+            expect(componentMap.mouseEventDetector.classType).toBe('groupTypeEventDetector');
         });
     });
 
-    describe('_addCustomEventComponentForNormalTooltip()', function() {
-        it('일반 툴팁을 위한 custom event 컴포넌트는 BoundsTypeCustomEvent 클래스로 생성합니다.', function() {
+    describe('_addMouseEventDetectorComponentForNormalTooltip()', function() {
+        it('일반 툴팁을 위한 custom event 컴포넌트는 BoundsTypeEventDetector 클래스로 생성합니다.', function() {
             axisTypeMixer.options.series = {};
-            axisTypeMixer._addCustomEventComponentForNormalTooltip();
+            axisTypeMixer._addMouseEventDetectorComponentForNormalTooltip();
 
-            expect(componentMap.customEvent).toBe(BoundsTypeCustomEvent);
+            expect(componentMap.mouseEventDetector.classType).toBe('boundsTypeEventDetector');
         });
     });
 });

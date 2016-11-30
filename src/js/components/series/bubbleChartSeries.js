@@ -6,6 +6,7 @@
 
 'use strict';
 
+var chartConst = require('../../const');
 var Series = require('./series');
 var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
 
@@ -13,6 +14,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     /**
      * Bubble chart series component.
      * @constructs BubbleChartSeries
+     * @private
      * @extends Series
      */
     init: function() {
@@ -71,8 +73,8 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
         var top = tui.util.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
 
         return {
-            left: left,
-            top: dimension.height - top,
+            left: left + chartConst.SERIES_EXPAND_SIZE,
+            top: dimension.height - top + chartConst.SERIES_EXPAND_SIZE,
             radius: Math.max(maxRadius * ratioMap.r, 2)
         };
     },

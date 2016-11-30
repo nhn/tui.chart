@@ -6,14 +6,14 @@
 
 'use strict';
 
-/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 10, 20, 6, 0.1]}]*/
-
 var chartConst = require('../const');
+var arrayUtil = require('./arrayUtil');
+var PERCENT_DIVISOR = 100;
 
 /**
  * Calculator.
  * @module calculator
- */
+ * @private */
 var calculator = {
     /**
      * Calculate limit from chart min, max data.
@@ -21,7 +21,6 @@ var calculator = {
      * @memberOf module:calculator
      * @param {number} min min minimum value of user data
      * @param {number} max max maximum value of user data
-     * @param {number} tickCount tick count
      * @returns {{min: number, max: number}} limit axis limit
      */
     calculateLimit: function(min, max) {
@@ -56,7 +55,7 @@ var calculator = {
     normalizeAxisNumber: function(value) {
         var standard = 0,
             flag = 1,
-            normalized, mod;
+            normalized, modValue;
 
         if (value === 0) {
             return value;
@@ -83,8 +82,8 @@ var calculator = {
         if (standard < 1) {
             normalized = this.normalizeAxisNumber(value * 10) * 0.1;
         } else {
-            mod = tui.util.mod(value, standard);
-            normalized = tui.util.add(value, (mod > 0 ? standard - mod : 0));
+            modValue = calculator.mod(value, standard);
+            normalized = calculator.add(value, (modValue > 0 ? standard - modValue : 0));
         }
 
         normalized *= flag;
@@ -109,7 +108,7 @@ var calculator = {
             positions = tui.util.map(tui.util.range(0, count), function(index) {
                 var ratio = index === 0 ? 0 : (index / (count - 1));
 
-                return ratio * size + additionalPosition;
+                return (ratio * size) + additionalPosition;
             });
             positions[positions.length - 1] -= 1;
         }
@@ -126,7 +125,7 @@ var calculator = {
      * @private
      */
     makeLabelsFromLimit: function(limit, step) {
-        var multipleNum = tui.util.findMultipleNum(step);
+        var multipleNum = calculator.findMultipleNum(step);
         var min = Math.round(limit.min * multipleNum);
         var max = Math.round(limit.max * multipleNum);
         var labels = tui.util.range(min, max + 1, step * multipleNum);
@@ -144,7 +143,7 @@ var calculator = {
      * @returns {number} step
      */
     calculateStepFromLimit: function(limit, count) {
-        return tui.util.divide(tui.util.subtract(limit.max, limit.min), (count - 1));
+        return calculator.divide(calculator.subtract(limit.max, limit.min), (count - 1));
     },
 
     /**
@@ -218,7 +217,7 @@ var calculator = {
             return value > 0;
         });
 
-        return tui.util.sum(plusValues);
+        return calculator.sum(plusValues);
     },
 
     /**
@@ -231,7 +230,7 @@ var calculator = {
             return value < 0;
         });
 
-        return tui.util.sum(minusValues);
+        return calculator.sum(minusValues);
     },
 
     /**
@@ -241,7 +240,7 @@ var calculator = {
      * @returns {number}
      */
     makePercentageValue: function(value, totalValue) {
-        return value / totalValue * 100;
+        return value / totalValue * PERCENT_DIVISOR;
     },
 
     /**
@@ -256,5 +255,128 @@ var calculator = {
         return ((value - subNumber) / divNumber) * baseRatio;
     }
 };
+
+/**
+ * Get length after decimal point.
+ * @memberOf module:calculator
+ * @param {string | number} value target value
+ * @returns {number} result length
+ */
+var getDecimalLength = function(value) {
+    var valueArr = String(value).split('.');
+
+    return valueArr.length === 2 ? valueArr[1].length : 0;
+};
+
+/**
+ * Find multiple num.
+ * @memberOf module:calculator
+ * @param {...Array} target values
+ * @returns {number} multiple num
+ */
+var findMultipleNum = function() {
+    var args = [].slice.call(arguments);
+    var underPointLens = tui.util.map(args, function(value) {
+        return calculator.getDecimalLength(value);
+    });
+    var underPointLen = arrayUtil.max(underPointLens);
+
+    return Math.pow(10, underPointLen);
+};
+
+/**
+ * Modulo operation for floating point operation.
+ * @memberOf module:calculator
+ * @param {number} target target values
+ * @param {number} modNum mod num
+ * @returns {number} result mod
+ */
+var mod = function(target, modNum) {
+    var multipleNum = calculator.findMultipleNum(modNum);
+    var result;
+
+    if (multipleNum === 1) {
+        result = target % modNum;
+    } else {
+        result = ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
+    }
+
+    return result;
+};
+
+/**
+ * 'add' is function for add operation to floating point.
+ * @memberOf module:calculator
+ * @param {number} a target a
+ * @param {number} b target b
+ * @returns {number}
+ */
+var add = function(a, b) {
+    var multipleNum = calculator.findMultipleNum(a, b);
+
+    return ((a * multipleNum) + (b * multipleNum)) / multipleNum;
+};
+
+/**
+ * 'subtract' is function for subtract operation to floating point.
+ * @memberOf module:calculator
+ * @param {number} a target a
+ * @param {number} b target b
+ * @returns {number}
+ */
+var subtract = function(a, b) {
+    var multipleNum = calculator.findMultipleNum(a, b);
+
+    return ((a * multipleNum) - (b * multipleNum)) / multipleNum;
+};
+
+/**
+ * 'multiply' is function for multiply operation to floating point.
+ * @param {number} a target a
+ * @param {number} b target b
+ * @returns {number}
+ */
+var multiply = function(a, b) {
+    var multipleNum = calculator.findMultipleNum(a, b);
+
+    return ((a * multipleNum) * (b * multipleNum)) / (multipleNum * multipleNum);
+};
+
+/**
+ * 'divide' is function for divide operation to floating point.
+ * @memberOf module:calculator
+ * @param {number} a target a
+ * @param {number} b target b
+ * @returns {number}
+ */
+var divide = function(a, b) {
+    var multipleNum = calculator.findMultipleNum(a, b);
+
+    return (a * multipleNum) / (b * multipleNum);
+};
+
+/**
+ * Sum.
+ * @memberOf module:calculator
+ * @param {Array.<number>} values target values
+ * @returns {number} result value
+ */
+var sum = function(values) {
+    var copyArr = values.slice();
+    copyArr.unshift(0);
+
+    return tui.util.reduce(copyArr, function(base, value) {
+        return calculator.add(parseFloat(base), parseFloat(value));
+    });
+};
+
+calculator.getDecimalLength = getDecimalLength;
+calculator.findMultipleNum = findMultipleNum;
+calculator.mod = mod;
+calculator.add = add;
+calculator.subtract = subtract;
+calculator.multiply = multiply;
+calculator.divide = divide;
+calculator.sum = sum;
 
 module.exports = calculator;

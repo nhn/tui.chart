@@ -16,6 +16,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
      * @constructs SeriesItem
+     * @private
      * @param {object} params - parameters
      *      @param {number} params.datum - value
      *      @param {string} params.chartType - type of chart

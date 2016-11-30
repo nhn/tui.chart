@@ -6,7 +6,7 @@
 
 'use strict';
 
-var DataProcessor = require('./dataProcessor');
+var DataProcessorBase = require('./dataProcessorBase');
 var renderUtil = require('../../helpers/renderUtil');
 
 /**
@@ -19,14 +19,28 @@ var renderUtil = require('../../helpers/renderUtil');
  * @typedef {{value: number, label: string, name: ?string}} valueMap
  */
 
-var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapChartDataProcessor.prototype */{
+var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends MapChartDataProcessor.prototype */{
     /**
      * Data processor for map chart.
+     * @param {rawData} rawData raw data
+     * @param {string} chartType chart type
+     * @param {object} options options
      * @constructs MapChartDataProcessor
+     * @private
      * @extends DataProcessor
      */
-    init: function() {
-        DataProcessor.apply(this, arguments);
+    init: function(rawData, chartType, options) {
+        /**
+         * raw data
+         * @type {rawData}
+         */
+        this.rawData = rawData;
+
+        /**
+         * chart options
+         * @type {Object}
+         */
+        this.options = options;
     },
 
     /**

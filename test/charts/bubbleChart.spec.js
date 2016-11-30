@@ -46,9 +46,10 @@ describe('Test for BubbleChart', function() {
 
             bubbleChart._addComponents('bubble');
 
-            expect(componentManager.register).toHaveBeenCalledWith('circleLegend', CircleLegend, {
+            expect(componentManager.register).toHaveBeenCalledWith('circleLegend', {
                 chartType: 'bubble',
-                baseFontFamily: 'Verdana'
+                baseFontFamily: 'Verdana',
+                classType: 'circleLegend'
             });
         });
 

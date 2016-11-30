@@ -6,7 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
@@ -17,6 +17,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Plot component.
      * @constructs Plot
+     * @private
      * @param {object} params parameters
      *      @param {number} params.vTickCount vertical tick count
      *      @param {number} params.hTickCount horizontal tick count
@@ -45,10 +46,10 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.options.bands = this.options.bands || [];
 
         /**
-         * x axis type
+         * x axis type option
          * @type {?string}
          */
-        this.xAxisType = params.xAxisType;
+        this.xAxisTypeOption = params.xAxisTypeOption;
 
         /**
          * Theme
@@ -67,11 +68,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * @type {Array.<string>}
          */
         this.chartTypes = params.chartTypes;
-
-        /**
-         * whether vertical or not
-         */
-        this.isVertical = params.isVertical;
 
         /**
          * layout bounds information for this components
@@ -201,6 +197,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
         templateParams.positionValue = percentagePosition + '%';
         templateParams.opacity = templateParams.opacity || '';
+
         return plotTemplate.tplPlotLine(templateParams);
     },
 
@@ -213,7 +210,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     _createOptionalLineValueRange: function(optionalLineData) {
         var range = optionalLineData.range || [optionalLineData.value];
 
-        if (predicate.isDatetimeType(this.xAxisType)) {
+        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
             range = tui.util.map(range, function(value) {
                 var date = new Date(value);
 
@@ -402,8 +399,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
         return this._makeLinesHtml(positions, dimension.width, templateParams);
     },
+
     /**
-     * Maker html for horizontal lines
+     * Maker html for horizontal lines.
      * @param {{width: number, height: number}} dimension - dimension
      * @param {string} lineColor - line color
      * @returns {string}

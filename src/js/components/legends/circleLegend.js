@@ -7,10 +7,11 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories//pluginFactory');
+var pluginFactory = require('../../factories/pluginFactory');
 var legendTemplate = require('./legendTemplate');
 
 var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
@@ -27,6 +28,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     /**
      * Circle legend component render a legend in the form of overlapping circles by representative radius values.
      * @constructs CircleLegend
+     * @private
      * @param {object} params parameters
      *      @param {?string} params.libType - library type for graph rendering
      *      @param {string} params.chartType - chart type
@@ -77,7 +79,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     },
 
     /**
-     * Format label
+     * Format label.
      * @param {number} label - label
      * @param {number} decimalLength - decimal length
      * @returns {string}
@@ -107,7 +109,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
         var halfWidth = dimension.width / 2;
         var maxRadius = this.maxRadius;
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
-        var decimalLength = tui.util.getDecimalLength(maxValueRadius);
+        var decimalLength = calculator.getDecimalLength(maxValueRadius);
         var labelHeight = renderUtil.getRenderedLabelHeight(maxValueRadius, this.labelTheme);
 
         return tui.util.map(this.circleRatios, function(ratio) {

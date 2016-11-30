@@ -10,7 +10,6 @@ var ChartBase = require('./chartBase');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
 var rawDataHandler = require('../models/data/rawDataHandler');
-var Series = require('../components/series/columnChartSeries');
 
 var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
     /**
@@ -72,7 +71,6 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             series: [
                 {
                     name: 'columnSeries',
-                    SeriesClass: Series,
                     data: {
                         allowNegativeTooltip: true
                     }

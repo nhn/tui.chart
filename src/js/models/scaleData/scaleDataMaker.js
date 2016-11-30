@@ -10,13 +10,14 @@ var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+var arrayUtil = require('../../helpers/arrayUtil');
 
 var abs = Math.abs;
 
 /**
  * scaleMaker calculates limit and step into values of processed data and returns it.
  * @module scaleDataMaker
- */
+ * @private */
 var scaleDataMaker = {
     /**
      * Get candidate counts of value.
@@ -75,7 +76,7 @@ var scaleDataMaker = {
             };
         }
 
-        multipleNum = tui.util.findMultipleNum(min, max);
+        multipleNum = calculator.findMultipleNum(min, max);
         changedOptions = {};
 
         if (!tui.util.isUndefined(limitOption.min)) {
@@ -165,13 +166,13 @@ var scaleDataMaker = {
      * @private
      */
     _normalizeMin: function(min, step) {
-        var mod = tui.util.mod(min, step),
+        var mod = calculator.mod(min, step),
             normalized;
 
         if (mod === 0) {
             normalized = min;
         } else {
-            normalized = tui.util.subtract(min, (min >= 0 ? mod : step + mod));
+            normalized = calculator.subtract(min, (min >= 0 ? mod : step + mod));
         }
 
         return Math.round(normalized);
@@ -187,8 +188,8 @@ var scaleDataMaker = {
      * @private
      */
     _makeNormalizedMax: function(limit, step, valueCount) {
-        var minMaxDiff = tui.util.multiply(step, valueCount - 1);
-        var normalizedMax = tui.util.add(limit.min, minMaxDiff);
+        var minMaxDiff = calculator.multiply(step, valueCount - 1);
+        var normalizedMax = calculator.add(limit.min, minMaxDiff);
         var maxDiff = limit.max - normalizedMax;
         var modDiff, divideDiff;
 
@@ -207,12 +208,22 @@ var scaleDataMaker = {
      * @param {{min: number, max: number}} limit base limit
      * @param {number} step scale step
      * @param {number} valueCount value count
+     * @param {{max:number, min:number}} limitOption limitOption
      * @returns {{min: number, max: number}} normalized limit
      * @private
      */
-    _normalizeLimit: function(limit, step, valueCount) {
-        limit.min = this._normalizeMin(limit.min, step);
-        limit.max = this._makeNormalizedMax(limit, step, valueCount);
+    _normalizeLimitIfNeed: function(limit, step, valueCount, limitOption) {
+        if (limitOption && tui.util.isExisty(limitOption.min)) {
+            limit.min = limitOption.min;
+        } else {
+            limit.min = this._normalizeMin(limit.min, step);
+        }
+
+        if (limitOption && tui.util.isExisty(limitOption.max)) {
+            limit.max = limitOption.max;
+        } else {
+            limit.max = this._makeNormalizedMax(limit, step, valueCount);
+        }
 
         return limit;
     },
@@ -230,7 +241,7 @@ var scaleDataMaker = {
      * @private
      */
     _decreaseMinByStep: function(min, dataMin, step, chartType, optionMin, isVertical) {
-        /*eslint max-params: [2, 6]*/
+        /* eslint max-params: [2, 6]*/
         var isLineChart = predicate.isLineChart(chartType);
         var isAreaChartXAxis = predicate.isAreaChart(chartType) && !isVertical;
         var isMinusDataMin = dataMin < 0;
@@ -383,7 +394,7 @@ var scaleDataMaker = {
         step = calculator.normalizeAxisNumber(step);
 
         // 03. limit 정규화 시키기
-        limit = this._normalizeLimit(limit, step, valueCount);
+        limit = this._normalizeLimitIfNeed(limit, step, valueCount, limitOption);
 
         // 04. line차트의 경우 사용자의 min값이 limit의 min값과 같을 경우, min값을 1 step 감소 시킴
         limit.min = this._decreaseMinByStep(limit.min, dataLimit.min, step, chartType, limitOption.min, isVertical);
@@ -455,7 +466,7 @@ var scaleDataMaker = {
         // 예상 label count와 차이가 많을 수록 후보 제외 가능성이 높음
         var diffCount = Math.max(abs(valueCounts[index] - candidateScale.stepCount), 1);
         // 소수점 이하 길이가 길 수록 후보에서 제외될 가능성이 높음
-        var weight = Math.pow(10, tui.util.getDecimalLength(candidateScale.step));
+        var weight = Math.pow(10, calculator.getDecimalLength(candidateScale.step));
 
         return (diffMax + diffMin) * diffCount * weight;
     },
@@ -470,7 +481,7 @@ var scaleDataMaker = {
      */
     _selectAxisScale: function(baseLimit, candidates, valueCounts) {
         var getComparingValue = tui.util.bind(this._getComparingValue, this, baseLimit, valueCounts);
-        var axisScale = tui.util.min(candidates, getComparingValue);
+        var axisScale = arrayUtil.min(candidates, getComparingValue);
 
         return axisScale;
     },
@@ -488,9 +499,9 @@ var scaleDataMaker = {
             return scale;
         }
 
-        scale.step = tui.util.divide(scale.step, divisionNumber);
-        scale.limit.min = tui.util.divide(scale.limit.min, divisionNumber);
-        scale.limit.max = tui.util.divide(scale.limit.max, divisionNumber);
+        scale.step = calculator.divide(scale.step, divisionNumber);
+        scale.limit.min = calculator.divide(scale.limit.min, divisionNumber);
+        scale.limit.max = calculator.divide(scale.limit.max, divisionNumber);
 
         return scale;
     },
@@ -556,8 +567,8 @@ var scaleDataMaker = {
     _makeDatetimeInfo: function(dataLimit, count) {
         var dateType = this._findDateType(dataLimit, count);
         var divisionNumber = this.millisecondMap[dateType];
-        var minDate = tui.util.divide(dataLimit.min, divisionNumber);
-        var maxDate = tui.util.divide(dataLimit.max, divisionNumber);
+        var minDate = calculator.divide(dataLimit.min, divisionNumber);
+        var maxDate = calculator.divide(dataLimit.max, divisionNumber);
         var max = maxDate - minDate;
 
         return {
@@ -581,9 +592,9 @@ var scaleDataMaker = {
     _restoreScaleToDatetimeType: function(scale, minDate, divisionNumber) {
         var limit = scale.limit;
 
-        scale.step = tui.util.multiply(scale.step, divisionNumber);
-        limit.min = tui.util.multiply(tui.util.add(limit.min, minDate), divisionNumber);
-        limit.max = tui.util.multiply(tui.util.add(limit.max, minDate), divisionNumber);
+        scale.step = calculator.multiply(scale.step, divisionNumber);
+        limit.min = calculator.multiply(calculator.add(limit.min, minDate), divisionNumber);
+        limit.max = calculator.multiply(calculator.add(limit.max, minDate), divisionNumber);
 
         return scale;
     },
@@ -606,8 +617,8 @@ var scaleDataMaker = {
      */
     _calculateScale: function(baseValues, baseSize, chartType, options) {
         var dataLimit = {
-            min: tui.util.min(baseValues),
-            max: tui.util.max(baseValues)
+            min: arrayUtil.min(baseValues),
+            max: arrayUtil.max(baseValues)
         };
         var datetimeInfo, integerTypeScale, tickCounts, candidates, scale;
 

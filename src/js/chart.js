@@ -11,9 +11,10 @@ var chartFactory = require('./factories/chartFactory');
 var pluginFactory = require('./factories/pluginFactory');
 var themeManager = require('./themes/themeManager');
 var mapManager = require('./factories/mapManager');
+var objectUtil = require('./helpers/objectUtil');
 
+require('../less/style.less');
 require('./polyfill');
-require('./code-snippet-util');
 require('./charts/chartsRegistration');
 require('./themes/defaultThemesRegistration');
 
@@ -74,8 +75,8 @@ tui.util.defineNamespace('tui.chart');
 function _createChart(container, rawData, options, chartType) {
     var themeName, theme, chart;
 
-    rawData = tui.util.deepCopy(rawData);
-    options = options ? tui.util.deepCopy(options) : {};
+    rawData = objectUtil.deepCopy(rawData);
+    options = options ? objectUtil.deepCopy(options) : {};
     options.chartType = chartType;
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeManager.get(themeName, chartType, rawData.series);
@@ -1282,3 +1283,5 @@ tui.chart.registerMap = function(mapName, data) {
 tui.chart.registerPlugin = function(libType, plugin) {
     pluginFactory.register(libType, plugin);
 };
+
+require('./plugins/pluginRaphael');

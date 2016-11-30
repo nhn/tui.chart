@@ -9,6 +9,7 @@
 'use strict';
 
 var chartConst = require('../../const');
+var DataProcessorBase = require('./dataProcessorBase');
 var SeriesDataModel = require('../data/seriesDataModel');
 var SeriesDataModelForTreemap = require('../data/seriesDataModelForTreemap');
 var SeriesGroup = require('./seriesGroup');
@@ -16,20 +17,21 @@ var rawDataHandler = require('../../models/data/rawDataHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
+var objectUtil = require('../../helpers/objectUtil');
 
 var concat = Array.prototype.concat;
 
-/**
+/*
  * Raw series datum.
  * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
  */
 
-/**
+/*
  * Raw series data.
  * @typedef {Array.<rawSeriesDatum>} rawSeriesData
  */
 
-/**
+/*
  * Raw data by user.
  * @typedef {{
  *      categories: ?Array.<string>,
@@ -37,21 +39,22 @@ var concat = Array.prototype.concat;
  * }} rawData
  */
 
-/**
+/*
  * SeriesDataModel is base model for drawing graph of chart series area,
  *      and create from rawSeriesData by user,
  * SeriesDataModel.groups has SeriesGroups.
  */
 
-/**
+/*
  * SeriesGroup is a element of SeriesDataModel.groups.
  * SeriesGroup.items has SeriesItem.
  */
 
-var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
+var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProcessor.prototype */{
     /**
      * Data processor.
      * @constructs DataProcessor
+     * @private
      * @param {rawData} rawData raw data
      * @param {string} chartType chart type
      * @param {object} options options
@@ -62,7 +65,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.originalRawData = tui.util.deepCopy(rawData);
+        this.originalRawData = objectUtil.deepCopy(rawData);
 
         /**
          * chart type
@@ -96,6 +99,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         this.initData(rawData);
         this.initZoomedRawData();
+        this.baseInit();
     },
 
     /**
@@ -103,7 +107,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {rawData} raw data
      */
     getOriginalRawData: function() {
-        return tui.util.deepCopy(this.originalRawData);
+        return objectUtil.deepCopy(this.originalRawData);
     },
 
     /**
@@ -113,7 +117,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getZoomedRawData: function() {
         var zoomedRawData = this.zoomedRawData;
         if (zoomedRawData) {
-            zoomedRawData = tui.util.deepCopy(zoomedRawData);
+            zoomedRawData = objectUtil.deepCopy(zoomedRawData);
         } else {
             zoomedRawData = this.getOriginalRawData();
         }
@@ -236,12 +240,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.legendData = null;
 
         /**
-         * functions for formatting
-         * @type {Array.<function>}
-         */
-        this.formatFunctions = null;
-
-        /**
          * multiline categories
          * @type {Array.<string>}
          */
@@ -272,7 +270,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Escape categories
+     * Escape categories.
      * @param {Array.<string, number>} categories - cetegories
      * @returns {*|Array.<Object>|Array}
      * @private
@@ -304,7 +302,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Process categories
+     * Process categories.
      * @param {string} type - category type (x or y)
      * @returns {null | Array.<string>} processed categories
      * @private
@@ -476,7 +474,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Get stacks.
+     * Get stacks from raw series data.
      * @returns {Array.<string>}
      */
     getStacks: function() {
@@ -496,7 +494,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Find stack index.
+     * Find stack index from stack list by stack value.
      * @param {string} stack stack
      * @returns {number}
      */
@@ -514,8 +512,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         if (!tui.util.isExisty(coordinateType)) {
             coordinateType = predicate.isCoordinateTypeChart(chartType);
-            coordinateType = coordinateType ||
-                (predicate.isLineTypeChart(chartType) && !this.hasCategories());
+            coordinateType = coordinateType || predicate.isLineScatterComboChart(chartType, this.seriesNames);
+            coordinateType = coordinateType || (predicate.isLineTypeChart(chartType) && !this.hasCategories());
             this.coordinateType = coordinateType;
         }
 
@@ -861,7 +859,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     _createValues: function(chartType, valueType) {
         var values;
 
-        if (chartType === chartConst.DUMMY_KEY) {
+        if (predicate.isComboChart(chartType)) {
             values = [];
             this._eachByAllSeriesDataModel(function(seriesDataModel) {
                 values = values.concat(seriesDataModel.getValues(valueType));
@@ -882,7 +880,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getValues: function(chartType, valueType) {
         var mapKey;
 
-        chartType = chartType || chartConst.DUMMY_KEY;
+        // chartType = chartType || chartConst.DUMMY_KEY;
         mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {
@@ -890,30 +888,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         }
 
         return this.valuesMap[mapKey];
-    },
-
-    /**
-     * Get max value.
-     * @param {?string} chartType - type of chart
-     * @param {?string} valueType - type of value like value, x, y, r
-     * @returns {number}
-     */
-    getMaxValue: function(chartType, valueType) {
-        return tui.util.max(this.getValues(chartType, valueType));
-    },
-
-    /**
-     * Get formatted max value.
-     * @param {?string} chartType - type of chart
-     * @param {?string} areaType - type of area like circleLegend
-     * @param {?string} valueType - type of value like value, x, y, r
-     * @returns {string | number}
-     */
-    getFormattedMaxValue: function(chartType, areaType, valueType) {
-        var maxValue = this.getMaxValue(chartType, valueType);
-        var formatFunctions = this.getFormatFunctions();
-
-        return renderUtil.formatValue(maxValue, formatFunctions, chartType, areaType, valueType);
     },
 
     /**
@@ -1041,144 +1015,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Get format functions.
-     * @returns {Array.<function>} functions
-     */
-    getFormatFunctions: function() {
-        if (!this.formatFunctions) {
-            this.formatFunctions = this._findFormatFunctions();
-        }
-
-        return this.formatFunctions;
-    },
-
-    /**
      * Get first label of SeriesItem.
      * @param {?string} chartType chartType
      * @returns {string} formatted value
      */
     getFirstItemLabel: function(chartType) {
         return this.getSeriesDataModel(chartType).getFirstItemLabel();
-    },
-
-    /**
-     * Pick max length under point.
-     * @param {string[]} values chart values
-     * @returns {number} max length under point
-     * @private
-     */
-    _pickMaxLenUnderPoint: function(values) {
-        var max = 0;
-
-        tui.util.forEachArray(values, function(value) {
-            var len = tui.util.getDecimalLength(value);
-            if (len > max) {
-                max = len;
-            }
-        });
-
-        return max;
-    },
-
-    /**
-     * Whether zero fill format or not.
-     * @param {string} format format
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _isZeroFill: function(format) {
-        return format.length > 2 && format.charAt(0) === '0';
-    },
-
-    /**
-     * Whether decimal format or not.
-     * @param {string} format format
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _isDecimal: function(format) {
-        var indexOf = format.indexOf('.');
-
-        return indexOf > -1 && indexOf < format.length - 1;
-    },
-
-    /**
-     * Whether comma format or not.
-     * @param {string} format format
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _isComma: function(format) {
-        return format.indexOf(',') > -1;
-    },
-
-    /**
-     * Format to zero fill.
-     * @param {number} len length of result
-     * @param {string} value target value
-     * @returns {string} formatted value
-     * @private
-     */
-    _formatToZeroFill: function(len, value) {
-        var isMinus = value < 0;
-
-        value = renderUtil.formatToZeroFill(Math.abs(value), len);
-
-        return (isMinus ? '-' : '') + value;
-    },
-
-    /**
-     * Format to Decimal.
-     * @param {number} len length of under decimal point
-     * @param {string} value target value
-     * @returns {string} formatted value
-     * @private
-     */
-    _formatToDecimal: function(len, value) {
-        return renderUtil.formatToDecimal(value, len);
-    },
-
-    /**
-     * Find simple type format functions.
-     * @param {string} format - simple format
-     * @returns {Array.<function>}
-     */
-    _findSimpleTypeFormatFunctions: function(format) {
-        var funcs = [];
-        var len;
-
-        if (this._isDecimal(format)) {
-            len = this._pickMaxLenUnderPoint([format]);
-            funcs = [tui.util.bind(this._formatToDecimal, this, len)];
-        } else if (this._isZeroFill(format)) {
-            len = format.length;
-            funcs = [tui.util.bind(this._formatToZeroFill, this, len)];
-
-            return funcs;
-        }
-
-        if (this._isComma(format)) {
-            funcs.push(renderUtil.formatToComma);
-        }
-
-        return funcs;
-    },
-
-    /**
-     * Find format functions.
-     * @returns {function[]} functions
-     */
-    _findFormatFunctions: function() {
-        var format = tui.util.pick(this.options, 'chart', 'format');
-        var funcs = [];
-
-        if (tui.util.isFunction(format)) {
-            funcs = [format];
-        } else if (tui.util.isString(format)) {
-            funcs = this._findSimpleTypeFormatFunctions(format);
-        }
-
-        return funcs;
     },
 
     /**
@@ -1277,8 +1119,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType) {
         var baseValues;
 
-        if (isSingleYAxis) {
-            baseValues = this.getValues();
+        if (predicate.isComboChart(this.chartType) && isSingleYAxis) {
+            baseValues = this.getValues(this.chartType, valueType);
             if (predicate.isNormalStackChart(chartType, stackType)) {
                 baseValues = baseValues.concat(this._createBaseValuesForNormalStackedChart(chartType));
             }

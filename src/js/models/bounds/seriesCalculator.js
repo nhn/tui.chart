@@ -12,7 +12,7 @@ var predicate = require('../../helpers/predicate');
 /**
  * Calculator for series.
  * @module seriesCalculator
- */
+ * @private */
 var seriesCalculator = {
     /**
      * Calculate width.

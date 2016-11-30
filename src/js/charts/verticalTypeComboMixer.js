@@ -9,14 +9,12 @@
 var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
-var ColumnChartSeries = require('../components/series/columnChartSeries');
-var LineChartSeries = require('../components/series/lineChartSeries');
-var AreaChartSeries = require('../components/series/areaChartSeries');
 
 var verticalTypeComboMixer = {
     /**
      * Column and Line Combo chart.
      * @constructs verticalTypeComboMixer
+     * @private
      * @extends ChartBase
      * @param {Array.<Array>} rawData raw data
      * @param {object} options chart options
@@ -38,11 +36,6 @@ var verticalTypeComboMixer = {
          * @type {Object|Array.<T>}
          */
         this.seriesNames = chartTypesMap.seriesNames;
-
-        /**
-         * chart types for options
-         */
-        this.optionChartTypes = chartTypesMap.optionChartTypes;
 
         /**
          * whether has right y axis or not
@@ -76,14 +69,12 @@ var verticalTypeComboMixer = {
         if (validChartTypes.length === 1) {
             chartTypesMap = {
                 chartTypes: validChartTypes,
-                seriesNames: validChartTypes,
-                optionChartTypes: !optionChartTypes.length ? optionChartTypes : validChartTypes
+                seriesNames: validChartTypes
             };
         } else {
             chartTypesMap = {
                 chartTypes: chartTypes,
-                seriesNames: seriesNames,
-                optionChartTypes: optionChartTypes
+                seriesNames: seriesNames
             };
         }
 
@@ -169,12 +160,11 @@ var verticalTypeComboMixer = {
      * @override
      */
     _getScaleOption: function() {
-        var isSingleYAxis = this.optionChartTypes.length < 2;
         var scaleOption = {
-            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], isSingleYAxis)
+            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
         };
 
-        if (!isSingleYAxis) {
+        if (this.hasRightYAxis) {
             scaleOption.rightYAxis = this._makeYAxisScaleOption('rightYAxis', this.chartTypes[1]);
         }
 
@@ -188,11 +178,6 @@ var verticalTypeComboMixer = {
      * @private
      */
     _makeDataForAddingSeriesComponent: function(seriesNames) {
-        var seriesClasses = {
-            column: ColumnChartSeries,
-            line: LineChartSeries,
-            area: AreaChartSeries
-        };
         var optionsMap = this._makeOptionsMap(seriesNames);
         var dataProcessor = this.dataProcessor;
         var serieses = tui.util.map(seriesNames, function(seriesName) {
@@ -206,7 +191,6 @@ var verticalTypeComboMixer = {
 
             return {
                 name: seriesName + 'Series',
-                SeriesClass: seriesClasses[chartType],
                 data: data
             };
         });
@@ -231,7 +215,7 @@ var verticalTypeComboMixer = {
         ];
         var serieses = this._makeDataForAddingSeriesComponent(this.seriesNames);
 
-        if (this.optionChartTypes.length) {
+        if (this.hasRightYAxis) {
             axes.push({
                 name: 'rightYAxis',
                 seriesName: this.seriesNames[1],
@@ -268,7 +252,7 @@ var verticalTypeComboMixer = {
             });
 
             tui.util.forEachArray(optionChartTypes, function(chartType, index) {
-                isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
+                isReverse = isReverse || ((chartType && resultChartTypes[index] !== chartType) || false);
             });
 
             if (isReverse) {
@@ -311,17 +295,7 @@ var verticalTypeComboMixer = {
         } else if (tickCountDiff < 0) {
             this._increaseYAxisTickCount(-tickCountDiff, rightYAxisData);
         }
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
-
 
 module.exports = verticalTypeComboMixer;

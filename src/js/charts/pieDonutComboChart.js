@@ -11,6 +11,7 @@ var rawDataHandler = require('../models/data/rawDataHandler');
 var pieTypeMixer = require('./pieTypeMixer');
 var comboTypeMixer = require('./comboTypeMixer');
 var predicate = require('../helpers/predicate');
+var arrayUtil = require('../helpers/arrayUtil');
 
 var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
     /**
@@ -51,7 +52,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         var seriesNames = this.seriesNames;
         var optionsMap = this._makeOptionsMap(seriesNames);
         var dataProcessor = this.dataProcessor;
-        var isShowOuterLabel = tui.util.any(optionsMap, predicate.isShowOuterLabel);
+        var isShowOuterLabel = arrayUtil.any(optionsMap, predicate.isShowOuterLabel);
         var seriesData = tui.util.map(seriesNames, function(seriesName) {
             var chartType = dataProcessor.findChartType(seriesName);
             var additionalParams = {
@@ -79,7 +80,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         this._addLegendComponent(this.seriesNames);
         this._addTooltipComponent();
         this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
-        this._addCustomEventComponent();
+        this._addMouseEventDetectorComponent();
     },
 
     /**

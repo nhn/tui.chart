@@ -7,7 +7,7 @@
 'use strict';
 
 var Series = require('./series');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 
@@ -15,6 +15,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Line chart series component.
      * @constructs PieChartSeries
+     * @private
      * @extends Series
      * @param {object} params parameters
      *      @param {object} params.model series model

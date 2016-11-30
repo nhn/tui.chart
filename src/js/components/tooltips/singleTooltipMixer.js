@@ -6,7 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../../const/'),
+var chartConst = require('../../const'),
     predicate = require('../../helpers/predicate'),
     dom = require('../../helpers/domHandler'),
     renderUtil = require('../../helpers/renderUtil');
@@ -14,7 +14,7 @@ var chartConst = require('../../const/'),
 /**
  * singleTooltipMixer is single tooltip mixer of map chart.
  * @mixin
- */
+ * @private */
 var singleTooltipMixer = {
     /**
      * Set data indexes.
@@ -335,7 +335,7 @@ var singleTooltipMixer = {
             tooltipSizeHalf = params.dimension[sizeType] / 2;
             barPosition = bound[positionType];
             barSizeHalf = bound[sizeType] / 2;
-            movedPositionValue = (barPosition + barSizeHalf - tooltipSizeHalf) * 2 - position[positionType];
+            movedPositionValue = ((barPosition + barSizeHalf - tooltipSizeHalf) * 2) - position[positionType];
             position[positionType] = movedPositionValue;
         }
 
@@ -365,10 +365,10 @@ var singleTooltipMixer = {
         var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
         var offset = this.options.offset || {};
         var positionOption = {};
-        var prevChartType, position;
+        var prevChartType = elTooltip && elTooltip.getAttribute('data-chart-type');
+        var position;
 
-        if (this._isChangedIndexes(prevIndexes, indexes)) {
-            prevChartType = elTooltip.getAttribute('data-chart-type');
+        if (this._isChangedIndexes(prevIndexes, indexes) || prevChartType !== params.chartType) {
             this.eventBus.fire('hoverOffSeries', prevIndexes, prevChartType);
         }
 
@@ -444,7 +444,8 @@ var singleTooltipMixer = {
         var indexes = this._getIndexesCustomAttribute(tooltipElement);
         var chartType = tooltipElement.getAttribute('data-chart-type');
 
-        if (predicate.isMousePositionChart(chartType)) {
+        if (predicate.isChartToDetectMouseEventOnSeries(chartType)) {
+            this.eventBus.fire('hoverOffSeries', indexes, chartType);
             this._executeHidingTooltip(tooltipElement);
         } else if (chartType) {
             this._setShowedCustomAttribute(tooltipElement, false);

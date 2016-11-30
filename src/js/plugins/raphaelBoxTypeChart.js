@@ -16,6 +16,7 @@ var MAX_BORDER_WIDTH = 3;
 /**
  * @classdesc RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
  * @class RaphaelBarChart
+ * @private
  */
 var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.prototype */ {
     /**
@@ -147,7 +148,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         var color;
 
         if (!seriesItem.hasChild) {
-            color = this.colorSpectrum.getColor(seriesItem.colorRatio) || this.chartBackground;
+            color = this.colorSpectrum.getColor(seriesItem.colorRatio || seriesItem.ratio) || this.chartBackground;
         } else {
             color = 'none';
         }

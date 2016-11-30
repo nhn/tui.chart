@@ -7,11 +7,11 @@
 'use strict';
 
 var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories//pluginFactory');
+var pluginFactory = require('../../factories/pluginFactory');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -22,6 +22,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Series base component.
      * @constructs Series
+     * @private
      * @param {object} params parameters
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
@@ -242,7 +243,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
         }
 
-        if (!predicate.isMousePositionChart(this.chartType)) {
+        if (!predicate.isChartToDetectMouseEventOnSeries(this.chartType)) {
             extendedDimension = this.dimensionMap.extendedSeries;
             renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
         }
@@ -264,11 +265,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Send boudns to customEvent component.
+     * Send boudns to mouseEventDetector component.
      * @param {object} seriesData - series data
      * @private
      */
-    _sendBoundsToCustomEvent: function(seriesData) {
+    _sendBoundsToMouseEventDetector: function(seriesData) {
         this.eventBus.fire('receiveSeriesData', {
             chartType: this.chartType,
             data: seriesData
@@ -291,7 +292,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.seriesData = seriesData = this._makeSeriesData();
 
-        this._sendBoundsToCustomEvent(seriesData);
+        this._sendBoundsToMouseEventDetector(seriesData);
 
         if (!paper) {
             renderUtil.renderDimension(seriesContainer, dimension);
@@ -338,9 +339,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _renderGraph: function(dimension, seriesData, paper) {
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        paper = this.graphRenderer.render(this.seriesContainer, params, paper);
-
-        return paper;
+        return this.graphRenderer.render(this.seriesContainer, params, paper);
     },
 
     /**
@@ -596,6 +595,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.graphRenderer.showAnimation) {
             return;
         }
+
         this.graphRenderer.showAnimation(data);
     },
 
@@ -612,6 +612,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.graphRenderer.hideAnimation || !data) {
             return;
         }
+
         this.graphRenderer.hideAnimation(data);
     },
 

@@ -8,12 +8,13 @@
 
 var Series = require('./series');
 var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 
 var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
     /**
      * Series component for rendering graph of heatmap chart.
      * @constructs HeatmapChartSeries
+     * @private
      * @param {object} params - parameters
      * @extends Series
      */
@@ -28,7 +29,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     },
 
     /**
-     * Make series data.
+     * Make series data for rendering graph and sending to mouse event detector.
      * @returns {{
      *      groupBounds: Array.<Array.<{left: number, top: number, radius: number}>>,
      *      seriesDataModel: SeriesDataModel
@@ -90,7 +91,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     },
 
     /**
-     * On show tooltip for calling showWedge.
+     * Call showWedge event of spectrum legend, when call showTooltip event.
      * @param {{indexes: {groupIndex: number, index: number}}} params - parameters
      */
     onShowTooltip: function(params) {

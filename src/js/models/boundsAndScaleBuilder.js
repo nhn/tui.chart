@@ -14,7 +14,7 @@ var predicate = require('../helpers/predicate');
 /**
  * Bounds and scale data builder.
  * @module boundsAndScaleBuilder
- */
+ * @private */
 var boundsAndScaleBuilder = {
     /**
      * Create BoundsModel.
@@ -119,10 +119,10 @@ var boundsAndScaleBuilder = {
         }
 
         if (componentManager.has('legend')) {
-            boundsModel.registerLegendDimension();
-
             if (componentManager.get('legend').colorSpectrum) {
-                boundsModel.updateDimensionForSpectrumLegend();
+                boundsModel.registerSpectrumLegendDimension();
+            } else {
+                boundsModel.registerLegendDimension();
             }
         }
 
@@ -153,7 +153,7 @@ var boundsAndScaleBuilder = {
         if (scaleOption.xAxis) {
             scaleDataModel.addScale('xAxis', options.xAxis, {
                 valueType: scaleOption.xAxis.valueType || 'value'
-            });
+            }, scaleOption.xAxis.additionalOptions);
         }
 
         // 05. axis data map 생성 및 설정

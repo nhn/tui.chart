@@ -13,7 +13,7 @@ var renderUtil = require('../../helpers/renderUtil');
 /**
  * Calculator for dimension of axis.
  * @module axisCalculator
- */
+ * @private */
 var axisCalculator = {
     /**
      * Calculate height for x axis.
@@ -22,7 +22,7 @@ var axisCalculator = {
      * @returns {*}
      */
     calculateXAxisHeight: function(title, theme) {
-        var titleHeight = renderUtil.getRenderedLabelHeight(title, theme.title);
+        var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
         var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme.label);
 
@@ -45,9 +45,9 @@ var axisCalculator = {
         if (options.isCenter) {
             width += chartConst.AXIS_LABEL_PADDING;
         } else if (options.rotateTitle === false) {
-            titleAreaWidth = renderUtil.getRenderedLabelWidth(title, theme.title) + chartConst.TITLE_PADDING;
+            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title) + chartConst.TITLE_PADDING;
         } else {
-            titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
+            titleAreaWidth = renderUtil.getRenderedLabelHeight(title.text, theme.title) + chartConst.TITLE_PADDING;
         }
 
         if (predicate.isDatetimeType(options.type)) {

@@ -12,6 +12,7 @@ var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
     /**
      * ColorSpectrum create a color spectrum and provide color value.
      * @constructs ColorSpectrum
+     * @private
      * @param {string} startColor hex color
      * @param {string} endColor hex color
      */

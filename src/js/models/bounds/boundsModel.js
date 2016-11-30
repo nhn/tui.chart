@@ -34,6 +34,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     /**
      * Bounds maker.
      * @constructs BoundsModel
+     * @private
      * @param {object} params parameters
      */
     init: function(params) {
@@ -203,11 +204,13 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @private
      */
     _registerTitleDimension: function() {
-        var chartOptions = this.options.chart || {},
-            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, this.theme.title),
-            dimension = {
-                height: titleHeight + chartConst.TITLE_PADDING
-            };
+        var chartOptions = this.options.chart || {title: {}};
+        var hasTitleOption = tui.util.isExisty(chartOptions.title);
+        var titleHeight =
+            hasTitleOption ? renderUtil.getRenderedLabelHeight(chartOptions.title.text, this.theme.title) : 0;
+        var dimension = {
+            height: titleHeight + chartConst.TITLE_PADDING
+        };
 
         this._registerDimension('title', dimension);
     },
@@ -235,9 +238,9 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
-     * Update dimension for SpectrumLegend.
+     * Register dimension for spectrum legend component.
      */
-    updateDimensionForSpectrumLegend: function() {
+    registerSpectrumLegendDimension: function() {
         var maxValue = this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
         var labelTheme = this.theme.label;
         var dimension;
@@ -396,14 +399,14 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
-     * Register center componets dimension.
+     * Register center components dimension.
      * @private
      */
     _registerCenterComponentsDimension: function() {
         var seriesDimension = this.getDimension('series');
 
         this._registerDimension('tooltip', seriesDimension);
-        this._registerDimension('customEvent', seriesDimension);
+        this._registerDimension('mouseEventDetector', seriesDimension);
     },
 
     /**
@@ -437,7 +440,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         this.chartLeftPadding += overflowLeft;
         this.dimensionMap.plot.width -= overflowLeft;
         this.dimensionMap.series.width -= overflowLeft;
-        this.dimensionMap.customEvent.width -= overflowLeft;
+        this.dimensionMap.mouseEventDetector.width -= overflowLeft;
         this.dimensionMap.xAxis.width -= overflowLeft;
     },
 
@@ -449,7 +452,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     _updateDimensionsHeight: function(diffHeight) {
         this.dimensionMap.plot.height -= diffHeight;
         this.dimensionMap.series.height -= diffHeight;
-        this.dimensionMap.customEvent.height -= diffHeight;
+        this.dimensionMap.mouseEventDetector.height -= diffHeight;
         this.dimensionMap.tooltip.height -= diffHeight;
         this.dimensionMap.yAxis.height -= diffHeight;
         this.dimensionMap.rightYAxis.height -= diffHeight;
@@ -504,7 +507,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
-     * Make legend bound.
+     * Make legend position.
      * @returns {{dimension: {width: number, height: number}, position: {top: number, left: number}}} legend bound
      * @private
      */
@@ -572,7 +575,8 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     _isNeedExpansionSeries: function() {
         var chartType = this.chartType;
 
-        return !predicate.isMousePositionChart(chartType) && !predicate.isTreemapChart(chartType)
+        return !(predicate.isPieTypeChart(chartType) || predicate.isMapChart(chartType))
+            && !predicate.isTreemapChart(chartType)
             && !predicate.isPieDonutComboChart(chartType, this.seriesNames);
     },
 
@@ -585,7 +589,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var seriesPosition = this.getPosition('series');
         var tooltipPosition;
 
-        this.positionMap.customEvent = tui.util.extend({}, seriesPosition);
+        this.positionMap.mouseEventDetector = tui.util.extend({}, seriesPosition);
         this.positionMap.legend = this._makeLegendPosition();
 
         if (this.getDimension('circleLegend').width) {
@@ -654,7 +658,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         this.dimensionMap.extendedSeries.width += yAxisWidth;
         this.dimensionMap.xAxis.width += chartConst.OVERLAPPING_WIDTH;
         this.dimensionMap.plot.width += yAxisWidth + chartConst.OVERLAPPING_WIDTH;
-        this.dimensionMap.customEvent.width += yAxisWidth;
+        this.dimensionMap.mouseEventDetector.width += yAxisWidth;
         this.dimensionMap.tooltip.width += yAxisWidth;
 
         this.positionMap.series.left -= (yAxisWidth - additionalLeft);
@@ -662,7 +666,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         this.positionMap.plot.left -= xAxisDecreasingLeft;
         this.positionMap.yAxis.left += yAxisExtensibleLeft;
         this.positionMap.xAxis.left -= xAxisDecreasingLeft;
-        this.positionMap.customEvent.left -= xAxisDecreasingLeft;
+        this.positionMap.mouseEventDetector.left -= xAxisDecreasingLeft;
         this.positionMap.tooltip.left -= xAxisDecreasingLeft;
     },
 

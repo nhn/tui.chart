@@ -6,7 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../../const/'),
+var chartConst = require('../../const'),
     dom = require('../../helpers/domHandler'),
     predicate = require('../../helpers/predicate'),
     renderUtil = require('../../helpers/renderUtil');
@@ -15,13 +15,14 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
+     * @private
      * @param {object} params - parameters
      *      @param {string} params.chartType - chart type
      *      @param {DataProcessor} params.dataProcessor - DataProcessor instance
      *      @param {object} params.options - tooltip options
      *      @param {object} params.theme - tooltip theme
      *      @param {boolean} params.isVertical - whether vertical or not
-     *      @param {object} params.public event - tui.util.CustomEvent instance
+     *      @param {object} params.eventBus - tui.util.CustomEvents instance
      *      @param {object} params.labelTheme - theme for label
      *      @param {string} params.xAxisType - xAxis type
      *      @param {string} params.dateFormat - date format
@@ -268,14 +269,16 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * onShowTooltip is callback of custom event showTooltip for SeriesView.
+     * onShowTooltip is callback of mouse event detector showTooltip for SeriesView.
      * @param {object} params coordinate event parameters
      */
     onShowTooltip: function(params) {
         var tooltipElement = this._getTooltipElement();
+        var isScatterCombo = predicate.isComboChart(this.chartType) && predicate.isScatterChart(params.chartType);
         var prevPosition;
 
-        if (!predicate.isMousePositionChart(params.chartType) && tooltipElement.offsetWidth) {
+        if ((!predicate.isChartToDetectMouseEventOnSeries(params.chartType) || isScatterCombo)
+            && tooltipElement.offsetWidth) {
             prevPosition = {
                 left: tooltipElement.offsetLeft,
                 top: tooltipElement.offsetTop
@@ -334,7 +337,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * onHideTooltip is callback of custom event hideTooltip for SeriesView
+     * onHideTooltip is callback of mouse event detector hideTooltip for SeriesView
      * @param {number} index index
      */
     onHideTooltip: function(index) {

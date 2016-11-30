@@ -15,6 +15,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * SeriesItemForCoordinateType is a element of SeriesGroup.items.
      * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
      * @constructs SeriesItemForCoordinateType
+     * @private
      * @param {object} params - parameters
      *      @param {Array.<number>|{x: number, y:number, r: ?number, label: ?string}} params.datum - raw series datum
      *      @param {string} params.chartType - type of chart
@@ -67,11 +68,17 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         if (tui.util.isArray(rawSeriesDatum)) {
             this.x = rawSeriesDatum[0] || 0;
             this.y = rawSeriesDatum[1] || 0;
-            this.r = rawSeriesDatum[2];
+            if (predicate.isBubbleChart(this.chartType)) {
+                this.r = rawSeriesDatum[2];
+                this.label = rawSeriesDatum[3] || '';
+            } else {
+                this.label = rawSeriesDatum[2] || '';
+            }
         } else {
             this.x = rawSeriesDatum.x;
             this.y = rawSeriesDatum.y;
             this.r = rawSeriesDatum.r;
+            this.label = rawSeriesDatum.label || '';
         }
 
         if (predicate.isDatetimeType(this.xAxisType)) {
@@ -81,10 +88,14 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
 
         this.index = index;
 
-        if (predicate.isLineTypeChart(this.chartType)) {
-            this.label = renderUtil.formatValue(this.y, this.formatFunctions, this.chartType, 'series');
-        } else {
-            this.label = rawSeriesDatum.label || '';
+        if (!this.label) {
+            if (predicate.isLineTypeChart(this.chartType) && predicate.isDatetimeType(this.xAxisType)) {
+                this.label = renderUtil.formatDate(this.x, this.dateFormat);
+            } else {
+                this.label = renderUtil.formatValue(this.x, this.formatFunctions, this.chartType, 'series');
+            }
+
+            this.label += ',&nbsp;' + renderUtil.formatValue(this.y, this.formatFunctions, this.chartType, 'series');
         }
     },
 
@@ -118,6 +129,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
     _getFormattedValueForTooltip: function(valueType) {
         var ratio = this.ratioMap[valueType];
         var value = this[valueType];
+
         return ratio ? renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType) : null;
     },
 
@@ -126,8 +138,6 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * @returns {{x: (number | null), y: (number | null), r: (number | null)}}
      */
     pickValueMapForTooltip: function() {
-        var formatFunctions = this.formatFunctions;
-        var chartType = this.chartType;
         var valueMap = {
             x: this._getFormattedValueForTooltip('x'),
             y: this._getFormattedValueForTooltip('y'),
@@ -138,14 +148,6 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         if (tui.util.isExisty(this.r)) {
             valueMap.r = this._getFormattedValueForTooltip('r');
             valueMap.rRatio = this.ratioMap.r;
-        }
-
-        if (predicate.isLineTypeChart(this.chartType)) {
-            if (predicate.isDatetimeType(this.xAxisType)) {
-                valueMap.category = renderUtil.formatDate(this.x, this.dateFormat);
-            } else {
-                valueMap.category = renderUtil.formatValue(this.x, formatFunctions, chartType, 'category');
-            }
         }
 
         return valueMap;

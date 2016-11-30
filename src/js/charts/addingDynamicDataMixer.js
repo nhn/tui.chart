@@ -6,6 +6,7 @@ var predicate = require('../helpers/predicate');
 /**
  * addingDynamicData is mixer for adding dynamic data.
  * @mixin
+ * @private
  */
 var addingDynamicDataMixer = {
     /**
@@ -129,6 +130,7 @@ var addingDynamicDataMixer = {
             if (this.options.series.shifting) {
                 this.dataProcessor.shiftData();
             }
+
             return;
         }
 
@@ -168,7 +170,7 @@ var addingDynamicDataMixer = {
     },
 
     /**
-     * Start lookup.
+     * Start lookup for checking added data.
      * @private
      */
     _startLookup: function() {

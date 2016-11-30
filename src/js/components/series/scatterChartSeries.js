@@ -8,12 +8,13 @@
 
 var Series = require('./series');
 var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 
 var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
     /**
      * Scatter chart series component.
      * @constructs ScatterChartSeries
+     * @private
      * @extends Series
      */
     init: function() {
@@ -35,8 +36,8 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
         var dimension = this.layout.dimension;
 
         return {
-            left: ratioMap.x * dimension.width,
-            top: dimension.height - (ratioMap.y * dimension.height),
+            left: (ratioMap.x * dimension.width) + chartConst.SERIES_EXPAND_SIZE,
+            top: dimension.height - (ratioMap.y * dimension.height) + chartConst.SERIES_EXPAND_SIZE,
             radius: chartConst.SCATTER_RADIUS
         };
     },

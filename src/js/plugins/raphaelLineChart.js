@@ -20,6 +20,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelLineChart
+     * @private
+     * @private
      * @extends RaphaelLineTypeBase
      */
     init: function() {
@@ -117,6 +119,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
         return tui.util.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
+
             return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
         });
     },

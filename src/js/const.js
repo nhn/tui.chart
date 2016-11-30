@@ -6,12 +6,11 @@
 
 'use strict';
 
-/*eslint no-magic-numbers: 0*/
-
 /**
  * Chart const
  * @readonly
  * @enum {number}
+ * @private
  */
 var chartConst = {
     /** tui class names
@@ -26,11 +25,6 @@ var chartConst = {
     CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
     /** @type {string} */
     CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
-    /**
-     * chart types
-     * @type {Array.<string>}
-     */
-    COMBO_CHART_TYPES: ['column', 'line', 'area', 'pie'],
     /** chart type
      * @type {string}
      */
@@ -45,6 +39,8 @@ var chartConst = {
     CHART_TYPE_COMBO: 'combo',
     /** @type {string} */
     CHART_TYPE_COLUMN_LINE_COMBO: 'columnLineCombo',
+    /** @type {string} */
+    CHART_TYPE_LINE_SCATTER_COMBO: 'lineScatterCombo',
     /** @type {string} */
     CHART_TYPE_LINE_AREA_COMBO: 'lineAreaCombo',
     /** @type {string} */

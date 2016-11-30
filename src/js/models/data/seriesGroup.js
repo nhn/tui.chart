@@ -7,16 +7,14 @@
 
 'use strict';
 
-/**
- * SeriesItem is a element of SeriesGroup.items.
- * SeriesItem has processed terminal data like value, ratio, etc.
- */
+var calculator = require('../../helpers/calculator');
 
 var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     /**
      * SeriesGroup is a element of SeriesDataModel.groups.
      * SeriesGroup.items has SeriesItem.
      * @constructs SeriesGroup
+     * @private
      * @param {Array.<SeriesItem>} seriesItems - series items
      */
     init: function(seriesItems) {
@@ -140,7 +138,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
             sumMap = {};
 
         tui.util.forEach(valuesMap, function(values, key) {
-            sumMap[key] = tui.util.sum(tui.util.map(values, function(value) {
+            sumMap[key] = calculator.sum(tui.util.map(values, function(value) {
                 return Math.abs(value);
             }));
         });

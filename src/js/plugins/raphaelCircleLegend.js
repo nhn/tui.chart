@@ -13,6 +13,7 @@ var raphael = window.Raphael;
 /**
  * @classdesc RaphaelCircleLegend is graph renderer for circleLegend.
  * @class RaphaelCircleLegend
+ * @private
  */
 var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.prototype */ {
     /**

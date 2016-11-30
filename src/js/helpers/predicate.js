@@ -7,11 +7,12 @@
 'use strict';
 
 var chartConst = require('../const');
+var arrayUtil = require('./arrayUtil');
 
 /**
  * predicate.
  * @module predicate
- */
+ * @private */
 var predicate = {
     /**
      * Whether bar chart or not.
@@ -100,7 +101,7 @@ var predicate = {
      * @returns {boolean}
      */
     isPieDonutComboChart: function(chartType, subChartTypes) {
-        var isAllPieType = tui.util.all(subChartTypes, function(subChartType) {
+        var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
             return predicate.isPieTypeChart(subChartType);
         });
 
@@ -135,8 +136,23 @@ var predicate = {
      * @returns {boolean}
      */
     isLineAreaComboChart: function(chartType, subChartTypes) {
-        var isAllLineType = tui.util.all(subChartTypes || [], function(subChartType) {
+        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
             return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
+        });
+
+        return predicate.isComboChart(chartType) && isAllLineType;
+    },
+
+    /**
+     * Whether line and scatter combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} subChartTypes - types of chart
+     * @returns {boolean}
+     */
+    isLineScatterComboChart: function(chartType, subChartTypes) {
+        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
+            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
         });
 
         return predicate.isComboChart(chartType) && isAllLineType;
@@ -266,12 +282,12 @@ var predicate = {
     },
 
     /**
-     * Whether mouse position chart or not.
+     * Whether chart to detect mouse events on series or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isMousePositionChart: function(chartType) {
+    isChartToDetectMouseEventOnSeries: function(chartType) {
         return predicate.isPieTypeChart(chartType) || predicate.isMapChart(chartType)
             || predicate.isCoordinateTypeChart(chartType);
     },

@@ -59,10 +59,10 @@ describe('Test user events for combo chart', function() {
 
     describe('selectSeries', function() {
         it('select series', function(done) {
-            var customEvent = comboChart.componentManager.get('customEvent');
+            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 40,
                 right: 450,
@@ -78,7 +78,7 @@ describe('Test user events for combo chart', function() {
                 done();
             });
 
-            customEvent._onClick({
+            mouseEventDetector._onClick({
                 clientX: 130,
                 clientY: 330
             });
@@ -87,10 +87,10 @@ describe('Test user events for combo chart', function() {
 
     describe('unselectSeries', function() {
         it('unselect series', function(done) {
-            var customEvent = comboChart.componentManager.get('customEvent');
+            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 40,
                 right: 450,
@@ -107,14 +107,14 @@ describe('Test user events for combo chart', function() {
             });
 
             // select
-            customEvent._onClick({
+            mouseEventDetector._onClick({
                 clientX: 130,
                 clientY: 330
             });
 
             setTimeout(function() {
                 // unselect
-                customEvent._onClick({
+                mouseEventDetector._onClick({
                     clientX: 130,
                     clientY: 330
                 });
@@ -125,10 +125,10 @@ describe('Test user events for combo chart', function() {
     // group tooltip 부터
     describe('beforeShowTooltip', function() {
         it('before show tooltip', function(done) {
-            var customEvent = comboChart.componentManager.get('customEvent');
+            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -144,7 +144,7 @@ describe('Test user events for combo chart', function() {
                 done();
             });
 
-            customEvent._onMousemove({
+            mouseEventDetector._onMousemove({
                 clientX: 100,
                 clientY: 100
             });
@@ -153,10 +153,10 @@ describe('Test user events for combo chart', function() {
 
     describe('afterShowTooltip', function() {
         it('after show tooltip', function(done) {
-            var customEvent = comboChart.componentManager.get('customEvent');
+            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            customEvent.customEventContainer = jasmine.createSpyObj('customEventContainer', ['getBoundingClientRect']);
-            customEvent.customEventContainer.getBoundingClientRect.and.returnValue({
+            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
+            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 top: 80,
                 right: 450,
@@ -175,7 +175,7 @@ describe('Test user events for combo chart', function() {
                 done();
             });
 
-            customEvent._onMousemove({
+            mouseEventDetector._onMousemove({
                 clientX: 100,
                 clientY: 100
             });

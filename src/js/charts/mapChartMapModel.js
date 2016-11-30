@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const');
+var arrayUtil = require('../helpers/arrayUtil');
 
 var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototype */ {
     /**
@@ -58,7 +59,7 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
         this.dataProcessor = dataProcessor;
 
         /**
-         * Raw map data
+         * Raw map data.
          * @type {Array.<{name: string, path: string, labelCoordinate: ?{x: number, y: number}}>}
          */
         this.rawMapData = rawMapData;
@@ -249,10 +250,10 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
             ys = tui.util.filter(tui.util.pluck(coordinates, 'y'), function(y) {
                 return !tui.util.isUndefined(y);
             }),
-            maxLeft = tui.util.max(xs),
-            minLeft = tui.util.min(xs),
-            maxTop = tui.util.max(ys),
-            minTop = tui.util.min(ys);
+            maxLeft = arrayUtil.max(xs),
+            minLeft = arrayUtil.min(xs),
+            maxTop = arrayUtil.max(ys),
+            minTop = arrayUtil.min(ys);
 
         return {
             dimension: {
@@ -390,8 +391,8 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
         });
 
         return {
-            width: tui.util.max(rights) - tui.util.min(lefts),
-            height: tui.util.max(bottoms) - tui.util.min(tops)
+            width: arrayUtil.max(rights) - arrayUtil.min(lefts),
+            height: arrayUtil.max(bottoms) - arrayUtil.min(tops)
         };
     },
 

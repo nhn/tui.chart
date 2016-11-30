@@ -88,9 +88,9 @@ describe('Test for renderUtil', function() {
         });
     });
 
-    describe('makeCustomEventName()', function() {
+    describe('makeMouseEventDetectorName()', function() {
         it('커스텀 이벤트명을 생성합니다.', function() {
-            var actual = renderUtil.makeCustomEventName('prefix', 'value', 'suffix'),
+            var actual = renderUtil.makeMouseEventDetectorName('prefix', 'value', 'suffix'),
                 expected = 'prefixValueSuffix';
             expect(actual).toBe(expected);
         });

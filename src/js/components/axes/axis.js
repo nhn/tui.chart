@@ -7,7 +7,7 @@
 'use strict';
 
 var dom = require('../../helpers/domHandler');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
@@ -17,6 +17,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Axis component.
      * @constructs Axis
+     * @private
      * @param {object} params parameters
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
@@ -744,9 +745,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _getRenderedTitleHeight: function() {
-        var title = this.options.title,
-            theme = this.theme.title,
-            result = title ? renderUtil.getRenderedLabelHeight(title, theme) : 0;
+        var title = this.options.title;
+        var theme = this.theme.title;
+        var result = title ? renderUtil.getRenderedLabelHeight(title.text, theme) : 0;
 
         return result;
     },
@@ -754,7 +755,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make cssText of label.
      * @param {number} labelSize label size (width or height)
-     * @returns {string[]} cssTexts
+     * @returns {string} cssText
      * @private
      */
     _makeLabelCssText: function(labelSize) {

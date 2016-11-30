@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Column Chart] diverging and stacked</title>
+    <link rel="stylesheet" type="text/css" href="../dist/chart.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html'>
+<div id='chart-area'></div>
+    </div>
+</div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="columnChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["0 ~ 9", "10 ~ 19", "20 ~ 29", "30 ~ 39", "40 ~ 49", "50 ~ 59", "60 ~ 69", "70 ~ 79", "80 ~ 89", "90 ~ 99", "100 ~"],
+    "series": [
+        {
+            "name": "Male - Seoul",
+            "data": [400718, 506749, 722122, 835851, 850007, 773094, 496232, 267037, 67004, 7769, 1314],
+            "stack": "Male"
+        },
+        {
+            "name": "Female - Seoul",
+            "data": [380595, 472893, 724408, 829149, 853032, 812687, 548381, 316142, 127406, 22177, 3770],
+            "stack": "Female"
+        },
+        {
+            "name": "Male - Incheon",
+            "data": [139283, 167132, 209256, 233977, 261195, 251151, 127721, 61452, 17138, 1974, 194],
+            "stack": "Male"
+        },
+        {
+            "name": "Female - Incheon",
+            "data": [132088, 155895, 192760, 221250, 255601, 243374, 130406, 80763, 38005, 6057, 523],
+            "stack": "Female"
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Population Distribution",
+        "format": "1,000"
+    },
+    "xAxis": {
+        "title": "Age Group"
+    },
+    "series": {
+        "stackType": "normal",
+        "diverging": true
+    },
+    "legend": {
+        "align": "top"
+    },
+    "tooltip": {
+        "grouped": true
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#75b5aa", "#6a9fb5", "#aa759f", "#8f5536"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.0.8/code-snippet.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.effects/1.1.0/effects.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/raphael/v2.1.4b/raphael-min.js"></script>
+<script src="../dist/chart.js"></script>
+<script src="js/sample.js"></script>
+<script class='code-js'>
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ["0 ~ 9", "10 ~ 19", "20 ~ 29", "30 ~ 39", "40 ~ 49", "50 ~ 59", "60 ~ 69", "70 ~ 79", "80 ~ 89", "90 ~ 99", "100 ~"],
+            series: [
+                {
+                    name: 'Male - Seoul',
+                    data: [400718, 506749, 722122, 835851, 850007, 773094, 496232, 267037, 67004, 7769, 1314],
+                    stack: 'Male'
+                },
+                {
+                    name: 'Female - Seoul',
+                    data: [380595, 472893, 724408, 829149, 853032, 812687, 548381, 316142, 127406, 22177, 3770],
+                    stack: 'Female'
+                },
+                {
+                    name: 'Male - Incheon',
+                    data: [139283, 167132, 209256, 233977, 261195, 251151, 127721, 61452, 17138, 1974, 194],
+                    stack: 'Male'
+                },
+                {
+                    name: 'Female - Incheon',
+                    data: [132088, 155895, 192760, 221250, 255601, 243374, 130406, 80763, 38005, 6057, 523],
+                    stack: 'Female'
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 400,
+                title: 'Population Distribution',
+                format: '1,000'
+            },
+            xAxis: {
+                title: 'Age Group'
+            },
+            series: {
+                stackType: 'normal',
+                diverging: true
+            },
+            legend: {
+                align: 'top'
+            },
+            tooltip: {
+                grouped: true
+            }
+        };
+    tui.chart.columnChart(container, data, options);
+</script>
+</body>
+</html>

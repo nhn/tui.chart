@@ -259,12 +259,23 @@ describe('Test for ScaleDataMaker', function() {
 
     describe('_normalizeLimit()', function() {
         it('정규화된 limit 값을 반환합니다.', function() {
-            var actual = scaleDataMaker._normalizeLimit({
+            var actual = scaleDataMaker._normalizeLimitIfNeed({
                 min: 10,
                 max: 110
             }, 20, 5);
             expect(actual.min).toBe(0);
             expect(actual.max).toBe(120);
+        });
+        it('limitOption의 min, max 값이 있을 경우 option의 min, max를 반환합니다.', function() {
+            var actual = scaleDataMaker._normalizeLimitIfNeed({
+                min: 10,
+                max: 110
+            }, 20, 5, {
+                min: 90,
+                max: 100
+            });
+            expect(actual.min).toBe(90);
+            expect(actual.max).toBe(100);
         });
     });
 

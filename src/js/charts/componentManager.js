@@ -7,6 +7,66 @@
 'use strict';
 
 var dom = require('../helpers/domHandler');
+var Axis = require('../components/axes/axis');
+var Plot = require('../components/plots/plot');
+
+// legends
+var Legend = require('../components/legends/legend');
+var SpectrumLegend = require('../components/legends/spectrumLegend');
+var CircleLegend = require('../components/legends/circleLegend');
+
+// tooltips
+var Tooltip = require('../components/tooltips/tooltip');
+var GroupTooltip = require('../components/tooltips/groupTooltip');
+var MapChartTooltip = require('../components/tooltips/mapChartTooltip');
+
+// mouse event detectors
+var AreaTypeEventDetector = require('../components/mouseEventDetectors/areaTypeEventDetector');
+var BoundsTypeEventDetector = require('../components/mouseEventDetectors/boundsTypeEventDetector');
+var GroupTypeEventDetector = require('../components/mouseEventDetectors/groupTypeEventDetector');
+var MapChartEventDetector = require('../components/mouseEventDetectors/mapChartEventDetector');
+var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEventDetector');
+
+// series
+var BarSeries = require('../components/series/barChartSeries');
+var ColumnSeries = require('../components/series/columnChartSeries');
+var LineSeries = require('../components/series/lineChartSeries');
+var AreaSeries = require('../components/series/areaChartSeries');
+var BubbleSeries = require('../components/series/bubbleChartSeries');
+var ScatterSeries = require('../components/series/scatterChartSeries');
+var MapSeries = require('../components/series/mapChartSeries');
+var PieSeries = require('../components/series/pieChartSeries');
+var HeatmapSeries = require('../components/series/heatmapChartSeries');
+var TreemapSeries = require('../components/series/treemapChartSeries');
+
+var Zoom = require('../components/series/zoom');
+
+var COMPONENT_CLASS_MAP = {
+    axis: Axis,
+    plot: Plot,
+    legend: Legend,
+    spectrumLegend: SpectrumLegend,
+    circleLegend: CircleLegend,
+    tooltip: Tooltip,
+    groupTooltip: GroupTooltip,
+    mapChartTooltip: MapChartTooltip,
+    areaTypeEventDetector: AreaTypeEventDetector,
+    boundsTypeEventDetector: BoundsTypeEventDetector,
+    groupTypeEventDetector: GroupTypeEventDetector,
+    mapChartEventDetector: MapChartEventDetector,
+    simpleEventDetector: SimpleEventDetector,
+    barSeries: BarSeries,
+    columnSeries: ColumnSeries,
+    lineSeries: LineSeries,
+    areaSeries: AreaSeries,
+    bubbleSeries: BubbleSeries,
+    scatterSeries: ScatterSeries,
+    mapSeries: MapSeries,
+    pieSeries: PieSeries,
+    heatmapSeries: HeatmapSeries,
+    treemapSeries: TreemapSeries,
+    zoom: Zoom
+};
 
 var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototype */ {
     /**
@@ -17,6 +77,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      *      @param {DataProcessor} params.dataProcessor - data processor
      *      @param {boolean} params.hasAxes - whether has axes or not
      * @constructs ComponentManager
+     * @private
      */
     init: function(params) {
         /**
@@ -80,18 +141,19 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     /**
      * Register component.
      * The component refers to a component of the chart.
-     * The component types are axis, legend, plot, series and customEvent.
+     * The component types are axis, legend, plot, series and mouseEventDetector.
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
-     * @param {function} Component component constructor
      * @param {object} params component parameters
      */
-    register: function(name, Component, params) {
-        var index, component, componentType;
+    register: function(name, params) {
+        var index, component, componentType, classType, Component;
 
         params = params || {};
 
         componentType = params.componentType || name;
+        classType = params.classType || componentType || name;
+
         index = params.index || 0;
 
         params.theme = params.theme || this.theme[componentType];
@@ -101,6 +163,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         params.hasAxes = this.hasAxes;
         params.eventBus = this.eventBus;
 
+        Component = COMPONENT_CLASS_MAP[classType];
         component = new Component(params);
         component.componentName = name;
         component.componentType = componentType;

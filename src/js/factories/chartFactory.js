@@ -28,6 +28,8 @@ var factory = {
 
             if (chartTypeMap[chartConst.CHART_TYPE_COLUMN] && chartTypeMap[chartConst.CHART_TYPE_LINE]) {
                 key = chartConst.CHART_TYPE_COLUMN_LINE_COMBO;
+            } else if (chartTypeMap[chartConst.CHART_TYPE_LINE] && chartTypeMap[chartConst.CHART_TYPE_SCATTER]) {
+                key = chartConst.CHART_TYPE_LINE_SCATTER_COMBO;
             } else if (chartTypeMap[chartConst.CHART_TYPE_AREA] && chartTypeMap[chartConst.CHART_TYPE_LINE]) {
                 key = chartConst.CHART_TYPE_LINE_AREA_COMBO;
             } else if (chartTypeMap[chartConst.CHART_TYPE_PIE]) {

@@ -17,6 +17,7 @@ var DEFAULT_LUMINANC = 0.2;
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
  * @class RaphaelBarChart
+ * @private
  */
 var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
     /**

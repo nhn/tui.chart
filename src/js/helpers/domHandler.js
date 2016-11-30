@@ -11,7 +11,7 @@ var aps = Array.prototype.slice;
 /**
  * DOM Handler.
  * @module domHandler
- */
+ * @private */
 var domHandler = {
     /**
      * Create element.

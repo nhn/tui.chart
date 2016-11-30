@@ -6,8 +6,6 @@
 
 'use strict';
 
-/*eslint no-magic-numbers: 0*/
-
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
@@ -17,6 +15,7 @@ var PADDING = 10;
 /**
  * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
  * @class RaphaelMapLegend
+ * @private
  */
 var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototype */ {
     /**

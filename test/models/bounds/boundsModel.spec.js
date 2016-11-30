@@ -92,7 +92,7 @@ describe('Test for BoundsModel', function() {
                 series: {
                     width: 199
                 },
-                customEvent: {
+                mouseEventDetector: {
                     width: 199
                 },
                 xAxis: {
@@ -106,7 +106,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.chartLeftPadding).toBe(60);
             expect(boundsModel.getDimension('plot').width).toBe(150);
             expect(boundsModel.getDimension('series').width).toBe(149);
-            expect(boundsModel.getDimension('customEvent').width).toBe(149);
+            expect(boundsModel.getDimension('mouseEventDetector').width).toBe(149);
             expect(boundsModel.getDimension('xAxis').width).toBe(150);
         });
     });
@@ -120,7 +120,7 @@ describe('Test for BoundsModel', function() {
                 series: {
                     height: 200
                 },
-                customEvent: {
+                mouseEventDetector: {
                     height: 200
                 },
                 tooltip: {
@@ -140,7 +140,7 @@ describe('Test for BoundsModel', function() {
 
             expect(boundsModel.getDimension('plot').height).toBe(150);
             expect(boundsModel.getDimension('series').height).toBe(150);
-            expect(boundsModel.getDimension('customEvent').height).toBe(150);
+            expect(boundsModel.getDimension('mouseEventDetector').height).toBe(150);
             expect(boundsModel.getDimension('tooltip').height).toBe(150);
             expect(boundsModel.getDimension('xAxis').height).toBe(100);
             expect(boundsModel.getDimension('yAxis').height).toBe(150);
@@ -266,8 +266,8 @@ describe('Test for BoundsModel', function() {
 
             expect(boundsModel.getDimension('tooltip').width).toBe(300);
             expect(boundsModel.getDimension('tooltip').height).toBe(200);
-            expect(boundsModel.getDimension('customEvent').width).toBe(300);
-            expect(boundsModel.getDimension('customEvent').height).toBe(200);
+            expect(boundsModel.getDimension('mouseEventDetector').width).toBe(300);
+            expect(boundsModel.getDimension('mouseEventDetector').height).toBe(200);
         });
     });
 
@@ -506,8 +506,8 @@ describe('Test for BoundsModel', function() {
             };
             boundsModel._registerEssentialComponentsPositions();
 
-            expect(boundsModel.getPosition('customEvent').top).toBe(50);
-            expect(boundsModel.getPosition('customEvent').left).toBe(50);
+            expect(boundsModel.getPosition('mouseEventDetector').top).toBe(50);
+            expect(boundsModel.getPosition('mouseEventDetector').left).toBe(50);
             expect(boundsModel.getPosition('legend').top).toBe(30);
             expect(boundsModel.getPosition('legend').left).toBe(250);
             expect(boundsModel.getPosition('tooltip').top).toBe(40);
@@ -528,7 +528,7 @@ describe('Test for BoundsModel', function() {
                 plot: {
                     width: 300
                 },
-                customEvent: {
+                mouseEventDetector: {
                     width: 300
                 },
                 tooltip: {
@@ -551,7 +551,7 @@ describe('Test for BoundsModel', function() {
                 xAxis: {
                     left: 50
                 },
-                customEvent: {
+                mouseEventDetector: {
                     left: 50
                 },
                 tooltip: {
@@ -571,7 +571,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.dimensionMap.extendedSeries.width).toBe(350);
             expect(boundsModel.dimensionMap.xAxis.width).toBe(301);
             expect(boundsModel.dimensionMap.plot.width).toBe(351);
-            expect(boundsModel.dimensionMap.customEvent.width).toBe(350);
+            expect(boundsModel.dimensionMap.mouseEventDetector.width).toBe(350);
             expect(boundsModel.dimensionMap.tooltip.width).toBe(350);
 
             expect(boundsModel.positionMap.series.left).toBe(0);
@@ -579,7 +579,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.positionMap.plot.left).toBe(1);
             expect(boundsModel.positionMap.yAxis.left).toBe(201);
             expect(boundsModel.positionMap.xAxis.left).toBe(1);
-            expect(boundsModel.positionMap.customEvent.left).toBe(1);
+            expect(boundsModel.positionMap.mouseEventDetector.left).toBe(1);
             expect(boundsModel.positionMap.tooltip.left).toBe(1);
         });
 
@@ -595,7 +595,7 @@ describe('Test for BoundsModel', function() {
                 plot: {
                     width: 300
                 },
-                customEvent: {
+                mouseEventDetector: {
                     width: 300
                 },
                 tooltip: {
@@ -618,7 +618,7 @@ describe('Test for BoundsModel', function() {
                 xAxis: {
                     left: 50
                 },
-                customEvent: {
+                mouseEventDetector: {
                     left: 50
                 },
                 tooltip: {

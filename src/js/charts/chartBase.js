@@ -99,19 +99,19 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Set offset property
-     * @param {{offset: object}} ptions -options
+     * @param {{offset: object}} options - options
      * @param {string} fromProperty - from property name
      * @param {string} toProperty - to property name
      * @private
      */
-    _setOffsetProperty: function(ptions, fromProperty, toProperty) {
-        if (!tui.util.isExisty(ptions[fromProperty])) {
+    _setOffsetProperty: function(options, fromProperty, toProperty) {
+        if (!tui.util.isExisty(options[fromProperty])) {
             return;
         }
 
-        ptions.offset = ptions.offset || {};
-        ptions.offset[toProperty] = ptions[fromProperty];
-        delete ptions[fromProperty];
+        options.offset = options.offset || {};
+        options.offset[toProperty] = options[fromProperty];
+        delete options[fromProperty];
     },
 
     /**
@@ -227,7 +227,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Create ComponentMananger.
+     * Create ComponentManager.
      * @returns {ComponentManager}
      * @private
      */
@@ -242,28 +242,30 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Make data for tooltip component.
+     * Make data for initialize tooltip component.
+     * @param {string} classType - component class type
      * @returns {object} tooltip data
      * @private
      */
-    _makeTooltipData: function() {
+    _makeTooltipData: function(classType) {
         return {
             isVertical: this.isVertical,
             chartType: this.chartType,
             xAxisType: this.options.xAxis.type,
-            dateFormat: this.options.xAxis.dateFormat
+            dateFormat: this.options.xAxis.dateFormat,
+            classType: classType || 'tooltip'
         };
     },
 
     /**
-     * Add components
+     * Add components.
      * @private
      * @abstract
      */
     _addComponents: function() {},
 
     /**
-     * Render title.
+     * Render chart title.
      * @param {HTMLElement} container - container
      * @private
      */
@@ -295,11 +297,36 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {boolean} addingDataMode - whether adding data mode or not
      * @returns {{
      *      layoutBounds: {
-     *          dimensionMap: object,
-     *          positionMap: object
+     *          dimensionMap: {
+     *              xAxis: {width: number, height: number},
+     *              yAxis: {width: number, height: number},
+     *              rightYAxis: {width: number, height: number},
+     *              series: {width: number, height: number},
+     *              extendedSeries: {width: number, height: number},
+     *              mouseEventDetector: {width: number, height: number},
+     *              legend: {width: number, height: number},
+     *              tooltip: {width: number, height: number}
+     *          },
+     *          positionMap: {
+     *              xAxis: {left: number, top: number},
+     *              yAxis: {left: number, top: number},
+     *              rightYAxis: {left: number, top: number},
+     *              series: {left: number, top: number},
+     *              extendedSeries: {left: number, top: number},
+     *              mouseEventDetector: {left: number, top: number},
+     *              legend: {left: number, top: number},
+     *              tooltip: {left: number, top: number}
+     *          }
      *      },
-     *      limitMap: object,
-     *      axisDataMap: object,
+     *      limitMap: {
+     *          xAxis: {min: number, max: number},
+     *          yAxis: {min: number, max: number}
+     *      },
+     *      axisDataMap: {
+     *          xAxis: object,
+     *          yAxis: object,
+     *          yRightAxis: object
+     *      },
      *      maxRadius: ?number
      * }}
      * @private
@@ -328,7 +355,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _addDataRatios: function() {},
 
     /**
-     * Render.
+     * Common render function for rendering functions like render, rerender, resize and zoom.
      * @param {function} onRender render callback function
      * @param {?boolean} addingDataMode - whether adding data mode or not
      * @private

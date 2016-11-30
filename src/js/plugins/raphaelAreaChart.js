@@ -21,6 +21,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * RaphaelAreaChart is graph renderer for area chart.
      * @constructs RaphaelAreaChart
+     * @private
+     * @private
      * @extends RaphaelLineTypeBase
      */
     init: function() {

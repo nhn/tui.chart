@@ -7,17 +7,19 @@
 'use strict';
 
 var LegendModel = require('./legendModel');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var eventListener = require('../../helpers/eventListener');
 var renderUtil = require('../../helpers/renderUtil');
+var arrayUtil = require('../../helpers/arrayUtil');
 var legendTemplate = require('./legendTemplate');
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
      * Legend component.
      * @constructs Legend
+     * @private
      * @param {object} params parameters
      *      @param {object} params.theme - axis theme
      *      @param {?Array.<string>} params.seriesNames - series names
@@ -147,7 +149,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Resize legend component.
+     * Rerender, when resizing chart.
      * @param {object} data - bounds data
      */
     resize: function(data) {
@@ -331,7 +333,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _checkLegend: function() {
         var checkedIndexes = this._getCheckedIndexes();
         var checkedCount = checkedIndexes.length;
-        var isPieTypeCharts = tui.util.all(this.seriesNames, predicate.isPieTypeChart);
+        var isPieTypeCharts = arrayUtil.all(this.seriesNames, predicate.isPieTypeChart);
         var data;
 
         if ((isPieTypeCharts && checkedCount === 1) || checkedCount === 0) {

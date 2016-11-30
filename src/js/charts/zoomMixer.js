@@ -11,7 +11,7 @@ var rawDataHandler = require('../models/data/rawDataHandler');
 /**
  * zoomMixer is mixer of line type chart(line, area).
  * @mixin
- */
+ * @private */
 var zoomMixer = {
     /**
      * Render for zoom.

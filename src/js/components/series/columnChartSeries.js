@@ -8,7 +8,7 @@
 
 var Series = require('./series');
 var BarTypeSeriesBase = require('./barTypeSeriesBase');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
@@ -17,6 +17,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     /**
      * Column chart series component.
      * @constructs ColumnChartSeries
+     * @private
      * @extends Series
      * @param {object} params parameters
      *      @param {object} params.model series model
@@ -60,11 +61,12 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     /**
      * Make column chart bound.
      * @param {{
-     *      baseSize: number,
-     *      basePosition: number,
-     *      step: number,
-     *      additionalPosition: ?number,
-     *      barSize: number
+     *      baseBarSize: number,
+     *      groupSize: number,
+     *      barSize: number,
+     *      pointInterval: number,
+     *      firstAdditionalPosition: number,
+     *      basePosition: number
      * }} baseData base data for making bound
      * @param {{
      *      baseLeft: number,
@@ -83,15 +85,15 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeColumnChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
-        var barHeight = Math.abs(baseData.baseBarSize * seriesItem.ratioDistance),
-            barStartTop = baseData.baseBarSize * seriesItem.startRatio,
-            startTop = baseData.basePosition - barStartTop + chartConst.SERIES_EXPAND_SIZE,
-            changedStack = (seriesItem.stack !== iterationData.prevStack),
-            stepCount, endTop, bound;
+        var barHeight = Math.abs(baseData.baseBarSize * seriesItem.ratioDistance);
+        var barStartTop = baseData.baseBarSize * seriesItem.startRatio;
+        var startTop = baseData.basePosition - barStartTop + chartConst.SERIES_EXPAND_SIZE;
+        var changedStack = (seriesItem.stack !== iterationData.prevStack);
+        var pointCount, endTop, bound, boundLeft;
 
         if (!isStackType || (!this.options.diverging && changedStack)) {
-            stepCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
-            iterationData.left = (baseData.step * stepCount) + iterationData.baseLeft + baseData.additionalPosition;
+            pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
+            iterationData.left = iterationData.baseLeft + (baseData.pointInterval * pointCount);
             iterationData.plusTop = 0;
             iterationData.minusTop = 0;
         }
@@ -105,7 +107,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         }
 
         iterationData.prevStack = seriesItem.stack;
-        bound = this._makeBound(baseData.barSize, barHeight, iterationData.left, startTop, endTop);
+        boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
+        bound = this._makeBound(baseData.barSize, barHeight, boundLeft, startTop, endTop);
 
         return bound;
     },
@@ -123,16 +126,15 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var baseLeft = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
-                        + chartConst.SERIES_EXPAND_SIZE,
-                iterationData = {
-                    baseLeft: baseLeft,
-                    left: baseLeft,
-                    plusTop: 0,
-                    minusTop: 0,
-                    prevStack: null
-                },
-                iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStackType);
+            var baseLeft = (groupIndex * baseData.groupSize) + chartConst.SERIES_EXPAND_SIZE;
+            var iterationData = {
+                baseLeft: baseLeft,
+                left: baseLeft,
+                plusTop: 0,
+                minusTop: 0,
+                prevStack: null
+            };
+            var iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStackType);
 
             return seriesGroup.map(iteratee);
         });

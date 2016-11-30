@@ -8,7 +8,7 @@
 
 var TooltipBase = require('./tooltipBase');
 var GroupTooltipPositionModel = require('./groupTooltipPositionModel');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var defaultTheme = require('../../themes/defaultTheme');
@@ -17,11 +17,13 @@ var tooltipTemplate = require('./tooltipTemplate');
 /**
  * @classdesc GroupTooltip component.
  * @class GroupTooltip
+ * @private
  */
 var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
+     * @private
      * @override
      */
     init: function() {

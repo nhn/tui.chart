@@ -9,13 +9,14 @@
 var Series = require('./series');
 var squarifier = require('./squarifier');
 var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 
 var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
     /**
      * Series component for rendering graph of treemap chart.
      * @constructs TreemapChartSeries
+     * @private
      * @param {object} params - parameters
      * @extends Series
      */

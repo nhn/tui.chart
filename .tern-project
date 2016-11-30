@@ -1,0 +1,22 @@
+{
+  "libs": [
+    "browser",
+    "jQuery"
+  ],
+  "loadEagerly": [
+    "src/js/**/*.js",
+    "lib/**/dist/*.js"
+  ],
+  "dontLoad": [
+    "test/**/*"
+  ],
+  "plugin": {
+      "doc_comment": {
+          "fullDocs": true
+      },
+      "node": {},
+      "complete_strings": {
+          "maxLength": 50
+      }
+  }
+}

@@ -11,7 +11,7 @@ var bindHandlerMap = {};
 /**
  * Event listener.
  * @module eventListener
- */
+ * @private */
 var eventListener = {
     /**
      * Add event listener for IE.

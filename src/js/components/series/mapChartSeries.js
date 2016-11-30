@@ -7,7 +7,7 @@
 'use strict';
 
 var Series = require('./series');
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
@@ -16,6 +16,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * Map chart series component.
      * @constructs MapChartSeries
+     * @private
      * @extends Series
      * @param {object} params parameters
      *      @param {object} params.options series options
@@ -96,6 +97,10 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         Series.call(this, params);
     },
 
+    /**
+     * Attach to event bus.
+     * @private
+     */
     _attachToEventBus: function() {
         Series.prototype._attachToEventBus.call(this);
 
@@ -311,7 +316,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * On click series.
+     * If click series, showing selected state.
      * @param {{left: number, top: number}} position - mouse position
      */
     onClickSeries: function(position) {
@@ -327,7 +332,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * Whether changed or not.
+     * Whether changed position or not.
      * @param {?{left: number, top: number}} prevPosition previous position
      * @param {{left: number, top: number}} position position
      * @returns {boolean} result boolean
@@ -338,7 +343,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * Show wedge.
+     * Show wedge of spectrum legend.
      * @param {number} index map data index
      * @private
      */
@@ -351,7 +356,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * Show tooltip
+     * Show tooltip.
      * @param {number} index map data index
      * @param {{left: number, top: number}} mousePosition mouse position
      * @private

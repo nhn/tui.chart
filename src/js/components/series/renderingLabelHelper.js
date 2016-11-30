@@ -6,12 +6,14 @@
 
 'use strict';
 
-var chartConst = require('../../const/');
+var chartConst = require('../../const');
 var renderUtil = require('../../helpers/renderUtil');
 var seriesTemplate = require('./seriesTemplate');
 
 /**
  * renderingLabelHelper is helper for rendering of series label.
+ * @module renderingLabelHelper
+ * @private
  */
 var renderingLabelHelper = {
     /**
@@ -220,7 +222,7 @@ var renderingLabelHelper = {
      * @returns {string}
      */
     makeSeriesLabelHtml: function(position, label, theme, index, selectedIndex, tplCssText, isStart) {
-        /*eslint max-params: [2, 7]*/
+        /* eslint max-params: [2, 7]*/
         var cssText = this._makeLabelCssText(position, theme, index, selectedIndex, tplCssText);
         var rangeLabelAttribute = '';
 

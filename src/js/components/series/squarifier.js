@@ -6,6 +6,9 @@
 
 'use strict';
 
+var calculator = require('../../helpers/calculator');
+var arrayUtil = require('../../helpers/arrayUtil');
+
 var squarifier = {
     /**
      * bound map
@@ -35,7 +38,7 @@ var squarifier = {
      * @private
      */
     _calculateScale: function(values, width, height) {
-        return (width * height) / tui.util.sum(values);
+        return (width * height) / calculator.sum(values);
     },
 
     /**
@@ -87,8 +90,8 @@ var squarifier = {
      * @private
      */
     _changedStackDirection: function(sum, weights, baseSize, newWeight) {
-        var min = tui.util.min(weights);
-        var max = tui.util.max(weights);
+        var min = arrayUtil.min(weights);
+        var max = arrayUtil.max(weights);
         var beforeWorst = this._worst(sum, min, max, baseSize);
         var newWorst = this._worst(sum + newWeight, Math.min(min, newWeight), Math.max(max, newWeight), baseSize);
 
@@ -128,7 +131,7 @@ var squarifier = {
 
         if (!sum) {
             weights = tui.util.pluck(row, 'weight');
-            sum = tui.util.sum(weights);
+            sum = calculator.sum(weights);
         }
 
         return sum / baseSize;
@@ -245,7 +248,7 @@ var squarifier = {
 
         tui.util.forEachArray(baseData, function(datum) {
             var weights = tui.util.pluck(row, 'weight');
-            var sum = tui.util.sum(weights);
+            var sum = calculator.sum(weights);
 
             if (row.length && self._changedStackDirection(sum, weights, baseSize, datum.weight)) {
                 addBounds(row, baseBound, baseSize, sum);

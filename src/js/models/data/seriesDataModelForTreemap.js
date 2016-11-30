@@ -10,13 +10,15 @@
 var SeriesDataModel = require('./seriesDataModel');
 var SeriesItem = require('./seriesItemForTreemap');
 var chartConst = require('../../const');
+var calculator = require('../../helpers/calculator');
 
 var aps = Array.prototype.slice;
 
-var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
+var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends SeriesDataModelForTreeMap.prototype */{
     /**
      * SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
      * @constructs SeriesDataModelForTreemap
+     * @private
      */
     init: function() {
         SeriesDataModel.apply(this, arguments);
@@ -132,7 +134,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
             });
 
             if (children.length) {
-                datum.value = tui.util.sum(tui.util.pluck(children, 'value'));
+                datum.value = calculator.sum(tui.util.pluck(children, 'value'));
                 datum.hasChild = true;
             } else {
                 datum.hasChild = false;
@@ -155,7 +157,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
         var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
         var filtered = parted[0];
         var rejected = parted[1];
-        var total = tui.util.sum(tui.util.pluck(filtered, 'value'));
+        var total = calculator.sum(tui.util.pluck(filtered, 'value'));
 
         tui.util.forEachArray(filtered, function(datum) {
             datum.ratio = datum.value / total;
@@ -298,4 +300,4 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     }
 });
 
-module.exports = SeriesDataModelForTreemap;
+module.exports = SeriesDataModelForTreeMap;
