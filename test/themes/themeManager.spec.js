@@ -132,21 +132,23 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_setColorsTheme()', function() {
-        it('set colors theme', function() {
-            var theme = {};
-            var rawTheme = {
-                colors: ['gray'],
-                singleColors: ['blue']
-            };
-            var baseColors = ['black', 'white'];
+    describe('_makeEachSeriesColor()', function() {
+        it('Make color data with given theme data', function() {
+            var colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 3);
 
-            themeManager._setColorsTheme(theme, rawTheme, baseColors);
+            expect(colors).toEqual(['a', 'b', 'c']);
+        });
 
-            expect(theme).toEqual({
-                colors: ['gray', 'black', 'white'],
-                singleColors: ['blue', 'black', 'white']
-            });
+        it('Make color data from start of given theme data if there has not enought colors', function() {
+            var colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 6);
+
+            expect(colors).toEqual(['a', 'b', 'c', 'd', 'a', 'b']);
+        });
+
+        it('Make color data from given data index', function() {
+            var colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 6, 2);
+
+            expect(colors).toEqual(['c', 'd', 'a', 'b', 'c', 'd']);
         });
     });
 
@@ -157,13 +159,13 @@ describe('Test for themeManager', function() {
                 column: {}
             };
             var rawSeriesThemeMap = {
-                colors: ['gray']
+                colors: ['a', 'b', 'c']
             };
 
-            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap);
+            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, [1, 2, 3, 4, 5]);
 
             expect(seriesThemeMap.column).toEqual({
-                colors: ['gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']
+                colors: ['a', 'b', 'c', 'a', 'b']
             });
         });
 
@@ -173,17 +175,38 @@ describe('Test for themeManager', function() {
                 column: {}
             };
             var rawSeriesThemeMap = {
-                singleColors: ['gray']
+                colors: ['a', 'b', 'c'],
+                singleColors: ['e', 'f', 'g']
             };
 
             themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap);
 
+            expect(seriesThemeMap.column).toEqual({
+                colors: [],
+                singleColors: ['e', 'f', 'g', 'a', 'b', 'c']
+            });
+        });
+
+        it('set series colors theme, when combo series with defaultTheme', function() {
+            var seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            var seriesThemeMap = {
+                column: {},
+                line: {}
+            };
+            var rawSeriesThemeMap = {};
+            var rawSeriesData = {
+                column: [{}, {}, {}, {}, {}, {}],
+                line: [{}, {}, {}, {}]
+            };
+
+            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
+
             expect(seriesThemeMap).toEqual({
                 column: {
-                    colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
-                    singleColors: [
-                        'gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'
-                    ]
+                    colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5']
+                },
+                line: {
+                    colors: ['#aa759f', '#8f5536', '#ac4142', '#d28445']
                 }
             });
         });
@@ -208,13 +231,38 @@ describe('Test for themeManager', function() {
             };
 
             themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
-
             expect(seriesThemeMap).toEqual({
                 column: {
-                    colors: ['red', 'green', 'blue', '#ac4142', '#d28445']
+                    colors: ['red', 'green', 'blue', 'red', 'green']
                 },
                 line: {
-                    colors: ['white', 'block', '#f4bf75']
+                    colors: ['white', 'block', 'white']
+                }
+            });
+        });
+        it('set series colors theme with default and user theme color', function() {
+            var seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            var seriesThemeMap = {
+                column: {},
+                line: {}
+            };
+            var rawSeriesThemeMap = {
+                line: {
+                    colors: ['white', 'block']
+                }
+            };
+            var rawSeriesData = {
+                column: [{}, {}, {}, {}, {}],
+                line: [{}, {}, {}]
+            };
+
+            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
+            expect(seriesThemeMap).toEqual({
+                column: {
+                    colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa']
+                },
+                line: {
+                    colors: ['white', 'block', 'white']
                 }
             });
         });
@@ -232,7 +280,7 @@ describe('Test for themeManager', function() {
             var actual = themeManager._initTheme(themeName, rawTheme, seriesNames);
 
             expect(actual.series.column.colors).toEqual(
-                ['gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']
+                []
             );
         });
 
@@ -255,8 +303,8 @@ describe('Test for themeManager', function() {
             };
             var actual = themeManager._initTheme(themeName, rawTheme, seriesNames, rawSeriesData);
 
-            expect(actual.series.column.colors).toEqual(['red', 'green', 'blue', '#ac4142', '#d28445']);
-            expect(actual.series.line.colors).toEqual(['white', 'block', '#f4bf75']);
+            expect(actual.series.column.colors).toEqual(['red', 'green', 'blue', 'red', 'green']);
+            expect(actual.series.line.colors).toEqual(['white', 'block', 'white']);
         });
     });
 

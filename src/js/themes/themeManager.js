@@ -1,5 +1,5 @@
 /**
- * @fileoverview  Theme manager.
+ * @Fileoverview  Theme manager.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -96,7 +96,6 @@ module.exports = {
      * @returns {object}
      * @private
      */
-
     _createComponentThemeWithSeriesName: function(seriesNames, fromTheme, toTheme, componentType) {
         var self = this;
         var newTheme = {};
@@ -118,59 +117,88 @@ module.exports = {
     },
 
     /**
-     * Set colors theme.
+     * Set series colors.
      * @param {object} theme - theme
      * @param {object} rawTheme - raw theme
      * @param {Array.<string>} baseColors - base colors
      * @private
      */
-    _setColorsTheme: function(theme, rawTheme, baseColors) {
-        if (rawTheme.colors) {
-            theme.colors = rawTheme.colors.concat(baseColors);
-        } else {
-            theme.colors = baseColors;
-        }
-
-        if (rawTheme.singleColors && rawTheme.singleColors.length) {
+    _setSingleColorsThemeIfNeed: function(theme, rawTheme, baseColors) {
+        // TODO 추후 수정을 위해 singleColor파트는 최대한 건드리지 않음
+        if (rawTheme && rawTheme.singleColors && rawTheme.singleColors.length) {
             theme.singleColors = rawTheme.singleColors.concat(baseColors);
         }
     },
 
     /**
+     * Make each series's color
+     * @param {[string]} themeColors Theme colors to use
+     * @param {number} seriesCount Series count
+     * @param {number} startColorIndex Start color index
+     * @returns {[string]} colors
+     */
+    _makeEachSeriesColors: function(themeColors, seriesCount, startColorIndex) {
+        var colors = [];
+        var themeColorsLen = themeColors.length;
+        var colorIndex = startColorIndex || 0;
+        var i;
+
+        for (i = 0; i < seriesCount; i += 1) {
+            colors.push(themeColors[colorIndex]);
+
+            colorIndex += 1;
+
+            if (colorIndex >= themeColorsLen) {
+                colorIndex = 0;
+            }
+        }
+
+        return colors;
+    },
+
+    /**
      * Set series colors theme.
-     * @param {Array.<string>} seriesNames - series names
-     * @param {object} seriesThemeMap - series theme map
-     * @param {object} rawSeriesThemeMap - raw series theme map
+     * @param {Array.<string>} seriesTypes - series type
+     * @param {object} seriesThemes - series theme map
+     * @param {object} rawSeriesThemes - raw series theme map
      * @param {object} rawSeriesData - raw series data
      * @private
      */
-    _setSeriesColors: function(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData) {
+    _setSeriesColors: function(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
         var self = this;
-        var baseColors = JSON.parse(JSON.stringify(defaultTheme.series.colors));
-        var startThemeIndex;
+        var colorIndex, seriesColors, seriesCount, hasOwnColors;
 
-        rawSeriesThemeMap = rawSeriesThemeMap || {};
-
-        if (seriesNames.length === 1) { // single chart
-            this._setColorsTheme(seriesThemeMap[seriesNames[0]], rawSeriesThemeMap, baseColors);
-        } else { // combo chart
-            startThemeIndex = 0;
-            tui.util.forEachArray(seriesNames, function(seriesName) {
-                var rawSeriesTheme = rawSeriesThemeMap[seriesName] || {};
-                var legendCount = rawSeriesData[seriesName].length;
-                var colorsCount = rawSeriesTheme.colors ? rawSeriesTheme.colors.length : 0;
-                var additionalColors = [];
-                var endThemeIndex;
-
-                if (colorsCount < legendCount) {
-                    endThemeIndex = startThemeIndex + (legendCount - colorsCount);
-                    additionalColors = baseColors.slice(startThemeIndex, endThemeIndex);
-                    startThemeIndex = endThemeIndex;
-                }
-
-                self._setColorsTheme(seriesThemeMap[seriesName], rawSeriesTheme, additionalColors);
-            });
+        if (seriesTypes.length === 1) {
+            rawSeriesThemes = makeObjectWithKeyData(seriesTypes[0], rawSeriesThemes);
+            rawSeriesData = makeObjectWithKeyData(seriesTypes[0], rawSeriesData);
         }
+
+        colorIndex = 0;
+
+        tui.util.forEachArray(seriesTypes, function(seriesType) {
+            if (rawSeriesThemes[seriesType]) {
+                seriesColors = rawSeriesThemes[seriesType].colors;
+                hasOwnColors = true;
+            } else {
+                seriesColors = defaultTheme.series.colors;
+                hasOwnColors = false;
+            }
+
+            seriesCount = rawSeriesData[seriesType] ? rawSeriesData[seriesType].length : 0;
+
+            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors,
+                                                                         seriesCount,
+                                                                         !hasOwnColors && colorIndex);
+
+            self._setSingleColorsThemeIfNeed(seriesThemes[seriesType],
+                                             rawSeriesThemes[seriesType],
+                                             seriesColors);
+
+            // To use distinct default colors between series
+            if (!hasOwnColors) {
+                colorIndex = (seriesCount + colorIndex) % seriesColors.length;
+            }
+        });
     },
 
     /**
@@ -298,3 +326,17 @@ module.exports = {
         return theme;
     }
 };
+
+
+/**
+ * Make new object with given key and data
+ * @param {string} key Key
+ * @param {*} data Data
+ * @returns {object} New object
+ */
+function makeObjectWithKeyData(key, data) {
+    var newObject = {};
+    newObject[key] = data;
+
+    return newObject;
+}
