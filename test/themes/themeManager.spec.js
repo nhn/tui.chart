@@ -279,9 +279,7 @@ describe('Test for themeManager', function() {
             var seriesNames = [chartConst.CHART_TYPE_COLUMN];
             var actual = themeManager._initTheme(themeName, rawTheme, seriesNames);
 
-            expect(actual.series.column.colors).toEqual(
-                []
-            );
+            expect(actual.series.column.colors).toEqual([]);
         });
 
         it('init theme, when combo chart', function() {
