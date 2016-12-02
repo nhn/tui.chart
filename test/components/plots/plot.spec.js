@@ -23,12 +23,10 @@ describe('Test for Plot', function() {
                 lineColor: 'black'
             }
         });
-
     });
 
     describe('_renderPlotArea()', function() {
         it('plotContainer와 dimension정보를 renderDimension()에 전달하여 너비 높이를 렌더링 합니다. ', function() {
-
             plot.layout = {
                 dimension: {
                     width: 400,
@@ -110,7 +108,7 @@ describe('Test for Plot', function() {
 
     describe('_makeLineHtml()', function() {
         it('make line html, for vertical line', function() {
-            var position = 50
+            var position = 50;
             var standardWidth = 100;
             var templateParams = plot._makeVerticalLineTemplateParams({
                 height: '50px',
@@ -123,7 +121,7 @@ describe('Test for Plot', function() {
         });
 
         it('make line html, for horizontal line', function() {
-            var position = 50
+            var position = 50;
             var standardWidth = 100;
             var templateParams = plot._makeHorizontalLineTemplateParams({
                 width: '50px',
@@ -302,7 +300,7 @@ describe('Test for Plot', function() {
                 className: '',
                 positionType: 'left',
                 height: '100px'
-            }
+            };
             var actual = plot._makeOptionalLineHtml(xAxisData, 400, templateParams, optionalLineData);
             var expected = '<div class="tui-chart-plot-line "' +
                 ' style="left:75%;width:1px;height:100px;background-color:red"></div>';
@@ -315,6 +313,30 @@ describe('Test for Plot', function() {
                 range: [170, 220],
                 color: 'yellow'
             };
+
+            var xAxisData = {
+                dataMin: 20,
+                distance: 200
+            };
+
+            var templateParams = {
+                className: '',
+                positionType: 'left',
+                height: '200px'
+            };
+
+            var actual = plot._makeOptionalLineHtml(xAxisData, 400, templateParams, optionalLineData);
+            var expected = '<div class="tui-chart-plot-line "' +
+                ' style="left:75%;width:24.75%;height:200px;background-color:yellow"></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('optional band should not make beyond paper width', function() {
+            var optionalLineData = {
+                range: [170, 500],
+                color: 'yellow'
+            };
             var xAxisData = {
                 dataMin: 20,
                 distance: 200
@@ -323,10 +345,10 @@ describe('Test for Plot', function() {
                 className: '',
                 positionType: 'left',
                 height: '200px'
-            }
+            };
             var actual = plot._makeOptionalLineHtml(xAxisData, 400, templateParams, optionalLineData);
             var expected = '<div class="tui-chart-plot-line "' +
-                ' style="left:75%;width:24.75%;height:200px;background-color:yellow"></div>';
+                ' style="left:75%;width:25%;height:200px;background-color:yellow"></div>';
 
             expect(actual).toBe(expected);
         });
@@ -423,8 +445,14 @@ describe('Test for Plot', function() {
             var lineContainer, childNodes;
 
             plot.bound = {
-                dimension: {width: 400, height: 200},
-                position: {top: 5, right: 5}
+                dimension: {
+                    width: 400,
+                    height: 200
+                },
+                position: {
+                    top: 5,
+                    right: 5
+                }
             };
             plot.axisDataMap = {
                 yAxis: {

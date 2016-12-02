@@ -186,16 +186,14 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Make line html.
-     * @param {number} position - position value
+     * @param {number} startPercent - start percentage position
      * @param {number} standardWidth - standard width
      * @param {object} templateParams - template parameters
      * @returns {string}
      * @private
      */
-    _makeLineHtml: function(position, standardWidth, templateParams) {
-        var percentagePosition = calculator.makePercentageValue(position, standardWidth);
-
-        templateParams.positionValue = percentagePosition + '%';
+    _makeLineHtml: function(startPercent, standardWidth, templateParams) {
+        templateParams.positionValue = startPercent + '%';
         templateParams.opacity = templateParams.opacity || '';
 
         return plotTemplate.tplPlotLine(templateParams);
@@ -312,19 +310,26 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
         var plotLineWidth = '1px';
         var html = '';
-        var percentageWidth;
+        var startPercent, widthPercent;
 
         if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+            startPercent = calculator.makePercentageValue(positionMap.start, width);
+
             if (tui.util.isExisty(positionMap.end)) {
-                percentageWidth = calculator.makePercentageValue(positionMap.end - positionMap.start, width);
-                templateParams.width = percentageWidth + '%';
+                widthPercent = calculator.makePercentageValue(positionMap.end - positionMap.start, width);
+
+                if (startPercent + widthPercent > 100) {
+                    widthPercent = 100 - startPercent;
+                }
+
+                templateParams.width = widthPercent + '%';
             } else {
                 templateParams.width = plotLineWidth;
             }
 
             templateParams.color = optionalLineData.color || 'transparent';
             templateParams.opacity = renderUtil.makeOpacityCssText(optionalLineData.opacity);
-            html = this._makeLineHtml(positionMap.start, width, templateParams);
+            html = this._makeLineHtml(startPercent, width, templateParams);
         }
 
         return html;
@@ -376,8 +381,12 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     _makeLinesHtml: function(positions, standardWidth, templateParams) {
         var self = this;
+        var startPercent;
+
         var lineHtml = tui.util.map(positions, function(position) {
-            return self._makeLineHtml(position, standardWidth, templateParams);
+            startPercent = calculator.makePercentageValue(position, standardWidth);
+
+            return self._makeLineHtml(startPercent, standardWidth, templateParams);
         }).join('');
 
         return lineHtml;
