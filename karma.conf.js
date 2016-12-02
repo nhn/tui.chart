@@ -15,7 +15,8 @@ module.exports = function(config) {
             'karma-jasmine',
             'karma-webpack',
             'karma-sourcemap-loader',
-            'karma-phantomjs-launcher'
+            'karma-phantomjs-launcher',
+            'karma-narrow-reporter'
         ],
 
         // frameworks to use
@@ -55,11 +56,20 @@ module.exports = function(config) {
             }
         },
 
+        webpackMiddleware: {
+            // webpack-dev-middleware configuration
+            // i. e.
+            noInfo: true,
+            stats: {
+                colors: true
+            }
+        },
+
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: [
-            'dots'
+            'narrow'
         ],
 
         // optionally, configure the reporter
@@ -101,7 +111,7 @@ module.exports = function(config) {
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
 
-        autoWatchBatchDelay: 500,
+        autoWatchBatchDelay: 100,
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
