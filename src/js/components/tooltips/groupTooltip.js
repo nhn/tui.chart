@@ -207,10 +207,15 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _makeGroupTooltipHtml: function(groupIndex) {
-        var data = this.data[groupIndex],
-            items = this._makeItemRenderingData(data.values);
+        var data = this.data[groupIndex];
+        var items, htmlString = '';
 
-        return this.templateFunc(data.category, items);
+        if (data) {
+            items = this._makeItemRenderingData(data.values);
+            htmlString = this.templateFunc(data.category, items);
+        }
+
+        return htmlString;
     },
 
     /**

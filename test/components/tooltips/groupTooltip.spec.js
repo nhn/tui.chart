@@ -135,6 +135,10 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeGroupTooltipHtml()', function() {
+        it('return empty string when series data is empty.', function() {
+            tooltip.data = [];
+            expect(tooltip._makeGroupTooltipHtml(1)).toBe('');
+        });
         it('전달하는 index에 해당하는 datum을 추출하여 기본 그룹 툴팁 html을 생성합니다.', function() {
             var actual, expected;
             tooltip.data = [

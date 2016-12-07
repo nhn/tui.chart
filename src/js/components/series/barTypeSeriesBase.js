@@ -33,7 +33,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * Get bar width option size.
      * @param {number} pointInterval point interval
-     * @param {?number} optionBarWidth barWidth option
+     * @param {number} [optionBarWidth] barWidth option
      * @returns {number} option size
      * @private
      */
@@ -74,7 +74,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * Make base data for making bound.
      * @param {number} baseGroupSize base group size
      * @param {number} baseBarSize base bar size
-     * @returns {{
+     * @returns {undefined|{
      *      baseBarSize: number,
      *      groupSize: number,
      *      barSize: number,
@@ -88,32 +88,36 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var isStackType = predicate.isValidStackOption(this.options.stackType);
         var seriesDataModel = this._getSeriesDataModel();
         var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
-        var itemCount, barSize, optionSize, basePosition, pointInterval;
+        var itemCount, barSize, optionSize, basePosition, pointInterval, baseBounds;
 
-        if (!isStackType) {
-            itemCount = seriesDataModel.getFirstSeriesGroup().getSeriesItemCount();
-        } else {
-            itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
+        if (seriesDataModel.rawSeriesData.length > 0) {
+            if (!isStackType) {
+                itemCount = seriesDataModel.getFirstSeriesGroup().getSeriesItemCount();
+            } else {
+                itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
+            }
+
+            pointInterval = groupSize / (itemCount + 1);
+            barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
+            optionSize = this.options.barWidth;
+            barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
+            basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
+
+            if (predicate.isColumnChart(this.chartType)) {
+                basePosition = baseBarSize - basePosition;
+            }
+
+            baseBounds = {
+                baseBarSize: baseBarSize,
+                groupSize: groupSize,
+                barSize: barSize,
+                pointInterval: pointInterval,
+                firstAdditionalPosition: pointInterval,
+                basePosition: basePosition
+            };
         }
 
-        pointInterval = groupSize / (itemCount + 1);
-        barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
-        optionSize = this.options.barWidth;
-        barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
-        basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
-
-        if (predicate.isColumnChart(this.chartType)) {
-            basePosition = baseBarSize - basePosition;
-        }
-
-        return {
-            baseBarSize: baseBarSize,
-            groupSize: groupSize,
-            barSize: barSize,
-            pointInterval: pointInterval,
-            firstAdditionalPosition: pointInterval,
-            basePosition: basePosition
-        };
+        return baseBounds;
     },
 
     /**
@@ -179,15 +183,14 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _makeStackedLabelsHtml: function(params) {
-        var self = this,
-            seriesGroup = params.seriesGroup,
-            labelHeight = params.labelHeight,
-            htmls, plusBound, minusBound, values;
-
-        htmls = seriesGroup.map(function(seriesItem, index) {
-            var bound = params.bounds[index],
-                labelHtml = '',
-                boundEnd, position;
+        var positiveBound, negativeBound, values;
+        var self = this;
+        var seriesGroup = params.seriesGroup;
+        var labelHeight = params.labelHeight;
+        var htmls = seriesGroup.map(function(seriesItem, index) {
+            var bound = params.bounds[index];
+            var labelHtml = '';
+            var boundEnd, position;
 
             if (bound && seriesItem) {
                 boundEnd = bound.end;
@@ -196,9 +199,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             }
 
             if (seriesItem.value > 0) {
-                plusBound = boundEnd;
+                positiveBound = boundEnd;
             } else if (seriesItem.value < 0) {
-                minusBound = boundEnd;
+                negativeBound = boundEnd;
             }
 
             return labelHtml;
@@ -206,8 +209,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         if (predicate.isNormalStack(this.options.stackType)) {
             values = seriesGroup.pluck('value');
-            htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
-            htmls.push(this._makeMinusSumLabelHtml(values, minusBound, labelHeight));
+            htmls.push(this._makePlusSumLabelHtml(values, positiveBound, labelHeight));
+            htmls.push(this._makeMinusSumLabelHtml(values, negativeBound, labelHeight));
         }
 
         return htmls.join('');
@@ -223,7 +226,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var groupBounds = this.seriesData.groupBounds;
         var seriesDataModel = this._getSeriesDataModel();
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label);
-        var html = seriesDataModel.map(function(seriesGroup, index) {
+        var stackLabelHtml = seriesDataModel.map(function(seriesGroup, index) {
             var labelsHtml = self._makeStackedLabelsHtml({
                 groupIndex: index,
                 seriesGroup: seriesGroup,
@@ -234,7 +237,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             return labelsHtml;
         }).join('');
 
-        elSeriesLabelArea.innerHTML = html;
+        elSeriesLabelArea.innerHTML = stackLabelHtml;
     },
 
     /**

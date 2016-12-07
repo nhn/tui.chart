@@ -339,7 +339,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         if ((isPieTypeCharts && checkedCount === 1) || checkedCount === 0) {
             this._renderLegendArea(this.legendContainer);
         } else {
-            this.legendModel.updateCheckedData(checkedIndexes);
+            this.legendModel.updateCheckedLegendsWith(checkedIndexes);
 
             data = this.legendModel.getSelectedDatum();
 

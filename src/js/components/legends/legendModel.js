@@ -74,8 +74,8 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
          */
         this.checkedWholeIndexes = [];
 
-        this._initCheckedIndexes();
         this._setData();
+        this._initCheckedIndexes();
     },
 
     /**
@@ -83,18 +83,27 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @private
      */
     _initCheckedIndexes: function() {
-        var checkedWholeIndexes = [];
+        var self = this;
+        var checkedIndexes = [];
         tui.util.forEachArray(this.legendData, function(legendDatum, index) {
-            checkedWholeIndexes[index] = true;
+            if (legendDatum.visible) {
+                checkedIndexes.push(index);
+            }
+            self.checkedWholeIndexes[index] = legendDatum.visible;
         });
-        this.checkedWholeIndexes = checkedWholeIndexes;
+
+        this.updateCheckedLegendsWith(checkedIndexes);
     },
 
     /**
      * Set theme to legend data.
      * @param {Array.<object>} legendData - legend data
-     * @param {{colors: Array.<number>, singleColor: ?string, bordercolor: ?string}} colorTheme - legend theme
-     * @param {Array.<boolean>} checkedIndexes - checked indexes
+     * @param {{
+     *     colors: Array.<string>,
+     *     singleColors: ?string,
+     *     borderColor: ?string
+     *     }} colorTheme - legend theme
+     * @param {Array.<boolean>} [checkedIndexes] - checked indexes
      * @private
      */
     _setThemeToLegendData: function(legendData, colorTheme, checkedIndexes) {
@@ -292,10 +301,10 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     },
 
     /**
-     * Update checked data.
-     * @param {Array.<number>} indexes indxes
+     * Update checked legend's indexes
+     * @param {Array.<number>} indexes indexes
      */
-    updateCheckedData: function(indexes) {
+    updateCheckedLegendsWith: function(indexes) {
         var self = this;
 
         this._resetCheckedData();
