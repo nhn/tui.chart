@@ -485,7 +485,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
     /**
      * Get stack count.
-     * @param {string} series type - series type
+     * @param {string} seriesType - series type
      * @returns {Number}
      */
     getStackCount: function(seriesType) {
