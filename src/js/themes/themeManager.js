@@ -169,7 +169,7 @@ module.exports = {
         var seriesColors, seriesCount, hasOwnColors;
         var colorIndex = 0;
 
-        rawSeriesThemes = rawSeriesThemes || {}; //분기문 간소화를위해
+        rawSeriesThemes = rawSeriesThemes || {}; // 분기문 간소화를위해
 
         tui.util.forEachArray(seriesTypes, function(seriesType) {
             if (rawSeriesThemes[seriesType]) {
