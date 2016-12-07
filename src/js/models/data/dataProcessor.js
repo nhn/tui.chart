@@ -116,6 +116,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     getZoomedRawData: function() {
         var zoomedRawData = this.zoomedRawData;
+
         if (zoomedRawData) {
             zoomedRawData = objectUtil.deepCopy(zoomedRawData);
         } else {
@@ -153,13 +154,9 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var startIndex = indexRange[0];
         var endIndex = indexRange[1];
 
-        if (tui.util.isArray(rawData.series)) {
-            rawData.series = this._filterSeriesDataByIndexRange(rawData.series, startIndex, endIndex);
-        } else {
-            tui.util.forEach(rawData.series, function(seriesDataSet, seriesName) {
-                rawData.series[seriesName] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
-            });
-        }
+        tui.util.forEach(rawData.series, function(seriesDataSet, seriesName) {
+            rawData.series[seriesName] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+        });
 
         rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
 
@@ -475,11 +472,12 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
     /**
      * Get stacks from raw series data.
+     * @param {string} seriesType seriesType to count stacks
      * @returns {Array.<string>}
      */
-    getStacks: function() {
+    getStacks: function(seriesType) {
         if (!this.stacks) {
-            this.stacks = rawDataHandler.pickStacks(this.rawData.series);
+            this.stacks = rawDataHandler.pickStacks(this.rawData.series[seriesType]);
         }
 
         return this.stacks;
@@ -489,8 +487,8 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * Get stack count.
      * @returns {Number}
      */
-    getStackCount: function() {
-        return this.getStacks().length;
+    getStackCount: function(seriesType) {
+        return this.getStacks(seriesType).length;
     },
 
     /**
@@ -530,7 +528,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
         if (!this.seriesDataModelMap[seriesName]) {
             chartType = this.findChartType(seriesName);
-            rawSeriesData = this.rawData.series[seriesName] || this.rawData.series;
+            rawSeriesData = this.rawData.series[seriesName];
 
             if (predicate.isTreemapChart(this.chartType)) {
                 SeriesDataModelClass = SeriesDataModelForTreemap;
@@ -586,7 +584,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     _findRawSeriesDatumByName: function(name, seriesName) {
         var foundSeriesDatum = null;
-        var seriesData = seriesName ? this.rawData.series[seriesName] : this.rawData.series;
+        var seriesData = this.rawData.series[seriesName];
 
         tui.util.forEachArray(seriesData, function(seriesDatum) {
             var isEqual = seriesDatum.name === name;
@@ -640,14 +638,17 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     _pushSeriesData: function(values) {
         var self = this;
+        var temp;
 
-        if (tui.util.isArray(this.originalRawData.series)) {
-            this._pushValues(this.originalRawData.series, values);
-        } else {
-            tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
-                self._pushValues(seriesData, values[seriesName], seriesName);
-            });
+        if (this.chartType !== 'combo' && tui.util.isArray(values)) {
+            temp = values;
+            values = {};
+            values[this.chartType] = temp;
         }
+
+        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
+            self._pushValues(seriesData, values[seriesName], seriesName);
+        });
     },
 
     /**
@@ -676,13 +677,9 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     _shiftSeriesData: function() {
         var self = this;
 
-        if (tui.util.isArray(this.originalRawData.series)) {
-            this._shiftValues(this.originalRawData.series);
-        } else {
-            tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
-                self._shiftValues(seriesData, seriesName);
-            });
-        }
+        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
+            self._shiftValues(seriesData, seriesName);
+        });
     },
 
     /**
@@ -920,16 +917,11 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     _pickLegendLabels: function() {
         var self = this;
         var seriesData = this.rawData.series;
-        var legendLabels;
+        var legendLabels = {};
 
-        if (tui.util.isArray(seriesData)) {
-            legendLabels = tui.util.map(seriesData, this._pickLegendLabel);
-        } else {
-            legendLabels = {};
-            tui.util.forEach(seriesData, function(seriesDatum, type) {
-                legendLabels[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
-            });
-        }
+        tui.util.forEach(seriesData, function(seriesData, seriesType) {
+            legendLabels[seriesType] = tui.util.map(seriesData, self._pickLegendLabel);
+        });
 
         legendLabels = tui.util.filter(legendLabels, function(label) {
             return tui.util.isExisty(label);
@@ -957,7 +949,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @private
      */
     _makeLegendData: function() {
-        var legendLabels = this.getLegendLabels(),
+        var legendLabels = this.getLegendLabels(this.chartType),
             seriesNames = this.seriesNames || [this.chartType],
             legendLabelsMap, legendData;
 

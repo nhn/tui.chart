@@ -276,10 +276,10 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
     /**
      * Get checked indexes.
-     * @returns {{column: ?Array.<boolean>, line: ?Array.<boolean>} | Array.<boolean>} sending data
+     * @returns {object} object data that whether series has checked or not
      */
     getCheckedIndexes: function() {
-        return this.checkedIndexesMap[this.chartType] || this.checkedIndexesMap;
+        return this.checkedIndexesMap;
     },
 
     /**

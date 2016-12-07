@@ -73,9 +73,16 @@ tui.util.defineNamespace('tui.chart');
  * @ignore
  */
 function _createChart(container, rawData, options, chartType) {
-    var themeName, theme, chart;
+    var themeName, theme, chart, temp;
 
     rawData = objectUtil.deepCopy(rawData);
+
+    if (chartType !== 'combo') {
+        temp = rawData.series;
+        rawData.series = {};
+        rawData.series[chartType] = temp;
+    }
+
     options = options ? objectUtil.deepCopy(options) : {};
     options.chartType = chartType;
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;

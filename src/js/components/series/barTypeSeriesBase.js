@@ -93,7 +93,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         if (!isStackType) {
             itemCount = seriesDataModel.getFirstSeriesGroup().getSeriesItemCount();
         } else {
-            itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
+            itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount(this.seriesName);
         }
 
         pointInterval = groupSize / (itemCount + 1);

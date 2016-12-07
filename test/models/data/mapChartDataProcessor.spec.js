@@ -20,15 +20,18 @@ describe('Test for MapChartDataProcessor', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
-                series: [{
-                    code: 'KR',
-                    data: 100
-                },
-                {
-                    code: 'JP',
-                    data: 50
-                }]
+                series: {
+                    map: [{
+                        code: 'KR',
+                        data: 100
+                    },
+                    {
+                        code: 'JP',
+                        data: 50
+                    }]
+                }
             };
+
             actual = dataProcessor._makeValueMap();
             expected = {
                 KR: {
@@ -48,14 +51,16 @@ describe('Test for MapChartDataProcessor', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
-                series: [{
-                    code: 'KR',
-                    data: 100
-                },
-                {
-                    code: 'JP',
-                    data: 50
-                }]
+                series: {
+                    map: [{
+                        code: 'KR',
+                        data: 100
+                    },
+                    {
+                        code: 'JP',
+                        data: 50
+                    }]
+                }
             };
             dataProcessor.options = {
                 chart: {
@@ -81,22 +86,26 @@ describe('Test for MapChartDataProcessor', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
-                series: [{
-                    code: 'KR',
-                    name: 'South Korea',
-                    data: 100
-                },
-                {
-                    code: 'JP',
-                    name: 'Japan',
-                    data: 50
-                }]
+                series: {
+                    map: [{
+                        code: 'KR',
+                        name: 'South Korea',
+                        data: 100
+                    },
+                    {
+                        code: 'JP',
+                        name: 'Japan',
+                        data: 50
+                    }]
+                }
             };
+
             dataProcessor.options = {
                 chart: {
                     format: '0100'
                 }
             };
+
             actual = dataProcessor._makeValueMap();
             expected = {
                 KR: {
