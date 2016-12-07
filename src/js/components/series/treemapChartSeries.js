@@ -85,16 +85,20 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      */
     _makeSeriesData: function() {
         var boundMap = this._getBoundMap();
+        var groupBounds = this._makeBounds(boundMap);
 
         return {
             boundMap: boundMap,
-            groupBounds: this._makeBounds(boundMap),
+            groupBounds: groupBounds,
             seriesDataModel: this._getSeriesDataModel(),
             startDepth: this.startDepth,
             isPivot: true,
             colorSpectrum: this.options.useColorValue ? this.colorSpectrum : null,
             chartBackground: this.chartBackground,
-            zoomable: this.options.zoomable
+            zoomable: this.options.zoomable,
+            isAvailable: function() {
+                return groupBounds && groupBounds.length > 0;
+            }
         };
     },
 

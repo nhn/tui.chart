@@ -131,6 +131,9 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends M
 
     createBaseValuesForLimit: function() {
         return this.getValues();
+    },
+    getLegendVisibility: function() {
+        return null;
     }
 });
 

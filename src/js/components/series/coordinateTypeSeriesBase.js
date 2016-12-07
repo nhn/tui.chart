@@ -20,11 +20,14 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      * @override
      */
     _makeSeriesData: function() {
-        var bounds = this._makeBounds();
+        var groupBounds = this._makeBounds();
 
         return {
-            groupBounds: bounds,
-            seriesDataModel: this._getSeriesDataModel()
+            groupBounds: groupBounds,
+            seriesDataModel: this._getSeriesDataModel(),
+            isAvailable: function() {
+                return groupBounds && groupBounds.length > 0;
+            }
         };
     },
 

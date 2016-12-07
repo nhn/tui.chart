@@ -299,14 +299,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         this._renderPosition(seriesContainer, position);
+        if (this.hasDataForRendering(seriesData) || this.chartType === 'map') {
+            if (funcRenderGraph) {
+                paper = funcRenderGraph(dimension, seriesData, paper);
+            }
 
-        if (funcRenderGraph && hasDataForRendering(seriesData)) {
-            paper = funcRenderGraph(dimension, seriesData, paper);
-        }
-
-        if (predicate.isShowLabel(this.options)) {
-            labelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
-            this._appendLabelContainer(seriesContainer, labelContainer);
+            if (predicate.isShowLabel(this.options)) {
+                labelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
+                this._appendLabelContainer(seriesContainer, labelContainer);
+            }
         }
 
         return paper;
@@ -388,7 +389,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
 
         if (data.checkedLegends) {
-            checkedLegends = data.checkedLegends[this.chartType];
+            checkedLegends = data.checkedLegends[this.seriesName];
             this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
         }
 
@@ -860,16 +861,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             dom.removeClass(this.seriesLabelContainer, 'show');
             dom.removeClass(this.seriesLabelContainer, 'opacity');
         }
+    },
+    /**
+     * Return boolean value whether seriesData contains data
+     * @param {object} seriesData seriesData object
+     * @returns {boolean}
+     */
+    hasDataForRendering: function(seriesData) {
+        return !!(seriesData && seriesData.isAvailable());
     }
 });
-
-/**
- * Return boolean value whether seriesData contains data
- * @param {object} seriesData seriesData object
- * @returns {boolean}
- */
-function hasDataForRendering(seriesData) {
-    return !!(seriesData && (seriesData.groupPositions || seriesData.seriesDataModel.rawSeriesData.length > 0));
-}
 
 module.exports = Series;

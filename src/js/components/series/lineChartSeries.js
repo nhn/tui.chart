@@ -48,9 +48,14 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
      * @override
      */
     _makeSeriesData: function() {
+        var groupPositions = this._makePositions();
+
         return {
             chartBackground: this.chartBackground,
-            groupPositions: this._makePositions()
+            groupPositions: groupPositions,
+            isAvailable: function() {
+                return groupPositions && groupPositions.length > 0;
+            }
         };
     },
 

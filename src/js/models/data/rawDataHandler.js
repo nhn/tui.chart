@@ -232,16 +232,17 @@ var rawDataHandler = {
      */
     filterCheckedRawData: function(rawData, checkedLegends) {
         var cloneData = JSON.parse(JSON.stringify(rawData));
-
-        tui.util.forEach(cloneData.series, function(serieses, chartType) {
-            if (!checkedLegends[chartType]) {
-                cloneData.series[chartType] = [];
-            } else if (checkedLegends[chartType].length) {
-                cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
-                    return checkedLegends[chartType][index];
-                });
-            }
-        });
+        if (checkedLegends) {
+            tui.util.forEach(cloneData.series, function(serieses, chartType) {
+                if (!checkedLegends[chartType]) {
+                    cloneData.series[chartType] = [];
+                } else if (checkedLegends[chartType].length) {
+                    cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
+                        return checkedLegends[chartType][index];
+                    });
+                }
+            });
+        }
 
         return cloneData;
     }

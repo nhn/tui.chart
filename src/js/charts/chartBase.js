@@ -380,9 +380,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     render: function() {
         var container = dom.create('DIV', 'tui-chart ' + this.className);
         var componentManager = this.componentManager;
-        var checkedLegends = componentManager.get('legend').legendModel.getCheckedIndexes();
         var dataProcessor = this.dataProcessor;
-        var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
+        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
+        var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
 
         this.dataProcessor.initData(rawData);
 
@@ -394,7 +394,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._render(function(boundsAndScale) {
             renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
             componentManager.render('render', boundsAndScale, {
-                checkedLegends: checkedLegends
+                checkedLegends: seriesVisibilityMap
             }, container);
         });
 

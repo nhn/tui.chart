@@ -555,21 +555,25 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {function} onFinish callback
      */
     animate: function(onFinish) {
-        var self = this,
-            seriesWidth = this.dimension.width,
+        var self = this;
+        var seriesWidth, seriesHeight;
+
+        if (this.dimension) {
+            seriesWidth = this.dimension.width;
             seriesHeight = this.dimension.height;
 
-        tui.chart.renderUtil.cancelAnimation(this.animation);
+            tui.chart.renderUtil.cancelAnimation(this.animation);
 
-        this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_DURATION, function(ratio) {
-            var width = Math.min(seriesWidth * ratio, seriesWidth);
+            this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_DURATION, function(ratio) {
+                var width = Math.min(seriesWidth * ratio, seriesWidth);
 
-            self.paper.setSize(width, seriesHeight);
+                self.paper.setSize(width, seriesHeight);
 
-            if (ratio === 1) {
-                onFinish();
-            }
-        });
+                if (ratio === 1) {
+                    onFinish();
+                }
+            });
+        }
     },
 
     /**

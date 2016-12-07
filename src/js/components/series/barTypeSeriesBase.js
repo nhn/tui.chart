@@ -22,11 +22,16 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @override
      */
     _makeSeriesData: function() {
-        this.groupBounds = this._makeBounds(this.layout.dimension);
+        var groupBounds = this._makeBounds(this.layout.dimension);
+
+        this.groupBounds = groupBounds;
 
         return {
-            groupBounds: this.groupBounds,
-            seriesDataModel: this._getSeriesDataModel()
+            groupBounds: groupBounds,
+            seriesDataModel: this._getSeriesDataModel(),
+            isAvailable: function() {
+                return groupBounds && groupBounds.length > 0;
+            }
         };
     },
 

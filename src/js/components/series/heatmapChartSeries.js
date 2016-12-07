@@ -38,12 +38,16 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
      * @override
      */
     _makeSeriesData: function() {
-        var boundsSet = this._makeBounds();
+        var groupBounds = this._makeBounds();
+        var seriesDataModel = this._getSeriesDataModel();
 
         return {
             colorSpectrum: this.colorSpectrum,
-            groupBounds: boundsSet,
-            seriesDataModel: this._getSeriesDataModel()
+            groupBounds: groupBounds,
+            seriesDataModel: seriesDataModel,
+            isAvailable: function() {
+                return groupBounds && groupBounds.length > 0;
+            }
         };
     },
 

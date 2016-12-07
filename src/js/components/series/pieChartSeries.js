@@ -192,13 +192,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _makeSeriesData: function() {
-        var circleBound = this._makeCircleBound(),
-            sectorData = this._makeSectorData(circleBound);
+        var circleBound = this._makeCircleBound();
+        var sectorData = this._makeSectorData(circleBound);
 
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
-            sectorData: sectorData
+            sectorData: sectorData,
+            isAvailable: function() {
+                return sectorData && sectorData.length > 0;
+            }
         };
     },
 
