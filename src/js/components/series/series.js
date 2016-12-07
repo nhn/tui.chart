@@ -387,8 +387,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.beforeAxisDataMap = this.axisDataMap;
 
 
-        if (data.checkedLegends && data.checkedLegends.length > 0) {
-            checkedLegends = data.checkedLegends[this.chartType] || data.checkedLegends;
+        if (data.checkedLegends) {
+            checkedLegends = data.checkedLegends[this.chartType];
             this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
         }
 
@@ -449,7 +449,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (this.dataProcessor.getGroupCount(this.seriesName)) {
             if (data.checkedLegends) {
-                checkedLegends = data.checkedLegends[this.chartType] || data.checkedLegends;
+                checkedLegends = data.checkedLegends[this.chartType];
                 this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
             }
 
