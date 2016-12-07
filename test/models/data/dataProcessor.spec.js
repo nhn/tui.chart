@@ -1081,110 +1081,104 @@ describe('Test for DataProcessor', function() {
             var actual;
 
             dataProcessor.rawData = {
-                series: [
-                    {
-                        name: 'Legend1',
-                        data: [20, 30, 50],
-                        visible: true
-                    },
-                    {
-                        name: 'Legend2',
-                        data: [40, 40, 60],
-                        visible: true
-                    },
-                    {
-                        name: 'Legend3',
-                        data: [60, 50, 10],
-                        visible: true
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70],
-                        visible: true
-                    }
-                ]
+                series: {
+                    line : [
+                        {
+                            name: 'Legend1',
+                            data: [20, 30, 50],
+                            visible: true
+                        },
+                        {
+                            name: 'Legend2',
+                            data: [40, 40, 60],
+                            visible: true
+                        },
+                        {
+                            name: 'Legend3',
+                            data: [60, 50, 10],
+                            visible: true
+                        },
+                        {
+                            name: 'Legend4',
+                            data: [80, 10, 70],
+                            visible: true
+                        }
+                    ]
+                }
             };
 
             actual = dataProcessor._pickLegendData('visibility');
 
-            expect(actual.length).toBe(4);
-            expect(actual[0]).toBe(true);
-            expect(actual[1]).toBe(true);
-            expect(actual[2]).toBe(true);
-            expect(actual[3]).toBe(true);
+            expect(actual.line).toEqual([true, true, true, true]);
         });
 
         it('pick legend visibility true when `visible` is undefined.', function() {
             var actual;
 
             dataProcessor.rawData = {
-                series: [
-                    {
-                        name: 'Legend1',
-                        data: [20, 30, 50],
-                        visible: true
-                    },
-                    {
-                        name: 'Legend2',
-                        data: [40, 40, 60],
-                        visible: false
-                    },
-                    {
-                        name: 'Legend3',
-                        data: [60, 50, 10],
-                        visible: true
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70],
-                        visible: true
-                    }
-                ]
+                series: {
+                    line : [
+                        {
+                            name: 'Legend1',
+                            data: [20, 30, 50],
+                            visible: true
+                        },
+                        {
+                            name: 'Legend2',
+                            data: [40, 40, 60],
+                            visible: false
+                        },
+                        {
+                            name: 'Legend3',
+                            data: [60, 50, 10],
+                            visible: true
+                        },
+                        {
+                            name: 'Legend4',
+                            data: [80, 10, 70],
+                            visible: true
+                        }
+                    ]
+                }
             };
 
             actual = dataProcessor._pickLegendData('visibility');
 
-            expect(actual.length).toBe(4);
-            expect(actual[0]).toBe(true);
-            expect(actual[1]).toBe(false);
-            expect(actual[2]).toBe(true);
-            expect(actual[3]).toBe(true);
+            expect(actual.line).toEqual([true, false, true, true]);
         });
 
         it('pick legend visibility true when `visible` is undefined.', function() {
             var actual;
 
             dataProcessor.rawData = {
-                series: [
-                    {
-                        name: 'Legend1',
-                        data: [20, 30, 50]
-                    },
-                    {
-                        name: 'Legend2',
-                        data: [40, 40, 60],
-                        visible: true
-                    },
-                    {
-                        name: 'Legend3',
-                        data: [60, 50, 10],
-                        visible: true
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70],
-                        visible: true
-                    }
-                ]
+                series: {
+                    line : [
+                        {
+                            name: 'Legend1',
+                            data: [20, 30, 50]
+                        },
+                        {
+                            name: 'Legend2',
+                            data: [40, 40, 60],
+                            visible: false
+                        },
+                        {
+                            name: 'Legend3',
+                            data: [60, 50, 10],
+                            visible: true
+                        },
+                        {
+                            name: 'Legend4',
+                            data: [80, 10, 70],
+                            visible: true
+                        }
+                    ]
+                }
             };
 
             actual = dataProcessor._pickLegendData('visibility');
 
-            expect(actual.length).toBe(4);
-            expect(actual[0]).toBe(true);
-            expect(actual[1]).toBe(true);
-            expect(actual[2]).toBe(true);
-            expect(actual[3]).toBe(true);
+            expect(actual.line).toEqual([true, false, true, true]);
         });
     });
 
