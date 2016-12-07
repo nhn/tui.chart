@@ -46,26 +46,30 @@ describe('Test for DataProcessor', function() {
         it('filter raw data(category and series) by index range, when single chart', function() {
             var rawData = {
                 categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
-                series: [
-                    {
-                        data: [1, 2, 3, 4, 5]
-                    },
-                    {
-                        data: [11, 12, 13, 14, 15]
-                    }
-                ]
+                series: {
+                    line: [
+                        {
+                            data: [1, 2, 3, 4, 5]
+                        },
+                        {
+                            data: [11, 12, 13, 14, 15]
+                        }
+                    ]
+                }
             };
             var actual = dataProcessor._filterRawDataByIndexRange(rawData, [1, 3]);
             var expected = {
                 categories: ['cate2', 'cate3', 'cate4'],
-                series: [
-                    {
-                        data: [2, 3, 4]
-                    },
-                    {
-                        data: [12, 13, 14]
-                    }
-                ]
+                series: {
+                    line: [
+                        {
+                            data: [2, 3, 4]
+                        },
+                        {
+                            data: [12, 13, 14]
+                        }
+                    ]
+                }
             };
 
             expect(actual).toEqual(expected);
@@ -386,18 +390,20 @@ describe('Test for DataProcessor', function() {
         it('find raw series datum by legend name, when single chart', function() {
             var actual;
 
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2]
-                },
-                {
-                    name: 'legend2',
-                    data: [3, 4]
-                }
-            ];
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
 
-            actual = dataProcessor._findRawSeriesDatumByName('legend2');
+            actual = dataProcessor._findRawSeriesDatumByName('legend2', 'line');
 
             expect(actual).toEqual({
                 name: 'legend2',
@@ -461,19 +467,22 @@ describe('Test for DataProcessor', function() {
                 name: 'legend1',
                 data: [1, 2]
             };
+
             var value = 5;
 
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2]
-                }
-            ];
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    }
+                ]
+            };
 
-            dataProcessor._pushValue(originalRawSeriesDatum, value);
+            dataProcessor._pushValue(originalRawSeriesDatum, value, 'line');
 
             expect(originalRawSeriesDatum.data).toEqual([1, 2, 5]);
-            expect(dataProcessor.rawData.series[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([1, 2, 5]);
         });
 
         it('push value to data property of series, when combo chart', function() {
@@ -520,18 +529,20 @@ describe('Test for DataProcessor', function() {
             ];
             var values = [5, 6];
 
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2]
-                }
-            ];
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    }
+                ]
+            };
 
-            dataProcessor._pushValues(originalRawSeriesData, values);
+            dataProcessor._pushValues(originalRawSeriesData, values, 'line');
 
             expect(originalRawSeriesData[0].data).toEqual([1, 2, 5]);
             expect(originalRawSeriesData[1].data).toEqual([3, 4, 6]);
-            expect(dataProcessor.rawData.series[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([1, 2, 5]);
         });
 
         it('push values to series of originalRawData and series of rawData, when combo chart', function() {
@@ -568,64 +579,74 @@ describe('Test for DataProcessor', function() {
 
     describe('_pushSeriesData()', function() {
         it('rawData와 originalRawData의 series배열 각 항목의 data요소에 전달된 values를 순서에 맞춰 추가합니다.', function() {
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2]
-                },
-                {
-                    name: 'legend2',
-                    data: [3, 4]
-                }
-            ];
-            dataProcessor.originalRawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2]
-                },
-                {
-                    name: 'legend2',
-                    data: [3, 4]
-                }
-            ];
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
+            dataProcessor.originalRawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
 
+            dataProcessor.chartType = 'line';
             dataProcessor._pushSeriesData([5, 6]);
 
-            expect(dataProcessor.rawData.series[0].data).toEqual([1, 2, 5]);
-            expect(dataProcessor.rawData.series[1].data).toEqual([3, 4, 6]);
-            expect(dataProcessor.originalRawData.series[0].data).toEqual([1, 2, 5]);
-            expect(dataProcessor.originalRawData.series[1].data).toEqual([3, 4, 6]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series.line[1].data).toEqual([3, 4, 6]);
+            expect(dataProcessor.originalRawData.series.line[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.originalRawData.series.line[1].data).toEqual([3, 4, 6]);
         });
 
         it('rawData에 선택된 legend만 남은 경우 originalRawData name 기준으로 value를 설정합니다.', function() {
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend2',
-                    data: [3, 4]
-                }
-            ];
-            dataProcessor.originalRawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2]
-                },
-                {
-                    name: 'legend2',
-                    data: [3, 4]
-                }
-            ];
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
+            dataProcessor.originalRawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
 
+            dataProcessor.chartType = 'line';
             dataProcessor._pushSeriesData([5, 6]);
 
-            expect(dataProcessor.rawData.series[0].data).toEqual([3, 4, 6]);
-            expect(dataProcessor.originalRawData.series[0].data).toEqual([1, 2, 5]);
-            expect(dataProcessor.originalRawData.series[1].data).toEqual([3, 4, 6]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([3, 4, 6]);
+            expect(dataProcessor.originalRawData.series.line[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.originalRawData.series.line[1].data).toEqual([3, 4, 6]);
         });
     });
 
     describe('_shiftValues()', function() {
         it('shift value of series data, when single chart', function() {
-            var originalRawSeriesData = [
+            var originalRawSeriesData =  [
                 {
                     name: 'legend1',
                     data: [1, 2, 3]
@@ -636,22 +657,25 @@ describe('Test for DataProcessor', function() {
                 }
             ];
 
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2, 3]
-                },
-                {
-                    name: 'legend2',
-                    data: [4, 5, 6]
-                }
-            ];
-            dataProcessor._shiftValues(originalRawSeriesData);
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2, 3]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [4, 5, 6]
+                    }
+                ]
+            };
+
+            dataProcessor._shiftValues(originalRawSeriesData, 'line');
 
             expect(originalRawSeriesData[0].data).toEqual([2, 3]);
             expect(originalRawSeriesData[1].data).toEqual([5, 6]);
-            expect(dataProcessor.rawData.series[0].data).toEqual([2, 3]);
-            expect(dataProcessor.rawData.series[1].data).toEqual([5, 6]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([2, 3]);
+            expect(dataProcessor.rawData.series.line[1].data).toEqual([5, 6]);
         });
 
         it('shift value of series data, when combo chart', function() {
@@ -687,58 +711,66 @@ describe('Test for DataProcessor', function() {
 
     describe('_shiftSeriesData', function() {
         it('rawData와 originalRawData의 series배열 각 항목의 data요소 첫번째 항목을 삭제합니다.', function() {
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2, 3]
-                },
-                {
-                    name: 'legend2',
-                    data: [4, 5, 6]
-                }
-            ];
-            dataProcessor.originalRawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2, 3]
-                },
-                {
-                    name: 'legend2',
-                    data: [4, 5, 6]
-                }
-            ];
+            dataProcessor.rawData.series = {
+                line : [
+                    {
+                        name: 'legend1',
+                        data: [1, 2, 3]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [4, 5, 6]
+                    }
+                ]
+            };
+            dataProcessor.originalRawData.series = {
+                line : [
+                    {
+                        name: 'legend1',
+                        data: [1, 2, 3]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [4, 5, 6]
+                    }
+                ]
+            };
 
             dataProcessor._shiftSeriesData();
 
-            expect(dataProcessor.rawData.series[0].data).toEqual([2, 3]);
-            expect(dataProcessor.rawData.series[1].data).toEqual([5, 6]);
-            expect(dataProcessor.originalRawData.series[0].data).toEqual([2, 3]);
-            expect(dataProcessor.originalRawData.series[1].data).toEqual([5, 6]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([2, 3]);
+            expect(dataProcessor.rawData.series.line[1].data).toEqual([5, 6]);
+            expect(dataProcessor.originalRawData.series.line[0].data).toEqual([2, 3]);
+            expect(dataProcessor.originalRawData.series.line[1].data).toEqual([5, 6]);
         });
 
         it('rawData에 선택된 legend만 남은 경우 originalRawData name 기준으로 data요소 첫번째 항목을 삭제합니다.', function() {
-            dataProcessor.rawData.series = [
-                {
-                    name: 'legend2',
-                    data: [4, 5, 6]
-                }
-            ];
-            dataProcessor.originalRawData.series = [
-                {
-                    name: 'legend1',
-                    data: [1, 2, 3]
-                },
-                {
-                    name: 'legend2',
-                    data: [4, 5, 6]
-                }
-            ];
+            dataProcessor.rawData.series = {
+                line : [
+                    {
+                        name: 'legend2',
+                        data: [4, 5, 6]
+                    }
+                ]
+            };
+            dataProcessor.originalRawData.series = {
+                line : [
+                    {
+                        name: 'legend1',
+                        data: [1, 2, 3]
+                    },
+                    {
+                        name: 'legend2',
+                        data: [4, 5, 6]
+                    }
+                ]
+            };
 
             dataProcessor._shiftSeriesData();
 
-            expect(dataProcessor.rawData.series[0].data).toEqual([5, 6]);
-            expect(dataProcessor.originalRawData.series[0].data).toEqual([2, 3]);
-            expect(dataProcessor.originalRawData.series[1].data).toEqual([5, 6]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([5, 6]);
+            expect(dataProcessor.originalRawData.series.line[0].data).toEqual([2, 3]);
+            expect(dataProcessor.originalRawData.series.line[1].data).toEqual([5, 6]);
         });
     });
 
@@ -1016,27 +1048,32 @@ describe('Test for DataProcessor', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
-                series: [
-                    {
-                        name: 'Legend1',
-                        data: [20, 30, 50]
-                    },
-                    {
-                        name: 'Legend2',
-                        data: [40, 40, 60]
-                    },
-                    {
-                        name: 'Legend3',
-                        data: [60, 50, 10]
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70]
-                    }
-                ]
+                series: {
+                    line: [
+                        {
+                            name: 'Legend1',
+                            data: [20, 30, 50]
+                        },
+                        {
+                            name: 'Legend2',
+                            data: [40, 40, 60]
+                        },
+                        {
+                            name: 'Legend3',
+                            data: [60, 50, 10]
+                        },
+                        {
+                            name: 'Legend4',
+                            data: [80, 10, 70]
+                        }
+                    ]
+                }
             };
+
             actual = dataProcessor._pickLegendData('label');
-            expected = ['Legend1', 'Legend2', 'Legend3', 'Legend4'];
+            expected = {
+                line: ['Legend1', 'Legend2', 'Legend3', 'Legend4']
+            };
 
             expect(actual).toEqual(expected);
         });

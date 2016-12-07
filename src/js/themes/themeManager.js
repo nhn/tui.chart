@@ -166,21 +166,17 @@ module.exports = {
      */
     _setSeriesColors: function(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
         var self = this;
-        var colorIndex, seriesColors, seriesCount, hasOwnColors;
+        var seriesColors, seriesCount, hasOwnColors;
+        var colorIndex = 0;
 
-        if (seriesTypes.length === 1) {
-            rawSeriesThemes = makeObjectWithKeyData(seriesTypes[0], rawSeriesThemes);
-            rawSeriesData = makeObjectWithKeyData(seriesTypes[0], rawSeriesData);
-        }
-
-        colorIndex = 0;
+        rawSeriesThemes = rawSeriesThemes || {}; //분기문 간소화를위해
 
         tui.util.forEachArray(seriesTypes, function(seriesType) {
             if (rawSeriesThemes[seriesType]) {
                 seriesColors = rawSeriesThemes[seriesType].colors;
                 hasOwnColors = true;
             } else {
-                seriesColors = defaultTheme.series.colors;
+                seriesColors = rawSeriesThemes.colors || defaultTheme.series.colors;
                 hasOwnColors = false;
             }
 
@@ -191,10 +187,10 @@ module.exports = {
                                                                          !hasOwnColors && colorIndex);
 
             self._setSingleColorsThemeIfNeed(seriesThemes[seriesType],
-                                             rawSeriesThemes[seriesType],
+                                             rawSeriesThemes,
                                              seriesColors);
 
-            // To use distinct default colors between series
+            // To distinct between series that use default theme, we make the colors different
             if (!hasOwnColors) {
                 colorIndex = (seriesCount + colorIndex) % seriesColors.length;
             }
@@ -214,6 +210,7 @@ module.exports = {
     _initTheme: function(themeName, rawTheme, seriesNames, rawSeriesData) {
         var theme;
 
+        // 테마 선택, 디폴트 테마 or 유저가 지정하는 컬러
         if (themeName !== chartConst.DEFAULT_THEME_NAME) {
             theme = JSON.parse(JSON.stringify(defaultTheme));
             this._overwriteTheme(rawTheme, theme);
@@ -221,6 +218,7 @@ module.exports = {
             theme = JSON.parse(JSON.stringify(rawTheme));
         }
 
+        // 각 컴포넌트 테마에 시리즈명별로 뎊스를 넣어준다. theme.yAxis.테마들 -> theme.yAxis.line.테마들
         theme.yAxis = this._createComponentThemeWithSeriesName(seriesNames, rawTheme.yAxis, theme.yAxis, 'yAxis');
         theme.series = this._createComponentThemeWithSeriesName(seriesNames, rawTheme.series, theme.series, 'series');
 
@@ -326,17 +324,3 @@ module.exports = {
         return theme;
     }
 };
-
-
-/**
- * Make new object with given key and data
- * @param {string} key Key
- * @param {*} data Data
- * @returns {object} New object
- */
-function makeObjectWithKeyData(key, data) {
-    var newObject = {};
-    newObject[key] = data;
-
-    return newObject;
-}

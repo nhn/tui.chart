@@ -207,14 +207,20 @@ var rawDataHandler = {
      * @param {{stackType: ?string, diverging: ?boolean}} seriesOptions - series options
      */
     updateRawSeriesDataByOptions: function(rawData, seriesOptions) {
+        var self = this;
+
         seriesOptions = seriesOptions || {};
 
         if (predicate.isValidStackOption(seriesOptions.stackType)) {
-            rawData.series = this._sortSeriesData(rawData.series);
+            tui.util.forEach(rawData.series, function(seriesDatum, seriesType) {
+                rawData.series[seriesType] = self._sortSeriesData(rawData.series[seriesType]);
+            });
         }
 
         if (seriesOptions.diverging) {
-            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, seriesOptions.stackType);
+            tui.util.forEach(rawData.series, function(seriesDatum, seriesType) {
+                rawData.series[seriesType] = self._makeRawSeriesDataForDiverging(seriesDatum, seriesOptions.stackType);
+            });
         }
     },
 
@@ -227,21 +233,15 @@ var rawDataHandler = {
     filterCheckedRawData: function(rawData, checkedLegends) {
         var cloneData = JSON.parse(JSON.stringify(rawData));
 
-        if (tui.util.isArray(cloneData.series)) {
-            cloneData.series = tui.util.filter(cloneData.series, function(series, index) {
-                return checkedLegends[index];
-            });
-        } else {
-            tui.util.forEach(cloneData.series, function(serieses, chartType) {
-                if (!checkedLegends[chartType]) {
-                    cloneData.series[chartType] = [];
-                } else if (checkedLegends[chartType].length) {
-                    cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
-                        return checkedLegends[chartType][index];
-                    });
-                }
-            });
-        }
+        tui.util.forEach(cloneData.series, function(serieses, chartType) {
+            if (!checkedLegends[chartType]) {
+                cloneData.series[chartType] = [];
+            } else if (checkedLegends[chartType].length) {
+                cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
+                    return checkedLegends[chartType][index];
+                });
+            }
+        });
 
         return cloneData;
     }

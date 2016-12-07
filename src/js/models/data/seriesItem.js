@@ -107,6 +107,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
          * ratio of start value
          * @type {number}
          */
+
         this.startRatio = null;
 
         /**

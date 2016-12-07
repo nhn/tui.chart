@@ -367,9 +367,13 @@ describe('Test for rawDataHandler', function() {
     describe('filterCheckedRawData()', function() {
         it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
             var actual = rawDataHandler.filterCheckedRawData({
-                series: ['a', 'b', 'c', 'd']
-            }, [null, true, true]);
-            var expected = ['b', 'c'];
+                series: {
+                    line: ['a', 'b', 'c', 'd']
+                }
+            }, { line: [null, true, true]});
+            var expected = {
+                line: ['b', 'c']
+            };
 
             expect(actual.series).toEqual(expected);
         });

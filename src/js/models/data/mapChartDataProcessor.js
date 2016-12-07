@@ -63,7 +63,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends M
      * @private
      */
     _makeValueMap: function() {
-        var rawSeriesData = this.rawData.series;
+        var rawSeriesData = this.rawData.series.map;
         var valueMap = {};
         var formatFunctions = this._findFormatFunctions();
 

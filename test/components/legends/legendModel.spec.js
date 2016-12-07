@@ -210,18 +210,24 @@ describe('Test for LegendModel', function() {
     });
 
     describe('getCheckedIndexes()', function() {
-        it('단일 차트의 경우는 체크여부 정보가 담겨있는 단순 배열을 반환합니다.', function() {
+        it('return checked data of series of singleChart', function() {
             var checkedLegends = [true, true];
+            var actual, expected;
 
             legendModel.checkedIndexesMap = {
                 'pie': checkedLegends
             };
             legendModel.chartType = 'pie';
 
-            expect(legendModel.getCheckedIndexes()).toEqual(checkedLegends);
+            actual = legendModel.getCheckedIndexes();
+            expected = {
+                'pie': [true, true]
+            };
+
+            expect(actual).toEqual(expected);
         });
 
-        it('콤보 차트의 경우는 차트 종류를 키로하는 체크여부 정보가 담겨있는 배열을 담고있는 객체를 반환합니다.', function() {
+        it('return checked data of series of comboChart', function() {
             var checkedIndexesMap = {
                 'column': [true, true],
                 'line': [true]
