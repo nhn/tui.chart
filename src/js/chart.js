@@ -12,6 +12,7 @@ var pluginFactory = require('./factories/pluginFactory');
 var themeManager = require('./themes/themeManager');
 var mapManager = require('./factories/mapManager');
 var objectUtil = require('./helpers/objectUtil');
+var seriesDataImporter = require('./helpers/seriesDataImporter');
 
 require('../less/style.less');
 require('./polyfill');
@@ -45,7 +46,16 @@ tui.util.defineNamespace('tui.chart');
 /**
  * Create chart.
  * @param {HTMLElement} container container
- * @param {rawData} rawData - raw data
+ * @param {({
+ *        series: (object|Array),
+ *        categories: Array
+ *   }|{
+ *        table: ({
+ *          elementId: string
+ *        }|{
+ *          element: HTMLElement
+ *        })
+ *   })} rawData - raw data object or data container table element or table's id
  * @param {{
  *   chart: {
  *     width: number,
@@ -74,16 +84,23 @@ tui.util.defineNamespace('tui.chart');
  */
 function _createChart(container, rawData, options, chartType) {
     var themeName, theme, chart;
+    if (rawData) {
+        if (rawData.table) {
+            rawData = seriesDataImporter.makeDataWithTable(rawData.table);
+        }
 
-    rawData = objectUtil.deepCopy(rawData);
-    options = options ? objectUtil.deepCopy(options) : {};
-    options.chartType = chartType;
-    themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
-    theme = themeManager.get(themeName, chartType, rawData.series);
+        if (rawData.series) {
+            rawData = objectUtil.deepCopy(rawData);
+            options = options ? objectUtil.deepCopy(options) : {};
+            options.chartType = chartType;
+            themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
+            theme = themeManager.get(themeName, chartType, rawData.series);
 
-    chart = chartFactory.get(options.chartType, rawData, theme, options);
-    container.appendChild(chart.render());
-    chart.animateChart();
+            chart = chartFactory.get(options.chartType, rawData, theme, options);
+            container.appendChild(chart.render());
+            chart.animateChart();
+        }
+    }
 
     return chart;
 }

@@ -8,7 +8,7 @@
 
 var dom = require('../../src/js/helpers/domHandler');
 
-describe('Test public APIs for bar chart', function() {
+describe('Test public APIs for line chart', function() {
     var rawData = {
         categories: ['01/01/2016', '02/01/2016', '03/01/2016', '04/01/2016', '05/01/2016', '06/01/2016', '07/01/2016', '08/01/2016', '09/01/2016', '10/01/2016', '11/01/2016', '12/01/2016'],
         series: [
