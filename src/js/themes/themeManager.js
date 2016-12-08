@@ -89,7 +89,7 @@ module.exports = {
 
     /**
      * Create component theme with series name
-     * @param {array.<string>} seriesNames - series names
+     * @param {Array.<string>} seriesNames - series names
      * @param {object} fromTheme - from theme
      * @param {object} toTheme - to theme
      * @param {string} componentType - component type
@@ -132,10 +132,10 @@ module.exports = {
 
     /**
      * Make each series's color
-     * @param {[string]} themeColors Theme colors to use
+     * @param {Array.<string>} themeColors Theme colors to use
      * @param {number} seriesCount Series count
      * @param {number} startColorIndex Start color index
-     * @returns {[string]} colors
+     * @returns {Array.<string>} colors
      */
     _makeEachSeriesColors: function(themeColors, seriesCount, startColorIndex) {
         var colors = [];
@@ -201,7 +201,7 @@ module.exports = {
      * Init theme.
      * @param {string} themeName - theme name
      * @param {object} rawTheme - raw theme
-     * @param {array.<string>} seriesNames - series names
+     * @param {Array.<string>} seriesNames - series names
      * @param {object} rawSeriesData - raw series data
      * @returns {object}
      * @private
