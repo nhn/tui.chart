@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "update": "npm run docs:clear && npm run docs:docCopy && npm run docs:docRemove && npm run bower:install && npm run bower:copy && npm run bower:remove",
+    "docs:clear": "rm -rf ./latest/*",
+    "docs:docCopy": "cp -r ./doc/* ./latest && cd ./latest && mkdir dist",
+    "docs:docRemove": "rm -rf ./doc",
+    "bower:install": "bower install",
+    "bower:copy": "cp -r ./bower_components/tui-chart/dist/ ./latest/dist",
+    "bower:remove": "rm -rf ./bower_components"
+  }
+}

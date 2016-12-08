@@ -1,0 +1,17 @@
+{
+  "name": "tui.chart github page",
+  "authors": [
+    "FE Development Lab <dl_javascript@nhnent.com>"
+  ],
+  "description": "TUI Chart Demo Page",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "nhnent.github.io/tui.chart",
+  "private": true,
+  "dependencies": {
+    "tui-chart": "https://github.com/nhnent/tui.chart.git"
+  },
+  "resolutions": {
+    "tui-code-snippet": "~1.1.0"
+  }
+}
