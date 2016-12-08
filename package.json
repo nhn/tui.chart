@@ -9,9 +9,7 @@
     "deploy": "webpack --production & webpack --production --minify",
     "test": "karma start karma.conf.js",
     "test:ne": "karma start karma.conf.ne.js",
-    "docs": "npm run docs:jsdoc && npm run docs:copy",
-    "docs:jsdoc": "./node_modules/.bin/jsdoc -t ./node_modules/tui-doc-template -c ./jsdoc-conf.json",
-    "docs:copy": "cpy dist/*.js doc/dist && cpy dist/*.css doc/dist && cpy dist/maps/*.js doc/dist/maps",
+    "docs": "./node_modules/.bin/jsdoc -t ./node_modules/tui-doc-template -c ./jsdoc-conf.json",
     "eslint": "eslint src/js"
   },
   "repository": {
