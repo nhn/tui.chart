@@ -5,6 +5,8 @@
  */
 
 'use strict';
+var FADE_IN_DURATION = 1000;
+var EASING_FORMULA = 'easeInQuint';
 
 var labelHelper = require('./renderingLabelHelper');
 var chartConst = require('../../const');
@@ -12,6 +14,8 @@ var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
+
+var animation = tui.component.animation;
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -691,6 +695,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     animateSeriesLabelArea: function(isRerendering) {
         var self = this;
+        var labelContainerStyle;
 
         if (!this._isLabelVisible()) {
             this._fireLoadEvent(isRerendering);
@@ -703,22 +708,24 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             this._fireLoadEvent(isRerendering);
         } else {
             dom.addClass(this.seriesLabelContainer, 'show');
-            this.labelShowEffector = new tui.component.Effects.Fade({
-                element: this.seriesLabelContainer,
-                duration: 300
-            });
-            this.labelShowEffector.action({
-                start: 0,
-                end: 1,
+            labelContainerStyle = this.seriesLabelContainer.style;
+            this.labelShowEffector = animation.anim({
+                from: 0,
+                to: 100,
+                easing: EASING_FORMULA,
+                duration: FADE_IN_DURATION,
+                frame: function(opacity) {
+                    labelContainerStyle.opacity = opacity;
+                },
                 complete: function() {
                     if (self.labelShowEffector) {
-                        clearInterval(self.labelShowEffector.timerId);
+                        self.labelShowEffector = null;
                     }
-                    self.labelShowEffector = null;
                     dom.addClass(self.seriesLabelContainer, 'opacity');
                     self._fireLoadEvent(isRerendering);
                 }
             });
+            this.labelShowEffector.run();
         }
     },
 

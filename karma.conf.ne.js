@@ -35,7 +35,7 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
-            {pattern: 'lib/tui-component-effects/effects.js', watched: false},
+            {pattern: 'lib/tui-component-animation/dist/tui-component-animation.js', watched: false},
             {pattern: 'lib/raphael/raphael-min.js', watched: false},
 
             'test/test.bundle.js'
