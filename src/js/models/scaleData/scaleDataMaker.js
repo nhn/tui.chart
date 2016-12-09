@@ -11,6 +11,7 @@ var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
+var coordinateScaleCalculator = require('./coordinateScaleCalculator.js');
 
 var abs = Math.abs;
 
@@ -695,7 +696,7 @@ var scaleDataMaker = {
      *      stackType: string,
      *      diverging: boolean,
      *      isVertical: boolean,
-     *      limitOption: ?{min: ?number, max: ?number},
+     *      limitOption: ?{min: ?number, max: ?number},21
      *      tickCounts: ?Array.<number>
      * }} options - options
      * @returns {{limit: {min:number, max:number}, step: number}}
@@ -706,7 +707,13 @@ var scaleDataMaker = {
         if (predicate.isPercentStackChart(chartType, options.stackType)) {
             scaleData = this._getPercentStackedScale(baseValues, chartType, options.diverging);
         } else {
-            scaleData = this._calculateScale(baseValues, baseSize, chartType, options);
+            // scaleData = this._calculateScale(baseValues, baseSize, chartType, options);
+
+            scaleData = coordinateScaleCalculator({
+                min: arrayUtil.min(baseValues),
+                max: arrayUtil.max(baseValues),
+                offsetSize: baseSize
+            });
         }
 
         return scaleData;
