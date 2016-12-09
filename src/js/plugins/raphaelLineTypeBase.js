@@ -48,16 +48,28 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
-     * @param {?string} posTopType position top type
+     * @param {?string} [posTopType='top'] position top type
+     * @param {object} options options object
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeLinesPath: function(positions, posTopType) {
-        var path;
+    _makeLinesPath: function(positions, posTopType, options) {
+        var path = [];
+        var prevMissing = false;
+        var connectNulls = options && options.connectNulls;
 
         posTopType = posTopType || 'top';
-        path = tui.util.map(positions, function(position) {
-            return ['L', position.left, position[posTopType]];
+        tui.util.map(positions, function(position) {
+            var pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
+
+            if (position) {
+                path.push([pathCommand, position.left, position[posTopType]]);
+                if (prevMissing) {
+                    prevMissing = false;
+                }
+            } else {
+                prevMissing = true;
+            }
         });
 
         path = concat.apply([], path);
@@ -98,29 +110,80 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
+     * Get spline positions groups
+     * @param {Array.<object>} positions positions array
+     * @param {boolean} connectNulls option of connect line of both null data's side
+     * @returns {Array.<Array.<object>>}
+     */
+    getSplinePositionsGroups: function(positions, connectNulls) {
+        var positionsGroups = [];
+        var positionsGroup = [];
+        tui.util.forEach(positions, function(position, index) {
+            var isLastIndex = index === positions.length - 1;
+
+            if (position) {
+                positionsGroup.push(position);
+            }
+
+            if ((!position && positionsGroup.length > 0 && !connectNulls) || isLastIndex) {
+                positionsGroups.push(positionsGroup);
+                positionsGroup = [];
+            }
+        });
+
+        return positionsGroups;
+    },
+
+    /**
+     * Get spline partial paths
+     * @param {Array.<Array.<object>>} positionsGroups positions groups
+     * @returns {Array.<Array.<Array>>}
+     */
+    getSplinePartialPaths: function(positionsGroups) {
+        var self = this;
+        var paths = [];
+        var firstPos, lastPos, positionsLen, fromPos, middlePositions, path;
+
+        tui.util.forEach(positionsGroups, function(dataPositions) {
+            firstPos = dataPositions[0];
+            positionsLen = dataPositions.length;
+            fromPos = firstPos;
+            lastPos = dataPositions[positionsLen - 1];
+            middlePositions = dataPositions.slice(1).slice(0, positionsLen - 2);
+
+            path = tui.util.map(middlePositions, function(position, index) {
+                var nextPos = dataPositions[index + 2];
+                var anchor = self._getAnchor(fromPos, position, nextPos);
+
+                fromPos = position;
+
+                return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
+            });
+
+            path.push([lastPos.left, lastPos.top, lastPos.left, lastPos.top]);
+            path.unshift(['M', firstPos.left, firstPos.top, 'C', firstPos.left, firstPos.top]);
+            paths.push(path);
+        });
+
+        return paths;
+    },
+
+    /**
      * Make spline lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @param {options} options options object
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeSplineLinesPath: function(positions) {
-        var self = this;
-        var firstPos = positions[0];
-        var positionsLen = positions.length;
-        var fromPos = firstPos;
-        var lastPos = positions[positionsLen - 1];
-        var middlePositions = positions.slice(1).slice(0, positionsLen - 2);
-        var path = tui.util.map(middlePositions, function(position, index) {
-            var nextPos = positions[index + 2];
-            var anchor = self._getAnchor(fromPos, position, nextPos);
+    _makeSplineLinesPath: function(positions, options) {
+        var connectNulls = options && options.connectNulls;
+        var path = [];
+        var positionsGroups = this.getSplinePositionsGroups(positions, connectNulls);
+        var partialPaths = this.getSplinePartialPaths(positionsGroups);
 
-            fromPos = position;
-
-            return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
+        tui.util.forEach(partialPaths, function(partialPath) {
+            path = path.concat(partialPath);
         });
-
-        path.push([lastPos.left, lastPos.top, lastPos.left, lastPos.top]);
-        path.unshift(['M', firstPos.left, firstPos.top, 'C', firstPos.left, firstPos.top]);
 
         return path;
     },
@@ -193,19 +256,25 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @returns {object} raphael dot
      */
     renderDot: function(paper, position, color, opacity) {
-        var dot = paper.circle(position.left, position.top, DEFAULT_DOT_RADIUS),
+        var dot, dotStyle, raphaelDot;
+
+        if (position) {
+            dot = paper.circle(position.left, position.top, DEFAULT_DOT_RADIUS);
             dotStyle = {
                 fill: color,
                 'fill-opacity': opacity,
                 'stroke-opacity': 0
             };
 
-        dot.attr(dotStyle);
+            dot.attr(dotStyle);
 
-        return {
-            dot: dot,
-            color: color
-        };
+            raphaelDot = {
+                dot: dot,
+                color: color
+            };
+        }
+
+        return raphaelDot;
     },
 
     /**
@@ -351,7 +420,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _getPivotGroupDots: function() {
-        if (!this.pivotGroupDots) {
+        if (!this.pivotGroupDots && this.groupDots) {
             this.pivotGroupDots = tui.chart.arrayUtil.pivot(this.groupDots);
         }
 
@@ -367,12 +436,14 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var self = this;
         var groupDots = this._getPivotGroupDots();
 
-        if (!groupDots[index]) {
+        if (!groupDots || !groupDots[index]) {
             return;
         }
 
         tui.util.forEachArray(groupDots[index], function(item) {
-            self._showDot(item.endDot.dot);
+            if (item.endDot) {
+                self._showDot(item.endDot.dot);
+            }
 
             if (item.startDot) {
                 self._showDot(item.startDot.dot);
@@ -484,11 +555,11 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _hideGroupDots: function(index) {
         var self = this;
-        var groupDots = this._getPivotGroupDots();
         var hasSelectedIndex = !tui.util.isNull(this.selectedLegendIndex);
         var baseOpacity = this.dotOpacity;
+        var groupDots = this._getPivotGroupDots();
 
-        if (!groupDots[index]) {
+        if (!groupDots || !groupDots[index]) {
             return;
         }
 
@@ -499,7 +570,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 opacity = DE_EMPHASIS_OPACITY;
             }
 
-            self._hideDot(item.endDot.dot, opacity);
+            if (item.endDot) {
+                self._hideDot(item.endDot.dot, opacity);
+            }
 
             if (item.startDot) {
                 self._hideDot(item.startDot.dot, opacity);

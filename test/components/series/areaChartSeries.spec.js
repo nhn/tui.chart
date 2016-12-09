@@ -115,6 +115,22 @@ describe('AreaChartSeries', function() {
 
             expect(actual).toEqual(expected);
         });
+        it('use prevTop if position is null.', function() {
+            var actual, expected;
+
+            series.layout = {
+                dimension: {
+                    height: 190
+                }
+            };
+
+            spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
+
+            actual = series._makeStackedPositions([[{top: 150}, {top: 100}], [null, {top: 150}], [{top: 180}, {top: 150}]]);
+            expected = [[{top: 150, startTop: 200}, {top: 100, startTop: 200}], [null, {top: 50, startTop: 100}], [{top: 130, startTop: 150}, {top: 0, startTop: 50}]];
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('_makePositions()', function() {

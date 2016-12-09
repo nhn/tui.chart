@@ -65,7 +65,9 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
 
             datum.indexes = indexes;
 
-            flatData.push(datum);
+            if (datum.value !== null) {
+                flatData.push(datum);
+            }
 
             if (!datum.id) {
                 datum.id = id;
@@ -160,7 +162,9 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
         var total = calculator.sum(tui.util.pluck(filtered, 'value'));
 
         tui.util.forEachArray(filtered, function(datum) {
-            datum.ratio = datum.value / total;
+            var value = datum.value === null ? 0 : datum.value;
+
+            datum.ratio = value / total;
 
             if (datum.hasChild) {
                 self._setRatio(rejected, datum.id);

@@ -63,7 +63,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.zeroTop = data.zeroTop;
         this.hasRangeData = data.hasRangeData;
 
-        this.groupPaths = this._getAreaChartPath(groupPositions);
+        this.groupPaths = this._getAreaChartPath(groupPositions, null, data.options);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
         this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
@@ -91,16 +91,17 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Get path for area chart.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions - positions
      * @param {boolean} [hasExtraPath] - whether has extra path or not
+     * @param {object} [options] - options object
      * @returns {*}
      * @private
      */
-    _getAreaChartPath: function(groupPositions, hasExtraPath) {
+    _getAreaChartPath: function(groupPositions, hasExtraPath, options) {
         var path;
 
         if (this.isSpline) {
             path = this._makeSplineAreaChartPath(groupPositions, hasExtraPath);
         } else {
-            path = this._makeAreaChartPath(groupPositions, hasExtraPath);
+            path = this._makeAreaChartPath(groupPositions, hasExtraPath, options);
         }
 
         return path;
@@ -162,13 +163,40 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _makeAreasPath: function(positions, hasExtraPath) {
-        var len = positions.length * 2;
         var path = [];
+        var paths = [];
+        var prevNull = false;
+        var positionLength = positions.length;
         var targetIndex;
+        var formerPath = [];
+        var latterPath = [];
 
         tui.util.forEachArray(positions, function(position, index) {
-            path[index] = ['L', position.left, position.top];
-            path[len - index - 1] = ['L', position.left, position.startTop];
+            var moveOrLine;
+            if (position) {
+                if (prevNull) {
+                    moveOrLine = 'M';
+                    prevNull = false;
+                } else {
+                    moveOrLine = 'L';
+                }
+
+                formerPath.push([moveOrLine, position.left, position.top]);
+                latterPath.unshift(['L', position.left, position.startTop]);
+            } else {
+                prevNull = true;
+                latterPath.push(['z']);
+            }
+
+            if (!position || index === positionLength - 1) {
+                paths.push(formerPath.concat(latterPath));
+                formerPath = [];
+                latterPath = [];
+            }
+        });
+
+        tui.util.forEachArray(paths, function(partialPath) {
+            path = path.concat(partialPath);
         });
 
         if (hasExtraPath !== false) {
@@ -186,10 +214,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Make path for area chart.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
      * @param {boolean} [hasExtraPath] - whether has extra path or not
+     * @param {object} [options] - options object
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _makeAreaChartPath: function(groupPositions, hasExtraPath) {
+    _makeAreaChartPath: function(groupPositions, hasExtraPath, options) {
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
@@ -197,7 +226,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
             paths = {
                 area: self._makeAreasPath(positions, hasExtraPath),
-                line: self._makeLinesPath(positions)
+                line: self._makeLinesPath(positions, null, options)
             };
 
             if (self.hasRangeData) {

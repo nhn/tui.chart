@@ -110,6 +110,63 @@ describe('Test for SeriesDataModel', function() {
             expect(actual[1][0].value).toBe(20);
         });
 
+        it('should not create item when pie data is null.', function() {
+            var actual;
+            seriesDataModel.chartType = 'pie';
+            seriesDataModel.rawSeriesData = [{
+                data: null
+            }, {
+                data: 20
+            }];
+            actual = seriesDataModel._createBaseGroups();
+
+            expect(actual.length).toBe(2);
+            expect(actual[0][0]).toBeUndefined();
+            expect(actual[1][0].value).toBe(20);
+
+            seriesDataModel.chartType = null;
+        });
+
+        it('should create groups on heatmap.', function() {
+            var actual;
+            seriesDataModel.chartType = 'heatmap';
+            seriesDataModel.rawSeriesData = [[10, 20, 30], [40, 50, 60], [70, 80, 90]];
+            actual = seriesDataModel._createBaseGroups();
+
+            expect(actual.length).toBe(3);
+            expect(actual[0][0].value).toBe(10);
+            expect(actual[0][1].value).toBe(20);
+            expect(actual[0][2].value).toBe(30);
+            expect(actual[1][0].value).toBe(40);
+            expect(actual[1][1].value).toBe(50);
+            expect(actual[1][2].value).toBe(60);
+            expect(actual[2][0].value).toBe(70);
+            expect(actual[2][1].value).toBe(80);
+            expect(actual[2][2].value).toBe(90);
+
+            seriesDataModel.chartType = null;
+        });
+
+        it('should create groups on heatmap with null data.', function() {
+            var actual;
+            seriesDataModel.chartType = 'heatmap';
+            seriesDataModel.rawSeriesData = [[10, 20, 30], [40, 50, 60], [70, 80, null]];
+            actual = seriesDataModel._createBaseGroups();
+
+            expect(actual.length).toBe(3);
+            expect(actual[0][0].value).toBe(10);
+            expect(actual[0][1].value).toBe(20);
+            expect(actual[0][2].value).toBe(30);
+            expect(actual[1][0].value).toBe(40);
+            expect(actual[1][1].value).toBe(50);
+            expect(actual[1][2].value).toBe(60);
+            expect(actual[2][0].value).toBe(70);
+            expect(actual[2][1].value).toBe(80);
+            expect(actual[2][2].value).toBe(null);
+
+            seriesDataModel.chartType = null;
+        });
+
         it('if coordinate type chart, create seriesItem by SeriesItemForCoordinateType class', function() {
             var actual;
 

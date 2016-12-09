@@ -60,11 +60,14 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position, index) {
                 var prevTop = prevPositionTops[index] || firstStartTop;
-                var stackedHeight = height - position.top;
-                var top = prevTop - stackedHeight;
+                var positionTop = position ? position.top : 0;
+                var stackedHeight = height - positionTop;
+                var top = position ? prevTop - stackedHeight : prevTop;
 
-                position.startTop = prevTop;
-                position.top = top;
+                if (position) {
+                    position.startTop = prevTop;
+                    position.top = top;
+                }
 
                 prevPositionTops[index] = top;
 

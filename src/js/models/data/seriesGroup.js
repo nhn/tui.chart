@@ -239,7 +239,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      * @returns {Array}
      */
     pluck: function(key) {
-        return tui.util.pluck(this.items, key);
+        var items = tui.util.filter(this.items, tui.util.isExisty);
+
+        return tui.util.pluck(items, key);
     },
 
     /**

@@ -52,9 +52,15 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var colors = theme.colors;
         var opacity = data.options.showDot ? 1 : 0;
         var isSpline = data.options.spline;
-        var groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
         var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
         var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
+        var groupPaths;
+
+        if (isSpline) {
+            groupPaths = this._getSplineLinesPath(groupPositions, data.options);
+        } else {
+            groupPaths = this._getLinesPath(groupPositions, data.options);
+        }
 
         paper = paper || raphael(container, 1, dimension.height);
 
@@ -86,25 +92,31 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Get lines path.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @param {object} options options object
      * @returns {Array.<Array.<string>>} path
      * @private
      */
-    _getLinesPath: function(groupPositions) {
+    _getLinesPath: function(groupPositions, options) {
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
-            return self._makeLinesPath(positions);
+            return self._makeLinesPath(positions, null, options);
         });
     },
 
     /**
      * Get spline lines path.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @param {object} options options object
      * @returns {Array} path
      * @private
      */
-    _getSplineLinesPath: function(groupPositions) {
-        return tui.util.map(groupPositions, this._makeSplineLinesPath, this);
+    _getSplineLinesPath: function(groupPositions, options) {
+        var self = this;
+
+        return tui.util.map(groupPositions, function(positions) {
+            return self._makeSplineLinesPath(positions, options);
+        });
     },
 
     /**

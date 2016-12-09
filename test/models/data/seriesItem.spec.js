@@ -28,7 +28,17 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.endLabel).toBe('0010');
             expect(seriesItem.isRange).toBe(false);
         });
+        it('initialize values of item, when raw value is null', function() {
+            seriesItem._initValues(null);
 
+            expect(seriesItem.value).toBe(null);
+            expect(seriesItem.end).toBe(null);
+            expect(seriesItem.start).toBe(null);
+            expect(seriesItem.label).toBe('');
+            expect(seriesItem.endLabel).toBe('');
+            expect(seriesItem.startLabel).toBe(null);
+            expect(seriesItem.isRange).toBe(false);
+        });
         it('initialize values of item, when raw value is array', function() {
             seriesItem.formatFunctions = [function(value) {
                 return '00' + value;

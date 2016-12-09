@@ -187,6 +187,35 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makeSectorData()', function() {
+        it('should create path ratio 0 when seriesItem is null.', function() {
+            var seriesDataModel = new SeriesDataModel(),
+                actual;
+
+            seriesDataModel.groups = [
+                new SeriesGroup([
+                    null, {
+                        ratio: 0.125
+                    }, {
+                        ratio: 0.1
+                    }, {
+                        ratio: 0.35
+                    }, {
+                        ratio: 0.175
+                    }
+                ])
+            ];
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+
+            actual = series._makeSectorData({
+                cx: 100,
+                cy: 100,
+                r: 100
+            });
+
+            expect(actual.length).toBe(5);
+            expect(actual[0].ratio).toBe(0);
+        });
+
         it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
             var seriesDataModel = new SeriesDataModel(),
                 actual;
