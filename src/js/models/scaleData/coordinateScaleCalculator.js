@@ -15,7 +15,7 @@ var SNAP_VALUES = [1, 2, 5, 10];
  * Default tick pixel size
  * @type {number}
  */
-var DEFAULT_PIXELS_PER_TICK = 72;
+var DEFAULT_PIXELS_PER_TICK = 88;
 
 /**
  * Get rough(not normalized) scale data
@@ -41,7 +41,7 @@ function getRoughScale(min, max, offsetSize, stepCount) {
     return {
         limit: {
             min: min,
-            max: max,
+            max: max
         },
         step: step,
         stepCount: stepCount

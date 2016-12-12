@@ -27,13 +27,13 @@ describe('coordinateScaleCalculator', function() {
         it('calculate with default tick pixel size(pixelsPerTick)', function() {
             var scale = csc({
                 min: 0,
-                max: 720,
-                offsetSize: 720
+                max: 880,
+                offsetSize: 880
             });
 
             expect(scale.limit.min).toEqual(0);
-            expect(scale.limit.max).toEqual(750);
-            expect(scale.step).toEqual(50);
+            expect(scale.limit.max).toEqual(900);
+            expect(scale.step).toEqual(100);
             expect(scale.stepCount).toEqual(10);
         });
 
@@ -97,7 +97,7 @@ describe('coordinateScaleCalculator', function() {
 
             expect(scale.limit.max).toEqual(2);
             expect(scale.limit.min).toEqual(0);
-            expect(scale.step).toEqual(0.1);
+            expect(scale.step).toEqual(0.2);
         });
     });
 });
