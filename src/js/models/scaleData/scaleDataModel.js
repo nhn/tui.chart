@@ -1,6 +1,7 @@
 'use strict';
 
 var scaleDataMaker = require('./scaleDataMaker');
+var scaleLabelFormatter = require('./scaleLabelFormatter');
 var axisDataMaker = require('./axisDataMaker');
 var predicate = require('../../helpers/predicate');
 
@@ -117,7 +118,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
             dateFormat: dateFormat
         });
 
-        return scaleDataMaker.createFormattedLabels(baseScaleData, typeMap, options, formatFunctions);
+        return scaleLabelFormatter.createFormattedLabels(baseScaleData, typeMap, options, formatFunctions);
     },
 
     /**

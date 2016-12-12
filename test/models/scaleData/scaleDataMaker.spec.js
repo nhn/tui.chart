@@ -236,7 +236,7 @@ describe('Test for ScaleDataMaker', function() {
             var baseValues = [-10, 20, -30, 40];
             var chartType = chartConst.CHART_TYPE_BAR;
             var diverging = true;
-            var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, chartType, diverging);
+            var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, true);
             var expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
@@ -245,120 +245,10 @@ describe('Test for ScaleDataMaker', function() {
         it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE 반환합니다.', function() {
             var baseValues = [-10, 20, -30, 40];
             var chartType = chartConst.CHART_TYPE_BAR;
-            var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, chartType);
+            var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, false);
             var expected = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_getFormatFunctions()', function() {
-        it('get format functions, when is percent stacked chart', function() {
-            var chartType = 'bar';
-            var stackType = 'percent';
-            var actual, expected;
-
-            scaleDataMaker.chartType = chartConst.CHART_TYPE_BAR;
-            scaleDataMaker.stackType = chartConst.PERCENT_STACK_TYPE;
-            actual = scaleDataMaker._getFormatFunctions(chartType, stackType);
-            expected = '10%';
-
-            expect(actual[0](10)).toBe(expected);
-        });
-
-        it('get format functions, when is not percent stacked chart', function() {
-            var chartType = chartConst.CHART_TYPE_LINE;
-            var stackType = '';
-            var formatFunctions = 'formatFunctions';
-            var actual;
-
-            actual = scaleDataMaker._getFormatFunctions(chartType, stackType, formatFunctions);
-
-            expect(actual).toBe('formatFunctions');
-        });
-    });
-
-    describe('_createScaleValues()', function() {
-        it('create scale values, when is diverging chart', function() {
-            var scaleData = {
-                limit: {
-                    min: -50,
-                    max: 50
-                },
-                step: 25
-            };
-            var chartType = chartConst.CHART_TYPE_BAR;
-            var diverging = true;
-            var actual = scaleDataMaker._createScaleValues(scaleData, chartType, diverging);
-            var expected = [50, 25, 0, 25, 50];
-
-            expect(actual).toEqual(expected);
-        });
-
-        it('create scale values, when is not diverging chart', function() {
-            var scaleData = {
-                limit: {
-                    min: -50,
-                    max: 50
-                },
-                step: 25
-            };
-            var chartType = chartConst.CHART_TYPE_LINE;
-            var diverging = false;
-            var actual = scaleDataMaker._createScaleValues(scaleData, chartType, diverging);
-            var expected = [-50, -25, 0, 25, 50];
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('createFormattedLabels()', function() {
-        it('create formatted scale values, when axis type is datetime', function() {
-            var scaleData = {};
-            var typeMap = {};
-            var options = {
-                type: chartConst.AXIS_TYPE_DATETIME,
-                dateFormat: 'YYYY.MM'
-            };
-            var actual;
-
-            spyOn(scaleDataMaker, '_createScaleValues').and.returnValue([
-                (new Date('01/01/2016')),
-                (new Date('04/01/2016')),
-                (new Date('08/01/2016'))
-            ]);
-
-            actual = scaleDataMaker.createFormattedLabels(scaleData, typeMap, options);
-
-            expect(actual).toEqual([
-                '2016.01',
-                '2016.04',
-                '2016.08'
-            ]);
-        });
-
-        it('create formatted scale values, when axis type is not datetime', function() {
-            var scaleData = {};
-            var typeMap = {
-                chartType: chartConst.CHART_TYPE_LINE
-            };
-            var options = {};
-            var formatFunctions = [
-                function(value) {
-                    return 'formatted:' + value;
-                }
-            ];
-            var actual;
-
-            spyOn(scaleDataMaker, '_createScaleValues').and.returnValue([10, 20, 30]);
-
-            actual = scaleDataMaker.createFormattedLabels(scaleData, typeMap, options, formatFunctions);
-
-            expect(actual).toEqual([
-                'formatted:10',
-                'formatted:20',
-                'formatted:30'
-            ]);
         });
     });
 });
