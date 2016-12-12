@@ -8,7 +8,7 @@
 
 var csc = require('../../../src/js/models/scaleData/coordinateScaleCalculator');
 
-fdescribe('coordinateScaleCalculator', function() {
+describe('coordinateScaleCalculator', function() {
     describe('positive values', function() {
         it('calculate with tick count', function() {
             var scale = csc({
@@ -59,7 +59,7 @@ fdescribe('coordinateScaleCalculator', function() {
         });
     });
 
-    describe('negative values', function() {
+    describe('Negative values', function() {
         var scale;
 
         beforeEach(function() {
@@ -72,6 +72,32 @@ fdescribe('coordinateScaleCalculator', function() {
 
         it('min should be -2000', function() {
             expect(scale.limit.min).toEqual(-2000);
+        });
+    });
+
+    describe('Under decimal point', function() {
+        it('edge range 0.120 ~ 0.900, should have step 0.05', function() {
+            var scale = csc({
+                min: 0.120,
+                max: 0.900,
+                offsetSize: 1000
+            });
+
+            expect(scale.limit.max).toEqual(0.9);
+            expect(scale.limit.min).toEqual(0.1);
+            expect(scale.step).toEqual(0.05);
+        });
+
+        it('edge range 0.0045 ~ 1, should have step 0.05', function() {
+            var scale = csc({
+                min: 0.0045,
+                max: 2,
+                offsetSize: 1000
+            });
+
+            expect(scale.limit.max).toEqual(2);
+            expect(scale.limit.min).toEqual(0);
+            expect(scale.step).toEqual(0.1);
         });
     });
 });

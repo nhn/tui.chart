@@ -856,14 +856,22 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('유효한 percent stack 차트가 아닌 경우에는 _calculateScale()의 수행결과를 반환합니다.', function() {
+        it('If there isn\'t percent stack chart then calculate as coordinate scale', function() {
             var baseValues = [10, 20, 30, 40];
             var baseSize = 400;
             var chartType = chartConst.CHART_TYPE_BAR;
             var actual, expected;
 
             actual = scaleDataMaker.makeScaleData(baseValues, baseSize, chartType, {});
-            expected = scaleDataMaker._calculateScale(baseValues, baseSize, chartType, {});
+
+            expected = {
+                limit: {
+                    max: 40,
+                    min: 10
+                },
+                step: 5,
+                stepCount: 6
+            };
 
             expect(actual).toEqual(expected);
         });
