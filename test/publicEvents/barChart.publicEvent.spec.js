@@ -55,10 +55,10 @@ describe('Test user events for bar chart', function() {
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 80,
-                right: 450,
-                bottom: 380
+                left: 40,
+                top: 70,
+                right: 460,
+                bottom: 390
             });
 
             barChart.on('selectSeries', function(info) {
@@ -83,10 +83,10 @@ describe('Test user events for bar chart', function() {
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 80,
-                right: 450,
-                bottom: 380
+                left: 40,
+                top: 70,
+                right: 460,
+                bottom: 390
             });
 
             barChart.on('unselectSeries', function(info) {
@@ -138,10 +138,10 @@ describe('Test user events for bar chart', function() {
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 80,
-                right: 450,
-                bottom: 380
+                left: 40,
+                top: 70,
+                right: 460,
+                bottom: 390
             });
 
             barChart.on('beforeShowTooltip', function(info) {
@@ -166,10 +166,10 @@ describe('Test user events for bar chart', function() {
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 80,
-                right: 450,
-                bottom: 380
+                left: 40,
+                top: 70,
+                right: 460,
+                bottom: 390
             });
 
             barChart.on('afterShowTooltip', function(info) {

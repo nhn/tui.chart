@@ -36,7 +36,8 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      */
     _makeData: function(seriesItemBoundsData) {
         var lastGroupIndex = 0;
-        var data = tui.util.map(seriesItemBoundsData, function(seriesDatum) {
+        var seriesItemBoundsLength = seriesItemBoundsData.length;
+        var data = tui.util.map(seriesItemBoundsData, function(seriesDatum, seriesIndex) {
             var groupPositions = seriesDatum.data.groupPositions || seriesDatum.data.groupBounds;
             var chartType = seriesDatum.chartType;
 
@@ -59,6 +60,10 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
                             },
                             bound: position
                         };
+                    }
+
+                    if (seriesItemBoundsLength > 1) {
+                        datum.indexes.legendIndex = seriesIndex;
                     }
 
                     return datum;

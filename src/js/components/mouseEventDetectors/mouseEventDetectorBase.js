@@ -27,7 +27,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
      *      @param {boolean} params.allowSelect - whether has allowSelect option or not
      */
     init: function(params) {
-        var isLineTypeChart;
+        var hasLineTypeChart;
 
         /**
          * type of chart
@@ -89,13 +89,12 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         this.prevFoundData = null;
 
 
-        isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
-
+        hasLineTypeChart = predicate.hasLineChart(this.chartType, this.chartTypes);
         /**
          * expand size
          * @type {number}
          */
-        this.expandSize = isLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
+        this.expandSize = hasLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
 
         /**
          * series item bounds data
@@ -129,11 +128,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
      * @private
      */
     _getRenderingBound: function() {
-        var renderingBound = this.layout;
-
-        if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
-            renderingBound = renderUtil.expandBound(renderingBound);
-        }
+        var renderingBound = renderUtil.expandBound(this.layout);
 
         return renderingBound;
     },
@@ -310,9 +305,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         if (predicate.isTreemapChart(this.chartType)) {
             groupIndex = 0;
         } else {
-            layerY += chartConst.SERIES_EXPAND_SIZE;
             groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
-            layerX += chartConst.SERIES_EXPAND_SIZE;
         }
 
         return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);

@@ -665,7 +665,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var sectorInfo = this._executeGraphRenderer(position, 'findSectorInfo');
         var prevIndex = this.prevClickedIndex;
         var allowSelect = this.options.allowSelect;
-        var foundIndex, shouldSelect;
+        var currentSeriesName = this.seriesName;
+        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
+        var pastSeriesNames = [];
+        var pastIndex = 0;
+        var foundIndex, shouldSelect, lastIndex;
 
         if ((sectorInfo || this._isDetectedLabel(position)) && tui.util.isExisty(prevIndex) && allowSelect) {
             this.onUnselectSeries({
@@ -676,11 +680,28 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             this.prevClickedIndex = null;
         }
 
-        if (!sectorInfo || sectorInfo.chartType !== this.chartType) {
+        if (!sectorInfo || sectorInfo.chartType !== this.seriesName) {
             return;
         }
 
-        foundIndex = sectorInfo.index;
+        tui.util.forEach(this.dataProcessor.seriesNames, function(seriesName) {
+            var needNext = true;
+
+            if (seriesName !== currentSeriesName) {
+                pastSeriesNames.push(seriesName);
+            } else {
+                needNext = false;
+            }
+
+            return needNext;
+        });
+
+        tui.util.forEach(pastSeriesNames, function(seriesName) {
+            pastIndex += seriesDataModelMap[seriesName].baseGroups.length;
+        });
+
+        lastIndex = pastIndex > 0 ? pastIndex : 0;
+        foundIndex = sectorInfo.index + lastIndex;
         shouldSelect = foundIndex > -1 && (foundIndex !== prevIndex);
 
         if (allowSelect && !shouldSelect) {
@@ -688,6 +709,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         }
 
         this.onSelectSeries({
+            chartType: this.chartType,
             indexes: {
                 index: foundIndex
             }

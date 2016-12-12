@@ -504,6 +504,20 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         }
 
         this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'zoom', newMagn);
+    },
+
+    /**
+     * Make exportation data for public event of series type.
+     * @param {object} seriesData - series data
+     * @returns {{
+     *     chartType: string,
+     *     code: string,
+     *     index: number
+     *     }}
+     * @private
+     */
+    _makeExportationSeriesData: function(seriesData) {
+        return seriesData;
     }
 });
 

@@ -144,6 +144,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
         }
 
         this.onSelectSeries({
+            chartType: this.chartType,
             indexes: indexes
         }, shouldSelect);
 

@@ -144,6 +144,21 @@ var predicate = {
     },
 
     /**
+     * Whether line and area combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} subChartTypes - types of chart
+     * @returns {boolean}
+     */
+    hasLineChart: function(chartType, subChartTypes) {
+        var hasLineType = arrayUtil.any(subChartTypes || [], function(subChartType) {
+            return predicate.isLineChart(subChartType);
+        });
+
+        return predicate.isComboChart(chartType) && hasLineType;
+    },
+
+    /**
      * Whether line and scatter combo chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
