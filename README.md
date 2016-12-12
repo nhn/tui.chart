@@ -63,7 +63,7 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 * **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
 * **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial/
 * **API** : https://nhnent.github.io/tui.chart/latest/
-* **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial.html
+* **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial-sample01-01-bar-chart.html
 
 ## Dependency
 * tui.code-snippet 1.0.8
@@ -75,9 +75,9 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 
 ## Test environment
 * PC
-	* IE8~11
-	* Chrome
-	* Firefox
+	* Microsoft Internet Explorer 8 ~ 11
+	* Google Chrome
+	* Mozilla Firefox
 
 ## Download/Install
 * Bower:
