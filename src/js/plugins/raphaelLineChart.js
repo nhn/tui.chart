@@ -57,9 +57,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var groupPaths;
 
         if (isSpline) {
-            groupPaths = this._getSplineLinesPath(groupPositions, data.options);
+            groupPaths = this._getSplineLinesPath(groupPositions, data.options.connectNulls);
         } else {
-            groupPaths = this._getLinesPath(groupPositions, data.options);
+            groupPaths = this._getLinesPath(groupPositions, data.options.connectNulls);
         }
 
         paper = paper || raphael(container, 1, dimension.height);
@@ -92,30 +92,30 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Get lines path.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @param {object} options options object
+     * @param {boolean} [connectNulls] - boolean value connect nulls or not
      * @returns {Array.<Array.<string>>} path
      * @private
      */
-    _getLinesPath: function(groupPositions, options) {
+    _getLinesPath: function(groupPositions, connectNulls) {
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
-            return self._makeLinesPath(positions, null, options);
+            return self._makeLinesPath(positions, null, connectNulls);
         });
     },
 
     /**
      * Get spline lines path.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @param {object} options options object
+     * @param {boolean} [connectNulls] - boolean value connect nulls or not
      * @returns {Array} path
      * @private
      */
-    _getSplineLinesPath: function(groupPositions, options) {
+    _getSplineLinesPath: function(groupPositions, connectNulls) {
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
-            return self._makeSplineLinesPath(positions, options);
+            return self._makeSplineLinesPath(positions, connectNulls);
         });
     },
 

@@ -138,7 +138,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             value = Math.abs(value);
         }
 
-        if (value === null) {
+        if (tui.util.isNull(value)) {
             this.label = '';
         } else {
             this.label = renderUtil.formatValue(value, this.formatFunctions, this.chartType, areaType);
@@ -161,7 +161,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      */
     _createValues: function(value) {
         var values = tui.util.map([].concat(value), function(newValue) {
-            return newValue === null ? null : parseFloat(newValue);
+            return tui.util.isNull(newValue) ? null : parseFloat(newValue);
         });
 
         values = values.sort(function(a, b) {

@@ -153,8 +153,8 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         var xAxisOption = this.options.xAxis;
         var isDivergingChart = this.isDivergingChart;
         var isCoordinateType = this.isCoordinateType;
-        var isPieChart = this.chartType === 'pie';
-        var arrayRawDatum = /heatmap|treemap/.test(this.chartType);
+        var isPieChart = predicate.isPieChart(this.chartType);
+        var hasRawDatumAsArray = predicate.isHeatmapChart(this.chartType) || predicate.isTreemapChart(this.chartType);
         var sortValues, SeriesItemClass;
 
         if (isCoordinateType) {
@@ -173,11 +173,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             var stack, data;
             var items;
 
-            if (arrayRawDatum) {
-                data = rawDatum;
-            } else {
+            data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+
+            if (!hasRawDatumAsArray) {
                 stack = rawDatum.stack;
-                data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
             }
 
             if (isCoordinateType || isPieChart) {

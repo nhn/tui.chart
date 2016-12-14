@@ -63,7 +63,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.zeroTop = data.zeroTop;
         this.hasRangeData = data.hasRangeData;
 
-        this.groupPaths = this._getAreaChartPath(groupPositions, null, data.options);
+        this.groupPaths = this._getAreaChartPath(groupPositions, null, data.options.connectNulls);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
         this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
@@ -91,17 +91,17 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Get path for area chart.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions - positions
      * @param {boolean} [hasExtraPath] - whether has extra path or not
-     * @param {object} [options] - options object
+     * @param {boolean} [connectNulls] - boolean value connect nulls or not
      * @returns {*}
      * @private
      */
-    _getAreaChartPath: function(groupPositions, hasExtraPath, options) {
+    _getAreaChartPath: function(groupPositions, hasExtraPath, connectNulls) {
         var path;
 
         if (this.isSpline) {
             path = this._makeSplineAreaChartPath(groupPositions, hasExtraPath);
         } else {
-            path = this._makeAreaChartPath(groupPositions, hasExtraPath, options);
+            path = this._makeAreaChartPath(groupPositions, hasExtraPath, connectNulls);
         }
 
         return path;
@@ -214,11 +214,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Make path for area chart.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
      * @param {boolean} [hasExtraPath] - whether has extra path or not
-     * @param {object} [options] - options object
+     * @param {boolean} [connectNulls] - boolean value connect nulls or not
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _makeAreaChartPath: function(groupPositions, hasExtraPath, options) {
+    _makeAreaChartPath: function(groupPositions, hasExtraPath, connectNulls) {
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
@@ -226,7 +226,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
             paths = {
                 area: self._makeAreasPath(positions, hasExtraPath),
-                line: self._makeLinesPath(positions, null, options)
+                line: self._makeLinesPath(positions, null, connectNulls)
             };
 
             if (self.hasRangeData) {

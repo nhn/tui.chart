@@ -47,7 +47,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             return seriesGroup.map(function(seriesItem, index) {
                 var position;
 
-                if (seriesItem.end !== null) {
+                if (!tui.util.isNull(seriesItem.end)) {
                     position = {
                         left: start + (step * index),
                         top: height - (seriesItem.ratio * height) + chartConst.SERIES_EXPAND_SIZE
@@ -86,7 +86,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             return seriesGroup.map(function(seriesItem) {
                 var position;
 
-                if (seriesItem.end !== null) {
+                if (!tui.util.isNull(seriesItem.end)) {
                     position = {
                         left: (seriesItem.ratioMap.x * width) + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
                         top: height - (seriesItem.ratioMap.y * height) + chartConst.SERIES_EXPAND_SIZE

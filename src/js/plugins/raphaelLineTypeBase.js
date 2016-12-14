@@ -49,14 +49,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
      * @param {?string} [posTopType='top'] position top type
-     * @param {object} options options object
+     * @param {boolean} [connectNulls] - boolean value connect nulls or not
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeLinesPath: function(positions, posTopType, options) {
+    _makeLinesPath: function(positions, posTopType, connectNulls) {
         var path = [];
         var prevMissing = false;
-        var connectNulls = options && options.connectNulls;
 
         posTopType = posTopType || 'top';
         tui.util.map(positions, function(position) {
@@ -110,12 +109,14 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * Get spline positions groups
+     * Get spline positions groups which is divided with null data value.
+     * If series has not divided positions, it returns only one positions group.
      * @param {Array.<object>} positions positions array
      * @param {boolean} connectNulls option of connect line of both null data's side
      * @returns {Array.<Array.<object>>}
+     * @private
      */
-    getSplinePositionsGroups: function(positions, connectNulls) {
+    _getSplinePositionsGroups: function(positions, connectNulls) {
         var positionsGroups = [];
         var positionsGroup = [];
         tui.util.forEach(positions, function(position, index) {
@@ -138,8 +139,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * Get spline partial paths
      * @param {Array.<Array.<object>>} positionsGroups positions groups
      * @returns {Array.<Array.<Array>>}
+     * @private
      */
-    getSplinePartialPaths: function(positionsGroups) {
+    _getSplinePartialPaths: function(positionsGroups) {
         var self = this;
         var paths = [];
         var firstPos, lastPos, positionsLen, fromPos, middlePositions, path;
@@ -171,15 +173,14 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Make spline lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
-     * @param {options} options options object
+     * @param {boolean} [connectNulls] - boolean value connect nulls or not
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeSplineLinesPath: function(positions, options) {
-        var connectNulls = options && options.connectNulls;
+    _makeSplineLinesPath: function(positions, connectNulls) {
         var path = [];
-        var positionsGroups = this.getSplinePositionsGroups(positions, connectNulls);
-        var partialPaths = this.getSplinePartialPaths(positionsGroups);
+        var positionsGroups = this._getSplinePositionsGroups(positions, connectNulls);
+        var partialPaths = this._getSplinePartialPaths(positionsGroups);
 
         tui.util.forEach(partialPaths, function(partialPath) {
             path = path.concat(partialPath);
