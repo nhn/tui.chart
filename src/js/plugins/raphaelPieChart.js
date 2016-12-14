@@ -103,7 +103,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         this._setSectorAttr();
 
-        this.sectorInfos = this._renderPie(data.sectorData, data.theme.colors);
+        this.sectorInfos = this._renderPie(data.sectorData, data.theme.colors, data.additionalIndex);
         this.overlay = this._renderOverlay();
 
         /**
@@ -281,10 +281,11 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * Render pie graph.
      * @param {Array.<object>} sectorData - sectorData
      * @param {Array.<string>} colors - sector colors
+     * @param {number} additionalIndex - additional index for accumulate past pie series's data indexes on pieDonutCombo
      * @returns {Array.<object>}
      * @private
      */
-    _renderPie: function(sectorData, colors) {
+    _renderPie: function(sectorData, colors, additionalIndex) {
         var self = this;
         var circleBound = this.circleBound;
         var chartBackground = this.chartBackground;
@@ -303,7 +304,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                     'stroke-width': 1
                 }
             });
-            sector.data('index', index);
+            sector.data('index', index + additionalIndex);
             sector.data('chartType', self.chartType);
 
             sectorInfos.push({

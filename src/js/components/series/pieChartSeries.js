@@ -380,7 +380,28 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             hideTooltip: tui.util.bind(this.hideTooltip, this)
         };
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
+        var currentSeriesName = this.seriesName;
+        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
+        var pastSeriesNames = [];
+        var pastIndex = 0;
 
+        tui.util.forEach(this.dataProcessor.seriesNames, function(seriesName) {
+            var needNext = true;
+
+            if (seriesName !== currentSeriesName) {
+                pastSeriesNames.push(seriesName);
+            } else {
+                needNext = false;
+            }
+
+            return needNext;
+        });
+
+        tui.util.forEach(pastSeriesNames, function(seriesName) {
+            pastIndex += seriesDataModelMap[seriesName].baseGroups.length;
+        });
+
+        params.additionalIndex = pastIndex;
         params.paper = paper;
 
         return this.graphRenderer.render(this.seriesContainer, params, callbacks);
@@ -665,11 +686,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var sectorInfo = this._executeGraphRenderer(position, 'findSectorInfo');
         var prevIndex = this.prevClickedIndex;
         var allowSelect = this.options.allowSelect;
-        var currentSeriesName = this.seriesName;
-        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-        var pastSeriesNames = [];
-        var pastIndex = 0;
-        var foundIndex, shouldSelect, lastIndex;
+        var foundIndex, shouldSelect;
 
         if ((sectorInfo || this._isDetectedLabel(position)) && tui.util.isExisty(prevIndex) && allowSelect) {
             this.onUnselectSeries({
@@ -684,24 +701,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return;
         }
 
-        tui.util.forEach(this.dataProcessor.seriesNames, function(seriesName) {
-            var needNext = true;
-
-            if (seriesName !== currentSeriesName) {
-                pastSeriesNames.push(seriesName);
-            } else {
-                needNext = false;
-            }
-
-            return needNext;
-        });
-
-        tui.util.forEach(pastSeriesNames, function(seriesName) {
-            pastIndex += seriesDataModelMap[seriesName].baseGroups.length;
-        });
-
-        lastIndex = pastIndex > 0 ? pastIndex : 0;
-        foundIndex = sectorInfo.index + lastIndex;
+        foundIndex = sectorInfo.index;
         shouldSelect = foundIndex > -1 && (foundIndex !== prevIndex);
 
         if (allowSelect && !shouldSelect) {

@@ -62,6 +62,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
                         };
                     }
 
+                    // Add legendIndex to datum on making multi series chart data, especially for LineScatterComboChart.
                     if (seriesItemBoundsLength > 1) {
                         datum.indexes.legendIndex = seriesIndex;
                     }
