@@ -15,7 +15,8 @@ var abs = Math.abs;
 /**
  * Format scale data labels
  * @module scaleLabelFormatter
- * @private */
+ * @private
+ */
 var scaleLabelFormatter = {
     /**
      * Get functions for formatting value.
