@@ -63,10 +63,10 @@ describe('Test user events for combo chart', function() {
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 40,
-                right: 450,
-                bottom: 380
+                left: 40,
+                top: 30,
+                right: 460,
+                bottom: 390
             });
 
             comboChart.on('selectSeries', function(info) {
@@ -91,10 +91,10 @@ describe('Test user events for combo chart', function() {
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 40,
-                right: 450,
-                bottom: 380
+                left: 40,
+                top: 30,
+                right: 460,
+                bottom: 390
             });
 
             comboChart.on('unselectSeries', function(info) {

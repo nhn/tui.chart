@@ -381,7 +381,28 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             hideTooltip: tui.util.bind(this.hideTooltip, this)
         };
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
+        var currentSeriesName = this.seriesName;
+        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
+        var pastSeriesNames = [];
+        var pastIndex = 0;
 
+        tui.util.forEach(this.dataProcessor.seriesNames, function(seriesName) {
+            var needNext = true;
+
+            if (seriesName !== currentSeriesName) {
+                pastSeriesNames.push(seriesName);
+            } else {
+                needNext = false;
+            }
+
+            return needNext;
+        });
+
+        tui.util.forEach(pastSeriesNames, function(seriesName) {
+            pastIndex += seriesDataModelMap[seriesName].baseGroups.length;
+        });
+
+        params.additionalIndex = pastIndex;
         params.paper = paper;
 
         return this.graphRenderer.render(this.seriesContainer, params, callbacks);
@@ -677,7 +698,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             this.prevClickedIndex = null;
         }
 
-        if (!sectorInfo || sectorInfo.chartType !== this.chartType) {
+        if (!sectorInfo || sectorInfo.chartType !== this.seriesName) {
             return;
         }
 
@@ -689,6 +710,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         }
 
         this.onSelectSeries({
+            chartType: this.chartType,
             indexes: {
                 index: foundIndex
             }
