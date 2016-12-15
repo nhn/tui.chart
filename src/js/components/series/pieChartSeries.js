@@ -140,7 +140,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         }
 
         paths = seriesGroup.map(function(seriesItem) {
-            var currentAngle = angleForRendering * seriesItem.ratio;
+            var ratio = seriesItem ? seriesItem.ratio : 0;
+            var currentAngle = angleForRendering * ratio;
             var endAngle = angle + currentAngle;
             var popupAngle = angle + (currentAngle / 2);
             var angles = {
@@ -162,7 +163,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             angle = endAngle;
 
             return {
-                ratio: seriesItem.ratio,
+                ratio: ratio,
                 angles: angles,
                 centerPosition: self._getArcPosition(tui.util.extend({
                     r: centerR

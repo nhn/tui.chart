@@ -152,9 +152,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         var formatFunctions = this.formatFunctions;
         var xAxisOption = this.options.xAxis;
         var isDivergingChart = this.isDivergingChart;
+        var isCoordinateType = this.isCoordinateType;
+        var isPieChart = predicate.isPieChart(this.chartType);
+        var hasRawDatumAsArray = predicate.isHeatmapChart(this.chartType) || predicate.isTreemapChart(this.chartType);
         var sortValues, SeriesItemClass;
 
-        if (this.isCoordinateType) {
+        if (isCoordinateType) {
             SeriesItemClass = SeriesItemForCoordinateType;
             sortValues = function(items) {
                 items.sort(function(a, b) {
@@ -167,11 +170,19 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
-            var stack = rawDatum.stack;
-            var data = tui.util.isArray(rawDatum) ? rawDatum : concat.apply(rawDatum.data);
+            var stack, data;
             var items;
 
-            data = tui.util.filter(data, tui.util.isExisty);
+            data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+
+            if (!hasRawDatumAsArray) {
+                stack = rawDatum.stack;
+            }
+
+            if (isCoordinateType || isPieChart) {
+                data = tui.util.filter(data, tui.util.isExisty);
+            }
+
             items = tui.util.map(data, function(datum, index) {
                 return new SeriesItemClass({
                     datum: datum,

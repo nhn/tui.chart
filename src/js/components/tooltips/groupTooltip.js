@@ -81,6 +81,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var chartDimension = this.dimensionMap.chart;
         var bound = this.layout;
 
+        if (data.checkedLegends) {
+            this.theme = this._updateLegendTheme(data.checkedLegends);
+        }
+
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
 
         return container;

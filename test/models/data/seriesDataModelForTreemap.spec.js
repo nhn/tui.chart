@@ -21,7 +21,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
     });
 
     describe('_flattenHierarchicalData()', function() {
-        it('flattren hierarchical data', function() {
+        it('flatten hierarchical data', function() {
             var rawSeriesData = [
                 {
                     label: 'label1',
@@ -78,6 +78,59 @@ describe('Test for SeriesDataModelForTreemap', function() {
             ];
 
             expect(actual).toEqual(expected);
+        });
+        it('except null value data child from flatten hierarchical data', function() {
+            var rawSeriesData = [
+                {
+                    label: 'label1',
+                    children: [
+                        {
+                            label: 'label1-1',
+                            children: [
+                                {
+                                    label: 'label1-1-1',
+                                    value: null
+                                }, {
+                                    label: 'label1-1-2',
+                                    value: 7
+                                }
+                            ]
+                        }, {
+                            label: 'label1-2',
+                            value: 3
+                        }
+                    ]
+                }
+            ];
+            var actual = seriesDataModel._flattenHierarchicalData(rawSeriesData);
+            var expected = [
+                {
+                    id: idPrefix + '0',
+                    parent: rootId,
+                    label: 'label1',
+                    indexes: [0]
+                }, {
+                    id: idPrefix + '0_0',
+                    parent: idPrefix + '0',
+                    label: 'label1-1',
+                    indexes: [0, 0]
+                }, {
+                    id: idPrefix + '0_0_1',
+                    parent: idPrefix + '0_0',
+                    label: 'label1-1-2',
+                    value: 7,
+                    indexes: [0, 0, 1]
+                }, {
+                    id: idPrefix + '0_1',
+                    parent: idPrefix + '0',
+                    label: 'label1-2',
+                    value: 3,
+                    indexes: [0, 1]
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+            expect(actual.length).toEqual(expected.length);
         });
     });
 

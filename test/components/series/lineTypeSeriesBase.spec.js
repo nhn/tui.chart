@@ -75,6 +75,46 @@ describe('LineTypeSeriesBase', function() {
             ]);
         });
 
+        it('should not create position when serieItem.end equals null.', function() {
+            var seriesDataModel = new SeriesDataModel();
+            var expected = [[]];
+            var actual;
+
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.pivotGroups = [
+                new SeriesGroup([{
+                    ratio: 0.25,
+                    end: null
+                }, {
+                    ratio: 0.5
+                }, {
+                    ratio: 0.4
+                }])
+            ];
+            spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 200
+                }
+            };
+            series.axisDataMap = {
+                xAxis: {}
+            };
+            series.aligned = false;
+            actual = series._makePositionsForDefaultType();
+
+            expected[0][1] = {
+                top: 110,
+                left: 160
+            };
+            expected[0][2] = {
+                top: 130,
+                left: 260
+            };
+            expect(actual).toEqual(expected);
+        });
+
         it('make positions for default data type, when aligned', function() {
             var seriesDataModel = new SeriesDataModel();
             var actual;

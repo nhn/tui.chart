@@ -45,13 +45,17 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         return seriesDataModel.map(function(seriesGroup) {
             return seriesGroup.map(function(seriesItem, index) {
-                var position = {
-                    left: start + (step * index),
-                    top: height - (seriesItem.ratio * height) + chartConst.SERIES_EXPAND_SIZE
-                };
+                var position;
 
-                if (tui.util.isExisty(seriesItem.startRatio)) {
-                    position.startTop = height - (seriesItem.startRatio * height) + chartConst.SERIES_EXPAND_SIZE;
+                if (!tui.util.isNull(seriesItem.end)) {
+                    position = {
+                        left: start + (step * index),
+                        top: height - (seriesItem.ratio * height) + chartConst.SERIES_EXPAND_SIZE
+                    };
+
+                    if (tui.util.isExisty(seriesItem.startRatio)) {
+                        position.startTop = height - (seriesItem.startRatio * height) + chartConst.SERIES_EXPAND_SIZE;
+                    }
                 }
 
                 return position;
@@ -80,13 +84,18 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         return seriesDataModel.map(function(seriesGroup) {
             return seriesGroup.map(function(seriesItem) {
-                var position = {
-                    left: (seriesItem.ratioMap.x * width) + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
-                    top: height - (seriesItem.ratioMap.y * height) + chartConst.SERIES_EXPAND_SIZE
-                };
+                var position;
 
-                if (tui.util.isExisty(seriesItem.ratioMap.start)) {
-                    position.startTop = height - (seriesItem.ratioMap.start * height) + chartConst.SERIES_EXPAND_SIZE;
+                if (!tui.util.isNull(seriesItem.end)) {
+                    position = {
+                        left: (seriesItem.ratioMap.x * width) + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
+                        top: height - (seriesItem.ratioMap.y * height) + chartConst.SERIES_EXPAND_SIZE
+                    };
+
+                    if (tui.util.isExisty(seriesItem.ratioMap.start)) {
+                        position.startTop =
+                            height - (seriesItem.ratioMap.start * height) + chartConst.SERIES_EXPAND_SIZE;
+                    }
                 }
 
                 return position;
@@ -226,7 +235,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * To call hideGroupTooltipLine function of graphRenderer.
      */
     onHideGroupTooltipLine: function() {
-        if (!this.graphRenderer.hideGroupTooltipLine) {
+        if (!this.seriesData.isAvailable() || !this.graphRenderer.hideGroupTooltipLine) {
             return;
         }
         this.graphRenderer.hideGroupTooltipLine();

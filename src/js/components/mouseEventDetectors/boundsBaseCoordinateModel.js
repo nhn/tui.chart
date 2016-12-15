@@ -150,7 +150,9 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
                 } else {
                     additionalIndex = results[index].length;
                     tui.util.forEachArray(data, function(datum) {
-                        datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + additionalIndex;
+                        if (datum) {
+                            datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + additionalIndex;
+                        }
                     });
                     results[index] = results[index].concat(data);
                 }

@@ -180,6 +180,96 @@ describe('Test for BoundsBaseCoordinateModel', function() {
 
             expect(actual).toEqual(expected);
         });
+        it('should not set "datum.sendData.indexes.legendIndex" without datum', function() {
+            var actual = coordinateModel._joinData([
+                [
+                    [null, {
+                        sendData: {
+                            indexes: {
+                                index: 1
+                            },
+                            value: 2
+                        }
+                    }],
+                    [{
+                        sendData: {
+                            indexes: {
+                                index: 0
+                            },
+                            value: 3
+                        }
+                    }, {
+                        sendData: {
+                            indexes: {
+                                index: 1
+                            },
+                            value: 4
+                        }
+                    }]
+                ], [
+                    [{
+                        sendData: {
+                            indexes: {
+                                index: 0
+                            },
+                            value: 5
+                        }
+                    }],
+                    [{
+                        sendData: {
+                            indexes: {
+                                index: 0
+                            },
+                            value: 6
+                        }
+                    }]
+                ]
+            ]);
+            var expected = [
+                [null, {
+                    sendData: {
+                        indexes: {
+                            index: 1
+                        },
+                        value: 2
+                    }
+                }, {
+                    sendData: {
+                        indexes: {
+                            index: 0,
+                            legendIndex: 2
+                        },
+                        value: 5
+                    }
+                }],
+                [{
+                    sendData: {
+                        indexes: {
+                            index: 0
+                        },
+                        value: 3
+                    }
+                }, {
+                    sendData: {
+                        indexes: {
+                            index: 1
+                        },
+                        value: 4
+                    }
+                }, {
+                    sendData: {
+                        indexes: {
+                            index: 0,
+                            legendIndex: 2
+                        },
+                        value: 6
+                    }
+                }]
+            ];
+
+            expect(actual).toEqual(expected);
+            expect(actual[0][0]).toEqual(null);
+        });
     });
 
     describe('_makeData()', function() {

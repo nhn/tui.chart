@@ -138,7 +138,12 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             value = Math.abs(value);
         }
 
-        this.label = renderUtil.formatValue(value, this.formatFunctions, this.chartType, areaType);
+        if (tui.util.isNull(value)) {
+            this.label = '';
+        } else {
+            this.label = renderUtil.formatValue(value, this.formatFunctions, this.chartType, areaType);
+        }
+
         this.endLabel = this.label;
 
         if (hasStart) {
@@ -155,7 +160,9 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _createValues: function(value) {
-        var values = tui.util.map([].concat(value), parseFloat);
+        var values = tui.util.map([].concat(value), function(newValue) {
+            return tui.util.isNull(newValue) ? null : parseFloat(newValue);
+        });
 
         values = values.sort(function(a, b) {
             if (a < 0 && b < 0) {
