@@ -106,6 +106,20 @@ var axisTypeMixer = {
     },
 
     /**
+     * Add chartExportMenu component.
+     * @private
+     */
+    _addChartExportMenuComponent: function() {
+        var chartOption = this.options.chart;
+        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
+
+        this.componentManager.register('chartExportMenu', {
+            chartTitle: chartTitle,
+            classType: 'chartExportMenu'
+        });
+    },
+
+    /**
      * Add components for axis type chart.
      * @param {object} params parameters
      *      @param {object} params.axes axes data
@@ -125,6 +139,10 @@ var axisTypeMixer = {
 
         if (options.legend.visible) {
             this._addLegendComponent(params.legend || {});
+        }
+
+        if (options.chartExportMenu.visible) {
+            this._addChartExportMenuComponent(options.chartExportMenu);
         }
 
         this._addSeriesComponents(params.series, options);

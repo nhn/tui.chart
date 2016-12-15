@@ -189,6 +189,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         options.series = options.series || {};
         options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
+        options.chartExportMenu = options.chartExportMenu || {};
 
         this._initializeTitleOptions(options.chart);
         this._initializeTitleOptions(options.xAxis);
@@ -196,6 +197,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         if (tui.util.isUndefined(options.legend.visible)) {
             options.legend.visible = true;
+        }
+
+        if (tui.util.isUndefined(options.chartExportMenu.visible)) {
+            options.chartExportMenu.visible = true;
         }
 
         this._initializeTooltipOptions(options.tooltip);

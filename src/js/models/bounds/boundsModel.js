@@ -97,6 +97,9 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
             },
             circleLegend: {
                 width: 0
+            },
+            chartExportMenu: {
+                width: 0
             }
         };
 
@@ -112,6 +115,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         this._registerChartDimension();
         this._registerTitleDimension();
+        this._registerChartExportMenuDimension();
     },
 
     /**
@@ -213,6 +217,17 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         };
 
         this._registerDimension('title', dimension);
+    },
+
+    /**
+     * Register chartExportMenu dimension
+     * @private
+     */
+    _registerChartExportMenuDimension: function() {
+        this._registerDimension('chartExportMenu', {
+            height: 17,
+            width: 60
+        });
     },
 
     /**
@@ -508,7 +523,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
     /**
      * Make legend position.
-     * @returns {{dimension: {width: number, height: number}, position: {top: number, left: number}}} legend bound
+     * @returns {{top: number, left: number}} legend bound
      * @private
      */
     _makeLegendPosition: function() {
@@ -535,6 +550,18 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         return {
             top: top,
             left: left
+        };
+    },
+
+    /**
+     * Make chartExportMenu position.
+     * @returns {{top: number, left: number}}
+     * @private
+     */
+    _makeChartExportMenuPosition: function() {
+        return {
+            top: 10,
+            right: 20
         };
     },
 
@@ -592,6 +619,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         this.positionMap.mouseEventDetector = tui.util.extend({}, seriesPosition);
         this.positionMap.legend = this._makeLegendPosition();
+        this.positionMap.chartExportMenu = this._makeChartExportMenuPosition();
 
         if (this.getDimension('circleLegend').width) {
             this.positionMap.circleLegend = this._makeCircleLegendPosition();

@@ -130,7 +130,8 @@ describe('Test for ComboChart', function() {
                 },
                 tooltip: {},
                 xAxis: {},
-                series: {}
+                series: {},
+                chartExportMenu: {}
             };
 
             axisTypeMixer._addComponentsForAxisType({

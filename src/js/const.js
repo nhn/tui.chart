@@ -9,7 +9,7 @@
 /**
  * Chart const
  * @readonly
- * @enum {number}
+ * @enum {number|string}
  * @private
  */
 var chartConst = {
@@ -25,6 +25,12 @@ var chartConst = {
     CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
     /** @type {string} */
     CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
+    /** @type {string} */
+    CLASS_NAME_CHART_EXPORT_MENU_AREA: 'tui-chart-chartExportMenu-area',
+    /** @type {string} */
+    CLASS_NAME_CHART_EXPORT_MENU_ITEM: 'tui-chart-chartExportMenu-item',
+    /** @type {string} */
+    CLASS_NAME_CHART_EXPORT_MENU_BUTTON: 'tui-chart-chartExportMenu-button',
     /** chart type
      * @type {string}
      */
