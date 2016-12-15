@@ -232,15 +232,16 @@ var scaleDataMaker = {
      * @param {number} baseSize - base size(width or height) for calculating scale data
      * @param {object} overflowItem - overflow item
      * @param {boolean} isDiverging - is diverging or not
+     * @param {{min: ?number, max: ?number}} limitOption - is diverging or not
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging) {
+    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, limitOption) {
         var limit = this._getLimitSafely(baseValues);
 
         var scaleData = coordinateScaleCalculator({
-            min: limit.min,
-            max: limit.max,
+            min: limitOption && limitOption.min ? limitOption.min : limit.min,
+            max: limitOption && limitOption.max ? limitOption.max : limit.max,
             offsetSize: baseSize
         });
 
@@ -271,13 +272,15 @@ var scaleDataMaker = {
     makeScaleData: function(baseValues, baseSize, chartType, options) {
         var scaleData;
         var isDiverging = predicate.isDivergingChart(chartType, options.diverging);
+        var limitOption = options.limitOption;
+        var overflowItem = options.overflowItem;
 
         if (predicate.isPercentStackChart(chartType, options.stackType)) {
             scaleData = this._calculatePercentStackedScale(baseValues, isDiverging);
         } else if (predicate.isDatetimeType(options.type)) {
             scaleData = this._calculateDatetimeScale(baseValues, baseSize, isDiverging);
         } else {
-            scaleData = this._calculateCoordinateScale(baseValues, baseSize, options.overflowItem, isDiverging);
+            scaleData = this._calculateCoordinateScale(baseValues, baseSize, overflowItem, isDiverging, limitOption);
         }
 
         return scaleData;
