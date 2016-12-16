@@ -215,6 +215,29 @@ describe('Test for ScaleDataMaker', function() {
         });
     });
 
+    describe('_calculateCoordinateScale()', function() {
+        it('limitOption 값이 있는 경우 옵션의 min, max를 반환합니다.', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
+                min: 0,
+                max: 100
+            });
+
+            expect(scaleData.limit.max).toBe(100);
+            expect(scaleData.limit.min).toBe(0);
+            expect(scaleData.step).toBe(50);
+        });
+
+        it('scaleData를 반환합니다.', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
+                min: null,
+                max: null
+            });
+
+            expect(scaleData.limit.max).toBe(40);
+            expect(scaleData.limit.min).toBe(0);
+            expect(scaleData.step).toBe(10);
+        });
+    });
     describe('_calculatePercentStackedScale()', function() {
         it('음수의 합이 0일 경우에는 chartConst.PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var baseValues = [10, 20, 30, 40];
