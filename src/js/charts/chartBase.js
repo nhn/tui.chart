@@ -251,6 +251,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return {
             isVertical: this.isVertical,
             chartType: this.chartType,
+            chartTypes: this.chartTypes,
             xAxisType: this.options.xAxis.type,
             dateFormat: this.options.xAxis.dateFormat,
             classType: classType || 'tooltip'

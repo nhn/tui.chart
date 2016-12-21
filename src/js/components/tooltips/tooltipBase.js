@@ -18,6 +18,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      * @param {object} params - parameters
      *      @param {string} params.chartType - chart type
+     *      @param {Array.<string>} params.chartTypes - chart types
      *      @param {DataProcessor} params.dataProcessor - DataProcessor instance
      *      @param {object} params.options - tooltip options
      *      @param {object} params.theme - tooltip theme
@@ -35,6 +36,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * @type {string}
          */
         this.chartType = params.chartType;
+
+        /**
+         * Chart types
+         * @type {Array.<string>}
+         */
+        this.chartTypes = params.chartTypes;
 
         /**
          * Data processor

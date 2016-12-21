@@ -235,7 +235,10 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * To call hideGroupTooltipLine function of graphRenderer.
      */
     onHideGroupTooltipLine: function() {
-        if (!this.seriesData.isAvailable() || !this.graphRenderer.hideGroupTooltipLine) {
+        if (this.seriesData.length === 0
+            || !this.seriesData.isAvailable()
+            || !this.graphRenderer.hideGroupTooltipLine
+        ) {
             return;
         }
         this.graphRenderer.hideGroupTooltipLine();

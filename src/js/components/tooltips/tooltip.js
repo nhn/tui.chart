@@ -37,9 +37,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeTooltipHtml: function(category, item) {
+        var isPieOrPieDonutComboChart = predicate.isPieChart(this.chartType)
+            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
         var template;
 
-        if (predicate.isCoordinateTypeChart(this.chartType)) {
+        if (isPieOrPieDonutComboChart) {
+            template = tooltipTemplate.tplPieChart;
+        } else if (this.dataProcessor.coordinateType) {
             template = tooltipTemplate.tplCoordinatetypeChart;
         } else {
             template = tooltipTemplate.tplDefault;
@@ -138,17 +142,28 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
         var legend = legendLabels[chartType][index] || '';
         var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
-        var label = seriesItem.tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
+        var ratio = '';
+        var tooltipDatum = {
+            legend: legend
+        };
+        var isPieOrPieDonutComboChart = predicate.isPieChart(this.chartType)
+            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
+
+        if (isPieOrPieDonutComboChart) {
+            tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? seriesItem.label : '');
+            ratio = labelPrefix + (seriesItem.ratio.toFixed(2) * 100) + '&nbsp;%&nbsp;' || '';
+            tooltipDatum.ratioLabel = ratio;
+        } else {
+            tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
+        }
 
         if (category && predicate.isDatetimeType(this.xAxisType)) {
             category = renderUtil.formatDate(category, this.dateFormat);
         }
 
-        return tui.util.extend({
-            category: category || '',
-            legend: legend,
-            label: label
-        }, seriesItem.pickValueMapForTooltip());
+        tooltipDatum.category = category || '';
+
+        return tui.util.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
     },
 
     /**

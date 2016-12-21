@@ -102,7 +102,7 @@ var predicate = {
      */
     isPieDonutComboChart: function(chartType, subChartTypes) {
         var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
-            return predicate.isPieTypeChart(subChartType);
+            return predicate.isPieChart(subChartType);
         });
 
         return predicate.isComboChart(chartType) && isAllPieType;
@@ -246,26 +246,6 @@ var predicate = {
     },
 
     /**
-     * Whether donut chart or not.
-     * @memberOf module:predicate
-     * @param {string} chartType -chart type
-     * @returns {boolean}
-     */
-    isDonutChart: function(chartType) {
-        return chartType === chartConst.CHART_TYPE_DONUT;
-    },
-
-    /**
-     * Whether pie type chart or not.
-     * @memberOf module:predicate
-     * @param {string} chartType - chart type
-     * @returns {boolean}
-     */
-    isPieTypeChart: function(chartType) {
-        return predicate.isPieChart(chartType) || predicate.isDonutChart(chartType);
-    },
-
-    /**
      * Whether map chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
@@ -303,7 +283,7 @@ var predicate = {
      * @returns {boolean}
      */
     isChartToDetectMouseEventOnSeries: function(chartType) {
-        return predicate.isPieTypeChart(chartType) || predicate.isMapChart(chartType)
+        return predicate.isPieChart(chartType) || predicate.isMapChart(chartType)
             || predicate.isCoordinateTypeChart(chartType);
     },
 

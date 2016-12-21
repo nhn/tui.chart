@@ -20,6 +20,7 @@ describe('Tooltip', function() {
 
     beforeEach(function() {
         tooltip = new Tooltip({
+            chartType: 'column',
             dataProcessor: dataProcessor,
             eventBus: new tui.util.CustomEvents(),
             options: {}
@@ -41,6 +42,32 @@ describe('Tooltip', function() {
             expected = ':&nbsp;label1';
 
             expect(actual.label).toBe(expected);
+        });
+
+        it('should make tooltip datum ratioLabel for data percentage and label for raw data value.', function() {
+            var actual, expected, seriesItem;
+            var legendLabels = {
+                'pie': ['legend1']
+            };
+
+            tooltip = new Tooltip({
+                chartType: 'pie',
+                dataProcessor: dataProcessor,
+                eventBus: new tui.util.CustomEvents(),
+                options: {}
+            });
+
+            seriesItem = {
+                label: 'label1',
+                ratio: 0.35,
+                pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
+            };
+
+            actual = tooltip._makeTooltipDatum(legendLabels, '', 'pie', seriesItem, 0);
+            expected = 'label1';
+
+            expect(actual.label).toBe(expected);
+            expect(actual.ratioLabel).toBe(':&nbsp;35&nbsp;%&nbsp;');
         });
 
         it('legend없이 seriesItem.label만 존재하면 prefix없는 label만 생성합니다.', function() {
