@@ -50,11 +50,8 @@ module.exports = (function() {
             filename: BUNDLE_FILENAME + (isProduction && isMinified ? '.min' : '') + '.js'
         },
         module: {
-            preLoaders: [eslintLoader],
+            preLoaders: [],
             loaders: [lessLoader]
-        },
-        eslint: {
-            failOnError: true
         },
         plugins: [
             new ExtractTextPlugin(BUNDLE_FILENAME + (isProduction && isMinified ? '.min' : '') + '.css')
@@ -62,7 +59,14 @@ module.exports = (function() {
         cache: false
     };
 
-    if (!isProduction) {
+    if (isProduction) {
+        // Production setting
+        Object.assign(config.eslint, {
+            failOnError: true
+        });
+
+        config.module.preLoaders = [eslintLoader];
+    } else {
         // Dev server setting
         Object.assign(config, {
             devtool: '#inline-source-map',
@@ -77,11 +81,6 @@ module.exports = (function() {
                     colors: true
                 }
             }
-        });
-
-        Object.assign(config.eslint, {
-            quiet: true,
-            failOnError: false
         });
     }
 
