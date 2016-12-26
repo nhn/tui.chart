@@ -61,11 +61,10 @@ module.exports = (function() {
 
     if (isProduction) {
         // Production setting
-        Object.assign(config.eslint, {
-            failOnError: true
-        });
-
         config.module.preLoaders = [eslintLoader];
+        config.eslint = {
+            failOnError: true
+        };
     } else {
         // Dev server setting
         Object.assign(config, {
