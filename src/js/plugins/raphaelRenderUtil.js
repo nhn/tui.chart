@@ -6,6 +6,8 @@
 
 'use strict';
 
+var Raphael = window.Raphael;
+
 /**
  * Util for raphael rendering.
  * @module raphaelRenderUtil
@@ -63,6 +65,29 @@ var raphaelRenderUtil = {
     },
 
     /**
+     * Render text
+     * @param {object} paper - raphael object
+     * @param {{left: number, top: number}} pos - position
+     * @param {string} text - text
+     * @param {object} attrs - attrs
+     * @returns {object}
+     */
+    renderText: function(paper, pos, text, attrs) {
+        var textObj = paper.text(pos.left, pos.top, text);
+
+        if (attrs) {
+            textObj.attr(attrs);
+        }
+
+        // for raphael's svg bug;
+        if (Raphael.svg) {
+            textObj.node.getElementsByTagName('tspan')[0].setAttribute('dy', 0);
+        }
+
+        return textObj;
+    },
+
+    /**
      * Render area graph.
      * @param {object} paper raphael paper
      * @param {string} path path
@@ -91,7 +116,6 @@ var raphaelRenderUtil = {
      * @param {number} radius - radius
      * @param {object} attributes - attributes
      * @returns {object}
-     * @private
      */
     renderCircle: function(paper, position, radius, attributes) {
         var circle = paper.circle(position.left, position.top, radius);
