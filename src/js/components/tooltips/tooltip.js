@@ -131,30 +131,24 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * Make tooltip datum.
-     * @param {Array.<string>} legendLabels - legend labels
+     * @param {string} legendLabel - legend label
      * @param {string} category - category
-     * @param {string} chartType - chart type
      * @param {SeriesItem} seriesItem - SeriesItem
-     * @param {number} index - index
      * @returns {Object}
      * @private
      */
-    _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
-        var legend = legendLabels[chartType][index] || '';
-        var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
-        var ratio = '';
+    _makeTooltipDatum: function(legendLabel, category, seriesItem) {
+        var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
+        var tooltipLabel = seriesItem.tooltipLabel;
+        var labelFormatter = this.tooltipOptions && this.tooltipOptions.labelFormatter;
         var tooltipDatum = {
-            legend: legend
+            legend: (legendLabel || '')
         };
-        var isPieOrPieDonutComboChart = predicate.isPieChart(this.chartType)
-            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
 
-        if (isPieOrPieDonutComboChart) {
-            tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? seriesItem.label : '');
-            ratio = labelPrefix + (seriesItem.ratio.toFixed(2) * 100) + '&nbsp;%&nbsp;' || '';
-            tooltipDatum.ratioLabel = ratio;
-        } else {
-            tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
+        tooltipDatum.label = tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
+
+        if (labelFormatter) {
+            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
         }
 
         if (category && predicate.isDatetimeType(this.xAxisType)) {
@@ -192,7 +186,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             data = seriesGroup.map(function(seriesItem, index) {
                 var category = self.dataProcessor.makeTooltipCategory(groupIndex, index, self.isVertical);
 
-                return seriesItem ? self._makeTooltipDatum(legendLabels, category, chartType, seriesItem, index) : null;
+                return seriesItem ? self._makeTooltipDatum(legendLabels[chartType][index], category, seriesItem) : null;
             });
 
             if (!tooltipData[chartType]) {

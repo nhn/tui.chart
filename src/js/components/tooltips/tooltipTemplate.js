@@ -22,7 +22,7 @@ var htmls = {
         '<div>' +
             '<span>{{ legend }}</span>' +
             '<span>{{ ratioLabel }}</span>' +
-            '<span>({{ label }} {{ suffix }})</span>' +
+            '<span>( {{ label }} {{ suffix }})</span>' +
         '</div>' +
     '</div>',
     HTML_COORDINATE_TYPE_CHART_TEMPLATE: '<div class="tui-chart-default-tooltip">' +

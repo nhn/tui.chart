@@ -45,7 +45,9 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      */
     _addComponents: function() {
         this._addLegendComponent();
-        this._addTooltipComponent();
+        this._addTooltipComponent({
+            labelFormatter: this.labelFormatter
+        });
         this._addSeriesComponents([{
             name: 'pieSeries',
             additionalParams: {

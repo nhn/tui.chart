@@ -27,6 +27,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      *      @param {object} params.labelTheme - theme for label
      *      @param {string} params.xAxisType - xAxis type
      *      @param {string} params.dateFormat - date format
+     *      @param {object} params.tooltipOptions - label formatter function
      */
     init: function(params) {
         var isPieChart = predicate.isPieChart(params.chartType);
@@ -90,6 +91,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * @type {?string}
          */
         this.dateFormat = params.dateFormat;
+
+        /**
+         * tooltip options for each chart
+         * @type {?function}
+         */
+        this.tooltipOptions = params.tooltipOptions;
 
         /**
          * className

@@ -38,7 +38,7 @@ describe('Tooltip', function() {
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels, '', 'column', seriesItem, 0);
+            actual = tooltip._makeTooltipDatum(legendLabels.column[0], '', seriesItem);
             expected = ':&nbsp;label1';
 
             expect(actual.label).toBe(expected);
@@ -54,7 +54,15 @@ describe('Tooltip', function() {
                 chartType: 'pie',
                 dataProcessor: dataProcessor,
                 eventBus: new tui.util.CustomEvents(),
-                options: {}
+                options: {},
+                tooltipOptions: {
+                    labelFormatter: function(seriesDatum, tooltipDatum) {
+                        tooltipDatum.label = seriesDatum.label;
+                        tooltipDatum.ratioLabel = ':&nbsp;' + (seriesItem.ratio * 100) + '&nbsp;%&nbsp;';
+
+                        return tooltipDatum;
+                    }
+                }
             });
 
             seriesItem = {
@@ -63,7 +71,7 @@ describe('Tooltip', function() {
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels, '', 'pie', seriesItem, 0);
+            actual = tooltip._makeTooltipDatum(legendLabels.pie[0], '', seriesItem);
             expected = 'label1';
 
             expect(actual.label).toBe(expected);
@@ -80,7 +88,7 @@ describe('Tooltip', function() {
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels, '', 'column', seriesItem, 0);
+            actual = tooltip._makeTooltipDatum(legendLabels.column[0], '', seriesItem);
             expected = 'label1';
 
             expect(actual.label).toBe(expected);
@@ -100,7 +108,7 @@ describe('Tooltip', function() {
                 })
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels, 'category1', 'column', seriesItem, 0);
+            actual = tooltip._makeTooltipDatum(legendLabels.column[0], 'category1', seriesItem);
             expected = {
                 category: 'category1',
                 legend: 'legend1',
