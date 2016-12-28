@@ -35,6 +35,12 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
          */
         this.seriesNames = tui.util.keys(rawData.series).sort();
 
+        /**
+         * chart types
+         * @type {Object}
+         */
+        this.chartTypes = ['pie', 'pie'];
+
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,
@@ -78,7 +84,9 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      */
     _addComponents: function() {
         this._addLegendComponent(this.seriesNames);
-        this._addTooltipComponent();
+        this._addTooltipComponent({
+            labelFormatter: this.labelFormatter
+        });
         this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
         this._addMouseEventDetectorComponent();
     },

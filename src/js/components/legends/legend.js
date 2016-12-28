@@ -333,10 +333,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _checkLegend: function() {
         var checkedIndexes = this._getCheckedIndexes();
         var checkedCount = checkedIndexes.length;
-        var isPieTypeCharts = arrayUtil.all(this.seriesNames, predicate.isPieTypeChart);
+        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
+        var isPieCharts = arrayUtil.all(this.seriesNames, function(seriesName) {
+            var seriesDataModel = seriesDataModelMap[seriesName];
+
+            return seriesDataModel && predicate.isPieChart(seriesDataModel.chartType);
+        });
         var data;
 
-        if ((isPieTypeCharts && checkedCount === 1) || checkedCount === 0) {
+        if ((isPieCharts && checkedCount === 1) || checkedCount === 0) {
             this._renderLegendArea(this.legendContainer);
         } else {
             this.legendModel.updateCheckedLegendsWith(checkedIndexes);

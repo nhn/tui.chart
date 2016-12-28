@@ -304,7 +304,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                     'stroke-width': 1
                 }
             });
-            sector.data('index', index + additionalIndex);
+            sector.data('index', index);
+            sector.data('legendIndex', index + additionalIndex);
             sector.data('chartType', self.chartType);
 
             sectorInfos.push({
@@ -355,9 +356,10 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     /**
      * Show overlay.
      * @param {number} index - index
+     * @param {number} legendIndex - legend index
      * @private
      */
-    _showOverlay: function(index) {
+    _showOverlay: function(index, legendIndex) {
         var overlay = this.overlay;
         var sectorInfo = this.sectorInfos[index];
         var sa = sectorInfo.angles.startAngle;
@@ -372,6 +374,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         innerAttrs[this.sectorName] = [cb.cx, cb.cy, cb.r, sa, ea, cb.r * this.holeRatio];
         overlay.inner.attr(innerAttrs);
         overlay.inner.data('index', index);
+        overlay.inner.data('legendIndex', legendIndex);
         overlay.outer.attr({
             path: this._makeDonutSectorPath(cb.cx, cb.cy, cb.r + 10, sa, ea, cb.r).path,
             fill: sectorInfo.color,
@@ -497,6 +500,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         if (sector) {
             info = {
+                legendIndex: tui.util.isExisty(sector.data('legendIndex')) ? sector.data('legendIndex') : -1,
                 index: tui.util.isExisty(sector.data('index')) ? sector.data('index') : -1,
                 chartType: sector.data('chartType')
             };
@@ -550,7 +554,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         if (this._isValidSector(sector)) {
             if (this.prevHoverSector !== sector) {
-                this._showOverlay(sector.data('index'));
+                this._showOverlay(sector.data('index'), sector.data('legendIndex'));
                 this.prevHoverSector = sector;
             }
 

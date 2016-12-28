@@ -20,6 +20,7 @@ describe('Tooltip', function() {
 
     beforeEach(function() {
         tooltip = new Tooltip({
+            chartType: 'column',
             dataProcessor: dataProcessor,
             eventBus: new tui.util.CustomEvents(),
             options: {}
@@ -37,10 +38,44 @@ describe('Tooltip', function() {
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels, '', 'column', seriesItem, 0);
+            actual = tooltip._makeTooltipDatum(legendLabels.column[0], '', seriesItem);
             expected = ':&nbsp;label1';
 
             expect(actual.label).toBe(expected);
+        });
+
+        it('should make tooltip datum ratioLabel for data percentage and label for raw data value.', function() {
+            var actual, expected, seriesItem;
+            var legendLabels = {
+                'pie': ['legend1']
+            };
+
+            tooltip = new Tooltip({
+                chartType: 'pie',
+                dataProcessor: dataProcessor,
+                eventBus: new tui.util.CustomEvents(),
+                options: {},
+                tooltipOptions: {
+                    labelFormatter: function(seriesDatum, tooltipDatum) {
+                        tooltipDatum.label = seriesDatum.label;
+                        tooltipDatum.ratioLabel = ':&nbsp;' + (seriesItem.ratio * 100) + '&nbsp;%&nbsp;';
+
+                        return tooltipDatum;
+                    }
+                }
+            });
+
+            seriesItem = {
+                label: 'label1',
+                ratio: 0.35,
+                pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
+            };
+
+            actual = tooltip._makeTooltipDatum(legendLabels.pie[0], '', seriesItem);
+            expected = 'label1';
+
+            expect(actual.label).toBe(expected);
+            expect(actual.ratioLabel).toBe(':&nbsp;35&nbsp;%&nbsp;');
         });
 
         it('legend없이 seriesItem.label만 존재하면 prefix없는 label만 생성합니다.', function() {
@@ -53,7 +88,7 @@ describe('Tooltip', function() {
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels, '', 'column', seriesItem, 0);
+            actual = tooltip._makeTooltipDatum(legendLabels.column[0], '', seriesItem);
             expected = 'label1';
 
             expect(actual.label).toBe(expected);
@@ -73,7 +108,7 @@ describe('Tooltip', function() {
                 })
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels, 'category1', 'column', seriesItem, 0);
+            actual = tooltip._makeTooltipDatum(legendLabels.column[0], 'category1', seriesItem);
             expected = {
                 category: 'category1',
                 legend: 'legend1',

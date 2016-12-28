@@ -37,9 +37,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeTooltipHtml: function(category, item) {
+        var isPieOrPieDonutComboChart = predicate.isPieChart(this.chartType)
+            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
         var template;
 
-        if (predicate.isCoordinateTypeChart(this.chartType)) {
+        if (isPieOrPieDonutComboChart) {
+            template = tooltipTemplate.tplPieChart;
+        } else if (this.dataProcessor.coordinateType) {
             template = tooltipTemplate.tplCoordinatetypeChart;
         } else {
             template = tooltipTemplate.tplDefault;
@@ -127,28 +131,33 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * Make tooltip datum.
-     * @param {Array.<string>} legendLabels - legend labels
+     * @param {string} legendLabel - legend label
      * @param {string} category - category
-     * @param {string} chartType - chart type
      * @param {SeriesItem} seriesItem - SeriesItem
-     * @param {number} index - index
      * @returns {Object}
      * @private
      */
-    _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
-        var legend = legendLabels[chartType][index] || '';
-        var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
-        var label = seriesItem.tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
+    _makeTooltipDatum: function(legendLabel, category, seriesItem) {
+        var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
+        var tooltipLabel = seriesItem.tooltipLabel;
+        var labelFormatter = this.tooltipOptions && this.tooltipOptions.labelFormatter;
+        var tooltipDatum = {
+            legend: (legendLabel || '')
+        };
+
+        tooltipDatum.label = tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
+
+        if (labelFormatter) {
+            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
+        }
 
         if (category && predicate.isDatetimeType(this.xAxisType)) {
             category = renderUtil.formatDate(category, this.dateFormat);
         }
 
-        return tui.util.extend({
-            category: category || '',
-            legend: legend,
-            label: label
-        }, seriesItem.pickValueMapForTooltip());
+        tooltipDatum.category = category || '';
+
+        return tui.util.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
     },
 
     /**
@@ -177,7 +186,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             data = seriesGroup.map(function(seriesItem, index) {
                 var category = self.dataProcessor.makeTooltipCategory(groupIndex, index, self.isVertical);
 
-                return seriesItem ? self._makeTooltipDatum(legendLabels, category, chartType, seriesItem, index) : null;
+                return seriesItem ? self._makeTooltipDatum(legendLabels[chartType][index], category, seriesItem) : null;
             });
 
             if (!tooltipData[chartType]) {

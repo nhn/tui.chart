@@ -712,7 +712,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         this.onSelectSeries({
             chartType: this.chartType,
             indexes: {
-                index: foundIndex
+                index: foundIndex,
+                legendIndex: sectorInfo.legendIndex
             }
         }, shouldSelect);
 

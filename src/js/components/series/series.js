@@ -454,7 +454,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (this.dataProcessor.getGroupCount(this.seriesName)) {
             if (data.checkedLegends) {
-                checkedLegends = data.checkedLegends[this.chartType];
+                checkedLegends = data.checkedLegends[this.seriesName];
                 this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
             }
 

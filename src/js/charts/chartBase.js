@@ -244,16 +244,19 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Make data for initialize tooltip component.
      * @param {string} classType - component class type
+     * @param {object} tooltipOptions tooltip option
      * @returns {object} tooltip data
      * @private
      */
-    _makeTooltipData: function(classType) {
+    _makeTooltipData: function(classType, tooltipOptions) {
         return {
             isVertical: this.isVertical,
             chartType: this.chartType,
+            chartTypes: this.chartTypes,
             xAxisType: this.options.xAxis.type,
             dateFormat: this.options.xAxis.dateFormat,
-            classType: classType || 'tooltip'
+            tooltipOptions: (tooltipOptions || {}),
+            classType: (classType || 'tooltip')
         };
     },
 

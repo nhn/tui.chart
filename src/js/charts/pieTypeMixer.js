@@ -30,10 +30,11 @@ var pieTypeMixer = {
 
     /**
      * Add tooltip component.
+     * @param {object} tooltipOptions tooltip options
      * @private
      */
-    _addTooltipComponent: function() {
-        this.componentManager.register('tooltip', this._makeTooltipData('tooltip'));
+    _addTooltipComponent: function(tooltipOptions) {
+        this.componentManager.register('tooltip', this._makeTooltipData('tooltip', tooltipOptions));
     },
 
     /**
@@ -67,6 +68,28 @@ var pieTypeMixer = {
             chartType: this.chartType,
             classType: 'simpleEventDetector'
         });
+    },
+
+    /**
+     * Label formatter function for pie chart
+     * @param {object} seriesItem series item
+     * @param {object} tooltipDatum tooltip datum object
+     * @param {string} labelPrefix label prefix
+     * @returns {object}
+     */
+    labelFormatter: function(seriesItem, tooltipDatum, labelPrefix) {
+        var ratioLabel;
+        var percentageString = (seriesItem.ratio * 100).toFixed(4);
+        var percent = parseFloat(percentageString);
+        var needSlice = (percent < 0.0009 || percentageString.length > 5);
+
+        percentageString = needSlice ? percentageString.substr(0, 4) : String(percent);
+        ratioLabel = percentageString + '&nbsp;%&nbsp;' || '';
+
+        tooltipDatum.ratioLabel = labelPrefix + ratioLabel;
+        tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? seriesItem.label : '');
+
+        return tooltipDatum;
     }
 };
 
