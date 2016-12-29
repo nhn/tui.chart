@@ -42,7 +42,8 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 #### Combo Chart (Combination Chart)
 * Represents combined features of two kinds of charts.
 
-![combo chart](https://cloud.githubusercontent.com/assets/2888775/17967953/3369fcae-6b05-11e6-9e31-abffd5a97b26.png)
+![combo chart](https://cloud.githubusercontent.com/assets/7088720/21537341/bfe0fe0e-cdd3-11e6-95da-83e662a2c646.png)
+
 
 #### Map Chart
 * Represents relationships in data by indicating data by color range on a geographical map.
@@ -58,6 +59,13 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 * Represents hierarchical data by using rectangles and color range.
 
 ![treemap chart](https://cloud.githubusercontent.com/assets/2888775/17967959/3392b338-6b05-11e6-88af-b870c9c4c13a.png)
+
+#### Radial Chart
+* Represents quantitative data with closed poly lines.
+
+![radial chart](https://cloud.githubusercontent.com/assets/7088720/21537366/29c89534-cdd4-11e6-83be-513f9a699368.png)
+
+
 
 ## Documentation
 * **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
