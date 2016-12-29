@@ -4,7 +4,7 @@
  * @version 2.5.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Nov 30 2016 12:07:03 GMT+0900 (KST)"
+ * bundle created at "Thu Dec 29 2016 14:03:50 GMT+0900 (KST)"
  */
 .tui-chart {
   position: relative;
@@ -429,6 +429,44 @@
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   filter: alpha(opacity=50);
   opacity: 0.5;
+}
+.tui-chart .tui-chart-chartExportMenu-area {
+  z-index: 900;
+  position: absolute;
+  font-family: Verdana;
+  margin: 0;
+  padding: 0;
+}
+.tui-chart .tui-chart-chartExportMenu-area .tui-chart-chartExportMenu-button {
+  position: absolute;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #000;
+  font-size: 12px;
+  padding: 3px 5px;
+  margin: 0;
+}
+.tui-chart .tui-chart-chartExportMenu-area ul {
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 0;
+  width: 100px;
+  background: #fafaff;
+  border: 1px solid #000;
+  font-size: 0.8em;
+  padding: 0;
+  margin: 0;
+}
+.tui-chart .tui-chart-chartExportMenu-area ul > li {
+  margin: 0;
+  padding: 7px 3px;
+  border-right: 0.5px solid #000;
+  border-bottom: 0.5px solid #000;
+  border-collapse: collapse;
+  text-align: center;
+  list-style-type: none;
+  line-height: 1;
 }
 .tui-chart .tui-chart-legend-area {
   z-index: 400;
