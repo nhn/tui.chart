@@ -177,6 +177,19 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
+     * Re render plot component
+     * @param {object} data - bounds and scale data
+     */
+    rerender: function(data) {
+        var plotPositions = this._makePositions(data.axisDataMap, data.layout.dimension);
+        var labelData = this._makeLabelData(data.axisDataMap, data.layout.dimension, plotPositions);
+
+        this.plotContainer.innerHTML = '';
+
+        this._renderPlotArea(this.plotContainer, data.layout.dimension, plotPositions, labelData);
+    },
+
+    /**
      * Set element's top, left given top, left position
      * series에서 가져옴, 추후 공통 페이퍼 적용전까지 임시 사용
      * @param {HTMLElement} el - series element
