@@ -121,5 +121,8 @@
   },
   "sample12-01-dynamic-data-shifting-chart": {
     "title": "[Dynamic chart] dynamic data and spline"
+  },
+  "sample13-01-radial-chart": {
+    "title": "[Radial chart] basic"
   }
 }
