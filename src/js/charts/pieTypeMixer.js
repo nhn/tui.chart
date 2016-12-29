@@ -59,6 +59,20 @@ var pieTypeMixer = {
     },
 
     /**
+     * Add chartExportMenu component.
+     * @private
+     */
+    _addChartExportMenuComponent: function() {
+        var chartOption = this.options.chart;
+        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
+
+        this.componentManager.register('chartExportMenu', {
+            chartTitle: chartTitle,
+            classType: 'chartExportMenu'
+        });
+    },
+
+    /**
      * Add mouse event detector component.
      * @private
      * @override

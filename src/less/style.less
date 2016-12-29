@@ -421,7 +421,44 @@
       .opacity(0.5);
     }
   }
-
+  .tui-chart-chartExportMenu-area {
+    z-index: 900;
+    position: absolute;
+    font-family: Verdana;
+    margin: 0;
+    padding: 0;
+    .tui-chart-chartExportMenu-button{
+      position: absolute;
+      right :0;
+      background-color: #fff;
+      border: 1px solid #000;
+      font-size: 12px;
+      padding: 3px 5px;
+      margin: 0;
+    }
+    ul {
+      display: none;
+      position: absolute;
+      top: 20px;
+      right: 0;
+      width: 100px;
+      background: #fafaff;
+      border: 1px solid #000;
+      font-size: 0.8em;
+      padding: 0;
+      margin: 0;
+        > li {
+          margin: 0;
+          padding: 7px 3px;
+          border-right: 0.5px solid #000;
+          border-bottom: 0.5px solid #000;
+          border-collapse: collapse;
+          text-align: center;
+          list-style-type: none;
+          line-height: 1;
+        }
+    }
+  }
   .tui-chart-legend-area {
     z-index: 400;
     position: absolute;

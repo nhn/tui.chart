@@ -10,6 +10,7 @@ var dom = require('../helpers/domHandler');
 var Axis = require('../components/axes/axis');
 var Plot = require('../components/plots/plot');
 var RadialPlot = require('../components/plots/radialPlot');
+var ChartExportMenu = require('../components/chartExportMenu/chartExportMenu');
 
 // legends
 var Legend = require('../components/legends/legend');
@@ -69,7 +70,8 @@ var COMPONENT_CLASS_MAP = {
     pieSeries: PieSeries,
     heatmapSeries: HeatmapSeries,
     treemapSeries: TreemapSeries,
-    zoom: Zoom
+    zoom: Zoom,
+    chartExportMenu: ChartExportMenu
 };
 
 var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototype */ {
