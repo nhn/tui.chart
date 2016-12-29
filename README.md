@@ -75,7 +75,7 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 
 ## Dependency
 * tui.code-snippet 1.0.8
-* tui.component-effects 1.1.0
+* tui.component-animation 0.1.0
 * Raphaël 2.1.4
 
 ## Map Data Attribution
