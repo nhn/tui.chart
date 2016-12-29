@@ -238,7 +238,8 @@ module.exports = {
             theme.title,
             theme.xAxis.title,
             theme.xAxis.label,
-            theme.legend.label
+            theme.legend.label,
+            theme.plot.label
         ];
 
         tui.util.forEach(theme.yAxis, function(_theme) {

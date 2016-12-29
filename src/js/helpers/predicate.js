@@ -45,6 +45,16 @@ var predicate = {
     },
 
     /**
+     * Whether radial type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
+     */
+    isRadialChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_RADIAL;
+    },
+
+    /**
      * Whether diverging chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart

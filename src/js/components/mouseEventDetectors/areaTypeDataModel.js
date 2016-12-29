@@ -41,7 +41,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
             var groupPositions = seriesDatum.data.groupPositions || seriesDatum.data.groupBounds;
             var chartType = seriesDatum.chartType;
 
-            if (predicate.isLineTypeChart(chartType)) {
+            if (predicate.isLineTypeChart(chartType) || predicate.isRadialChart(chartType)) {
                 groupPositions = arrayUtil.pivot(groupPositions);
             }
 

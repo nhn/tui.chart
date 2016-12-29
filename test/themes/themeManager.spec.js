@@ -334,6 +334,9 @@ describe('Test for themeManager', function() {
                 },
                 legend: {
                     label: {}
+                },
+                plot: {
+                    label: {}
                 }
             };
             var actual = themeManager._createTargetThemesForFontInherit(theme);
@@ -345,7 +348,8 @@ describe('Test for themeManager', function() {
                 theme.legend.label,
                 theme.yAxis.column.title,
                 theme.yAxis.column.label,
-                theme.series.column.label
+                theme.series.column.label,
+                theme.plot.label
             ]);
         });
 
@@ -376,6 +380,9 @@ describe('Test for themeManager', function() {
                 },
                 legend: {
                     label: {}
+                },
+                plot: {
+                    label: {}
                 }
             };
             var actual = themeManager._createTargetThemesForFontInherit(theme);
@@ -390,7 +397,8 @@ describe('Test for themeManager', function() {
                 theme.yAxis.line.title,
                 theme.yAxis.line.label,
                 theme.series.column.label,
-                theme.series.line.label
+                theme.series.line.label,
+                theme.plot.label
             ]);
         });
     });
@@ -407,6 +415,9 @@ describe('Test for themeManager', function() {
                     label: {}
                 },
                 legend: {
+                    label: {}
+                },
+                plot: {
                     label: {}
                 }
             };
@@ -501,7 +512,8 @@ describe('Test for themeManager', function() {
 
             expect(theme.plot).toEqual({
                 lineColor: '#e5dbc4',
-                background: '#f6f1e5'
+                background: '#f6f1e5',
+                label: theme.plot.label
             });
         });
 

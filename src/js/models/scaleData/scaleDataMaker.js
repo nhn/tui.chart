@@ -232,16 +232,28 @@ var scaleDataMaker = {
      * @param {number} baseSize - base size(width or height) for calculating scale data
      * @param {object} overflowItem - overflow item
      * @param {boolean} isDiverging - is diverging or not
-     * @param {{min: ?number, max: ?number}} limitOption - is diverging or not
+     * @param {object} options - scale options
+     * @param {{min: ?number, max: ?number}} options.limit - limit options
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, limitOption) {
+    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, options) {
         var limit = this._getLimitSafely(baseValues);
+        var limitOption = options.limitOption;
+        var stepCount = options.stepCount;
+        var min = limit.min;
+        var max = limit.max;
+
+        if (limitOption && (limitOption.min || limitOption.max)) {
+            stepCount = null;
+            min = limitOption.min || min;
+            max = limitOption.max || max;
+        }
 
         var scaleData = coordinateScaleCalculator({
-            min: limitOption && limitOption.min ? limitOption.min : limit.min,
-            max: limitOption && limitOption.max ? limitOption.max : limit.max,
+            min: min,
+            max: max,
+            stepCount: stepCount,
             offsetSize: baseSize
         });
 
@@ -272,7 +284,6 @@ var scaleDataMaker = {
     makeScaleData: function(baseValues, baseSize, chartType, options) {
         var scaleData;
         var isDiverging = predicate.isDivergingChart(chartType, options.diverging);
-        var limitOption = options.limitOption;
         var overflowItem = options.overflowItem;
 
         if (predicate.isPercentStackChart(chartType, options.stackType)) {
@@ -280,7 +291,11 @@ var scaleDataMaker = {
         } else if (predicate.isDatetimeType(options.type)) {
             scaleData = this._calculateDatetimeScale(baseValues, baseSize, isDiverging);
         } else {
-            scaleData = this._calculateCoordinateScale(baseValues, baseSize, overflowItem, isDiverging, limitOption);
+            if (predicate.isRadialChart(chartType)) {
+                options.stepCount = Math.floor(baseSize / 100);
+            }
+
+            scaleData = this._calculateCoordinateScale(baseValues, baseSize, overflowItem, isDiverging, options);
         }
 
         return scaleData;

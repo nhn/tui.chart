@@ -303,6 +303,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         this._renderPosition(seriesContainer, position);
+
         if (this.hasDataForRendering(seriesData) || this.chartType === 'map') {
             if (funcRenderGraph) {
                 paper = funcRenderGraph(dimension, seriesData, paper);
@@ -390,7 +391,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.seriesContainer = container;
         this._setDataForRendering(data);
         this.beforeAxisDataMap = this.axisDataMap;
-
 
         if (data.checkedLegends) {
             checkedLegends = data.checkedLegends[this.seriesName];

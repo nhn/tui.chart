@@ -47,51 +47,6 @@ var calculator = {
     },
 
     /**
-     * Normalize number.
-     * @memberOf module:calculator
-     * @param {number} value target value
-     * @returns {number} normalized number
-     */
-    normalizeAxisNumber: function(value) {
-        var standard = 0,
-            flag = 1,
-            normalized, modValue;
-
-        if (value === 0) {
-            return value;
-        } else if (value < 0) {
-            flag = -1;
-        }
-
-        value *= flag;
-
-        tui.util.forEachArray(chartConst.AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
-            if (value < num) {
-                if (num > 1) {
-                    standard = num;
-                }
-
-                return false;
-            } else if (num === chartConst.AXIS_LAST_STANDARD_MULTIPLE_NUM) {
-                standard = num;
-            }
-
-            return true;
-        });
-
-        if (standard < 1) {
-            normalized = this.normalizeAxisNumber(value * 10) * 0.1;
-        } else {
-            modValue = calculator.mod(value, standard);
-            normalized = calculator.add(value, (modValue > 0 ? standard - modValue : 0));
-        }
-
-        normalized *= flag;
-
-        return normalized;
-    },
-
-    /**
      * Make tick positions of pixel type.
      * @memberOf module:calculator
      * @param {number} size area width or height

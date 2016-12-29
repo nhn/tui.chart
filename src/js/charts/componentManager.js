@@ -9,6 +9,7 @@
 var dom = require('../helpers/domHandler');
 var Axis = require('../components/axes/axis');
 var Plot = require('../components/plots/plot');
+var RadialPlot = require('../components/plots/radialPlot');
 
 // legends
 var Legend = require('../components/legends/legend');
@@ -31,6 +32,7 @@ var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEvent
 var BarSeries = require('../components/series/barChartSeries');
 var ColumnSeries = require('../components/series/columnChartSeries');
 var LineSeries = require('../components/series/lineChartSeries');
+var RadialSeries = require('../components/series/radialSeries');
 var AreaSeries = require('../components/series/areaChartSeries');
 var BubbleSeries = require('../components/series/bubbleChartSeries');
 var ScatterSeries = require('../components/series/scatterChartSeries');
@@ -44,6 +46,7 @@ var Zoom = require('../components/series/zoom');
 var COMPONENT_CLASS_MAP = {
     axis: Axis,
     plot: Plot,
+    radialPlot: RadialPlot,
     legend: Legend,
     spectrumLegend: SpectrumLegend,
     circleLegend: CircleLegend,
@@ -58,6 +61,7 @@ var COMPONENT_CLASS_MAP = {
     barSeries: BarSeries,
     columnSeries: ColumnSeries,
     lineSeries: LineSeries,
+    radialSeries: RadialSeries,
     areaSeries: AreaSeries,
     bubbleSeries: BubbleSeries,
     scatterSeries: ScatterSeries,

@@ -64,7 +64,7 @@ var boundsAndScaleBuilder = {
      * @param {object} yAxisOptions - option for yAxis
      */
     addYAxisScale: function(scaleDataModel, name, scaleOption, yAxisOptions) {
-        scaleDataModel.addScale(name, scaleOption.options || yAxisOptions, {
+        scaleDataModel.addScale(name, (scaleOption && scaleOption.options) || yAxisOptions || {}, {
             valueType: scaleOption.valueType || 'value',
             areaType: scaleOption.areaType,
             chartType: scaleOption.chartType

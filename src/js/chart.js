@@ -1172,6 +1172,94 @@ tui.chart.mapChart = function(container, rawData, options) {
 };
 
 /**
+ * radial chart creator.
+ * @memberOf tui.chart
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showDot - show dot or not (default: true)
+ *          @param {boolean} options.series.showArea - show area or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.type - "spiderweb" or "circle" (default: "spiderweb")
+ *      @param {object|Array} options.yAxis - options for y axis component
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.offset - tooltip offset
+ *              @param {number} options.tooltip.offset.x - offset x
+ *              @param {number} options.tooltip.offset.y - offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
+ * @returns {object} bar chart
+ * @api
+ * @example
+ *  var container = document.getElementById('chart-area'),
+ *  data = {
+ *      categories: ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+ *      series: [
+ *          {
+ *              name: 'Budget',
+ *              data: [5000, 3000, 5000, 7000, 6000, 4000]
+ *          },
+ *          {
+ *              name: 'Income',
+ *              data: [8000, 8000, 7000, 2000, 5000, 3000]
+ *            },
+ *          {
+ *              name: 'Expenses',
+ *              data: [4000, 4000, 6000, 3000, 4000, 5000]
+ *          },
+ *          {
+ *              name: 'Debt',
+ *              data: [6000, 3000, 3000, 1000, 2000, 4000]
+ *          }
+ *      ]
+ *  },
+ *  options = {
+ *      chart: {
+ *          width: 600,
+ *          height: 400
+ *      },
+ *      series: {
+ *          showDot: true,
+ *          showArea: true
+ *      },
+ *      plot: {
+ *          type: 'circle'
+ *      },
+ *      yAxis: {
+ *          min: 0,
+ *          max: 9000
+ *      }
+ *  };
+ *  tui.chart.radialChart(container, data, options);
+ *
+ */
+tui.chart.radialChart = function(container, rawData, options) {
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_RADIAL);
+};
+
+/**
  * Register theme.
  * @memberOf tui.chart
  * @param {string} themeName - theme name

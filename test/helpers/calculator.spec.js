@@ -29,48 +29,6 @@ describe('Test for calculator', function() {
         });
     });
 
-    describe('normalizeAxisNumber()', function() {
-        it('0에 대한 정규화 결과는 0입니다.', function() {
-            var result = calculator.normalizeAxisNumber(0);
-            expect(result).toBe(0);
-        });
-
-        it('1.6에 대한 정규화 결과는 2입니다.', function() {
-            var result = calculator.normalizeAxisNumber(1.6);
-            expect(result).toBe(2);
-        });
-
-        it('4에 대한 정규화 결과는 5입니다.', function() {
-            var result = calculator.normalizeAxisNumber(4);
-            expect(result).toBe(5);
-        });
-
-        it('6에 대한 정규화 결과는 10입니다.', function() {
-            var result = calculator.normalizeAxisNumber(6);
-            expect(result).toBe(10);
-        });
-
-        it('40에 대한 정규화 결과는 50입니다.', function() {
-            var result = calculator.normalizeAxisNumber(40);
-            expect(result).toBe(50);
-        });
-
-        it('1005에 대한 정규화 결과는 2000입니다.', function() {
-            var result = calculator.normalizeAxisNumber(1005);
-            expect(result).toBe(1100);
-        });
-
-        it('0.4에 대한 정규화 결과는 0.5입니다.', function() {
-            var result = calculator.normalizeAxisNumber(0.4);
-            expect(result).toBe(0.5);
-        });
-
-        it('0.07에 대한 정규화 결과는 0.1입니다.', function() {
-            var result = calculator.normalizeAxisNumber(0.07);
-            expect(result).toBe(0.1);
-        });
-    });
-
     describe('makePixelPositions()', function() {
         it('make pixel positions, when size is 300 and count is 5', function() {
             var positions = calculator.makeTickPixelPositions(300, 5);

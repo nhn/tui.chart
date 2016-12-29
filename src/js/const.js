@@ -57,6 +57,8 @@ var chartConst = {
     CHART_TYPE_TREEMAP: 'treemap',
     /** @type {string} */
     CHART_TYPE_MAP: 'map',
+    /** @type {string} */
+    CHART_TYPE_RADIAL: 'radial',
     /** chart padding */
     CHART_PADDING: 10,
     /** chart default width */
@@ -362,6 +364,10 @@ var chartConst = {
         beforeShowTooltip: true,
         afterShowTooltip: true,
         zoom: true
-    }
+    },
+    /** for radial */
+    RADIAL_PLOT_PADDING: 15, // Prevent cross paper boundaries by line width
+    RADIAL_MARGIN_FOR_CATEGORY: 60,
+    RADIAL_CATEGORY_PADDING: 20
 };
 module.exports = chartConst;

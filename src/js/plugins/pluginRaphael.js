@@ -10,11 +10,15 @@ var BarChart = require('./raphaelBarChart');
 var LineChart = require('./raphaelLineChart');
 var AreaChart = require('./raphaelAreaChart');
 var PieChart = require('./raphaelPieChart');
+var RadialLineSeries = require('./raphaelRadialLineSeries');
 var CoordinateTypeChart = require('./raphaelCoordinateTypeChart');
 var BoxTypeChart = require('./raphaelBoxTypeChart');
 var MapChart = require('./raphaelMapChart');
+
 var MapLegend = require('./raphaelMapLegend');
 var CircleLegend = require('./raphaelCircleLegend');
+
+var RadialPlot = require('./raphaelRadialPlot');
 
 var pluginName = 'raphael';
 var pluginRaphael = {
@@ -28,8 +32,10 @@ var pluginRaphael = {
     heatmap: BoxTypeChart,
     treemap: BoxTypeChart,
     map: MapChart,
+    radial: RadialLineSeries,
     mapLegend: MapLegend,
-    circleLegend: CircleLegend
+    circleLegend: CircleLegend,
+    radialPlot: RadialPlot
 };
 
 tui.chart.registerPlugin(pluginName, pluginRaphael);

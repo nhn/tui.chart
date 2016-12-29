@@ -43,10 +43,10 @@ function getSnappedNumber(number) {
     var guideValue, snapNumber, i, t;
 
     for (i = 0, t = SNAP_VALUES.length; i < t; i += 1) {
-        guideValue = (SNAP_VALUES[i] + (SNAP_VALUES[i + 1] || SNAP_VALUES[i])) / 2;
+        snapNumber = SNAP_VALUES[i];
+        guideValue = (snapNumber + (SNAP_VALUES[i + 1] || snapNumber)) / 2;
 
         if (number <= guideValue) {
-            snapNumber = SNAP_VALUES[i];
             break;
         }
     }

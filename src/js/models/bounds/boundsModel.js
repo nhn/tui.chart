@@ -577,6 +577,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         return !(predicate.isPieChart(chartType) || predicate.isMapChart(chartType))
             && !predicate.isTreemapChart(chartType)
+            && !predicate.isRadialChart(chartType)
             && !predicate.isPieDonutComboChart(chartType, this.seriesNames);
     },
 

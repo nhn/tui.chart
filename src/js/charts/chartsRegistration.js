@@ -16,6 +16,7 @@ var ScatterChart = require('./scatterChart');
 var HeatmapChart = require('./heatmapChart');
 var TreemapChart = require('./treemapChart');
 var MapChart = require('./mapChart');
+var RadialChart = require('./radialChart');
 
 chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);
@@ -31,3 +32,4 @@ chartFactory.register(chartConst.CHART_TYPE_SCATTER, ScatterChart);
 chartFactory.register(chartConst.CHART_TYPE_HEATMAP, HeatmapChart);
 chartFactory.register(chartConst.CHART_TYPE_TREEMAP, TreemapChart);
 chartFactory.register(chartConst.CHART_TYPE_MAP, MapChart);
+chartFactory.register(chartConst.CHART_TYPE_RADIAL, RadialChart);

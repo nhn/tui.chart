@@ -35,7 +35,12 @@ var defaultTheme = {
     xAxis: DEFAULT_AXIS,
     plot: {
         lineColor: '#dddddd',
-        background: '#ffffff'
+        background: '#ffffff',
+        label: {
+            fontSize: 11,
+            fontFamily: EMPTY,
+            color: '#888'
+        }
     },
     series: {
         label: {
