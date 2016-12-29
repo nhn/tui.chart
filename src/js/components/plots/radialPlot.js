@@ -158,7 +158,7 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @returns {{
      *     container: HTMLElement,
      *     paper: object
-     * } plot element
+     * }} plot element
      */
     render: function(data) {
         var paper;

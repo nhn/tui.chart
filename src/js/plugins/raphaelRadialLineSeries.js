@@ -14,7 +14,7 @@ var DE_EMPHASIS_OPACITY = 0.3;
 
 var raphael = window.Raphael;
 
-var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */ {
+var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelRadialLineSeries

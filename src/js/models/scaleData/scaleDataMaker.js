@@ -243,6 +243,7 @@ var scaleDataMaker = {
         var stepCount = options.stepCount;
         var min = limit.min;
         var max = limit.max;
+        var scaleData;
 
         if (limitOption && (limitOption.min || limitOption.max)) {
             stepCount = null;
@@ -250,7 +251,7 @@ var scaleDataMaker = {
             max = limitOption.max || max;
         }
 
-        var scaleData = coordinateScaleCalculator({
+        scaleData = coordinateScaleCalculator({
             min: min,
             max: max,
             stepCount: stepCount,
