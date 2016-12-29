@@ -63,7 +63,7 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
      * @private
      */
     _renderSpiderwebPlot: function() {
-        this._renderLines(this._getLinesPath(this.plotPositions));
+        this._renderLines(this._getLinesPath(this.plotPositions), this.theme.lineColor);
     },
 
     /**
@@ -91,7 +91,7 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
      * @private
      */
     _renderCatergoryLines: function() {
-        this._renderLines(this._getLinesPath(arrayUtil.pivot(this.plotPositions)));
+        this._renderLines(this._getLinesPath(arrayUtil.pivot(this.plotPositions)), this.theme.lineColor);
     },
 
     /**
@@ -139,11 +139,11 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderLines: function(groupPaths) {
+    _renderLines: function(groupPaths, lineColor) {
         var paper = this.paper;
 
         return tui.util.map(groupPaths, function(path) {
-            return raphaelRenderUtil.renderLine(paper, path.join(' '), '#CCC', 1);
+            return raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
         });
     },
 
