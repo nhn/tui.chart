@@ -34,7 +34,7 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.limit.min).toEqual(0);
             expect(scale.limit.max).toEqual(900);
             expect(scale.step).toEqual(100);
-            expect(scale.stepCount).toEqual(10);
+            expect(scale.stepCount).toEqual(9);
         });
 
         it('get tick value that normalized', function() {
