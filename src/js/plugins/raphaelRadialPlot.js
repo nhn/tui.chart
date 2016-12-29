@@ -49,10 +49,10 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
      * @private
      */
     _renderPlot: function() {
-        if (this.options.type === 'spiderweb') {
-            this._renderSpiderwebPlot();
-        } else {
+        if (this.options.type === 'circle') {
             this._renderCirclePlot();
+        } else {
+            this._renderSpiderwebPlot();
         }
 
         this._renderCatergoryLines();
