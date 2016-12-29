@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Radial Chart] basic</title>
+    <link rel="stylesheet" type="text/css" href="../dist/chart.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html'>
+        <div id="chart-area"></div>
+    </div>
+</div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="radialChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+    "series": [
+        {
+            "name": "Budget",
+            "data": [5000, 3000, 5000, 7000, 6000, 4000]
+        },
+        {
+            "name": "Income",
+            "data": [8000, 1000, 7000, 2000, 5000, 3000]
+
+        },
+        {
+            "name": "Expenses",
+            "data": [4000, 4000, 6000, 3000, 4000, 5000]
+        },
+        {
+            "name": "Debt",
+            "data": [6000, 3000, 3000, 1000, 2000, 4000]
+        }
+    ]
+}
+
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+        "chart": {
+            "title": "Annual Incomes",
+            "width": 600,
+            "height": 400
+        },
+        "series": {
+            "showDot": true,
+            "showArea": true
+        },
+        "plot": {
+            "type": "circle"
+        }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#63A69F", "#F2E1AC", "#F2836B",  "#F2594B"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.0.8/code-snippet.js"></script>
+<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.animation/0.1.0/dist/tui-component-animation.js"></script>
+<script type="text/javascript" src="https://rawgit.com/nhnent/raphael/v2.1.4b/raphael.js"></script>
+<script src="../dist/chart.js"></script>
+<script src="js/sample.js"></script>
+<script class='code-js'>
+    var container = document.getElementById('chart-area'),
+    data = {
+        categories: ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+        series: [
+            {
+                name: 'Budget',
+                data: [5000, 3000, 5000, 7000, 6000, 4000]
+            },
+            {
+                name: 'Income',
+                data: [8000, 8000, 7000, 2000, 5000, 3000]
+
+            },
+            {
+                name: 'Expenses',
+                data: [4000, 4000, 6000, 3000, 4000, 5000]
+            },
+            {
+                name: 'Debt',
+                data: [6000, 3000, 3000, 1000, 2000, 4000]
+            }
+        ]
+    },
+    options = {
+        chart: {
+            title: 'Annual Incomes',
+            width: 600,
+            height: 400
+        },
+        series: {
+            showDot: true,
+            showArea: true
+        },
+        plot: {
+            type: 'circle'
+        }
+    };
+    tui.chart.radialChart(container, data, options);
+</script>
+</body>
+</html>
