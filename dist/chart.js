@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.5.0
+ * @version 2.6.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Dec 29 2016 14:54:06 GMT+0900 (KST)"
+ * bundle created at "Thu Dec 29 2016 17:44:26 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -25555,7 +25555,8 @@
 	function getNormalizedScale(scale) {
 	    var step = getNormalizedStep(scale.step);
 	    var edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step);
-	    var stepCount = scale.stepCount;
+	    var limitSize = Math.abs(edge.max - edge.min);
+	    var stepCount = limitSize / step;
 
 	    return {
 	        limit: {
