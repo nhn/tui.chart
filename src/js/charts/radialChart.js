@@ -73,6 +73,11 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
             chartType: this.chartType,
             classType: 'legend'
         }));
+
+        this.componentManager.register('chartExportMenu', {
+            chartTitle: this.options.chart && this.options.chart.title ? this.options.chart.title.text : 'chart',
+            classType: 'chartExportMenu'
+        });
     },
 
     /**
