@@ -136,6 +136,7 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
     /**
      * Render lines.
      * @param {Array.<Array.<string>>} groupPaths paths
+     * @param {string} lineColor line color
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
