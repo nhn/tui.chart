@@ -105,7 +105,8 @@ function getNormalizedLimit(min, max, step) {
 function getNormalizedScale(scale) {
     var step = getNormalizedStep(scale.step);
     var edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step);
-    var stepCount = scale.stepCount;
+    var limitSize = Math.abs(edge.max - edge.min);
+    var stepCount = limitSize / step;
 
     return {
         limit: {
