@@ -4,7 +4,7 @@
  * @version 2.5.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Dec 29 2016 14:03:50 GMT+0900 (KST)"
+ * bundle created at "Thu Dec 29 2016 14:54:06 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -7847,6 +7847,19 @@
 	            container: this.plotContainer,
 	            paper: paper
 	        };
+	    },
+
+	    /**
+	     * Re render plot component
+	     * @param {object} data - bounds and scale data
+	     */
+	    rerender: function(data) {
+	        var plotPositions = this._makePositions(data.axisDataMap, data.layout.dimension);
+	        var labelData = this._makeLabelData(data.axisDataMap, data.layout.dimension, plotPositions);
+
+	        this.plotContainer.innerHTML = '';
+
+	        this._renderPlotArea(this.plotContainer, data.layout.dimension, plotPositions, labelData);
 	    },
 
 	    /**
