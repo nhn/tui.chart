@@ -247,8 +247,8 @@ var scaleDataMaker = {
 
         if (limitOption && (limitOption.min || limitOption.max)) {
             stepCount = null;
-            min = limitOption.min || min;
-            max = limitOption.max || max;
+            min = tui.util.isExisty(limitOption.min) ? limitOption.min : min;
+            max = tui.util.isExisty(limitOption.max) ? limitOption.max : max;
         }
 
         scaleData = coordinateScaleCalculator({
