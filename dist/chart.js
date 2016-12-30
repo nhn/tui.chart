@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.6.1
+ * @version 2.6.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Dec 29 2016 17:44:26 GMT+0900 (KST)"
+ * bundle created at "Fri Dec 30 2016 11:19:56 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -25385,8 +25385,8 @@
 
 	        if (limitOption && (limitOption.min || limitOption.max)) {
 	            stepCount = null;
-	            min = limitOption.min || min;
-	            max = limitOption.max || max;
+	            min = tui.util.isExisty(limitOption.min) ? limitOption.min : min;
+	            max = tui.util.isExisty(limitOption.max) ? limitOption.max : max;
 	        }
 
 	        scaleData = coordinateScaleCalculator({
