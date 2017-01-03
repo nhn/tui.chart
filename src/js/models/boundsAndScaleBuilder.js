@@ -26,7 +26,7 @@ var boundsAndScaleBuilder = {
     _createBoundsModel: function(dataProcessor, params) {
         return new BoundsModel({
             chartType: params.chartType,
-            seriesNames: params.seriesNames,
+            seriesTypes: params.seriesTypes,
             options: params.options,
             theme: params.theme,
             dataProcessor: dataProcessor,
@@ -46,7 +46,7 @@ var boundsAndScaleBuilder = {
     _createScaleDataModel: function(dataProcessor, boundsModel, params) {
         return new ScaleDataModel({
             chartType: params.chartType,
-            seriesNames: params.seriesNames,
+            seriesTypes: params.seriesTypes,
             options: params.options,
             theme: params.theme,
             dataProcessor: dataProcessor,
@@ -212,7 +212,7 @@ var boundsAndScaleBuilder = {
         boundsAndScale = {
             dimensionMap: boundsModel.dimensionMap,
             positionMap: boundsModel.positionMap,
-            limitMap: scaleDataModel.makeLimitMap(params.seriesNames || [params.chartType], params.isVertical)
+            limitMap: scaleDataModel.makeLimitMap(params.seriesTypes || [params.chartType], params.isVertical)
         };
 
         if (scaleDataModel.axisDataMap) {

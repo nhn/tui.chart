@@ -44,7 +44,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * Series name
          * @tpye {string}
          */
-        this.seriesName = params.seriesName || params.chartType;
+        this.seriesType = params.seriesType || params.chartType;
 
         /**
          * Component type
@@ -80,7 +80,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * Theme
          * @type {object}
          */
-        this.orgTheme = this.theme = params.theme[this.seriesName];
+        this.orgTheme = this.theme = params.theme[this.seriesType];
 
         /**
          * Graph renderer
@@ -209,7 +209,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _getSeriesDataModel: function() {
-        return this.dataProcessor.getSeriesDataModel(this.seriesName);
+        return this.dataProcessor.getSeriesDataModel(this.seriesType);
     },
 
     /**
@@ -328,7 +328,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _makeParamsForGraphRendering: function(dimension, seriesData) {
         return tui.util.extend({
             dimension: dimension,
-            chartType: this.seriesName,
+            chartType: this.seriesType,
             theme: this.theme,
             options: this.options
         }, seriesData);
@@ -393,7 +393,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.beforeAxisDataMap = this.axisDataMap;
 
         if (data.checkedLegends) {
-            checkedLegends = data.checkedLegends[this.seriesName];
+            checkedLegends = data.checkedLegends[this.seriesType];
             this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
         }
 
@@ -452,9 +452,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this._clearSeriesContainer();
 
-        if (this.dataProcessor.getGroupCount(this.seriesName)) {
+        if (this.dataProcessor.getGroupCount(this.seriesType)) {
             if (data.checkedLegends) {
-                checkedLegends = data.checkedLegends[this.seriesName];
+                checkedLegends = data.checkedLegends[this.seriesType];
                 this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
             }
 
@@ -826,11 +826,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      *On select legend.
-     * @param {string} seriesName - series name
+     * @param {string} seriesType - series name
      * @param {?number} legendIndex - legend index
      */
-    onSelectLegend: function(seriesName, legendIndex) {
-        if ((this.seriesName !== seriesName) && !tui.util.isNull(legendIndex)) {
+    onSelectLegend: function(seriesType, legendIndex) {
+        if ((this.seriesType !== seriesType) && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
         }
 

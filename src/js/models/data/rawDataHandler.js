@@ -82,17 +82,17 @@ var rawDataHandler = {
     /**
      * Find char type from chart name.
      * @param {object.<string, string>} seriesAlias - alias map
-     * @param {string} seriesName - series name
+     * @param {string} seriesType - series name
      * @returns {*}
      */
-    findChartType: function(seriesAlias, seriesName) {
+    findChartType: function(seriesAlias, seriesType) {
         var chartType;
 
         if (seriesAlias) {
-            chartType = seriesAlias[seriesName];
+            chartType = seriesAlias[seriesType];
         }
 
-        return chartType || seriesName;
+        return chartType || seriesType;
     },
 
     /**
@@ -105,8 +105,8 @@ var rawDataHandler = {
         var chartTypeMap = {};
 
         if (tui.util.isObject(rawData.series)) {
-            tui.util.forEach(rawData.series, function(data, seriesName) {
-                chartTypeMap[self.findChartType(rawData.seriesAlias, seriesName)] = true;
+            tui.util.forEach(rawData.series, function(data, seriesType) {
+                chartTypeMap[self.findChartType(rawData.seriesAlias, seriesType)] = true;
             });
         }
 

@@ -24,23 +24,23 @@ module.exports = {
     },
 
     /**
-     * Pick series names from raw series data.
+     * Pick series types from raw series data.
      * @param {string} chartType - chart type
      * @param {object} rawSeriesData - raw series data
      * @returns {Array}
      * @private
      */
     _pickSeriesNames: function(chartType, rawSeriesData) {
-        var seriesNames = [];
+        var seriesTypes = [];
         if (predicate.isComboChart(chartType)) {
-            tui.util.forEach(rawSeriesData, function(data, seriesName) {
-                seriesNames.push(seriesName);
+            tui.util.forEach(rawSeriesData, function(data, seriesType) {
+                seriesTypes.push(seriesType);
             });
         } else {
-            seriesNames.push(chartType);
+            seriesTypes.push(chartType);
         }
 
-        return seriesNames;
+        return seriesTypes;
     },
 
     /**
@@ -89,27 +89,27 @@ module.exports = {
 
     /**
      * Create component theme with series name
-     * @param {Array.<string>} seriesNames - series names
+     * @param {Array.<string>} seriesTypes - series types
      * @param {object} fromTheme - from theme
      * @param {object} toTheme - to theme
      * @param {string} componentType - component type
      * @returns {object}
      * @private
      */
-    _createComponentThemeWithSeriesName: function(seriesNames, fromTheme, toTheme, componentType) {
+    _createComponentThemeWithSeriesName: function(seriesTypes, fromTheme, toTheme, componentType) {
         var self = this;
         var newTheme = {};
 
         fromTheme = fromTheme || {};
 
-        tui.util.forEachArray(seriesNames, function(seriesName) {
-            var theme = fromTheme[seriesName] || self._pickValidTheme(fromTheme, componentType);
+        tui.util.forEachArray(seriesTypes, function(seriesType) {
+            var theme = fromTheme[seriesType] || self._pickValidTheme(fromTheme, componentType);
 
             if (tui.util.keys(theme).length) {
-                newTheme[seriesName] = JSON.parse(JSON.stringify(defaultTheme[componentType]));
-                self._overwriteTheme(theme, newTheme[seriesName]);
+                newTheme[seriesType] = JSON.parse(JSON.stringify(defaultTheme[componentType]));
+                self._overwriteTheme(theme, newTheme[seriesType]);
             } else {
-                newTheme[seriesName] = JSON.parse(JSON.stringify(toTheme));
+                newTheme[seriesType] = JSON.parse(JSON.stringify(toTheme));
             }
         });
 
@@ -201,13 +201,13 @@ module.exports = {
      * Init theme.
      * @param {string} themeName - theme name
      * @param {object} rawTheme - raw theme
-     * @param {Array.<string>} seriesNames - series names
+     * @param {Array.<string>} seriesTypes - series types
      * @param {object} rawSeriesData - raw series data
      * @returns {object}
      * @private
      * @ignore
      */
-    _initTheme: function(themeName, rawTheme, seriesNames, rawSeriesData) {
+    _initTheme: function(themeName, rawTheme, seriesTypes, rawSeriesData) {
         var theme;
 
         // 테마 선택, 디폴트 테마 or 유저가 지정하는 컬러
@@ -219,10 +219,10 @@ module.exports = {
         }
 
         // 각 컴포넌트 테마에 시리즈명별로 뎊스를 넣어준다. theme.yAxis.테마들 -> theme.yAxis.line.테마들
-        theme.yAxis = this._createComponentThemeWithSeriesName(seriesNames, rawTheme.yAxis, theme.yAxis, 'yAxis');
-        theme.series = this._createComponentThemeWithSeriesName(seriesNames, rawTheme.series, theme.series, 'series');
+        theme.yAxis = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.yAxis, theme.yAxis, 'yAxis');
+        theme.series = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.series, theme.series, 'series');
 
-        this._setSeriesColors(seriesNames, theme.series, rawTheme.series, rawSeriesData);
+        this._setSeriesColors(seriesTypes, theme.series, rawTheme.series, rawSeriesData);
 
         return theme;
     },
@@ -273,11 +273,11 @@ module.exports = {
      * Copy color theme to otherTheme from seriesTheme.
      * @param {object} seriesTheme - series theme
      * @param {object} otherTheme - other theme
-     * @param {object} seriesName - series name
+     * @param {object} seriesType - series name
      * @private
      */
-    _copySeriesColorTheme: function(seriesTheme, otherTheme, seriesName) {
-        otherTheme[seriesName] = {
+    _copySeriesColorTheme: function(seriesTheme, otherTheme, seriesType) {
+        otherTheme[seriesType] = {
             colors: seriesTheme.colors,
             singleColors: seriesTheme.singleColors,
             borderColor: seriesTheme.borderColor,
@@ -294,9 +294,9 @@ module.exports = {
     _copySeriesColorThemeToOther: function(theme) {
         var self = this;
 
-        tui.util.forEach(theme.series, function(seriesTheme, seriesName) {
-            self._copySeriesColorTheme(seriesTheme, theme.legend, seriesName);
-            self._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesName);
+        tui.util.forEach(theme.series, function(seriesTheme, seriesType) {
+            self._copySeriesColorTheme(seriesTheme, theme.legend, seriesType);
+            self._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesType);
         });
     },
 
@@ -309,17 +309,17 @@ module.exports = {
      */
     get: function(themeName, chartType, rawSeriesData) {
         var rawTheme = themes[themeName];
-        var theme, seriesNames;
+        var theme, seriesTypes;
 
         if (!rawTheme) {
             throw new Error('Not exist ' + themeName + ' theme.');
         }
 
-        seriesNames = this._pickSeriesNames(chartType, rawSeriesData);
+        seriesTypes = this._pickSeriesNames(chartType, rawSeriesData);
 
-        theme = this._initTheme(themeName, rawTheme, seriesNames, rawSeriesData);
+        theme = this._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
 
-        this._inheritThemeFont(theme, seriesNames);
+        this._inheritThemeFont(theme, seriesTypes);
         this._copySeriesColorThemeToOther(theme);
 
         return theme;

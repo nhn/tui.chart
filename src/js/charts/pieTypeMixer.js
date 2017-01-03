@@ -13,15 +13,15 @@
 var pieTypeMixer = {
     /**
      * Add legend component.
-     * @param {Array.<string>} [seriesNames] - series names
+     * @param {Array.<string>} [seriesTypes] - series types
      * @private
      */
-    _addLegendComponent: function(seriesNames) {
+    _addLegendComponent: function(seriesTypes) {
         var legendOption = this.options.legend || {};
 
         if (legendOption.visible) {
             this.componentManager.register('legend', {
-                seriesNames: seriesNames,
+                seriesTypes: seriesTypes,
                 chartType: this.chartType,
                 classType: 'legend'
             });

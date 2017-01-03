@@ -33,7 +33,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
          * chart types.
          * @type {Array.<string>}
          */
-        this.seriesNames = tui.util.keys(rawData.series).sort();
+        this.seriesTypes = tui.util.keys(rawData.series).sort();
 
         /**
          * chart types
@@ -55,22 +55,22 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @private
      */
     _makeDataForAddingSeriesComponent: function() {
-        var seriesNames = this.seriesNames;
-        var optionsMap = this._makeOptionsMap(seriesNames);
+        var seriesTypes = this.seriesTypes;
+        var optionsMap = this._makeOptionsMap(seriesTypes);
         var dataProcessor = this.dataProcessor;
         var isShowOuterLabel = arrayUtil.any(optionsMap, predicate.isShowOuterLabel);
-        var seriesData = tui.util.map(seriesNames, function(seriesName) {
-            var chartType = dataProcessor.findChartType(seriesName);
+        var seriesData = tui.util.map(seriesTypes, function(seriesType) {
+            var chartType = dataProcessor.findChartType(seriesType);
             var additionalParams = {
                 chartType: chartType,
-                seriesName: seriesName,
-                options: optionsMap[seriesName],
+                seriesType: seriesType,
+                options: optionsMap[seriesType],
                 isShowOuterLabel: isShowOuterLabel,
                 isCombo: true
             };
 
             return {
-                name: seriesName + 'Series',
+                name: seriesType + 'Series',
                 additionalParams: additionalParams
             };
         });
@@ -83,7 +83,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @private
      */
     _addComponents: function() {
-        this._addLegendComponent(this.seriesNames);
+        this._addLegendComponent(this.seriesTypes);
         this._addTooltipComponent({
             labelFormatter: this.labelFormatter
         });
@@ -102,9 +102,9 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      */
     _addDataRatios: function() {
         var self = this;
-        var seriesNames = this.seriesNames || [this.chartType];
+        var seriesTypes = this.seriesTypes || [this.chartType];
 
-        tui.util.forEachArray(seriesNames, function(chartType) {
+        tui.util.forEachArray(seriesTypes, function(chartType) {
             self.dataProcessor.addDataRatiosOfPieChart(chartType);
         });
     },
@@ -119,7 +119,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         var rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
 
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
-            seriesNames: this.seriesNames
+            seriesTypes: this.seriesTypes
         });
     }
 });

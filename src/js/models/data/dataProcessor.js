@@ -58,9 +58,9 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @param {rawData} rawData raw data
      * @param {string} chartType chart type
      * @param {object} options options
-     * @param {Array.<string>} seriesNames chart types
+     * @param {Array.<string>} seriesTypes chart types
      */
-    init: function(rawData, chartType, options, seriesNames) {
+    init: function(rawData, chartType, options, seriesTypes) {
         /**
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
@@ -80,10 +80,10 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         this.options = options;
 
         /**
-         * seriesNames is sorted chart types for rendering series area of combo chart.
+         * seriesTypes is sorted chart types for rendering series area of combo chart.
          * @type {Array.<string>}
          */
-        this.seriesNames = seriesNames;
+        this.seriesTypes = seriesTypes;
 
         /**
          * legend data for rendering legend of group tooltip
@@ -154,8 +154,8 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var startIndex = indexRange[0];
         var endIndex = indexRange[1];
 
-        tui.util.forEach(rawData.series, function(seriesDataSet, seriesName) {
-            rawData.series[seriesName] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+        tui.util.forEach(rawData.series, function(seriesDataSet, seriesType) {
+            rawData.series[seriesType] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 
         rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
@@ -259,11 +259,11 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
     /**
      * Find chart type from series name.
-     * @param {string} seriesName - series name
+     * @param {string} seriesType - series name
      * @returns {*}
      */
-    findChartType: function(seriesName) {
-        return rawDataHandler.findChartType(this.rawData.seriesAlias, seriesName);
+    findChartType: function(seriesType) {
+        return rawDataHandler.findChartType(this.rawData.seriesAlias, seriesType);
     },
 
     /**
@@ -511,7 +511,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
         if (!tui.util.isExisty(coordinateType)) {
             coordinateType = predicate.isCoordinateTypeChart(chartType);
-            coordinateType = coordinateType || predicate.isLineScatterComboChart(chartType, this.seriesNames);
+            coordinateType = coordinateType || predicate.isLineScatterComboChart(chartType, this.seriesTypes);
             coordinateType = coordinateType || (predicate.isLineTypeChart(chartType) && !this.hasCategories());
             this.coordinateType = coordinateType;
         }
@@ -521,15 +521,15 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
     /**
      * Get SeriesDataModel.
-     * @param {string} seriesName - series name
+     * @param {string} seriesType - series name
      * @returns {SeriesDataModel}
      */
-    getSeriesDataModel: function(seriesName) {
+    getSeriesDataModel: function(seriesType) {
         var rawSeriesData, chartType, SeriesDataModelClass;
 
-        if (!this.seriesDataModelMap[seriesName]) {
-            chartType = this.findChartType(seriesName);
-            rawSeriesData = this.rawData.series[seriesName];
+        if (!this.seriesDataModelMap[seriesType]) {
+            chartType = this.findChartType(seriesType);
+            rawSeriesData = this.rawData.series[seriesType];
 
             if (predicate.isTreemapChart(this.chartType)) {
                 SeriesDataModelClass = SeriesDataModelForTreemap;
@@ -537,11 +537,11 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
                 SeriesDataModelClass = SeriesDataModel;
             }
 
-            this.seriesDataModelMap[seriesName] = new SeriesDataModelClass(rawSeriesData, chartType,
+            this.seriesDataModelMap[seriesType] = new SeriesDataModelClass(rawSeriesData, chartType,
                 this.options, this.getFormatFunctions(), this.isCoordinateType());
         }
 
-        return this.seriesDataModelMap[seriesName];
+        return this.seriesDataModelMap[seriesType];
     },
 
     /**
@@ -579,13 +579,13 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     /**
      * Find raw series datum by name.
      * @param {string} name - legend name
-     * @param {string} [seriesName] - series name
+     * @param {string} [seriesType] - series name
      * @returns {object}
      * @private
      */
-    _findRawSeriesDatumByName: function(name, seriesName) {
+    _findRawSeriesDatumByName: function(name, seriesType) {
         var foundSeriesDatum = null;
-        var seriesData = this.rawData.series[seriesName];
+        var seriesData = this.rawData.series[seriesType];
 
         tui.util.forEachArray(seriesData, function(seriesDatum) {
             var isEqual = seriesDatum.name === name;
@@ -604,11 +604,11 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * Push value to data property of series.
      * @param {{name: string, data: Array}} seriesDatum - series datum
      * @param {Array.<number>|{x: number, y: number, r: number}|number} value - value
-     * @param {string} seriesName - sereis name
+     * @param {string} seriesType - sereis name
      * @private
      */
-    _pushValue: function(seriesDatum, value, seriesName) {
-        var rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+    _pushValue: function(seriesDatum, value, seriesType) {
+        var rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesType);
 
         seriesDatum.data.push(value);
 
@@ -621,14 +621,14 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * Push values to series of originalRawData and series of rawData.
      * @param {Array.<{name: string, data: Array}>} seriesData - series data
      * @param {Array} values - values
-     * @param {string} [seriesName] - series name
+     * @param {string} [seriesType] - series name
      * @private
      */
-    _pushValues: function(seriesData, values, seriesName) {
+    _pushValues: function(seriesData, values, seriesType) {
         var self = this;
 
         tui.util.forEachArray(seriesData, function(seriesDatum, index) {
-            self._pushValue(seriesDatum, values[index], seriesName);
+            self._pushValue(seriesDatum, values[index], seriesType);
         });
     },
 
@@ -647,22 +647,22 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             values[this.chartType] = temp;
         }
 
-        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
-            self._pushValues(seriesData, values[seriesName], seriesName);
+        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesType) {
+            self._pushValues(seriesData, values[seriesType], seriesType);
         });
     },
 
     /**
      * Shift values.
      * @param {Array.<{name: string, data: Array}>} seriesData - series data
-     * @param {string} seriesName - series name
+     * @param {string} seriesType - series name
      * @private
      */
-    _shiftValues: function(seriesData, seriesName) {
+    _shiftValues: function(seriesData, seriesType) {
         var self = this;
 
         tui.util.forEachArray(seriesData, function(seriesDatum) {
-            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesType);
 
             seriesDatum.data.shift();
             if (rawSeriesDatum) {
@@ -678,8 +678,8 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     _shiftSeriesData: function() {
         var self = this;
 
-        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
-            self._shiftValues(seriesData, seriesName);
+        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesType) {
+            self._shiftValues(seriesData, seriesType);
         });
     },
 
@@ -770,15 +770,15 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     },
 
     /**
-     * Traverse all SeriesDataModel by seriesNames, and executes iteratee function.
+     * Traverse all SeriesDataModel by seriesTypes, and executes iteratee function.
      * @param {function} iteratee iteratee function
      * @private
      */
     _eachByAllSeriesDataModel: function(iteratee) {
         var self = this,
-            seriesNames = this.seriesNames || [this.chartType];
+            seriesTypes = this.seriesTypes || [this.chartType];
 
-        tui.util.forEachArray(seriesNames, function(chartType) {
+        tui.util.forEachArray(seriesTypes, function(chartType) {
             return iteratee(self.getSeriesDataModel(chartType), chartType);
         });
     },
@@ -987,7 +987,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     _makeLegendData: function() {
         var legendLabels = this.getLegendLabels(this.chartType);
-        var seriesNames = this.seriesNames || [this.chartType];
+        var seriesTypes = this.seriesTypes || [this.chartType];
         var legendLabelsMap, legendData;
         var legendVisibilities = this.getLegendVisibility();
 
@@ -995,11 +995,11 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             legendLabelsMap = [this.chartType];
             legendLabelsMap[this.chartType] = legendLabels;
         } else {
-            seriesNames = this.seriesNames;
+            seriesTypes = this.seriesTypes;
             legendLabelsMap = legendLabels;
         }
 
-        legendData = tui.util.map(seriesNames, function(chartType) {
+        legendData = tui.util.map(seriesTypes, function(chartType) {
             return tui.util.map(legendLabelsMap[chartType], function(label, index) {
                 var is2DArray = tui.util.isArray(legendVisibilities[chartType]);
 

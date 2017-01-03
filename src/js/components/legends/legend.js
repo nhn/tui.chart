@@ -22,7 +22,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      * @param {object} params parameters
      *      @param {object} params.theme - axis theme
-     *      @param {?Array.<string>} params.seriesNames - series names
+     *      @param {?Array.<string>} params.seriesTypes - series types
      *      @param {string} params.chart - chart type
      */
     init: function(params) {
@@ -45,10 +45,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.chartType = params.chartType;
 
         /**
-         * series names
+         * series types
          * @type {?Array.<string>}
          */
-        this.seriesNames = params.seriesNames || [this.chartType];
+        this.seriesTypes = params.seriesTypes || [this.chartType];
 
         /**
          * event bus for transmitting message
@@ -80,7 +80,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             theme: this.theme,
             labels: params.dataProcessor.getLegendLabels(),
             legendData: params.dataProcessor.getLegendData(),
-            seriesNames: this.seriesNames,
+            seriesTypes: this.seriesTypes,
             chartType: this.chartType
         });
 
@@ -334,8 +334,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         var checkedIndexes = this._getCheckedIndexes();
         var checkedCount = checkedIndexes.length;
         var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-        var isPieCharts = arrayUtil.all(this.seriesNames, function(seriesName) {
-            var seriesDataModel = seriesDataModelMap[seriesName];
+        var isPieCharts = arrayUtil.all(this.seriesTypes, function(seriesType) {
+            var seriesDataModel = seriesDataModelMap[seriesType];
 
             return seriesDataModel && predicate.isPieChart(seriesDataModel.chartType);
         });

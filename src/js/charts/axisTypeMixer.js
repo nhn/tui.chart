@@ -31,7 +31,7 @@ var axisTypeMixer = {
             var axisParams = {
                 aligned: aligned,
                 isVertical: !!axis.isVertical,
-                seriesName: axis.seriesName || self.chartType,
+                seriesType: axis.seriesType || self.chartType,
                 classType: 'axis'
             };
 
@@ -85,7 +85,7 @@ var axisTypeMixer = {
         var classType = legendData.classType || 'legend';
 
         this.componentManager.register('legend', tui.util.extend({
-            seriesNames: this.seriesNames,
+            seriesTypes: this.seriesTypes,
             chartType: this.chartType,
             classType: classType
         }, legendData.additionalParams));

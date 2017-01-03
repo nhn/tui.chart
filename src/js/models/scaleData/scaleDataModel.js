@@ -14,7 +14,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      */
     init: function(params) {
         this.chartType = params.chartType;
-        this.seriesNames = params.seriesNames;
+        this.seriesTypes = params.seriesTypes;
         this.dataProcessor = params.dataProcessor;
         this.boundsModel = params.boundsModel;
         this.options = params.options;
@@ -238,7 +238,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      * @private
      */
     _createAxisData: function(scaleData, axisOptions, labelTheme, isVertical, isPositionRight) {
-        var aligned = predicate.isLineTypeChart(this.chartType, this.seriesNames);
+        var aligned = predicate.isLineTypeChart(this.chartType, this.seriesTypes);
         var axisData;
 
         if (scaleData) {
@@ -389,7 +389,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
 
     /**
      * Make limit map.
-     * @param {Array.<string>} seriesNames - series names like bar, column, line, area
+     * @param {Array.<string>} seriesTypes - series types like bar, column, line, area
      * @param {boolean} isVertical - whether vertical or not
      * @returns {{
      *      xAxis: ?{min: number, max: number},
@@ -400,7 +400,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      * }}
      * @private
      */
-    makeLimitMap: function(seriesNames, isVertical) {
+    makeLimitMap: function(seriesTypes, isVertical) {
         var self = this;
         var scaleDataMap = this.scaleDataMap;
         var limitMap = {};
@@ -421,8 +421,8 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
             limitMap.legend = scaleDataMap.legend.limit;
         }
 
-        tui.util.forEachArray(seriesNames, function(seriesName, index) {
-            limitMap[seriesName] = self._findLimit(limitMap, index, isVertical);
+        tui.util.forEachArray(seriesTypes, function(seriesType, index) {
+            limitMap[seriesType] = self._findLimit(limitMap, index, isVertical);
         });
 
         return limitMap;

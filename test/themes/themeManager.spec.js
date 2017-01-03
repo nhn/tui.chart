@@ -86,7 +86,7 @@ describe('Test for themeManager', function() {
 
     describe('_createComponentThemeWithSeriesName()', function() {
         it('create component theme with series name, when fromTheme map has key of series name', function() {
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
             var fromTheme = {
                 column: {
                     label: {
@@ -100,7 +100,7 @@ describe('Test for themeManager', function() {
             var toTheme = {};
             var componentType = 'yAxis';
             var actual = themeManager._createComponentThemeWithSeriesName(
-                seriesNames, fromTheme, toTheme, componentType
+                seriesTypes, fromTheme, toTheme, componentType
             );
             var expected = JSON.parse(JSON.stringify(defaultTheme[componentType]));
 
@@ -110,7 +110,7 @@ describe('Test for themeManager', function() {
         });
 
         it('create component theme with series name, when fromTheme map has not key of series name', function() {
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
             var fromTheme = {};
             var toTheme = {
                 label: {
@@ -122,7 +122,7 @@ describe('Test for themeManager', function() {
             };
             var componentType = 'yAxis';
             var actual = themeManager._createComponentThemeWithSeriesName(
-                seriesNames, fromTheme, toTheme, componentType
+                seriesTypes, fromTheme, toTheme, componentType
             );
             var expected = {
                 column: toTheme
@@ -154,7 +154,7 @@ describe('Test for themeManager', function() {
 
     describe('_setSeriesColors()', function() {
         it('set series colors theme, when single series', function() {
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
             var seriesThemeMap = {
                 column: {}
             };
@@ -165,7 +165,7 @@ describe('Test for themeManager', function() {
                 column: [1, 2, 3, 4, 5]
             };
 
-            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
+            themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
 
             expect(seriesThemeMap.column).toEqual({
                 colors: ['a', 'b', 'c', 'a', 'b']
@@ -173,7 +173,7 @@ describe('Test for themeManager', function() {
         });
 
         it('set series colors theme, when single series and singleColors', function() {
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
             var seriesThemeMap = {
                 column: {}
             };
@@ -186,7 +186,7 @@ describe('Test for themeManager', function() {
                 column: []
             };
 
-            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
+            themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
 
             expect(seriesThemeMap.column).toEqual({
                 colors: [],
@@ -195,7 +195,7 @@ describe('Test for themeManager', function() {
         });
 
         it('set series colors theme, when combo series with defaultTheme', function() {
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             var seriesThemeMap = {
                 column: {},
                 line: {}
@@ -206,7 +206,7 @@ describe('Test for themeManager', function() {
                 line: [{}, {}, {}, {}]
             };
 
-            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
+            themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
 
             expect(seriesThemeMap).toEqual({
                 column: {
@@ -219,7 +219,7 @@ describe('Test for themeManager', function() {
         });
 
         it('set series colors theme, when combo series', function() {
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             var seriesThemeMap = {
                 column: {},
                 line: {}
@@ -237,7 +237,7 @@ describe('Test for themeManager', function() {
                 line: [{}, {}, {}]
             };
 
-            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
+            themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
             expect(seriesThemeMap).toEqual({
                 column: {
                     colors: ['red', 'green', 'blue', 'red', 'green']
@@ -248,7 +248,7 @@ describe('Test for themeManager', function() {
             });
         });
         it('set series colors theme with default and user theme color', function() {
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             var seriesThemeMap = {
                 column: {},
                 line: {}
@@ -263,7 +263,7 @@ describe('Test for themeManager', function() {
                 line: [{}, {}, {}]
             };
 
-            themeManager._setSeriesColors(seriesNames, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
+            themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
             expect(seriesThemeMap).toEqual({
                 column: {
                     colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa']
@@ -283,8 +283,8 @@ describe('Test for themeManager', function() {
                     colors: ['gray']
                 }
             };
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN];
-            var actual = themeManager._initTheme(themeName, rawTheme, seriesNames, {column: []});
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
+            var actual = themeManager._initTheme(themeName, rawTheme, seriesTypes, {column: []});
 
             expect(actual.series.column.colors).toEqual([]);
         });
@@ -301,12 +301,12 @@ describe('Test for themeManager', function() {
                     }
                 }
             };
-            var seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             var rawSeriesData = {
                 column: [{}, {}, {}, {}, {}],
                 line: [{}, {}, {}]
             };
-            var actual = themeManager._initTheme(themeName, rawTheme, seriesNames, rawSeriesData);
+            var actual = themeManager._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
 
             expect(actual.series.column.colors).toEqual(['red', 'green', 'blue', 'red', 'green']);
             expect(actual.series.line.colors).toEqual(['white', 'block', 'white']);

@@ -32,10 +32,10 @@ var verticalTypeComboMixer = {
         this.chartTypes = chartTypesMap.chartTypes;
 
         /**
-         * series names
+         * series types
          * @type {Object|Array.<T>}
          */
-        this.seriesNames = chartTypesMap.seriesNames;
+        this.seriesTypes = chartTypesMap.seriesTypes;
 
         /**
          * whether has right y axis or not
@@ -58,9 +58,9 @@ var verticalTypeComboMixer = {
      * @private
      */
     _makeChartTypesMap: function(rawSeriesData, yAxisOption) {
-        var seriesNames = tui.util.keys(rawSeriesData).sort();
-        var optionChartTypes = this._getYAxisOptionChartTypes(seriesNames, yAxisOption);
-        var chartTypes = optionChartTypes.length ? optionChartTypes : seriesNames;
+        var seriesTypes = tui.util.keys(rawSeriesData).sort();
+        var optionChartTypes = this._getYAxisOptionChartTypes(seriesTypes, yAxisOption);
+        var chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
         var validChartTypes = tui.util.filter(optionChartTypes, function(_chartType) {
             return rawSeriesData[_chartType].length;
         });
@@ -69,12 +69,12 @@ var verticalTypeComboMixer = {
         if (validChartTypes.length === 1) {
             chartTypesMap = {
                 chartTypes: validChartTypes,
-                seriesNames: validChartTypes
+                seriesTypes: validChartTypes
             };
         } else {
             chartTypesMap = {
                 chartTypes: chartTypes,
-                seriesNames: seriesNames
+                seriesTypes: seriesTypes
             };
         }
 
@@ -106,14 +106,14 @@ var verticalTypeComboMixer = {
     setAdditionalOptions: function(additionalOptions) {
         var dataProcessor = this.dataProcessor;
 
-        tui.util.forEach(this.options.series, function(seriesOption, seriesName) {
+        tui.util.forEach(this.options.series, function(seriesOption, seriesType) {
             var chartType;
 
             if (!seriesOption.stackType) {
                 return;
             }
 
-            chartType = dataProcessor.findChartType(seriesName);
+            chartType = dataProcessor.findChartType(seriesType);
 
             if (!predicate.isAllowedStackOption(chartType)) {
                 return;
@@ -173,24 +173,24 @@ var verticalTypeComboMixer = {
 
     /**
      * Make data for adding series component.
-     * @param {Array.<string>} seriesNames - series names
+     * @param {Array.<string>} seriesTypes - series types
      * @returns {Array.<object>}
      * @private
      */
-    _makeDataForAddingSeriesComponent: function(seriesNames) {
-        var optionsMap = this._makeOptionsMap(seriesNames);
+    _makeDataForAddingSeriesComponent: function(seriesTypes) {
+        var optionsMap = this._makeOptionsMap(seriesTypes);
         var dataProcessor = this.dataProcessor;
-        var serieses = tui.util.map(seriesNames, function(seriesName) {
-            var chartType = dataProcessor.findChartType(seriesName);
+        var serieses = tui.util.map(seriesTypes, function(seriesType) {
+            var chartType = dataProcessor.findChartType(seriesType);
             var data = {
                 allowNegativeTooltip: true,
                 chartType: chartType,
-                seriesName: seriesName,
-                options: optionsMap[seriesName]
+                seriesType: seriesType,
+                options: optionsMap[seriesType]
             };
 
             return {
-                name: seriesName + 'Series',
+                name: seriesType + 'Series',
                 data: data
             };
         });
@@ -206,25 +206,25 @@ var verticalTypeComboMixer = {
         var axes = [
             {
                 name: 'yAxis',
-                seriesName: this.seriesNames[0],
+                seriesType: this.seriesTypes[0],
                 isVertical: true
             },
             {
                 name: 'xAxis'
             }
         ];
-        var serieses = this._makeDataForAddingSeriesComponent(this.seriesNames);
+        var serieses = this._makeDataForAddingSeriesComponent(this.seriesTypes);
 
         if (this.hasRightYAxis) {
             axes.push({
                 name: 'rightYAxis',
-                seriesName: this.seriesNames[1],
+                seriesType: this.seriesTypes[1],
                 isVertical: true
             });
         }
 
         this._addComponentsForAxisType({
-            seriesNames: this.seriesNames,
+            seriesTypes: this.seriesTypes,
             axis: axes,
             series: serieses,
             plot: true

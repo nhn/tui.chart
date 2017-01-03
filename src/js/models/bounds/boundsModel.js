@@ -65,9 +65,9 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         this.chartType = params.chartType;
 
         /**
-         * series names
+         * series types
          */
-        this.seriesNames = params.seriesNames || [];
+        this.seriesTypes = params.seriesTypes || [];
 
         /**
          * data processor
@@ -605,7 +605,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         return !(predicate.isPieChart(chartType) || predicate.isMapChart(chartType))
             && !predicate.isTreemapChart(chartType)
             && !predicate.isRadialChart(chartType)
-            && !predicate.isPieDonutComboChart(chartType, this.seriesNames);
+            && !predicate.isPieDonutComboChart(chartType, this.seriesTypes);
     },
 
     /**

@@ -46,7 +46,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Theme
          * @type {object}
          */
-        this.theme = params.theme[params.seriesName] || params.theme;
+        this.theme = params.theme[params.seriesType] || params.theme;
 
         /**
          * Whether label type or not.

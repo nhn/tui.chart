@@ -30,10 +30,10 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
         this.chartTypes = ['line', 'scatter'];
 
         /**
-         * series names
+         * series types
          * @type {Object|Array.<T>}
          */
-        this.seriesNames = ['line', 'scatter'];
+        this.seriesTypes = ['line', 'scatter'];
 
         ChartBase.call(this, {
             rawData: rawData,
@@ -49,13 +49,13 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
      * @private
      */
     _addComponents: function() {
-        var optionsMap = this._makeOptionsMap(this.seriesNames);
+        var optionsMap = this._makeOptionsMap(this.seriesTypes);
 
         this._addPlotComponent(this.options.xAxis.type);
         this._addAxisComponents([
             {
                 name: 'yAxis',
-                seriesName: this.seriesNames[0],
+                seriesType: this.seriesTypes[0],
                 isVertical: true
             },
             {
@@ -70,7 +70,7 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
                 data: {
                     allowNegativeTooltip: true,
                     chartType: 'line',
-                    seriesName: 'line',
+                    seriesType: 'line',
                     options: optionsMap.line
                 }
             },
@@ -80,7 +80,7 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
                 data: {
                     allowNegativeTooltip: true,
                     chartType: 'scatter',
-                    seriesName: 'scatter',
+                    seriesType: 'scatter',
                     options: optionsMap.scatter
                 }
             }

@@ -373,7 +373,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderGraph: function(dimension, seriesData, paper) {
         var showTootltip = tui.util.bind(this.showTooltip, this, {
             allowNegativeTooltip: !!this.allowNegativeTooltip,
-            seriesName: this.seriesName,
+            seriesType: this.seriesType,
             chartType: this.chartType
         });
         var callbacks = {
@@ -381,16 +381,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             hideTooltip: tui.util.bind(this.hideTooltip, this)
         };
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
-        var currentSeriesName = this.seriesName;
+        var currentSeriesName = this.seriesType;
         var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
         var pastSeriesNames = [];
         var pastIndex = 0;
 
-        tui.util.forEach(this.dataProcessor.seriesNames, function(seriesName) {
+        tui.util.forEach(this.dataProcessor.seriesTypes, function(seriesType) {
             var needNext = true;
 
-            if (seriesName !== currentSeriesName) {
-                pastSeriesNames.push(seriesName);
+            if (seriesType !== currentSeriesName) {
+                pastSeriesNames.push(seriesType);
             } else {
                 needNext = false;
             }
@@ -398,8 +398,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return needNext;
         });
 
-        tui.util.forEach(pastSeriesNames, function(seriesName) {
-            pastIndex += seriesDataModelMap[seriesName].baseGroups.length;
+        tui.util.forEach(pastSeriesNames, function(seriesType) {
+            pastIndex += seriesDataModelMap[seriesType].baseGroups.length;
         });
 
         params.additionalIndex = pastIndex;
@@ -496,7 +496,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var dataProcessor = this.dataProcessor;
         var seriesDataModel = this._getSeriesDataModel();
         var positions = params.positions;
-        var htmls = tui.util.map(dataProcessor.getLegendLabels(this.seriesName), function(legend, index) {
+        var htmls = tui.util.map(dataProcessor.getLegendLabels(this.seriesType), function(legend, index) {
             var html = '',
                 label, position;
 
@@ -698,7 +698,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             this.prevClickedIndex = null;
         }
 
-        if (!sectorInfo || sectorInfo.chartType !== this.seriesName) {
+        if (!sectorInfo || sectorInfo.chartType !== this.seriesType) {
             return;
         }
 

@@ -14,15 +14,15 @@ var comboTypeMixer = {
     /**
      * Get base series options.
      * @param {object.<string, object>} seriesOptions - series options
-     * @param {Array.<string>} seriesNames - seriens names
+     * @param {Array.<string>} seriesTypes - seriens names
      * @returns {object}
      * @private
      */
-    _getBaseSeriesOptions: function(seriesOptions, seriesNames) {
+    _getBaseSeriesOptions: function(seriesOptions, seriesTypes) {
         var baseSeriesOptions = tui.util.extend({}, seriesOptions);
 
-        tui.util.forEachArray(seriesNames, function(seriesName) {
-            delete baseSeriesOptions[seriesName];
+        tui.util.forEachArray(seriesTypes, function(seriesType) {
+            delete baseSeriesOptions[seriesType];
         });
 
         return baseSeriesOptions;
@@ -30,17 +30,17 @@ var comboTypeMixer = {
 
     /**
      * Make options map
-     * @param {Array.<string>} seriesNames - series names
+     * @param {Array.<string>} seriesTypes - series types
      * @returns {object}
      * @private
      */
-    _makeOptionsMap: function(seriesNames) {
+    _makeOptionsMap: function(seriesTypes) {
         var seriesOptions = this.options.series;
-        var baseSeriesOptions = this._getBaseSeriesOptions(seriesOptions, seriesNames);
+        var baseSeriesOptions = this._getBaseSeriesOptions(seriesOptions, seriesTypes);
         var optionsMap = {};
 
-        tui.util.forEachArray(seriesNames, function(chartType) {
-            optionsMap[chartType] = tui.util.extend({}, baseSeriesOptions, seriesOptions[chartType]);
+        tui.util.forEachArray(seriesTypes, function(seriesType) {
+            optionsMap[seriesType] = tui.util.extend({}, baseSeriesOptions, seriesOptions[seriesType]);
         });
 
         return optionsMap;

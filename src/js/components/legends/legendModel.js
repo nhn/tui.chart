@@ -42,7 +42,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
          * chart types
          * @type {?Array.<string>}
          */
-        this.seriesNames = params.seriesNames || [];
+        this.seriesTypes = params.seriesTypes || [];
 
         /**
          * chart type
@@ -142,25 +142,25 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
         var self = this;
         var theme = this.theme;
         var chartType = this.chartType;
-        var seriesNames = this.seriesNames;
+        var seriesTypes = this.seriesTypes;
         var legendData = this.legendData;
         var checkedIndexesMap = this.checkedIndexesMap;
         var data, startIndex;
 
-        if (!seriesNames || seriesNames.length < 2) {
+        if (!seriesTypes || seriesTypes.length < 2) {
             this._setThemeToLegendData(legendData, theme[chartType], checkedIndexesMap[chartType]);
             data = legendData;
         } else {
             startIndex = 0;
-            data = concat.apply([], tui.util.map(seriesNames, function(seriesName) {
-                var labelLen = self.labels[seriesName].length;
+            data = concat.apply([], tui.util.map(seriesTypes, function(seriesType) {
+                var labelLen = self.labels[seriesType].length;
                 var endIndex = startIndex + labelLen;
                 var slicedLegendData, checkedIndexes;
 
                 slicedLegendData = legendData.slice(startIndex, endIndex);
-                checkedIndexes = checkedIndexesMap[seriesName];
+                checkedIndexes = checkedIndexesMap[seriesType];
                 startIndex = endIndex;
-                self._setThemeToLegendData(slicedLegendData, theme[seriesName], checkedIndexes);
+                self._setThemeToLegendData(slicedLegendData, theme[seriesType], checkedIndexes);
 
                 return slicedLegendData;
             }));

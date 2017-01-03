@@ -899,7 +899,7 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.seriesDataModelMap.column.groups = ['seriesGroup1', 'seriesGroup2'];
             dataProcessor.seriesDataModelMap.line.groups = ['seriesGroup3'];
-            dataProcessor.seriesNames = ['column', 'line'];
+            dataProcessor.seriesTypes = ['column', 'line'];
 
             actual = dataProcessor.isValidAllSeriesDataModel();
             expected = true;
@@ -916,7 +916,7 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.seriesDataModelMap.column.groups = ['seriesGroup1', 'seriesGroup2'];
             dataProcessor.seriesDataModelMap.line.groups = [];
-            dataProcessor.seriesNames = ['column', 'line'];
+            dataProcessor.seriesTypes = ['column', 'line'];
 
             actual = dataProcessor.isValidAllSeriesDataModel();
             expected = false;
@@ -941,7 +941,7 @@ describe('Test for DataProcessor', function() {
                 new SeriesGroup(['seriesItem4']),
                 new SeriesGroup(['seriesItem5', 'seriesItem6'])
             ];
-            dataProcessor.seriesNames = ['column', 'line'];
+            dataProcessor.seriesTypes = ['column', 'line'];
 
             actual = dataProcessor._makeSeriesGroups();
 
@@ -964,7 +964,7 @@ describe('Test for DataProcessor', function() {
             var actual, expected;
 
             dataProcessor.chartType = chartConst.CHART_TYPE_COMBO;
-            dataProcessor.seriesNames = ['column', 'line'];
+            dataProcessor.seriesTypes = ['column', 'line'];
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -1370,7 +1370,7 @@ describe('Test for DataProcessor', function() {
                 line: new SeriesDataModel()
             };
 
-            dataProcessor.seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            dataProcessor.seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
@@ -1396,7 +1396,7 @@ describe('Test for DataProcessor', function() {
             };
 
             dataProcessor.chartType = chartConst.CHART_TYPE_COMBO;
-            dataProcessor.seriesNames = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            dataProcessor.seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
             dataProcessor.seriesDataModelMap.column.groups = [
                 seriesGroup

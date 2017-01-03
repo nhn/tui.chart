@@ -218,7 +218,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {object} params.rawData - raw data
      *      @param {DataProcessor} params.DataProcessor - DataProcessor class
      *      @param {{chart: object, chartType: string}} params.options - chart options
-     *      @param {Array} params.seriesNames series - chart types for rendering series
+     *      @param {Array} params.seriesTypes series - chart types for rendering series
      * @returns {object} data processor
      * @private
      */
@@ -226,7 +226,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var DataProcessor, dataProcessor;
 
         DataProcessor = params.DataProcessor || DefaultDataProcessor;
-        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, this.seriesNames);
+        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, this.seriesTypes);
 
         return dataProcessor;
     },
@@ -342,7 +342,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _buildBoundsAndScaleData: function(prevXAxisData, addingDataMode) {
         return boundsAndScaleBuilder.build(this.dataProcessor, this.componentManager, {
             chartType: this.chartType,
-            seriesNames: this.seriesNames,
+            seriesTypes: this.seriesTypes,
             options: this.options,
             theme: this.theme,
             hasAxes: this.hasAxes,
