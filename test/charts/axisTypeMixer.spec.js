@@ -18,8 +18,8 @@ describe('Test for ComboChart', function() {
     var componentManager, dataProcessor;
 
     beforeAll(function() {
-        spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
-        spyObjs._makeTooltipData.and.callFake(function(classType) {
+        spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', 'makeTooltipData', '_makeAxesData']);
+        spyObjs.makeTooltipData.and.callFake(function(classType) {
             return classType;
         });
 
@@ -161,13 +161,13 @@ describe('Test for ComboChart', function() {
         });
     });
 
-    describe('_addDataRatios()', function() {
+    describe('addDataRatios()', function() {
         it('add data ratios, when chart is coordinate type', function() {
             dataProcessor.isCoordinateType.and.returnValue(true);
             axisTypeMixer.chartType = 'line';
             axisTypeMixer.options = {};
 
-            axisTypeMixer._addDataRatios('limitMap');
+            axisTypeMixer.addDataRatios('limitMap');
 
             expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('line', 'limitMap', false);
         });
@@ -192,7 +192,7 @@ describe('Test for ComboChart', function() {
             axisTypeMixer.chartTypes = ['column', 'line'];
             axisTypeMixer.isVertical = true;
 
-            axisTypeMixer._addDataRatios(limitMap);
+            axisTypeMixer.addDataRatios(limitMap);
 
             expect(dataProcessor.addDataRatios).toHaveBeenCalledWith({
                 min: 0,

@@ -75,9 +75,9 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         var axes = [
             {
                 name: 'yAxis',
@@ -108,10 +108,9 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     /**
      * Get scale option.
      * @returns {{xAxis: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             xAxis: true
         };

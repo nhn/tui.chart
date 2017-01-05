@@ -122,7 +122,7 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_makeTooltipData()', function() {
+    describe('makeTooltipData()', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function() {
             var actual, expected;
             var seriesDataModel = new SeriesDataModel();
@@ -148,7 +148,7 @@ describe('Tooltip', function() {
             tooltip.chartType = 'column';
             tooltip.isVertical = true;
 
-            actual = tooltip._makeTooltipData();
+            actual = tooltip.makeTooltipData();
             expected = {
                 column: [[
                     {category: 'Silver', label: ':&nbsp;10', legend: 'Density1'},

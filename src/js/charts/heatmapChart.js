@@ -49,9 +49,9 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
 
     /**
      * Add components.
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         var seriesTheme = this.theme.series[this.chartType];
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
@@ -87,10 +87,9 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
     /**
      * Get scale option.
      * @returns {{legend: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             legend: true
         };
@@ -104,7 +103,7 @@ tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
  * @private
  * @override
  */
-HeatmapChart.prototype._addDataRatios = function(limitMap) {
+HeatmapChart.prototype.addDataRatios = function(limitMap) {
     this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
 };
 

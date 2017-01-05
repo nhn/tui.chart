@@ -156,10 +156,9 @@ var verticalTypeComboMixer = {
      *      yAxis: {options: object, areaType: string, chartType: string, additionalParams: object},
      *      rightYAxis: {options: object, areaType: string, chartType: string, additionalParams: object}
      * }}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         var scaleOption = {
             yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
         };
@@ -200,9 +199,9 @@ var verticalTypeComboMixer = {
 
     /**
      * Add components.
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         var axes = [
             {
                 name: 'yAxis',

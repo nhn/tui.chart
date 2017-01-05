@@ -42,9 +42,10 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
     /**
      * Add components.
+     * @override
      * @private
      */
-    _addComponents: function() {
+    addComponents: function() {
         var options = this.options;
         var seriesTheme = this.theme.series[this.chartType];
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
@@ -61,7 +62,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
         this.componentManager.register('tooltip', tui.util.extend({
             mapModel: mapModel
-        }, this._makeTooltipData('mapChartTooltip')));
+        }, this.makeTooltipData('mapChartTooltip')));
 
         this.componentManager.register('mapSeries', {
             libType: options.libType,
@@ -85,10 +86,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     /**
      * Get scale option.
      * @returns {{legend: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             legend: true
         };
@@ -96,10 +96,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
     /**
      * Add data ratios.
-     * @private
      * @override
      */
-    _addDataRatios: function(limitMap) {
+    addDataRatios: function(limitMap) {
         this.dataProcessor.addDataRatios(limitMap.legend);
     }
 });

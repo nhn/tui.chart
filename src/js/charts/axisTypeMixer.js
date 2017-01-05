@@ -73,7 +73,7 @@ var axisTypeMixer = {
      */
     _addTooltipComponent: function() {
         var classType = this.options.tooltip.grouped ? 'groupTooltip' : 'tooltip';
-        this.componentManager.register('tooltip', this._makeTooltipData(classType));
+        this.componentManager.register('tooltip', this.makeTooltipData(classType));
     },
 
     /**
@@ -152,10 +152,9 @@ var axisTypeMixer = {
 
     /**
      * Add data ratios.
-     * @private
      * @override
      */
-    _addDataRatios: function(limitMap) {
+    addDataRatios: function(limitMap) {
         var self = this;
         var chartTypes = this.chartTypes || [this.chartType];
         var seriesOption = this.options.series || {};
@@ -191,7 +190,6 @@ var axisTypeMixer = {
     /**
      * Add mouseEventDetector components for group tooltip.
      * @private
-     * @override
      */
     _addMouseEventDetectorComponentForGroupTooltip: function() {
         var seriesOptions = this.options.series;

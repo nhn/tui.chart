@@ -66,13 +66,13 @@ describe('Test for BubbleChart', function() {
         });
     });
 
-    describe('_addDataRatios()', function() {
+    describe('addDataRatios()', function() {
         it('add data ratio, when bubble chart', function() {
             var limitMap = 'limit map';
 
             dataProcessor.isCoordinateType.and.returnValue(true);
             bubbleChart.options = {};
-            bubbleChart._addDataRatios(limitMap);
+            bubbleChart.addDataRatios(limitMap);
 
             expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('bubble', limitMap, true);
         });

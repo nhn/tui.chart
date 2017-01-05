@@ -42,10 +42,9 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
 
     /**
      * Add components
-     * @private
      * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         this.componentManager.register('series', {
             libType: this.options.libType,
             chartType: this.options.chartType,
@@ -54,7 +53,7 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
             chartBackground: this.theme.chart.background
         });
 
-        this.componentManager.register('tooltip', this._makeTooltipData('tooltip'));
+        this.componentManager.register('tooltip', this.makeTooltipData('tooltip'));
 
         this.componentManager.register('plot', {
             componentType: 'plot',
@@ -82,26 +81,22 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
 
     /**
      * Add data ratios.
-     * @private
      * @override
      */
-    _addDataRatios: function(limitMap) {
+    addDataRatios: function(limitMap) {
         this.dataProcessor.addDataRatios(limitMap[this.chartType], null, this.chartType);
     },
 
     /**
      * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             yAxis: {}
         };
     }
 });
-
-tui.util.extend(RadialChart.prototype);
 
 module.exports = RadialChart;

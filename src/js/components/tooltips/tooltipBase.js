@@ -200,7 +200,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      * @abstract
      */
-    _makeTooltipData: function() {},
+    makeTooltipData: function() {},
 
     /**
      * Set data for rendering.
@@ -227,7 +227,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         var el = dom.create('DIV', this.className);
 
         this._setDataForRendering(data);
-        this.data = this._makeTooltipData();
+        this.data = this.makeTooltipData();
 
         renderUtil.renderPosition(el, this.layout.position);
 
@@ -242,7 +242,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     rerender: function(data) {
         this.resize(data);
-        this.data = this._makeTooltipData();
+        this.data = this.makeTooltipData();
     },
 
     /**
@@ -263,7 +263,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * Zoom.
      */
     zoom: function() {
-        this.data = this._makeTooltipData();
+        this.data = this.makeTooltipData();
     },
 
     /**

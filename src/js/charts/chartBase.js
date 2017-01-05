@@ -77,7 +77,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.componentManager = this._createComponentManager();
 
-        this._addComponents();
+        this.addComponents();
 
         this._attachToEventBus();
     },
@@ -251,9 +251,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {string} classType - component class type
      * @param {object} tooltipOptions tooltip option
      * @returns {object} tooltip data
-     * @private
      */
-    _makeTooltipData: function(classType, tooltipOptions) {
+    makeTooltipData: function(classType, tooltipOptions) {
         return {
             isVertical: this.isVertical,
             chartType: this.chartType,
@@ -267,10 +266,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Add components.
-     * @private
      * @abstract
      */
-    _addComponents: function() {},
+    addComponents: function() {},
 
     /**
      * Render chart title.
@@ -294,10 +292,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Get scale option.
-     * @private
      * @abstract
      */
-    _getScaleOption: function() {},
+    getScaleOption: function() {},
 
     /**
      * Build bounds and scale data.
@@ -346,7 +343,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             options: this.options,
             theme: this.theme,
             hasAxes: this.hasAxes,
-            scaleOption: this._getScaleOption(),
+            scaleOption: this.getScaleOption(),
             isVertical: this.isVertical,
             hasRightYAxis: this.hasRightYAxis,
             addedDataCount: this.addedDataCount,
@@ -357,10 +354,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Add data ratios.
-     * @private
      * @abstract
      */
-    _addDataRatios: function() {},
+    addDataRatios: function() {},
 
     /**
      * Common render function for rendering functions like render, rerender, resize and zoom.
@@ -376,7 +372,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         // 비율값 추가
-        this._addDataRatios(boundsAndScale.limitMap);
+        this.addDataRatios(boundsAndScale.limitMap);
 
         onRender(boundsAndScale);
     },

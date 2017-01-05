@@ -41,9 +41,9 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         var chartExportMenu = this.options.chartExportMenu;
 
         this._addLegendComponent();
@@ -65,20 +65,10 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
     /**
      * Add data ratios.
-     * @private
      * @override
      */
-    _addDataRatios: function() {
+    addDataRatios: function() {
         this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
-    },
-
-    /**
-     * Send series data.
-     * @private
-     * @override
-     */
-    _sendSeriesData: function() {
-        ChartBase.prototype._sendSeriesData.call(this, chartConst.CHART_TYPE_PIE);
     }
 });
 

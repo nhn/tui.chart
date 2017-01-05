@@ -165,7 +165,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @returns {Array.<object>} tooltip data
      * @override
      */
-    _makeTooltipData: function() {
+    makeTooltipData: function() {
         var self = this;
         var orgLegendLabels = this.dataProcessor.getLegendLabels();
         var isPivot = predicate.isTreemapChart(this.chartType);

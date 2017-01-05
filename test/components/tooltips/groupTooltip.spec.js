@@ -26,7 +26,7 @@ describe('GroupTooltip', function() {
         });
     });
 
-    describe('_makeTooltipData()', function() {
+    describe('makeTooltipData()', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function() {
             var actual, expected;
 
@@ -51,7 +51,7 @@ describe('GroupTooltip', function() {
                 return categories[index];
             });
 
-            actual = tooltip._makeTooltipData();
+            actual = tooltip.makeTooltipData();
             expected = [
                 {category: 'Silver', values: ['10', '20']},
                 {category: 'Gold', values: ['30', '40']}

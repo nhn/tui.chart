@@ -14,10 +14,9 @@ var lineTypeMixer = {
     /**
      * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         var scaleOption = {};
 
         if (this.dataProcessor.isCoordinateType()) {
@@ -53,9 +52,8 @@ var lineTypeMixer = {
     /**
      * Add components
      * @param {string} chartType chart type
-     * @private
      */
-    _addComponents: function() {
+    addComponents: function() {
         if (this.dataProcessor.isCoordinateType()) {
             delete this.options.xAxis.tickInterval;
             this.options.tooltip.grouped = false;

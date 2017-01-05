@@ -34,7 +34,7 @@ var pieTypeMixer = {
      * @private
      */
     _addTooltipComponent: function(tooltipOptions) {
-        this.componentManager.register('tooltip', this._makeTooltipData('tooltip', tooltipOptions));
+        this.componentManager.register('tooltip', this.makeTooltipData('tooltip', tooltipOptions));
     },
 
     /**

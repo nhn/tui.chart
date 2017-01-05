@@ -46,9 +46,9 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
 
     /**
      * Add components.
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         var optionsMap = this._makeOptionsMap(this.seriesTypes);
 
         this._addPlotComponent(this.options.xAxis.type);
@@ -102,10 +102,9 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
      *      yAxis: {valueType: string, additionalOptions: {isSingleYAxis: boolean}},
      *      xAxis: {valueType: string}
      * }}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             yAxis: {
                 valueType: 'y'

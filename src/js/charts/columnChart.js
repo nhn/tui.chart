@@ -55,9 +55,9 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         this._addComponentsForAxisType({
             axis: [
                 {
@@ -83,10 +83,9 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
     /**
      * Get scale option.
      * @returns {{yAxis: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             yAxis: true
         };

@@ -39,9 +39,9 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
     /**
      * Add components.
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         var seriesTheme = this.theme.series[this.chartType];
         var useColorValue = this.options.series.useColorValue;
         var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
@@ -55,7 +55,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
         this.componentManager.register('tooltip', tui.util.extend({
             labelTheme: tui.util.pick(this.theme, 'series', 'label')
-        }, this._makeTooltipData()));
+        }, this.makeTooltipData()));
 
         if (useColorValue && this.options.legend.visible) {
             this.componentManager.register('legend', {
@@ -75,10 +75,9 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
     /**
      * Get scale option.
      * @returns {{legend: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             legend: true
         };
@@ -86,10 +85,9 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
     /**
      * Add data ratios to dataProcessor for rendering graph.
-     * @private
      * @override
      */
-    _addDataRatios: function(limitMap) {
+    addDataRatios: function(limitMap) {
         this.dataProcessor.addDataRatiosForTreemapChart(limitMap.legend, this.chartType);
     },
 

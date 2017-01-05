@@ -138,7 +138,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @returns {Array.<object>} tooltip data
      * @override
      */
-    _makeTooltipData: function() {
+    makeTooltipData: function() {
         var self = this;
 
         return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {

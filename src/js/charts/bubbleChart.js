@@ -48,10 +48,9 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     /**
      * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?{valueType:string}}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         var scaleOption = {};
 
         if (this.dataProcessor.hasXValue(this.chartType)) {
@@ -85,9 +84,9 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         this._addComponentsForAxisType({
             axis: [
                 {

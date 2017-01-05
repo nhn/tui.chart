@@ -80,9 +80,9 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         this._addLegendComponent(this.seriesTypes);
         this._addTooltipComponent({
             labelFormatter: this.labelFormatter
@@ -97,10 +97,9 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
 
     /**
      * Add data ratios.
-     * @private
      * @override
      */
-    _addDataRatios: function() {
+    addDataRatios: function() {
         var self = this;
         var seriesTypes = this.seriesTypes || [this.chartType];
 

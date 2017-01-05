@@ -44,9 +44,9 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
+    addComponents: function() {
         this._addComponentsForAxisType({
             axis: [
                 {
@@ -69,10 +69,9 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
     /**
      * Get scale option.
      * @returns {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             xAxis: {
                 valueType: 'x'
