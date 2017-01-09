@@ -93,10 +93,18 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
         return {
             legend: true
         };
-    }
-});
+    },
+    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
+    _addPlotComponent: axisTypeMixer._addPlotComponent,
+    _addLegendComponent: axisTypeMixer._addLegendComponent,
+    _addAxisComponents: axisTypeMixer._addAxisComponents,
+    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
+    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
+    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
+    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
 
-tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
+    _addMouseEventDetectorComponentForNormalTooltip: axisTypeMixer._addMouseEventDetectorComponentForNormalTooltip
+});
 
 /**
  * Add data ratios for rendering graph.

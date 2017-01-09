@@ -112,9 +112,18 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
                 baseFontFamily: this.theme.chart.fontFamily
             });
         }
-    }
-});
+    },
+    addDataRatios: axisTypeMixer.addDataRatios,
 
-tui.util.extend(BubbleChart.prototype, axisTypeMixer);
+    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
+    _addPlotComponent: axisTypeMixer._addPlotComponent,
+    _addLegendComponent: axisTypeMixer._addLegendComponent,
+    _addAxisComponents: axisTypeMixer._addAxisComponents,
+    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
+    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
+    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
+    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
+    _addSimpleEventDetectorComponent: axisTypeMixer._addSimpleEventDetectorComponent
+});
 
 module.exports = BubbleChart;

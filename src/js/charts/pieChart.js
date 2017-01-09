@@ -69,9 +69,14 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      */
     addDataRatios: function() {
         this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
-    }
-});
+    },
 
-tui.util.extend(PieChart.prototype, pieTypeMixer);
+    _addLegendComponent: pieTypeMixer._addLegendComponent,
+    _addTooltipComponent: pieTypeMixer._addTooltipComponent,
+    _addChartExportMenuComponent: pieTypeMixer._addChartExportMenuComponent,
+    _addSeriesComponents: pieTypeMixer._addSeriesComponents,
+    _addMouseEventDetectorComponent: pieTypeMixer._addMouseEventDetectorComponent,
+    labelFormatter: pieTypeMixer.labelFormatter
+});
 
 module.exports = PieChart;

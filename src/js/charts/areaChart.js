@@ -59,10 +59,42 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._initForAddingData();
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
-    }
-});
+    },
+    addDataRatios: axisTypeMixer.addDataRatios,
 
-tui.util.extend(AreaChart.prototype,
-    axisTypeMixer, lineTypeMixer, zoomMixer, addingDynamicDataMixer);
+    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
+    _addPlotComponent: axisTypeMixer._addPlotComponent,
+    _addLegendComponent: axisTypeMixer._addLegendComponent,
+    _addAxisComponents: axisTypeMixer._addAxisComponents,
+    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
+    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
+    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
+    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
+
+    getScaleOption: lineTypeMixer.getScaleOption,
+    addComponents: lineTypeMixer.addComponents,
+
+    addPlotLine: lineTypeMixer.addPlotLine,
+    addPlotBand: lineTypeMixer.addPlotBand,
+    removePlotBand: lineTypeMixer.removePlotBand,
+    removePlotLine: lineTypeMixer.removePlotLine,
+
+    _addMouseEventDetectorComponentForNormalTooltip: lineTypeMixer._addMouseEventDetectorComponentForNormalTooltip,
+
+    onZoom: zoomMixer.onZoom,
+    onResetZoom: zoomMixer.onResetZoom,
+    _renderForZoom: zoomMixer._renderForZoom,
+
+    _initForAddingData: addingDynamicDataMixer._initForAddingData,
+    _pauseAnimationForAddingData: addingDynamicDataMixer._pauseAnimationForAddingData,
+    _changeCheckedLegends: addingDynamicDataMixer._changeCheckedLegends,
+    _restartAnimationForAddingData: addingDynamicDataMixer._restartAnimationForAddingData,
+    _startLookup: addingDynamicDataMixer._startLookup,
+    _calculateAnimateTickSize: addingDynamicDataMixer._calculateAnimateTickSize,
+    _animateForAddingData: addingDynamicDataMixer._animateForAddingData,
+    _checkForAddedData: addingDynamicDataMixer._checkForAddedData,
+    addData: addingDynamicDataMixer.addData,
+    _rerenderForAddingData: addingDynamicDataMixer._rerenderForAddingData
+});
 
 module.exports = AreaChart;

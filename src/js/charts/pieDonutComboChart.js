@@ -120,9 +120,16 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
             seriesTypes: this.seriesTypes
         });
-    }
-});
+    },
+    _makeOptionsMap: comboTypeMixer._makeOptionsMap,
+    _getBaseSeriesOptions: comboTypeMixer._getBaseSeriesOptions,
 
-tui.util.extend(PieDonutComboChart.prototype, pieTypeMixer, comboTypeMixer);
+    _addLegendComponent: pieTypeMixer._addLegendComponent,
+    _addTooltipComponent: pieTypeMixer._addTooltipComponent,
+    _addChartExportMenuComponent: pieTypeMixer._addChartExportMenuComponent,
+    _addSeriesComponents: pieTypeMixer._addSeriesComponents,
+    _addMouseEventDetectorComponent: pieTypeMixer._addMouseEventDetectorComponent,
+    labelFormatter: pieTypeMixer.labelFormatter
+});
 
 module.exports = PieDonutComboChart;

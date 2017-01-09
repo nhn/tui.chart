@@ -113,9 +113,17 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
                 valueType: 'x'
             }
         };
-    }
-});
+    },
+    addDataRatios: axisTypeMixer.addDataRatios,
 
-tui.util.extend(LineScatterComboChart.prototype, axisTypeMixer, comboTypeMixer);
+    _addPlotComponent: axisTypeMixer._addPlotComponent,
+    _addLegendComponent: axisTypeMixer._addLegendComponent,
+    _addAxisComponents: axisTypeMixer._addAxisComponents,
+    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
+    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
+
+    _makeOptionsMap: comboTypeMixer._makeOptionsMap,
+    _getBaseSeriesOptions: comboTypeMixer._getBaseSeriesOptions
+});
 
 module.exports = LineScatterComboChart;

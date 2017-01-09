@@ -45,9 +45,33 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         tui.util.extend(this, chartTypesMap);
 
         this._rerender(checkedLegends, rawData, chartTypesMap);
-    }
-});
+    },
+    addDataRatios: axisTypeMixer.addDataRatios,
 
-tui.util.extend(ColumnLineComboChart.prototype, axisTypeMixer, comboTypeMixer, verticalTypeComboMixer);
+    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
+    _addPlotComponent: axisTypeMixer._addPlotComponent,
+    _addLegendComponent: axisTypeMixer._addLegendComponent,
+    _addAxisComponents: axisTypeMixer._addAxisComponents,
+    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
+    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
+    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
+    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
+
+    _addMouseEventDetectorComponentForGroupTooltip: axisTypeMixer._addMouseEventDetectorComponentForGroupTooltip,
+
+    _makeOptionsMap: comboTypeMixer._makeOptionsMap,
+    _getBaseSeriesOptions: comboTypeMixer._getBaseSeriesOptions,
+
+    _initForVerticalTypeCombo: verticalTypeComboMixer._initForVerticalTypeCombo,
+    _makeChartTypesMap: verticalTypeComboMixer._makeChartTypesMap,
+    _getYAxisOptionChartTypes: verticalTypeComboMixer._getYAxisOptionChartTypes,
+    _makeYAxisOptionsMap: verticalTypeComboMixer._makeYAxisOptionsMap,
+    addComponents: verticalTypeComboMixer.addComponents,
+    getScaleOption: verticalTypeComboMixer.getScaleOption,
+    _makeDataForAddingSeriesComponent: verticalTypeComboMixer._makeDataForAddingSeriesComponent,
+    _makeYAxisScaleOption: verticalTypeComboMixer._makeYAxisScaleOption,
+    _setAdditionalOptions: verticalTypeComboMixer._setAdditionalOptions,
+    _increaseYAxisTickCount: verticalTypeComboMixer._increaseYAxisTickCount
+});
 
 module.exports = ColumnLineComboChart;

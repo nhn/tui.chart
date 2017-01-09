@@ -103,7 +103,7 @@ var verticalTypeComboMixer = {
      * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
      * @private
      */
-    setAdditionalOptions: function(additionalOptions) {
+    _setAdditionalOptions: function(additionalOptions) {
         var dataProcessor = this.dataProcessor;
 
         tui.util.forEach(this.options.series, function(seriesOption, seriesType) {
@@ -139,7 +139,7 @@ var verticalTypeComboMixer = {
         };
 
         if (isSingleYAxis && this.options.series) {
-            this.setAdditionalOptions(additionalOptions);
+            this._setAdditionalOptions(additionalOptions);
         }
 
         return {

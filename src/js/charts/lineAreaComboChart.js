@@ -54,10 +54,39 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
 
         this._initForAddingData();
         this._changeCheckedLegends(checkedLegends, rawData, chartTypesMap);
-    }
+    },
+    addDataRatios: axisTypeMixer.addDataRatios,
+
+    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
+    _addPlotComponent: axisTypeMixer._addPlotComponent,
+    _addLegendComponent: axisTypeMixer._addLegendComponent,
+    _addAxisComponents: axisTypeMixer._addAxisComponents,
+    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
+    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
+    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
+    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
+
+    _addMouseEventDetectorComponentForGroupTooltip: axisTypeMixer._addMouseEventDetectorComponentForGroupTooltip,
+
+    onZoom: zoomMixer.onZoom,
+    onResetZoom: zoomMixer.onResetZoom,
+    _renderForZoom: zoomMixer._renderForZoom,
+
+    _initForAddingData: addingDynamicDataMixer._initForAddingData,
+    _pauseAnimationForAddingData: addingDynamicDataMixer._pauseAnimationForAddingData,
+    _changeCheckedLegends: addingDynamicDataMixer._changeCheckedLegends,
+    _restartAnimationForAddingData: addingDynamicDataMixer._restartAnimationForAddingData,
+    _startLookup: addingDynamicDataMixer._startLookup,
+    _calculateAnimateTickSize: addingDynamicDataMixer._calculateAnimateTickSize,
+    _animateForAddingData: addingDynamicDataMixer._animateForAddingData,
+    _checkForAddedData: addingDynamicDataMixer._checkForAddedData,
+    addData: addingDynamicDataMixer.addData,
+    _rerenderForAddingData: addingDynamicDataMixer._rerenderForAddingData,
+
+    _makeOptionsMap: comboTypeMixer._makeOptionsMap,
+    _getBaseSeriesOptions: comboTypeMixer._getBaseSeriesOptions
 });
 
-tui.util.extend(LineAreaComboChart.prototype,
-    axisTypeMixer, zoomMixer, addingDynamicDataMixer, comboTypeMixer, verticalTypeComboMixer);
+tui.util.extend(LineAreaComboChart.prototype, verticalTypeComboMixer);
 
 module.exports = LineAreaComboChart;

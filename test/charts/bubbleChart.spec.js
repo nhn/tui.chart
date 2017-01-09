@@ -29,7 +29,7 @@ describe('Test for BubbleChart', function() {
         bubbleChart.chartType = 'bubble';
     });
 
-    describe('_addComponents()', function() {
+    describe('addComponents()', function() {
         it('circleLegend.visible 옵션이 true이면 componentManager.register를 호출하여 circleLegend 컴포넌트를 생성합니다.', function() {
             spyOn(bubbleChart, '_addComponentsForAxisType');
             bubbleChart.options = {
@@ -44,7 +44,7 @@ describe('Test for BubbleChart', function() {
                 }
             };
 
-            bubbleChart._addComponents('bubble');
+            bubbleChart.addComponents('bubble');
 
             expect(componentManager.register).toHaveBeenCalledWith('circleLegend', {
                 chartType: 'bubble',
@@ -60,7 +60,7 @@ describe('Test for BubbleChart', function() {
                     visible: false
                 }
             };
-            bubbleChart._addComponents();
+            bubbleChart.addComponents();
 
             expect(componentManager.register).not.toHaveBeenCalled();
         });
