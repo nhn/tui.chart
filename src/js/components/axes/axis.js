@@ -990,4 +990,20 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     }
 });
 
-module.exports = Axis;
+function axisFactory(axisParam) {
+    var chartType = axisParam.dataProcessor.chartType;
+    var name = axisParam.name;
+
+    // axisTypeMixer
+    if (chartType === 'bar') {
+        axisParam.isVertical = (name === 'yAxis');
+        axisParam.seriesType = chartType;
+        axisParam.aligned = false;
+    }
+
+    return new Axis(axisParam);
+}
+
+axisFactory.componentType = 'axis';
+
+module.exports = axisFactory;

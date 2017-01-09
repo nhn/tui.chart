@@ -44,7 +44,7 @@ var TreemapSeries = require('../components/series/treemapChartSeries');
 
 var Zoom = require('../components/series/zoom');
 
-var COMPONENT_CLASS_MAP = {
+var COMPONENT_FACTORY_MAP = {
     axis: Axis,
     plot: Plot,
     radialPlot: RadialPlot,
@@ -93,7 +93,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         this.components = [];
 
         /**
-         * Component map.
+         * componentFactory map.
          * @type {object}
          */
         this.componentMap = {};
@@ -153,29 +153,64 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {object} params component parameters
      */
     register: function(name, params) {
-        var index, component, componentType, classType, Component;
+        var index, component, componentType, classType, componentFactory, themeKey;
+
+        // TODO 임시 분기 코드
+        var old = false;
+        if (!tui.util.isString(params)) {
+            classType = params.classType || componentType || name;
+            old = true;
+        } else {
+            classType = params;
+            params = {};
+        }
 
         params = params || {};
 
-        componentType = params.componentType || name;
-        classType = params.classType || componentType || name;
+        params.name = name;
 
         index = params.index || 0;
 
-        params.theme = params.theme || this.theme[componentType];
+        componentFactory = COMPONENT_FACTORY_MAP[classType];
+
+        if (old) {
+            componentType = params.componentType || name;
+        } else {
+            componentType = componentFactory.componentType;
+        }
+
+        // axis의 경우 name으로 테마를 가져온다. xAxis, yAxis
+        if (componentType === 'axis') {
+            themeKey = name;
+        } else {
+            themeKey = componentType;
+        }
+
+        params.chartTheme = this.theme;
+        params.theme = params.theme || this.theme[themeKey];
+
+        params.chartOptions = this.options;
         params.options = this._makeComponentOptions(params.options, componentType, index);
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;
         params.eventBus = this.eventBus;
 
-        Component = COMPONENT_CLASS_MAP[classType];
-        component = new Component(params);
-        component.componentName = name;
-        component.componentType = componentType;
+        // TODO 팩터리로 전환하기 위한 임시 분기
+        if (old) {
+            component = new componentFactory(params);
+        } else {
+            component = componentFactory(params);
+        }
 
-        this.components.push(component);
-        this.componentMap[name] = component;
+        // 팩토리에서 옵션에따라 생성을 거부할 수 있다.
+        if (component) {
+            component.componentName = name;
+            component.componentType = componentType;
+
+            this.components.push(component);
+            this.componentMap[name] = component;
+        }
     },
 
     /**

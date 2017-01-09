@@ -227,4 +227,19 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
 BarTypeSeriesBase.mixin(BarChartSeries);
 
-module.exports = BarChartSeries;
+function barSeriesFactory(params) {
+    var chartType = params.dataProcessor.chartType;
+    var libType = params.dataProcessor.options.libType;
+    var chartTheme = params.chartTheme;
+
+    params.libType = libType;
+    params.chartType = chartType;
+    params.chartBackground = chartTheme.background;
+
+    return new BarChartSeries(params);
+}
+
+// TODO 더나은 방법 찾아보자
+barSeriesFactory.componentType = 'series';
+
+module.exports = barSeriesFactory;

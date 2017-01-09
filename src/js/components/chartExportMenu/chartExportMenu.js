@@ -227,4 +227,14 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
     }
 });
 
-module.exports = ChartExportMenu;
+function chartExportMenuFactory(params) {
+    var isVisible = params.options.visible;
+
+    if (isVisible) {
+        return new ChartExportMenu(params);
+    }
+}
+
+chartExportMenuFactory.componentType = 'chartExportMenu';
+
+module.exports = chartExportMenuFactory;

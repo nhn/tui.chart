@@ -185,6 +185,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _initializeOptions: function(options) {
+        options.chartTypes = this.charTypes;
         options.xAxis = options.xAxis || {};
         options.series = options.series || {};
         options.tooltip = options.tooltip || {};
@@ -251,6 +252,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {string} classType - component class type
      * @param {object} tooltipOptions tooltip option
      * @returns {object} tooltip data
+     * todo 이작업은 툴팁 팩토리에서 하게 됨으로 이메서드는 제거되어야한다.
      */
     makeTooltipData: function(classType, tooltipOptions) {
         return {

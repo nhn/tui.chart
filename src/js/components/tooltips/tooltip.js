@@ -201,4 +201,24 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 });
 
 singleTooltipMixer.mixin(Tooltip);
-module.exports = Tooltip;
+
+function tooltipFactory(params) {
+    var chartType = params.chartType;
+    var chartTypes = params.chartTypes;
+    var xAxisOptions = params.chartOptions.xAxis;
+
+    params.chartType = chartType;
+    params.chartTypes = chartTypes;
+
+    if (chartType === 'bar') {
+        params.isVertical = false;
+        params.xAxisType = xAxisOptions.type;
+        params.dateFormat = xAxisOptions.dateFormat;
+    }
+
+    return new Tooltip(params);
+}
+
+tooltipFactory.componentType = 'tooltip';
+
+module.exports = tooltipFactory;

@@ -577,4 +577,20 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     }
 });
 
-module.exports = Plot;
+function plotFactory(param) {
+    var chartType = param.dataProcessor.chartType;
+    var chartTypes = param.dataProcessor.chartTypes;
+    var xAxisType = param.dataProcessor.options.xAxis.type;
+
+    if (chartType === 'bar') {
+        param.chartType = chartType;
+        param.chartTypes = chartTypes;
+        param.xAxisTypeOption = xAxisType;
+    }
+
+    return new Plot(param);
+}
+
+plotFactory.componentType = 'plot';
+
+module.exports = plotFactory;

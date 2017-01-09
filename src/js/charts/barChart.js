@@ -78,31 +78,19 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @override
      */
     addComponents: function() {
-        var axes = [
-            {
-                name: 'yAxis',
-                isVertical: true
-            },
-            {
-                name: 'xAxis'
-            }
-        ];
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
 
-        if (this.hasRightYAxis) {
-            axes.push({
-                name: 'rightYAxis',
-                isVertical: true
-            });
-        }
-        this._addComponentsForAxisType({
-            axis: axes,
-            series: [
-                {
-                    name: 'barSeries'
-                }
-            ],
-            plot: true
-        });
+        this.componentManager.register('legend', 'legend');
+
+        this.componentManager.register('barSeries', 'barSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        // todo group툴팁이 옵션인데 옵션인게 맞는지 물어보기 바차트는 그룹일때 에러난다.
+        this.componentManager.register('tooltip', 'tooltip');
+
+        this.componentManager.register('mouseEventDetector', 'boundsTypeEventDetector');
     },
 
     /**
@@ -130,18 +118,18 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         }
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, null, boundParams);
     },
-    addDataRatios: axisTypeMixer.addDataRatios,
+    /**
+     * Add data ratios.
+     * @override
+     * modified from axisTypeMixer
+     */
+    addDataRatios: function(limitMap) {
+        var seriesOption = this.options.series || {};
+        var chartType = this.chartType;
+        var stackType = (seriesOption[chartType] || seriesOption).stackType;
 
-    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
-    _addPlotComponent: axisTypeMixer._addPlotComponent,
-    _addLegendComponent: axisTypeMixer._addLegendComponent,
-    _addAxisComponents: axisTypeMixer._addAxisComponents,
-    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
-    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
-    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
-
-    _addMouseEventDetectorComponentForNormalTooltip: axisTypeMixer._addMouseEventDetectorComponentForNormalTooltip
+        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+    }
 });
 
 module.exports = BarChart;
