@@ -72,7 +72,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         });
 
         path = concat.apply([], path);
-        path[0] = 'M';
+
+        if (path.length > 0) {
+            path[0] = 'M';
+        }
 
         return path;
     },

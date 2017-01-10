@@ -37,7 +37,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var step;
 
         if (this.aligned) {
-            step = width / (len - 1);
+            step = width / (len > 1 ? (len - 1) : len);
         } else {
             step = width / len;
             start += (step / 2);
