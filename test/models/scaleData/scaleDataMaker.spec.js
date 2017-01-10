@@ -238,6 +238,26 @@ describe('Test for ScaleDataMaker', function() {
             expect(scaleData.limit.min).toBe(0);
             expect(scaleData.step).toBe(10);
         });
+
+        it('data가 한개이며 음수인 경우 (min : data, max: 0)을 반환합니다.', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([-10], 100, null, false, {
+                min: null,
+                max: null
+            });
+
+            expect(scaleData.limit.max).toBe(0);
+            expect(scaleData.limit.min).toBe(-10);
+        });
+
+        it('data가 한개이며 양수인 경우 (min : 0, max: data)를 반환합니다.', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([10], 100, null, false, {
+                min: null,
+                max: null
+            });
+
+            expect(scaleData.limit.max).toBe(10);
+            expect(scaleData.limit.min).toBe(0);
+        });
     });
     describe('_calculatePercentStackedScale()', function() {
         it('음수의 합이 0일 경우에는 chartConst.PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
