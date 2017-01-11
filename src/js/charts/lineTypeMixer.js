@@ -56,6 +56,8 @@ var lineTypeMixer = {
      * @private
      */
     _addComponents: function() {
+        var chartOptions = this.options.chart || {};
+
         if (this.dataProcessor.isCoordinateType()) {
             delete this.options.xAxis.tickInterval;
             this.options.tooltip.grouped = false;
@@ -78,7 +80,8 @@ var lineTypeMixer = {
                     name: this.chartType + 'Series'
                 }
             ],
-            plot: true
+            plot: true,
+            title: chartOptions.title
         });
     },
 

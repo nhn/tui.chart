@@ -54,6 +54,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
     _addComponents: function() {
         var seriesTheme = this.theme.series[this.chartType];
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+        var chartOptions = this.options.chart || {};
 
         this._addComponentsForAxisType({
             axis: [
@@ -80,7 +81,8 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
                 }
             ],
             tooltip: true,
-            mouseEventDetector: true
+            mouseEventDetector: true,
+            title: chartOptions.title
         });
     },
 

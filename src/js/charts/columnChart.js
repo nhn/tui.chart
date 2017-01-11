@@ -58,6 +58,8 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * @private
      */
     _addComponents: function() {
+        var chartOptions = this.options.chart || {};
+
         this._addComponentsForAxisType({
             axis: [
                 {
@@ -76,7 +78,8 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                     }
                 }
             ],
-            plot: true
+            plot: true,
+            title: chartOptions.title
         });
     },
 

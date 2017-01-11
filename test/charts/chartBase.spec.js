@@ -7,7 +7,6 @@
 'use strict';
 
 var ChartBase = require('../../src/js/charts/chartBase'),
-    dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil'),
     DataProcessor = require('../../src/js/models/data/dataProcessor');
 
@@ -274,15 +273,6 @@ describe('Test for ChartBase', function() {
             expect(actual.originalRawData).toEqual({
                 categories: ['a', 'b', 'c']
             });
-        });
-    });
-
-    describe('_renderTitle()', function() {
-        it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function() {
-            var el = dom.create('DIV');
-            chartBase._renderTitle(el);
-            expect(el.firstChild.innerHTML).toBe('Chart Title');
-            expect(el.firstChild.style.fontSize).toBe('14px');
         });
     });
 

@@ -46,9 +46,16 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
      * @override
      */
     _addComponents: function() {
+        var options = this.options;
+        var chartOptions = options.chart || {};
+
+        if (chartOptions.title) {
+            this._addTitleComponent(chartOptions.title);
+        }
+
         this.componentManager.register('series', {
-            libType: this.options.libType,
-            chartType: this.options.chartType,
+            libType: options.libType,
+            chartType: options.chartType,
             componentType: 'series',
             classType: 'radialSeries',
             chartBackground: this.theme.chart.background
@@ -75,11 +82,20 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
         }));
 
         this.componentManager.register('chartExportMenu', {
-            chartTitle: this.options.chart && this.options.chart.title ? this.options.chart.title.text : 'chart',
+            chartTitle: chartOptions && chartOptions.title ? chartOptions.title.text : 'chart',
             classType: 'chartExportMenu'
         });
     },
 
+    _addTitleComponent: function(options) {
+        this.componentManager.register('title', {
+            dataProcessor: this.dataProcessor,
+            libType: options.libType,
+            text: options.text,
+            theme: this.theme.chart ? this.theme.chart.title : {},
+            classType: 'title'
+        });
+    },
     /**
      * Add data ratios.
      * @private

@@ -47,6 +47,8 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
      * @private
      */
     _addComponents: function() {
+        var chartOptions = this.options.chart || {};
+
         this._addComponentsForAxisType({
             axis: [
                 {
@@ -62,7 +64,8 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
                     name: 'scatterSeries'
                 }
             ],
-            plot: true
+            plot: true,
+            title: chartOptions.title
         });
     },
 
