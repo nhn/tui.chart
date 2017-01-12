@@ -115,7 +115,71 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('make positions for default data type, when aligned', function() {
+        it('make positions for default data type, when aligned & single data', function() {
+            var seriesDataModel = new SeriesDataModel();
+            var actual;
+
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.pivotGroups = [
+                new SeriesGroup([{
+                    ratio: 0.25
+                }])
+            ];
+            spyOn(seriesDataModel, 'getGroupCount').and.returnValue(1);
+            series.aligned = true;
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 200
+                }
+            };
+            series.axisDataMap = {
+                xAxis: {}
+            };
+
+            actual = series._makePositionsForDefaultType();
+
+            expect(actual).toEqual([
+                [
+                    {
+                        top: 160,
+                        left: 10
+                    }
+                ]
+            ]);
+        });
+
+        it('make positions for default data type, when aligned & single null data', function() {
+            var seriesDataModel = new SeriesDataModel();
+            var actual;
+
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.pivotGroups = [
+                new SeriesGroup([{
+                    ratio: 0.25,
+                    end: null
+                }])
+            ];
+            spyOn(seriesDataModel, 'getGroupCount').and.returnValue(1);
+            series.aligned = true;
+            series.layout = {
+                dimension: {
+                    width: 300,
+                    height: 200
+                }
+            };
+            series.axisDataMap = {
+                xAxis: {}
+            };
+
+            actual = series._makePositionsForDefaultType();
+
+            expect(actual.length).toBe(1);
+            expect(actual[0].length).toBe(1);
+            expect(actual[0][0]).toBeUndefined();
+        });
+
+        it('make positions for default data type, when aligned & null', function() {
             var seriesDataModel = new SeriesDataModel();
             var actual;
 
