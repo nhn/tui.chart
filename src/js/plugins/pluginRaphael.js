@@ -19,6 +19,7 @@ var legend = require('./raphaelLegendComponent');
 var MapLegend = require('./raphaelMapLegend');
 var CircleLegend = require('./raphaelCircleLegend');
 var title = require('./raphaelTitleComponent');
+var axis = require('./raphaelAxisComponent');
 
 var RadialPlot = require('./raphaelRadialPlot');
 
@@ -39,7 +40,8 @@ var pluginRaphael = {
     mapLegend: MapLegend,
     circleLegend: CircleLegend,
     radialPlot: RadialPlot,
-    title: title
+    title: title,
+    axis: axis
 };
 
 tui.chart.registerPlugin(pluginName, pluginRaphael);

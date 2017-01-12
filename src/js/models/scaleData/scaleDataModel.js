@@ -238,7 +238,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      * @private
      */
     _createAxisData: function(scaleData, axisOptions, labelTheme, isVertical, isPositionRight) {
-        var aligned = predicate.isLineTypeChart(this.chartType, this.seriesTypes);
+        var aligned = predicate.isLineTypeChart(this.chartType, this.seriesTypes) && !axisOptions.pointOnColumn;
         var axisData;
 
         if (scaleData) {
