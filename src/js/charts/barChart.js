@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
 
@@ -87,7 +86,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         this.componentManager.register('barSeries', 'barSeries');
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
-        // todo group툴팁이 옵션인데 옵션인게 맞는지 물어보기 바차트는 그룹일때 에러난다.
+        // todo 툴팁은 옵션에 따라서 group인지 아닌지가 갈리게 된다. 둘다아는 툴팁팩토리가 하나 생겨야할듯싶다.
         this.componentManager.register('tooltip', 'tooltip');
 
         this.componentManager.register('mouseEventDetector', 'boundsTypeEventDetector');

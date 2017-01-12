@@ -203,18 +203,22 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 singleTooltipMixer.mixin(Tooltip);
 
 function tooltipFactory(params) {
-    var chartType = params.chartType;
-    var chartTypes = params.chartTypes;
+    var chartType = params.chartOptions.chartType;
+    var chartTypes = params.chartOptions.chartTypes;
     var xAxisOptions = params.chartOptions.xAxis;
+    var isVertical;
+
+    if (chartType === 'bar') {
+        isVertical = false;
+    } else if (chartType === 'column') {
+        isVertical = true;
+    }
 
     params.chartType = chartType;
     params.chartTypes = chartTypes;
-
-    if (chartType === 'bar') {
-        params.isVertical = false;
-        params.xAxisType = xAxisOptions.type;
-        params.dateFormat = xAxisOptions.dateFormat;
-    }
+    params.isVertical = isVertical;
+    params.xAxisType = xAxisOptions.type;
+    params.dateFormat = xAxisOptions.dateFormat;
 
     return new Tooltip(params);
 }

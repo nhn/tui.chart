@@ -228,8 +228,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 BarTypeSeriesBase.mixin(BarChartSeries);
 
 function barSeriesFactory(params) {
-    var chartType = params.dataProcessor.chartType;
-    var libType = params.dataProcessor.options.libType;
+    var chartType = params.chartOptions.chartType;
+    var libType = params.chartOptions.libType;
     var chartTheme = params.chartTheme;
 
     params.libType = libType;

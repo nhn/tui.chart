@@ -153,7 +153,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {object} params component parameters
      */
     register: function(name, params) {
-        var index, component, componentType, classType, componentFactory, themeKey;
+        var index, component, componentType, classType, componentFactory, optionKey;
 
         // TODO 임시 분기 코드
         var old = false;
@@ -179,18 +179,18 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
             componentType = componentFactory.componentType;
         }
 
-        // axis의 경우 name으로 테마를 가져온다. xAxis, yAxis
+        // axis의 경우 name으로 테마와 옵션을 가져온다. xAxis, yAxis
         if (componentType === 'axis') {
-            themeKey = name;
+            optionKey = name;
         } else {
-            themeKey = componentType;
+            optionKey = componentType;
         }
 
         params.chartTheme = this.theme;
-        params.theme = params.theme || this.theme[themeKey];
+        params.theme = params.theme || this.theme[optionKey];
 
         params.chartOptions = this.options;
-        params.options = this._makeComponentOptions(params.options, componentType, index);
+        params.options = this._makeComponentOptions(params.options, optionKey, index);
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;

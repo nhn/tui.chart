@@ -216,11 +216,15 @@ var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends
 function BoundsTypeEventDetectorFactory(params) {
     var chartType = params.chartOptions.chartType;
     var seriesAllowSelect = params.chartOptions.series.allowSelect;
+    var isVertical;
 
     if (chartType === 'bar') {
-        params.isVertical = false;
+        isVertical = false;
+    } else if (chartType === 'column') {
+        isVertical = true;
     }
 
+    params.isVertical = isVertical;
     params.allowSelect = seriesAllowSelect;
 
     return new BoundsTypeEventDetector(params);

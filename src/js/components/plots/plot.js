@@ -578,11 +578,11 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 });
 
 function plotFactory(param) {
-    var chartType = param.dataProcessor.chartType;
-    var chartTypes = param.dataProcessor.chartTypes;
-    var xAxisType = param.dataProcessor.options.xAxis.type;
+    var chartType = param.chartOptions.chartType;
+    var chartTypes = param.chartOptions.chartTypes;
+    var xAxisType = param.chartOptions.xAxis.type;
 
-    if (chartType === 'bar') {
+    if (chartType === 'bar' || chartType === 'column') {
         param.chartType = chartType;
         param.chartTypes = chartTypes;
         param.xAxisTypeOption = xAxisType;

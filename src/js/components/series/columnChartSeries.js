@@ -226,4 +226,18 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
 BarTypeSeriesBase.mixin(ColumnChartSeries);
 
-module.exports = ColumnChartSeries;
+function columnChartSeriesFactory(params) {
+    var chartType = params.chartOptions.chartType;
+    var libType = params.chartOptions.libType;
+    var chartTheme = params.chartTheme;
+
+    params.libType = libType;
+    params.chartType = chartType;
+    params.chartBackground = chartTheme.background;
+
+    return new ColumnChartSeries(params);
+}
+
+columnChartSeriesFactory.componentType = 'series';
+
+module.exports = columnChartSeriesFactory;

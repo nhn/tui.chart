@@ -57,7 +57,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * Add components
      * @override
      */
-    addComponents: function() {
+    __addComponents: function() {
         this._addComponentsForAxisType({
             axis: [
                 {
@@ -78,6 +78,24 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             ],
             plot: true
         });
+    },
+    /**
+     * Add components
+     * @override
+     */
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
+
+        this.componentManager.register('legend', 'legend');
+
+        this.componentManager.register('columnSeries', 'columnSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+
+        this.componentManager.register('mouseEventDetector', 'boundsTypeEventDetector');
     },
 
     /**

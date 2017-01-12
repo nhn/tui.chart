@@ -995,7 +995,7 @@ function axisFactory(axisParam) {
     var name = axisParam.name;
 
     // axisTypeMixer
-    if (chartType === 'bar') {
+    if (chartType === 'bar' || chartType === 'column') {
         axisParam.isVertical = (name === 'yAxis');
         axisParam.seriesType = chartType;
         axisParam.aligned = false;
