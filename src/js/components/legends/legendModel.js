@@ -244,6 +244,14 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     },
 
     /**
+     * Toggle checked index.
+     * @param {number} index legend index
+     */
+    toggleCheckedIndex: function(index) {
+        this.checkedWholeIndexes[index] = !this.checkedWholeIndexes[index];
+    },
+
+    /**
      * Update checked index.
      * @param {number} index legend index
      * @private

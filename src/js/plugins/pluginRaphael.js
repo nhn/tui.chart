@@ -15,6 +15,7 @@ var CoordinateTypeChart = require('./raphaelCoordinateTypeChart');
 var BoxTypeChart = require('./raphaelBoxTypeChart');
 var MapChart = require('./raphaelMapChart');
 
+var legend = require('./raphaelLegendComponent');
 var MapLegend = require('./raphaelMapLegend');
 var CircleLegend = require('./raphaelCircleLegend');
 var title = require('./raphaelTitleComponent');
@@ -34,6 +35,7 @@ var pluginRaphael = {
     treemap: BoxTypeChart,
     map: MapChart,
     radial: RadialLineSeries,
+    legend: legend,
     mapLegend: MapLegend,
     circleLegend: CircleLegend,
     radialPlot: RadialPlot,

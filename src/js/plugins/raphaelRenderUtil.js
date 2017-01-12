@@ -69,19 +69,26 @@ var raphaelRenderUtil = {
      * @param {{left: number, top: number}} pos - position
      * @param {string} text - text
      * @param {object} attrs - attrs
+     * @param {object} event - event to bind text object
      */
-    renderText: function(paper, pos, text, attrs) {
+    renderText: function(paper, pos, text, attrs, event) {
         // for raphael's svg bug;
         // DOM에 붙지 않은 paper에 텍스트 객체 생성시 버그가 있다.
         setTimeout(function() {
             var textObj = paper.text(pos.left, pos.top, text);
 
-            if (attrs) {
-                textObj.attr(attrs);
-            }
+            if (textObj) {
+                if (attrs) {
+                    textObj.attr(attrs);
+                }
 
-            if (attrs['dominant-baseline']) {
-                textObj.node.setAttribute('dominant-baseline', attrs['dominant-baseline']);
+                if (attrs['dominant-baseline']) {
+                    textObj.node.setAttribute('dominant-baseline', attrs['dominant-baseline']);
+                }
+
+                if (event) {
+                    textObj[event.name](event.handler);
+                }
             }
         });
     },

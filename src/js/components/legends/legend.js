@@ -10,10 +10,9 @@ var LegendModel = require('./legendModel');
 var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
-var eventListener = require('../../helpers/eventListener');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
-var legendTemplate = require('./legendTemplate');
+var pluginFactory = require('../../factories/pluginFactory');
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
@@ -24,11 +23,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      *      @param {object} params.theme - axis theme
      *      @param {?Array.<string>} params.seriesTypes - series types
      *      @param {string} params.chart - chart type
+     *      @param {object} params.dataProcessor - data processor
+     *      @param {object} params.eventBus - chart event bus
      */
     init: function(params) {
         /**
          * legend theme
-         * @type {Object}
+         * @type {object}
          */
         this.theme = params.theme;
 
@@ -62,12 +63,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.className = 'tui-chart-legend-area';
 
         /**
-         * checked indexes
-         * @type {Array}
-         */
-        this.checkedIndexes = [];
-
-        /**
          * DataProcessor instance
          * @type {DataProcessor}
          */
@@ -89,17 +84,18 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
          */
         this.layout = null;
-    },
 
-    /**
-     * Render legend area.
-     * @param {HTMLElement} legendContainer legend container
-     * @private
-     */
-    _renderLegendArea: function(legendContainer) {
-        legendContainer.innerHTML = this._makeLegendHtml(this.legendModel.getData());
-        renderUtil.renderPosition(legendContainer, this.layout.position);
-        legendContainer.style.cssText += ';' + renderUtil.makeFontCssText(this.theme.label);
+        /**
+         * Graph renderer
+         * @type {object}
+         */
+        this.graphRenderer = pluginFactory.get(this.options.libType || chartConst.DEFAULT_PLUGIN, 'legend');
+
+        /**
+         * Paper for rendering legend
+         * @type {object}
+         */
+        this.paper = null;
     },
 
     /**
@@ -128,13 +124,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.legendContainer = container;
 
-        if (predicate.isHorizontalLegend(this.options.align)) {
-            dom.addClass(container, 'horizontal');
-        }
-
         this._setDataForRendering(data);
-        this._renderLegendArea(container);
-        this._attachEvent(container);
+        this.paper = this._renderLegendArea(container);
+        this._listenEvents();
 
         return container;
     },
@@ -144,8 +136,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @param {object} data - bounds data
      */
     rerender: function(data) {
+        this.paper.remove();
+
         this._setDataForRendering(data);
-        this._renderLegendArea(this.legendContainer);
+        this.paper = this._renderLegendArea(this.legendContainer);
     },
 
     /**
@@ -157,102 +151,59 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Make cssText of legend rect.
-     * @param {{
-     *      chartType: string,
-     *      theme: {color: string, borderColor: ?string, singleColor: ?string}
-     * }} legendDatum legend datum
-     * @param {number} baseMarginTop base margin-top
-     * @returns {string} cssText of legend rect
+     * Render legend area.
+     * @param {HTMLElement} legendContainer legend container
+     * @returns {object} paper paper for drawing legend
      * @private
      */
-    _makeLegendRectCssText: function(legendDatum, baseMarginTop) {
-        var theme = legendDatum.theme,
-            borderCssText = theme.borderColor ? renderUtil.concatStr(';border:1px solid ', theme.borderColor) : '',
-            rectMargin, marginTop;
-        if (legendDatum.chartType === 'line') {
-            marginTop = baseMarginTop + chartConst.LINE_MARGIN_TOP;
-        } else {
-            marginTop = baseMarginTop;
-        }
-
-        rectMargin = renderUtil.concatStr(';margin-top:', marginTop, 'px');
-
-        return renderUtil.concatStr('background-color:', theme.singleColor || theme.color, borderCssText, rectMargin);
-    },
-
-
-    /**
-     * Make labels width.
-     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
-     * @returns {Array.<number>} labels width
-     * @private
-     */
-    _makeLabelsWidth: function(legendData) {
+    _renderLegendArea: function(legendContainer) {
         var self = this;
+        var graphRenderer = this.graphRenderer;
+        var legendData = this.legendModel.getData();
+        var labelsWidth = graphRenderer.makeLabelsWidth(legendData, this.theme.label);
+        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
+        var isHorizontal = predicate.isHorizontalLegend(this.options.align);
+        var labelCount = labelsWidth.length;
+        var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
+        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
+        var iconWidth = 10;
+        var width = arrayUtil.max(labelsWidth) + checkboxWidth + iconWidth
+            + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
+        var paper, legendRenderingData;
 
-        return tui.util.map(legendData, function(item) {
-            var labelWidth = renderUtil.getRenderedLabelWidth(item.label, self.theme.label);
-
-            return labelWidth + chartConst.LEGEND_AREA_PADDING;
-        });
-    },
-
-    /**
-     * Make legend html.
-     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
-     * @returns {string} legend html
-     * @private
-     */
-    _makeLegendHtml: function(legendData) {
-        var self = this;
-        var template = legendTemplate.tplLegend;
-        var checkBoxTemplate = legendTemplate.tplCheckbox;
-        var labelsWidth = this._makeLabelsWidth(legendData);
-        var labelHeight = renderUtil.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
-        var isHorizontalLegend = predicate.isHorizontalLegend(this.options.align);
-        var height = labelHeight + (chartConst.LABEL_PADDING_TOP * 2);
-        var baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1;
-        var html = tui.util.map(legendData, function(legendDatum, index) {
-            var rectCssText = self._makeLegendRectCssText(legendDatum, baseMarginTop);
-            var checkbox = self.options.showCheckbox === false ? '' : checkBoxTemplate({
-                index: index,
-                checked: self.legendModel.isCheckedIndex(index) ? ' checked' : ''
-            });
-            var data = {
-                rectCssText: rectCssText,
-                height: height,
-                labelHeight: labelHeight,
-                unselected: self.legendModel.isUnselectedIndex(index) ? ' unselected' : '',
-                labelWidth: isHorizontalLegend ? ';width:' + labelsWidth[index] + 'px' : '',
-                iconType: legendDatum.chartType || 'rect',
-                label: legendDatum.label,
-                checkbox: checkbox,
-                index: index
+        legendRenderingData = tui.util.map(legendData, function(legendDatum, index) {
+            var checkbox = self.options.showCheckbox === false ? null : {
+                checked: self.legendModel.isCheckedIndex(index)
             };
 
-            return template(data);
-        }).join('');
+            return {
+                checkbox: checkbox,
+                iconType: legendDatum.chartType || 'rect',
+                index: index,
+                theme: legendDatum.theme,
+                label: legendDatum.label,
+                labelHeight: labelHeight,
+                labelWidth: labelsWidth[index],
+                isUnselected: self.legendModel.isUnselectedIndex(index)
+            };
+        });
 
-        return html;
-    },
+        paper = graphRenderer.render({
+            container: legendContainer,
+            legendData: legendRenderingData,
+            isHorizontal: isHorizontal,
+            dimension: {
+                height: height,
+                width: width
+            },
+            labelTheme: this.theme.label,
+            labelsWidth: labelsWidth,
+            eventBus: this.eventBus
+        });
 
-    /**
-     * Find legend element.
-     * @param {HTMLElement} elTarget target element
-     * @returns {HTMLElement} legend element
-     * @private
-     */
-    _findLegendLabelElement: function(elTarget) {
-        var legendContainer;
+        renderUtil.renderPosition(legendContainer, this.layout.position);
 
-        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_LEGEND_LABEL)) {
-            legendContainer = elTarget;
-        } else {
-            legendContainer = dom.findParentByClass(elTarget, chartConst.CLASS_NAME_LEGEND_LABEL);
-        }
-
-        return legendContainer;
+        return paper;
     },
 
     /**
@@ -302,8 +253,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             this.legendModel.checkSelectedIndex();
             this._fireChangeCheckedLegendsEvent();
         }
-
-        this._renderLegendArea(this.legendContainer);
+        this.rerender();
 
         this._fireSelectLegendEvent(data);
         this._fireSelectLegendPublicEvent(data);
@@ -317,8 +267,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _getCheckedIndexes: function() {
         var checkedIndexes = [];
 
-        tui.util.forEachArray(this.legendContainer.getElementsByTagName('input'), function(checkbox, index) {
-            if (checkbox.checked) {
+        tui.util.forEachArray(this.legendModel.checkedWholeIndexes, function(checkbox, index) {
+            if (checkbox) {
                 checkedIndexes.push(index);
             }
         });
@@ -331,69 +281,55 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _checkLegend: function() {
-        var checkedIndexes = this._getCheckedIndexes();
-        var checkedCount = checkedIndexes.length;
-        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-        var isPieCharts = arrayUtil.all(this.seriesTypes, function(seriesType) {
-            var seriesDataModel = seriesDataModelMap[seriesType];
+        var selectedData = this.legendModel.getSelectedDatum();
 
-            return seriesDataModel && predicate.isPieChart(seriesDataModel.chartType);
-        });
-        var data;
+        if (!this.legendModel.isCheckedSelectedIndex()) {
+            this.legendModel.updateSelectedIndex(null);
+        }
 
-        if ((isPieCharts && checkedCount === 1) || checkedCount === 0) {
-            this._renderLegendArea(this.legendContainer);
-        } else {
-            this.legendModel.updateCheckedLegendsWith(checkedIndexes);
+        this._fireChangeCheckedLegendsEvent();
 
-            data = this.legendModel.getSelectedDatum();
-
-            if (!this.legendModel.isCheckedSelectedIndex()) {
-                this.legendModel.updateSelectedIndex(null);
-            }
-
-            this._renderLegendArea(this.legendContainer);
-
-            this._fireChangeCheckedLegendsEvent();
-
-            if (data) {
-                this._fireSelectLegendEvent(data);
-            }
+        if (selectedData) {
+            this._fireSelectLegendEvent(selectedData);
         }
     },
 
     /**
      * On click event handler.
-     * @param {MouseEvent} e mouse event
+     * @param {number} index checkbox index
      * @private
      */
-    _onClick: function(e) {
-        var elTarget = e.target || e.srcElement,
-            legendContainer, index;
+    _checkboxClick: function(index) {
+        var checkedIndexes;
 
-        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_LEGEND_CHECKBOX)) {
+        this.legendModel.toggleCheckedIndex(index);
+
+        checkedIndexes = this._getCheckedIndexes();
+
+        if (checkedIndexes.length > 0) {
+            this.legendModel.updateCheckedLegendsWith(checkedIndexes);
             this._checkLegend();
-
-            return;
+        } else {
+            this.legendModel.toggleCheckedIndex(index);
         }
+    },
 
-        legendContainer = this._findLegendLabelElement(elTarget);
-
-        if (!legendContainer) {
-            return;
-        }
-
-        index = parseInt(legendContainer.getAttribute('data-index'), 10);
+    /**
+     * On click event handler.
+     * @param {number} index selected index
+     * @private
+     */
+    _labelClick: function(index) {
         this._selectLegend(index);
     },
 
     /**
-     * Attach browser event.
-     * @param {HTMLElement} target target element
+     * Listen legend events
      * @private
      */
-    _attachEvent: function(target) {
-        eventListener.on(target, 'click', this._onClick, this);
+    _listenEvents: function() {
+        this.eventBus.on('checkboxClicked', this._checkboxClick, this);
+        this.eventBus.on('labelClicked', this._labelClick, this);
     }
 });
 
