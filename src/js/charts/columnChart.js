@@ -108,18 +108,18 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             yAxis: true
         };
     },
-    addDataRatios: axisTypeMixer.addDataRatios,
+    /**
+     * Add data ratios.
+     * @override
+     * modified from axisTypeMixer
+     */
+    addDataRatios: function(limitMap) {
+        var seriesOption = this.options.series || {};
+        var chartType = this.chartType;
+        var stackType = (seriesOption[chartType] || seriesOption).stackType;
 
-    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
-    _addPlotComponent: axisTypeMixer._addPlotComponent,
-    _addLegendComponent: axisTypeMixer._addLegendComponent,
-    _addAxisComponents: axisTypeMixer._addAxisComponents,
-    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
-    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
-    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
-
-    _addMouseEventDetectorComponentForNormalTooltip: axisTypeMixer._addMouseEventDetectorComponentForNormalTooltip
+        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+    }
 });
 
 module.exports = ColumnChart;
