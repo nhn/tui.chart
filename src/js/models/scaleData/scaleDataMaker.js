@@ -165,6 +165,17 @@ var scaleDataMaker = {
             min: arrayUtil.min(baseValues),
             max: arrayUtil.max(baseValues)
         };
+        var firstValue;
+
+        if (baseValues.length === 1) {
+            firstValue = baseValues[0];
+
+            if (firstValue > 0) {
+                limit.min = 0;
+            } else {
+                limit.max = 0;
+            }
+        }
 
         if (limit.min === 0 && limit.max === 0) {
             limit.max = 10;
