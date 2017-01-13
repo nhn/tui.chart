@@ -208,12 +208,12 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @private
      */
     _registerTitleDimension: function() {
-        var chartOptions = this.options.chart || {title: {}};
+        var chartOptions = this.options.chart || {};
         var hasTitleOption = tui.util.isExisty(chartOptions.title);
         var titleHeight =
             hasTitleOption ? renderUtil.getRenderedLabelHeight(chartOptions.title.text, this.theme.title) : 0;
         var dimension = {
-            height: titleHeight + chartConst.TITLE_PADDING
+            height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
         };
 
         this._registerDimension('title', dimension);
@@ -224,10 +224,20 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @private
      */
     _registerChartExportMenuDimension: function() {
-        this._registerDimension('chartExportMenu', {
-            height: 17,
-            width: 60
-        });
+        var dimension;
+
+        if (this.options.chartExportMenu.visible) {
+            dimension = {
+                height: 17 + chartConst.CHART_PADDING,
+                width: 60
+            };
+        } else {
+            dimension = {
+                width: 0,
+                height: 0
+            };
+        }
+        this._registerDimension('chartExportMenu', dimension);
     },
 
     /**
@@ -530,7 +540,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var dimensionMap = this.dimensionMap;
         var seriesDimension = this.getDimension('series');
         var legendOption = this.options.legend;
-        var top = dimensionMap.title.height;
+        var top = dimensionMap.title.height || dimensionMap.chartExportMenu.height;
         var yAxisAreaWidth, left;
 
         if (predicate.isLegendAlignBottom(legendOption.align)) {
