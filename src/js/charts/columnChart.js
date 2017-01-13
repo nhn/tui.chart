@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 var rawDataHandler = require('../models/data/rawDataHandler');
 
 var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {

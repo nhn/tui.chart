@@ -77,4 +77,18 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
 
 LineTypeSeriesBase.mixin(LineChartSeries);
 
-module.exports = LineChartSeries;
+function lineSeriesFactory(params) {
+    var chartType = params.chartOptions.chartType;
+    var libType = params.chartOptions.libType;
+    var chartTheme = params.chartTheme;
+
+    params.libType = libType;
+    params.chartType = chartType;
+    params.chartBackground = chartTheme.background;
+
+    return new LineChartSeries(params);
+}
+
+lineSeriesFactory.componentType = 'series';
+
+module.exports = lineSeriesFactory;

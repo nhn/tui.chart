@@ -173,4 +173,23 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
     }
 });
 
-module.exports = AreaTypeEventDetector;
+function areaTypeEventDetectorFactory(params) {
+    var chartType = params.chartOptions.chartType;
+    var zoomable = params.chartOptions.series.zoomable;
+    var seriesAllowSelect = params.chartOptions.series.allowSelect;
+    var isVertical;
+
+    if (chartType === 'line') {
+        isVertical = true;
+    }
+
+    params.zoomable = zoomable;
+    params.isVertical = isVertical;
+    params.allowSelect = seriesAllowSelect;
+
+    return new AreaTypeEventDetector(params);
+}
+
+areaTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+module.exports = areaTypeEventDetectorFactory;

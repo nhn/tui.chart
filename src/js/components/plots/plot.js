@@ -582,11 +582,11 @@ function plotFactory(param) {
     var chartTypes = param.chartOptions.chartTypes;
     var xAxisType = param.chartOptions.xAxis.type;
 
-    if (chartType === 'bar' || chartType === 'column') {
-        param.chartType = chartType;
-        param.chartTypes = chartTypes;
-        param.xAxisTypeOption = xAxisType;
-    }
+
+    // bar, chart, line 동일
+    param.chartType = chartType;
+    param.chartTypes = chartTypes;
+    param.xAxisTypeOption = xAxisType;
 
     return new Plot(param);
 }

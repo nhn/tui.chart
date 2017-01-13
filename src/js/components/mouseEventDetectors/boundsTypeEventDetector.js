@@ -213,7 +213,7 @@ var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends
     }
 });
 
-function BoundsTypeEventDetectorFactory(params) {
+function boundsTypeEventDetectorFactory(params) {
     var chartType = params.chartOptions.chartType;
     var seriesAllowSelect = params.chartOptions.series.allowSelect;
     var isVertical;
@@ -230,6 +230,6 @@ function BoundsTypeEventDetectorFactory(params) {
     return new BoundsTypeEventDetector(params);
 }
 
-BoundsTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+boundsTypeEventDetectorFactory.componentType = 'mouseEventDetector';
 
-module.exports = BoundsTypeEventDetectorFactory;
+module.exports = boundsTypeEventDetectorFactory;

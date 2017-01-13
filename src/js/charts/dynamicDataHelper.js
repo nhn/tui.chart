@@ -1,0 +1,199 @@
+'use strict';
+
+var predicate = require('../helpers/predicate');
+
+var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.prototype */ {
+    init: function(chart) {
+        /**
+         * chart instance
+         * @type {ChartBase}
+         */
+        this.chart = chart;
+        this.reset();
+    },
+    reset: function() {
+        /**
+         * whether lookupping or not
+         * @type {boolean}
+         */
+        this.lookupping = false;
+
+        /**
+         * whether paused or not
+         * @type {boolean}
+         */
+        this.paused = false;
+
+        /**
+         * rendering delay timer id
+         * @type {null}
+         */
+        this.rerenderingDelayTimerId = null;
+
+        /**
+         * added data count
+         * @type {number}
+         */
+        this.addedDataCount = 0;
+
+        /**
+         * checked legends.
+         * @type {null | Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}}
+         */
+        this.checkedLegends = null;
+
+        /**
+         * previous xAxis data
+         * @type {null|object}
+         */
+        this.prevXAxisData = null;
+    },
+    /**
+     * Calculate animate tick size.
+     * @param {number} xAxisWidth - x axis width
+     * @returns {number}
+     * @private
+     */
+    _calculateAnimateTickSize: function(xAxisWidth) {
+        var dataProcessor = this.chart.dataProcessor;
+        var tickInterval = this.chart.options.xAxis.tickInterval;
+        var shiftingOption = !!this.chart.options.series.shifting;
+        var tickCount;
+
+        if (dataProcessor.isCoordinateType()) {
+            tickCount = dataProcessor.getValues(this.chart.chartType, 'x').length - 1;
+        } else {
+            tickCount = dataProcessor.getCategoryCount(false) - 1;
+        }
+
+        if (shiftingOption && !predicate.isAutoTickInterval(tickInterval)) {
+            tickCount -= 1;
+        }
+
+        return xAxisWidth / tickCount;
+    },
+
+    /**
+     * Animate for adding data.
+     * @private
+     */
+    _animateForAddingData: function() {
+        var chart = this.chart;
+        var self = this;
+        var shiftingOption = !!this.chart.options.series.shifting;
+
+        this.addedDataCount += 1;
+
+        chart._render(function(boundsAndScale) {
+            var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
+
+            chart.componentManager.render('animateForAddingData', boundsAndScale, {
+                tickSize: tickSize,
+                shifting: shiftingOption
+            });
+        }, true);
+
+        if (shiftingOption) {
+            chart.dataProcessor.shiftData();
+        }
+    },
+
+    /**
+     * Rerender for adding data.
+     * @private
+     */
+    _rerenderForAddingData: function() {
+        var chart = this.chart;
+
+        chart._render(function(boundsAndScale) {
+            chart.componentManager.render('rerender', boundsAndScale);
+        });
+    },
+
+    /**
+     * Check for added data.
+     * @private
+     */
+    _checkForAddedData: function() {
+        var chart = this.chart;
+        var self = this;
+        var added = chart.dataProcessor.addDataFromDynamicData();
+
+        if (!added) {
+            this.lookupping = false;
+
+            return;
+        }
+
+        if (this.paused) {
+            if (chart.options.series.shifting) {
+                chart.dataProcessor.shiftData();
+            }
+
+            return;
+        }
+
+        this._animateForAddingData();
+        this.rerenderingDelayTimerId = setTimeout(function() {
+            self.rerenderingDelayTimerId = null;
+            self._rerenderForAddingData();
+            self._checkForAddedData();
+        }, 400);
+    },
+
+    /**
+     * Pause animation for adding data.
+     */
+    pauseAnimation: function() {
+        this.paused = true;
+
+        if (this.rerenderingDelayTimerId) {
+            clearTimeout(this.rerenderingDelayTimerId);
+            this.rerenderingDelayTimerId = null;
+
+            if (this.chart.options.series.shifting) {
+                this.chart.dataProcessor.shiftData();
+            }
+        }
+    },
+
+    /**
+     * Restart animation for adding data.
+     */
+    restartAnimation: function() {
+        this.paused = false;
+        this.lookupping = false;
+        this._startLookup();
+    },
+
+    /**
+     * Start lookup for checking added data.
+     * @private
+     */
+    _startLookup: function() {
+        if (this.lookupping) {
+            return;
+        }
+
+        this.lookupping = true;
+
+        this._checkForAddedData();
+    },
+
+    /**
+     * Add data.
+     * @param {string} category - category
+     * @param {Array} values - values
+     */
+    addData: function(category, values) {
+        if (!values) {
+            values = category;
+            category = null;
+        }
+
+        this.chart.dataProcessor.addDynamicData(category, values);
+        this._startLookup();
+    }
+});
+
+module.exports = DynamicDataHelper;

@@ -210,7 +210,7 @@ function tooltipFactory(params) {
 
     if (chartType === 'bar') {
         isVertical = false;
-    } else if (chartType === 'column') {
+    } else if (chartType === 'column' || chartType === 'line') {
         isVertical = true;
     }
 

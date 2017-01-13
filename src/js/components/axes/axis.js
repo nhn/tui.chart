@@ -994,8 +994,7 @@ function axisFactory(axisParam) {
     var chartType = axisParam.dataProcessor.chartType;
     var name = axisParam.name;
 
-    // axisTypeMixer
-    if (chartType === 'bar' || chartType === 'column') {
+    if (chartType === 'bar' || chartType === 'column' || chartType === 'line') {
         axisParam.isVertical = (name === 'yAxis');
         axisParam.seriesType = chartType;
         axisParam.aligned = false;
