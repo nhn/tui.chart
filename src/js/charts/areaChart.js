@@ -7,10 +7,8 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var lineTypeMixer = require('./lineTypeMixer');
-var zoomMixer = require('./zoomMixer');
-var axisTypeMixer = require('./axisTypeMixer');
-var addingDynamicDataMixer = require('./addingDynamicDataMixer');
+var DynamicDataHelper = require('./dynamicDataHelper');
+var predicate = require('../helpers/predicate');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var Series = require('../components/series/areaChartSeries');
 
@@ -46,9 +44,17 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
             hasAxes: true,
             isVertical: true
         });
-        this._initForAddingData();
-    },
 
+        this._dynamicDataHelper = new DynamicDataHelper(this);
+    },
+    /**
+     * Add data.
+     * @param {string} category - category
+     * @param {Array} values - values
+     */
+    addData: function(category, values) {
+        this._dynamicDataHelper.addData(category, values);
+    },
     /**
      * On change checked legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
@@ -57,44 +63,160 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
      * @override
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-        this._initForAddingData();
+        this._dynamicDataHelper.reset();
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
     },
-    addDataRatios: axisTypeMixer.addDataRatios,
+    /**
+     * Add data ratios.
+     * @override
+     * from axisTypeMixer
+     */
+    addDataRatios: function(limitMap) {
+        var self = this;
+        var chartTypes = this.chartTypes || [this.chartType];
+        var seriesOption = this.options.series || {};
+        var addDataRatio;
 
-    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
-    _addPlotComponent: axisTypeMixer._addPlotComponent,
-    _addLegendComponent: axisTypeMixer._addLegendComponent,
-    _addAxisComponents: axisTypeMixer._addAxisComponents,
-    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
-    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
-    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
+        if (this.dataProcessor.isCoordinateType()) {
+            addDataRatio = function(chartType) {
+                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+            };
+        } else {
+            addDataRatio = function(chartType) {
+                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+            };
+        }
 
-    getScaleOption: lineTypeMixer.getScaleOption,
-    addComponents: lineTypeMixer.addComponents,
+        tui.util.forEachArray(chartTypes, addDataRatio);
+    },
 
-    addPlotLine: lineTypeMixer.addPlotLine,
-    addPlotBand: lineTypeMixer.addPlotBand,
-    removePlotBand: lineTypeMixer.removePlotBand,
-    removePlotLine: lineTypeMixer.removePlotLine,
+    /**
+     * Add components
+     * @override
+     */
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
 
-    _addMouseEventDetectorComponentForNormalTooltip: lineTypeMixer._addMouseEventDetectorComponentForNormalTooltip,
+        this.componentManager.register('legend', 'legend');
 
-    onZoom: zoomMixer.onZoom,
-    onResetZoom: zoomMixer.onResetZoom,
-    _renderForZoom: zoomMixer._renderForZoom,
+        this.componentManager.register('areaSeries', 'areaSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
-    _initForAddingData: addingDynamicDataMixer._initForAddingData,
-    _pauseAnimationForAddingData: addingDynamicDataMixer._pauseAnimationForAddingData,
-    _changeCheckedLegends: addingDynamicDataMixer._changeCheckedLegends,
-    _restartAnimationForAddingData: addingDynamicDataMixer._restartAnimationForAddingData,
-    _startLookup: addingDynamicDataMixer._startLookup,
-    _calculateAnimateTickSize: addingDynamicDataMixer._calculateAnimateTickSize,
-    _animateForAddingData: addingDynamicDataMixer._animateForAddingData,
-    _checkForAddedData: addingDynamicDataMixer._checkForAddedData,
-    addData: addingDynamicDataMixer.addData,
-    _rerenderForAddingData: addingDynamicDataMixer._rerenderForAddingData
+        this.componentManager.register('tooltip', 'tooltip');
+
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+    },
+    /**
+     * Get scale option.
+     * from lineTypeMixer
+     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
+     * @override
+     */
+    getScaleOption: function() {
+        var scaleOption = {};
+
+        if (this.dataProcessor.isCoordinateType()) {
+            scaleOption.xAxis = {
+                valueType: 'x'
+            };
+            scaleOption.yAxis = {
+                valueType: 'y'
+            };
+        } else {
+            scaleOption.yAxis = true;
+        }
+
+        return scaleOption;
+    },
+
+    /**
+     * Add plot line.
+     * @param {{index: number, color: string, id: string}} data - data
+     * @override
+     * @api
+     */
+    addPlotLine: function(data) {
+        this.componentManager.get('plot').addPlotLine(data);
+    },
+
+    /**
+     * Add plot band.
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     * @override
+     * @api
+     */
+    addPlotBand: function(data) {
+        this.componentManager.get('plot').addPlotBand(data);
+    },
+
+    /**
+     * Remove plot line.
+     * @param {string} id - line id
+     * @override
+     * @api
+     */
+    removePlotLine: function(id) {
+        this.componentManager.get('plot').removePlotLine(id);
+    },
+
+    /**
+     * Remove plot band.
+     * @param {string} id - band id
+     * @override
+     * @api
+     */
+    removePlotBand: function(id) {
+        this.componentManager.get('plot').removePlotBand(id);
+    },
+    /**
+     * Render for zoom.
+     * from chart/zoomMixer
+     * @param {boolean} isResetZoom - whether reset zoom or not
+     * @private
+     */
+    _renderForZoom: function(isResetZoom) {
+        var self = this;
+
+        this._render(function(boundsAndScale) {
+            self.componentManager.render('zoom', boundsAndScale, {
+                isResetZoom: isResetZoom
+            });
+        });
+    },
+
+    /**
+     * On zoom.
+     * nnfrom chart/zoomMixer
+     * @param {Array.<number>} indexRange - index range for zoom
+     * @override
+     */
+    onZoom: function(indexRange) {
+        this._dynamicDataHelper.pauseAnimation();
+        this.dataProcessor.updateRawDataForZoom(indexRange);
+        this._renderForZoom(false);
+    },
+
+    /**
+     * On reset zoom.
+     * from chart/zoomMixer
+     * @override
+     */
+    onResetZoom: function() {
+        var rawData = this.dataProcessor.getOriginalRawData();
+
+        if (this._dynamicDataHelper.checkedLegends) {
+            rawData = rawDataHandler.filterCheckedRawData(rawData, this._dynamicDataHelper.checkedLegends);
+        }
+
+        this.dataProcessor.initData(rawData);
+        this.dataProcessor.initZoomedRawData();
+        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
+        this._renderForZoom(true);
+        this._dynamicDataHelper.restartAnimation();
+    }
 });
 
 module.exports = AreaChart;

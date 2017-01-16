@@ -582,8 +582,7 @@ function plotFactory(param) {
     var chartTypes = param.chartOptions.chartTypes;
     var xAxisType = param.chartOptions.xAxis.type;
 
-
-    // bar, chart, line 동일
+    // bar, chart, line, area동일
     param.chartType = chartType;
     param.chartTypes = chartTypes;
     param.xAxisTypeOption = xAxisType;
