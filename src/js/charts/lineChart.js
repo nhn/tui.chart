@@ -9,9 +9,6 @@
 var ChartBase = require('./chartBase');
 var predicate = require('../helpers/predicate');
 var chartConst = require('../const');
-var lineTypeMixer = require('./lineTypeMixer');
-var zoomMixer = require('./zoomMixer');
-var axisTypeMixer = require('./axisTypeMixer');
 var DynamicDataHelper = require('./dynamicDataHelper');
 var Series = require('../components/series/lineChartSeries');
 var rawDataHandler = require('../models/data/rawDataHandler');
@@ -47,6 +44,12 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
             hasAxes: true,
             isVertical: true
         });
+
+        if (this.dataProcessor.isCoordinateType()) {
+            delete this.options.xAxis.tickInterval;
+            this.options.tooltip.grouped = false;
+            this.options.series.shifting = false;
+        }
 
         this._dynamicDataHelper = new DynamicDataHelper(this);
     },
@@ -101,12 +104,6 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @override
      */
     addComponents: function() {
-        if (this.dataProcessor.isCoordinateType()) {
-            delete this.options.xAxis.tickInterval;
-            this.options.tooltip.grouped = false;
-            this.options.series.shifting = false;
-        }
-
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');
