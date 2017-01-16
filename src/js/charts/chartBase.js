@@ -243,7 +243,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             theme: this.theme,
             dataProcessor: this.dataProcessor,
             hasAxes: this.hasAxes,
-            eventBus: this.eventBus
+            eventBus: this.eventBus,
+            isVertical: this.isVertical
         });
     },
 

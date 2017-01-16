@@ -123,6 +123,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         this.hasAxes = params.hasAxes;
 
         /**
+         * whether chart is vertical or not
+         * @type {boolean}
+         */
+        this.isVertical = params.isVertical;
+
+        /**
          * event bus for transmitting message
          * @type {object}
          */
@@ -194,6 +200,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;
+        params.isVertical = this.isVertical;
         params.eventBus = this.eventBus;
 
         // TODO 팩터리로 전환하기 위한 임시 분기
