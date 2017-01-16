@@ -114,16 +114,15 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
         this.componentManager.register('tooltip', 'tooltip');
-
-        this.componentManager.register('mouseEventDetector', 'areaTypeEventDetector');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
-     /**
+    /**
      * Get scale option.
      * from lineTypeMixer
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @override
      */
-     getScaleOption: function() {
+    getScaleOption: function() {
         var scaleOption = {};
 
         if (this.dataProcessor.isCoordinateType()) {

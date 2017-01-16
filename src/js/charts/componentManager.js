@@ -23,11 +23,8 @@ var GroupTooltip = require('../components/tooltips/groupTooltip');
 var MapChartTooltip = require('../components/tooltips/mapChartTooltip');
 
 // mouse event detectors
-var AreaTypeEventDetector = require('../components/mouseEventDetectors/areaTypeEventDetector');
-var BoundsTypeEventDetector = require('../components/mouseEventDetectors/boundsTypeEventDetector');
-var GroupTypeEventDetector = require('../components/mouseEventDetectors/groupTypeEventDetector');
 var MapChartEventDetector = require('../components/mouseEventDetectors/mapChartEventDetector');
-var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEventDetector');
+var mouseEventDetector = require('../components/mouseEventDetectors/mouseEventDetector');
 
 // series
 var BarSeries = require('../components/series/barChartSeries');
@@ -54,11 +51,8 @@ var COMPONENT_FACTORY_MAP = {
     tooltip: Tooltip,
     groupTooltip: GroupTooltip,
     mapChartTooltip: MapChartTooltip,
-    areaTypeEventDetector: AreaTypeEventDetector,
-    boundsTypeEventDetector: BoundsTypeEventDetector,
-    groupTypeEventDetector: GroupTypeEventDetector,
     mapChartEventDetector: MapChartEventDetector,
-    simpleEventDetector: SimpleEventDetector,
+    mouseEventDetector: mouseEventDetector,
     barSeries: BarSeries,
     columnSeries: ColumnSeries,
     lineSeries: LineSeries,

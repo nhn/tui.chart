@@ -86,10 +86,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         this.componentManager.register('barSeries', 'barSeries');
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
-        // todo 툴팁은 옵션에 따라서 group인지 아닌지가 갈리게 된다. 둘다아는 툴팁팩토리가 하나 생겨야할듯싶다.
         this.componentManager.register('tooltip', 'tooltip');
-
-        this.componentManager.register('mouseEventDetector', 'boundsTypeEventDetector');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
 
     /**

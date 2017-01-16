@@ -93,8 +93,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
         this.componentManager.register('tooltip', 'tooltip');
-
-        this.componentManager.register('mouseEventDetector', 'boundsTypeEventDetector');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
 
     /**

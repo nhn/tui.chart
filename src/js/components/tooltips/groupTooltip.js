@@ -431,4 +431,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     }
 });
 
-module.exports = GroupTooltip;
+function groupTooltipFactory(params) {
+    return new GroupTooltip(params);
+}
+
+groupTooltipFactory.componentType = 'tooltip';
+
+module.exports = groupTooltipFactory;

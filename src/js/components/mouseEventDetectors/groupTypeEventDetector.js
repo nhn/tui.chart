@@ -203,4 +203,11 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
     }
 });
 
-module.exports = GroupTypeEventDetector;
+
+function groupTypeEventDetectorFactory(params) {
+    return new GroupTypeEventDetector(params);
+}
+
+groupTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+module.exports = groupTypeEventDetectorFactory;
