@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var raphael = window.Raphael;
 
 /**
  * Util for raphael rendering.
@@ -193,6 +194,33 @@ var raphaelRenderUtil = {
         }).join('');
 
         return '#' + changedHex;
+    },
+
+    /**
+     * Get rendered text element size
+     * @param {string} text text content
+     * @param {number} fontSize font-size attribute
+     * @param {string} fontFamily font-family attribute
+     * @returns {{
+     *     width: number,
+     *     height: number
+     * }}
+     */
+    getRenderedTextSize: function(text, fontSize, fontFamily) {
+        var paper = raphael(document.body, 100, 100);
+        var textElement = paper.text(0, 0, text).attr({
+            'font-size': fontSize,
+            'font-family': fontFamily
+        });
+        var bBox = textElement.getBBox();
+
+        textElement.remove();
+        paper.remove();
+
+        return {
+            width: bBox.width,
+            height: bBox.height
+        };
     }
 };
 

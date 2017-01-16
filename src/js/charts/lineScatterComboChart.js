@@ -49,9 +49,15 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
      * @private
      */
     _addComponents: function() {
+        var options = this.options;
         var optionsMap = this._makeOptionsMap(this.seriesTypes);
+        var chartOptions = this.options.chart || {};
 
-        this._addPlotComponent(this.options.xAxis.type);
+        if (chartOptions.title) {
+            this._addTitleComponent(options.chart.title);
+        }
+
+        this._addPlotComponent(options.xAxis.type);
         this._addAxisComponents([
             {
                 name: 'yAxis',
@@ -84,12 +90,12 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
                     options: optionsMap.scatter
                 }
             }
-        ], this.options);
+        ], options);
 
         this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            allowSelect: this.options.series.allowSelect,
+            allowSelect: options.series.allowSelect,
             classType: 'areaTypeEventDetector'
         });
 

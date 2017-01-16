@@ -45,6 +45,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      */
     _addComponents: function() {
         var chartExportMenu = this.options.chartExportMenu;
+        var chartOptions = this.options.chart || {};
+
+        if (chartOptions.title) {
+            this._addTitleComponent(chartOptions.title);
+        }
 
         this._addLegendComponent();
         this._addTooltipComponent({

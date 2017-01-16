@@ -49,6 +49,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         var seriesTheme = this.theme.series[this.chartType];
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
+        var chartOptions = options.chart;
 
         options.legend = options.legend || {};
 
@@ -57,6 +58,10 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
                 colorSpectrum: colorSpectrum,
                 classType: 'spectrumLegend'
             });
+        }
+
+        if (chartOptions.title) {
+            this._addTitleComponent(chartOptions.title);
         }
 
         this.componentManager.register('tooltip', tui.util.extend({
@@ -79,6 +84,16 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,
             classType: 'mapChartEventDetector'
+        });
+    },
+
+    _addTitleComponent: function(options) {
+        this.componentManager.register('title', {
+            dataProcessor: this.dataProcessor,
+            libType: options.libType,
+            text: options.text,
+            theme: this.theme.title,
+            classType: 'title'
         });
     },
 

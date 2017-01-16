@@ -42,9 +42,14 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @private
      */
     _addComponents: function() {
+        var options = this.options;
         var seriesTheme = this.theme.series[this.chartType];
-        var useColorValue = this.options.series.useColorValue;
+        var useColorValue = options.series.useColorValue;
         var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
+
+        if (options.chart && options.chart.title) {
+            this._addTitleComponent(options.chart.title);
+        }
 
         this.componentManager.register('series', {
             chartBackground: this.theme.chart.background,
@@ -57,7 +62,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             labelTheme: tui.util.pick(this.theme, 'series', 'label')
         }, this._makeTooltipData()));
 
-        if (useColorValue && this.options.legend.visible) {
+        if (useColorValue && options.legend.visible) {
             this.componentManager.register('legend', {
                 chartType: this.chartType,
                 classType: 'spectrumLegend',
@@ -72,6 +77,15 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         });
     },
 
+    _addTitleComponent: function(options) {
+        this.componentManager.register('title', {
+            dataProcessor: this.dataProcessor,
+            libType: options.libType,
+            text: options.text,
+            theme: this.theme.title || {},
+            classType: 'title'
+        });
+    },
     /**
      * Get scale option.
      * @returns {{legend: boolean}}

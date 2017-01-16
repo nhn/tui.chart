@@ -83,13 +83,20 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @private
      */
     _addComponents: function() {
+        var options = this.options;
+        var chartOptions = options.chart || {};
+
+        if (chartOptions.title) {
+            this._addTitleComponent(options.chart.title);
+        }
+
         this._addLegendComponent(this.seriesTypes);
         this._addTooltipComponent({
             labelFormatter: this.labelFormatter
         });
 
-        if (this.options.chartExportMenu.visible) {
-            this._addChartExportMenuComponent(this.options.chartExportMenu);
+        if (options.chartExportMenu.visible) {
+            this._addChartExportMenuComponent(options.chartExportMenu);
         }
         this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
         this._addMouseEventDetectorComponent();

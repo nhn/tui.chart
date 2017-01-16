@@ -88,6 +88,8 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @private
      */
     _addComponents: function() {
+        var chartOptions = this.options.chart || {};
+
         this._addComponentsForAxisType({
             axis: [
                 {
@@ -103,7 +105,8 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
                     name: 'bubbleSeries'
                 }
             ],
-            plot: true
+            plot: true,
+            title: chartOptions.title
         });
 
         if (this.options.circleLegend.visible) {

@@ -203,6 +203,7 @@ var verticalTypeComboMixer = {
      * @private
      */
     _addComponents: function() {
+        var chartOptions = this.options.chart || {};
         var axes = [
             {
                 name: 'yAxis',
@@ -227,7 +228,8 @@ var verticalTypeComboMixer = {
             seriesTypes: this.seriesTypes,
             axis: axes,
             series: serieses,
-            plot: true
+            plot: true,
+            title: chartOptions.title
         });
     },
 

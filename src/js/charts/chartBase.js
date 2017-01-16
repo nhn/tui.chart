@@ -273,26 +273,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _addComponents: function() {},
 
     /**
-     * Render chart title.
-     * @param {HTMLElement} container - container
-     * @private
-     */
-    _renderTitle: function(container) {
-        var chartOptions = this.options.chart || {};
-        var title = chartOptions.title || {};
-        var titleElement = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title');
-
-        if (title.offset) {
-            renderUtil.renderPosition(titleElement, {
-                left: title.offset.x,
-                top: title.offset.y
-            });
-        }
-
-        dom.append(container, titleElement);
-    },
-
-    /**
      * Get scale option.
      * @private
      * @abstract
@@ -393,8 +373,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
 
         this.dataProcessor.initData(rawData);
-
-        this._renderTitle(container);
 
         renderUtil.renderBackground(container, this.theme.chart.background);
         renderUtil.renderFontFamily(container, this.theme.chart.fontFamily);

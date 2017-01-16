@@ -28,6 +28,15 @@ var pieTypeMixer = {
         }
     },
 
+    _addTitleComponent: function(options) {
+        this.componentManager.register('title', {
+            dataProcessor: this.dataProcessor,
+            libType: options.libType,
+            text: options.text,
+            theme: this.theme.chart ? this.theme.chart.title : {},
+            classType: 'title'
+        });
+    },
     /**
      * Add tooltip component.
      * @param {object} tooltipOptions tooltip options

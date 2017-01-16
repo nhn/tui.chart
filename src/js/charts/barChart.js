@@ -78,6 +78,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @private
      */
     _addComponents: function() {
+        var chartOptions = this.options.chart || {};
+
         var axes = [
             {
                 name: 'yAxis',
@@ -101,7 +103,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
                     name: 'barSeries'
                 }
             ],
-            plot: true
+            plot: true,
+            title: chartOptions.title
         });
     },
 

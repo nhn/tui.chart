@@ -145,9 +145,23 @@ var axisTypeMixer = {
             this._addChartExportMenuComponent(options.chartExportMenu);
         }
 
+        if (params.title) {
+            this._addTitleComponent(params.title);
+        }
+
         this._addSeriesComponents(params.series, options);
         this._addTooltipComponent();
         this._addMouseEventDetectorComponent();
+    },
+
+    _addTitleComponent: function(options) {
+        this.componentManager.register('title', {
+            dataProcessor: this.dataProcessor,
+            libType: this.options.libType,
+            text: options.text,
+            theme: this.theme.chart ? this.theme.chart.title : {},
+            classType: 'title'
+        });
     },
 
     /**
