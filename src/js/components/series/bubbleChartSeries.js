@@ -130,7 +130,6 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
 
 CoordinateTypeSeriesBase.mixin(BubbleChartSeries);
 
-
 function bubbleSeriesFactory(params) {
     var chartType = params.chartOptions.chartType;
     var libType = params.chartOptions.libType;

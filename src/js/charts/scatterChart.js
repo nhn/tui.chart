@@ -9,7 +9,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 
 var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
     /**
@@ -43,30 +42,6 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
     },
 
     /**
-     * Add components
-     * @override
-     */
-    addComponents: function() {
-        this._addComponentsForAxisType({
-            axis: [
-                {
-                    name: 'yAxis',
-                    isVertical: true
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
-            series: [
-                {
-                    name: 'scatterSeries'
-                }
-            ],
-            plot: true
-        });
-    },
-
-    /**
      * Get scale option.
      * @returns {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
      * @override
@@ -81,18 +56,30 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
             }
         };
     },
-    addDataRatios: axisTypeMixer.addDataRatios,
+    /**
+     * Add components
+     * @override
+     */
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
 
-    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
-    _addPlotComponent: axisTypeMixer._addPlotComponent,
-    _addLegendComponent: axisTypeMixer._addLegendComponent,
-    _addAxisComponents: axisTypeMixer._addAxisComponents,
-    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
-    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
-    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
+        this.componentManager.register('legend', 'legend');
 
-    _addSimpleEventDetectorComponent: axisTypeMixer._addSimpleEventDetectorComponent
+        this.componentManager.register('scatterSeries', 'scatterSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+    },
+    /**
+     * Add data ratios.
+     * @override
+     */
+    addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, false);
+    }
 });
 
 module.exports = ScatterChart;
