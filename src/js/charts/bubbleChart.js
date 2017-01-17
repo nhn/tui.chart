@@ -104,12 +104,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @override
      */
     addDataRatios: function(limitMap) {
-        var self = this;
-        var chartTypes = this.chartTypes || [this.chartType];
-
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, true);
-        });
+        this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);
     }
 });
 
