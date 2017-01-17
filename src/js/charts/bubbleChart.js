@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
     /**
@@ -87,43 +86,31 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @override
      */
     addComponents: function() {
-        this._addComponentsForAxisType({
-            axis: [
-                {
-                    name: 'yAxis',
-                    isVertical: true
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
-            series: [
-                {
-                    name: 'bubbleSeries'
-                }
-            ],
-            plot: true
-        });
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
 
-        if (this.options.circleLegend.visible) {
-            this.componentManager.register('circleLegend', {
-                chartType: this.chartType,
-                classType: 'circleLegend',
-                baseFontFamily: this.theme.chart.fontFamily
-            });
-        }
+        this.componentManager.register('legend', 'legend');
+        this.componentManager.register('circleLegend', 'circleLegend');
+
+        this.componentManager.register('bubbleSeries', 'bubbleSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
-    addDataRatios: axisTypeMixer.addDataRatios,
+    /**
+     * Add data ratios.
+     * @override
+     */
+    addDataRatios: function(limitMap) {
+        var self = this;
+        var chartTypes = this.chartTypes || [this.chartType];
 
-    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
-    _addPlotComponent: axisTypeMixer._addPlotComponent,
-    _addLegendComponent: axisTypeMixer._addLegendComponent,
-    _addAxisComponents: axisTypeMixer._addAxisComponents,
-    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
-    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
-    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
-    _addSimpleEventDetectorComponent: axisTypeMixer._addSimpleEventDetectorComponent
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, true);
+        });
+    }
 });
 
 module.exports = BubbleChart;

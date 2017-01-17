@@ -201,4 +201,26 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     }
 });
 
-module.exports = CircleLegend;
+function circleLegendFactory(params) {
+    var chartType = params.chartOptions.chartType;
+    var chartTheme = params.chartTheme;
+    var visibleOption = tui.util.pick(params.chartOptions, 'circleLegend', 'visible');
+    var isLegendVisible;
+
+    if (tui.util.isUndefined(visibleOption)) {
+        isLegendVisible = true;
+    } else {
+        isLegendVisible = visibleOption;
+    }
+
+    if (isLegendVisible) {
+        params.chartType = chartType;
+        params.baseFontFamily = chartTheme.chart.fontFamily;
+
+        return new CircleLegend(params);
+    }
+}
+
+circleLegendFactory.componentType = 'legend';
+
+module.exports = circleLegendFactory;
