@@ -994,11 +994,8 @@ function axisFactory(axisParam) {
     var chartType = axisParam.chartOptions.chartType;
     var name = axisParam.name;
 
-    if (/^(bar|column|line|area)$/.test(chartType)) {
-        axisParam.isYAxis = (name === 'yAxis');
-        axisParam.seriesType = chartType;
-        axisParam.aligned = false;
-    }
+    axisParam.isYAxis = (name === 'yAxis');
+    axisParam.seriesType = chartType;
 
     if (name === 'rightYAxis') {
         axisParam.componentType = 'yAxis';
