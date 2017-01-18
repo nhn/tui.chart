@@ -31,6 +31,11 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
+        // Radial차트는 그룹툴팁을 지원하지 않음, 지원하게되면 아래 코드 삭제
+        if (options.tooltip) {
+            options.tooltip.grouped = false;
+        }
+
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,
@@ -39,46 +44,21 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
             isVertical: true
         });
     },
-
     /**
      * Add components
      * @override
      */
     addComponents: function() {
-        this.componentManager.register('series', {
-            libType: this.options.libType,
-            chartType: this.options.chartType,
-            componentType: 'series',
-            classType: 'radialSeries',
-            chartBackground: this.theme.chart.background
-        });
+        this.componentManager.register('radialSeries', 'radialSeries');
+        this.componentManager.register('plot', 'radialPlot');
 
-        this.componentManager.register('tooltip', this.makeTooltipData('tooltip'));
+        this.componentManager.register('legend', 'legend');
 
-        this.componentManager.register('plot', {
-            componentType: 'plot',
-            classType: 'radialPlot'
-        });
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
-        this.componentManager.register('mouseEventDetector', {
-            chartType: this.chartType,
-            isVertical: true,
-            allowSelect: true,
-            classType: 'areaTypeEventDetector'
-        });
-
-        this.componentManager.register('legend', tui.util.extend({
-            seriesNames: this.seriesNames,
-            chartType: this.chartType,
-            classType: 'legend'
-        }));
-
-        this.componentManager.register('chartExportMenu', {
-            chartTitle: this.options.chart && this.options.chart.title ? this.options.chart.title.text : 'chart',
-            classType: 'chartExportMenu'
-        });
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
-
     /**
      * Add data ratios.
      * @override

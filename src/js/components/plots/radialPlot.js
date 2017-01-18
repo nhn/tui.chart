@@ -308,4 +308,10 @@ function makeRadialCategoryPositions(params) {
     return points;
 }
 
-module.exports = RadialPlot;
+function RadialPlotFactory(param) {
+    return new RadialPlot(param);
+}
+
+RadialPlotFactory.componentType = 'plot';
+
+module.exports = RadialPlotFactory;

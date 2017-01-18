@@ -129,4 +129,18 @@ var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSerie
     }
 });
 
-module.exports = RadialChartSeries;
+function radialSeriesFactory(params) {
+    var chartType = params.chartOptions.chartType;
+    var libType = params.chartOptions.libType;
+    var chartTheme = params.chartTheme;
+
+    params.libType = libType;
+    params.chartType = chartType;
+    params.chartBackground = chartTheme.background;
+
+    return new RadialChartSeries(params);
+}
+
+radialSeriesFactory.componentType = 'series';
+
+module.exports = radialSeriesFactory;
