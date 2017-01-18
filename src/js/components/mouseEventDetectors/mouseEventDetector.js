@@ -20,7 +20,8 @@ function mouseEventDetectorFactory(params) {
 
     if (predicate.isBarTypeChart(chartType)) {
         factory = boundsTypeEventDetectorFactory;
-    } else if (predicate.isCoordinateTypeChart(chartType)) {
+    } else if (predicate.isCoordinateTypeChart(chartType)
+         || predicate.isPieChart(chartType)) {
         factory = simpleEventDetectorFactory;
     } else if (params.chartOptions.tooltip.grouped) {
         factory = groupTypeEventDetectorFactory;

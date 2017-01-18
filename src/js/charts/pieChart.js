@@ -7,7 +7,6 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var pieTypeMixer = require('./pieTypeMixer');
 var chartConst = require('../const');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
@@ -44,23 +43,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     addComponents: function() {
-        var chartExportMenu = this.options.chartExportMenu;
-
-        this._addLegendComponent();
-        this._addTooltipComponent({
-            labelFormatter: this.labelFormatter
-        });
-
-        if (chartExportMenu.visible) {
-            this._addChartExportMenuComponent(chartExportMenu);
-        }
-        this._addSeriesComponents([{
-            name: 'pieSeries',
-            additionalParams: {
-                chartType: this.chartType
-            }
-        }]);
-        this._addMouseEventDetectorComponent();
+        this.componentManager.register('legend', 'legend');
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+        this.componentManager.register('pieSeries', 'pieSeries');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
 
     /**
@@ -69,14 +56,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      */
     addDataRatios: function() {
         this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
-    },
-
-    _addLegendComponent: pieTypeMixer._addLegendComponent,
-    _addTooltipComponent: pieTypeMixer._addTooltipComponent,
-    _addChartExportMenuComponent: pieTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: pieTypeMixer._addSeriesComponents,
-    _addMouseEventDetectorComponent: pieTypeMixer._addMouseEventDetectorComponent,
-    labelFormatter: pieTypeMixer.labelFormatter
+    }
 });
 
 module.exports = PieChart;
