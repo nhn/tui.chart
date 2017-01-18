@@ -55,13 +55,11 @@ describe('Tooltip', function() {
                 dataProcessor: dataProcessor,
                 eventBus: new tui.util.CustomEvents(),
                 options: {},
-                tooltipOptions: {
-                    labelFormatter: function(seriesDatum, tooltipDatum) {
-                        tooltipDatum.label = seriesDatum.label;
-                        tooltipDatum.ratioLabel = ':&nbsp;' + (seriesItem.ratio * 100) + '&nbsp;%&nbsp;';
+                labelFormatter: function(seriesDatum, tooltipDatum) {
+                    tooltipDatum.label = seriesDatum.label;
+                    tooltipDatum.ratioLabel = ':&nbsp;' + (seriesItem.ratio * 100) + '&nbsp;%&nbsp;';
 
-                        return tooltipDatum;
-                    }
+                    return tooltipDatum;
                 }
             });
 

@@ -140,7 +140,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
     _makeTooltipDatum: function(legendLabel, category, seriesItem) {
         var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
         var tooltipLabel = seriesItem.tooltipLabel;
-        var labelFormatter = this.tooltipOptions && this.tooltipOptions.labelFormatter;
+        var labelFormatter = this.labelFormatter;
         var tooltipDatum = {
             legend: (legendLabel || '')
         };
