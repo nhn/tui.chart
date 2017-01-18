@@ -56,32 +56,6 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * Add components
      * @override
      */
-    __addComponents: function() {
-        this._addComponentsForAxisType({
-            axis: [
-                {
-                    name: 'yAxis',
-                    isVertical: true
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
-            series: [
-                {
-                    name: 'columnSeries',
-                    data: {
-                        allowNegativeTooltip: true
-                    }
-                }
-            ],
-            plot: true
-        });
-    },
-    /**
-     * Add components
-     * @override
-     */
     addComponents: function() {
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('yAxis', 'axis');
