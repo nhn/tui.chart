@@ -166,7 +166,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
             this._renderChartExportMenuArea(container);
             this._renderChartExportMenu(container);
             this.chartExportMenuContainer = container;
-            this._attachEvent(container);
+            this._attachEvent();
         }
 
         return container;
@@ -223,25 +223,25 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
             } else {
                 this._showChartExportMenu();
             }
+        } else {
+            this._hideChartExportMenu();
         }
     },
 
     /**
      * Attach browser event.
-     * @param {HTMLElement} target target element
      * @private
      */
-    _attachEvent: function(target) {
-        eventListener.on(target, 'click', this._onClick, this);
+    _attachEvent: function() {
+        eventListener.on(document.body, 'click', this._onClick, this);
     },
 
     /**
      * Detach browser event.
-     * @param {HTMLElement} target target element
      * @private
      */
-    _detachEvent: function(target) {
-        eventListener.off(target, 'click', this._onClick);
+    _detachEvent: function() {
+        eventListener.off(document.body, 'click', this._onClick);
     }
 });
 
