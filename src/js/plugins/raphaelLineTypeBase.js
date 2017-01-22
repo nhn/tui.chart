@@ -458,7 +458,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {object} layout layout
      */
     showGroupTooltipLine: function(bound, layout) {
-        var left = Math.max(bound.position.left, 11) - chartConst.SERIES_EXPAND_SIZE - chartConst.CHART_PADDING;
+        var left = Math.max(bound.position.left, 11);
         var linePath = raphaelRenderUtil.makeLinePath({
             left: left,
             top: layout.position.top + bound.dimension.height

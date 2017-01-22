@@ -52,8 +52,8 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
 
         return tui.util.map(tui.util.range(0, tickCount), function() {
             var limit = {
-                min: prev + tickInterval - halfInterval,
-                max: prev + tickInterval + halfInterval
+                min: prev - halfInterval,
+                max: prev + halfInterval
             };
 
             prev += tickInterval;
