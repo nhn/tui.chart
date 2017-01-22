@@ -7,7 +7,6 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
-var chartConst = require('../const');
 
 var ANIMATION_DURATION = 700;
 var DEFAULT_DOT_RADIUS = 3;
