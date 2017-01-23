@@ -603,30 +603,6 @@ describe('PieChartSeries', function() {
         });
     });
 
-    describe('_moveToOuterPosition()', function() {
-        it('position.left값이 기준 값(centerLeft)보다 작으면 좌측으로 label너비 만큼 이동 시킵니다. position.top은 label높이가 중앙에 위치하도록 조절합니다.', function() {
-            var actual = series._moveToOuterPosition(120, {
-                end: {
-                    left: 100,
-                    top: 50
-                }
-            }, 'label1');
-
-            expect(actual.left).toBe(78.484375);
-        });
-
-        it('position.left값이 기준 값(centerLeft)보다 크면 이동없이 반환합니다.', function() {
-            var actual = series._moveToOuterPosition(120, {
-                end: {
-                    left: 140,
-                    top: 50
-                }
-            }, 'label1');
-
-            expect(actual.left).toBe(161.515625);
-        });
-    });
-
     describe('_renderSeriesLabel()', function() {
         it('labelAlign 옵션이 outer면 _renderOuterLegend()가 수행됩니다.', function() {
             var container = dom.create('div');

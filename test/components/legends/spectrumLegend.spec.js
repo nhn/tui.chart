@@ -45,16 +45,6 @@ describe('Test for SpectrumLegend', function() {
 
             setTimeout(function() {
                 expect(legendSet.length).toBe(10);
-                expect(legendSet[0].node.nodeName).toBe('path');
-                expect(legendSet[1].node.nodeName).toBe('path');
-                expect(legendSet[2].node.nodeName).toBe('path');
-                expect(legendSet[3].node.nodeName).toBe('path');
-                expect(legendSet[4].node.nodeName).toBe('path');
-                expect(legendSet[5].node.nodeName).toBe('text');
-                expect(legendSet[6].node.nodeName).toBe('text');
-                expect(legendSet[7].node.nodeName).toBe('text');
-                expect(legendSet[8].node.nodeName).toBe('text');
-                expect(legendSet[9].node.nodeName).toBe('text');
                 done();
             });
         });
