@@ -335,32 +335,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     },
 
     /**
-     * Animate for resizing of label container.
-     * @param {number} interval - interval for stacking
-     * @private
-     */
-    _animateForResizing: function(interval) {
-        var seriesLabelContainer = this.seriesLabelContainer;
-        var animateLabel, areaWidth;
-
-        if (!seriesLabelContainer) {
-            return;
-        }
-
-        areaWidth = this.dimensionMap.extendedSeries.width;
-
-        if (!this.dataProcessor.isCoordinateType()) {
-            animateLabel = function(ratio) {
-                var left = interval * ratio;
-
-                seriesLabelContainer.style.width = (areaWidth - left) + 'px';
-            };
-        }
-
-        this._animate(animateLabel);
-    },
-
-    /**
      * Make top of zero point for adding data.
      * @returns {number}
      * @private
@@ -398,12 +372,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         zeroTop = this._makeZeroTopForAddingData();
 
         this.graphRenderer.animateForAddingData(paramsForRendering, tickSize, groupPositions, shiftingOption, zeroTop);
-
-        if (shiftingOption) {
-            this._animateForMoving(tickSize);
-        } else {
-            this._animateForResizing(tickSize);
-        }
     },
 
     /**
