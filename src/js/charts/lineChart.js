@@ -71,7 +71,7 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._dynamicDataHelper.reset();
-        this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
+        this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, boundsParams);
     },
     /**
      * Add data ratios.
@@ -223,34 +223,6 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
         this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
         this._renderForZoom(true);
         this._dynamicDataHelper.restartAnimation();
-    },
-
-    /**
-     * Change checked legend.
-     * from addingDynamicDataMixer
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @param {?object} rawData rawData
-     * @param {?object} boundsParams addition params for calculating bounds
-     * @override
-     */
-    _changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-        var self = this;
-        var shiftingOption = !!this.options.series.shifting;
-        var pastPaused = this.paused;
-
-        if (!pastPaused) {
-            this._dynamicDataHelper.pauseAnimation();
-        }
-
-        this._dynamicDataHelper.checkedLegends = checkedLegends;
-        this._rerender(checkedLegends, rawData, boundsParams);
-
-        if (!pastPaused) {
-            setTimeout(function() {
-                self.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
-                self._dynamicDataHelper.restartAnimation();
-            }, chartConst.RERENDER_TIME);
-        }
     }
 });
 

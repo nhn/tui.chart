@@ -64,7 +64,7 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._dynamicDataHelper.reset();
-        this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
+        this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, boundsParams);
     },
     /**
      * Add data ratios.

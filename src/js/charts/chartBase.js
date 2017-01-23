@@ -244,7 +244,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             dataProcessor: this.dataProcessor,
             hasAxes: this.hasAxes,
             eventBus: this.eventBus,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            seriesTypes: this.seriesTypes || [this.chartType]
         });
     },
 
@@ -412,9 +413,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Rerender.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
-     * @private
      */
-    _rerender: function(checkedLegends, rawData) {
+    rerender: function(checkedLegends, rawData) {
         var self = this;
         var dataProcessor = this.dataProcessor;
 
@@ -438,7 +438,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {?object} boundsParams addition params for calculating bounds
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-        this._rerender(checkedLegends, rawData, boundsParams);
+        this.rerender(checkedLegends, rawData, boundsParams);
     },
 
     /**

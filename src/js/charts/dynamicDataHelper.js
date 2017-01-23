@@ -1,5 +1,6 @@
 'use strict';
 
+var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 
 var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.prototype */ {
@@ -139,6 +140,33 @@ var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.protot
             self._rerenderForAddingData();
             self._checkForAddedData();
         }, 400);
+    },
+
+    /**
+     * Change checked legend.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @param {?object} boundsParams addition params for calculating bounds
+     */
+    changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        var self = this;
+        var chart = this.chart;
+        var shiftingOption = !!chart.options.series.shifting;
+        var pastPaused = this.paused;
+
+        if (!pastPaused) {
+            this.pauseAnimation();
+        }
+
+        this.checkedLegends = checkedLegends;
+        chart.rerender(checkedLegends, rawData, boundsParams);
+
+        if (!pastPaused) {
+            setTimeout(function() {
+                chart.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
+                self.restartAnimation();
+            }, chartConst.RERENDER_TIME);
+        }
     },
 
     /**
