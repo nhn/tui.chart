@@ -46,7 +46,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Theme
          * @type {object}
          */
-        this.theme = params.theme[params.seriesType] || params.theme;
+        this.theme = params.theme;
 
         /**
          * Whether label type or not.
@@ -995,11 +995,23 @@ function axisFactory(axisParam) {
     var name = axisParam.name;
 
     axisParam.isYAxis = (name === 'yAxis');
-    axisParam.seriesType = chartType;
 
-    if (name === 'rightYAxis') {
-        axisParam.componentType = 'yAxis';
-        axisParam.index = 1;
+    // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
+    // 나중에 테마에서 시리즈로 다시 분기되는게 아니라 커포넌트 네임인 rightYAxis로 따로 받도록 테마 구조를 변경하자.
+    if (chartType === 'combo') {
+        if (axisParam.isYAxis) {
+            axisParam.theme = axisParam.theme[axisParam.seriesTypes[0]];
+        } else if (name === 'rightYAxis') {
+            axisParam.componentType = 'yAxis';
+            axisParam.theme = axisParam.theme[axisParam.seriesTypes[1]];
+            axisParam.index = 1;
+        }
+    // 왜 싱글타입의  yAxis도 내부에 차트이름으로 한번더 분기가 되는 지는 모르겠다 추가 개선요소
+    } else if (axisParam.isYAxis) {
+        axisParam.theme = axisParam.theme[chartType];
+    // 싱글에 xAxis인 경우
+    } else {
+        axisParam.theme = axisParam.theme;
     }
 
     return new Axis(axisParam);
