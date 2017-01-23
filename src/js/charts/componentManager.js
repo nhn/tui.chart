@@ -127,18 +127,25 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
          * @type {object}
          */
         this.eventBus = params.eventBus;
+
+        /**
+         * seriesTypes of chart
+         * @type {Array.<string>}
+         */
+        this.seriesTypes = params.seriesTypes;
     },
 
     /**
      * Make component options.
      * @param {object} options options
-     * @param {string} componentType component type
+     * @param {string} optionKey component option key
+     * @param {string} componentName component name
      * @param {number} index component index
      * @returns {object} options
      * @private
      */
-    _makeComponentOptions: function(options, componentType, index) {
-        options = options || this.options[componentType];
+    _makeComponentOptions: function(options, optionKey, componentName, index) {
+        options = options || this.options[optionKey];
         options = tui.util.isArray(options) ? options[index] : options || {};
 
         return options;
@@ -155,7 +162,8 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     register: function(name, params) {
         var index, component, componentType, classType, componentFactory, optionKey;
 
-        // TODO 임시 분기 코드
+        // TODO 임시 분기 코드들이 많다.
+        // register는 한번더 리팩토링해야함
         var old = false;
         if (!tui.util.isString(params)) {
             classType = params.classType || componentType || name;
@@ -179,6 +187,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
             componentType = componentFactory.componentType;
         }
 
+
+
+        params.chartTheme = this.theme;
+        params.chartOptions = this.options;
+        params.seriesTypes = this.seriesTypes;
+
         // axis의 경우 name으로 테마와 옵션을 가져온다. xAxis, yAxis
         if (componentType === 'axis') {
             optionKey = name;
@@ -186,11 +200,27 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
             optionKey = componentType;
         }
 
-        params.chartTheme = this.theme;
-        params.theme = params.theme || this.theme[optionKey];
+        params.theme = this.theme[optionKey];
+        params.options = this.options[optionKey];
 
-        params.chartOptions = this.options;
-        params.options = this._makeComponentOptions(params.options, optionKey, index);
+        if (optionKey === 'series') {
+            // 시리즈는 옵션과 테마가 시리즈 이름으로 뎊스가 한번더 들어간다.
+            // 테마는 항상 뎊스가 더들어가고 옵션은 콤보인경우에만 더들어간다.
+            tui.util.forEach(this.seriesTypes, function(seriesType) {
+                if (name.indexOf(seriesType) === 0) {
+                    params.options = params.options[seriesType] || params.options;
+                    params.theme = params.theme[seriesType];
+
+                    if (tui.util.isArray(params.options)) {
+                        params.options = params.options[index] || {};
+                    }
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;
