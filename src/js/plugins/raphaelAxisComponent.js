@@ -62,7 +62,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         raphaelRenderUtil.renderText(paper, positionTopAndLeft, {
             text: data.text,
             attributes: attributes,
-            set: data.Set
+            set: data.set
         });
     },
 
