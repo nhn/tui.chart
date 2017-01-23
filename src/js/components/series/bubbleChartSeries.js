@@ -131,13 +131,12 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
 CoordinateTypeSeriesBase.mixin(BubbleChartSeries);
 
 function bubbleSeriesFactory(params) {
-    var chartType = params.chartOptions.chartType;
     var libType = params.chartOptions.libType;
     var chartTheme = params.chartTheme;
 
     params.libType = libType;
-    params.chartType = chartType;
-    params.chartBackground = chartTheme.background;
+    params.chartType = 'bubble';
+    params.chartBackground = chartTheme.chart.background;
 
     return new BubbleChartSeries(params);
 }

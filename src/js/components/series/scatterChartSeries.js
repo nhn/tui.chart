@@ -64,13 +64,12 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
 CoordinateTypeSeriesBase.mixin(ScatterChartSeries);
 
 function scatterSeriesFactory(params) {
-    var chartType = params.chartOptions.chartType;
     var libType = params.chartOptions.libType;
     var chartTheme = params.chartTheme;
 
     params.libType = libType;
-    params.chartType = chartType;
-    params.chartBackground = chartTheme.background;
+    params.chartType = 'scatter';
+    params.chartBackground = chartTheme.chart.background;
 
     return new ScatterChartSeries(params);
 }
