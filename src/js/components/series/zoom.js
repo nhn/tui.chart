@@ -98,7 +98,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
         var changedMagn = Math.min(Math.max(1, this.magn * magn), chartConst.MAX_ZOOM_MAGN);
 
         if (changedMagn !== this.magn) {
-            this.magn = changedMagn;
+            //this.magn = changedMagn;
             this.eventBus.fire('zoomMap', this.magn, position);
         }
     },
@@ -142,16 +142,11 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @private
      */
     _calculateMagn: function(wheelDelta) {
-        var tick = parseInt(wheelDelta / chartConst.WHEEL_TICK, 10),
-            magn;
-
-        if (tick > 0) {
-            magn = Math.pow(2, tick);
-        } else {
-            magn = Math.pow(0.5, Math.abs(tick));
+        if (wheelDelta > 0) {
+            this.magn += 0.5;
+        } else if (wheelDelta < 0) {
+            this.magn -= 0.5;
         }
-
-        return magn;
     },
 
     /**
@@ -160,23 +155,15 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @param {{left: number, top: number}} position mouse position
      */
     onWheel: function(wheelDelta, position) {
-        var magn;
+        this._calculateMagn(wheelDelta);
 
-        if (Math.abs(wheelDelta) < chartConst.WHEEL_TICK) {
-            this.stackedWheelDelta += wheelDelta;
-        } else {
-            this.stackedWheelDelta = wheelDelta;
+        if (this.magn > 5) {
+            this.magn = 5;
+        } else if (this.magn < 0.25) {
+            this.magn = 1;
+        } else if (this.magn >= 1) {
+            this._zoom(this.magn, position);
         }
-
-        if (Math.abs(this.stackedWheelDelta) < chartConst.WHEEL_TICK) {
-            return;
-        }
-
-        magn = this._calculateMagn(this.stackedWheelDelta);
-
-        this._zoom(magn, position);
-
-        this.stackedWheelDelta = this.stackedWheelDelta % chartConst.WHEEL_TICK;
     }
 });
 

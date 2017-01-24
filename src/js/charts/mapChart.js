@@ -50,9 +50,15 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
         var chartOptions = options.chart;
+        var chartOption = this.options.chart;
+        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
+
+        this.componentManager.register('chartExportMenu', {
+            chartTitle: chartTitle,
+            classType: 'chartExportMenu'
+        });
 
         options.legend = options.legend || {};
-
         if (options.legend.visible) {
             this.componentManager.register('legend', {
                 colorSpectrum: colorSpectrum,

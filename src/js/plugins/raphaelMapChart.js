@@ -28,11 +28,22 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     render: function(paper, data) {
         var mapDimension = data.mapModel.getMapDimension();
 
+        this.ratio = this._getDimensionRatio(data, mapDimension);
         this.paper = paper;
-        this.sectors = this._renderMap(data);
+        this.sectorSet = paper.set();
+        this.sectors = this._renderMap(data, this.ratio);
         this.overColor = data.theme.overColor;
+    },
 
-        paper.setViewBox(0, 0, mapDimension.width, mapDimension.height, false);
+    /**
+     * Get dimension ratio
+     * @param {object} dimension dimension
+     * @param {object} mapDimension map dimension
+     * @returns {number}
+     * @private
+     */
+    _getDimensionRatio: function(dimension, mapDimension) {
+        return Math.min(dimension.height / mapDimension.height, dimension.width / mapDimension.width);
     },
 
     /**
@@ -41,24 +52,36 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      *      @param {{width: number, height: number}} data.dimension series dimension
      *      @param {Array.<{code: string, path: string}>} data.map mapData
      *      @param {ColorSpectrum} data.colorSpectrum color model
+     * @param {number} dimensionRatio dimension ratio of rendering by map
      * @returns {Array.<{sector: object, color: string, data: object}>} rendered map information
      * @private
      */
-    _renderMap: function(data) {
-        var paper = this.paper,
-            colorSpectrum = data.colorSpectrum;
+    _renderMap: function(data, dimensionRatio) {
+        //var self = this;
+        var sectorSet = this.sectorSet;
+        var position = data.layout.position;
+        var paper = this.paper;
+        var colorSpectrum = data.colorSpectrum;
+        //this.gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        //this.paper.canvas.appendChild(this.gElement);
+        //window.gElement = this.gElement;
+        //window.paper = this.paper;
 
         return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
-            var ratio = datum.ratio || 0,
-                color = colorSpectrum.getColor(ratio),
-                sector = raphaelRenderUtil.renderArea(paper, datum.path, {
-                    fill: color,
-                    opacity: 1,
-                    stroke: STROKE_COLOR,
-                    'stroke-opacity': 1
-                });
-
+            var ratio = datum.ratio || 0;
+            var color = colorSpectrum.getColor(ratio);
+            var sector = raphaelRenderUtil.renderArea(paper, datum.path, {
+                fill: color,
+                opacity: 1,
+                stroke: STROKE_COLOR,
+                'stroke-opacity': 1,
+                transform: 's' + dimensionRatio + ',' + dimensionRatio + ',0,0'
+                    + 't' + position.left + ',' + position.top
+            });
+            //self.gElement.appendChild(sector[0])
             sector.data('index', index);
+
+            sectorSet.push(sector);
 
             return {
                 sector: sector,
@@ -105,12 +128,23 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         }, ANIMATION_DURATION, '>');
     },
 
-    /**
-     * Set size
-     * @param {{width: number, height: number}} dimension dimension
-     */
-    setSize: function(dimension) {
-        this.paper.setSize(dimension.width, dimension.height);
+    scaleMapPaths: function(changedRatio, position) {
+        var bbox = this.sectorSet.getBBox();
+        var direction = changedRatio < 0 ? -1 : 1;
+
+        //tui.util.forEach(this.sectorSet, function(sector) {
+        //    var node = sector.node;
+        //    var scale = sector.paper.canvas.createSVGTransform();
+        //    scale.setScale(changedRatio, changedRatio);
+        //    node.transform.baseVal.appendItem(scale);
+        //}); // 빠른데 IE8안됨
+
+        //this.sectorSet.scale(changedRatio, changedRatio, position.left, position.top); //버벅댐
+
+        this.sectorSet.attr({
+            transform: 's' + changedRatio + ',' + changedRatio + ',0,0'
+                + 't' + (bbox.x * changedRatio * direction) + ',' + (bbox.y * changedRatio * direction)
+        });
     }
 });
 

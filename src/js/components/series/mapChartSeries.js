@@ -95,7 +95,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this.startPosition = null;
 
         Series.call(this, params);
-        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
     /**
@@ -145,18 +144,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @returns {HTMLElement} series element
      */
     render: function(data) {
-        this.seriesContainer = dom.create('DIV', this.className);
-
-        renderUtil.renderPosition(this.seriesContainer, data.layout.position);
-
-        this.paper = raphael(this.seriesContainer, data.layout.dimension.width, data.layout.dimension.height);
-        data.paper = this.paper;
-
         Series.prototype.render.call(this, data);
-
         this._setMapRatio();
-
-        return this.seriesContainer;
     },
 
     /**
@@ -180,20 +169,14 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @override
      */
     _renderGraph: function() {
-        if (!this.graphContainer) {
-            this.graphContainer = dom.create('DIV', 'tui-chart-series-graph-area');
-            this.seriesContainer.appendChild(this.graphContainer);
-        }
-
         this._setGraphDimension();
-        renderUtil.renderDimension(this.graphContainer, this.graphDimension);
 
         this._setLimitPositionToMoveMap();
 
         this.graphRenderer.render(this.paper, {
             colorSpectrum: this.colorSpectrum,
             mapModel: this.mapModel,
-            dimension: this.graphDimension,
+            layout: this.layout,
             theme: this.theme
         });
     },
@@ -270,21 +253,16 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @param {number} changedRatio changed ratio
      * @private
      */
-    _zoom: function(changedRatio) {
+    _zoom: function(changedRatio, position) {
         var prevDimension = this.graphDimension,
             prevLimitPosition = this.limitPosition;
 
         this._setGraphDimension();
-        renderUtil.renderDimension(this.graphContainer, this.graphDimension);
-        this.graphRenderer.setSize(this.graphDimension);
 
         this._setLimitPositionToMoveMap();
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
-        renderUtil.renderPosition(this.graphContainer, this.basePosition);
 
-        if (this.seriesLabelContainer) {
-            this._renderSeriesLabel(this.seriesLabelContainer);
-        }
+        this.graphRenderer.scaleMapPaths(changedRatio, position);
     },
 
     /**
@@ -384,7 +362,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @param {{left: number, top: number}} position position
      */
     onMoveSeries: function(position) {
-        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
+        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex'),
+            containerBound;
 
         if (!tui.util.isNull(foundIndex)) {
             if (this.prevMovedIndex !== foundIndex) {
@@ -397,9 +376,11 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             }
 
             if (this._isChangedPosition(this.prevPosition, position)) {
+                // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+                containerBound = this.paper.canvas.getBoundingClientRect();
                 this._showTooltip(foundIndex, {
-                    left: position.left,
-                    top: position.top - chartConst.CHART_PADDING - chartConst.TOOLTIP_GAP
+                    left: position.left - containerBound.left,
+                    top: position.top - containerBound.top
                 });
                 this.prevMovedIndex = foundIndex;
             }
@@ -471,7 +452,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _movePositionForZoom: function(position, changedRatio) {
         var seriesDimension = this.layout.dimension;
-        var containerBound = this.seriesContainer.getBoundingClientRect();
+        var containerBound = this.paper.canvas.getBoundingClientRect();
         var startPosition = {
             left: (seriesDimension.width / 2) + containerBound.left,
             top: (seriesDimension.height / 2) + containerBound.top
@@ -489,7 +470,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             top: startPosition.top + (movementPosition.top * changedRatio)
         };
 
-        this._movePosition(startPosition, endPosition);
+        //this._movePosition(startPosition, endPosition);
     },
 
     /**
@@ -502,11 +483,11 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         this.zoomMagn = newMagn;
 
-        this._zoom(changedRatio);
+        this._zoom(changedRatio, position);
 
-        if (position) {
-            this._movePositionForZoom(position, changedRatio);
-        }
+        //if (position) {
+        //    this._movePositionForZoom(position, changedRatio);
+        //}
 
         this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'zoom', newMagn);
     },
