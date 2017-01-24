@@ -90,7 +90,7 @@ var chartConst = {
     /** default graph plugin
      * @type {string}
      */
-    DEFAULT_PLUGIN: 'raphael',
+    DEFAULT_PLUGIN: 'Raphael',
     /** default tick color
      * @type {string}
      */
@@ -284,7 +284,7 @@ var chartConst = {
     /** map legend graph size */
     MAP_LEGEND_GRAPH_SIZE: 25,
     /** map legend label padding */
-    MAP_LEGEND_LABEL_PADDING: 5,
+    MAP_LEGEND_LABEL_PADDING: 10,
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
     CIRCLE_LEGEND_PADDING: 10,
     HALF_RATIO: 0.5,
@@ -374,6 +374,9 @@ var chartConst = {
     /** for radial */
     RADIAL_PLOT_PADDING: 15, // Prevent cross paper boundaries by line width
     RADIAL_MARGIN_FOR_CATEGORY: 60,
-    RADIAL_CATEGORY_PADDING: 20
+    RADIAL_CATEGORY_PADDING: 20,
+
+    COMPONENT_TYPE_DOM: 'DOM',
+    COMPONENT_TYPE_RAPHAEL: 'Raphael'
 };
 module.exports = chartConst;

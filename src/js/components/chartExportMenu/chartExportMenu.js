@@ -58,6 +58,8 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
          * @type {HTMLElement}
          */
         this.chartExportMenu = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
     /**
@@ -143,7 +145,9 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      * @returns {HTMLElement} chartExportMenu element
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
+        var container = data.paper;
+
+        dom.addClass(container, this.className);
 
         this._setDataForRendering(data);
         this._renderChartExportMenuArea(container);

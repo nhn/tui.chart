@@ -8,7 +8,6 @@
 
 var Series = require('./series');
 var LineTypeSeriesBase = require('./lineTypeSeriesBase');
-var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 
 var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
@@ -37,13 +36,14 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     _makePositionTopOfZeroPoint: function() {
         var dimension = this.layout.dimension;
         var limit = this.axisDataMap.yAxis.limit;
-        var top = this._getLimitDistanceFromZeroPoint(dimension.height, limit).toMax;
+        var baseTop = this.layout.position.top;
+        var top = this._getLimitDistanceFromZeroPoint(dimension.height, limit).toMax + baseTop;
 
         if (limit.min >= 0 && !top) {
             top = dimension.height;
         }
 
-        return top + chartConst.SERIES_EXPAND_SIZE;
+        return top;
     },
 
     /**
@@ -53,15 +53,16 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @private
      */
     _makeStackedPositions: function(groupPositions) {
-        var height = this.layout.dimension.height + chartConst.SERIES_EXPAND_SIZE,
-            firstStartTop = this._makePositionTopOfZeroPoint(),
-            prevPositionTops = [];
+        var height = this.layout.dimension.height;
+        var baseTop = this.layout.position.top;
+        var firstStartTop = this._makePositionTopOfZeroPoint();
+        var prevPositionTops = [];
 
         return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position, index) {
                 var prevTop = prevPositionTops[index] || firstStartTop;
                 var positionTop = position ? position.top : 0;
-                var stackedHeight = height - positionTop;
+                var stackedHeight = height - positionTop + baseTop;
                 var top = position ? prevTop - stackedHeight : prevTop;
 
                 if (position) {
@@ -100,14 +101,15 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      */
     _makeSeriesData: function() {
         var dimension = this.layout.dimension;
-        var zeroTop = this._getLimitDistanceFromZeroPoint(dimension.height, this.limit).toMax;
+        var baseTop = this.layout.position.top;
+        var zeroTop = this._getLimitDistanceFromZeroPoint(dimension.height, this.limit).toMax + baseTop;
         var groupPositions = this._makePositions();
 
         return {
             chartBackground: this.chartBackground,
             groupPositions: groupPositions,
             hasRangeData: this._getSeriesDataModel().hasRangeData(),
-            zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE,
+            zeroTop: zeroTop,
             isAvailable: function() {
                 return groupPositions && groupPositions.length > 0;
             }

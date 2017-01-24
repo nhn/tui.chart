@@ -335,7 +335,9 @@ describe('test for squarifier', function() {
 
             actual = squarifier.squarify({
                 width: 600,
-                height: 400
+                height: 400,
+                left: 0,
+                top: 0
             }, [
                 {
                     id: 'id_0',

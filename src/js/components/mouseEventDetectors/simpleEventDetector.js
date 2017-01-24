@@ -6,6 +6,7 @@
 
 'use strict';
 
+var chartConst = require('../../const');
 var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var renderUtil = require('../../helpers/renderUtil');
 
@@ -24,6 +25,8 @@ var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lend
          * @type {string}
          */
         this.chartType = params.chartType;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
 
         /**
          * event bus for transmitting message

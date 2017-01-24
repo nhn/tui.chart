@@ -408,7 +408,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._render(function(boundsAndScale) {
             self.componentManager.render('rerender', boundsAndScale, {
                 checkedLegends: checkedLegends
-            });
+            }, self.chartContainer);
         });
     },
 

@@ -560,7 +560,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      */
     _makeChartExportMenuPosition: function() {
         return {
-            top: 10,
+            top: 1,
             right: 20
         };
     },

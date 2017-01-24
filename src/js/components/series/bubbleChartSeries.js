@@ -30,6 +30,8 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
          */
         this.maxRadius = null;
 
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
         Series.apply(this, arguments);
     },
 
@@ -69,12 +71,13 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      */
     _makeBound: function(ratioMap, positionByStep, maxRadius) {
         var dimension = this.layout.dimension;
+        var position = this.layout.position;
         var left = tui.util.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
         var top = tui.util.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
 
         return {
-            left: left + chartConst.SERIES_EXPAND_SIZE,
-            top: dimension.height - top + chartConst.SERIES_EXPAND_SIZE,
+            left: position.left + left,
+            top: position.top + dimension.height - top,
             radius: Math.max(maxRadius * ratioMap.r, 2)
         };
     },

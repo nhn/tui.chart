@@ -8,7 +8,6 @@
 
 var Series = require('./series');
 var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const');
 
 var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
     /**
@@ -62,8 +61,8 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
      */
     _makeBound: function(blockWidth, blockHeight, x, y) {
         var height = this.layout.dimension.height;
-        var left = (blockWidth * x) + chartConst.SERIES_EXPAND_SIZE;
-        var top = height - (blockHeight * (y + 1)) + chartConst.SERIES_EXPAND_SIZE;
+        var left = (blockWidth * x) + this.layout.position.left;
+        var top = height - (blockHeight * (y + 1)) + this.layout.position.top;
 
         return {
             end: {
@@ -108,18 +107,30 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
 
     /**
      * Render series label.
-     * @param {HTMLElement} labelContainer - series label container
+     * @param {object} paper - paper
      * @private
      */
-    _renderSeriesLabel: function(labelContainer) {
+    _renderSeriesLabel: function(paper) {
         var sdm = this._getSeriesDataModel();
         var boundsSet = this.seriesData.groupBounds;
         var labelTheme = this.theme.label;
         var selectedIndex = this.selectedLegendIndex;
         var positionsSet = labelHelper.boundsToLabelPositions(sdm, boundsSet, labelTheme);
-        var html = labelHelper.makeLabelsHtmlForBoundType(sdm, positionsSet, labelTheme, selectedIndex);
+        var labels = sdm.map(function(datum) {
+            return datum.valuesMap.value;
+        });
 
-        labelContainer.innerHTML = html;
+        this.labelSet = this.graphRenderer.renderSeriesLabel(paper, positionsSet, labels, labelTheme, selectedIndex);
+    },
+
+    /**
+     * Resize.
+     * @override
+     */
+    resize: function() {
+        this.boundMap = null;
+
+        Series.prototype.resize.apply(this, arguments);
     },
 
     /**

@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var raphael = window.Raphael;
 
 var BarChart = require('./raphaelBarChart');
 var LineChart = require('./raphaelLineChart');
@@ -15,13 +16,15 @@ var CoordinateTypeChart = require('./raphaelCoordinateTypeChart');
 var BoxTypeChart = require('./raphaelBoxTypeChart');
 var MapChart = require('./raphaelMapChart');
 
+var legend = require('./raphaelLegendComponent');
 var MapLegend = require('./raphaelMapLegend');
 var CircleLegend = require('./raphaelCircleLegend');
 var title = require('./raphaelTitleComponent');
+var axis = require('./raphaelAxisComponent');
 
 var RadialPlot = require('./raphaelRadialPlot');
 
-var pluginName = 'raphael';
+var pluginName = 'Raphael';
 var pluginRaphael = {
     bar: BarChart,
     column: BarChart,
@@ -34,10 +37,15 @@ var pluginRaphael = {
     treemap: BoxTypeChart,
     map: MapChart,
     radial: RadialLineSeries,
+    legend: legend,
     mapLegend: MapLegend,
     circleLegend: CircleLegend,
     radialPlot: RadialPlot,
-    title: title
+    title: title,
+    axis: axis
+};
+var callback = function(container, dimension) {
+    return raphael(container, dimension.width, dimension.height);
 };
 
-tui.chart.registerPlugin(pluginName, pluginRaphael);
+tui.chart.registerPlugin(pluginName, pluginRaphael, callback);

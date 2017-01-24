@@ -41,6 +41,12 @@ describe('PieChartSeries', function() {
             dataProcessor: dataProcessor,
             eventBus: new tui.util.CustomEvents()
         });
+        series.layout = {
+            position: {
+                left: 0,
+                top: 0
+            }
+        };
     });
 
     describe('_makeValidAngle()', function() {
@@ -268,11 +274,9 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 2 ~ 3 사분면인 경우 높이 값을 두배로 하여 너비와 높이값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 600,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 600,
+                height: 400
             };
             series.options.startAngle = 120;
             series.options.endAngle = 220;
@@ -285,11 +289,9 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 4 ~ 1 사분면인 경우에도 높이 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 600,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 600,
+                height: 400
             };
             series.options.startAngle = 320;
             series.options.endAngle = 80;
@@ -302,11 +304,9 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 1 ~ 2 사분면인 경우 너비 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 300,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 300,
+                height: 400
             };
             series.options.startAngle = 0;
             series.options.endAngle = 180;
@@ -319,11 +319,9 @@ describe('PieChartSeries', function() {
         it('사분면의 범위가 3 ~ 4 사분면인 경우에도 너비 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 300,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 300,
+                height: 400
             };
             series.options.startAngle = 180;
             series.options.endAngle = 360;
@@ -336,11 +334,9 @@ describe('PieChartSeries', function() {
         it('시작 사분변과 종료 사분면이 같은 경우에는 너비, 높이 값 모두 두배로 하여 작은 값을 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 20;
             series.options.endAngle = 80;
@@ -353,11 +349,9 @@ describe('PieChartSeries', function() {
         it('콤보 차트의 경우 추가적인 계산 없이 너비와 높이 값 중 작은 값을 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.isCombo = true;
 
@@ -371,11 +365,9 @@ describe('PieChartSeries', function() {
         it('시리즈 영역의 너비와 높이 중 작은 값의 반의 80%를 반지름으로 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
 
             actual = series._calculateRadius();
@@ -386,11 +378,9 @@ describe('PieChartSeries', function() {
         it('isShowOuterLabel이 true인 경우에는 65%를 반환합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.isShowOuterLabel = true;
 
@@ -404,11 +394,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 1사분면에만 존재하면 계산된 cx를 반지름의 반 길이만큼 줄여주고 cy를 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 20;
             series.options.endAngle = 80;
@@ -422,11 +410,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 1 ~ 2 사분면에 존재하면 계산된 cx를 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 20;
             series.options.endAngle = 160;
@@ -440,11 +426,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 2사분면에만 존재하면 계산된 cx, cy 모두 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 110;
             series.options.endAngle = 180;
@@ -458,11 +442,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 2 ~ 3 사분면에 존재하면 계산된 cy를 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 90;
             series.options.endAngle = 270;
@@ -476,11 +458,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 3사분면에만 존재하면 계산된 cx를 반지름의 반 길이만큼 늘여주고 cy를 반지름의 반 길이만큼 줄여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 220;
             series.options.endAngle = 250;
@@ -494,11 +474,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 3 ~ 4 사분면에 존재하면 계산된 cx를 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 250;
             series.options.endAngle = 350;
@@ -512,11 +490,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 4 ~ 1 사분면에 존재하면 계산된 cy를 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 280;
             series.options.endAngle = 50;
@@ -530,11 +506,9 @@ describe('PieChartSeries', function() {
         it('pie sector가 4사분면에만 존재하면 계산된 cx, cy 모두 반지름의 반 길이만큼 늘여줍니다', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.options.startAngle = 270;
             series.options.endAngle = 360;
@@ -548,11 +522,9 @@ describe('PieChartSeries', function() {
         it('콤보차트 인 경우에는 cx, cy에 대해 추가적인 연산을 수행하지 않습니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 500,
-                    height: 400
-                }
+            series.layout.dimension = {
+                width: 500,
+                height: 400
             };
             series.isCombo = true;
 
@@ -567,11 +539,9 @@ describe('PieChartSeries', function() {
         it('pie 타입 차트(pie, donut)의 circle bounds정보를 생성합니다.', function() {
             var actual;
 
-            series.layout = {
-                dimension: {
-                    width: 400,
-                    height: 300
-                }
+            series.layout.dimension = {
+                width: 400,
+                height: 300
             };
             actual = series._makeCircleBound();
 
@@ -596,113 +566,6 @@ describe('PieChartSeries', function() {
                     top: 64.64466094067262
                 };
             expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_getSeriesLabel()', function() {
-        it('showLegend 옵션만 true일 경우에는 legend만 반환합니다.', function() {
-            var actual, expected;
-
-            series.options.showLegend = true;
-            actual = series._getSeriesLabel({
-                legend: 'legend'
-            });
-            expected = '<span class="tui-chart-series-legend">legend</span>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('showLabel 옵션만 ture일 경우에는 label만 반환한다.', function() {
-            var actual, expected;
-
-            series.options.showLabel = true;
-            actual = series._getSeriesLabel({
-                label: 'label'
-            });
-            expected = 'label';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('showLegend, showLabel 모두 true일 경우에는 legend + separator + label 형태로 반환합니다.', function() {
-            var actual, expected;
-
-            series.options.showLabel = true;
-            series.options.showLegend = true;
-
-            actual = series._getSeriesLabel({
-                legend: 'legend',
-                label: 'label',
-                separator: ':&nbsp;'
-            });
-            expected = '<span class="tui-chart-series-legend">legend</span>:&nbsp;label';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_moveToCenterPosition()', function() {
-        it('label이 position의 중심에 위치하도록 label position을 계산하여 반환한다.', function() {
-            var actual = series._moveToCenterPosition({
-                    left: 100,
-                    top: 50
-                }, 'label1'),
-                expected = {
-                    left: 80,
-                    top: 40
-                };
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_renderCenterLegend()', function() {
-        it('legend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var labelContainer = dom.create('div');
-            var children;
-
-            series.options.showLegend = true;
-            series.seriesData = {
-                sectorData: [
-                    {
-                        centerPosition: {
-                            left: 100,
-                            top: 50
-                        },
-                        ratio: 0.3
-                    },
-                    {
-                        centerPosition: {
-                            left: 100,
-                            top: 100
-                        },
-                        ratio: 0.4
-                    },
-                    {
-                        centerPosition: {
-                            left: 100,
-                            top: 150
-                        },
-                        ratio: 0.4
-                    }
-                ]
-            };
-
-            series._renderCenterLegend(labelContainer);
-            children = labelContainer.childNodes;
-
-            expect(children[0].style.left).toBe('80px');
-            expect(children[0].style.top).toBe('40px');
-            expect(children[0].firstChild.className).toBe('tui-chart-series-legend');
-            expect(children[0].firstChild.innerHTML).toBe('legend1');
-            expect(children[1].style.left).toBe('80px');
-            expect(children[1].style.top).toBe('90px');
-            expect(children[1].firstChild.className).toBe('tui-chart-series-legend');
-            expect(children[1].firstChild.innerHTML).toBe('legend2');
-            expect(children[2].style.left).toBe('80px');
-            expect(children[2].style.top).toBe('140px');
-            expect(children[2].firstChild.className).toBe('tui-chart-series-legend');
-            expect(children[2].firstChild.innerHTML).toBe('legend3');
         });
     });
 
@@ -740,96 +603,13 @@ describe('PieChartSeries', function() {
         });
     });
 
-    describe('_moveToOuterPosition()', function() {
-        it('position.left값이 기준 값(centerLeft)보다 작으면 좌측으로 label너비 만큼 이동 시킵니다. position.top은 label높이가 중앙에 위치하도록 조절합니다.', function() {
-            var actual = series._moveToOuterPosition(120, {
-                end: {
-                    left: 100,
-                    top: 50
-                }
-            }, 'label1');
-
-            expect(actual.left).toBe(55);
-        });
-
-        it('position.left값이 기준 값(centerLeft)보다 크면 이동없이 반환합니다.', function() {
-            var actual = series._moveToOuterPosition(120, {
-                end: {
-                    left: 140,
-                    top: 50
-                }
-            }, 'label1');
-
-            expect(actual.left).toBe(145);
-        });
-    });
-
-    describe('_renderOuterLegend()', function() {
-        it('lengend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var labelContainer = dom.create('div');
-            var children;
-
-            spyOn(series.graphRenderer, 'renderLegendLines');
-            series.options.showLegend = true;
-            series.seriesData = {
-                circleBound: {
-                    cx: 110
-                },
-                sectorData: [
-                    {
-                        outerPosition: {
-                            middle: {
-                                left: 100,
-                                top: 50
-                            }
-                        },
-                        ratio: 0.3
-                    },
-                    {
-                        outerPosition: {
-                            middle: {
-                                left: 150,
-                                top: 100
-                            }
-                        },
-                        ratio: 0.4
-                    },
-                    {
-                        outerPosition: {
-                            middle: {
-                                left: 100,
-                                top: 150
-                            }
-                        },
-                        ratio: 0.4
-                    }
-                ]
-            };
-            series._renderOuterLegend(labelContainer);
-
-            children = labelContainer.childNodes;
-
-            expect(children[0].style.left).toBe('35px');
-            expect(children[0].style.top).toBe('40px');
-            expect(children[0].firstChild.className).toBe('tui-chart-series-legend');
-            expect(children[0].firstChild.innerHTML).toBe('legend1');
-            expect(children[1].style.left).toBe('175px');
-            expect(children[1].style.top).toBe('90px');
-            expect(children[1].firstChild.className).toBe('tui-chart-series-legend');
-            expect(children[1].firstChild.innerHTML).toBe('legend2');
-            expect(children[2].style.left).toBe('35px');
-            expect(children[2].style.top).toBe('140px');
-            expect(children[2].firstChild.className).toBe('tui-chart-series-legend');
-            expect(children[2].firstChild.innerHTML).toBe('legend3');
-        });
-    });
-
     describe('_renderSeriesLabel()', function() {
         it('labelAlign 옵션이 outer면 _renderOuterLegend()가 수행됩니다.', function() {
-            var actual = dom.create('div');
-            var expected = dom.create('div');
+            var container = dom.create('div');
+            var paper = window.Raphael(container, 100, 100);
 
-            spyOn(series.graphRenderer, 'renderLegendLines');
+            spyOn(series, '_renderOuterLegend');
+
             series.options.labelAlign = 'outer';
             series.seriesData = {
                 circleBound: {
@@ -866,17 +646,17 @@ describe('PieChartSeries', function() {
                 ]
             };
 
-            series._renderSeriesLabel(actual);
-            series._renderOuterLegend(expected);
+            series._renderSeriesLabel(paper);
 
-            expect(actual.className).toEqual(expected.className);
-            expect(actual.innerHTML).toEqual(expected.innerHTML);
+            expect(series._renderOuterLegend).toHaveBeenCalled();
+            paper.remove();
         });
-        it('labelAlign 옵션이 outer가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
-            var actual = dom.create('div');
-            var expected = dom.create('div');
 
-            spyOn(series.graphRenderer, 'renderLegendLines');
+        it('labelAlign 옵션이 outer가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
+            var container = dom.create('div');
+            var paper = window.Raphael(container, 100, 100);
+
+            spyOn(series, '_renderCenterLegend');
             series.seriesData = {
                 sectorData: [
                     {
@@ -899,11 +679,10 @@ describe('PieChartSeries', function() {
                     }
                 ]
             };
-            series._renderSeriesLabel(actual);
-            series._renderCenterLegend(expected);
+            series._renderSeriesLabel(paper);
 
-            expect(actual.className).toEqual(expected.className);
-            expect(actual.innerHTML).toEqual(expected.innerHTML);
+            expect(series._renderCenterLegend).toHaveBeenCalled();
+            paper.remove();
         });
     });
 });

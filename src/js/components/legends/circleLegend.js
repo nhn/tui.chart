@@ -8,18 +8,11 @@
 'use strict';
 
 var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
-var legendTemplate = require('./legendTemplate');
 
 var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
-    /**
-     * css className of circle legend
-     * @type {string}
-     */
-    className: 'tui-chart-circle-legend-area',
     /**
      * ratios for rendering circle
      * @type {Array.<number>}
@@ -36,7 +29,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      *      @param {string} params.baseFontFamily - base fontFamily of chart
      */
     init: function(params) {
-        var libType = params.libType || chartConst.DEFAULT_PLUGIN;
+        var libType = params.libType;
 
         /**
          * chart type
@@ -76,6 +69,8 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
          * @type {null|number}
          */
         this.maxRadius = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     },
 
     /**
@@ -87,68 +82,40 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     _formatLabel: function(label, decimalLength) {
         var formatFunctions = this.dataProcessor.getFormatFunctions();
+        var formattedLabel;
 
         if (decimalLength === 0) {
-            label = String(parseInt(label, 10));
+            formattedLabel = String(parseInt(label, 10));
         } else {
-            label = String(label);
-            label = renderUtil.formatToDecimal(label, decimalLength);
+            formattedLabel = renderUtil.formatToDecimal(String(label), decimalLength);
         }
 
-        return renderUtil.formatValue(label, formatFunctions, this.chartType, 'circleLegend', 'r');
+        return renderUtil.formatValue(formattedLabel, formatFunctions, this.chartType, 'circleLegend', 'r');
     },
 
     /**
      * Make label html.
-     * @returns {string}
+     * @returns {Array.<string>}
      * @private
      */
-    _makeLabelHtml: function() {
+    _makeLabels: function() {
         var self = this;
-        var dimension = this.layout.dimension;
-        var halfWidth = dimension.width / 2;
-        var maxRadius = this.maxRadius;
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
         var decimalLength = calculator.getDecimalLength(maxValueRadius);
-        var labelHeight = renderUtil.getRenderedLabelHeight(maxValueRadius, this.labelTheme);
 
         return tui.util.map(this.circleRatios, function(ratio) {
-            var diameter = maxRadius * ratio * 2;
-            var label = self._formatLabel(maxValueRadius * ratio, decimalLength);
-            var labelWidth = renderUtil.getRenderedLabelWidth(label, self.labelTheme);
-
-            return legendTemplate.tplCircleLegendLabel({
-                left: halfWidth - (labelWidth / 2),
-                top: dimension.height - diameter - labelHeight,
-                label: label
-            });
-        }).join('');
-    },
-
-    /**
-     * Render label area.
-     * @private
-     */
-    _renderLabelArea: function() {
-        var labelContainer = dom.create('DIV', 'tui-chart-circle-legend-label-area');
-
-        labelContainer.innerHTML = this._makeLabelHtml();
-        this.container.appendChild(labelContainer);
+            return self._formatLabel(maxValueRadius * ratio, decimalLength);
+        });
     },
 
     /**
      * Render for circle legend area.
+     * @param {object} paper paper object
+     * @returns {Array.<object>}
      * @private
      */
-    _render: function() {
-        var circleContainer = dom.create('DIV', 'tui-chart-circle-area');
-
-        this.container.appendChild(circleContainer);
-
-        this.graphRenderer.render(circleContainer, this.layout.dimension, this.maxRadius, this.circleRatios);
-
-        this._renderLabelArea();
-        renderUtil.renderPosition(this.container, this.layout.position);
+    _render: function(paper) {
+        return this.graphRenderer.render(paper, this.layout, this.maxRadius, this.circleRatios, this._makeLabels());
     },
 
     /**
@@ -170,16 +137,10 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     /**
      * Render.
      * @param {object} data - bounds data
-     * @returns {HTMLElement}
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
-
-        this.container = container;
         this._setDataForRendering(data);
-        this._render(data);
-
-        return container;
+        this.circleLegendSet = this._render(data.paper);
     },
 
     /**
@@ -187,9 +148,10 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      * @param {object} data - bounds data
      */
     rerender: function(data) {
-        this.container.innerHTML = '';
+        this.circleLegendSet.remove();
+
         this._setDataForRendering(data);
-        this._render();
+        this.circleLegendSet = this._render(data.paper);
     },
 
     /**

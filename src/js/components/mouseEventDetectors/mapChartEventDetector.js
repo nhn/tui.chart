@@ -40,6 +40,8 @@ var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
          * @type {boolean}
          */
         this.isDown = false;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
     /**

@@ -8,8 +8,6 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael;
-
 var STROKE_COLOR = 'gray';
 var ANIMATION_DURATION = 100;
 
@@ -21,25 +19,20 @@ var ANIMATION_DURATION = 100;
 var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype */ {
     /**
      * Render function of map chart.
-     * @param {HTMLElement} container container
+     * @param {object} paper paper object
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension
      *      @param {Array.<{code: string, path: string}>} data.map mapData
      *      @param {ColorSpectrum} data.colorSpectrum color model
-     * @returns {object} paper raphael paper
      */
-    render: function(container, data) {
-        var dimension = data.dimension,
-            mapDimension = data.mapModel.getMapDimension(),
-            paper;
+    render: function(paper, data) {
+        var mapDimension = data.mapModel.getMapDimension();
 
-        this.paper = paper = raphael(container, dimension.width, dimension.height);
+        this.paper = paper;
         this.sectors = this._renderMap(data);
         this.overColor = data.theme.overColor;
 
         paper.setViewBox(0, 0, mapDimension.width, mapDimension.height, false);
-
-        return paper;
     },
 
     /**

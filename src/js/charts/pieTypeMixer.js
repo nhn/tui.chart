@@ -34,6 +34,7 @@ var pieTypeMixer = {
             libType: options.libType,
             text: options.text,
             theme: this.theme.chart ? this.theme.chart.title : {},
+            options: this.options.chart ? this.options.chart.title : {},
             classType: 'title'
         });
     },

@@ -13,8 +13,14 @@ describe('Test for TickBaseCoordinateModel', function() {
 
     beforeEach(function() {
         coordinateModel = new TickBaseCoordinateModel({
-            width: 200
-        }, 3, 'column', true);
+            dimension: {
+                width: 200,
+                height: 100
+            },
+            position: {
+                top: 0,
+                left: 0
+            }}, 3, 'column', true);
     });
 
     describe('_makeLineTypeData()', function() {
@@ -40,8 +46,14 @@ describe('Test for TickBaseCoordinateModel', function() {
             coordinateModel.isLineType = true;
 
             actual = coordinateModel._makeData({
-                width: 200
-            }, 3, 'line', true);
+                dimension: {
+                    width: 200,
+                    height: 100
+                },
+                position: {
+                    top: 0,
+                    left: 0
+                }}, 3, 'line', true);
             expected = coordinateModel._makeLineTypeData(200, 3);
 
             expect(actual).toEqual(expected);
@@ -53,7 +65,14 @@ describe('Test for TickBaseCoordinateModel', function() {
             coordinateModel.isLineType = false;
 
             actual = coordinateModel._makeData({
-                width: 200
+                dimension: {
+                    width: 200,
+                    height: 100
+                },
+                position: {
+                    top: 0,
+                    left: 0
+                }
             }, 3, 'column', true);
             expected = coordinateModel._makeNormalData(200, 3);
 

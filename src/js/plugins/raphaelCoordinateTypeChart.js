@@ -16,6 +16,7 @@ var EMPHASIS_OPACITY = 0.5;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
 var OVERLAY_BORDER_WIDTH = 2;
+var TOOLTIP_OFFSET_VALUE = 20;
 
 /**
  * bound for circle
@@ -35,7 +36,7 @@ var OVERLAY_BORDER_WIDTH = 2;
 var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prototype */ {
     /**
      * Render function of bubble chart
-     * @param {HTMLElement} container - container element
+     * @param {object} paper - Raphael paper
      * @param {{
      *      dimension: {width: number, height: number},
      *      seriesDataModel: SeriesDataModel,
@@ -45,17 +46,10 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      * @param {{showTooltip: function, hideTooltip: function}} callbacks - callbacks for toggle of tooltip.
      * @returns {object}
      */
-    render: function(container, data, callbacks) {
-        var dimension = data.dimension,
-            paper;
+    render: function(paper, data, callbacks) {
+        var circleSet = paper.set();
 
-        this.paper = paper = raphael(container, dimension.width, dimension.height);
-
-        /**
-         * container element
-         * @type {HTMLElement}
-         */
-        this.container = container;
+        this.paper = paper;
 
         /**
          * theme
@@ -91,7 +85,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
          * two-dimensional array by circleInfo
          * @type {Array.<Array.<circleInfo>>}
          */
-        this.groupCircleInfos = this._renderCircles();
+        this.groupCircleInfos = this._renderCircles(circleSet);
 
         /**
          * previous selected circle
@@ -111,7 +105,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
          */
         this.animationTimeoutId = null;
 
-        return paper;
+        return circleSet;
     },
 
     /**
@@ -137,10 +131,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Render circles.
+     * @param {object} circleSet - circle set
      * @returns {Array.<Array.<circleInfo>>}
      * @private
      */
-    _renderCircles: function() {
+    _renderCircles: function(circleSet) {
         var self = this;
         var colors = this.theme.colors;
         var singleColors = [];
@@ -163,6 +158,8 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
                         opacity: 0,
                         stroke: 'none'
                     });
+
+                    circleSet.push(circle);
 
                     circle.data('groupIndex', groupIndex);
                     circle.data('index', index);
@@ -360,15 +357,14 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      */
     moveMouseOnSeries: function(position) {
         var circle = this._findCircle(position);
-        var containerBound, groupIndex, index, args;
+        var groupIndex, index, args;
 
         if (circle && tui.util.isExisty(circle.data('groupIndex'))) {
-            containerBound = this.container.getBoundingClientRect();
             groupIndex = circle.data('groupIndex');
             index = circle.data('index');
             args = [{}, groupIndex, index, {
-                left: position.left - containerBound.left,
-                top: position.top - containerBound.top
+                left: position.left - TOOLTIP_OFFSET_VALUE,
+                top: position.top - TOOLTIP_OFFSET_VALUE
             }];
 
             if (this._isChangedPosition(this.prevPosition, position)) {

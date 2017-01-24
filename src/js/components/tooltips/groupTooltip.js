@@ -251,7 +251,6 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         if (isLine) {
             width = 1;
-            height += 6;
         } else {
             width = range.end - range.start;
         }
@@ -262,7 +261,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
                 height: height
             },
             position: {
-                left: range.start + chartConst.SERIES_EXPAND_SIZE,
+                left: range.start,
                 top: chartConst.SERIES_EXPAND_SIZE
             }
         };

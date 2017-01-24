@@ -6,14 +6,11 @@
 
 'use strict';
 
-var LegendModel = require('./legendModel');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var predicate = require('../../helpers/predicate');
-var eventListener = require('../../helpers/eventListener');
-var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
-var legendTemplate = require('./legendTemplate');
+var chartConst = require('../../const');
+var LegendModel = require('./legendModel');
+var pluginFactory = require('../../factories/pluginFactory');
+var predicate = require('../../helpers/predicate');
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
@@ -24,11 +21,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      *      @param {object} params.theme - axis theme
      *      @param {?Array.<string>} params.seriesTypes - series types
      *      @param {string} params.chart - chart type
+     *      @param {object} params.dataProcessor - data processor
+     *      @param {object} params.eventBus - chart event bus
      */
     init: function(params) {
         /**
          * legend theme
-         * @type {Object}
+         * @type {object}
          */
         this.theme = params.theme;
 
@@ -62,12 +61,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.className = 'tui-chart-legend-area';
 
         /**
-         * checked indexes
-         * @type {Array}
-         */
-        this.checkedIndexes = [];
-
-        /**
          * DataProcessor instance
          * @type {DataProcessor}
          */
@@ -89,17 +82,20 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
          */
         this.layout = null;
-    },
 
-    /**
-     * Render legend area.
-     * @param {HTMLElement} legendContainer legend container
-     * @private
-     */
-    _renderLegendArea: function(legendContainer) {
-        legendContainer.innerHTML = this._makeLegendHtml(this.legendModel.getData());
-        renderUtil.renderPosition(legendContainer, this.layout.position);
-        legendContainer.style.cssText += ';' + renderUtil.makeFontCssText(this.theme.label);
+        /**
+         * Graph renderer
+         * @type {object}
+         */
+        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'legend');
+
+        /**
+         * Paper for rendering legend
+         * @type {object}
+         */
+        this.paper = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     },
 
     /**
@@ -115,28 +111,27 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _setDataForRendering: function(data) {
         if (data) {
             this.layout = data.layout;
+            this.paper = data.paper;
         }
     },
 
     /**
      * Render legend component.
      * @param {object} data - bounds data
-     * @returns {HTMLElement} legend element
+     */
+    _render: function(data) {
+        this._setDataForRendering(data);
+        this.legendSet = this._renderLegendArea(data.paper);
+    },
+
+    /**
+     * Render legend component and listen legend event.
+     * @param {object} data - bounds data
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
+        this._render(data);
 
-        this.legendContainer = container;
-
-        if (predicate.isHorizontalLegend(this.options.align)) {
-            dom.addClass(container, 'horizontal');
-        }
-
-        this._setDataForRendering(data);
-        this._renderLegendArea(container);
-        this._attachEvent(container);
-
-        return container;
+        this._listenEvents();
     },
 
     /**
@@ -144,8 +139,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @param {object} data - bounds data
      */
     rerender: function(data) {
-        this._setDataForRendering(data);
-        this._renderLegendArea(this.legendContainer);
+        this.legendSet.remove();
+
+        this._render(data);
     },
 
     /**
@@ -157,102 +153,74 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Make cssText of legend rect.
-     * @param {{
-     *      chartType: string,
-     *      theme: {color: string, borderColor: ?string, singleColor: ?string}
-     * }} legendDatum legend datum
-     * @param {number} baseMarginTop base margin-top
-     * @returns {string} cssText of legend rect
+     * Get legend rendering data
+     * @param {object} legendData legned data
+     * @param {number} labelHeight lebel height
+     * @param {Array.<number>} labelWidths label widths
+     * @returns {Array.<object>}
      * @private
      */
-    _makeLegendRectCssText: function(legendDatum, baseMarginTop) {
-        var theme = legendDatum.theme,
-            borderCssText = theme.borderColor ? renderUtil.concatStr(';border:1px solid ', theme.borderColor) : '',
-            rectMargin, marginTop;
-        if (legendDatum.chartType === 'line') {
-            marginTop = baseMarginTop + chartConst.LINE_MARGIN_TOP;
-        } else {
-            marginTop = baseMarginTop;
-        }
-
-        rectMargin = renderUtil.concatStr(';margin-top:', marginTop, 'px');
-
-        return renderUtil.concatStr('background-color:', theme.singleColor || theme.color, borderCssText, rectMargin);
-    },
-
-
-    /**
-     * Make labels width.
-     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
-     * @returns {Array.<number>} labels width
-     * @private
-     */
-    _makeLabelsWidth: function(legendData) {
+    _getLegendRenderingData: function(legendData, labelHeight, labelWidths) {
         var self = this;
 
-        return tui.util.map(legendData, function(item) {
-            var labelWidth = renderUtil.getRenderedLabelWidth(item.label, self.theme.label);
+        return tui.util.map(legendData, function(legendDatum, index) {
+            var checkbox = self.options.showCheckbox === false ? null : {
+                checked: self.legendModel.isCheckedIndex(index)
+            };
 
-            return labelWidth + chartConst.LEGEND_AREA_PADDING;
+            return {
+                checkbox: checkbox,
+                iconType: legendDatum.chartType || 'rect',
+                index: index,
+                theme: legendDatum.theme,
+                label: legendDatum.label,
+                labelHeight: labelHeight,
+                labelWidth: labelWidths[index],
+                isUnselected: self.legendModel.isUnselectedIndex(index)
+            };
         });
     },
 
     /**
-     * Make legend html.
-     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
-     * @returns {string} legend html
+     * Render legend area.
+     * @param {object} paper paper object
+     * @returns {Array.<object>}
      * @private
      */
-    _makeLegendHtml: function(legendData) {
-        var self = this;
-        var template = legendTemplate.tplLegend;
-        var checkBoxTemplate = legendTemplate.tplCheckbox;
-        var labelsWidth = this._makeLabelsWidth(legendData);
-        var labelHeight = renderUtil.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
-        var isHorizontalLegend = predicate.isHorizontalLegend(this.options.align);
-        var height = labelHeight + (chartConst.LABEL_PADDING_TOP * 2);
-        var baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1;
-        var html = tui.util.map(legendData, function(legendDatum, index) {
-            var rectCssText = self._makeLegendRectCssText(legendDatum, baseMarginTop);
-            var checkbox = self.options.showCheckbox === false ? '' : checkBoxTemplate({
-                index: index,
-                checked: self.legendModel.isCheckedIndex(index) ? ' checked' : ''
-            });
-            var data = {
-                rectCssText: rectCssText,
+    _renderLegendArea: function(paper) {
+        var legendData = this.legendModel.getData();
+        var graphRenderer = this.graphRenderer;
+        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
+        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
+        var isHorizontal = predicate.isHorizontalLegend(this.options.align);
+        var labelCount = labelWidths.length;
+        var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
+        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
+        var iconWidth = 10;
+        var width = arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
+            + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
+        var basePosition = this.layout.position;
+        var position = {
+            left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
+            top: basePosition.top
+        };
+        var legendRenderingData;
+
+        legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
+
+        return graphRenderer.render({
+            paper: paper,
+            legendData: legendRenderingData,
+            isHorizontal: isHorizontal,
+            position: position,
+            dimension: {
                 height: height,
-                labelHeight: labelHeight,
-                unselected: self.legendModel.isUnselectedIndex(index) ? ' unselected' : '',
-                labelWidth: isHorizontalLegend ? ';width:' + labelsWidth[index] + 'px' : '',
-                iconType: legendDatum.chartType || 'rect',
-                label: legendDatum.label,
-                checkbox: checkbox,
-                index: index
-            };
-
-            return template(data);
-        }).join('');
-
-        return html;
-    },
-
-    /**
-     * Find legend element.
-     * @param {HTMLElement} elTarget target element
-     * @returns {HTMLElement} legend element
-     * @private
-     */
-    _findLegendLabelElement: function(elTarget) {
-        var legendContainer;
-
-        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_LEGEND_LABEL)) {
-            legendContainer = elTarget;
-        } else {
-            legendContainer = dom.findParentByClass(elTarget, chartConst.CLASS_NAME_LEGEND_LABEL);
-        }
-
-        return legendContainer;
+                width: width
+            },
+            labelTheme: this.theme.label,
+            labelWidths: labelWidths,
+            eventBus: this.eventBus
+        });
     },
 
     /**
@@ -303,8 +271,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             this._fireChangeCheckedLegendsEvent();
         }
 
-        this._renderLegendArea(this.legendContainer);
-
         this._fireSelectLegendEvent(data);
         this._fireSelectLegendPublicEvent(data);
     },
@@ -317,8 +283,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _getCheckedIndexes: function() {
         var checkedIndexes = [];
 
-        tui.util.forEachArray(this.legendContainer.getElementsByTagName('input'), function(checkbox, index) {
-            if (checkbox.checked) {
+        tui.util.forEachArray(this.legendModel.checkedWholeIndexes, function(checkbox, index) {
+            if (checkbox) {
                 checkedIndexes.push(index);
             }
         });
@@ -331,69 +297,55 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _checkLegend: function() {
-        var checkedIndexes = this._getCheckedIndexes();
-        var checkedCount = checkedIndexes.length;
-        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-        var isPieCharts = arrayUtil.all(this.seriesTypes, function(seriesType) {
-            var seriesDataModel = seriesDataModelMap[seriesType];
+        var selectedData = this.legendModel.getSelectedDatum();
 
-            return seriesDataModel && predicate.isPieChart(seriesDataModel.chartType);
-        });
-        var data;
+        if (!this.legendModel.isCheckedSelectedIndex()) {
+            this.legendModel.updateSelectedIndex(null);
+        }
 
-        if ((isPieCharts && checkedCount === 1) || checkedCount === 0) {
-            this._renderLegendArea(this.legendContainer);
-        } else {
-            this.legendModel.updateCheckedLegendsWith(checkedIndexes);
+        this._fireChangeCheckedLegendsEvent();
 
-            data = this.legendModel.getSelectedDatum();
-
-            if (!this.legendModel.isCheckedSelectedIndex()) {
-                this.legendModel.updateSelectedIndex(null);
-            }
-
-            this._renderLegendArea(this.legendContainer);
-
-            this._fireChangeCheckedLegendsEvent();
-
-            if (data) {
-                this._fireSelectLegendEvent(data);
-            }
+        if (selectedData) {
+            this._fireSelectLegendEvent(selectedData);
         }
     },
 
     /**
      * On click event handler.
-     * @param {MouseEvent} e mouse event
+     * @param {number} index checkbox index
      * @private
      */
-    _onClick: function(e) {
-        var elTarget = e.target || e.srcElement,
-            legendContainer, index;
+    _checkboxClick: function(index) {
+        var checkedIndexes;
 
-        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_LEGEND_CHECKBOX)) {
+        this.legendModel.toggleCheckedIndex(index);
+
+        checkedIndexes = this._getCheckedIndexes();
+
+        if (checkedIndexes.length > 0) {
+            this.legendModel.updateCheckedLegendsWith(checkedIndexes);
             this._checkLegend();
-
-            return;
+        } else {
+            this.legendModel.toggleCheckedIndex(index);
         }
+    },
 
-        legendContainer = this._findLegendLabelElement(elTarget);
-
-        if (!legendContainer) {
-            return;
-        }
-
-        index = parseInt(legendContainer.getAttribute('data-index'), 10);
+    /**
+     * On click event handler.
+     * @param {number} index selected index
+     * @private
+     */
+    _labelClick: function(index) {
         this._selectLegend(index);
     },
 
     /**
-     * Attach browser event.
-     * @param {HTMLElement} target target element
+     * Listen legend events
      * @private
      */
-    _attachEvent: function(target) {
-        eventListener.on(target, 'click', this._onClick, this);
+    _listenEvents: function() {
+        this.eventBus.on('checkboxClicked', this._checkboxClick, this);
+        this.eventBus.on('labelClicked', this._labelClick, this);
     }
 });
 

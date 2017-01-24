@@ -34,12 +34,19 @@ describe('Test public APIs for line chart', function() {
             }
         ]
     };
-    var lineChart;
+    var lineChart, plot;
 
     beforeEach(function() {
         var container = dom.create('DIV');
+        var plotContainer = dom.create('DIV');
 
         lineChart = tui.chart.lineChart(container, rawData);
+        plot = lineChart.componentManager.get('plot');
+        plot.paper = Raphael(plotContainer, 100, 100);
+    });
+
+    afterEach(function() {
+        plot.paper.remove();
     });
 
     describe('addData()', function() {
@@ -70,70 +77,45 @@ describe('Test public APIs for line chart', function() {
 
     describe('addPlotLine()', function() {
         it('add plot line', function() {
-            var plot = lineChart.componentManager.get('plot');
-            var addedPlotLine;
-
             lineChart.addPlotLine({
                 value: '02/01/2016',
                 color: 'red'
             });
 
-            addedPlotLine = plot.optionalContainer.firstChild;
-
-            expect(plot.optionalContainer.className).toBe('tui-chart-plot-optional-lines-area');
-            expect(plot.optionalContainer.childNodes.length).toBe(1);
-            expect(addedPlotLine.className).toBe('tui-chart-plot-line vertical');
-            expect(addedPlotLine.style.width).toBe('1px');
-            expect(addedPlotLine.style.backgroundColor).toBe('red');
+            expect(plot.options.lines.length).toBe(1);
         });
     });
 
     describe('addPlotBand()', function() {
         it('add plot band', function() {
-            var plot = lineChart.componentManager.get('plot');
-            var addedPlotBand;
-
             lineChart.addPlotBand({
                 range: ['03/01/2016', '04/01/2016'],
                 color: 'yellow',
                 opacity: 0.5
             });
 
-            addedPlotBand = plot.optionalContainer.firstChild;
-
-            expect(plot.optionalContainer.className).toBe('tui-chart-plot-optional-lines-area');
-            expect(plot.optionalContainer.childNodes.length).toBe(1);
-            expect(addedPlotBand.className).toBe('tui-chart-plot-line vertical');
-            expect(addedPlotBand.style.width).not.toBe('1px');
-            expect(addedPlotBand.style.backgroundColor).toBe('yellow');
+            expect(plot.options.bands.length).toBe(1);
         });
     });
 
     describe('removePlotLine()', function() {
         it('remove plot line', function() {
-            var plot = lineChart.componentManager.get('plot');
-
             lineChart.addPlotLine({
                 id: 'line1',
                 value: '02/01/2016',
                 color: 'red'
             });
 
-            expect(plot.optionalContainer.className).toBe('tui-chart-plot-optional-lines-area');
-            expect(plot.optionalContainer.childNodes.length).toBe(1);
-            expect(plot.optionalContainer.firstChild.className).toBe('tui-chart-plot-line vertical');
+            expect(plot.options.lines.length).toBe(1);
 
             lineChart.removePlotLine('line1');
 
-            expect(plot.optionalContainer.className).toBe('tui-chart-plot-optional-lines-area');
-            expect(plot.optionalContainer.childNodes.length).toBe(0);
+            expect(plot.options.lines.length).toBe(0);
         });
     });
 
     describe('removePlotBand()', function() {
         it('remove plot band', function() {
-            var plot = lineChart.componentManager.get('plot');
-
             lineChart.addPlotBand({
                 id: 'band1',
                 range: ['03/01/2016', '04/01/2016'],
@@ -141,14 +123,11 @@ describe('Test public APIs for line chart', function() {
                 opacity: 0.5
             });
 
-            expect(plot.optionalContainer.className).toBe('tui-chart-plot-optional-lines-area');
-            expect(plot.optionalContainer.childNodes.length).toBe(1);
-            expect(plot.optionalContainer.firstChild.className).toBe('tui-chart-plot-line vertical');
+            expect(plot.options.bands.length).toBe(1);
 
             lineChart.removePlotBand('band1');
 
-            expect(plot.optionalContainer.className).toBe('tui-chart-plot-optional-lines-area');
-            expect(plot.optionalContainer.childNodes.length).toBe(0);
+            expect(plot.options.bands.length).toBe(0);
         });
     });
 });

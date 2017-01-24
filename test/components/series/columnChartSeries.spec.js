@@ -129,6 +129,10 @@ describe('ColumnChartSeries', function() {
                 dimension: {
                     width: 100,
                     height: 100
+                },
+                position: {
+                    left: 0,
+                    top: 0
                 }
             };
             spyOn(series, '_makeBaseDataForMakingBound').and.returnValue({
@@ -145,26 +149,26 @@ describe('ColumnChartSeries', function() {
                 {
                     start: {
                         top: 70,
-                        left: 20,
+                        left: 10,
                         width: 20,
                         height: 0
                     },
                     end: {
                         top: 30,
-                        left: 20,
+                        left: 10,
                         width: 20,
                         height: 40
                     }
                 }, {
                     start: {
                         top: 70,
-                        left: 40,
+                        left: 30,
                         width: 20,
                         height: 0
                     },
                     end: {
                         top: 10,
-                        left: 40,
+                        left: 30,
                         width: 20,
                         height: 60
                     }
@@ -182,42 +186,6 @@ describe('ColumnChartSeries', function() {
                 width: 30
             }, 20);
             var expected = 6;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_makePlusSumLabelHtml()', function() {
-        it('make label html for plus sum', function() {
-            var values = [10, 20, 30];
-            var bound = {
-                left: 10,
-                top: 30,
-                width: 40,
-                height: 20
-            };
-            var labelHeight = 20;
-            var actual = series._makePlusSumLabelHtml(values, bound, labelHeight);
-            var expected = '<div class="tui-chart-series-label"' +
-                ' style="left:11px;top:5px;font-family:Verdana;font-size:11px;font-weight:normal">60</div>';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_makeMinusSumLabelHtml()', function() {
-        it('make label html for minus sum', function() {
-            var values = [-10, -20, -30];
-            var bound = {
-                left: 10,
-                top: 30,
-                width: 40,
-                height: 20
-            };
-            var labelHeight = 20;
-            var actual = series._makeMinusSumLabelHtml(values, bound, labelHeight);
-            var expected = '<div class="tui-chart-series-label"' +
-                ' style="left:11px;top:55px;font-family:Verdana;font-size:11px;font-weight:normal">-60</div>';
-
             expect(actual).toBe(expected);
         });
     });

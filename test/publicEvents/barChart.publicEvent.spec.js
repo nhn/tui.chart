@@ -71,8 +71,8 @@ describe('Test user events for bar chart', function() {
             });
 
             mouseEventDetector._onClick({
-                clientX: 100,
-                clientY: 100
+                clientX: 70,
+                clientY: 50
             });
         });
     });
@@ -100,15 +100,15 @@ describe('Test user events for bar chart', function() {
 
             // select
             mouseEventDetector._onClick({
-                clientX: 100,
-                clientY: 100
+                clientX: 70,
+                clientY: 50
             });
 
             setTimeout(function() {
                 // unselect
                 mouseEventDetector._onClick({
-                    clientX: 100,
-                    clientY: 100
+                    clientX: 70,
+                    clientY: 50
                 });
             });
         });
@@ -154,8 +154,8 @@ describe('Test user events for bar chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 100,
-                clientY: 100
+                clientX: 70,
+                clientY: 50
             });
         });
     });
@@ -185,8 +185,8 @@ describe('Test user events for bar chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 100,
-                clientY: 100
+                clientX: 70,
+                clientY: 50
             });
         });
     });

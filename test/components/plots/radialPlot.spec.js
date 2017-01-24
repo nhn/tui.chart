@@ -28,8 +28,14 @@ describe('Test for RadialPlot', function() {
                 labels: ['1', '2', '3', '4', '5', '6']
             }
         }, {
-            width: 476,
-            height: 371
+            position: {
+                top: 0,
+                left: 0
+            },
+            dimension: {
+                width: 476,
+                height: 371
+            }
         });
 
         expect(result.length).toEqual(6);
@@ -49,8 +55,14 @@ describe('Test for RadialPlot', function() {
                 labels: ['1', '2', '3', '4', '5', '6']
             }
         }, {
-            width: 476,
-            height: 371
+            position: {
+                top: 0,
+                left: 0
+            },
+            dimension: {
+                width: 476,
+                height: 371
+            }
         });
 
         expect(result.length).toEqual(6);

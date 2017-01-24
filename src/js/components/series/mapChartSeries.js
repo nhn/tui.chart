@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var raphael = window.Raphael;
 
 var Series = require('./series');
 var chartConst = require('../../const');
@@ -75,7 +76,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          */
         this.prevPosition = null;
 
-
         /**
          * Previous moved index.
          * @type {?number}
@@ -95,6 +95,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this.startPosition = null;
 
         Series.call(this, params);
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
     /**
@@ -144,11 +145,18 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @returns {HTMLElement} series element
      */
     render: function(data) {
-        var container = Series.prototype.render.call(this, data);
+        this.seriesContainer = dom.create('DIV', this.className);
+
+        renderUtil.renderPosition(this.seriesContainer, data.layout.position);
+
+        this.paper = raphael(this.seriesContainer, data.layout.dimension.width, data.layout.dimension.height);
+        data.paper = this.paper;
+
+        Series.prototype.render.call(this, data);
 
         this._setMapRatio();
 
-        return container;
+        return this.seriesContainer;
     },
 
     /**
@@ -182,7 +190,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         this._setLimitPositionToMoveMap();
 
-        this.graphRenderer.render(this.graphContainer, {
+        this.graphRenderer.render(this.paper, {
             colorSpectrum: this.colorSpectrum,
             mapModel: this.mapModel,
             dimension: this.graphDimension,

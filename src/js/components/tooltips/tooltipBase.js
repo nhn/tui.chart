@@ -146,6 +146,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          */
         this.dimensionMap = null;
 
+        /**
+         * Drawing type
+         * @type {string}
+         */
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
+
         this._setDefaultTooltipPositionOption();
         this._saveOriginalPositionOptions();
 
@@ -224,7 +230,9 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @returns {HTMLElement} tooltip element
      */
     render: function(data) {
-        var el = dom.create('DIV', this.className);
+        var el = data.paper;
+
+        dom.addClass(el, this.className);
 
         this._setDataForRendering(data);
         this.data = this._makeTooltipData();

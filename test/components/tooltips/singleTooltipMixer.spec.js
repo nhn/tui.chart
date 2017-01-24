@@ -11,7 +11,7 @@ var chartConst = require('../../../src/js/const');
 var dom = require('../../../src/js/helpers/domHandler');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
-describe('Tooltip', function() {
+describe('singleTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
@@ -22,6 +22,12 @@ describe('Tooltip', function() {
 
         tooltip = singleTooltipMixer;
         tooltip.dataProcessor = dataProcessor;
+        tooltip.layout = {
+            position: {
+                top: 0,
+                left: 0
+            }
+        };
     });
 
     describe('_setIndexesCustomAttribute()', function() {
@@ -90,21 +96,21 @@ describe('Tooltip', function() {
     });
 
     describe('_makeTopPositionOfNotBarChart()', function() {
-        it('Bar차트가 아닌 차트에서 align옵션에 "bottom"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+        it('Bar차트가 아닌 차트에서 align옵션에 "bottom"이 포함된 경우의 top position 정보를 계산합니다.', function() {
             var actual = tooltip._makeTopPositionOfNotBarChart(50, 'bottom', 30, 5),
                 expected = 85;
             expect(actual).toBe(expected);
         });
 
-        it('Bar차트가 아닌 차트에서 align옵션에 "middle"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+        it('Bar차트가 아닌 차트에서 align옵션에 "middle"이 포함된 경우의 top position 정보를 계산합니다.', function() {
             var actual = tooltip._makeTopPositionOfNotBarChart(50, 'middle', 30),
                 expected = 65;
             expect(actual).toBe(expected);
         });
 
-        it('Bar차트가 아닌 차트에서 align옵션에 "top"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+        it('Bar차트가 아닌 차트에서 align옵션에 "top"이 포함된 경우의 top position 정보를 계산합니다.', function() {
             var actual = tooltip._makeTopPositionOfNotBarChart(50, 'top'),
-                expected = 45;
+                expected = 55;
             expect(actual).toBe(expected);
         });
     });
@@ -129,8 +135,8 @@ describe('Tooltip', function() {
                     }
                 }),
                 expected = {
-                    left: 10,
-                    top: 15
+                    left: 15,
+                    top: 25
                 };
 
             expect(actual).toEqual(expected);
@@ -164,7 +170,7 @@ describe('Tooltip', function() {
             });
             expected = {
                 left: 55,
-                top: 15
+                top: 25
             };
 
             expect(actual).toEqual(expected);
@@ -434,7 +440,7 @@ describe('Tooltip', function() {
                 }
             });
             expected = {
-                left: 10,
+                left: 5,
                 top: 15
             };
 
@@ -467,8 +473,8 @@ describe('Tooltip', function() {
                 }
             });
             expected = {
-                left: 55,
-                top: 10
+                left: 45,
+                top: 0
             };
             expect(actual).toEqual(expected);
         });

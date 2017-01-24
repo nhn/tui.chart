@@ -301,17 +301,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {Array.<Array.<object>>} groupPositions positions
      * @param {string[]} colors colors
      * @param {number} opacity opacity
+     * @param {Array.<object>} seriesSet series set
      * @returns {Array.<object>} dots
      * @private
      */
-    _renderDots: function(paper, groupPositions, colors, opacity) {
+    _renderDots: function(paper, groupPositions, colors, opacity, seriesSet) {
         var self = this;
         var dots;
-
-        // 기존에 캐싱된 dot을 다른 도형에 의해 가려지지 않게 하기 위해 제일 앞으로 이동시킴
-        if (paper.dots) {
-            this._moveDotsToFront(paper.dots);
-        }
 
         dots = tui.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
@@ -328,16 +324,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                     dotMap.startDot = self.renderDot(paper, startPosition, color, opacity);
                 }
 
+                if (seriesSet) {
+                    seriesSet.push(dotMap.endDot.dot);
+                    if (dotMap.startDot) {
+                        seriesSet.push(dotMap.startDot.dot);
+                    }
+                }
+
                 return dotMap;
             });
         });
-
-        if (!paper.dots) {
-            paper.dots = [];
-        }
-
-        // 다른 그래프 렌더링 시 앞으로 이동시키기 위해 paper에 캐싱함
-        paper.dots = paper.dots.concat(dots);
 
         return dots;
     },
@@ -461,15 +457,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
      * }} bound bound
+     * @param {object} layout layout
      */
-    showGroupTooltipLine: function(bound) {
+    showGroupTooltipLine: function(bound, layout) {
         var left = Math.max(bound.position.left, 11);
         var linePath = raphaelRenderUtil.makeLinePath({
             left: left,
-            top: bound.position.top + bound.dimension.height
+            top: layout.position.top + bound.dimension.height
         }, {
             left: left,
-            top: bound.position.top
+            top: layout.position.top
         });
 
         this.tooltipLine.attr({
@@ -621,31 +618,14 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * Show graph for zoom.
-     */
-    showGraph: function() {
-        this.paper.setSize(this.dimension.width, this.dimension.height);
-    },
-
-    /**
      * Animate.
      * @param {function} onFinish callback
      */
     animate: function(onFinish) {
-        var self = this;
-        var seriesWidth, seriesHeight;
-
         if (this.dimension) {
-            seriesWidth = this.dimension.width;
-            seriesHeight = this.dimension.height;
-
             tui.chart.renderUtil.cancelAnimation(this.animation);
 
             this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_DURATION, function(ratio) {
-                var width = Math.min(seriesWidth * ratio, seriesWidth);
-
-                self.paper.setSize(width, seriesHeight);
-
                 if (ratio === 1) {
                     onFinish();
                 }
@@ -737,25 +717,39 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * Animate by position.
      * @param {object} raphaelObj - raphael object
      * @param {{left: number, top: number}} position - position
+     * @param {number} tickSize tick size
      * @private
      */
-    _animateByPosition: function(raphaelObj, position) {
-        raphaelObj.animate({
+    _animateByPosition: function(raphaelObj, position, tickSize) {
+        var attr = {
             cx: position.left,
             cy: position.top
-        }, MOVING_ANIMATION_DURATION);
+        };
+
+        if (tui.util.isExisty(tickSize)) {
+            attr.transform = 't-' + tickSize + ',0';
+        }
+
+        raphaelObj.animate(attr, MOVING_ANIMATION_DURATION);
     },
 
     /**
      * Animate by path.
      * @param {object} raphaelObj - raphael object
      * @param {Array.<string | number>} paths - paths
+     * @param {number} tickSize tick size
      * @private
      */
-    _animateByPath: function(raphaelObj, paths) {
-        raphaelObj.animate({
+    _animateByPath: function(raphaelObj, paths, tickSize) {
+        var attr = {
             path: paths.join(' ')
-        }, MOVING_ANIMATION_DURATION);
+        };
+
+        if (tui.util.isExisty(tickSize)) {
+            attr.transform = 't-' + tickSize + ',0';
+        }
+
+        raphaelObj.animate(attr, MOVING_ANIMATION_DURATION);
     },
 
     /**

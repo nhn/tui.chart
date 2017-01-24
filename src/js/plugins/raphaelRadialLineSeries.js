@@ -12,8 +12,6 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 
-var raphael = window.Raphael;
-
 var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
     /**
      * RaphaelLineCharts is graph renderer for line chart.
@@ -36,12 +34,11 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
 
     /**
      * Render function of line chart.
-     * @param {HTMLElement} container container
+     * @param {object} paper - raphael paper
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
-     * @param {object} [paper] - raphael paper
      * @returns {object} paper raphael paper
      */
-    render: function(container, data, paper) {
+    render: function(paper, data) {
         var dimension = data.dimension;
         var groupPositions = data.groupPositions;
         var theme = data.theme;
@@ -52,18 +49,17 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
         var groupPaths = this._getLinesPath(groupPositions);
         var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
-
-        paper = paper || raphael(container, 1, dimension.height);
+        var radialSeriesSet = paper.set();
 
         this.paper = paper;
         this.dimension = dimension;
 
         if (isShowArea) {
-            this._renderArea(paper, groupPaths, colors);
+            this._renderArea(paper, groupPaths, colors, radialSeriesSet);
         }
 
-        this.groupLines = this._renderLines(paper, groupPaths, colors);
-        this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity);
+        this.groupLines = this._renderLines(paper, groupPaths, colors, null, radialSeriesSet);
+        this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity, radialSeriesSet);
 
         if (data.options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
@@ -77,7 +73,7 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
         this.groupPaths = groupPaths;
         this.dotOpacity = dotOpacity;
 
-        return paper;
+        return radialSeriesSet;
     },
 
     /**
@@ -100,14 +96,18 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
      * @param {Array.<Array.<string>>} groupPaths paths
      * @param {string[]} colors line colors
      * @param {?number} strokeWidth stroke width
+     * @param {Array.<object>} radialSeriesSet radial line series set
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderLines: function(paper, groupPaths, colors, strokeWidth) {
+    _renderLines: function(paper, groupPaths, colors, strokeWidth, radialSeriesSet) {
         return tui.util.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
+            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
 
-            return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+            radialSeriesSet.push(line);
+
+            return line;
         });
     },
 
@@ -116,19 +116,23 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
      * @param {object} paper raphael paper
      * @param {Array.<Array.<string>>} groupPaths paths
      * @param {string[]} colors line colors
+     * @param {Array.<object>} radialSeriesSet radial line series set
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderArea: function(paper, groupPaths, colors) {
+    _renderArea: function(paper, groupPaths, colors, radialSeriesSet) {
         return tui.util.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
-
-            return raphaelRenderUtil.renderArea(paper, path, {
+            var area = raphaelRenderUtil.renderArea(paper, path, {
                 fill: color,
                 opacity: 0.4,
                 'stroke-width': 0,
                 stroke: color
             });
+
+            radialSeriesSet.push(area);
+
+            return area;
         });
     },
 

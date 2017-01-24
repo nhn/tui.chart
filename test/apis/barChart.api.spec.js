@@ -36,7 +36,7 @@ describe('Test public APIs for bar chart', function() {
     beforeEach(function() {
         var container = dom.create('DIV');
 
-        barChart = tui.chart.barChart(container, rawData);
+        barChart = tui.chart.barChart(container, rawData, {});
     });
 
     describe('resize()', function() {
@@ -198,14 +198,11 @@ describe('Test public APIs for bar chart', function() {
             barChart.showSeriesLabel();
 
             expect(barChart.options.series.showLabel).toBe(true);
-            expect(series.seriesLabelContainer.className).toBe('tui-chart-series-label-area show opacity');
         });
     });
 
     describe('hideSeriesLabel()', function() {
         it('hide series label', function() {
-            var series = barChart.componentManager.get('barSeries');
-
             expect(barChart.options.series.showLabel).toBeUndefined();
 
             barChart.showSeriesLabel();
@@ -215,7 +212,6 @@ describe('Test public APIs for bar chart', function() {
             barChart.hideSeriesLabel();
 
             expect(barChart.options.series.showLabel).toBe(false);
-            expect(series.seriesLabelContainer.className).toBe('tui-chart-series-label-area');
         });
     });
 });

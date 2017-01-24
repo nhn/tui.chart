@@ -12,7 +12,15 @@ var arrayUtil = require('../../helpers/arrayUtil');
 var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.prototype */ {
     /**
      * TickBaseDataModel is tick base data model.
-     * @param {{width: number, height: number}} dimension dimension
+     * @param {{
+     *     dimension: {
+     *         width: number,
+     *         height: number
+     *     }, position: {
+     *         left: number,
+     *         top: number
+     *     }
+     * }} layout layout
      * @param {number} tickCount tick count
      * @param {string} chartType chart type
      * @param {boolean} isVertical whether vertical or not
@@ -20,32 +28,52 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @constructs TickBaseDataModel
      * @private
      */
-    init: function(dimension, tickCount, chartType, isVertical, chartTypes) {
+    init: function(layout, tickCount, chartType, isVertical, chartTypes) {
         /**
          * whether line type or not
          * @type {boolean}
          */
         this.isLineType = predicate.isLineTypeChart(chartType, chartTypes);
 
-        this.data = this._makeData(dimension, tickCount, isVertical);
+        this.data = this._makeData(layout, tickCount, isVertical);
+    },
+
+    /**
+     * Get each tick ranges
+     * @param {number} tickCount tick count
+     * @param {number} firstPosition first position value
+     * @param {number} tickInterval tick distance
+     * @returns {Array.<object>}
+     * @private
+     */
+    _getRanges: function(tickCount, firstPosition, tickInterval) {
+        var prev = firstPosition;
+        var halfInterval = tickInterval / 2;
+
+        return tui.util.map(tui.util.range(0, tickCount), function() {
+            var limit = {
+                min: prev - halfInterval,
+                max: prev + halfInterval
+            };
+
+            prev += tickInterval;
+
+            return limit;
+        });
     },
 
     /**
      * Make tick base data about line type chart.
      * @param {number} width width
      * @param {number} tickCount tick count
+     * @param {number} firstPosition firstPosition of group
      * @returns {Array} tick base data
      * @private
      */
-    _makeLineTypeData: function(width, tickCount) {
-        var tickInterval = (width + 1) / (tickCount - 1),
-            halfInterval = tickInterval / 2,
-            ranges = tui.util.map(tui.util.range(0, tickCount), function(index) {
-                return {
-                    min: (index * tickInterval) - halfInterval,
-                    max: (index * tickInterval) + halfInterval
-                };
-            });
+    _makeLineTypeData: function(width, tickCount, firstPosition) {
+        var tickInterval = (width + 1) / (tickCount - 1);
+        var ranges = this._getRanges(tickCount, (firstPosition || 0), tickInterval);
+
         ranges[tickCount - 1].max -= 1;
 
         return ranges;
@@ -55,16 +83,17 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * Make tick base data about non line type chart.
      * @param {number} size width or height
      * @param {number} tickCount tick count
+     * @param {number} firstPosition firstPosition of group
      * @returns {Array} tick base data
      * @private
      */
-    _makeNormalData: function(size, tickCount) {
+    _makeNormalData: function(size, tickCount, firstPosition) {
         var len = tickCount - 1;
         var tickInterval = size / len;
-        var prev = 0;
+        var prev = (firstPosition || 0);
 
-        return tui.util.map(tui.util.range(0, len), function(index) {
-            var max = arrayUtil.min([size, (index + 1) * tickInterval]);
+        return tui.util.map(tui.util.range(0, len), function() {
+            var max = arrayUtil.min([size + prev, tickInterval + prev]);
             var limit = {
                 min: prev,
                 max: max
@@ -77,20 +106,21 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
 
     /**
      * Make tick base data for mouse event detector.
-     * @param {{width: number, height: number}} dimension dimension
+     * @param {{dimension: object, position: object}} layout layout
      * @param {number} tickCount tick count
      * @param {boolean} isVertical whether vertical or not
      * @returns {Array.<object>} tick base data
      * @private
      */
-    _makeData: function(dimension, tickCount, isVertical) {
+    _makeData: function(layout, tickCount, isVertical) {
         var sizeType = isVertical ? 'width' : 'height';
+        var positionType = isVertical ? 'left' : 'top';
         var data;
 
         if (this.isLineType) {
-            data = this._makeLineTypeData(dimension[sizeType], tickCount);
+            data = this._makeLineTypeData(layout.dimension[sizeType], tickCount, layout.position[positionType]);
         } else {
-            data = this._makeNormalData(dimension[sizeType], tickCount);
+            data = this._makeNormalData(layout.dimension[sizeType], tickCount, layout.position[positionType]);
         }
 
         return data;
@@ -128,11 +158,11 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     /**
      * Make range of tooltip position.
      * @param {number} index index
-     * @param {string} chartType chart type
+     * @param {number} positionValue positionValue
      * @returns {{start: number, end: number}} range type value
      * @private
      */
-    makeRange: function(index) {
+    makeRange: function(index, positionValue) {
         var limit = this.data[index],
             range, center;
         if (this.isLineType) {
@@ -143,8 +173,8 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
             };
         } else {
             range = {
-                start: limit.min,
-                end: limit.max
+                start: limit.min - (positionValue || 0),
+                end: limit.max - (positionValue || 0)
             };
         }
 

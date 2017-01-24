@@ -6,37 +6,47 @@
 
 'use strict';
 
-var raphael = window.Raphael;
-
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
     /**
      * Render title
-     * @param {HTMLElement} container - title container
+     * @param {object} paper - paper
      * @param {string} titleText - title text
+     * @param {{x: number, y: number}} offset - title offset x, y
      * @param {object} theme - theme object
-     * @returns {object} Raphael paper
+     * @returns {Array.<object>} title set
      */
-    render: function(container, titleText, theme) {
+    render: function(paper, titleText, offset, theme) {
         var fontSize = theme.fontSize;
         var fontFamily = theme.fontFamily;
         var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
-        var paper = raphael(container, titleSize.width, titleSize.height);
         var pos = {
-            left: 0,
+            left: paper.width / 2,
             top: titleSize.height / 2    // for renderText's baseline
         };
+        var titleSet = paper.set();
 
-        raphaelRenderUtil.renderText(paper, pos, titleText, {
-            'font-family': theme.fontFamily,
-            'font-size': theme.fontSize,
-            'font-weight': theme.fontWeight,
-            fill: theme.color,
-            'text-anchor': 'start'
+        if (offset) {
+            if (offset.x) {
+                pos.left += offset.x;
+            } else if (offset.y) {
+                pos.top += offset.y;
+            }
+        }
+        raphaelRenderUtil.renderText(paper, pos, {
+            text: titleText,
+            attributes: {
+                'font-family': theme.fontFamily,
+                'font-size': theme.fontSize,
+                'font-weight': theme.fontWeight,
+                fill: theme.color,
+                'text-anchor': 'middle'
+            },
+            set: titleSet
         });
 
-        return paper;
+        return titleSet;
     }
 });
 

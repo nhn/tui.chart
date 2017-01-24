@@ -6,6 +6,7 @@
 
 'use strict';
 
+var chartConst = require('../../const');
 var EventDetectorBase = require('./mouseEventDetectorBase');
 var zoomMixer = require('./zoomMixer');
 
@@ -139,11 +140,13 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
      */
     _showTooltip: function(foundData, isMoving) {
         var index = foundData.indexes.groupIndex;
+        var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top)
+            - chartConst.CHART_PADDING;
 
         this.prevIndex = index;
         this.eventBus.fire('showTooltip', {
             index: index,
-            range: this.tickBaseCoordinateModel.makeRange(index),
+            range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
             size: this.dimension[this.sizeType],
             isVertical: this.isVertical,
             isMoving: isMoving

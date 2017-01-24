@@ -7,11 +7,8 @@
 'use strict';
 
 var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var plotTemplate = require('./plotTemplate');
 
 var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
@@ -80,27 +77,26 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * @type {null|object}
          */
         this.axisDataMap = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     },
 
     /**
      * Render plot area.
-     * @param {HTMLElement} plotContainer plot area element
+     * @param {object} paper paper object
      * @private
      */
-    _renderPlotArea: function(plotContainer) {
+    _renderPlotArea: function(paper) {
         var dimension;
 
         dimension = this.layout.dimension;
 
-        renderUtil.renderDimension(plotContainer, dimension);
-        renderUtil.renderPosition(plotContainer, this.layout.position);
-
         if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
-            this._renderOptionalLines(plotContainer, dimension);
+            this._renderOptionalLines(paper, dimension);
         }
 
         if (this.options.showLine) {
-            this._renderPlotLines(plotContainer, dimension);
+            this._renderPlotLines(paper, dimension);
         }
     },
 
@@ -120,22 +116,20 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             this.layout = data.layout;
             this.dimensionMap = data.dimensionMap;
             this.axisDataMap = data.axisDataMap;
+            this.paper = data.paper;
         }
     },
 
     /**
      * Render plot component.
      * @param {object} data - bounds and scale data
-     * @returns {HTMLElement} plot element
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
+        var paper = (data && data.paper) || this.paper;
+        this.plotSet = paper.set();
 
         this._setDataForRendering(data);
-        this._renderPlotArea(container);
-        this.plotContainer = container;
-
-        return container;
+        this._renderPlotArea(this.paper);
     },
 
     /**
@@ -143,9 +137,8 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} data - bounds and scale data
      */
     rerender: function(data) {
-        this.plotContainer.innerHTML = '';
-        this._setDataForRendering(data);
-        this._renderPlotArea(this.plotContainer);
+        this.plotSet.remove();
+        this.render(data);
     },
 
     /**
@@ -185,18 +178,50 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Make line html.
-     * @param {number} startPercent - start percentage position
-     * @param {number} standardWidth - standard width
-     * @param {object} templateParams - template parameters
-     * @returns {string}
+     * Render line
+     * @param {number} position - start percentage position
+     * @param {object} attributes - line attributes
+     * @returns {object} path
      * @private
      */
-    _makeLineHtml: function(startPercent, standardWidth, templateParams) {
-        templateParams.positionValue = startPercent + '%';
-        templateParams.opacity = templateParams.opacity || '';
+    _renderLine: function(position, attributes) {
+        var top = this.layout.position.top;
+        var height = this.layout.dimension.height;
+        var pathString = 'M' + position + ',' + top + 'V' + (top + height);
+        var path = this.paper.path(pathString);
 
-        return plotTemplate.tplPlotLine(templateParams);
+        path.attr({
+            opacity: attributes.opacity || 1,
+            stroke: attributes.color
+        });
+
+        this.plotSet.push(path);
+
+        return path;
+    },
+
+    /**
+     * Render band
+     * @param {number} position - start percentage position
+     * @param {number} width - width
+     * @param {object} attributes - band attributes
+     * @returns {object} band
+     * @private
+     */
+    _renderBand: function(position, width, attributes) {
+        var top = this.layout.position.top;
+        var height = this.layout.dimension.height;
+        var rect = this.paper.rect(position, top, width, height);
+
+        rect.attr({
+            fill: attributes.color,
+            opacity: attributes.opacity || 1,
+            stroke: attributes.color
+        });
+
+        this.plotSet.push(rect);
+
+        return rect;
     },
 
     /**
@@ -298,41 +323,51 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Make optional line html.
+     * Render optional line.
      * @param {Array.<number>} xAxisData - positions
      * @param {number} width - standard width
-     * @param {object} templateParams - template parameters
+     * @param {object} attributes - template parameters
      * @param {object} optionalLineData - optional line information
-     * @returns {string}
+     * @returns {object}
      * @private
      */
-    _makeOptionalLineHtml: function(xAxisData, width, templateParams, optionalLineData) {
+    _renderOptionalLine: function(xAxisData, width, attributes, optionalLineData) {
         var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
-        var plotLineWidth = '1px';
-        var html = '';
-        var startPercent, widthPercent;
+        var line;
 
         if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
-            startPercent = calculator.makePercentageValue(positionMap.start, width);
+            attributes.width = 1;
 
-            if (tui.util.isExisty(positionMap.end)) {
-                widthPercent = calculator.makePercentageValue(positionMap.end - positionMap.start, width);
+            attributes.color = optionalLineData.color || 'transparent';
+            attributes.opacity = optionalLineData.opacity;
 
-                if (startPercent + widthPercent > 100) {
-                    widthPercent = 100 - startPercent;
-                }
-
-                templateParams.width = widthPercent + '%';
-            } else {
-                templateParams.width = plotLineWidth;
-            }
-
-            templateParams.color = optionalLineData.color || 'transparent';
-            templateParams.opacity = renderUtil.makeOpacityCssText(optionalLineData.opacity);
-            html = this._makeLineHtml(startPercent, width, templateParams);
+            line = this._renderLine(positionMap.start + this.layout.position.left, attributes);
         }
 
-        return html;
+        return line;
+    },
+
+    /**
+     * Render optional band.
+     * @param {Array.<number>} xAxisData - positions
+     * @param {number} width - standard width
+     * @param {object} attributes - template parameters
+     * @param {object} optionalLineData - optional line information
+     * @returns {object}
+     * @private
+     */
+    _makeOptionalBand: function(xAxisData, width, attributes, optionalLineData) {
+        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
+        var bandWidth = positionMap.end - positionMap.start;
+        var band;
+
+        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+            attributes.color = optionalLineData.color || 'transparent';
+            attributes.opacity = optionalLineData.opacity;
+            band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
+        }
+
+        return band;
     },
 
     /**
@@ -342,88 +377,101 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @returns {string}
      * @private
      */
-    _makeOptionalLinesHtml: function(lines, dimension) {
+    _makeOptionalLines: function(lines, dimension) {
         var width = dimension.width;
         var xAxisData = this.axisDataMap.xAxis;
         var templateParams = this._makeVerticalLineTemplateParams({
             height: dimension.height + 'px'
         });
-        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalLineHtml, this, xAxisData, width, templateParams);
+        var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
+
+        return tui.util.map(lines, makeOptionalLineHtml).join('');
+    },
+
+    /**
+     * Make optional lines html.
+     * @param {Array.<object>} lines - optional lines
+     * @param {{width: number, height: number}} dimension - dimension
+     * @returns {string}
+     * @private
+     */
+    _makeOptionalBands: function(lines, dimension) {
+        var width = dimension.width;
+        var xAxisData = this.axisDataMap.xAxis;
+        var templateParams = this._makeVerticalLineTemplateParams({
+            height: dimension.height + 'px'
+        });
+        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
 
         return tui.util.map(lines, makeOptionalLineHtml).join('');
     },
 
     /**
      * Render optional lines and bands.
-     * @param {HTMLElement} container - container
+     * @param {object} paper - paper
      * @param {{width: number, height: number}} dimension - dimension
      * @private
      */
-    _renderOptionalLines: function(container, dimension) {
-        var optionalContainer = dom.create('DIV', 'tui-chart-plot-optional-lines-area');
-        var bandsHtml = this._makeOptionalLinesHtml(this.options.bands, dimension);
-        var linesHtml = this._makeOptionalLinesHtml(this.options.lines, dimension);
+    _renderOptionalLines: function(paper, dimension) {
+        var optionalLines = [];
+        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
+        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
 
-        this.optionalContainer = optionalContainer;
-
-        dom.append(container, optionalContainer);
-
-        optionalContainer.innerHTML = bandsHtml + linesHtml;
-    },
-
-    /**
-     * Make html of plot lines.
-     * @param {Array.<number>} positions - position values
-     * @param {number} standardWidth - standard width
-     * @param {object} templateParams parameters
-     * @returns {string} html
-     * @private
-     */
-    _makeLinesHtml: function(positions, standardWidth, templateParams) {
-        var self = this;
-        var startPercent;
-
-        var lineHtml = tui.util.map(positions, function(position) {
-            startPercent = calculator.makePercentageValue(position, standardWidth);
-
-            return self._makeLineHtml(startPercent, standardWidth, templateParams);
-        }).join('');
-
-        return lineHtml;
+        this.optionalLines = optionalLines;
     },
 
     /**
      * Maker html for vertical lines
      * @param {{width: number, height: number}} dimension - dimension
      * @param {string} lineColor - line color
-     * @returns {string}
      * @private
      */
-    _makeVerticalLinesHtml: function(dimension, lineColor) {
+    _renderVerticalLines: function(dimension, lineColor) {
         var positions = this._makeHorizontalPositions(dimension.width);
-        var templateParams = this._makeVerticalLineTemplateParams({
-            height: dimension.height + 'px',
-            color: lineColor
-        });
+        var self = this;
+        var layout = this.layout;
+        var left = layout.position.left;
+        var top = layout.position.top;
 
-        return this._makeLinesHtml(positions, dimension.width, templateParams);
+        tui.util.forEach(positions, function(position) {
+            var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
+
+            var path = self.paper.path(pathString);
+
+            path.attr({
+                stroke: lineColor,
+                'stroke-width': 1
+            });
+
+            self.plotSet.push(path);
+        });
     },
 
     /**
      * Maker html for horizontal lines.
      * @param {{width: number, height: number}} dimension - dimension
      * @param {string} lineColor - line color
-     * @returns {string}
      * @private
      */
-    _makeHorizontalLinesHtml: function(dimension, lineColor) {
+    _renderHorizontalLines: function(dimension, lineColor) {
         var positions = this._makeVerticalPositions(dimension.height);
-        var templateParams = this._makeHorizontalLineTemplateParams({
-            width: dimension.width + 'px',
-            color: lineColor
-        });
+        var self = this;
+        var layout = this.layout;
+        var left = layout.position.left;
+        var top = layout.position.top;
+        var distance = positions[1] - positions[0];
 
-        return this._makeLinesHtml(positions, dimension.height, templateParams);
+        tui.util.forEach(positions, function(position, index) {
+            var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
+            var path = self.paper.path(pathString);
+
+            path.attr({
+                stroke: lineColor,
+                'stroke-width': 1
+            });
+
+            self.plotSet.push(path);
+        });
     },
 
     /**
@@ -433,19 +481,13 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _renderPlotLines: function(container, dimension) {
-        var lineContainer = dom.create('DIV', 'tui-chart-plot-lines-area');
         var theme = this.theme;
-        var lineHtml = '';
 
         if (!predicate.isLineTypeChart(this.chartType)) {
-            lineHtml += this._makeVerticalLinesHtml(dimension, theme.lineColor);
+            this._renderVerticalLines(dimension, theme.lineColor);
         }
 
-        lineHtml += this._makeHorizontalLinesHtml(dimension, theme.lineColor);
-
-        dom.append(container, lineContainer);
-        lineContainer.innerHTML += lineHtml;
-        renderUtil.renderBackground(container, theme.background);
+        this._renderHorizontalLines(dimension, theme.lineColor);
     },
 
     /**
@@ -543,8 +585,8 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {string} id - band id
      */
     removePlotBand: function(id) {
-        this.options.bands = tui.util.filter(this.options.bands, function(line) {
-            return line.id !== id;
+        this.options.bands = tui.util.filter(this.options.bands, function(band) {
+            return band.id !== id;
         });
         this.rerender();
     },
@@ -555,24 +597,26 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     animateForAddingData: function(data) {
         var self = this;
-        var beforeLeft = 0;
-        var interval = data.tickSize;
-        var areaWidth;
 
-        if (this.dataProcessor.isCoordinateType()) {
-            this.optionalContainer.innerHTML = '';
-        } else if (data.shifting) {
-            renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
-                var left = interval * ratio;
-                self.optionalContainer.style.left = (beforeLeft - left) + 'px';
-            });
-        } else {
-            areaWidth = this.layout.dimension.width;
-            renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
-                var left = interval * ratio;
-                self.optionalContainer.style.width = (areaWidth - left) + 'px';
-            }, function() {
-            });
+        if (!this.dataProcessor.isCoordinateType()) {
+            if (data.shifting) {
+                tui.util.forEach(this.optionalLines, function(line) {
+                    var bbox = line.getBBox();
+
+                    if (bbox.x - data.tickSize < self.layout.position.left) {
+                        line.animate({
+                            transform: 'T' + data.tickSize + ',' + bbox.y,
+                            opacity: 0
+                        }, 300, 'linear', function() {
+                            line.remove();
+                        });
+                    } else {
+                        line.animate({
+                            transform: 'T' + data.tickSize + ',' + bbox.y
+                        }, 300);
+                    }
+                });
+            }
         }
     }
 });

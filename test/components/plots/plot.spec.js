@@ -5,17 +5,19 @@
  */
 
 'use strict';
+var raphael = window.Raphael;
 
 var Plot = require('../../../src/js/components/plots/plot.js');
 var DataProcessor = require('../../../src/js/models/data/dataProcessor');
 var chartConst = require('../../../src/js/const');
 var dom = require('../../../src/js/helpers/domHandler.js');
-var renderUtil = require('../../../src/js/helpers/renderUtil.js');
 
 describe('Test for Plot', function() {
-    var plot, dataProcessor;
+    var plot, dataProcessor, paper;
 
     beforeEach(function() {
+        paper = raphael(dom.create('div'));
+
         dataProcessor = new DataProcessor({}, '', {});
         plot = new Plot({
             dataProcessor: dataProcessor,
@@ -23,28 +25,15 @@ describe('Test for Plot', function() {
                 lineColor: 'black'
             }
         });
+
+        plot.paper = paper;
+    });
+
+    afterEach(function() {
+        paper.remove();
     });
 
     describe('_renderPlotArea()', function() {
-        it('plotContainer와 dimension정보를 renderDimension()에 전달하여 너비 높이를 렌더링 합니다. ', function() {
-            plot.layout = {
-                dimension: {
-                    width: 400,
-                    height: 300
-                }
-            };
-            spyOn(renderUtil, 'renderDimension');
-            spyOn(renderUtil, 'renderPosition');
-            spyOn(plot, '_renderPlotLines');
-
-            plot._renderPlotArea('plotContainer');
-
-            expect(renderUtil.renderDimension).toHaveBeenCalledWith('plotContainer', {
-                width: 400,
-                height: 300
-            });
-        });
-
         it('options.showLine을 설정하지 않으면 기본값이 true로 설정되어 line을 렌더링 합니다.', function() {
             plot.layout = {
                 dimension: {
@@ -52,8 +41,6 @@ describe('Test for Plot', function() {
                     height: 300
                 }
             };
-            spyOn(renderUtil, 'renderDimension');
-            spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderPlotLines');
 
             plot._renderPlotArea('plotContainer');
@@ -71,8 +58,6 @@ describe('Test for Plot', function() {
                     height: 300
                 }
             };
-            spyOn(renderUtil, 'renderDimension');
-            spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderPlotLines');
             plot.options = {
                 showLine: false
@@ -90,8 +75,6 @@ describe('Test for Plot', function() {
                     height: 300
                 }
             };
-            spyOn(renderUtil, 'renderDimension');
-            spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderOptionalLines');
             plot.chartType = chartConst.CHART_TYPE_LINE;
             plot.options = {
@@ -103,34 +86,6 @@ describe('Test for Plot', function() {
                 width: 400,
                 height: 300
             });
-        });
-    });
-
-    describe('_makeLineHtml()', function() {
-        it('make line html, for vertical line', function() {
-            var position = 50;
-            var standardWidth = 100;
-            var templateParams = plot._makeVerticalLineTemplateParams({
-                height: '50px',
-                color: 'red'
-            });
-            var actual = plot._makeLineHtml(position, standardWidth, templateParams);
-            var expected = '<div class="tui-chart-plot-line vertical" style="left:50%;width:1px;height:50px;background-color:red"></div>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('make line html, for horizontal line', function() {
-            var position = 50;
-            var standardWidth = 100;
-            var templateParams = plot._makeHorizontalLineTemplateParams({
-                width: '50px',
-                color: 'red'
-            });
-            var actual = plot._makeLineHtml(position, standardWidth, templateParams);
-            var expected = '<div class="tui-chart-plot-line horizontal" style="bottom:50%;width:50px;height:1px;background-color:red"></div>';
-
-            expect(actual).toBe(expected);
         });
     });
 
@@ -286,221 +241,6 @@ describe('Test for Plot', function() {
         });
     });
 
-    describe('_makeOptionalLineHtml()', function() {
-        it('make optional line html', function() {
-            var optionalLineData = {
-                value: 170,
-                color: 'red'
-            };
-            var xAxisData = {
-                dataMin: 20,
-                distance: 200
-            };
-            var templateParams = {
-                className: '',
-                positionType: 'left',
-                height: '100px'
-            };
-            var actual = plot._makeOptionalLineHtml(xAxisData, 400, templateParams, optionalLineData);
-            var expected = '<div class="tui-chart-plot-line "' +
-                ' style="left:75%;width:1px;height:100px;background-color:red"></div>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('make optional band html', function() {
-            var optionalLineData = {
-                range: [170, 220],
-                color: 'yellow'
-            };
-
-            var xAxisData = {
-                dataMin: 20,
-                distance: 200
-            };
-
-            var templateParams = {
-                className: '',
-                positionType: 'left',
-                height: '200px'
-            };
-
-            var actual = plot._makeOptionalLineHtml(xAxisData, 400, templateParams, optionalLineData);
-            var expected = '<div class="tui-chart-plot-line "' +
-                ' style="left:75%;width:24.75%;height:200px;background-color:yellow"></div>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('optional band should not make beyond paper width', function() {
-            var optionalLineData = {
-                range: [170, 500],
-                color: 'yellow'
-            };
-            var xAxisData = {
-                dataMin: 20,
-                distance: 200
-            };
-            var templateParams = {
-                className: '',
-                positionType: 'left',
-                height: '200px'
-            };
-            var actual = plot._makeOptionalLineHtml(xAxisData, 400, templateParams, optionalLineData);
-            var expected = '<div class="tui-chart-plot-line "' +
-                ' style="left:75%;width:25%;height:200px;background-color:yellow"></div>';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_makeOptionalLinesHtml()', function() {
-        it('make optional lines html', function() {
-            var lines = [
-                {
-                    value: 170,
-                    color: 'red'
-                },
-                {
-                    value: 200,
-                    color: 'blue'
-                }
-            ];
-            var dimension = {
-                width: 400,
-                height: 200
-            };
-            var actual, expected;
-
-            plot.axisDataMap = {
-                xAxis: {
-                    dataMin: 20,
-                    distance: 200
-                }
-            };
-
-            actual = plot._makeOptionalLinesHtml(lines, dimension);
-            expected = '<div class="tui-chart-plot-line vertical"' +
-                    ' style="left:75%;width:1px;height:200px;background-color:red"></div>' +
-                '<div class="tui-chart-plot-line vertical"' +
-                    ' style="left:90%;width:1px;height:200px;background-color:blue"></div>';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_renderOptionalLines', function() {
-        it('render optional lines and bands', function() {
-            var container = dom.create('DIV');
-            var dimension = {
-                width: 400,
-                height: 200
-            };
-            var expectedContainer = dom.create('DIV');
-            var optionalContainer, expected;
-
-            plot.options.bands = [
-                {
-                    range: [70, 120],
-                    color: 'yellow'
-                }
-            ];
-            plot.options.lines = [
-                {
-                    value: 170,
-                    color: 'red'
-                },
-                {
-                    value: 200,
-                    color: 'blue'
-                }
-            ];
-            plot.axisDataMap = {
-                xAxis: {
-                    dataMin: 20,
-                    distance: 200
-                }
-            };
-
-            plot._renderOptionalLines(container, dimension);
-
-            expected = '<div class="tui-chart-plot-line vertical"' +
-                ' style="left:25%;width:25%;height:200px;background-color:yellow"></div>' +
-                '<div class="tui-chart-plot-line vertical"' +
-                ' style="left:75%;width:1px;height:200px;background-color:red"></div>' +
-                '<div class="tui-chart-plot-line vertical"' +
-                ' style="left:90%;width:1px;height:200px;background-color:blue"></div>';
-            expectedContainer.innerHTML = expected;
-
-            optionalContainer = container.firstChild;
-
-            expect(optionalContainer.className).toBe('tui-chart-plot-optional-lines-area');
-            expect(optionalContainer.innerHTML).toBe(expectedContainer.innerHTML);
-        });
-    });
-
-    describe('_renderPlotLines()', function() {
-        it('vTickCount=5 width=400인 경우에는 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 아래에서 부터 렌더링합니다.', function() {
-            var container = dom.create('DIV');
-            var lineContainer, childNodes;
-
-            plot.bound = {
-                dimension: {
-                    width: 400,
-                    height: 200
-                },
-                position: {
-                    top: 5,
-                    right: 5
-                }
-            };
-            plot.axisDataMap = {
-                yAxis: {
-                    validTickCount: 5
-                },
-                xAxis: {
-                    validTickCount: 0
-                }
-            };
-
-            plot._renderPlotLines(container, plot.bound.dimension);
-            lineContainer = container.firstChild;
-            childNodes = lineContainer.childNodes;
-
-            expect(lineContainer.className).toBe('tui-chart-plot-lines-area');
-            expect(childNodes.length).toBe(4);
-            expect(dom.hasClass(childNodes[0], 'horizontal')).toBe(true);
-            expect(dom.hasClass(childNodes[3], 'horizontal')).toBe(true);
-            expect(childNodes[0].style.bottom).toBe('25%');
-            expect(childNodes[1].style.bottom).toBe('50%');
-            expect(childNodes[2].style.bottom).toBe('75%');
-            expect(childNodes[3].style.bottom).toBe('99.5%');
-            expect(childNodes[0].style.width).toBe('400px');
-            expect(childNodes[3].style.width).toBe('400px');
-        });
-    });
-
-    describe('_makeLinesHtml()', function() {
-        it('make lines html', function() {
-            var positions = [0, 50, 100, 150];
-            var templateParams = plot._makeVerticalLineTemplateParams({
-                height: 200,
-                color: 'red'
-            });
-            var actual = plot._makeLinesHtml(positions, 200, templateParams);
-            var expected = '<div class="tui-chart-plot-line vertical"' +
-                    ' style="left:0%;width:1px;height:200;background-color:red"></div>' +
-                '<div class="tui-chart-plot-line vertical"' +
-                    ' style="left:25%;width:1px;height:200;background-color:red"></div>' +
-                '<div class="tui-chart-plot-line vertical"' +
-                    ' style="left:50%;width:1px;height:200;background-color:red"></div>' +
-                '<div class="tui-chart-plot-line vertical"' +
-                    ' style="left:75%;width:1px;height:200;background-color:red"></div>';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_makeVerticalPositions()', function() {
         it('make positions for vertical line', function() {
             var positions;
@@ -616,31 +356,15 @@ describe('Test for Plot', function() {
                     xAxis: {
                         validTickCount: 0
                     }
-                }
+                },
+                paper: raphael(dom.create('div'))
             };
-            var container, lineContainer, childNodes;
 
-            container = plot.render(data);
+            plot.render(data);
 
-            expect(container.style.width).toBe('400px');
-            expect(container.style.height).toBe('200px');
-            expect(container.style.top).toBe('5px');
-            expect(container.style.left).toBe('5px');
-            expect(container.className).toBe('tui-chart-plot-area');
+            expect(plot.plotSet.length).toBe(4);
 
-            lineContainer = container.firstChild;
-            childNodes = lineContainer.childNodes;
-
-            expect(lineContainer.className).toBe('tui-chart-plot-lines-area');
-            expect(childNodes.length).toBe(4);
-            expect(dom.hasClass(childNodes[0], 'horizontal')).toBe(true);
-            expect(dom.hasClass(childNodes[3], 'horizontal')).toBe(true);
-            expect(childNodes[0].style.bottom).toBe('25%');
-            expect(childNodes[1].style.bottom).toBe('50%');
-            expect(childNodes[2].style.bottom).toBe('75%');
-            expect(childNodes[3].style.bottom).toBe('99.5%');
-            expect(childNodes[0].style.width).toBe('400px');
-            expect(childNodes[3].style.width).toBe('400px');
+            data.paper.remove();
         });
     });
 });

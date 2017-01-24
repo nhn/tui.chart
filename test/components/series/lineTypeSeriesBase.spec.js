@@ -9,7 +9,6 @@
 var LineTypeSeriesBase = require('../../../src/js/components/series/lineTypeSeriesBase'),
     SeriesDataModel = require('../../../src/js/models/data/seriesDataModel'),
     SeriesGroup = require('../../../src/js/models/data/seriesGroup'),
-    dom = require('../../../src/js/helpers/domHandler'),
     renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
@@ -24,9 +23,18 @@ describe('LineTypeSeriesBase', function() {
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstItemLabel', 'isCoordinateType']);
         series = new LineTypeSeriesBase();
-        series._makeSeriesLabelHtml = makeSeriesLabelHtml;
         series.dataProcessor = dataProcessor;
         series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
+        series.layout = {
+            dimension: {
+                width: 300,
+                height: 200
+            },
+            position: {
+                top: 0,
+                left: 0
+            }
+        };
     });
 
     describe('_makePositionsForDefaultType()', function() {
@@ -45,12 +53,6 @@ describe('LineTypeSeriesBase', function() {
                 }])
             ];
             spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
-            series.layout = {
-                dimension: {
-                    width: 300,
-                    height: 200
-                }
-            };
             series.axisDataMap = {
                 xAxis: {}
             };
@@ -60,16 +62,16 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toEqual([
                 [
                     {
-                        top: 160,
-                        left: 60
+                        top: 150,
+                        left: 50
                     },
                     {
-                        top: 110,
-                        left: 160
+                        top: 100,
+                        left: 150
                     },
                     {
-                        top: 130,
-                        left: 260
+                        top: 120,
+                        left: 250
                     }
                 ]
             ]);
@@ -92,12 +94,6 @@ describe('LineTypeSeriesBase', function() {
                 }])
             ];
             spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
-            series.layout = {
-                dimension: {
-                    width: 300,
-                    height: 200
-                }
-            };
             series.axisDataMap = {
                 xAxis: {}
             };
@@ -105,12 +101,12 @@ describe('LineTypeSeriesBase', function() {
             actual = series._makePositionsForDefaultType();
 
             expected[0][1] = {
-                top: 110,
-                left: 160
+                top: 100,
+                left: 150
             };
             expected[0][2] = {
-                top: 130,
-                left: 260
+                top: 120,
+                left: 250
             };
             expect(actual).toEqual(expected);
         });
@@ -195,12 +191,6 @@ describe('LineTypeSeriesBase', function() {
             ];
             spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
             series.aligned = true;
-            series.layout = {
-                dimension: {
-                    width: 300,
-                    height: 200
-                }
-            };
             series.axisDataMap = {
                 xAxis: {}
             };
@@ -210,16 +200,16 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toEqual([
                 [
                     {
-                        top: 160,
-                        left: 10
+                        top: 150,
+                        left: 0
                     },
                     {
-                        top: 110,
-                        left: 160
+                        top: 100,
+                        left: 150
                     },
                     {
-                        top: 130,
-                        left: 310
+                        top: 120,
+                        left: 300
                     }
                 ]
             ]);
@@ -254,6 +244,10 @@ describe('LineTypeSeriesBase', function() {
                 dimension: {
                     width: 300,
                     height: 200
+                },
+                position: {
+                    top: 0,
+                    left: 0
                 }
             };
             series.axisDataMap = {
@@ -267,16 +261,16 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toEqual([
                 [
                     {
-                        top: 170,
-                        left: 34
+                        top: 160,
+                        left: 24
                     },
                     {
-                        top: 70,
-                        left: 154
+                        top: 60,
+                        left: 144
                     },
                     {
-                        top: 130,
-                        left: 274
+                        top: 120,
+                        left: 264
                     }
                 ]
             ]);
@@ -373,12 +367,12 @@ describe('LineTypeSeriesBase', function() {
                 left: 60
             });
             actual = position.left;
-            expected = 17.5;
+            expected = 60;
 
             expect(actual).toBe(expected);
         });
 
-        it('라벨 너비와 _calculateLabelPositionTop()의 실행 결과를 영역 높이로 나누어 top을 설정합니다.', function() {
+        it('라벨 너비와 _calculateLabelPositionTop()의 실행 결과로 top을 설정합니다.', function() {
             var position, actual, expected;
 
             spyOn(series, '_calculateLabelPositionTop').and.returnValue(50);
@@ -393,117 +387,9 @@ describe('LineTypeSeriesBase', function() {
                 left: 60
             });
             actual = position.top;
-            expected = 25;
+            expected = 50;
 
             expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_makeSeriesLabelHtmlForLineType()', function() {
-        it('seriesData.gropuPositions에서 groupIndex와 index에 해당하는 position값을 basePosition으로 설정하고 label은 seriesItem.endLabel로 설정합니다.', function() {
-            var groupIndex = 0,
-                index = 0,
-                seriesItem = {
-                    value: 'value',
-                    endLabel: 'endLabel'
-                },
-                labelHeight = 'labelHeight',
-                isStart = false;
-
-            series.seriesData = {
-                groupPositions: [
-                    [{
-                        left: 10,
-                        top: 20
-                    }]
-                ]
-            };
-
-            spyOn(series, '_makeLabelPosition');
-            series._makeSeriesLabelHtmlForLineType(groupIndex, index, seriesItem, labelHeight, isStart);
-
-            expect(series._makeLabelPosition).toHaveBeenCalledWith({
-                left: 10,
-                top: 20
-            }, 'labelHeight', 'endLabel', 'value', false);
-        });
-
-        it('시작값일 경우(isStart=true)에는 startTop을 top으로 변경하여 basePosition을 설정하고 label은 seriesItem.startLabel로 설정합니다.', function() {
-            var groupIndex = 0,
-                index = 0,
-                seriesItem = {
-                    value: 'value',
-                    endLabel: 'endLabel',
-                    startLabel: 'startLabel'
-                },
-                labelHeight = 'labelHeight',
-                isStart = true;
-
-            series.seriesData = {
-                groupPositions: [
-                    [{
-                        left: 10,
-                        top: 20,
-                        startTop: 5
-                    }]
-                ]
-            };
-
-            spyOn(series, '_makeLabelPosition');
-            series._makeSeriesLabelHtmlForLineType(groupIndex, index, seriesItem, labelHeight, isStart);
-
-            expect(series._makeLabelPosition).toHaveBeenCalledWith({
-                left: 10,
-                top: 5,
-                startTop: 5
-            }, 'labelHeight', 'startLabel', 'value', true);
-        });
-    });
-
-    describe('_renderSeriesLabel()', function() {
-        it('라인차트에서 series label은 seriesItem 숫자 만큼 렌더링 됩니다.', function() {
-            var elLabelArea = dom.create('div');
-            var seriesDataModel = new SeriesDataModel();
-
-            series._getSeriesDataModel.and.returnValue(seriesDataModel);
-            spyOn(seriesDataModel, 'getFirstItemLabel').and.returnValue('1.5');
-            seriesDataModel.pivotGroups = [
-                new SeriesGroup([{
-                    label: '1.5'
-                }, {
-                    label: '2.2'
-                }])
-            ];
-            series.options = {
-                showLabel: true
-            };
-            series.theme = {
-                label: {}
-            };
-            series.seriesData = {
-                groupPositions: [
-                    [
-                        {
-                            top: 50,
-                            left: 50
-                        },
-                        {
-                            top: 70,
-                            left: 150
-                        }
-                    ]
-                ]
-            };
-            series.dimensionMap = {
-                extendedSeries: {
-                    width: 200,
-                    height: 200
-                }
-            };
-
-            series._renderSeriesLabel(elLabelArea);
-
-            expect(elLabelArea.childNodes.length).toBe(2);
         });
     });
 

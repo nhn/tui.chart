@@ -109,6 +109,8 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         this.seriesCount = predicate.isComboChart(this.chartType) ? 2 : 1;
 
         this._attachToEventBus();
+
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
     /**
@@ -144,7 +146,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         var renderingBound, tbcm;
 
         this.dimension = dimension;
-        tbcm = new TickBaseCoordinateModel(dimension, tickCount, this.chartType, this.isVertical, this.chartTypes);
+        tbcm = new TickBaseCoordinateModel(this.layout, tickCount, this.chartType, this.isVertical, this.chartTypes);
         this.tickBaseCoordinateModel = tbcm;
         renderingBound = this._getRenderingBound();
         renderUtil.renderDimension(mouseEventDetectorContainer, renderingBound.dimension);
@@ -189,8 +191,10 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
      * @returns {HTMLElement} container for mouse event detector
      */
     render: function(data) {
-        var container = dom.create('DIV', 'tui-chart-series-custom-event-area');
+        var container = data.paper;
         var tickCount;
+
+        dom.addClass(container, 'tui-chart-series-custom-event-area');
 
         if (data.axisDataMap.xAxis) {
             tickCount = this._pickTickCount(data.axisDataMap);
@@ -215,21 +219,20 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
     _calculateLayerPosition: function(clientX, clientY, checkLimit) {
         var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
         var layerPosition = {};
-        var expandSize = this.expandSize;
         var maxLeft, minLeft;
 
         checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
 
         if (checkLimit) {
-            maxLeft = bound.right + expandSize;
-            minLeft = bound.left - expandSize;
+            maxLeft = bound.right;
+            minLeft = bound.left;
             clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
         }
 
-        layerPosition.x = clientX - bound.left;
+        layerPosition.x = clientX - chartConst.CHART_PADDING;
 
         if (!tui.util.isUndefined(clientY)) {
-            layerPosition.y = clientY - bound.top;
+            layerPosition.y = clientY - chartConst.CHART_PADDING;
         }
 
         return layerPosition;

@@ -11,7 +11,6 @@ var BarTypeSeriesBase = require('./barTypeSeriesBase');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
 
 var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**
@@ -87,7 +86,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     _makeColumnChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
         var barHeight = Math.abs(baseData.baseBarSize * seriesItem.ratioDistance);
         var barStartTop = baseData.baseBarSize * seriesItem.startRatio;
-        var startTop = baseData.basePosition - barStartTop + chartConst.SERIES_EXPAND_SIZE;
+        var startTop = baseData.basePosition + barStartTop + chartConst.SERIES_EXPAND_SIZE;
         var changedStack = (seriesItem.stack !== iterationData.prevStack);
         var pointCount, endTop, bound, boundLeft;
 
@@ -126,7 +125,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var baseLeft = (groupIndex * baseData.groupSize) + chartConst.SERIES_EXPAND_SIZE;
+            var baseLeft = (groupIndex * baseData.groupSize) + self.layout.position.left;
             var iterationData = {
                 baseLeft: baseLeft,
                 left: baseLeft,
@@ -151,76 +150,6 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
 
         return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
-    },
-
-    /**
-     * Make plus sum label html.
-     * @param {Array.<number>} values values
-     * @param {{left: number, top: number}} bound bound
-     * @param {number} labelHeight label height
-     * @returns {string} plus sum label html
-     * @private
-     */
-    _makePlusSumLabelHtml: function(values, bound, labelHeight) {
-        var html = '';
-        var sum, formatFunctions, formattedSum;
-
-        if (bound) {
-            sum = calculator.sumPlusValues(values);
-            formatFunctions = this.dataProcessor.getFormatFunctions();
-            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
-            html = this._makeSeriesLabelHtml({
-                left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
-                top: bound.top - labelHeight - chartConst.SERIES_LABEL_PADDING
-            }, formattedSum, -1);
-        }
-
-        return html;
-    },
-
-    /**
-     * Make minus sum label html.
-     * @param {Array.<number>} values values
-     * @param {{left: number, top: number}} bound bound
-     * @returns {string} plus minus label html
-     * @private
-     */
-    _makeMinusSumLabelHtml: function(values, bound) {
-        var html = '';
-        var sum, formatFunctions, formattedSum;
-
-        if (bound) {
-            sum = calculator.sumMinusValues(values);
-
-            if (this.options.diverging) {
-                sum = Math.abs(sum);
-            }
-
-            formatFunctions = this.dataProcessor.getFormatFunctions();
-            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
-            html = this._makeSeriesLabelHtml({
-                left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
-                top: bound.top + bound.height + chartConst.SERIES_LABEL_PADDING
-            }, formattedSum, -1);
-        }
-
-        return html;
-    },
-
-    /**
-     * Render series component.
-     * @param {object} data data for rendering
-     * @returns {HTMLElement} series element
-     * @override
-     */
-    render: function(data) {
-        var result;
-
-        delete data.paper;
-        result = Series.prototype.render.call(this, data);
-        delete result.paper;
-
-        return result;
     }
 });
 

@@ -65,23 +65,51 @@ var raphaelRenderUtil = {
 
     /**
      * Render text
-     * @param {object} paper - raphael object
-     * @param {{left: number, top: number}} pos - position
-     * @param {string} text - text
-     * @param {object} attrs - attrs
+     * @param {object} paper - Raphael paper object
+     * @param {{left: number, top: number}} pos - text object position
+     * @param {object} data rendering data
+     * @param {string} data.text - text content
+     * @param {object} [data.attributes] - text object's attributes
+     * @param {Array.<object>} [data.events] - events to bind text object
+     * @param {Array.<object>} [data.sets] - raphael set array
      */
-    renderText: function(paper, pos, text, attrs) {
+    renderText: function(paper, pos, data) {
         // for raphael's svg bug;
         // DOM에 붙지 않은 paper에 텍스트 객체 생성시 버그가 있다.
         setTimeout(function() {
-            var textObj = paper.text(pos.left, pos.top, text);
+            var textObj = paper.text(pos.left, pos.top, data.text);
+            var attributes = data.attributes;
 
-            if (attrs) {
-                textObj.attr(attrs);
-            }
+            if (textObj) {
+                if (attributes) {
+                    textObj.attr(attributes);
+                } else {
+                    attributes = {};
+                }
 
-            if (attrs['dominant-baseline']) {
-                textObj.node.setAttribute('dominant-baseline', attrs['dominant-baseline']);
+                if (attributes['dominant-baseline']) {
+                    textObj.node.setAttribute('dominant-baseline', attributes['dominant-baseline']);
+                }
+
+                if (data.events) {
+                    tui.util.forEach(data.events, function(event) {
+                        textObj[event.name](event.handler);
+                    });
+                }
+
+                if (data.set) {
+                    if (tui.util.isArray(data.set)) {
+                        tui.util.forEach(data.set, function(set) {
+                            set.push(textObj);
+                        });
+                    } else {
+                        data.set.push(textObj);
+                    }
+                }
+
+                if (data.toBack) {
+                    textObj.toBack();
+                }
             }
         });
     },

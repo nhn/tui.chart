@@ -34,10 +34,11 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
      */
     _makeBound: function(ratioMap) {
         var dimension = this.layout.dimension;
+        var basePosition = this.layout.position;
 
         return {
-            left: (ratioMap.x * dimension.width) + chartConst.SERIES_EXPAND_SIZE,
-            top: dimension.height - (ratioMap.y * dimension.height) + chartConst.SERIES_EXPAND_SIZE,
+            left: basePosition.left + (ratioMap.x * dimension.width),
+            top: dimension.height - (ratioMap.y * dimension.height) + basePosition.top,
             radius: chartConst.SCATTER_RADIUS
         };
     },

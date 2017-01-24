@@ -8,7 +8,6 @@
 
 var zoomMixer = require('../../../src/js/components/mouseEventDetectors/zoomMixer');
 var MouseEventDetectorBase = require('../../../src/js/components/mouseEventDetectors/mouseEventDetectorBase');
-var chartConst = require('../../../src/js/const');
 var dom = require('../../../src/js/helpers/domHandler');
 
 describe('Test for zoomMixer', function() {
@@ -19,6 +18,12 @@ describe('Test for zoomMixer', function() {
 
     beforeEach(function() {
         zoomMixer.expandSize = 0;
+        zoomMixer.layout = {
+            position: {
+                top: 0,
+                left: 0
+            }
+        };
     });
 
     describe('_showDragSelection()', function() {
@@ -33,15 +38,14 @@ describe('Test for zoomMixer', function() {
                 left: 50,
                 right: 150
             });
-            zoomMixer.expandSize = chartConst.SERIES_EXPAND_SIZE;
 
             zoomMixer._showDragSelection(50);
 
-            expect(zoomMixer.dragSelectionElement.style.left).toBe('10px');
-            expect(zoomMixer.dragSelectionElement.style.width).toBe('100px');
+            expect(zoomMixer.dragSelectionElement.style.left).toBe('50px');
+            expect(zoomMixer.dragSelectionElement.style.width).toBe('60px');
         });
 
-        it('layerX가 startLayerX보다 클 경우에는 left값을 startLayerX로 설정합니다.', function() {
+        it('layerX가 startLayerX보다 클 경우에는 left값 - 10을 startLayerX로 설정합니다.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
             zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -52,7 +56,7 @@ describe('Test for zoomMixer', function() {
             zoomMixer._showDragSelection(130);
 
             expect(zoomMixer.dragSelectionElement.style.left).toBe('40px');
-            expect(zoomMixer.dragSelectionElement.style.width).toBe('50px');
+            expect(zoomMixer.dragSelectionElement.style.width).toBe('90px');
         });
 
         it('_showLayerSelection을 수행하면 dragSelectionElement에 show 스타일 클래스가 설정됩니다.', function() {

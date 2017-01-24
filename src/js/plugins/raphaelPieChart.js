@@ -16,9 +16,11 @@ var MIN_DEGREE = 0.01;
 var RAD = Math.PI / DEGREE_180;
 var LOADING_ANIMATION_DURATION = 700;
 var EMPHASIS_OPACITY = 1;
+var OVERLAY_OPACITY = 0.3;
 var DE_EMPHASIS_OPACITY = 0.3;
-var DEFAULT_LUMINANC = 0.2;
+var DEFAULT_LUMINANT_VALUE = 0.2;
 var OVERLAY_ID = 'overlay';
+var TOOLTIP_OFFSET_VALUE = 20;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
@@ -28,7 +30,7 @@ var OVERLAY_ID = 'overlay';
 var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
      * Render function of pie chart.
-     * @param {HTMLElement} container container
+     * @param {object} paper Raphael paper
      * @param {{
      *      sectorData: Array.<object>,
      *      circleBound: {cx: number, cy: number, r: number},
@@ -39,25 +41,14 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      *      @param {function} callbacks.hideTooltip hide tooltip function
      * @returns {object} paper raphael paper
      */
-    render: function(container, data, callbacks) {
-        var dimension = data.dimension;
-        var paper;
+    render: function(paper, data, callbacks) {
+        var pieSeriesSet = paper.set();
 
         /**
          * raphael object
          * @type {object}
          */
-        if (data.paper) {
-            this.paper = paper = data.paper;
-        } else {
-            this.paper = paper = raphael(container, dimension.width, dimension.height);
-        }
-
-        /**
-         * series container
-         * @type {HTMLElement}
-         */
-        this.container = container;
+        this.paper = paper;
 
         /**
          * ratio for hole
@@ -103,14 +94,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         this._setSectorAttr();
 
-        this.sectorInfos = this._renderPie(data.sectorData, data.theme.colors, data.additionalIndex);
+        this.sectorInfos = this._renderPie(data.sectorData, data.theme.colors, data.additionalIndex, pieSeriesSet);
         this.overlay = this._renderOverlay();
-
-        /**
-         * selected previous sector
-         * @type {object}
-         */
-        this.prevSelectedSector = null;
 
         /**
          * previous mouse position
@@ -124,7 +109,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
          */
         this.prevHoverSector = null;
 
-        return paper;
+        return pieSeriesSet;
     },
 
     /**
@@ -263,7 +248,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      *      @param {{cx: number, cy: number, r:number}} params.circleBound circle bounds
      *      @param {number} params.startAngle start angle
      *      @param {number} params.endAngle end angle
-     *      @param {{fill: string, stroke: string, strike-width: string}} params.attrs attrs
+     *      @param {{object}} params.attrs attributes
      * @returns {object} raphael object
      * @private
      */
@@ -282,10 +267,11 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {Array.<object>} sectorData - sectorData
      * @param {Array.<string>} colors - sector colors
      * @param {number} additionalIndex - additional index for accumulate past pie series's data indexes on pieDonutCombo
+     * @param {Array.<object>} pieSeriesSet - pie series set
      * @returns {Array.<object>}
      * @private
      */
-    _renderPie: function(sectorData, colors, additionalIndex) {
+    _renderPie: function(sectorData, colors, additionalIndex, pieSeriesSet) {
         var self = this;
         var circleBound = this.circleBound;
         var chartBackground = this.chartBackground;
@@ -314,6 +300,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 angles: sectorDatum.angles.end,
                 ratio: ratio
             });
+
+            pieSeriesSet.push(sector);
         });
 
         return sectorInfos;
@@ -342,15 +330,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _makeLinePaths: function(outerPositions) {
-        var paths = tui.util.map(outerPositions, function(positions) {
+        return tui.util.map(outerPositions, function(positions) {
             return [
                 raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
                 raphaelRenderUtil.makeLinePath(positions.middle, positions.end),
                 'Z'
             ].join('');
         });
-
-        return paths;
     },
 
     /**
@@ -369,7 +355,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         innerAttrs = {
             fill: '#fff',
-            opacity: 0.3
+            opacity: OVERLAY_OPACITY
         };
         innerAttrs[this.sectorName] = [cb.cx, cb.cy, cb.r, sa, ea, cb.r * this.holeRatio];
         overlay.inner.attr(innerAttrs);
@@ -378,7 +364,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         overlay.outer.attr({
             path: this._makeDonutSectorPath(cb.cx, cb.cy, cb.r + 10, sa, ea, cb.r).path,
             fill: sectorInfo.color,
-            opacity: 0.3
+            opacity: OVERLAY_OPACITY
         });
     },
 
@@ -527,11 +513,11 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _showTooltip: function(sector, position) {
-        var containerBound = this.container.getBoundingClientRect();
         var args = [{}, 0, sector.data('index'), {
-            left: position.left - containerBound.left,
-            top: position.top - containerBound.top
+            left: position.left - TOOLTIP_OFFSET_VALUE,
+            top: position.top - TOOLTIP_OFFSET_VALUE
         }];
+
         this.callbacks.showTooltip.apply(null, args);
     },
 
@@ -576,14 +562,16 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     selectSeries: function(indexes) {
         var sectorInfo = this.sectorInfos[indexes.index];
-        var objColor, color;
+        var luminanceColor, objColor, color;
 
         if (!sectorInfo) {
             return;
         }
 
         objColor = raphael.color(sectorInfo.color);
-        color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC);
+        luminanceColor = raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANT_VALUE);
+
+        color = this.selectionColor || luminanceColor;
 
         sectorInfo.sector.attr({
             fill: color
@@ -627,6 +615,52 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 });
             }
         });
+    },
+    /**
+     * Get rendered label width
+     * @param {string} text - text content
+     * @param {object} theme - label theme
+     * @returns {number}
+     */
+    getRenderedLabelWidth: function(text, theme) {
+        return raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily).width;
+    },
+
+    /**
+     * Get rendered label height
+     * @param {string} text - text content
+     * @param {object} theme - label theme
+     * @returns {number}
+     */
+    getRenderedLabelHeight: function(text, theme) {
+        return raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily).height;
+    },
+
+    /**
+     * Render labels and return label set
+     * @param {object} paper Raphael paper
+     * @param {object} positions position left, top
+     * @param {Array.<string>} labels series labels
+     * @param {object} theme label theme
+     * @returns {Array.<object>}
+     */
+    renderLabels: function(paper, positions, labels, theme) {
+        var labelSet = paper.set();
+
+        tui.util.forEach(positions, function(position, index) {
+            raphaelRenderUtil.renderText(paper, position, {
+                text: labels[index],
+                set: labelSet,
+                attributes: {
+                    'font-size': theme.fontSize,
+                    'font-family': theme.fontFamily,
+                    'font-weight': theme.fontWeight,
+                    'text-anchor': 'middle'
+                }
+            });
+        });
+
+        return labelSet;
     }
 });
 

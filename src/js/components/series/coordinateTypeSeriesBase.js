@@ -7,8 +7,6 @@
 
 'use strict';
 
-var renderUtil = require('../../helpers/renderUtil');
-
 var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSeriesBase.prototype */ {
     /**
      * Make series data.
@@ -61,10 +59,11 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      * Render raphael graph.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
+     * @param {object} paper paper object
      * @private
      * @override
      */
-    _renderGraph: function(dimension, seriesData) {
+    _renderGraph: function(dimension, seriesData, paper) {
         var showTooltip = tui.util.bind(this.showTooltip, this, {
             chartType: this.chartType
         });
@@ -74,45 +73,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
         };
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        this.graphRenderer.render(this.seriesContainer, params, callbacks);
-    },
-
-    /**
-     * Make html for label of series area.
-     * @param {{left: number, top: number}} basePosition - position
-     * @param {string} label - label of SeriesItem
-     * @param {number} index - index
-     * @returns {string}
-     * @private
-     */
-    _makeSeriesLabelsHtml: function(basePosition, label, index) {
-        var labelHeight = renderUtil.getRenderedLabelHeight(label, this.theme.label);
-        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label);
-        var position = {
-            left: basePosition.left - (labelWidth / 2),
-            top: basePosition.top - (labelHeight / 2)
-        };
-
-        return this._makeSeriesLabelHtml(position, label, index);
-    },
-
-    /**
-     * Render series label.
-     * @param {HTMLElement} labelContainer - container for label area
-     * @private
-     */
-    _renderSeriesLabel: function(labelContainer) {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var html = seriesDataModel.map(function(seriesGroup, groupIndex) {
-            return seriesGroup.map(function(seriesItem, index) {
-                var bound = self.seriesData.groupBounds[groupIndex][index];
-
-                return seriesItem ? self._makeSeriesLabelsHtml(bound, seriesItem.label, index) : '';
-            }).join('');
-        }).join('');
-
-        labelContainer.innerHTML = html;
+        return this.graphRenderer.render(paper, params, callbacks);
     },
 
     /**
