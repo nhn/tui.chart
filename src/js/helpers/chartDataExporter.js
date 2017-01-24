@@ -28,7 +28,6 @@ var DOWNLOADER_FUNCTIONS = {
  * Return given extension type is image format
  * @param {string} extension extension
  * @returns {boolean}
- * @private
  */
 function isImageExtension(extension) {
     return extension === 'png' || extension === 'jpeg';
@@ -198,6 +197,7 @@ function _makeCsvTextWithRawData(rawData, itemDelimiterCharacter, lineDelimiterC
  * Download image with png format
  * @param {string} fileName - file name to save
  * @param {string} extension - extension type
+ * @private
  */
 function _downloadImage(fileName, extension) {
     var container = document.getElementsByClassName('tui-chart')[0];
@@ -252,6 +252,7 @@ function _downloadImage(fileName, extension) {
  * Base64 string to blob
  * @param {string} base64String - base64 string
  * @returns {Blob}
+ * @private
  */
 function base64toBlob(base64String) {
     var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
@@ -347,6 +348,7 @@ function _download(content, fileName, extension) {
 function exportChartData(extension, rawData, chartTitle) {
     var fileName = chartTitle;
 
+    // Image downloads asynchronous because of waiting until image loaded from svg data URI.
     if (isImageExtension(extension)) {
         _downloadImage(fileName, extension);
     } else {
@@ -364,6 +366,11 @@ function isBrowserSupportClientSideDownload() {
     return method !== 'none';
 }
 
+/**
+ * Return boolean value for chart data is able to export
+ * @param {object} seriesDataModels series data model
+ * @returns {boolean}
+ */
 function isDataDownloadAvailable(seriesDataModels) {
     var result = true;
 
