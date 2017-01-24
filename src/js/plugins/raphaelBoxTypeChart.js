@@ -340,6 +340,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         setTimeout(function() {
             if (!colorSpectrum && box.seriesItem.hasChild) {
                 box.rect.toBack();
+                box.rect.paper.pushDownBackgroundToBottom();
             }
         }, ANIMATION_DURATION);
     },

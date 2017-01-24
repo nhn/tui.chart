@@ -364,6 +364,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
+
+        if (this.paper.pushDownBackgroundToBottom) {
+            this.paper.pushDownBackgroundToBottom();
+        }
     },
 
     /**

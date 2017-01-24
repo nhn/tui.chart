@@ -46,7 +46,13 @@ var pluginRaphael = {
 };
 var callback = function(container, dimension) {
     var paper = raphael(container, dimension.width, dimension.height);
-    paper.rect(0, 0, dimension.width, dimension.height).attr({
+    var rect = paper.rect(0, 0, dimension.width, dimension.height);
+
+    paper.pushDownBackgroundToBottom = function() {
+        rect.toBack();
+    };
+
+    rect.attr({
         fill: '#fff',
         'stroke-width': 0
     });
