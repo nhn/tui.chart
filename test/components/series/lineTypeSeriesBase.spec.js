@@ -127,6 +127,10 @@ describe('LineTypeSeriesBase', function() {
                 dimension: {
                     width: 300,
                     height: 200
+                },
+                position: {
+                    top: 10,
+                    left: 10
                 }
             };
             series.axisDataMap = {
@@ -162,6 +166,10 @@ describe('LineTypeSeriesBase', function() {
                 dimension: {
                     width: 300,
                     height: 200
+                },
+                position: {
+                    top: 10,
+                    left: 10
                 }
             };
             series.axisDataMap = {
