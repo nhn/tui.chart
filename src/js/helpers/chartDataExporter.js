@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var isIE10OrIE11 = tui.util.browser.msie && (tui.util.browser.version === 10 || tui.util.browser.version === 11);
 
 var DATA_URI_HEADERS = {
     xls: 'data:application/vnd.ms-excel;base64,',
@@ -18,6 +19,16 @@ var DOWNLOADER_FUNCTIONS = {
     downloadAttribute: _downloadWithAnchorElementDownloadAttribute,
     msSaveOrOpenBlob: _downloadWithMsSaveOrOpenBlob
 };
+
+/**
+ * Return given extension type is image format
+ * @param {string} extension extension
+ * @returns {boolean}
+ * @private
+ */
+function _isImageExtension(extension) {
+    return extension === 'png' || extension === 'jpeg';
+}
 
 /**
  * Get pivoted second dimension array from table to use element.innerText
@@ -178,6 +189,92 @@ function _makeCsvTextWithRawData(rawData, itemDelimiterCharacter, lineDelimiterC
     return csvText;
 }
 
+
+/**
+ * Download image with png format
+ * @param {string} fileName - file name to save
+ * @param {string} extension - extension type
+ */
+function _downloadImage(fileName, extension) {
+    var container = document.getElementsByClassName('tui-chart')[0];
+    var svg = container.getElementsByTagName('svg')[0];
+    var svgParent = svg.parentNode;
+    var DOMURL = window.URL || window.webkitURL || window;
+    var img = new Image();
+    var width = container.offsetWidth;
+    var height = container.offsetHeight;
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var url, blob, svgString;
+    var tempWrapper = document.createElement('DIV');
+
+    tempWrapper.appendChild(svg);
+
+    svgString = tempWrapper.innerHTML;
+    svgParent.appendChild(svg);
+    tempWrapper = null;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    // remove name space for IE
+    if (isIE10OrIE11) {
+        svgString = svgString.replace(/xmlns:NS1=""/, '');
+        svgString = svgString.replace(/NS1:xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
+        svgString = svgString.replace(/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, '');
+        svgString = svgString.replace(/xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
+    }
+
+    if (isIE10OrIE11 && ctx.drawSvg) {
+        ctx.drawSvg(svgString, 0, 0);
+
+        _download(canvas.toDataURL('image/' + extension, 1), fileName, extension);
+    } else {
+        blob = new Blob([svgString], {type: 'image/svg+xml'});
+        url = DOMURL.createObjectURL(blob);
+
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0, width, height);
+
+            _download(canvas.toDataURL('image/' + extension, 1), fileName, extension);
+
+            DOMURL.revokeObjectURL(url);
+        };
+        img.src = url;
+    }
+}
+
+/**
+ * Base64 string to blob
+ * @param {string} base64String - base64 string
+ * @returns {Blob}
+ */
+function base64toBlob(base64String) {
+    var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
+    var sliceSize = 1024;
+    var byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
+    var byteArrays = [];
+    var offset, slice, byteNumbers, i, byteArray, resultBlob;
+
+    for (offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        byteNumbers = new Array(slice.length);
+
+        for (i = 0; i < slice.length; i += 1) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        byteArray = new window.Uint8Array(byteNumbers);
+
+        byteArrays.push(byteArray);
+    }
+
+    resultBlob = new Blob(byteArrays, {type: contentType});
+
+    return resultBlob;
+}
+
 /**
  * Download content to file with msSaveOrOpenBlob
  * @param {string} content - file content
@@ -186,8 +283,8 @@ function _makeCsvTextWithRawData(rawData, itemDelimiterCharacter, lineDelimiterC
  * @private
  */
 function _downloadWithMsSaveOrOpenBlob(content, fileName, extension) {
-    var blobObject = new Blob([content]);
-    window.navigator.msSaveOrOpenBlob(blobObject, fileName, extension);
+    var blobObject = _isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
+    window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
 }
 
 /**
@@ -200,7 +297,17 @@ function _downloadWithMsSaveOrOpenBlob(content, fileName, extension) {
 function _downloadWithAnchorElementDownloadAttribute(content, fileName, extension) {
     var anchorElement = document.createElement('a');
     var data = extension !== 'csv' ? window.btoa(unescape(encodeURIComponent(content))) : encodeURIComponent(content);
-    var dataUri = DATA_URI_HEADERS[extension] + data;
+    var dataUri;
+
+    if (!content) {
+        return;
+    }
+
+    if (_isImageExtension(extension)) {
+        dataUri = content;
+    } else {
+        dataUri = DATA_URI_HEADERS[extension] + data;
+    }
 
     anchorElement.href = dataUri;
     anchorElement.target = '_blank';
@@ -222,7 +329,7 @@ function _downloadWithAnchorElementDownloadAttribute(content, fileName, extensio
 function _download(content, fileName, extension) {
     var downloadMethod = _getDownloadMethod();
 
-    if (downloadMethod) {
+    if (downloadMethod && tui.util.isString(content)) {
         DOWNLOADER_FUNCTIONS[downloadMethod](content, fileName, extension);
     }
 }
@@ -235,9 +342,12 @@ function _download(content, fileName, extension) {
  */
 function exportChartData(extension, rawData, chartTitle) {
     var fileName = chartTitle;
-    var content = EXPORT_DATA_MAKERS[extension](rawData);
 
-    _download(content, fileName, extension);
+    if (_isImageExtension(extension)) {
+        _downloadImage(fileName, extension);
+    } else {
+        _download(EXPORT_DATA_MAKERS[extension](rawData), fileName, extension);
+    }
 }
 
 /**

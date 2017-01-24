@@ -45,7 +45,13 @@ var pluginRaphael = {
     axis: axis
 };
 var callback = function(container, dimension) {
-    return raphael(container, dimension.width, dimension.height);
+    var paper = raphael(container, dimension.width, dimension.height);
+    paper.rect(0, 0, dimension.width, dimension.height).attr({
+        fill: '#fff',
+        'stroke-width': 0
+    });
+
+    return paper;
 };
 
 tui.chart.registerPlugin(pluginName, pluginRaphael, callback);

@@ -12,7 +12,7 @@ var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var chartDataExporter = require('../../helpers/chartDataExporter');
 
-var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv'];
+var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
 var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
 
 var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype */ {
