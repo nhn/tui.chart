@@ -43,6 +43,8 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
          */
         this.stackedWheelDelta = 0;
 
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
         this._attachToEventBus();
     },
 

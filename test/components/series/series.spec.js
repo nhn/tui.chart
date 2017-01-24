@@ -84,58 +84,6 @@ describe('Series', function() {
         });
     });
 
-    describe('_makeSeriesLabelHtml()', function() {
-        it('position, value 정보를 받아 series레이블이 표현될 html을 생성합니다.', function() {
-            var result = series._makeSeriesLabelHtml({
-                left: 10,
-                top: 10
-            }, 'label1', 0);
-
-            expect(result).toBe('<div class="tui-chart-series-label"' +
-                ' style="left:10px;top:10px;font-family:Verdana;font-size:11px;font-weight:normal">label1</div>');
-        });
-    });
-
-    describe('render()', function() {
-        it('width=200, height=100의 series 영역을 렌더링합니다.', function() {
-            var data = {
-                limitMap: {
-                    bar: {
-                        min: 0,
-                        max: 100
-                    }
-                },
-                dimensionMap: {
-                    extendedSeries: {
-                        width: 220,
-                        height: 120
-                    }
-                },
-                positionMap: {
-                    extendedSeries: {
-                        top: 40,
-                        left: 40
-                    }
-                }
-            };
-            var eventBus = jasmine.createSpyObj('eventBus', ['fire']);
-            var actual, seriesContainer;
-
-            series.hasAxes = true;
-            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
-            series.eventBus = eventBus;
-
-            actual = series.render(data);
-            seriesContainer = actual.container;
-
-            expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);
-            expect(seriesContainer.style.width).toBe('220px');
-            expect(seriesContainer.style.height).toBe('120px');
-            expect(seriesContainer.style.top).toBe('40px');
-            expect(seriesContainer.style.left).toBe('40px');
-        });
-    });
-
     describe('_findLabelElement()', function() {
         it('대상 엘리먼트가 시리즈 라벨(series label) 엘리먼트이면 대상 엘리먼트를 반환합니다.', function() {
             var elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL);

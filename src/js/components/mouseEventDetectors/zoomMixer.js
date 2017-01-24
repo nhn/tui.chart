@@ -249,7 +249,7 @@ var zoomMixer = {
      */
     _showDragSelection: function(clientX) {
         var layerX = this._calculateLayerPosition(clientX).x;
-        var left = Math.min(layerX, this.startLayerX);
+        var left = Math.min(layerX, this.startLayerX) - this.layout.position.left;
         var width = Math.abs(layerX - this.startLayerX);
         var element = this.dragSelectionElement;
 

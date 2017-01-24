@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var raphael = window.Raphael;
 
 var Series = require('./series');
 var chartConst = require('../../const');
@@ -75,7 +76,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          */
         this.prevPosition = null;
 
-
         /**
          * Previous moved index.
          * @type {?number}
@@ -94,6 +94,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          */
         this.startPosition = null;
 
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
         Series.call(this, params);
     },
 
@@ -144,11 +145,14 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @returns {HTMLElement} series element
      */
     render: function(data) {
-        var container = Series.prototype.render.call(this, data);
+        this.seriesContainer = dom.create('DIV', this.className);
+        this.paper = raphael(this.seriesContainer, data.layout.dimension.width, data.layout.dimension.height);
+
+        Series.prototype.render.call(this, data);
 
         this._setMapRatio();
 
-        return container;
+        return this.seriesContainer;
     },
 
     /**
@@ -182,7 +186,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         this._setLimitPositionToMoveMap();
 
-        this.graphRenderer.render(this.graphContainer, {
+        this.graphRenderer.render(this.paper, {
             colorSpectrum: this.colorSpectrum,
             mapModel: this.mapModel,
             dimension: this.graphDimension,
@@ -267,12 +271,10 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             prevLimitPosition = this.limitPosition;
 
         this._setGraphDimension();
-        renderUtil.renderDimension(this.graphContainer, this.graphDimension);
         this.graphRenderer.setSize(this.graphDimension);
 
         this._setLimitPositionToMoveMap();
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
-        renderUtil.renderPosition(this.graphContainer, this.basePosition);
 
         if (this.seriesLabelContainer) {
             this._renderSeriesLabel(this.seriesLabelContainer);
@@ -391,7 +393,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
             if (this._isChangedPosition(this.prevPosition, position)) {
                 // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
-                containerBound = this.seriesContainer.getBoundingClientRect();
+                containerBound = this.paper.canvas.getBoundingClientRect();
                 this._showTooltip(foundIndex, {
                     left: position.left - containerBound.left,
                     top: position.top - containerBound.top
@@ -466,7 +468,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _movePositionForZoom: function(position, changedRatio) {
         var seriesDimension = this.layout.dimension;
-        var containerBound = this.seriesContainer.getBoundingClientRect();
+        var containerBound = this.paper.canvas.getBoundingClientRect();
         var startPosition = {
             left: (seriesDimension.width / 2) + containerBound.left,
             top: (seriesDimension.height / 2) + containerBound.top

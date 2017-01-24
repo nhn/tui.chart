@@ -5,13 +5,14 @@
  */
 
 'use strict';
-
+var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
 var Axis = require('../components/axes/axis');
 var Plot = require('../components/plots/plot');
 var title = require('../components/title/title');
 var RadialPlot = require('../components/plots/radialPlot');
 var ChartExportMenu = require('../components/chartExportMenu/chartExportMenu');
+var drawingToolPicker = require('../helpers/drawingToolPicker');
 
 // legends
 var Legend = require('../components/legends/legend');
@@ -88,6 +89,10 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @private
      */
     init: function(params) {
+        var chartOption = params.options.chart;
+        var width = chartOption ? chartOption.width : chartConst.CHART_DEFAULT_WIDTH;
+        var height = chartOption ? chartOption.height : chartConst.CHART_DEFAULT_HEIGHT;
+
         /**
          * Components
          * @type {Array.<object>}
@@ -129,6 +134,17 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
          * @type {object}
          */
         this.eventBus = params.eventBus;
+
+        /**
+         * Drawing tool picker
+         * @type {object}
+         */
+        this.drawingToolPicker = drawingToolPicker;
+
+        this.drawingToolPicker.initDimension({
+            width: width,
+            height: height
+        });
     },
 
     /**
@@ -232,23 +248,21 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      */
     render: function(funcName, boundsAndScale, additionalData, container) {
         var self = this;
-        var name, type, paper;
+        var name, type;
 
         var elements = tui.util.map(this.components, function(component) {
             var element = null;
-            var data, result;
+            var data, result, paper;
 
             if (component[funcName]) {
                 name = component.componentName;
                 type = component.componentType;
+                paper = self.drawingToolPicker.getPaper(container, component.drawingType);
                 data = self._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
 
                 result = component[funcName](data);
 
-                if (result && result.container) {
-                    element = result.container;
-                    paper = result.paper;
-                } else {
+                if (result && !result.paper) {
                     element = result;
                 }
             }

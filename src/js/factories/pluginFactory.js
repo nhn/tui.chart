@@ -6,6 +6,7 @@
  */
 
 'use strict';
+var chartConst = require('../const');
 
 var plugins = {},
     factory = {
@@ -16,7 +17,7 @@ var plugins = {},
          * @returns {object} renderer instance
          */
         get: function(libType, chartType) {
-            var plugin = plugins[libType],
+            var plugin = plugins[libType || chartConst.DEFAULT_PLUGIN],
                 Renderer, renderer;
 
             if (!plugin) {

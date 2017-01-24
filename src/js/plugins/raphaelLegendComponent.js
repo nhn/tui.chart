@@ -8,7 +8,6 @@
 var chartConst = require('../const');
 var raphaelRenderUtil = require('../plugins/raphaelRenderUtil');
 
-var raphael = window.Raphael;
 var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
 var CHECKBOX_WIDTH = 10;
 var CHECKBOX_HEIGHT = 10;
@@ -23,26 +22,21 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
      *     @param {boolean} data.isHorizontal boolean value of horizontal or not
      *     @param {{height:number, width:number}} data.dimension legend dimension
      *     @param {object} data.labelTheme legend label theme object
-     *     @param {number} data.labelsWidth label widths
+     *     @param {number} data.labelWidths label widths
      *     @param {object} data.eventBus event bus
      * @returns {object} paper
      */
     render: function(data) {
         var self = this;
-        var container = data.container;
         var legendData = data.legendData;
         var isHorizontal = data.isHorizontal;
-        var position = {
-            top: 1,
-            left: 1
-        };
-        var horizontalWidth, horizontalHeight;
+        var position = tui.util.extend({}, data.position);
+        var legendSet = data.paper.set();
 
         this.eventBus = data.eventBus;
-        this.paper = raphael(container, data.dimension.width, data.dimension.height);
-        this.labelsWidth = data.labelsWidth;
+        this.paper = data.paper;
+        this.labelWidths = data.labelWidths;
         this.labelTheme = data.labelTheme;
-
         tui.util.forEach(legendData, function(legendDatum, index) {
             var legendIndex = legendDatum.index;
             var legendColor = legendDatum.theme.color;
@@ -53,29 +47,37 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
             var labelHeight = legendDatum.labelHeight;
 
             if (checkboxData) {
-                self._renderCheckbox(position, checkboxData, legendIndex);
+                self._renderCheckbox(position, checkboxData, legendIndex, legendSet);
                 position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
             }
 
-            self._renderIcon(position, legendColor, iconType, labelHeight, legendIndex);
+            self._renderIcon(position, {
+                legendColor: legendColor,
+                iconType: iconType,
+                labelHeight: labelHeight,
+                isUnselected: isUnselected,
+                legendIndex: legendIndex,
+                legendSet: legendSet
+            });
+
             position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
 
-            self._renderLabel(position, labelText, labelHeight, isUnselected, legendIndex);
+            self._renderLabel(position, {
+                labelText: labelText,
+                labelHeight: labelHeight,
+                isUnselected: isUnselected,
+                legendIndex: legendIndex,
+                legendSet: legendSet
+            });
             if (isHorizontal) {
-                position.left += data.labelsWidth[index] + chartConst.LEGEND_LABEL_LEFT_PADDING;
+                position.left += data.labelWidths[index] + chartConst.LEGEND_LABEL_LEFT_PADDING;
             } else {
-                position.left = 1;
+                position.left = data.position.left;
                 position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
             }
         });
 
-        if (isHorizontal) {
-            horizontalWidth = position.left + data.labelsWidth[data.labelsWidth.length - 1];
-            horizontalHeight = legendData[0].labelHeight + chartConst.LEGEND_LABEL_LEFT_PADDING;
-            this.paper.setSize(horizontalWidth, horizontalHeight);
-        }
-
-        return this.paper;
+        return legendSet;
     },
 
     /**
@@ -84,7 +86,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
      * @param {object} theme theme object
      * @returns {Array.<number>} label widths
      */
-    makeLabelsWidth: function(legendData, theme) {
+    makeLabelWidths: function(legendData, theme) {
         return tui.util.map(legendData, function(item) {
             var labelWidth = raphaelRenderUtil.getRenderedTextSize(item.label, theme.fontSize, theme.fontFamily).width;
 
@@ -105,31 +107,38 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
     /**
      * Render label text and attach event
      * @param {object} position left, top
-     * @param {string} labelText label text
-     * @param {number} labelHeight label height
-     * @param {boolean} isUnselected boolean value for selected or not
-     * @param {number} legendIndex legend index
+     * @param {object} data rendering data
+     *     @param {string} data.labelText label text
+     *     @param {number} data.labelHeight label height
+     *     @param {boolean} data.isUnselected boolean value for selected or not
+     *     @param {number} data.legendIndex legend index
+     *     @param {Array.<object>} data.legendSet legend set
      * @private
      */
-    _renderLabel: function(position, labelText, labelHeight, isUnselected, legendIndex) {
+    _renderLabel: function(position, data) {
         var self = this;
         var labelTheme = this.labelTheme;
         var pos = {
             left: position.left,
-            top: position.top + (labelHeight / 2)
+            top: position.top + (data.labelHeight / 2)
         };
 
-        raphaelRenderUtil.renderText(this.paper, pos, labelText, {
-            'font-size': labelTheme.fontSize,
-            'font-family': labelTheme.fontFamily,
-            'font-weight': labelTheme.fontWeight,
-            opacity: isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1,
-            'text-anchor': 'start'
-        }, {
-            name: 'click',
-            handler: function() {
-                self.eventBus.fire('labelClicked', legendIndex);
-            }
+        raphaelRenderUtil.renderText(this.paper, pos, {
+            text: data.labelText,
+            attributes: {
+                'font-size': labelTheme.fontSize,
+                'font-family': labelTheme.fontFamily,
+                'font-weight': labelTheme.fontWeight,
+                opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1,
+                'text-anchor': 'start'
+            },
+            events: [{
+                name: 'click',
+                handler: function() {
+                    self.eventBus.fire('labelClicked', data.legendIndex);
+                }
+            }],
+            set: data.legendSet
         });
     },
 
@@ -138,8 +147,9 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
      * @param {object} position left, top
      * @param {{checked: boolean}} checkboxData checkbox data
      * @param {number} legendIndex legend index
+     * @param {Array.<object>} legendSet legend set
      */
-    _renderCheckbox: function(position, checkboxData, legendIndex) {
+    _renderCheckbox: function(position, checkboxData, legendIndex, legendSet) {
         var self = this;
         var checkboxSet;
         var left = position.left;
@@ -149,20 +159,22 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
             + 'L' + ((CHECKBOX_WIDTH * 0.8) + left) + ',' + ((CHECKBOX_HEIGHT * 0.2) + top);
 
         if (checkboxData) {
-            this.paper.setStart();
+            checkboxSet = this.paper.set();
 
-            this.paper.rect(left, top, CHECKBOX_WIDTH, CHECKBOX_HEIGHT, 2).attr({
+            checkboxSet.push(this.paper.rect(left, top, CHECKBOX_WIDTH, CHECKBOX_HEIGHT, 2).attr({
                 fill: '#fff'
-            });
+            }));
 
             if (checkboxData.checked) {
-                this.paper.path(vPathString);
+                checkboxSet.push(this.paper.path(vPathString));
             }
-
-            checkboxSet = this.paper.setFinish();
 
             checkboxSet.click(function() {
                 self.eventBus.fire('checkboxClicked', legendIndex);
+            });
+
+            checkboxSet.forEach(function(checkbox) {
+                legendSet.push(checkbox);
             });
         }
     },
@@ -170,40 +182,43 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
     /**
      * Render legend icon and attach event
      * @param {object} position left, top
-     * @param {string} legendColor legend's color hex string
-     * @param {string} iconType 'line' or 'rect'
-     * @param {number} labelHeight label's height
-     * @param {number} legendIndex legend index
+     * @param {object} data rendering data
+     *     @param {string} data.labelText label text
+     *     @param {number} data.labelHeight label height
+     *     @param {string} data.legendColor legend color hex
+     *     @param {boolean} data.isUnselected boolean value for selected or not
+     *     @param {number} data.legendIndex legend index
+     *     @param {Array.<object>} data.legendSet legend set
      * @private
      */
-    _renderIcon: function(position, legendColor, iconType, labelHeight, legendIndex) {
+    _renderIcon: function(position, data) {
         var self = this;
         var icon, pathString;
 
         this.paper.setStart();
 
-        if (iconType === 'line') {
-            pathString = 'M' + position.left + ',' + (position.top + (labelHeight / 2))
+        if (data.iconType === 'line') {
+            pathString = 'M' + position.left + ',' + (position.top + (data.labelHeight / 2))
                 + 'H' + (position.left + 10);
 
-            raphaelRenderUtil.renderLine(this.paper, pathString, legendColor, 3);
+            icon = raphaelRenderUtil.renderLine(this.paper, pathString, data.legendColor, 3);
         } else {
-            raphaelRenderUtil.renderRect(this.paper, {
+            icon = raphaelRenderUtil.renderRect(this.paper, {
                 left: position.left,
                 top: position.top,
                 width: 10,
                 height: 10
             }, {
                 'stroke-width': 0,
-                fill: legendColor
+                fill: data.legendColor
             });
         }
 
-        icon = this.paper.setFinish();
-
         icon.click(function() {
-            self.eventBus.fire('labelClicked', legendIndex);
+            self.eventBus.fire('labelClicked', data.legendIndex);
         });
+
+        data.legendSet.push(icon);
     }
 });
 

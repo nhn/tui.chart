@@ -7,10 +7,13 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var chartConst = require('../const');
 
-var raphael = window.Raphael;
-
-var PADDING = 10;
+var PADDING = chartConst.LEGEND_AREA_PADDING;
+var DEGREE_HORIZONTAL_BAR = 360;
+var DEGREE_VERTICAL_BAR = 270;
+var GAP_BETWEEN_LABEL_AND_LEGEND_BAR = 35;
+var TICK_BAR_LENGTH = 15;
 
 /**
  * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
@@ -20,52 +23,85 @@ var PADDING = 10;
 var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototype */ {
     /**
      * Render function of map chart legend.
-     * @param {HTMLElement} container container
-     * @param {{width: number, height: number}} dimension legend dimension
+     * @param {object} paper raphael paper
+     * @param {object} layout legend layout
      * @param {ColorSpectrum} colorSpectrum map chart color model
      * @param {boolean} isHorizontal whether horizontal legend or not
-     * @returns {object} paper raphael paper
+     * @param {Array.<object>} legendSet legend set
      */
-    render: function(container, dimension, colorSpectrum, isHorizontal) {
-        var paper = raphael(container, dimension.width, dimension.height);
+    render: function(paper, layout, colorSpectrum, isHorizontal, legendSet) {
+        layout.position.left += PADDING;
 
-        this._renderGradientBar(paper, dimension, colorSpectrum, isHorizontal);
-        this.wedge = this._renderWedge(paper);
+        legendSet.push(this._renderGradientBar(paper, layout, colorSpectrum, isHorizontal));
 
-        return paper;
+        this.wedge = this._renderWedge(paper, layout.position);
+        legendSet.push(this.wedge);
+    },
+
+    /**
+     * Render gradient bar inner tick & tick label
+     * @param {object} paper Raphael paper
+     * @param {object} baseData base data for render ticks
+     * @param {Array.<string>} labels labels
+     * @param {boolean} isHorizontal boolean value for is horizontal or not
+     * @param {Array.<object>} legendSet legend set
+     */
+    renderTicksAndLabels: function(paper, baseData, labels, isHorizontal, legendSet) {
+        tui.util.forEach(labels, function(label, labelIndex) {
+            var offsetValue = baseData.step * labelIndex;
+            var pos = tui.util.extend({}, baseData.position);
+            var path = 'M';
+
+            if (isHorizontal) {
+                pos.left += offsetValue;
+                path += pos.left + ',' + (pos.top - GAP_BETWEEN_LABEL_AND_LEGEND_BAR)
+                    + 'V' + (pos.top - GAP_BETWEEN_LABEL_AND_LEGEND_BAR + TICK_BAR_LENGTH);
+            } else {
+                pos.top += offsetValue;
+                path += (pos.left - GAP_BETWEEN_LABEL_AND_LEGEND_BAR) + ',' + pos.top
+                    + 'H' + (pos.left - GAP_BETWEEN_LABEL_AND_LEGEND_BAR + TICK_BAR_LENGTH);
+            }
+
+            legendSet.push(raphaelRenderUtil.renderLine(paper, path, '#ccc', 1));
+
+            raphaelRenderUtil.renderText(paper, pos, {
+                text: label,
+                set: legendSet
+            });
+        });
     },
 
     /**
      * Render gradient bar.
      * @param {object} paper raphael object
-     * @param {{width: number, height: number}} dimension legend dimension
+     * @param {object} layout legend layout
      * @param {ColorSpectrum} colorSpectrum map chart color model
      * @param {boolean} isHorizontal whether horizontal legend or not
+     * @returns {object}
      * @private
      */
-    _renderGradientBar: function(paper, dimension, colorSpectrum, isHorizontal) {
-        var rectHeight = dimension.height;
-        var left = 0;
+    _renderGradientBar: function(paper, layout, colorSpectrum, isHorizontal) {
+        var rectHeight = layout.dimension.height;
+        var left = layout.position.left;
         var degree, bound;
 
         if (isHorizontal) {
             rectHeight -= PADDING;
-            left = PADDING / 2;
-            degree = 360;
+            degree = DEGREE_HORIZONTAL_BAR;
             this._makeWedghPath = this._makeHorizontalWedgePath;
         } else {
-            degree = 270;
+            degree = DEGREE_VERTICAL_BAR;
             this._makeWedghPath = this._makeVerticalWedgePath;
         }
 
         bound = {
             left: left,
-            top: 0,
-            width: dimension.width - PADDING,
+            top: layout.position.top,
+            width: layout.dimension.width - PADDING,
             height: rectHeight
         };
 
-        raphaelRenderUtil.renderRect(paper, bound, {
+        return raphaelRenderUtil.renderRect(paper, bound, {
             fill: degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end,
             stroke: 'none'
         });
@@ -74,17 +110,17 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
     /**
      * Render wedge.
      * @param {object} paper raphael object
+     * @param {{top: number, left: number}} position base position of legend
      * @returns {object} raphael object
      * @private
      */
-    _renderWedge: function(paper) {
-        var wedge = paper.path(this.verticalBasePath).attr({
+    _renderWedge: function(paper, position) {
+        return paper.path(this.verticalBasePath).attr({
             'fill': 'gray',
             stroke: 'none',
-            opacity: 0
+            opacity: 0,
+            transform: 't' + position.left + ',' + position.top
         });
-
-        return wedge;
     },
 
     /**
@@ -123,12 +159,11 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      */
     _makeHorizontalWedgePath: function(left) {
         var path = this.horizontalBasePath;
+        var positionLeft = left + (PADDING / 2);
 
-        left += PADDING / 2;
-
-        path[1] = left;
-        path[4] = left + 3;
-        path[7] = left - 3;
+        path[1] = positionLeft;
+        path[4] = positionLeft + 3;
+        path[7] = positionLeft - 3;
 
         return path;
     },

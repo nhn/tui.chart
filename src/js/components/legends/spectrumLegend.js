@@ -8,10 +8,7 @@
 
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
-var legendTemplate = require('./legendTemplate');
 
 var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */ {
     /**
@@ -24,13 +21,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      *      @param {MapChartDataProcessor} params.dataProcessor data processor
      */
     init: function(params) {
-        var libType = params.libType || chartConst.DEFAULT_PLUGIN;
-
-        /**
-         * class name.
-         * @type {string}
-         */
-        this.className = 'tui-chart-legend-area';
+        var libType = params.libType;
 
         /**
          * chart type
@@ -86,6 +77,8 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
          */
         this.scaleData = null;
 
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
         this._attachToEventBus();
     },
 
@@ -105,76 +98,33 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      * @returns {{startPositionValue: number, step: number, positionType: string, labelSize: ?number}} base data
      * @private
      */
-    _makeBaseDataToMakeTickHtml: function() {
+    _makeBaseDataToMakeTickArea: function() {
         var dimension = this.layout.dimension;
         var scaleData = this.scaleData;
         var stepCount = scaleData.stepCount || scaleData.tickCount - 1;
         var baseData = {};
-        var firstLabel;
+
+        baseData.position = this.layout.position;
 
         if (this.isHorizontal) {
-            baseData.startPositionValue = 5;
             baseData.step = dimension.width / stepCount;
-            baseData.positionType = 'left:';
+            baseData.position.top += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
         } else {
-            baseData.startPositionValue = 0;
             baseData.step = dimension.height / stepCount;
-            baseData.positionType = 'top:';
-            firstLabel = scaleData.labels[0];
-            baseData.labelSize = parseInt(renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label) / 2, 10) - 1;
+            baseData.position.left += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
         }
 
         return baseData;
     },
-    /**
-     * Make tick html.
-     * @returns {string} tick html.
-     * @private
-     */
-    _makeTickHtml: function() {
-        var self = this;
-        var baseData = this._makeBaseDataToMakeTickHtml();
-        var positionValue = baseData.startPositionValue;
-        var htmls;
-
-        htmls = tui.util.map(this.scaleData.labels, function(label) {
-            var labelSize, html;
-
-            if (self.isHorizontal) {
-                labelSize = parseInt(renderUtil.getRenderedLabelWidth(label, self.theme.label) / 2, 10);
-            } else {
-                labelSize = baseData.labelSize;
-            }
-
-            html = legendTemplate.tplTick({
-                position: baseData.positionType + positionValue + 'px',
-                labelPosition: baseData.positionType + (positionValue - labelSize) + 'px',
-                label: label
-            });
-
-            positionValue += baseData.step;
-
-            return html;
-        });
-
-        return htmls.join('');
-    },
 
     /**
      * Render tick area.
-     * @returns {HTMLElement} tick countainer
+     * @param {Array.<object>} legendSet legend set
      * @private
      */
-    _renderTickArea: function() {
-        var tickContainer = dom.create('div', 'tui-chart-legend-tick-area');
-
-        tickContainer.innerHTML = this._makeTickHtml();
-
-        if (this.isHorizontal) {
-            dom.addClass(tickContainer, 'horizontal');
-        }
-
-        return tickContainer;
+    _renderTickArea: function(legendSet) {
+        this.graphRenderer.renderTicksAndLabels(this.paper, this._makeBaseDataToMakeTickArea(),
+            this.scaleData.labels, this.isHorizontal, legendSet);
     },
 
     /**
@@ -203,10 +153,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
 
     /**
      * Render graph.
-     * @param {HTMLElement} container container element
+     * @param {Array.<object>} legendSet legend set
      * @private
      */
-    _renderGraph: function(container) {
+    _renderGraph: function(legendSet) {
         var dimension;
 
         if (this.isHorizontal) {
@@ -215,23 +165,24 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             dimension = this._makeVerticalGraphDimension();
         }
 
-        this.graphRenderer.render(container, dimension, this.colorSpectrum, this.isHorizontal);
+        this.graphRenderer.render(this.paper, {
+            dimension: dimension,
+            position: this.layout.position
+        }, this.colorSpectrum, this.isHorizontal, legendSet);
     },
 
     /**
      * Render legend area.
-     * @param {HTMLElement} container legend container
+     * @returns {Array.<object>}
      * @private
      */
-    _renderLegendArea: function(container) {
-        var tickContainer;
+    _renderLegendArea: function() {
+        var legendSet = this.paper.set();
 
-        container.innerHTML = '';
-        renderUtil.renderPosition(container, this.layout.position);
-        this._renderGraph(container);
-        tickContainer = this._renderTickArea();
-        container.appendChild(tickContainer);
-        container.style.cssText += ';' + renderUtil.makeFontCssText(this.theme.label);
+        this._renderGraph(legendSet);
+        this._renderTickArea(legendSet);
+
+        return legendSet;
     },
 
     /**
@@ -244,22 +195,26 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      */
     _setDataForRendering: function(data) {
         this.layout = data.layout;
+        this.paper = data.paper;
         this.scaleData = data.legendScaleData;
     },
 
     /**
      * Render legend component.
      * @param {object} data - scale data
-     * @returns {HTMLElement} legend element
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
-
-        this.legendContainer = container;
         this._setDataForRendering(data);
-        this._renderLegendArea(container);
+        this.legnedSet = this._renderLegendArea();
+    },
 
-        return container;
+    /**
+     * Rerender legend component.
+     * @param {object} data - scale data
+     */
+    rerender: function(data) {
+        this.legnedSet.remove();
+        this.legnedSet = this.render(data);
     },
 
     /**
@@ -267,8 +222,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      * @param {object} data - scale data
      */
     resize: function(data) {
-        this._setDataForRendering(data);
-        this._renderLegendArea(this.legendContainer);
+        this.rerender(data);
     },
 
     /**

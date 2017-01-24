@@ -9,7 +9,6 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var arrayUtil = require('../helpers/arrayUtil');
 
-var raphael = window.Raphael;
 var STEP_TOP_ADJUSTMENT = 8;
 var STEP_LEFT_ADJUSTMENT = 3;
 
@@ -29,48 +28,53 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
      * @returns {object} paper raphael paper
      */
     render: function(params) {
-        var paper = raphael(params.container, params.dimension.width, params.dimension.height);
+        var plotSet = params.paper.set();
 
-        this.paper = paper;
-        this.dimension = params.dimension;
+        this.paper = params.paper;
+        this.layout = params.layout;
         this.plotPositions = params.plotPositions;
         this.theme = params.theme;
         this.options = params.options;
         this.labelData = params.labelData;
 
-        this._renderPlot();
-        this._renderLabels();
+        this._renderPlot(plotSet);
+        this._renderLabels(plotSet);
 
-        return paper;
+        return plotSet;
     },
 
     /**
      * Render plot component
+     * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderPlot: function() {
+    _renderPlot: function(plotSet) {
         if (this.options.type === 'circle') {
-            this._renderCirclePlot();
+            this._renderCirclePlot(plotSet);
         } else {
-            this._renderSpiderwebPlot();
+            this._renderSpiderwebPlot(plotSet);
         }
 
-        this._renderCatergoryLines();
+        this._renderCatergoryLines(plotSet);
     },
 
     /**
      * Render spider web plot
+     * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderSpiderwebPlot: function() {
-        this._renderLines(this._getLinesPath(this.plotPositions), this.theme.lineColor);
+    _renderSpiderwebPlot: function(plotSet) {
+        var groupPaths = this._getLinesPath(this.plotPositions);
+
+        this._renderLines(groupPaths, this.theme.lineColor, plotSet);
     },
 
     /**
      * Render circle plot
+     * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderCirclePlot: function() {
+    _renderCirclePlot: function(plotSet) {
         var i, pos, radius;
         var plotPositions = this.plotPositions;
         var centerPoint = plotPositions[0][0];
@@ -80,25 +84,29 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
             pos = plotPositions[i][0];
             radius = centerPoint.top - pos.top;
 
-            raphaelRenderUtil.renderCircle(this.paper, centerPoint, radius, {
+            plotSet.push(raphaelRenderUtil.renderCircle(this.paper, centerPoint, radius, {
                 stroke: strokeColor
-            });
+            }));
         }
     },
 
     /**
      * Render category lines
+     * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderCatergoryLines: function() {
-        this._renderLines(this._getLinesPath(arrayUtil.pivot(this.plotPositions)), this.theme.lineColor);
+    _renderCatergoryLines: function(plotSet) {
+        var groupPaths = this._getLinesPath(arrayUtil.pivot(this.plotPositions));
+
+        this._renderLines(groupPaths, this.theme.lineColor, plotSet);
     },
 
     /**
      * Render labels
+     * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderLabels: function() {
+    _renderLabels: function(plotSet) {
         var paper = this.paper;
         var theme = this.theme;
         var labelData = this.labelData;
@@ -113,7 +121,12 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
                 'dominant-baseline': 'middle'
             };
 
-            raphaelRenderUtil.renderText(paper, item.position, item.text, attrs);
+            raphaelRenderUtil.renderText(paper, item.position, {
+                text: item.text,
+                attributes: attrs,
+                set: plotSet,
+                toBack: true
+            });
         });
 
         tui.util.forEachArray(labelData.step, function(item) {
@@ -129,7 +142,12 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
             item.position.top -= STEP_TOP_ADJUSTMENT;
             item.position.left -= STEP_LEFT_ADJUSTMENT;
 
-            raphaelRenderUtil.renderText(paper, item.position, item.text, attrs);
+            raphaelRenderUtil.renderText(paper, item.position, {
+                text: item.text,
+                attributes: attrs,
+                set: plotSet,
+                toBack: true
+            });
         });
     },
 
@@ -137,14 +155,19 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
      * Render lines.
      * @param {Array.<Array.<string>>} groupPaths paths
      * @param {string} lineColor line color
+     * @param {Array.<object>} plotSet plot set
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderLines: function(groupPaths, lineColor) {
+    _renderLines: function(groupPaths, lineColor, plotSet) {
         var paper = this.paper;
 
         return tui.util.map(groupPaths, function(path) {
-            return raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
+            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
+
+            plotSet.push(line);
+
+            return line;
         });
     },
 

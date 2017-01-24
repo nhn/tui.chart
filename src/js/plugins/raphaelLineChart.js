@@ -14,8 +14,6 @@ var DE_EMPHASIS_OPACITY = 0.3;
 var LEFT_BAR_WIDTH = 10;
 var ADDING_DATA_ANIMATION_DURATION = 300;
 
-var raphael = window.Raphael;
-
 var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
     /**
      * RaphaelLineCharts is graph renderer for line chart.
@@ -40,12 +38,11 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
     /**
      * Render function of line chart.
-     * @param {HTMLElement} container container
-     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @param {object} [paper] - raphael paper
+     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @returns {object} paper raphael paper
      */
-    render: function(container, data, paper) {
+    render: function(paper, data) {
         var dimension = data.dimension;
         var groupPositions = data.groupPositions;
         var theme = data.theme;
@@ -62,12 +59,11 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             groupPaths = this._getLinesPath(groupPositions, data.options.connectNulls);
         }
 
-        paper = paper || raphael(container, 1, dimension.height);
-
         this.paper = paper;
         this.isSpline = isSpline;
         this.dimension = dimension;
 
+        paper.setStart();
         this.groupLines = this._renderLines(paper, groupPaths, colors);
         this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
@@ -77,7 +73,6 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }
-
         this.colors = colors;
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;
@@ -86,7 +81,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 
-        return paper;
+        return paper.setFinish();
     },
 
     /**
@@ -220,11 +215,44 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
             tui.util.forEachArray(dots, function(item, index) {
                 var position = groupPosition[index + additionalIndex];
-                self._animateByPosition(item.endDot.dot, position);
+                self._animateByPosition(item.endDot.dot, position, tickSize);
             });
 
-            self._animateByPath(line, groupPaths[groupIndex]);
+            self._animateByPath(line, groupPaths[groupIndex], tickSize);
         });
+    },
+
+    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme) {
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            fill: labelTheme.color,
+            'text-anchor': 'middle'
+        };
+        var set = paper.set();
+
+        tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
+            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+                var position = groupPositions[categoryIndex][seriesIndex];
+
+                raphaelRenderUtil.renderText(paper, position.end, {
+                    text: label.end,
+                    attributes: attributes,
+                    set: set
+                });
+
+                if (position.start) {
+                    raphaelRenderUtil.renderText(paper, position.start, {
+                        text: label.start,
+                        attributes: attributes,
+                        set: set
+                    });
+                }
+            });
+        });
+
+        return set;
     }
 });
 

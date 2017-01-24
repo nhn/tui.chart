@@ -24,7 +24,7 @@ var zoomMixer = {
         this._render(function(boundsAndScale) {
             self.componentManager.render('zoom', boundsAndScale, {
                 isResetZoom: isResetZoom
-            });
+            }, self.chartContainer);
         });
     },
 

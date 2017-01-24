@@ -9,7 +9,6 @@
 var Series = require('./series');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
 
 var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -40,6 +39,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          * @type {?number}
          */
         this.prevClickedIndex = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
 
         this._setDefaultOptions();
     },
@@ -298,9 +299,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _calculateCenterXY: function(radius) {
         var dimension = this.layout.dimension;
+        var position = this.layout.position;
         var halfRadius = radius / 2;
-        var cx = dimension.width / 2;
-        var cy = dimension.height / 2;
+        var cx = (dimension.width / 2) + position.left;
+        var cy = (dimension.height / 2) + position.top;
 
         if (!this.isCombo) {
             if (this._isInQuadrantRange(1, 1)) {
@@ -367,6 +369,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * Render raphael graph.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
+     * @param {object} paper paper object
      * @private
      * @override
      */
@@ -403,9 +406,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         });
 
         params.additionalIndex = pastIndex;
-        params.paper = paper;
 
-        return this.graphRenderer.render(this.seriesContainer, params, callbacks);
+        return this.graphRenderer.render(paper, params, callbacks);
     },
 
     /**
@@ -459,78 +461,30 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Get series label.
-     * @param {object} params parameters
-     *      @param {string} params.legend legend
-     *      @param {string} params.label label
-     *      @param {string} params.separator separator
-     * @returns {string} series label
-     * @private
-     */
-    _getSeriesLabel: function(params) {
-        var seriesLabel = '';
-
-        if (this.options.showLegend) {
-            seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
-        }
-
-        if (this.options.showLabel) {
-            seriesLabel += (seriesLabel ? params.separator : '') + params.label;
-        }
-
-        return seriesLabel;
-    },
-
-    /**
      * Render center legend.
+     * @param {object} paper paper
      * @param {object} params parameters
      *      @param {Array.<object>} params.positions positions
      *      @param {string} params.separator separator
      *      @param {object} params.options options
      *      @param {function} params.funcMoveToPosition function
-     * @param {HTMLElement} seriesLabelContainer series label area element
+     * @returns {Array.<object>}
      * @private
      */
-    _renderLegendLabel: function(params, seriesLabelContainer) {
-        var self = this;
+    _renderLegendLabel: function(paper, params) {
         var dataProcessor = this.dataProcessor;
-        var seriesDataModel = this._getSeriesDataModel();
-        var positions = params.positions;
-        var htmls = tui.util.map(dataProcessor.getLegendLabels(this.seriesType), function(legend, index) {
-            var html = '',
-                label, position;
+        var legendLabels = dataProcessor.getLegendLabels(this.seriesType);
+        var positions;
 
-            if (positions[index]) {
-                label = self._getSeriesLabel({
-                    legend: legend,
-                    label: seriesDataModel.getSeriesItem(0, index).label,
-                    separator: params.separator
-                });
-                position = params.funcMoveToPosition(positions[index], label);
-                html = self._makeSeriesLabelHtml(position, label, index);
-            }
+        if (params.funcMoveToPosition) {
+            positions = tui.util.map(params.positions, function(position, index) {
+                return params.funcMoveToPosition(position, legendLabels[index]);
+            });
+        } else {
+            positions = params.positions;
+        }
 
-            return html;
-        });
-
-        seriesLabelContainer.innerHTML = htmls.join('');
-    },
-
-    /**
-     * Move to center position.
-     * @param {{left: number, top: number}} position position
-     * @param {string} label label
-     * @returns {{left: number, top: number}} center position
-     * @private
-     */
-    _moveToCenterPosition: function(position, label) {
-        var left = position.left - (renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2),
-            top = position.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
-
-        return {
-            left: left,
-            top: top
-        };
+        return this.graphRenderer.renderLabels(paper, positions, legendLabels, this.theme.label);
     },
 
     /**
@@ -547,15 +501,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Render center legend.
-     * @param {HTMLElement} seriesLabelContainer series label area element
+     * @param {object} paper paper
+     * @returns {Array.<object>}
      * @private
      */
-    _renderCenterLegend: function(seriesLabelContainer) {
-        this._renderLegendLabel({
-            positions: this._pickPositionsFromSectorData('centerPosition'),
-            funcMoveToPosition: tui.util.bind(this._moveToCenterPosition, this),
-            separator: '<br>'
-        }, seriesLabelContainer);
+    _renderCenterLegend: function(paper) {
+        return this._renderLegendLabel(paper, {
+            positions: this._pickPositionsFromSectorData('centerPosition')
+        });
     },
 
     /**
@@ -591,14 +544,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _moveToOuterPosition: function(centerLeft, position, label) {
-        var positionEnd = position.end,
-            left = positionEnd.left,
-            top = positionEnd.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
+        var positionEnd = position.end;
+        var left = positionEnd.left;
+        var top = positionEnd.top;
+        var OffsetX = (this.graphRenderer.getRenderedLabelWidth(label, this.theme.label) / 2)
+            + chartConst.SERIES_LABEL_PADDING;
 
         if (left < centerLeft) {
-            left -= renderUtil.getRenderedLabelWidth(label, this.theme.label) + chartConst.SERIES_LABEL_PADDING;
+            left -= OffsetX;
         } else {
-            left += chartConst.SERIES_LABEL_PADDING;
+            left += OffsetX;
         }
 
         return {
@@ -609,10 +564,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Render outer legend.
-     * @param {HTMLElement} seriesLabelContainer series label area element
+     * @param {object} paper paper
+     * @returns {Array.<object>}
      * @private
      */
-    _renderOuterLegend: function(seriesLabelContainer) {
+    _renderOuterLegend: function(paper) {
         var centerLeft = this.getSeriesData().circleBound.cx;
         var outerPositions = this._pickPositionsFromSectorData('outerPosition');
         var filteredPositions = tui.util.filter(outerPositions, function(position) {
@@ -620,26 +576,31 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         });
 
         this._addEndPosition(centerLeft, filteredPositions);
-        this._renderLegendLabel({
+        this._renderLegendLabel(paper, {
             positions: outerPositions,
             funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
-        }, seriesLabelContainer);
+        });
 
-        this.graphRenderer.renderLegendLines(filteredPositions);
+        return this.graphRenderer.renderLegendLines(filteredPositions);
     },
 
     /**
      * Render series label.
-     * @param {HTMLElement} seriesLabelContainer series label area element
+     * @param {object} paper paper
+     * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function(seriesLabelContainer) {
+    _renderSeriesLabel: function(paper) {
+        var labelSet;
+
         if (predicate.isLabelAlignOuter(this.options.labelAlign)) {
-            this._renderOuterLegend(seriesLabelContainer);
+            labelSet = this._renderOuterLegend(paper);
         } else {
-            this._renderCenterLegend(seriesLabelContainer);
+            labelSet = this._renderCenterLegend(paper);
         }
+
+        return labelSet;
     },
 
     /**

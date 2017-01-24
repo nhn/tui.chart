@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var raphael = window.Raphael;
 
 var BarChart = require('./raphaelBarChart');
 var LineChart = require('./raphaelLineChart');
@@ -23,7 +24,7 @@ var axis = require('./raphaelAxisComponent');
 
 var RadialPlot = require('./raphaelRadialPlot');
 
-var pluginName = 'raphael';
+var pluginName = 'Raphael';
 var pluginRaphael = {
     bar: BarChart,
     column: BarChart,
@@ -43,5 +44,8 @@ var pluginRaphael = {
     title: title,
     axis: axis
 };
+var callback = function(container, dimension) {
+    return raphael(container, dimension.width, dimension.height);
+};
 
-tui.chart.registerPlugin(pluginName, pluginRaphael);
+tui.chart.registerPlugin(pluginName, pluginRaphael, callback);

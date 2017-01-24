@@ -7,9 +7,6 @@
 'use strict';
 
 var labelHelper = require('../../../src/js/components/series/renderingLabelHelper');
-var TreemapChartSeries = require('../../../src/js/components/series/treemapChartSeries');
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModelForTreemap');
-var seriesTemplate = require('../../../src/js/components/series/seriesTemplate');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('Test for renderingLabelHelper', function() {
@@ -26,7 +23,7 @@ describe('Test for renderingLabelHelper', function() {
             };
             var actual = labelHelper._calculateLeftPositionForCenterAlign(bound, 60);
 
-            expect(actual).toBe(40);
+            expect(actual).toBe(70);
         });
     });
 
@@ -38,7 +35,7 @@ describe('Test for renderingLabelHelper', function() {
             };
             var actual = labelHelper._calculateTopPositionForMiddleAlign(bound, 60);
 
-            expect(actual).toBe(41);
+            expect(actual).toBe(70);
         });
     });
 
@@ -52,8 +49,8 @@ describe('Test for renderingLabelHelper', function() {
             };
             var actual = labelHelper._makePositionForBoundType(bound, 20, 'label');
 
-            expect(actual.left).toBe(25);
-            expect(actual.top).toBe(36);
+            expect(actual.left).toBe(50);
+            expect(actual.top).toBe(45);
         });
     });
 
@@ -72,8 +69,8 @@ describe('Test for renderingLabelHelper', function() {
             var actual = labelHelper._makePositionMap(seriesItem, bound, 20, {}, makePosition);
 
             expect(actual.end).toEqual({
-                left: 25,
-                top: 36
+                left: 50,
+                top: 45
             });
             expect(actual.start).toBeUndefined();
         });
@@ -94,203 +91,12 @@ describe('Test for renderingLabelHelper', function() {
 
             expect(actual.end).toEqual({
                 left: 75,
-                top: 36
+                top: 45
             });
             expect(actual.start).toEqual({
                 left: -25,
-                top: 36
+                top: 45
             });
-        });
-    });
-
-    describe('_makeLabelCssText()', function() {
-        it('make cssText for label', function() {
-            var position = {
-                left: 10,
-                top: 10
-            };
-            var theme = {
-                fontFamily: 'Verdana',
-                fontSize: 12,
-                fontWeight: 'normal'
-            };
-            var actual = labelHelper._makeLabelCssText(position, theme);
-
-            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px;font-weight:normal');
-        });
-
-        it('make cssText for label, when selectedIndex exist and not equal as index', function() {
-            var position = {
-                left: 10,
-                top: 10
-            };
-            var theme = {
-                fontFamily: 'Verdana',
-                fontSize: 12,
-                fontWeight: 'normal'
-            };
-            var index = 0;
-            var selectedIndex = 1;
-            var actual;
-
-            spyOn(renderUtil, 'makeOpacityCssText').and.returnValue(';opacity:0.3');
-
-            actual = labelHelper._makeLabelCssText(position, theme, index, selectedIndex);
-
-            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px;font-weight:normal;opacity:0.3');
-        });
-
-        it('cssText template을 전달하면 해당 template으로 cssText를 생성합니다.', function() {
-            var position = {
-                left: 10,
-                top: 10
-            };
-            var theme = {
-                fontFamily: 'Verdana',
-                fontSize: 12,
-                fontWeight: 'normal'
-            };
-            var actual = labelHelper._makeLabelCssText(position, theme, null, null, seriesTemplate.tplCssTextForLineType);
-
-            expect(actual).toBe('left:10%;top:10%;font-family:Verdana;font-size:12px;font-weight:normal');
-        });
-    });
-
-    describe('makeSeriesLabelHtml()', function() {
-        it('make html for series label', function() {
-            var position = {
-                left: 10,
-                top: 10
-            };
-            var theme = {
-                fontFamily: 'Verdana',
-                fontSize: 12,
-                fontWeight: 'normal'
-            };
-            var label = 'label';
-            var index = 0;
-            var selectedIndex = 1;
-            var actual, expected;
-
-            spyOn(renderUtil, 'makeOpacityCssText').and.returnValue(';opacity:0.3');
-
-            actual = labelHelper.makeSeriesLabelHtml(position, label, theme, index, selectedIndex);
-            expected = '<div class="tui-chart-series-label"' +
-                    ' style="left:10px;top:10px;font-family:Verdana;font-size:12px;font-weight:normal;opacity:0.3">' +
-                'label</div>';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('makeLabelsHtmlForTreemap', function() {
-        var seriesDataModel, hoverSeriesItem, series, shouldDimmed, seriesItems, boundMap;
-
-        beforeEach(function() {
-            seriesDataModel = new SeriesDataModel([], 'treemap');
-            hoverSeriesItem = {
-                id: 'id_0',
-                depth: 1
-            };
-            series = new TreemapChartSeries({
-                chartType: 'treemap',
-                theme: {
-                    treemap: {
-                        label: {
-                            fontSize: 12,
-                            fontFamily: 'Verdana',
-                            fontWeight: 'normal'
-                        }
-                    }
-                },
-                eventBus: new tui.util.CustomEvents()
-            });
-
-            series.layout = {
-                dimension: {
-                    width: 600,
-                    height: 400
-                }
-            };
-            seriesDataModel.rawSeriesData = [
-                {
-                    label: 'label1',
-                    children: [
-                        {
-                            label: 'label1-1',
-                            value: 6
-                        }, {
-                            label: 'label1-2',
-                            children: [
-                                {
-                                    label: 'label1-2-1',
-                                    children: [
-                                        {
-                                            label: 'label1-2-1-1',
-                                            value: 2
-                                        },
-                                        {
-                                            label: 'label1-2-1-2',
-                                            value: 1
-                                        }
-                                    ]
-                                },
-                                {
-                                    label: 'label3-2',
-                                    value: 3
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    label: 'lable2',
-                    value: 4
-                }
-            ];
-
-            spyOn(series, '_getSeriesDataModel').and.returnValue(seriesDataModel);
-            shouldDimmed = tui.util.bind(series._shouldDimmed, series, seriesDataModel, hoverSeriesItem);
-            seriesItems = seriesDataModel.findLeafSeriesItems(0);
-            boundMap = series._getBoundMap();
-        });
-
-        it('make labels html for treemap', function() {
-            var actual = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, series.theme.label, shouldDimmed);
-            var expected = '<div class="tui-chart-series-label"' +
-                ' style="left:87.5px;top:191px;font-family:Verdana;font-size:12px;font-weight:normal">label1-1</div>' +
-            '<div class="tui-chart-series-label"' +
-                ' style="left:312.5px;top:291px;font-family:Verdana;font-size:12px;font-weight:normal">label3-2</div>' +
-            '<div class="tui-chart-series-label"' +
-                ' style="left:275px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">label1-2-1-1</div>' +
-            '<div class="tui-chart-series-label"' +
-                ' style="left:387.5px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">label1-2-1-2</div>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('make labels html for treemap, when has labelTemplate', function() {
-            var labelTemplate = function(data) {
-                return '<div>' + data.label + '</div>';
-            };
-            var actual = labelHelper.makeLabelsHtmlForTreemap(
-                seriesItems, boundMap, series.theme.label, shouldDimmed, labelTemplate
-            );
-            var expected = '<div class="tui-chart-series-label"' +
-                    ' style="left:87.5px;top:191px;font-family:Verdana;font-size:12px;font-weight:normal">' +
-                    '<div>label1-1</div></div>' +
-                '<div class="tui-chart-series-label"' +
-                    ' style="left:312.5px;top:291px;font-family:Verdana;font-size:12px;font-weight:normal">' +
-                    '<div>label3-2</div></div>' +
-                '<div class="tui-chart-series-label"' +
-                    ' style="left:275px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">' +
-                    '<div>label1-2-1-1</div></div>' +
-                '<div class="tui-chart-series-label"' +
-                    ' style="left:387.5px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">' +
-                    '<div>label1-2-1-2</div></div>';
-
-            expect(actual).toBe(expected);
-
         });
     });
 });

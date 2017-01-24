@@ -13,6 +13,7 @@ var themeManager = require('./themes/themeManager');
 var mapManager = require('./factories/mapManager');
 var objectUtil = require('./helpers/objectUtil');
 var seriesDataImporter = require('./helpers/seriesDataImporter');
+var drawingToolPicker = require('./helpers/drawingToolPicker');
 
 require('../less/style.less');
 require('./polyfill');
@@ -1387,14 +1388,16 @@ tui.chart.registerMap = function(mapName, data) {
  * @memberOf tui.chart
  * @param {string} libType type of graph library
  * @param {object} plugin plugin to control library
+ * @param {function} getPaperCallback callback function for getting paper
  * @example
  * var pluginRaphael = {
  *   bar: function() {} // Render class
  * };
  * tui.chart.registerPlugin('raphael', pluginRaphael);
  */
-tui.chart.registerPlugin = function(libType, plugin) {
+tui.chart.registerPlugin = function(libType, plugin, getPaperCallback) {
     pluginFactory.register(libType, plugin);
+    drawingToolPicker.addRendererType(libType, getPaperCallback);
 };
 
 require('./plugins/pluginRaphael');

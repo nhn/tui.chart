@@ -36,13 +36,16 @@ describe('BarTypeSeriesBase', function() {
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
         series.dataProcessor = dataProcessor;
+        series.layout = {
+            position: {
+                top: 0,
+                left: 0
+            }
+        };
         series._makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
             left: 0,
             top: 0
         });
-        series._makeSeriesLabelHtml = jasmine.createSpy('_makeSeriesLabelHtml').and.returnValue('<div></div>');
-        series._makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');
-        series._makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');
         series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
     });
 
@@ -153,41 +156,6 @@ describe('BarTypeSeriesBase', function() {
         });
     });
 
-    describe('_renderNormalSeriesLabel()', function() {
-        it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
-            var labelContainer = dom.create('div');
-            var seriesDataModel = new SeriesDataModel();
-
-            dataProcessor.getFirstItemLabel.and.returnValue('1.5');
-            series._getSeriesDataModel.and.returnValue(seriesDataModel);
-            seriesDataModel.groups = [
-                new SeriesGroup([{
-                    value: 1.5,
-                    endLabel: '1.5'
-                }, {
-                    value: 2.2,
-                    endLabel: '2.2'
-                }])
-            ];
-
-            series.seriesData = {
-                groupBounds: [
-                    [
-                        {
-                            end: {}
-                        },
-                        {
-                            end: {}
-                        }
-                    ]
-                ]
-            };
-            series._renderNormalSeriesLabel(labelContainer);
-
-            expect(labelContainer.childNodes.length).toEqual(2);
-        });
-    });
-
     describe('_makeSumValues()', function() {
         it('[10, 20, 30] values의 합은 60입니다.', function() {
             var actual = series._makeSumValues([10, 20, 30]);
@@ -206,108 +174,13 @@ describe('BarTypeSeriesBase', function() {
         });
     });
 
-    describe('_makeStackedLabelsHtml()', function() {
-        it('bar type(bar, column) stack 차트의 series label html을 전달하는 values의 수 만큼 생성합니다.', function() {
-            var container = dom.create('div');
-            var html;
-            series.options = {
-                stackType: 'percent'
-            };
-
-            html = series._makeStackedLabelsHtml({
-                seriesGroup: new SeriesGroup([{
-                    value: 1.5,
-                    label: '1.5'
-                }, {
-                    value: 2.2,
-                    label: '2.2'
-                }]),
-                bounds: [
-                    {
-                        end: {}
-                    },
-                    {
-                        end: {}
-                    }
-                ],
-                labelHeight: 10
-            });
-            container.innerHTML = html;
-            expect(container.childNodes.length).toBe(2);
-        });
-
-        it('stackType옵션이 normal일 경우에는 series label html을 전달하는 values + 1(sum)만큼 생성합니다.', function() {
-            var container = dom.create('div');
-            var html;
-
-            series.options = {
-                stackType: 'normal'
-            };
-
-            html = series._makeStackedLabelsHtml({
-                seriesGroup: new SeriesGroup([{
-                    value: 1.5,
-                    label: '1.5'
-                }, {
-                    value: 2.2,
-                    label: '2.2'
-                }]),
-                bounds: [
-                    {
-                        end: {}
-                    },
-                    {
-                        end: {}
-                    }
-                ],
-                labelHeight: 10
-            });
-            container.innerHTML = html;
-            expect(container.childNodes.length).toBe(4);
-        });
-    });
-
-    describe('_renderStackedSeriesLabel()', function() {
-        it('bar type(bar, column) stackType=normal 차트의 series label을 전달하는 values의 수 + 1(sum)만큼 랜더링 합니다.', function() {
-            var elLabelArea = dom.create('div');
-            var seriesDataModel = new SeriesDataModel();
-
-            dataProcessor.getFirstItemLabel.and.returnValue('1.5');
-            series._getSeriesDataModel.and.returnValue(seriesDataModel);
-            seriesDataModel.groups = [
-                new SeriesGroup([{
-                    value: 1.5
-                }, {
-                    value: 2.2
-                }])
-            ];
-
-            series.options = {
-                stackType: 'normal'
-            };
-            series.seriesData = {
-                groupBounds: [
-                    [
-                        {
-                            end: {}
-                        },
-                        {
-                            end: {}
-                        }
-                    ]
-                ]
-            };
-            series._renderStackedSeriesLabel(elLabelArea);
-
-            expect(elLabelArea.childNodes.length).toBe(4);
-        });
-    });
-
     describe('_renderSeriesLabel()', function() {
         it('stackType 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div');
-            var elExpected = dom.create('div');
+            var paper = window.Raphael(elLabelArea, 100, 100);
             var seriesDataModel = new SeriesDataModel();
+
+            spyOn(series, '_renderNormalSeriesLabel');
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
@@ -334,17 +207,17 @@ describe('BarTypeSeriesBase', function() {
                 ]
             };
 
-            series._renderSeriesLabel(elLabelArea);
-            series._renderNormalSeriesLabel(elExpected);
+            series._renderSeriesLabel(paper);
 
-            expect(elLabelArea.className).toEqual(elExpected.className);
-            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
+            expect(series._renderNormalSeriesLabel).toHaveBeenCalled();
         });
 
         it('stackType 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div');
-            var elExpected = dom.create('div');
+            var paper = window.Raphael(elLabelArea, 100, 100);
             var seriesDataModel = new SeriesDataModel();
+
+            spyOn(series, '_renderStackedSeriesLabel');
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
@@ -373,11 +246,9 @@ describe('BarTypeSeriesBase', function() {
                 ]
             };
 
-            series._renderSeriesLabel(elLabelArea);
-            series._renderStackedSeriesLabel(elExpected);
+            series._renderSeriesLabel(paper);
 
-            expect(elLabelArea.className).toEqual(elExpected.className);
-            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
+            expect(series._renderStackedSeriesLabel).toHaveBeenCalled();
         });
     });
 });

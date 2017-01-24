@@ -22,24 +22,24 @@ var DEFAULT_LUMINANC = 0.2;
 var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
     /**
      * Render function of bar chart
-     * @param {HTMLElement} container container element
+     * @param {object} paper paper object
      * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
-     * @returns {object} paper raphael paper
+     * @returns {Array.<object>} seriesSet
      */
-    render: function(container, data) {
-        var groupBounds = data.groupBounds,
-            dimension = data.dimension,
-            paper;
+    render: function(paper, data) {
+        var groupBounds = data.groupBounds;
 
         if (!groupBounds) {
             return null;
         }
 
-        this.paper = paper = raphael(container, dimension.width, dimension.height);
+        this.paper = paper;
 
         this.theme = data.theme;
         this.seriesDataModel = data.seriesDataModel;
         this.chartType = data.chartType;
+
+        this.paper.setStart();
 
         this.groupBars = this._renderBars(groupBounds);
         this.groupBorders = this._renderBarBorders(groupBounds);
@@ -48,7 +48,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         this.theme = data.theme;
         this.groupBounds = groupBounds;
 
-        return paper;
+        return this.paper.setFinish();
     },
 
     /**
@@ -559,6 +559,39 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 });
             }
         });
+    },
+
+    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme, isStacked) {
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            fill: labelTheme.color,
+            'text-anchor': isStacked ? 'middle' : 'start'
+        };
+        var labelSet = paper.set();
+
+        tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
+            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+                var position = groupPositions[categoryIndex][seriesIndex];
+
+                raphaelRenderUtil.renderText(paper, position.end, {
+                    text: label.end,
+                    attributes: attributes,
+                    set: labelSet
+                });
+
+                if (position.start) {
+                    raphaelRenderUtil.renderText(paper, position.start, {
+                        text: label.start,
+                        attributes: attributes,
+                        set: labelSet
+                    });
+                }
+            });
+        });
+
+        return labelSet;
     }
 });
 

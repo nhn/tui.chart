@@ -10,8 +10,6 @@ var Series = require('./series');
 var BarTypeSeriesBase = require('./barTypeSeriesBase');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
 
 var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
     /**
@@ -104,7 +102,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         var barWidth = baseData.baseBarSize * seriesItem.ratioDistance;
         var additionalLeft = this._calculateAdditionalLeft(seriesItem.value);
         var barStartLeft = baseData.baseBarSize * seriesItem.startRatio;
-        var startLeft = baseData.basePosition + barStartLeft + additionalLeft + chartConst.SERIES_EXPAND_SIZE;
+        var startLeft = baseData.basePosition + barStartLeft + additionalLeft;
         var changedStack = (seriesItem.stack !== iterationData.prevStack);
         var pointCount, endLeft, bound, boundTop;
 
@@ -143,7 +141,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         var baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var baseTop = (groupIndex * baseData.groupSize) + chartConst.SERIES_EXPAND_SIZE;
+            var baseTop = (groupIndex * baseData.groupSize) + self.layout.position.top;
             var iterationData = {
                 baseTop: baseTop,
                 top: baseTop,
@@ -166,62 +164,6 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      */
     _calculateTopPositionOfSumLabel: function(bound, labelHeight) {
         return bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
-    },
-
-    /**
-     * Make html of plus sum label.
-     * @param {Array.<number>} values values
-     * @param {{left: number, top: number}} bound bound
-     * @param {number} labelHeight label height
-     * @returns {string} plus sum label html
-     * @private
-     */
-    _makePlusSumLabelHtml: function(values, bound, labelHeight) {
-        var html = '';
-        var sum, formatFunctions, formattedSum;
-
-        if (bound) {
-            sum = calculator.sumPlusValues(values);
-            formatFunctions = this.dataProcessor.getFormatFunctions();
-            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
-            html = this._makeSeriesLabelHtml({
-                left: bound.left + bound.width + chartConst.SERIES_LABEL_PADDING,
-                top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
-            }, formattedSum, -1);
-        }
-
-        return html;
-    },
-
-    /**
-     * Make minus sum label html.
-     * @param {Array.<number>} values values
-     * @param {{left: number, top: number}} bound bound
-     * @param {number} labelHeight label height
-     * @returns {string} plus minus label html
-     * @private
-     */
-    _makeMinusSumLabelHtml: function(values, bound, labelHeight) {
-        var html = '';
-        var sum, formatFunctions, formattedSum, labelWidth;
-
-        if (bound) {
-            sum = calculator.sumMinusValues(values);
-
-            if (this.options.diverging) {
-                sum = Math.abs(sum);
-            }
-
-            formatFunctions = this.dataProcessor.getFormatFunctions();
-            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
-            labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
-            html = this._makeSeriesLabelHtml({
-                left: bound.left - labelWidth - chartConst.SERIES_LABEL_PADDING,
-                top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
-            }, formattedSum, -1);
-        }
-
-        return html;
     }
 });
 

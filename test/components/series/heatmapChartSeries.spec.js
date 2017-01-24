@@ -28,14 +28,18 @@ describe('HeatmapChartSeries', function() {
             series.layout = {
                 dimension: {
                     height: 200
+                },
+                position: {
+                    top: 0,
+                    left: 0
                 }
             };
 
             actual = series._makeBound(30, 30, 0, 1);
 
             expect(actual.end).toEqual({
-                left: 10,
-                top: 150,
+                left: 0,
+                top: 140,
                 width: 30,
                 height: 30
             });

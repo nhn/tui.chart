@@ -81,13 +81,15 @@ var singleTooltipMixer = {
      */
     _makeLeftPositionOfNotBarChart: function(baseLeft, alignOption, minusWidth, lineGap) {
         var left = baseLeft;
+        var offsetNegative = minusWidth || 0;
+        var lineGapOffset = lineGap || chartConst.TOOLTIP_GAP;
 
         if (alignOption.indexOf('left') > -1) {
-            left -= minusWidth + lineGap;
-        } else if (alignOption.indexOf('center') > -1) {
-            left -= minusWidth / 2;
+            left -= offsetNegative + lineGapOffset;
+        } else if (alignOption.indexOf('center') > -1 && offsetNegative) {
+            left -= offsetNegative / 2;
         } else {
-            left += lineGap;
+            left += lineGapOffset;
         }
 
         return left;
@@ -104,13 +106,14 @@ var singleTooltipMixer = {
      */
     _makeTopPositionOfNotBarChart: function(baseTop, alignOption, tooltipHeight, lineGap) {
         var top = baseTop;
+        var offsetNegative = tooltipHeight || 0;
 
         if (alignOption.indexOf('bottom') > -1) {
-            top += tooltipHeight + lineGap;
-        } else if (alignOption.indexOf('middle') > -1) {
-            top += tooltipHeight / 2;
+            top += offsetNegative + lineGap;
+        } else if (alignOption.indexOf('middle') > -1 && offsetNegative) {
+            top += offsetNegative / 2;
         } else {
-            top -= chartConst.TOOLTIP_GAP;
+            top -= offsetNegative - chartConst.TOOLTIP_GAP;
         }
 
         return top;
@@ -132,8 +135,8 @@ var singleTooltipMixer = {
             lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
             alignOption = params.alignOption || '',
             tooltipHeight = params.dimension.height,
-            baseLeft = bound.left + positionOption.left,
-            baseTop = bound.top - tooltipHeight + positionOption.top;
+            baseLeft = bound.left - this.layout.position.left + positionOption.left,
+            baseTop = bound.top - this.layout.position.top + positionOption.top;
 
         return {
             left: this._makeLeftPositionOfNotBarChart(baseLeft, alignOption, minusWidth, lineGap),
@@ -208,13 +211,14 @@ var singleTooltipMixer = {
      * @private
      */
     _makeTooltipPositionForBarChart: function(params) {
+        var position = this.layout.position;
         var bound = params.bound,
             positionOption = params.positionOption,
             minusHeight = params.dimension.height - (bound.height || 0),
             alignOption = params.alignOption || '',
             tooltipWidth = params.dimension.width,
-            baseLeft = bound.left + bound.width + positionOption.left,
-            baseTop = bound.top + positionOption.top;
+            baseLeft = bound.left + bound.width + positionOption.left - position.left,
+            baseTop = bound.top + positionOption.top - position.top;
 
         return {
             left: this._makeLeftPositionForBarChart(baseLeft, alignOption, tooltipWidth),

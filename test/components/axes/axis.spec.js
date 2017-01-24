@@ -97,7 +97,6 @@ describe('Test for Axis', function() {
 
             axis._renderAxisArea(container);
 
-            expect(container.style.width).toBe('380px');
             expect(axis._renderNotDividedAxis).not.toHaveBeenCalled();
             expect(axis._renderDividedAxis).toHaveBeenCalled();
         });
@@ -131,7 +130,6 @@ describe('Test for Axis', function() {
 
             axis._renderAxisArea(container);
 
-            expect(container.style.width).toBe('300px');
             expect(axis._renderNotDividedAxis).toHaveBeenCalled();
             expect(axis._renderDividedAxis).not.toHaveBeenCalled();
         });

@@ -6,16 +6,10 @@
 
 'use strict';
 
-var dom = require('../../helpers/domHandler');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
-
-var raphael = window.Raphael;
-
-var PAPER_ADDITIONAL_DIMENSION_RATIO = 1.1;
 
 var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
@@ -95,7 +89,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get(params.options.libType || chartConst.DEFAULT_PLUGIN, 'axis');
+        this.graphRenderer = pluginFactory.get(params.options.libType, 'axis');
+
+        /**
+         * Drawing type
+         * @type {string}
+         */
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
 
         /**
          * Paper additional width
@@ -116,27 +116,25 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {number} tickCount tick count
      * @param {Array.<number|string>} categories categories
      * @param {number} additionalWidth additional width
-     * @param {object} paper paper object
      * @private
      */
-    _renderChildContainers: function(size, tickCount, categories, additionalWidth, paper) {
+    _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
         var isVerticalLineType = this.isVertical && this.data.aligned;
 
-        this._renderTitleArea(paper, size);
-        this._renderLabelArea(size, tickCount, categories, additionalWidth, paper);
+        this._renderTitleArea();
+        this._renderLabelArea(size, tickCount, categories, additionalWidth);
 
         if (!isVerticalLineType) {
-            this._renderTickArea(size, tickCount, additionalWidth, paper);
+            this._renderTickArea(size, tickCount, additionalWidth);
         }
     },
 
     /**
      * Render divided xAxis if yAxis rendered in the center.
-     * @param {HTMLElement} axisContainer axis container element
      * @param {{width: number, height:number}} dimension axis area width and height
      * @private
      */
-    _renderDividedAxis: function(axisContainer, dimension) {
+    _renderDividedAxis: function(dimension) {
         var axisData = this.data;
         var lSideWidth = Math.round(dimension.width / 2);
         var rSideWidth = dimension.width - lSideWidth - 1;
@@ -146,58 +144,38 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var lCategories = categories.slice(0, halfTickCount);
         var rCategories = categories.slice(halfTickCount - 1, tickCount);
         var tickInterval = lSideWidth / halfTickCount;
-        var secondXAxisAdditionalPosition = lSideWidth + this.dimensionMap.yAxis.width + tickInterval - 1;
-        var paper = raphael(axisContainer, this.dimensionMap.chart.width, dimension.height);
+        var secondXAxisAdditionalPosition = lSideWidth + this.dimensionMap.yAxis.width;
 
         this.paperAdditionalWidth = tickInterval;
 
-        paper.canvas.style.left = -(Math.round(tickInterval * 2)) + 'px';
-
-        this._renderChildContainers(lSideWidth, halfTickCount, lCategories, tickInterval, paper);
+        this._renderChildContainers(lSideWidth, halfTickCount, lCategories, 0);
         this._renderChildContainers(rSideWidth, halfTickCount, rCategories,
-            secondXAxisAdditionalPosition, paper);
+            secondXAxisAdditionalPosition);
     },
 
     /**
      * Render single axis if not divided.
-     * @param {HTMLElement} axisContainer axis container element
      * @param {{width: number, height: number}} dimension axis area dimension
      * @private
      */
-    _renderNotDividedAxis: function(axisContainer, dimension) {
-        var PAPER_ADDITIONAL_DIMENSION_DIFFERENCE = (PAPER_ADDITIONAL_DIMENSION_RATIO - 1) / 2;
+    _renderNotDividedAxis: function(dimension) {
         var axisData = this.data;
         var isVertical = this.isVertical;
-        var width = isVertical ? dimension.width : this.dimensionMap.chart.width;
-        var height = isVertical ? dimension.height * PAPER_ADDITIONAL_DIMENSION_RATIO : dimension.height;
         var size = isVertical ? dimension.height : dimension.width;
         var additionalSize = 0;
-        var childContainers;
-        var paper = raphael(axisContainer, width, height);
 
         if (axisData.positionRatio) {
             additionalSize = size * axisData.positionRatio;
         }
 
-        if (isVertical) {
-            this.paperAdditionalHeight = (dimension.height * PAPER_ADDITIONAL_DIMENSION_DIFFERENCE);
-            paper.canvas.style.top = -(Math.round(this.paperAdditionalHeight)) + 'px';
-        } else {
-            this.paperAdditionalWidth = (dimension.width * PAPER_ADDITIONAL_DIMENSION_DIFFERENCE);
-            paper.canvas.style.left = -(Math.round(this.paperAdditionalWidth)) + 'px';
-        }
-
-        childContainers = this._renderChildContainers(size, axisData.tickCount, axisData.labels, additionalSize, paper);
-
-        dom.append(axisContainer, childContainers);
+        this._renderChildContainers(size, axisData.tickCount, axisData.labels, additionalSize);
     },
 
     /**
      * Render axis area.
-     * @param {HTMLElement} axisContainer axis area element
      * @private
      */
-    _renderAxisArea: function(axisContainer) {
+    _renderAxisArea: function() {
         var dimension = this.layout.dimension;
         var axisData = this.data;
 
@@ -205,15 +183,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         if (this.options.divided) {
             this.containerWidth = dimension.width + this.dimensionMap.yAxis.width;
-            this._renderDividedAxis(axisContainer, dimension);
+            this._renderDividedAxis(dimension);
             dimension.width = this.containerWidth;
         } else {
             dimension.width += this.options.isCenter ? 2 : 0;
-            this._renderNotDividedAxis(axisContainer, dimension);
+            this._renderNotDividedAxis(dimension);
         }
-
-        renderUtil.renderDimension(axisContainer, dimension);
-        renderUtil.renderPosition(axisContainer, this.layout.position);
     },
 
     /**
@@ -238,16 +213,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * @param {object} data - bounds and scale data
-     * @returns {HTMLElement} axis area base element
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
+        this.paper = data.paper;
+        this.axisSet = data.paper.set();
 
         this._setDataForRendering(data);
-        this._renderAxisArea(container);
-        this.axisContainer = container;
-
-        return container;
+        this._renderAxisArea();
     },
 
     /**
@@ -255,10 +227,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {object} data - bounds and scale data
      */
     rerender: function(data) {
-        this.axisContainer.innerHTML = '';
+        this.axisSet.remove();
 
-        this._setDataForRendering(data);
-        this._renderAxisArea(this.axisContainer);
+        this.render(data);
     },
 
     /**
@@ -279,18 +250,23 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Title area renderer
-     * @param {object} paper paper object
-     * @param {?number} size (width or height)
      * @private
      */
-    _renderTitleArea: function(paper, size) {
+    _renderTitleArea: function() {
         var title = this.options.title || {};
+
         if (title.text) {
-            this.graphRenderer.renderTitle(title.text, this.theme.title, paper, {
-                isVertical: this.isVertical,
-                isPositionRight: this.data.isPositionRight,
-                isCenter: this.options.isCenter
-            }, size);
+            this.graphRenderer.renderTitle(this.paper, {
+                text: title.text,
+                theme: this.theme.title,
+                rotationInfo: {
+                    isVertical: this.isVertical,
+                    isPositionRight: this.data.isPositionRight,
+                    isCenter: this.options.isCenter
+                },
+                layout: this.layout,
+                set: this.axisSet
+            });
         }
     },
 
@@ -299,20 +275,21 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {number} areaSize - width or height
      * @param {boolean} isNotDividedXAxis - whether is not divided x axis or not.
      * @param {number} additionalSize - additional size
-     * @param {object} paper - raphael paper
      * @private
      */
-    _renderTickLine: function(areaSize, isNotDividedXAxis, additionalSize, paper) {
+    _renderTickLine: function(areaSize, isNotDividedXAxis, additionalSize) {
         this.graphRenderer.renderTickLine({
-            paper: paper,
             areaSize: areaSize,
-            isNotDividedXAxis: isNotDividedXAxis,
             additionalSize: additionalSize,
             additionalWidth: this.paperAdditionalWidth,
             additionalHeight: this.paperAdditionalHeight,
             isPositionRight: this.data.isPositionRight,
             isCenter: this.data.options.isCenter,
-            isVertical: this.isVertical
+            isNotDividedXAxis: isNotDividedXAxis,
+            isVertical: this.isVertical,
+            layout: this.layout,
+            paper: this.paper,
+            set: this.axisSet
         });
     },
 
@@ -321,11 +298,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {number} size - width or height
      * @param {number} tickCount - tick count
      * @param {boolean} isNotDividedXAxis - whether is not divided x axis or not.
-     * @param {number} additionalSize - additional size
-     * @param {object} paper - raphael paper
+     * @param {number} [additionalSize] - additional size
      * @private
      */
-    _renderTicks: function(size, tickCount, isNotDividedXAxis, additionalSize, paper) {
+    _renderTicks: function(size, tickCount, isNotDividedXAxis, additionalSize) {
         var tickColor = this.theme.tickColor;
         var axisData = this.data;
         var sizeRatio = axisData.sizeRatio || 1;
@@ -339,7 +315,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         positions.length = axisData.tickCount;
 
         this.graphRenderer.renderTicks({
-            paper: paper,
+            paper: this.paper,
+            layout: this.layout,
             positions: positions,
             isVertical: isVertical,
             isCenter: isCenter,
@@ -347,7 +324,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             additionalWidth: additionalWidth,
             additionalHeight: additionalHeight,
             isPositionRight: isPositionRight,
-            tickColor: tickColor
+            tickColor: tickColor,
+            set: this.axisSet
         });
     },
 
@@ -355,16 +333,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * Render tick area.
      * @param {number} size - width or height
      * @param {number} tickCount - tick count
-     * @param {?number} additionalSize - additional size (width or height)
-     * @param {object} paper raphael paper
+     * @param {number} [additionalSize] - additional size (width or height)
      * @private
      */
-    _renderTickArea: function(size, tickCount, additionalSize, paper) {
+    _renderTickArea: function(size, tickCount, additionalSize) {
         var isNotDividedXAxis = !this.isVertical && !this.options.divided;
 
-        this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0), paper);
+        this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0));
 
-        this._renderTicks(size, tickCount, isNotDividedXAxis, (additionalSize || 0), paper);
+        this._renderTicks(size, tickCount, isNotDividedXAxis, (additionalSize || 0));
     },
 
     /**
@@ -372,16 +349,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {number} size label area size
      * @param {number} tickCount tick count
      * @param {Array.<string>} categories categories
-     * @param {?number} additionalSize additional size (width or height)
-     * @param {object} paper paper object
+     * @param {number} [additionalSize] additional size (width or height)
      * @private
      */
-    _renderLabelArea: function(size, tickCount, categories, additionalSize, paper) {
+    _renderLabelArea: function(size, tickCount, categories, additionalSize) {
         var sizeRatio = this.data.sizeRatio || 1;
         var tickPixelPositions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount, 0);
         var labelDistance = tickPixelPositions[1] - tickPixelPositions[0];
 
-        this._renderLabels(tickPixelPositions, categories, labelDistance, (additionalSize || 0), paper);
+        this._renderLabels(tickPixelPositions, categories, labelDistance, (additionalSize || 0));
     },
 
     /**
@@ -390,16 +366,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {string[]} categories categories
      * @param {number} labelSize label size
      * @param {number} additionalSize additional size
-     * @param {object} paper paper
      * @private
      */
-    _renderRotationLabels: function(positions, categories, labelSize, additionalSize, paper) {
+    _renderRotationLabels: function(positions, categories, labelSize, additionalSize) {
+        var self = this;
         var renderer = this.graphRenderer;
         var isVertical = this.isVertical;
         var theme = this.theme.label;
         var degree = this.data.degree;
         var halfWidth = labelSize / 2;
-        var horizontalTop = calculator.calculateRotatedHeight(degree, labelSize, this.theme.label.fontSize);
+        var horizontalTop = (calculator.calculateRotatedHeight(degree, labelSize, this.theme.label.fontSize) * 3 / 4)
+            + this.layout.position.top;
+        var baseLeft = this.layout.position.left;
 
         tui.util.forEach(positions, function(position, index) {
             var labelPosition = position + (additionalSize || 0);
@@ -410,15 +388,16 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.left = labelSize;
             } else {
                 positionTopAndLeft.top = horizontalTop;
-                positionTopAndLeft.left = labelPosition + labelSize;
+                positionTopAndLeft.left = baseLeft + labelPosition + halfWidth;
             }
 
             renderer.renderRotatedLabel({
-                positionTopAndLeft: positionTopAndLeft,
+                degree: degree,
                 labelText: categories[index],
-                paper: paper,
-                theme: theme,
-                degree: degree
+                paper: self.paper,
+                positionTopAndLeft: positionTopAndLeft,
+                set: self.axisSet,
+                theme: theme
             });
         });
     },
@@ -429,19 +408,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {string[]} categories categories
      * @param {number} labelSize label size
      * @param {number} additionalSize additional size
-     * @param {object} paper paper object
      * @private
      */
-    _renderNormalLabels: function(positions, categories, labelSize, additionalSize, paper) {
+    _renderNormalLabels: function(positions, categories, labelSize, additionalSize) {
+        var self = this;
         var renderer = this.graphRenderer;
         var isVertical = this.isVertical;
         var isPositionRight = this.data.isPositionRight;
         var isCategoryLabel = this.isLabelAxis;
         var theme = this.theme.label;
-        var paperAdditionalWidth = this.paperAdditionalWidth;
         var dataProcessor = this.dataProcessor;
         var isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
         var isPointOnColumn = isLineTypeChart && this.options.pointOnColumn;
+        var layout = this.layout;
 
         tui.util.forEach(positions, function(position, index) {
             var labelPosition = position + additionalSize;
@@ -451,22 +430,22 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             var labelTopPosition, labelLeftPosition;
 
             if (isVertical) {
-                labelTopPosition = fontSize + 4 + labelPosition;
+                labelTopPosition = labelPosition;
 
                 if (isCategoryLabel) {
-                    labelTopPosition += halfLabelDistance;
+                    labelTopPosition += halfLabelDistance + layout.position.top;
                 } else {
-                    labelTopPosition = paper.height - labelTopPosition;
+                    labelTopPosition = layout.dimension.height + layout.position.top - labelTopPosition;
                 }
 
                 if (isPositionRight) {
-                    labelLeftPosition = chartConst.AXIS_LABEL_PADDING;
+                    labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING;
                 } else {
-                    labelLeftPosition = paper.width - chartConst.AXIS_LABEL_PADDING;
+                    labelLeftPosition = layout.position.left + layout.dimension.width - chartConst.CHART_PADDING;
                 }
             } else {
-                labelTopPosition = fontSize * PAPER_ADDITIONAL_DIMENSION_RATIO;
-                labelLeftPosition = labelPosition + paperAdditionalWidth;
+                labelTopPosition = fontSize + layout.position.top;
+                labelLeftPosition = labelPosition + layout.position.left;
 
                 if (isCategoryLabel) {
                     if (!isLineTypeChart || isPointOnColumn) {
@@ -479,12 +458,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             positionTopAndLeft.left = Math.round(labelLeftPosition);
 
             renderer.renderLabel({
-                positionTopAndLeft: positionTopAndLeft,
-                labelText: categories[index],
-                labelSize: labelSize,
-                paper: paper,
-                isVertical: isVertical,
                 isPositionRight: isPositionRight,
+                isVertical: isVertical,
+                labelSize: labelSize,
+                labelText: categories[index],
+                paper: self.paper,
+                positionTopAndLeft: positionTopAndLeft,
+                set: self.axisSet,
                 theme: theme
             });
         });
@@ -496,10 +476,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {Array.<string>} categories - categories
      * @param {number} labelSize label size
      * @param {number} additionalSize additional size
-     * @param {object} paper paper object
      * @private
      */
-    _renderLabels: function(positions, categories, labelSize, additionalSize, paper) {
+    _renderLabels: function(positions, categories, labelSize, additionalSize) {
         var isRotationlessXAxis = !this.isVertical && this.isLabelAxis && (this.options.rotateLabel === false);
         var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.data.degree;
         var axisLabels;
@@ -515,9 +494,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         }
 
         if (hasRotatedXAxisLabel) {
-            this._renderRotationLabels(positions, axisLabels, labelSize, additionalSize, paper);
+            this._renderRotationLabels(positions, axisLabels, labelSize, additionalSize);
         } else {
-            this._renderNormalLabels(positions, axisLabels, labelSize, additionalSize, paper);
+            this._renderNormalLabels(positions, axisLabels, labelSize, additionalSize);
+        }
+    },
+    /**
+     * Animate axis for adding data
+     * @param {object} data rendering data
+     */
+    animateForAddingData: function(data) {
+        if (!this.isVertical) {
+            this.graphRenderer.animateForAddingData(data.tickSize);
         }
     }
 });

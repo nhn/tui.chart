@@ -6,10 +6,8 @@
 
 'use strict';
 
-var dom = require('../../helpers/domHandler');
 var geom = require('../../helpers/geometric');
 var chartConst = require('../../const');
-var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
 
 var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
@@ -46,21 +44,23 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * Graph renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get('raphael', 'radialPlot');
+        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'radialPlot');
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     },
 
     /**
      * Render plot area
-     * @param {HTMLElement} container html container
-     * @param {object} dimension dimension
+     * @param {object} paper paper object
+     * @param {object} layout layout
      * @param {Array.<Array>} plotPositions plot positions
      * @param {object} labelData label data
-     * @returns {Paper} raphael paper
+     * @returns {Array.<object>} plotSet
      */
-    _renderPlotArea: function(container, dimension, plotPositions, labelData) {
+    _renderPlotArea: function(paper, layout, plotPositions, labelData) {
         var renderParams = {
-            container: container,
-            dimension: dimension,
+            paper: paper,
+            layout: layout,
             plotPositions: plotPositions,
             labelData: labelData,
             theme: this.theme,
@@ -73,14 +73,16 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make plot positions for render
      * @param {object} axisDataMap axisDataMap
-     * @param {object} dimension dimension
+     * @param {object} layout layout
      * @returns {Array.<Array>} plot positions
      */
-    _makePositions: function(axisDataMap, dimension) {
-        var width = dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-        var height = dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2);
-        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2);
+    _makePositions: function(axisDataMap, layout) {
+        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
+        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
+        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
+            + layout.position.left;
+        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
+            - layout.position.top;
         var stepCount = axisDataMap.yAxis.tickCount;
         var angleStepCount = axisDataMap.xAxis.labels.length;
 
@@ -97,14 +99,16 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make category positions
      * @param {object} axisDataMap axisDataMap
-     * @param {object} dimension dimension
+     * @param {object} layout layout
      * @returns {Array.<object>} category positions
      */
-    _makeCategoryPositions: function(axisDataMap, dimension) {
-        var width = dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
-        var height = dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
-        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_CATEGORY_PADDING / 2);
-        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_CATEGORY_PADDING / 2);
+    _makeCategoryPositions: function(axisDataMap, layout) {
+        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
+        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
+        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_CATEGORY_PADDING / 2)
+            + layout.position.left;
+        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_CATEGORY_PADDING / 2)
+            - layout.position.top;
         var angleStepCount = axisDataMap.xAxis.labels.length;
 
         return makeRadialCategoryPositions({
@@ -155,25 +159,14 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Render plot component.
      * @param {object} data - bounds and scale data
-     * @returns {{
-     *     container: HTMLElement,
-     *     paper: object
-     * }} plot element
      */
     render: function(data) {
-        var paper;
-        var plotPositions = this._makePositions(data.axisDataMap, data.layout.dimension);
-        var labelData = this._makeLabelData(data.axisDataMap, data.layout.dimension, plotPositions);
+        var plotPositions = this._makePositions(data.axisDataMap, data.layout);
+        var labelData = this._makeLabelData(data.axisDataMap, data.layout, plotPositions);
 
-        this.plotContainer = dom.create('DIV', this.className);
-        this._renderContainerPosition(this.plotContainer, data.positionMap.plot);
+        this.plotSet = this._renderPlotArea(data.paper, data.layout, plotPositions, labelData);
 
-        paper = this._renderPlotArea(this.plotContainer, data.layout.dimension, plotPositions, labelData);
-
-        return {
-            container: this.plotContainer,
-            paper: paper
-        };
+        this.plotSet.toBack();
     },
 
     /**
@@ -181,28 +174,9 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} data - bounds and scale data
      */
     rerender: function(data) {
-        var plotPositions = this._makePositions(data.axisDataMap, data.layout.dimension);
-        var labelData = this._makeLabelData(data.axisDataMap, data.layout.dimension, plotPositions);
+        this.plotSet.remove();
 
-        this.plotContainer.innerHTML = '';
-
-        this._renderPlotArea(this.plotContainer, data.layout.dimension, plotPositions, labelData);
-    },
-
-    /**
-     * Set element's top, left given top, left position
-     * series에서 가져옴, 추후 공통 페이퍼 적용전까지 임시 사용
-     * @param {HTMLElement} el - series element
-     * @param {{top: number, left: number}} position - series top, left position
-     * @private
-     */
-    _renderContainerPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isOldBrowser() ? 1 : 0;
-
-        renderUtil.renderPosition(el, {
-            top: position.top - (hiddenWidth),
-            left: position.left - (hiddenWidth * 2)
-        });
+        this.render(data);
     },
 
     /**

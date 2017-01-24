@@ -49,9 +49,9 @@ describe('Test for Legend', function() {
     });
 
     describe('render()', function() {
-        it('render를 수행하면 legendContainer에 className 설정, _renderLegendArea를 실행한 렌더링, click 이벤트 등록 등을 수행한다.', function() {
-            var actual, expected;
-
+        it('render를 수행하면 _renderLegendArea를 실행한 렌더링, click 이벤트 등록 등을 수행한다.', function() {
+            spyOn(legend, '_renderLegendArea');
+            spyOn(legend, '_listenEvents');
             legend.layout = {
                 position: {
                     top: 20,
@@ -59,12 +59,18 @@ describe('Test for Legend', function() {
                 }
             };
 
-            actual = legend.render();
-            expected = document.createElement('DIV');
-            legend._renderLegendArea(expected);
+            legend.render({
+                paper: Raphael(document.createElement('DIV'), 100, 100),
+                layout: {
+                    position: {
+                        top: 0,
+                        left: 0
+                    }
+                }
+            });
 
-            expect(actual.className).toBe('tui-chart-legend-area');
-            expect(legend.legendContainer).toBe(actual);
+            expect(legend._renderLegendArea).toHaveBeenCalled();
+            expect(legend._renderLegendArea).toHaveBeenCalled();
         });
     });
 

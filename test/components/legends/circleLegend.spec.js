@@ -7,7 +7,6 @@
 'use strict';
 
 var CircleLegend = require('../../../src/js/components/legends/circleLegend');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('Test for CircleLegend', function() {
     var circleLegend, dataProcessor;
@@ -48,30 +47,6 @@ describe('Test for CircleLegend', function() {
             }]);
             actual = circleLegend._formatLabel(10.22, 0);
             expected = '0010';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_makeLabelHtml()', function() {
-        it('circle legend label 영역의 html을 생성합니다.', function() {
-            var actual, expected;
-
-            circleLegend.layout = {
-                dimension: {
-                    width: 80,
-                    height: 80
-                }
-            };
-            circleLegend.maxRadius = 30;
-            dataProcessor.getMaxValue.and.returnValue(300);
-            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(12);
-            spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(20);
-
-            actual = circleLegend._makeLabelHtml();
-            expected = '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 8px">300</div>' +
-                '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 38px">150</div><' +
-                'div class="tui-chart-circle-legend-label" style="left: 30px;top: 53px">75</div>';
 
             expect(actual).toBe(expected);
         });

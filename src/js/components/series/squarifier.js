@@ -18,15 +18,12 @@ var squarifier = {
 
     /**
      * Make base bound for calculating bounds.
-     * @param {{width: number, height: number}} dimension - dimension
+     * @param {{width: number, height: number, left: number, top: number}} layout - layout
      * @returns {{width: number, height: number, left: number, top: number}}
      * @private
      */
-    _makeBaseBound: function(dimension) {
-        return tui.util.extend({
-            left: 0,
-            top: 0
-        }, dimension);
+    _makeBaseBound: function(layout) {
+        return tui.util.extend({}, layout);
     },
 
     /**
@@ -233,13 +230,13 @@ var squarifier = {
 
     /**
      * Create squarified bound map for graph rendering.
-     * @param {{width: number, height: number}} dimension - dimension
+     * @param {object} layout - series area layout
      * @param {Array.<SeriesItem>} seriesItems - seriesItems
      * @returns {object.<string, {width: number, height: number, left: number, top: number}>}
      */
-    squarify: function(dimension, seriesItems) {
+    squarify: function(layout, seriesItems) {
         var self = this;
-        var baseBound = this._makeBaseBound(dimension);
+        var baseBound = this._makeBaseBound(layout);
         var baseData = this._makeBaseData(seriesItems, baseBound.width, baseBound.height);
         var row = [];
         var baseSize, addBounds;

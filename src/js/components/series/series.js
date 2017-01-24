@@ -8,7 +8,6 @@
 var FADE_IN_DURATION = 1000;
 var EASING_FORMULA = 'easeInQuint';
 
-var labelHelper = require('./renderingLabelHelper');
 var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
@@ -32,7 +31,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      *      @param {object} params.theme series theme
      */
     init: function(params) {
-        var libType = params.libType || chartConst.DEFAULT_PLUGIN;
+        var libType = params.libType;
 
         /**
          * Chart type
@@ -166,6 +165,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          */
         this.beforeAxisDataMap = null;
 
+        /**
+         * Drawing type
+         * @type {string}
+         */
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
         this._attachToEventBus();
     },
 
@@ -236,36 +241,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series label area
-     * @param {?HTMLElement} seriesLabelContainer series label area element
-     * @returns {HTMLElement} series label area element
+     * @param {object} paper series label area element
+     * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabelArea: function(seriesLabelContainer) {
-        var extendedDimension;
-
-        if (!seriesLabelContainer) {
-            seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
-        }
-
-        if (!predicate.isChartToDetectMouseEventOnSeries(this.chartType)) {
-            extendedDimension = this.dimensionMap.extendedSeries;
-            renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
-        }
-
-        this._renderSeriesLabel(seriesLabelContainer);
-
-        return seriesLabelContainer;
-    },
-
-    /**
-     * Append label container to series container.
-     * @param {HTMLElement} seriesContainer - series container
-     * @param {HTMLElement} labelContainer - label container
-     * @private
-     */
-    _appendLabelContainer: function(seriesContainer, labelContainer) {
-        this.seriesLabelContainer = labelContainer;
-        dom.append(seriesContainer, labelContainer);
+    _renderSeriesLabelArea: function(paper) {
+        return this._renderSeriesLabel(paper);
     },
 
     /**
@@ -282,40 +263,28 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series area.
-     * @param {HTMLElement} seriesContainer - series area element
      * @param {object} paper - raphael object
      * @param {function} funcRenderGraph - function for graph rendering
-     * @returns {object}
      * @private
      */
-    _renderSeriesArea: function(seriesContainer, paper, funcRenderGraph) {
-        var dimension, position, seriesData, labelContainer;
+    _renderSeriesArea: function(paper, funcRenderGraph) {
+        var dimension, seriesData;
 
         dimension = this.dimensionMap.extendedSeries;
-        position = this.positionMap.extendedSeries;
 
         this.seriesData = seriesData = this._makeSeriesData();
 
         this._sendBoundsToMouseEventDetector(seriesData);
 
-        if (!paper) {
-            renderUtil.renderDimension(seriesContainer, dimension);
-        }
-
-        this._renderPosition(seriesContainer, position);
-
         if (this.hasDataForRendering(seriesData) || this.chartType === 'map') {
             if (funcRenderGraph) {
-                paper = funcRenderGraph(dimension, seriesData, paper);
+                this.seriesSet = funcRenderGraph(dimension, seriesData, paper);
             }
 
             if (predicate.isShowLabel(this.options)) {
-                labelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
-                this._appendLabelContainer(seriesContainer, labelContainer);
+                this.labelSet = this._renderSeriesLabelArea(paper);
             }
         }
-
-        return paper;
     },
 
     /**
@@ -345,7 +314,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _renderGraph: function(dimension, seriesData, paper) {
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        return this.graphRenderer.render(this.seriesContainer, params, paper);
+        return this.graphRenderer.render(paper, params);
     },
 
     /**
@@ -382,13 +351,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Render series component.
      * @param {object} data - data for rendering
-     * @returns {HTMLElement} series element
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
-        var checkedLegends, paper;
-
-        this.seriesContainer = container;
+        var checkedLegends;
+        this.paper = data.paper;
         this._setDataForRendering(data);
         this.beforeAxisDataMap = this.axisDataMap;
 
@@ -397,12 +363,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
         }
 
-        paper = this._renderSeriesArea(container, data.paper, tui.util.bind(this._renderGraph, this));
-
-        return {
-            container: container,
-            paper: paper
-        };
+        this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
     },
 
     /**
@@ -429,26 +390,25 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Clear series container.
-     * @param {object} paper - Raphael object for series rendering area
      * @private
      */
-    _clearSeriesContainer: function(paper) {
-        if (this.graphRenderer.clear && !paper) {
-            this.graphRenderer.clear();
+    _clearSeriesContainer: function() {
+        if (this.seriesSet && this.seriesSet.remove) {
+            this.seriesSet.remove();
+        }
+        if (this.labelSet && this.labelSet.remove) {
+            this.labelSet.remove();
         }
 
-        this.seriesContainer.innerHTML = '';
-        this.seriesLabelContainer = null;
         this.seriesData = [];
     },
 
     /**
      * Rerender series
      * @param {object} data - data for rendering
-     * @returns {{container: HTMLElement, paper: object}}
      */
     rerender: function(data) {
-        var checkedLegends, paper;
+        var checkedLegends;
 
         this._clearSeriesContainer();
 
@@ -459,7 +419,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             }
 
             this._setDataForRendering(data);
-            paper = this._renderSeriesArea(this.seriesContainer, data.paper, tui.util.bind(this._renderGraph, this));
+            this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
 
             if (this.labelShowEffector) {
                 clearInterval(this.labelShowEffector.timerId);
@@ -475,11 +435,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 this.graphRenderer.selectLegend(this.selectedLegendIndex);
             }
         }
-
-        return {
-            container: this.seriesContainer,
-            paper: paper
-        };
     },
 
     /**
@@ -504,8 +459,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _showGraphWithoutAnimation: function() {
-        this.graphRenderer.showGraph();
-
         if (this._isLabelVisible()) {
             this._showSeriesLabelWithoutAnimation();
         }
@@ -529,8 +482,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     resize: function(data) {
+        this._clearSeriesContainer();
         this._setDataForRendering(data);
-        this._renderSeriesArea(this.seriesContainer, data.paper, tui.util.bind(this._resizeGraph, this));
+        this._renderSeriesArea(data.paper, tui.util.bind(this._resizeGraph, this));
     },
 
     /**
@@ -659,23 +613,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         } else {
             this.animateSeriesLabelArea(isRerendering);
         }
-    },
-
-    /**
-     * Make html about series label.
-     * @param {{left: number, top: number}} position - position for rendering
-     * @param {string} label - label of SeriesItem
-     * @param {number} index - index of legend
-     * @param {object} [tplCssText] - cssText template object
-     * @param {boolean} [isStart] - whether start label or not
-     * @returns {string}
-     * @private
-     */
-    _makeSeriesLabelHtml: function(position, label, index, tplCssText, isStart) {
-        var labelTheme = this.theme.label;
-        var selectedIndex = this.selectedLegendIndex;
-
-        return labelHelper.makeSeriesLabelHtml(position, label, labelTheme, index, selectedIndex, tplCssText, isStart);
     },
 
     /**
@@ -837,7 +774,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.selectedLegendIndex = legendIndex;
 
         if (this._getSeriesDataModel().getGroupCount()) {
-            this._renderSeriesArea(this.seriesContainer, this.paper);
             this.graphRenderer.selectLegend(legendIndex);
         }
     },
@@ -846,13 +782,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Show label.
      */
     showLabel: function() {
-        var labelContainer;
-
         this.options.showLabel = true;
 
         if (!this.seriesLabelContainer) {
-            labelContainer = this._renderSeriesLabelArea();
-            this._appendLabelContainer(this.seriesContainer, labelContainer);
+            this._renderSeriesLabelArea(this.paper);
         }
 
         this._showSeriesLabelWithoutAnimation();

@@ -80,6 +80,8 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * @type {null|object}
          */
         this.axisDataMap = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
     /**

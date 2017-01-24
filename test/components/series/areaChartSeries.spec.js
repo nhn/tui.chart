@@ -19,10 +19,17 @@ describe('AreaChartSeries', function() {
             options: {},
             eventBus: new tui.util.CustomEvents()
         });
+        series.layout = {
+            position: {
+                top: 10,
+                left: 10
+            }
+        };
     });
 
     describe('_makePositionTopOfZeroPoint', function() {
-        it('min이 음수이고 max가 양수일 경우에는 0점에서 max까지의 거리(_getLimitDistanceFromZeroPoint)를 top position 정보에 확장 사이트를 더하여 반환합니다.', function() {
+        it('min이 음수이고 max가 양수일 경우에는 0점에서 max까지의 거리(_getLimitDistanceFromZeroPoint)를' +
+            ' top position 정보에 확장 사이트를 더하여 반환합니다.', function() {
             var limit = {
                 min: -10,
                 max: 10
@@ -30,10 +37,8 @@ describe('AreaChartSeries', function() {
             var height = 100;
             var actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: height
-                }
+            series.layout.dimension = {
+                height: height
             };
             series.axisDataMap = {
                 yAxis: {
@@ -55,10 +60,8 @@ describe('AreaChartSeries', function() {
             var height = 100;
             var actual, expected;
 
-            series.layout = {
-                dimension: {
+            series.layout.dimension = {
                     height: height
-                }
             };
             series.axisDataMap = {
                 yAxis: {
@@ -80,10 +83,8 @@ describe('AreaChartSeries', function() {
             var height = 100;
             var actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: height
-                }
+            series.layout.dimension = {
+                height: height
             };
             series.axisDataMap = {
                 yAxis: {
@@ -102,10 +103,8 @@ describe('AreaChartSeries', function() {
         it('영역 chart의 기존 position값에 이전 top을 startTop으로 설정하여 stackType position 정보를 구합니다.', function() {
             var actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: 190
-                }
+            series.layout.dimension = {
+                height: 190
             };
 
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
@@ -118,10 +117,8 @@ describe('AreaChartSeries', function() {
         it('use prevTop if position is null.', function() {
             var actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: 190
-                }
+            series.layout.dimension = {
+                height: 190
             };
 
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
@@ -138,10 +135,8 @@ describe('AreaChartSeries', function() {
             var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
                 actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: 190
-                }
+            series.layout.dimension = {
+                height: 190
             };
 
             spyOn(series, '_makeBasicPositions').and.returnValue(basicPositions);
@@ -156,10 +151,8 @@ describe('AreaChartSeries', function() {
         it('영역 차트의 position은 stack 차트가 아닌경우 경우 _makeBasicPositions 실행한 결과를 반환합니다.', function() {
             var actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: 190
-                }
+            series.layout.dimension = {
+                height: 190
             };
 
             spyOn(series, '_makeBasicPositions').and.returnValue([[{top: 150}], [{top: 100}], [{top: 180}]]);

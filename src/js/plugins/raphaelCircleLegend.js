@@ -8,48 +8,31 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael;
-
 /**
  * @classdesc RaphaelCircleLegend is graph renderer for circleLegend.
  * @class RaphaelCircleLegend
  * @private
  */
 var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.prototype */ {
-    /**
-     * Render function of map chart legend.
-     * @param {HTMLElement} container container
-     * @param {{width: number, height: number}} dimension - dimension of circle legend area
-     * @param {number} maxRadius - pixel type maximum radius
-     * @param {Array.<number>} radiusRatios - radius ratios
-     * @returns {object} paper raphael paper
-     */
-    render: function(container, dimension, maxRadius, radiusRatios) {
-        var paper = raphael(container, dimension.width, dimension.height);
-
-        this.paper = paper;
-
-        this._renderCircles(dimension, maxRadius, radiusRatios);
-
-        return paper;
-    },
 
     /**
-     * Render circles.
-     * @param {{width: number, height: number}} dimension - dimension of circle legend area
+     * Render circle and label.
+     * @param {object} paper paper object
+     * @param {{width: number, height: number}} layout - layout of circle legend area
      * @param {number} maxRadius - pixel type maximum radius
      * @param {Array.<number>} radiusRatios - radius ratios
+     * @param {Array.<string>} labels - circle legend labels
+     * @returns {Array.<object>}
      * @private
      */
-    _renderCircles: function(dimension, maxRadius, radiusRatios) {
-        var paper = this.paper;
-        var left = dimension.width / 2;
+    render: function(paper, layout, maxRadius, radiusRatios, labels) {
+        var left = layout.position.left + (layout.dimension.width / 2);
+        var circleLegendSet = paper.set();
 
-        tui.util.forEachArray(radiusRatios, function(ratio) {
+        tui.util.forEachArray(radiusRatios, function(ratio, index) {
             var radius = maxRadius * ratio;
-            var top = (dimension.height - radius) - 1;
-
-            raphaelRenderUtil.renderCircle(paper, {
+            var top = layout.position.top + layout.dimension.height - radius;
+            var circle = raphaelRenderUtil.renderCircle(paper, {
                 left: left,
                 top: top
             }, radius, {
@@ -58,7 +41,19 @@ var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.pr
                 stroke: '#888',
                 'stroke-width': 1
             });
+
+            circleLegendSet.push(circle);
+
+            raphaelRenderUtil.renderText(paper, {
+                left: left,
+                top: top - radius - 5
+            }, {
+                text: labels[index],
+                set: circleLegendSet
+            });
         });
+
+        return circleLegendSet;
     }
 });
 

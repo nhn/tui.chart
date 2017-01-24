@@ -36,6 +36,10 @@ describe('Test for RadialSeries', function() {
             dimension: {
                 width: 100,
                 height: 100
+            },
+            position: {
+                left: 0,
+                top: 0
             }
         };
 

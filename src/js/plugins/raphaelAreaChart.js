@@ -14,7 +14,6 @@ var DE_EMPHASIS_OPACITY = 0.3;
 var LEFT_BAR_WIDTH = 10;
 var ADDING_DATA_ANIMATION_DURATION = 300;
 
-var raphael = window.Raphael;
 var concat = Array.prototype.concat;
 
 var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
@@ -41,12 +40,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Render function of area chart.
-     * @param {HTMLElement} container container
-     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @param {object} paper - raphael paper
+     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @returns {object}
      */
-    render: function(container, data, paper) {
+    render: function(paper, data) {
         var dimension = data.dimension;
         var groupPositions = data.groupPositions;
         var theme = data.theme;
@@ -55,13 +53,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
         var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
 
-        paper = paper || raphael(container, 1, dimension.height);
-
         this.paper = paper;
         this.isSpline = data.options.spline;
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;
         this.hasRangeData = data.hasRangeData;
+
+        paper.setStart();
 
         this.groupPaths = this._getAreaChartPath(groupPositions, null, data.options.connectNulls);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
@@ -84,7 +82,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.pivotGroupDots = null;
 
-        return paper;
+        return paper.setFinish();
     },
 
     /**
@@ -408,6 +406,39 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 self._animateByPath(area.startLine, pathMap.startLine);
             }
         });
+    },
+
+    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme) {
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            fill: labelTheme.color,
+            'text-anchor': 'middle'
+        };
+        var set = paper.set();
+
+        tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
+            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+                var position = groupPositions[categoryIndex][seriesIndex];
+
+                raphaelRenderUtil.renderText(paper, position.end, {
+                    text: label.end,
+                    attributes: attributes,
+                    set: set
+                });
+
+                if (position.start) {
+                    raphaelRenderUtil.renderText(paper, position.start, {
+                        text: label.start,
+                        attributes: attributes,
+                        set: set
+                    });
+                }
+            });
+        });
+
+        return set;
     }
 });
 

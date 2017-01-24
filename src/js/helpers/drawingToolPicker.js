@@ -39,7 +39,10 @@ var DrawingToolPicker = {
      */
     getPaper: function(container, rendererType) {
         var paper = this[rendererType + 'Paper'];
-        if (!paper || dom.findParentByClass(paper.canvas, 'tui-chart') !== container) {
+        var isNeedCreateNewPaper = tui.util.isExisty(container)
+            && paper && dom.findParentByClass(paper.canvas, 'tui-chart') !== container;
+
+        if (!paper || isNeedCreateNewPaper) {
             paper = renderers[rendererType].call(this, container, this.dimension);
 
             if (rendererType !== 'DOM') {

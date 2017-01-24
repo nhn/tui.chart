@@ -6,54 +6,64 @@
 
 'use strict';
 
+var chartConst = require('../const');
 var raphaelRenderUtil = require('./raphaelRenderUtil');
-var HALF_PIXEL = 0.5;
 
 var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
+    init: function() {
+        this.ticks = [];
+    },
     /**
      * Render title
-     * @param {string} textContent text content
-     * @param {object} theme theme object
      * @param {object} paper raphael paper
-     * @param {object} rotationInfo object
-     * @param {number} size size
+     * @param {object} data rendering data
+     * @param {string} data.text text content
+     * @param {object} data.theme theme object
+     * @param {object} data.rotationInfo object
+     * @param {object} data.layout dimension and position
      */
-    renderTitle: function(textContent, theme, paper, rotationInfo, size) {
-        var fontSize = theme.fontSize;
-        var fontFamily = theme.fontFamily;
-        var titleSize = raphaelRenderUtil.getRenderedTextSize(textContent, fontSize, fontFamily);
-        var centerPosition = (size + titleSize.width) / 2;
+    renderTitle: function(paper, data) {
+        var fontSize = data.theme.fontSize;
+        var fontFamily = data.theme.fontFamily;
+        var titleSize = raphaelRenderUtil.getRenderedTextSize(data.text, fontSize, fontFamily);
+        var size = data.rotationInfo.isVertical ? data.layout.dimension.height : data.layout.dimension.width;
+        var position = data.rotationInfo.isVertical ? data.layout.position.top : data.layout.position.left;
+        var centerPosition = ((size + titleSize.width) / 2) + position;
         var halfTextHeight = titleSize.height / 2;
         var attributes = {
-            'font-family': theme.fontFamily,
-            'font-size': theme.fontSize,
-            'font-weight': theme.fontWeight,
-            fill: theme.color,
+            'font-family': data.theme.fontFamily,
+            'font-size': data.theme.fontSize,
+            'font-weight': data.theme.fontWeight,
+            fill: data.theme.color,
             'text-anchor': 'start'
         };
         var positionTopAndLeft = {};
 
         attributes['text-anchor'] = 'middle';
 
-        if (rotationInfo.isCenter) {
-            positionTopAndLeft.top = paper.height - halfTextHeight;
-            positionTopAndLeft.left = paper.width / 2;
-        } else if (rotationInfo.isPositionRight) {
+        if (data.rotationInfo.isCenter) {
+            positionTopAndLeft.top = data.layout.position.top + (data.layout.dimension.height * 1.1) + halfTextHeight;
+            positionTopAndLeft.left = data.layout.position.left + (data.layout.dimension.width / 2);
+        } else if (data.rotationInfo.isPositionRight) {
             attributes.transform = 'r90';
 
             positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = paper.width - halfTextHeight;
-        } else if (rotationInfo.isVertical) {
+            positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width - halfTextHeight;
+        } else if (data.rotationInfo.isVertical) {
             attributes.transform = 'r-90';
 
             positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = halfTextHeight;
+            positionTopAndLeft.left = data.layout.position.left + halfTextHeight;
         } else {
-            positionTopAndLeft.top = paper.height - halfTextHeight;
+            positionTopAndLeft.top = paper.height - halfTextHeight - chartConst.CHART_PADDING;
             positionTopAndLeft.left = centerPosition;
         }
 
-        raphaelRenderUtil.renderText(paper, positionTopAndLeft, textContent, attributes);
+        raphaelRenderUtil.renderText(paper, positionTopAndLeft, {
+            text: data.text,
+            attributes: attributes,
+            set: data.Set
+        });
     },
 
     /**
@@ -92,7 +102,11 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             attributes['text-anchor'] = 'middle';
         }
 
-        raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, attributes);
+        raphaelRenderUtil.renderText(paper, positionTopAndLeft, {
+            text: labelText,
+            attributes: attributes,
+            set: [data.set, this.ticks]
+        });
     },
 
     /**
@@ -115,13 +129,17 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var theme = data.theme;
         var degree = data.degree;
 
-        raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, {
-            'font-family': theme.fontFamily,
-            'font-size': theme.fontSize,
-            'font-weight': theme.fontWeight,
-            fill: theme.color,
-            'text-anchor': 'end',
-            transform: 'r' + (-degree)
+        raphaelRenderUtil.renderText(paper, positionTopAndLeft, {
+            text: labelText,
+            attributes: {
+                'font-family': theme.fontFamily,
+                'font-size': theme.fontSize,
+                'font-weight': theme.fontWeight,
+                fill: theme.color,
+                'text-anchor': 'end',
+                transform: 'r' + (-degree)
+            },
+            set: [data.set, this.ticks]
         });
     },
 
@@ -130,15 +148,19 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
      * @param {object} data data for rendering ticks
      */
     renderTicks: function(data) {
+        var self = this;
         var paper = data.paper;
         var positions = data.positions;
         var additionalSize = data.additionalSize;
         var isVertical = data.isVertical;
         var isCenter = data.isCenter;
-        var additionalWidth = data.additionalWidth;
-        var additionalHeight = data.additionalHeight;
         var isPositionRight = data.isPositionRight;
         var tickColor = data.tickColor;
+        var layout = data.layout;
+        var rightEdgeOfAxis = layout.position.left + layout.dimension.width;
+        var baseTop = layout.position.top;
+        var baseLeft = layout.position.left;
+        var tick;
 
         tui.util.forEach(positions, function(position) {
             var pathString = 'M';
@@ -147,26 +169,29 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
 
             if (isVertical) {
                 if (isCenter) {
-                    pathString += 0 + ',' + (position + additionalHeight - 1);
-                    pathString += 'H' + 5;
-                    pathString += 'M' + (paper.width - 5) + ',' + (position + additionalHeight - 1);
-                    pathString += 'H' + paper.width;
+                    pathString += baseLeft + ',' + (baseTop + position);
+                    pathString += 'H' + (baseLeft + 5);
+
+                    pathString += 'M' + rightEdgeOfAxis + ',' + (baseTop + position);
+                    pathString += 'H' + (rightEdgeOfAxis - 5);
                 } else if (isPositionRight) {
-                    pathString += 0 + ',' + (position + additionalHeight);
-                    pathString += 'H' + 5;
+                    pathString += baseLeft + ',' + (baseTop + position);
+                    pathString += 'H' + (baseLeft + 5);
                 } else {
-                    pathString += (paper.width - 5) + ',' + (position + additionalHeight - 1);
-                    pathString += 'H' + paper.width;
+                    pathString += rightEdgeOfAxis + ',' + (baseTop + position);
+                    pathString += 'H' + (rightEdgeOfAxis - 5);
                 }
             } else {
-                pathString += (position + additionalWidth) + ',0';
-                pathString += 'V5';
+                pathString += (baseLeft + position) + ',' + baseTop;
+                pathString += 'V' + (baseTop + 5);
             }
 
             if (!isNaN(position)) {
-                paper.path(pathString).attr({
+                tick = paper.path(pathString).attr({
                     stroke: tickColor
                 });
+                data.set.push(tick);
+                self.ticks.push(tick);
             }
         });
     },
@@ -188,50 +213,65 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var areaSize = data.areaSize;
         var lineSize = areaSize;
         var paper = data.paper;
+        var layout = data.layout;
         var isNotDividedXAxis = data.isNotDividedXAxis;
         var additionalSize = data.additionalSize;
-        var additionalWidth = data.additionalWidth;
-        var additionalHeight = data.additionalHeight;
         var isPositionRight = data.isPositionRight;
         var isCenter = data.isCenter;
         var isVertical = data.isVertical;
         var pathString = 'M';
-        var verticalTickLineEndYCoord = lineSize + additionalHeight - 1;
+        var baseTop = layout.position.top;
+        var baseLeft = layout.position.left;
+        var verticalTickLineEndYCoord = layout.dimension.height + baseTop;
+        var rightEdgeOfAxis = baseLeft + layout.dimension.width;
         var lineStartYCoord, lineEndXCoord, lineEndYCoord;
 
         if (isPositionRight) {
-            pathString += '0,' + (additionalHeight + 1);
+            pathString += baseLeft + ',' + baseTop;
             pathString += 'V' + verticalTickLineEndYCoord;
         } else if (isVertical) {
-            lineStartYCoord = additionalHeight - HALF_PIXEL;
-            pathString += (paper.width - HALF_PIXEL) + ',' + lineStartYCoord;
+            lineStartYCoord = baseTop;
+            pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
 
             if (isCenter) {
                 pathString += 'V' + verticalTickLineEndYCoord;
-                pathString += 'M' + HALF_PIXEL + ',' + lineStartYCoord;
+                pathString += 'M' + baseLeft + ',' + lineStartYCoord;
                 pathString += 'V' + verticalTickLineEndYCoord;
             } else {
-                lineEndYCoord = lineSize - 1 + additionalHeight;
-                pathString += 'V' + Math.round(lineEndYCoord);
+                lineEndYCoord = baseTop + lineSize;
+                pathString += 'V' + lineEndYCoord;
             }
         } else {
             if (isNotDividedXAxis) {
-                pathString += additionalWidth;
+                pathString += baseLeft;
             } else {
-                pathString += Math.round(additionalWidth + additionalSize);
+                pathString += (baseLeft + additionalSize);
             }
-            pathString += ',' + HALF_PIXEL + 'H';
+            pathString += ',' + baseTop + 'H';
 
-            lineEndXCoord = lineSize - 1 + additionalWidth;
+            lineEndXCoord = (baseLeft + lineSize);
+
             if (!isNotDividedXAxis) {
                 lineEndXCoord += additionalSize;
             }
-            pathString += Math.round(lineEndXCoord);
+            pathString += lineEndXCoord;
         }
 
-        paper.path(pathString).attr({
+        data.set.push(paper.path(pathString).attr({
             'stroke-width': 1,
             stroke: 'black'
+        }));
+    },
+
+    /**
+     * Animate ticks for adding data
+     * @param {number} tickSize tick size of moving
+     */
+    animateForAddingData: function(tickSize) {
+        tui.util.forEach(this.ticks, function(tick) {
+            tick.animate({
+                transform: 't-' + tickSize + ',0'
+            }, 300);
         });
     }
 });

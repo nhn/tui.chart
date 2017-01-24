@@ -93,6 +93,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var isStackType = predicate.isValidStackOption(this.options.stackType);
         var seriesDataModel = this._getSeriesDataModel();
         var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
+        var columnTopOffset = -this.layout.position.top + chartConst.CHART_PADDING;
+        var positionValue =
+            predicate.isColumnChart(this.chartType) ? columnTopOffset : this.layout.position.left;
         var itemCount, barSize, optionSize, basePosition, pointInterval, baseBounds;
 
         if (seriesDataModel.rawSeriesData.length > 0) {
@@ -106,7 +109,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
             optionSize = this.options.barWidth;
             barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
-            basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
+            basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin
+                + positionValue;
 
             if (predicate.isColumnChart(this.chartType)) {
                 basePosition = baseBarSize - basePosition;
@@ -127,25 +131,38 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Render normal series label.
-     * @param {HTMLElement} labelContainer series label area element
+     * @param {object} paper paper
+     * @returns {Array.<object>}
      * @private
      */
-    _renderNormalSeriesLabel: function(labelContainer) {
-        var sdm = this._getSeriesDataModel();
+    _renderNormalSeriesLabel: function(paper) {
+        var graphRenderer = this.graphRenderer;
+        var seriesDataModel = this._getSeriesDataModel();
         var boundsSet = this.seriesData.groupBounds;
         var labelTheme = this.theme.label;
         var selectedIndex = this.selectedLegendIndex;
-        var positionsSet, html;
+        var groupLabels = seriesDataModel.map(function(seriesGroup) {
+            return seriesGroup.map(function(seriesDatum) {
+                var label = {
+                    end: seriesDatum.endLabel
+                };
+
+                if (tui.util.isExisty(seriesDatum.start)) {
+                    label.start = seriesDatum.startLabel;
+                }
+
+                return label;
+            });
+        });
+        var positionsSet;
 
         if (predicate.isBarChart(this.chartType)) {
-            positionsSet = labelHelper.boundsToLabelPositionsForBarChart(sdm, boundsSet, labelTheme);
+            positionsSet = labelHelper.boundsToLabelPositionsForBarChart(seriesDataModel, boundsSet, labelTheme);
         } else {
-            positionsSet = labelHelper.boundsToLabelPositionsForColumnChart(sdm, boundsSet, labelTheme);
+            positionsSet = labelHelper.boundsToLabelPositionsForColumnChart(seriesDataModel, boundsSet, labelTheme);
         }
 
-        html = labelHelper.makeLabelsHtmlForBoundType(sdm, positionsSet, labelTheme, selectedIndex);
-
-        labelContainer.innerHTML = html;
+        return graphRenderer.renderSeriesLabel(paper, positionsSet, groupLabels, labelTheme, selectedIndex);
     },
 
     /**
@@ -162,15 +179,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * Make stackType label position.
      * @param {{width: number, height: number, left: number, top: number}} bound element bound
-     * @param {string} label label
-     * @param {number} labelHeight label height
      * @returns {{left: number, top: number}} position
      * @private
      */
-    _makeStackedLabelPosition: function(bound, label, labelHeight) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
-            left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),
-            top = bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
+    _makeStackedLabelPosition: function(bound) {
+        var left = bound.left + (bound.width / 2);
+        var top = bound.top + (bound.height / 2);
 
         return {
             left: left,
@@ -183,79 +197,74 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @param {object} params parameters
      *      @param {number} params.groupIndex group index
      *      @param {Array.<object>} params.bounds bounds,
-     *      @param {number} params.labelHeight label height
-     * @returns {string} labels html
+     * @returns {string} label positions
      * @private
      */
-    _makeStackedLabelsHtml: function(params) {
-        var positiveBound, negativeBound, values;
+    _makeStackedLabelPositions: function(params) {
         var self = this;
         var seriesGroup = params.seriesGroup;
-        var labelHeight = params.labelHeight;
-        var htmls = seriesGroup.map(function(seriesItem, index) {
+        var positions = seriesGroup.map(function(seriesItem, index) {
             var bound = params.bounds[index];
-            var labelHtml = '';
-            var boundEnd, position;
+            var position;
 
             if (bound && seriesItem) {
-                boundEnd = bound.end;
-                position = self._makeStackedLabelPosition(boundEnd, seriesItem.label, params.labelHeight);
-                labelHtml = self._makeSeriesLabelHtml(position, seriesItem.label, index);
+                position = self._makeStackedLabelPosition(bound.end);
             }
 
-            if (seriesItem.value > 0) {
-                positiveBound = boundEnd;
-            } else if (seriesItem.value < 0) {
-                negativeBound = boundEnd;
-            }
-
-            return labelHtml;
+            return {
+                end: position
+            };
         });
 
-        if (predicate.isNormalStack(this.options.stackType)) {
-            values = seriesGroup.pluck('value');
-            htmls.push(this._makePlusSumLabelHtml(values, positiveBound, labelHeight));
-            htmls.push(this._makeMinusSumLabelHtml(values, negativeBound, labelHeight));
-        }
-
-        return htmls.join('');
+        return positions;
     },
 
     /**
      * Render series label, when has stackType option.
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {object} paper paper
+     * @returns {Array.<object>}
      * @private
      */
-    _renderStackedSeriesLabel: function(elSeriesLabelArea) {
+    _renderStackedSeriesLabel: function(paper) {
         var self = this;
+        var graphRenderer = this.graphRenderer;
+        var labelTheme = this.theme.label;
         var groupBounds = this.seriesData.groupBounds;
         var seriesDataModel = this._getSeriesDataModel();
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label);
-        var stackLabelHtml = seriesDataModel.map(function(seriesGroup, index) {
-            var labelsHtml = self._makeStackedLabelsHtml({
-                groupIndex: index,
+        var groupPositions = seriesDataModel.map(function(seriesGroup, index) {
+            return self._makeStackedLabelPositions({
                 seriesGroup: seriesGroup,
-                bounds: groupBounds[index],
-                labelHeight: labelHeight
+                bounds: groupBounds[index]
             });
+        });
+        var groupLabels = seriesDataModel.map(function(seriesGroup) {
+            return seriesGroup.map(function(seriesDatum) {
+                return {
+                    end: seriesDatum.endLabel
+                };
+            });
+        });
+        var isStacked = true;
 
-            return labelsHtml;
-        }).join('');
-
-        elSeriesLabelArea.innerHTML = stackLabelHtml;
+        return graphRenderer.renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme, isStacked);
     },
 
     /**
      * Render series label.
-     * @param {HTMLElement} labelContainer series label area element
+     * @param {object} paper paper
+     * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function(labelContainer) {
+    _renderSeriesLabel: function(paper) {
+        var labelSet;
+
         if (this.options.stackType) {
-            this._renderStackedSeriesLabel(labelContainer);
+            labelSet = this._renderStackedSeriesLabel(paper);
         } else {
-            this._renderNormalSeriesLabel(labelContainer);
+            labelSet = this._renderNormalSeriesLabel(paper);
         }
+
+        return labelSet;
     }
 });
 

@@ -7,8 +7,6 @@
 'use strict';
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael;
-
 var ANIMATION_DURATION = 100;
 var MIN_BORDER_WIDTH = 1;
 var MAX_BORDER_WIDTH = 3;
@@ -21,7 +19,7 @@ var MAX_BORDER_WIDTH = 3;
 var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.prototype */ {
     /**
      * Render function of bar chart
-     * @param {HTMLElement} container container element
+     * @param {object} paper Raphael paper
      * @param {{
      *      dimension: {width: number, height: number},
      *      colorSpectrum: object,
@@ -31,10 +29,11 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * }} seriesData - data for graph rendering
      * @returns {object}
      */
-    render: function(container, seriesData) {
-        var dimension = seriesData.dimension;
+    render: function(paper, seriesData) {
+        var seriesSet = paper.set();
 
-        this.paper = raphael(container, dimension.width, dimension.height);
+        this.paper = paper;
+
         /**
          * theme
          * @type {*|{}}
@@ -87,9 +86,10 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
          * boxes set
          * @type {Array.<Array.<{rect: Object, color: string}>>}
          */
-        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot);
+        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot,
+        seriesSet);
 
-        return this.paper;
+        return seriesSet;
     },
 
     /**
@@ -219,10 +219,11 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @param {SeriesDataModel} seriesDataModel - seriesDataModel
      * @param {number} startDepth - start depth
      * @param {boolean} isPivot - whether pivot or not
+     * @param {Array.<object>} seriesSet - seriesSet
      * @returns {Array.<Array.<{rect: object, color: string}>>}
      * @private
      */
-    _renderBoxes: function(seriesDataModel, startDepth, isPivot) {
+    _renderBoxes: function(seriesDataModel, startDepth, isPivot, seriesSet) {
         var self = this;
         var rectToBack;
 
@@ -252,7 +253,12 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
                         color: color
                     };
                     rectToBack(result.rect);
+
+                    if (seriesSet) {
+                        seriesSet.push(result.rect);
+                    }
                 }
+
 
                 return result;
             });
@@ -366,6 +372,46 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
                 raphaelRenderUtil.updateRectBound(box.rect, bound);
             }
         });
+    },
+
+    renderSeriesLabel: function(paper, positionSet, labels, labelTheme) {
+        var labelSet = paper.set();
+
+        tui.util.forEach(labels, function(categoryLabel, categoryIndex) {
+            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+                raphaelRenderUtil.renderText(paper, positionSet[categoryIndex][seriesIndex].end, {
+                    text: label,
+                    attributes: {
+                        'font-size': labelTheme.fontSize,
+                        'font-family': labelTheme.fontFamily,
+                        'font-weight': labelTheme.fontWeight,
+                        fill: labelTheme.color
+                    },
+                    set: labelSet
+                });
+            });
+        });
+
+        return labelSet;
+    },
+
+    renderSeriesLabelForTreemap: function(paper, positions, labels, labelTheme) {
+        var labelSet = paper.set();
+
+        tui.util.forEach(labels, function(label, index) {
+            raphaelRenderUtil.renderText(paper, positions[index], {
+                text: label,
+                attributes: {
+                    'font-size': labelTheme.fontSize,
+                    'font-family': labelTheme.fontFamily,
+                    'font-weight': labelTheme.fontWeight,
+                    fill: labelTheme.color
+                },
+                set: labelSet
+            });
+        });
+
+        return labelSet;
     }
 });
 

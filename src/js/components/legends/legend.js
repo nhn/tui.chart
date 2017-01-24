@@ -6,13 +6,11 @@
 
 'use strict';
 
-var LegendModel = require('./legendModel');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
+var chartConst = require('../../const');
+var LegendModel = require('./legendModel');
 var pluginFactory = require('../../factories/pluginFactory');
+var predicate = require('../../helpers/predicate');
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
@@ -89,13 +87,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          * Graph renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get(this.options.libType || chartConst.DEFAULT_PLUGIN, 'legend');
+        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'legend');
 
         /**
          * Paper for rendering legend
          * @type {object}
          */
         this.paper = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     },
 
     /**
@@ -111,24 +111,27 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _setDataForRendering: function(data) {
         if (data) {
             this.layout = data.layout;
+            this.paper = data.paper;
         }
     },
 
     /**
      * Render legend component.
      * @param {object} data - bounds data
-     * @returns {HTMLElement} legend element
+     */
+    _render: function(data) {
+        this._setDataForRendering(data);
+        this.legendSet = this._renderLegendArea(data.paper);
+    },
+
+    /**
+     * Render legend component and listen legend event.
+     * @param {object} data - bounds data
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
+        this._render(data);
 
-        this.legendContainer = container;
-
-        this._setDataForRendering(data);
-        this.paper = this._renderLegendArea(container);
         this._listenEvents();
-
-        return container;
     },
 
     /**
@@ -136,10 +139,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @param {object} data - bounds data
      */
     rerender: function(data) {
-        this.paper.remove();
+        this.legendSet.remove();
 
-        this._setDataForRendering(data);
-        this.paper = this._renderLegendArea(this.legendContainer);
+        this._render(data);
     },
 
     /**
@@ -151,27 +153,17 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Render legend area.
-     * @param {HTMLElement} legendContainer legend container
-     * @returns {object} paper paper for drawing legend
+     * Get legend rendering data
+     * @param {object} legendData legned data
+     * @param {number} labelHeight lebel height
+     * @param {Array.<number>} labelWidths label widths
+     * @returns {Array.<object>}
      * @private
      */
-    _renderLegendArea: function(legendContainer) {
+    _getLegendRenderingData: function(legendData, labelHeight, labelWidths) {
         var self = this;
-        var graphRenderer = this.graphRenderer;
-        var legendData = this.legendModel.getData();
-        var labelsWidth = graphRenderer.makeLabelsWidth(legendData, this.theme.label);
-        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
-        var isHorizontal = predicate.isHorizontalLegend(this.options.align);
-        var labelCount = labelsWidth.length;
-        var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
-        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
-        var iconWidth = 10;
-        var width = arrayUtil.max(labelsWidth) + checkboxWidth + iconWidth
-            + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
-        var paper, legendRenderingData;
 
-        legendRenderingData = tui.util.map(legendData, function(legendDatum, index) {
+        return tui.util.map(legendData, function(legendDatum, index) {
             var checkbox = self.options.showCheckbox === false ? null : {
                 checked: self.legendModel.isCheckedIndex(index)
             };
@@ -183,27 +175,52 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
                 theme: legendDatum.theme,
                 label: legendDatum.label,
                 labelHeight: labelHeight,
-                labelWidth: labelsWidth[index],
+                labelWidth: labelWidths[index],
                 isUnselected: self.legendModel.isUnselectedIndex(index)
             };
         });
+    },
 
-        paper = graphRenderer.render({
-            container: legendContainer,
+    /**
+     * Render legend area.
+     * @param {object} paper paper object
+     * @returns {Array.<object>}
+     * @private
+     */
+    _renderLegendArea: function(paper) {
+        var legendData = this.legendModel.getData();
+        var graphRenderer = this.graphRenderer;
+        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
+        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
+        var isHorizontal = predicate.isHorizontalLegend(this.options.align);
+        var labelCount = labelWidths.length;
+        var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
+        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
+        var iconWidth = 10;
+        var width = arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
+            + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
+        var basePosition = this.layout.position;
+        var position = {
+            left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
+            top: basePosition.top
+        };
+        var legendRenderingData;
+
+        legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
+
+        return graphRenderer.render({
+            paper: paper,
             legendData: legendRenderingData,
             isHorizontal: isHorizontal,
+            position: position,
             dimension: {
                 height: height,
                 width: width
             },
             labelTheme: this.theme.label,
-            labelsWidth: labelsWidth,
+            labelWidths: labelWidths,
             eventBus: this.eventBus
         });
-
-        renderUtil.renderPosition(legendContainer, this.layout.position);
-
-        return paper;
     },
 
     /**
@@ -253,7 +270,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             this.legendModel.checkSelectedIndex();
             this._fireChangeCheckedLegendsEvent();
         }
-        this.rerender();
 
         this._fireSelectLegendEvent(data);
         this._fireSelectLegendPublicEvent(data);

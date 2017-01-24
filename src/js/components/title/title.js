@@ -6,7 +6,6 @@
 
 'use strict';
 
-var dom = require('../../helpers/domHandler');
 var chartConst = require('../../const');
 var pluginFactory = require('../../factories/pluginFactory');
 
@@ -22,12 +21,6 @@ var Title = tui.util.defineClass(/** @lends Title.prototype */ {
      */
     init: function(params) {
         /**
-         * Title view className
-         * @type {string}
-         */
-        this.className = 'tui-chart-title-area';
-
-        /**
          * Theme
          * @type {object}
          */
@@ -40,37 +33,58 @@ var Title = tui.util.defineClass(/** @lends Title.prototype */ {
         this.titleText = params.text;
 
         /**
+         * Relative offset position
+         * @type {object}
+         */
+        this.offset = params.options.offset;
+
+        /**
          * Graph renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get(params.options.libType || chartConst.DEFAULT_PLUGIN, 'title');
+        this.graphRenderer = pluginFactory.get(params.options.libType, 'title');
+
+        /**
+         * Drawing type
+         * @type {string}
+         */
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     },
 
     /**
      * Render title component
-     * @returns {{
-     *     container: HTMLElement,
-     *     paper: object
-     * }}
+     * @param {object} data data for render title
      */
-    render: function() {
-        var container = dom.create('DIV', this.className);
+    render: function(data) {
+        this.titleSet = this._renderTitleArea(data.paper);
+    },
 
-        this._renderTitleArea(container);
+    /**
+     * Render title component
+     * @param {object} data data for render title
+     */
+    resize: function(data) {
+        this.rerender(data);
+    },
 
-        return container;
+    /**
+     * Render title component
+     * @param {object} data data for render title
+     */
+    rerender: function(data) {
+        this.titleSet.remove();
+
+        this.render(data);
     },
 
     /**
      * Render title on given paper
-     * @param {HTMLElement} container title container element
+     * @param {object} paper paper object
      * @returns {object} raphael paper
      * @private
      */
-    _renderTitleArea: function(container) {
-        container.style.textAlign = 'center';
-
-        return this.graphRenderer.render(container, this.titleText, this.theme);
+    _renderTitleArea: function(paper) {
+        return this.graphRenderer.render(paper, this.titleText, this.offset, this.theme);
     }
 });
 

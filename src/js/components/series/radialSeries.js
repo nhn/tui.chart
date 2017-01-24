@@ -34,6 +34,8 @@ var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSerie
          * @type {null | {id: number}}
          */
         this.movingAnimation = null;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     },
 
     /**
@@ -44,11 +46,14 @@ var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSerie
      * @private
      */
     _makePositionsForRadial: function(seriesGroups, groupCount) {
-        var dimension = this.layout.dimension;
+        var layout = this.layout;
+        var dimension = layout.dimension;
         var width = dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
         var height = dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2);
-        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2);
+        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
+            + layout.position.left;
+        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
+            - layout.position.top;
 
         var stepAngle = 360 / groupCount;
         var radius;

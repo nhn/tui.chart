@@ -6,15 +6,15 @@
 
 'use strict';
 
-var BubbleChartSeries = require('../../../src/js/components/series/bubbleChartSeries'),
-    renderUtil = require('../../../src/js/helpers/renderUtil');
+var BubbleChartSeries = require('../../../src/js/components/series/bubbleChartSeries');
 
 describe('BubbleChartSeries', function() {
     var series, dataProcessor, seriesDataModel;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories', 'getCategoryCount', 'isXCountGreaterThanYCount', 'getSeriesDataModel']);
-        seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount'])
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['hasCategories', 'getCategoryCount', 'isXCountGreaterThanYCount', 'getSeriesDataModel']);
+        seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
     });
 
     beforeEach(function() {
@@ -30,6 +30,12 @@ describe('BubbleChartSeries', function() {
             dataProcessor: dataProcessor,
             eventBus: new tui.util.CustomEvents()
         });
+        series.layout = {
+            position: {
+                top: 10,
+                left: 10
+            }
+        };
     });
 
     describe('_calculateStep()', function() {
@@ -40,10 +46,8 @@ describe('BubbleChartSeries', function() {
             dataProcessor.isXCountGreaterThanYCount.and.returnValue(true);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategoryCount.and.returnValue(3);
-            series.layout = {
-                dimension: {
-                    height: 270
-                }
+            series.layout.dimension = {
+                height: 270
             };
 
             actual = series._calculateStep();
@@ -59,10 +63,8 @@ describe('BubbleChartSeries', function() {
             dataProcessor.isXCountGreaterThanYCount.and.returnValue(false);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategoryCount.and.returnValue(3);
-            series.layout = {
-                dimension: {
-                    width: 210
-                }
+            series.layout.dimension = {
+                width: 210
             };
 
             actual = series._calculateStep();
@@ -76,10 +78,8 @@ describe('BubbleChartSeries', function() {
         it('x ratio(ratioMap.x)값이 있는 경우에는 x ratio와 시리즈 너비 값으로 left를 계산합니다.', function() {
             var actual, expected;
 
-            series.layout = {
-                dimension: {
-                    width: 200
-                }
+            series.layout.dimension = {
+                width: 200
             };
 
             actual = series._makeBound({
@@ -94,9 +94,7 @@ describe('BubbleChartSeries', function() {
             var positionByStep = 40,
                 actual, expected;
 
-            series.layout = {
-                dimension: {}
-            };
+            series.layout.dimension = {};
             actual = series._makeBound({}, positionByStep);
             expected = 50;
 
@@ -106,10 +104,8 @@ describe('BubbleChartSeries', function() {
         it('y ratio(ratioMap.y)값이 있는 경우에는 y ratio와 시리즈 높이 값으로 top을 계산합니다.', function() {
             var actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: 150
-                }
+            series.layout.dimension = {
+                height: 150
             };
             actual = series._makeBound({
                 y: 0.5
@@ -123,10 +119,8 @@ describe('BubbleChartSeries', function() {
             var positionByStep = 40,
                 actual, expected;
 
-            series.layout = {
-                dimension: {
-                    height: 150
-                }
+            series.layout.dimension = {
+                height: 150
             };
             actual = series._makeBound({}, positionByStep);
             expected = 120;

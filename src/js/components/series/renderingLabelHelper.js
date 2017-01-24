@@ -8,7 +8,6 @@
 
 var chartConst = require('../../const');
 var renderUtil = require('../../helpers/renderUtil');
-var seriesTemplate = require('./seriesTemplate');
 
 /**
  * renderingLabelHelper is helper for rendering of series label.
@@ -19,46 +18,39 @@ var renderingLabelHelper = {
     /**
      * Calculate left position for center align of series label.
      * @param {{left: number, top: number, width:number, height: number}} bound - bound
-     * @param {number} labelWidth - label width
      * @returns {number}
      * @private
      */
-    _calculateLeftPositionForCenterAlign: function(bound, labelWidth) {
-        return bound.left + ((bound.width - labelWidth) / 2);
+    _calculateLeftPositionForCenterAlign: function(bound) {
+        return bound.left + ((bound.width) / 2);
     },
 
     /**
      * Calculate top position for middle align of series label.
      * @param {{left: number, top: number, width:number, height: number}} bound - bound
-     * @param {number} labelHeight - label height
      * @returns {number}
      * @private
      */
-    _calculateTopPositionForMiddleAlign: function(bound, labelHeight) {
-        return bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
+    _calculateTopPositionForMiddleAlign: function(bound) {
+        return bound.top + ((bound.height) / 2);
     },
 
     /**
      * Make position for type of bound for rendering label.
      * @param {{left: number, top: number, width:number, height: number}} bound - bound
-     * @param {number} labelHeight - label height
-     * @param {string} label - label
-     * @param {object} theme - theme for series label
      * @returns {{left: number, top: number}}
      * @private
      */
-    _makePositionForBoundType: function(bound, labelHeight, label, theme) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(label, theme);
-
+    _makePositionForBoundType: function(bound) {
         return {
-            left: this._calculateLeftPositionForCenterAlign(bound, labelWidth),
-            top: this._calculateTopPositionForMiddleAlign(bound, labelHeight)
+            left: this._calculateLeftPositionForCenterAlign(bound),
+            top: this._calculateTopPositionForMiddleAlign(bound)
         };
     },
 
     /**
      * Make position map for rendering label.
-     * @param {SeriesItem} seriesItem - series item
+     * @param {SeriesItem} seriesItem - series itemyuio
      * @param {{left: number, top: number, width: number, height: number}} bound - bound
      * @param {number} labelHeight - label height
      * @param {object} theme - theme for series label
@@ -130,7 +122,7 @@ var renderingLabelHelper = {
 
         return {
             left: left,
-            top: this._calculateTopPositionForMiddleAlign(bound, labelHeight)
+            top: this._calculateTopPositionForMiddleAlign(bound)
         };
     },
 
@@ -158,7 +150,6 @@ var renderingLabelHelper = {
      * @private
      */
     _makePositionForColumnChart: function(bound, labelHeight, label, theme, isOppositeSide) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(label, theme);
         var top = bound.top;
 
         if (isOppositeSide) {
@@ -168,7 +159,7 @@ var renderingLabelHelper = {
         }
 
         return {
-            left: this._calculateLeftPositionForCenterAlign(bound, labelWidth),
+            left: this._calculateLeftPositionForCenterAlign(bound),
             top: top
         };
     },
@@ -187,118 +178,25 @@ var renderingLabelHelper = {
     },
 
     /**
-     * Make css text for series label.
-     * @param {{left: number, top: number}} position - position for rendering label
-     * @param {object} theme - theme for series label
-     * @param {number} index - index of legends
-     * @param {number} selectedIndex - selected index of legends
-     * @param {object} [tplCssText] - cssText template object
-     * @returns {*}
-     * @private
-     */
-    _makeLabelCssText: function(position, theme, index, selectedIndex, tplCssText) {
-        var cssObj = tui.util.extend(position, theme);
-
-        tplCssText = tplCssText || seriesTemplate.tplCssText;
-
-        if (tui.util.isExisty(selectedIndex) && (selectedIndex !== index)) {
-            cssObj.opacity = renderUtil.makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
-        } else {
-            cssObj.opacity = '';
-        }
-
-        return tplCssText(cssObj);
-    },
-
-    /**
-     * Make html for series label.
-     * @param {{left: number, top: number}} position - position for rendering label
-     * @param {string} label - label of SeriesItem
-     * @param {object} theme - theme for series label
-     * @param {number} index - index of legends
-     * @param {number} selectedIndex - selected index of legends
-     * @param {object} [tplCssText] - cssText template object
-     * @param {boolean} [isStart] - whether start label or not
-     * @returns {string}
-     */
-    makeSeriesLabelHtml: function(position, label, theme, index, selectedIndex, tplCssText, isStart) {
-        /* eslint max-params: [2, 7]*/
-        var cssText = this._makeLabelCssText(position, theme, index, selectedIndex, tplCssText);
-        var rangeLabelAttribute = '';
-
-        if (isStart) {
-            rangeLabelAttribute = ' data-range="true"';
-        }
-
-        return seriesTemplate.tplSeriesLabel({
-            label: label,
-            cssText: cssText,
-            rangeLabelAttribute: rangeLabelAttribute
-        });
-    },
-
-    /**
-     * Make labels html for bound type chart.
-     * @param {SeriesDataModel} seriesDataModel - series data model
-     * @param {Array.<Array.<{left: number, top: number}>>} positionsSet - positions set
-     * @param {object} theme - theme for series label
-     * @param {number} selectedIndex - selected index of legends
-     * @param {boolean} [isPivot] - whether pivot or not
-     * @returns {*}
-     */
-    makeLabelsHtmlForBoundType: function(seriesDataModel, positionsSet, theme, selectedIndex, isPivot) {
-        var makeSeriesLabelHtml = tui.util.bind(this.makeSeriesLabelHtml, this);
-        var labelsHtml = seriesDataModel.map(function(seriesGroup, groupIndex) {
-            return seriesGroup.map(function(seriesItem, index) {
-                var positionMap = positionsSet[groupIndex][index];
-                var html = makeSeriesLabelHtml(positionMap.end, seriesItem.endLabel, theme, index, selectedIndex);
-
-                if (positionMap.start) {
-                    html += makeSeriesLabelHtml(positionMap.start, seriesItem.startLabel, theme, index, selectedIndex);
-                }
-
-                return html;
-            }).join('');
-        }, !!isPivot).join('');
-
-        return labelsHtml;
-    },
-
-    /**
      * Make labels html for treemap chart.
      * @param {Array.<SeriesItem>} seriesItems - seriesItems
      * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
-     * @param {object} theme - theme for series label
-     * @param {function} shouldDimmed - returns whether should dimmed or not
-     * @param {function} template - label template
      * @returns {string}
      */
-    makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed, template) {
+    boundsToLabelPostionsForTreemap: function(seriesItems, boundMap) {
         var self = this;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-        var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
+        var positions = tui.util.map(seriesItems, function(seriesItem) {
             var bound = boundMap[seriesItem.id];
-            var html = '';
-            var position, compareIndex, label;
+            var position;
 
             if (bound) {
-                compareIndex = shouldDimmed(seriesItem) ? -1 : null;
-
-                if (template) {
-                    label = template(seriesItem.pickLabelTemplateData());
-                    labelHeight = renderUtil.getRenderedLabelHeight(label, theme);
-                } else {
-                    label = seriesItem.label;
-                }
-
-                position = self._makePositionForBoundType(bound, labelHeight, label, theme, seriesItem.value >= 0);
-                html = self.makeSeriesLabelHtml(position, label, theme, index, compareIndex);
+                position = self._makePositionForBoundType(bound);
             }
 
-            return html;
-        }).join('');
+            return position;
+        });
 
-        return labelsHtml;
+        return positions;
     }
 };
 

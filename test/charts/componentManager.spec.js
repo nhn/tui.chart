@@ -13,7 +13,9 @@ describe('Test for ComponentManager', function() {
     var componentManager;
 
     beforeEach(function() {
-        componentManager = new ComponentManager({});
+        componentManager = new ComponentManager({
+            options: {}
+        });
     });
 
     describe('register()', function() {
