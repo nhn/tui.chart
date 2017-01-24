@@ -7,6 +7,10 @@
 'use strict';
 var isIE10OrIE11 = tui.util.browser.msie && (tui.util.browser.version === 10 || tui.util.browser.version === 11);
 
+var isImageDownloadAvailable = isBrowserSupportClientSideDownload()
+    && (!isIE10OrIE11 || (isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg));
+
+
 var DATA_URI_HEADERS = {
     xls: 'data:application/vnd.ms-excel;base64,',
     csv: 'data:text/csv,'
@@ -26,7 +30,7 @@ var DOWNLOADER_FUNCTIONS = {
  * @returns {boolean}
  * @private
  */
-function _isImageExtension(extension) {
+function isImageExtension(extension) {
     return extension === 'png' || extension === 'jpeg';
 }
 
@@ -283,7 +287,7 @@ function base64toBlob(base64String) {
  * @private
  */
 function _downloadWithMsSaveOrOpenBlob(content, fileName, extension) {
-    var blobObject = _isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
+    var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
     window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
 }
 
@@ -303,7 +307,7 @@ function _downloadWithAnchorElementDownloadAttribute(content, fileName, extensio
         return;
     }
 
-    if (_isImageExtension(extension)) {
+    if (isImageExtension(extension)) {
         dataUri = content;
     } else {
         dataUri = DATA_URI_HEADERS[extension] + data;
@@ -343,7 +347,7 @@ function _download(content, fileName, extension) {
 function exportChartData(extension, rawData, chartTitle) {
     var fileName = chartTitle;
 
-    if (_isImageExtension(extension)) {
+    if (isImageExtension(extension)) {
         _downloadImage(fileName, extension);
     } else {
         _download(EXPORT_DATA_MAKERS[extension](rawData), fileName, extension);
@@ -360,7 +364,24 @@ function isBrowserSupportClientSideDownload() {
     return method !== 'none';
 }
 
+function isDataDownloadAvailable(seriesDataModels) {
+    var result = true;
+
+    tui.util.forEach(seriesDataModels, function(seriesDataModel) {
+        if (seriesDataModel.isCoordinateType) {
+            result = false;
+        }
+
+        return false;
+    });
+
+    return result;
+}
+
 module.exports = {
     exportChartData: exportChartData,
-    isBrowserSupportClientSideDownload: isBrowserSupportClientSideDownload
+    isBrowserSupportClientSideDownload: isBrowserSupportClientSideDownload,
+    isDataDownloadAvailable: isDataDownloadAvailable,
+    isImageDownloadAvailable: isImageDownloadAvailable,
+    isImageExtension: isImageExtension
 };

@@ -94,16 +94,26 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      * @private
      */
     _renderChartExportMenu: function(chartExportMenuContainer) {
+        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
+        var isImageExtension = chartDataExporter.isImageExtension;
+        var isImageDownloadAvailable = chartDataExporter.isImageDownloadAvailable;
         var browserSupportsDownload = chartDataExporter.isBrowserSupportClientSideDownload();
+        var isDataDownloadAvailable = chartDataExporter.isDataDownloadAvailable(seriesDataModelMap);
         var chartExportMenuElement = dom.create('ul');
         var menuStyle = chartExportMenuElement.style;
         var menuItems = [];
 
-        if (browserSupportsDownload) {
+        if (browserSupportsDownload && (isDataDownloadAvailable || isImageDownloadAvailable)) {
             menuItems = tui.util.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
-                var itemElement = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
-                itemElement.id = exportItemType;
-                itemElement.innerHTML = 'Export to .' + exportItemType;
+                var itemElement;
+
+                if ((!isImageExtension(exportItemType) && isDataDownloadAvailable)
+                    || (isImageExtension(exportItemType) && isImageDownloadAvailable)
+                ) {
+                    itemElement = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
+                    itemElement.id = exportItemType;
+                    itemElement.innerHTML = 'Export to .' + exportItemType;
+                }
 
                 return itemElement;
             });
@@ -145,15 +155,19 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      * @returns {HTMLElement} chartExportMenu element
      */
     render: function(data) {
-        var container = data.paper;
+        var container = null;
 
-        dom.addClass(container, this.className);
+        if (chartDataExporter.isBrowserSupportClientSideDownload()) {
+            container = data.paper;
 
-        this._setDataForRendering(data);
-        this._renderChartExportMenuArea(container);
-        this._renderChartExportMenu(container);
-        this.chartExportMenuContainer = container;
-        this._attachEvent(container);
+            dom.addClass(container, this.className);
+
+            this._setDataForRendering(data);
+            this._renderChartExportMenuArea(container);
+            this._renderChartExportMenu(container);
+            this.chartExportMenuContainer = container;
+            this._attachEvent(container);
+        }
 
         return container;
     },
