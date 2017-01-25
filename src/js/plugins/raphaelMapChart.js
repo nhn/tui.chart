@@ -28,7 +28,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     render: function(paper, data) {
         var mapDimension = data.mapModel.getMapDimension();
 
-        this.ratio = this._getDimensionRatio(data, mapDimension);
+        this.ratio = this._getDimensionRatio(data.layout.dimension, mapDimension);
         this.paper = paper;
         this.sectorSet = paper.set();
         this.sectors = this._renderMap(data, this.ratio);
@@ -128,22 +128,58 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         }, ANIMATION_DURATION, '>');
     },
 
-    scaleMapPaths: function(changedRatio, position) {
+    scaleMapPaths: function(changedRatio, position, layout, base) {
         var bbox = this.sectorSet.getBBox();
-        var direction = changedRatio < 0 ? -1 : 1;
+        var zoomOut = changedRatio < 1 ? 1 : -1;
 
-        //tui.util.forEach(this.sectorSet, function(sector) {
+        tui.util.forEachArray(this.sectorSet, function(sector) {
+            var transformList = sector.node.transform.baseVal;
+            var zoom = sector.paper.canvas.createSVGTransform();
+            var matrix = sector.paper.canvas.createSVGMatrix();
+            var raphaelMatrix = sector.paper.raphael.matrix();
+
+            raphaelMatrix.scale(changedRatio, changedRatio, position.left, position.top);
+
+            tui.util.extend(matrix, raphaelMatrix);
+
+            zoom.setMatrix(matrix);
+            transformList.appendItem(zoom);
+        }); // 빠른데 IE8안됨
+
+        //tui.util.forEachArray(this.sectorSet, function(sector) {
         //    var node = sector.node;
         //    var scale = sector.paper.canvas.createSVGTransform();
-        //    scale.setScale(changedRatio, changedRatio);
+        //    var translate = sector.paper.canvas.createSVGTransform();
+        //
+        //    scale.setScale(changedRatio, changedRatio, position.left, position.top);
         //    node.transform.baseVal.appendItem(scale);
+        //
+        //    translate.setTranslate((bbox.width - (bbox.width * changedRatio)) / 2,
+        //        (bbox.height - (bbox.height * changedRatio)) / 2);
+        //    node.transform.baseVal.appendItem(translate);
+        //    node.transform.baseVal.initialize(node.transform.baseVal.consolidate());
         //}); // 빠른데 IE8안됨
 
         //this.sectorSet.scale(changedRatio, changedRatio, position.left, position.top); //버벅댐
 
-        this.sectorSet.attr({
-            transform: 's' + changedRatio + ',' + changedRatio + ',0,0'
-                + 't' + (bbox.x * changedRatio * direction) + ',' + (bbox.y * changedRatio * direction)
+        //this.sectorSet.attr({
+        //    transform: 's' + changedRatio + ',' + changedRatio + ',0,0'
+        //        + 't' + (bbox.x * changedRatio * direction) + ',' + (bbox.y * changedRatio * direction)
+        //});
+    },
+
+    moveMapPaths: function(distances, zoomMagn, dimension, mapDimension) {
+        var bbox = this.sectorSet.getBBox();
+
+        tui.util.forEachArray(this.sectorSet, function(sector) {
+            var node = sector.node;
+            var translate;
+
+            translate = sector.paper.canvas.createSVGTransform();
+
+            translate.setTranslate(distances.x, distances.y);
+            node.transform.baseVal.appendItem(translate);
+            node.transform.baseVal.initialize(node.transform.baseVal.consolidate());
         });
     }
 });

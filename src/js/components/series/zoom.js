@@ -143,9 +143,9 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      */
     _calculateMagn: function(wheelDelta) {
         if (wheelDelta > 0) {
-            this.magn += 0.5;
+            this.magn += 0.1;
         } else if (wheelDelta < 0) {
-            this.magn -= 0.5;
+            this.magn -= 0.1;
         }
     },
 
@@ -159,7 +159,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 
         if (this.magn > 5) {
             this.magn = 5;
-        } else if (this.magn < 0.25) {
+        } else if (this.magn < 0.2) {
             this.magn = 1;
         } else if (this.magn >= 1) {
             this._zoom(this.magn, position);
