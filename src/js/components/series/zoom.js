@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var IS_MSIE_VERSION_LTE_THAN_8 = tui.util.browser.msie && tui.util.browser.version <= 8;
 
 var seriesTemplate = require('./seriesTemplate');
 var chartConst = require('../../const');
@@ -43,7 +44,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
          */
         this.stackedWheelDelta = 0;
 
-        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
 
         this._attachToEventBus();
     },
@@ -62,11 +63,15 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @returns {HTMLElement} zoom container
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
+        var container;
 
-        container.innerHTML += seriesTemplate.ZOOM_BUTTONS;
-        renderUtil.renderPosition(container, data.positionMap.series);
-        this._attachEvent(container);
+        if (!IS_MSIE_VERSION_LTE_THAN_8) {
+            container = dom.create('DIV', this.className);
+
+            container.innerHTML += seriesTemplate.ZOOM_BUTTONS;
+            renderUtil.renderPosition(container, data.positionMap.series);
+            this._attachEvent(container);
+        }
 
         return container;
     },
