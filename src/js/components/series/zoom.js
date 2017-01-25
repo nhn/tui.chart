@@ -115,9 +115,9 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @private
      */
     _onClick: function(e) {
-        var target = e.target || e.srcElement,
-            btnElement = this._findBtnElement(target),
-            magn;
+        var target = e.target || e.srcElement;
+        var btnElement = this._findBtnElement(target);
+        var magn;
 
         if (btnElement) {
             magn = parseFloat(btnElement.getAttribute('data-magn'));

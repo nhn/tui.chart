@@ -94,6 +94,11 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          */
         this.startPosition = null;
 
+        this.stackedMovingPositions = {
+            x: 0,
+            y: 0
+        };
+
         Series.call(this, params);
     },
 
@@ -262,7 +267,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setLimitPositionToMoveMap();
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
 
-        this.graphRenderer.scaleMapPaths(changedRatio, position, this.layout, this.basePosition);
+        this.graphRenderer.scaleMapPaths(changedRatio, position, this.mapRatio, this.limitPosition, this.graphDimension);
     },
 
     /**
@@ -353,7 +358,10 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             indexes: {
                 index: index
             },
-            mousePosition: mousePosition
+            mousePosition: {
+                left: mousePosition.left,
+                top: mousePosition.top - 15
+            }
         });
     },
 
@@ -417,9 +425,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             y: (endPosition.top - startPosition.top) / this.zoomMagn
         };
 
-        //renderUtil.renderPosition(this.graphContainer, movementPosition);
         this.graphRenderer.moveMapPaths(movementPosition);
-        //this.basePosition = movementPosition;
     },
 
     /**

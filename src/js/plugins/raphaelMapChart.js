@@ -57,15 +57,10 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @private
      */
     _renderMap: function(data, dimensionRatio) {
-        //var self = this;
         var sectorSet = this.sectorSet;
         var position = data.layout.position;
         var paper = this.paper;
         var colorSpectrum = data.colorSpectrum;
-        //this.gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        //this.paper.canvas.appendChild(this.gElement);
-        //window.gElement = this.gElement;
-        //window.paper = this.paper;
 
         return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
             var ratio = datum.ratio || 0;
@@ -78,7 +73,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
                 transform: 's' + dimensionRatio + ',' + dimensionRatio + ',0,0'
                     + 't' + position.left + ',' + position.top
             });
-            //self.gElement.appendChild(sector[0])
+
             sector.data('index', index);
 
             sectorSet.push(sector);
@@ -128,9 +123,9 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         }, ANIMATION_DURATION, '>');
     },
 
-    scaleMapPaths: function(changedRatio, position, layout, base) {
-        var bbox = this.sectorSet.getBBox();
-        var zoomOut = changedRatio < 1 ? 1 : -1;
+    scaleMapPaths: function(changedRatio, position, mapRatio, limitPosition, mapDimension) {
+        var isZoomIn = changedRatio > 1;
+        var zoomFactor = isZoomIn ? 1 / changedRatio / mapRatio : changedRatio / mapRatio;
 
         tui.util.forEachArray(this.sectorSet, function(sector) {
             var transformList = sector.node.transform.baseVal;
@@ -138,39 +133,21 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
             var matrix = sector.paper.canvas.createSVGMatrix();
             var raphaelMatrix = sector.paper.raphael.matrix();
 
-            raphaelMatrix.scale(changedRatio, changedRatio, position.left, position.top);
+            raphaelMatrix.scale(changedRatio, changedRatio, position.left * zoomFactor, position.top * zoomFactor);
 
-            tui.util.extend(matrix, raphaelMatrix);
+            matrix.a = raphaelMatrix.a;
+            matrix.b = raphaelMatrix.b;
+            matrix.c = raphaelMatrix.c;
+            matrix.d = raphaelMatrix.d;
+            matrix.e = raphaelMatrix.e;
+            matrix.f = raphaelMatrix.f;
 
             zoom.setMatrix(matrix);
             transformList.appendItem(zoom);
-        }); // 빠른데 IE8안됨
-
-        //tui.util.forEachArray(this.sectorSet, function(sector) {
-        //    var node = sector.node;
-        //    var scale = sector.paper.canvas.createSVGTransform();
-        //    var translate = sector.paper.canvas.createSVGTransform();
-        //
-        //    scale.setScale(changedRatio, changedRatio, position.left, position.top);
-        //    node.transform.baseVal.appendItem(scale);
-        //
-        //    translate.setTranslate((bbox.width - (bbox.width * changedRatio)) / 2,
-        //        (bbox.height - (bbox.height * changedRatio)) / 2);
-        //    node.transform.baseVal.appendItem(translate);
-        //    node.transform.baseVal.initialize(node.transform.baseVal.consolidate());
-        //}); // 빠른데 IE8안됨
-
-        //this.sectorSet.scale(changedRatio, changedRatio, position.left, position.top); //버벅댐
-
-        //this.sectorSet.attr({
-        //    transform: 's' + changedRatio + ',' + changedRatio + ',0,0'
-        //        + 't' + (bbox.x * changedRatio * direction) + ',' + (bbox.y * changedRatio * direction)
-        //});
+        });
     },
 
-    moveMapPaths: function(distances, zoomMagn, dimension, mapDimension) {
-        var bbox = this.sectorSet.getBBox();
-
+    moveMapPaths: function(distances) {
         tui.util.forEachArray(this.sectorSet, function(sector) {
             var node = sector.node;
             var translate;
