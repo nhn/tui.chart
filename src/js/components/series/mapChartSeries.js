@@ -421,8 +421,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _movePosition: function(startPosition, endPosition) {
         var movementPosition = {
-            x: (endPosition.left - startPosition.left) / this.zoomMagn,
-            y: (endPosition.top - startPosition.top) / this.zoomMagn
+            x: (endPosition.left - startPosition.left) / this.zoomMagn / this.mapRatio,
+            y: (endPosition.top - startPosition.top) / this.zoomMagn / this.mapRatio
         };
 
         this.graphRenderer.moveMapPaths(movementPosition);
