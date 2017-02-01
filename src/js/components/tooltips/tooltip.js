@@ -33,7 +33,7 @@ function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
 
 function tooltipFactory(params) {
     var chartType = params.chartOptions.chartType;
-    var chartTypes = params.chartOptions.chartTypes;
+    var seriesTypes = params.seriesTypes;
     var xAxisOptions = params.chartOptions.xAxis;
     var factory = params.options.grouped ? groupTooltipFactory : normalTooltipFactory;
 
@@ -42,7 +42,7 @@ function tooltipFactory(params) {
     }
 
     params.chartType = chartType;
-    params.chartTypes = chartTypes;
+    params.chartTypes = seriesTypes;
     params.xAxisType = xAxisOptions.type;
     params.dateFormat = xAxisOptions.dateFormat;
 

@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var predicate = require('../helpers/predicate');
-var chartConst = require('../const');
 var DynamicDataHelper = require('./dynamicDataHelper');
 var Series = require('../components/series/lineChartSeries');
 var rawDataHandler = require('../models/data/rawDataHandler');

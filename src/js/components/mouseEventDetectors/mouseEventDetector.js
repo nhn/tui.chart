@@ -13,7 +13,7 @@ var boundsTypeEventDetectorFactory = require('./boundsTypeEventDetector');
 
 function mouseEventDetectorFactory(params) {
     var chartType = params.chartOptions.chartType;
-    var chartTypes = params.chartOptions.chartTypes;
+    var seriesTypes = params.seriesTypes;
     var zoomable = params.chartOptions.series.zoomable;
     var seriesAllowSelect = params.chartOptions.series.allowSelect;
     var factory;
@@ -30,7 +30,8 @@ function mouseEventDetectorFactory(params) {
     }
 
     params.chartType = chartType;
-    params.chartTypes = chartTypes;
+    // TODO chartType이나 chartTypes없이 모두 seriesTypes만 보도록 변경해야한다.컴포넌트 전체의 문제임
+    params.chartTypes = seriesTypes;
     params.zoomable = zoomable;
     params.allowSelect = seriesAllowSelect;
 

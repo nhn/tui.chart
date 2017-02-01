@@ -1006,7 +1006,7 @@ function axisFactory(axisParam) {
             axisParam.theme = axisParam.theme[axisParam.seriesTypes[1]];
             axisParam.index = 1;
         }
-    // 왜 싱글타입의  yAxis도 내부에 차트이름으로 한번더 분기가 되는 지는 모르겠다 추가 개선요소
+    // 왜 싱글타입의  yAxis도 내부에 차트이름으로 한번더 분기가 되는 지는 모르겠다 일관성이 없는 느낌, 추가 개선요소
     } else if (axisParam.isYAxis) {
         axisParam.theme = axisParam.theme[chartType];
     // 싱글에 xAxis인 경우

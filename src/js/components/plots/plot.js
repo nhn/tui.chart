@@ -579,12 +579,12 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
 function plotFactory(param) {
     var chartType = param.chartOptions.chartType;
-    var chartTypes = param.chartOptions.chartTypes;
+    var seriesTypes = param.seriesTypes;
     var xAxisType = param.chartOptions.xAxis.type;
 
     // bar, chart, line, area동일
     param.chartType = chartType;
-    param.chartTypes = chartTypes;
+    param.chartTypes = seriesTypes;
     param.xAxisTypeOption = xAxisType;
 
     return new Plot(param);
