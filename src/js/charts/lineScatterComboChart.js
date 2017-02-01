@@ -7,12 +7,6 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var axisTypeMixer = require('./axisTypeMixer');
-var comboTypeMixer = require('./comboTypeMixer');
-
-var LineSeries = require('../components/series/lineChartSeries');
-var ScatterSeries = require('../components/series/scatterChartSeries');
-
 var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
     /**
      * Line and Scatter Combo chart.
@@ -45,58 +39,6 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
     },
 
     /**
-     * Add components.
-     * @override
-     */
-    addComponents: function() {
-        var optionsMap = this._makeOptionsMap(this.seriesTypes);
-
-        this._addPlotComponent(this.options.xAxis.type);
-        this._addAxisComponents([
-            {
-                name: 'yAxis',
-                seriesType: this.seriesTypes[0],
-                isVertical: true
-            },
-            {
-                name: 'xAxis'
-            }
-        ], false);
-        this._addLegendComponent({});
-        this._addSeriesComponents([
-            {
-                name: 'lineSeries',
-                SeriesClass: LineSeries,
-                data: {
-                    allowNegativeTooltip: true,
-                    chartType: 'line',
-                    seriesType: 'line',
-                    options: optionsMap.line
-                }
-            },
-            {
-                name: 'scatterSeries',
-                SeriesClass: ScatterSeries,
-                data: {
-                    allowNegativeTooltip: true,
-                    chartType: 'scatter',
-                    seriesType: 'scatter',
-                    options: optionsMap.scatter
-                }
-            }
-        ], this.options);
-
-        this.componentManager.register('mouseEventDetector', {
-            chartType: this.chartType,
-            isVertical: this.isVertical,
-            allowSelect: this.options.series.allowSelect,
-            classType: 'areaTypeEventDetector'
-        });
-
-        this._addTooltipComponent();
-    },
-
-    /**
      * Get scale option.
      * @returns {{
      *      yAxis: {valueType: string, additionalOptions: {isSingleYAxis: boolean}},
@@ -114,16 +56,42 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
             }
         };
     },
-    addDataRatios: axisTypeMixer.addDataRatios,
 
-    _addPlotComponent: axisTypeMixer._addPlotComponent,
-    _addLegendComponent: axisTypeMixer._addLegendComponent,
-    _addAxisComponents: axisTypeMixer._addAxisComponents,
-    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
-    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
+    /**
+     * Add data ratios.
+     * @override
+     * from axisTypeMixer
+     */
+    addDataRatios: function(limitMap) {
+        var self = this;
+        var chartTypes = this.chartTypes || [this.chartType];
+        var addDataRatio;
 
-    _makeOptionsMap: comboTypeMixer._makeOptionsMap,
-    _getBaseSeriesOptions: comboTypeMixer._getBaseSeriesOptions
+        addDataRatio = function(chartType) {
+            self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+        };
+
+        tui.util.forEachArray(chartTypes, addDataRatio);
+    },
+
+    /**
+     * Add components
+     * @override
+     */
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
+
+        this.componentManager.register('legend', 'legend');
+
+        this.componentManager.register('lineSeries', 'lineSeries');
+        this.componentManager.register('scatterSeries', 'scatterSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+    }
 });
 
 module.exports = LineScatterComboChart;
