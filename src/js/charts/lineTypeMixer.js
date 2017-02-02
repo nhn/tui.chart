@@ -44,7 +44,7 @@ var lineTypeMixer = {
         this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            zoomable: seriesOptions.zoomable,
+            zoomable: seriesOptions.zoomable && !this.dataProcessor.coordinateType,
             allowSelect: seriesOptions.allowSelect,
             classType: 'areaTypeEventDetector'
         });
