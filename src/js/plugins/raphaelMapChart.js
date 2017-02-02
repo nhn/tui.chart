@@ -7,9 +7,34 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var dom = require('../helpers/domHandler');
+var browser = tui.util.browser;
 
+var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 var STROKE_COLOR = 'gray';
 var ANIMATION_DURATION = 100;
+var G_ID = 'tui-chart-series-group';
+
+
+/**
+ * Create clip rect with layout
+ * @param {object} paper Raphael paper
+ * @param {Array.<object>} sectorSet sectorSet
+ * @param {string} id ID string
+ * @returns {object}
+ */
+function createGElement(paper, sectorSet, id) {
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.id = id;
+
+    sectorSet.forEach(function(sector) {
+        dom.append(g, sector.node);
+    });
+
+    paper.canvas.appendChild(g);
+
+    return g;
+}
 
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
@@ -32,6 +57,11 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         this.paper = paper;
         this.sectorSet = paper.set();
         this.sectors = this._renderMap(data, this.ratio);
+
+        if (!IS_LTE_THAN_IE8) {
+            this.g = createGElement(paper, this.sectorSet, G_ID);
+        }
+
         this.overColor = data.theme.overColor;
     },
 
@@ -126,38 +156,32 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     scaleMapPaths: function(changedRatio, position, mapRatio, limitPosition, mapDimension) {
         var isZoomIn = changedRatio > 1;
         var zoomFactor = isZoomIn ? 1 / changedRatio / mapRatio : changedRatio / mapRatio;
+        var transformList = this.g.transform.baseVal;
+        var zoom = this.paper.canvas.createSVGTransform();
+        var matrix = this.paper.canvas.createSVGMatrix();
+        var raphaelMatrix = this.paper.raphael.matrix();
 
-        tui.util.forEachArray(this.sectorSet, function(sector) {
-            var transformList = sector.node.transform.baseVal;
-            var zoom = sector.paper.canvas.createSVGTransform();
-            var matrix = sector.paper.canvas.createSVGMatrix();
-            var raphaelMatrix = sector.paper.raphael.matrix();
+        raphaelMatrix.scale(changedRatio, changedRatio, position.left * zoomFactor, position.top * zoomFactor);
 
-            raphaelMatrix.scale(changedRatio, changedRatio, position.left * zoomFactor, position.top * zoomFactor);
+        matrix.a = raphaelMatrix.a;
+        matrix.b = raphaelMatrix.b;
+        matrix.c = raphaelMatrix.c;
+        matrix.d = raphaelMatrix.d;
+        matrix.e = raphaelMatrix.e;
+        matrix.f = raphaelMatrix.f;
 
-            matrix.a = raphaelMatrix.a;
-            matrix.b = raphaelMatrix.b;
-            matrix.c = raphaelMatrix.c;
-            matrix.d = raphaelMatrix.d;
-            matrix.e = raphaelMatrix.e;
-            matrix.f = raphaelMatrix.f;
-
-            zoom.setMatrix(matrix);
-            transformList.appendItem(zoom);
-        });
+        zoom.setMatrix(matrix);
+        transformList.appendItem(zoom);
+        transformList.initialize(transformList.consolidate());
     },
 
     moveMapPaths: function(distances) {
-        tui.util.forEachArray(this.sectorSet, function(sector) {
-            var node = sector.node;
-            var translate;
+        var transformList = this.g.transform.baseVal;
+        var translate = this.paper.canvas.createSVGTransform();
 
-            translate = sector.paper.canvas.createSVGTransform();
-
-            translate.setTranslate(distances.x, distances.y);
-            node.transform.baseVal.appendItem(translate);
-            node.transform.baseVal.initialize(node.transform.baseVal.consolidate());
-        });
+        translate.setTranslate(distances.x, distances.y);
+        transformList.appendItem(translate);
+        transformList.initialize(transformList.consolidate());
     }
 });
 

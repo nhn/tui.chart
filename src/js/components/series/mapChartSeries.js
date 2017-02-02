@@ -267,7 +267,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setLimitPositionToMoveMap();
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
 
-        this.graphRenderer.scaleMapPaths(changedRatio, position, this.mapRatio, this.limitPosition, this.graphDimension);
+        this.graphRenderer.scaleMapPaths(changedRatio, position, this.mapRatio, prevDimension, prevDimension);
     },
 
     /**
