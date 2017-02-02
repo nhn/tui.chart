@@ -469,11 +469,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             top: layout.position.top
         });
 
-        this.tooltipLine.attr({
-            path: linePath,
-            stroke: '#999',
-            'stroke-opacity': 1
-        });
+        if (this.tooltipLine) {
+            this.tooltipLine.attr({
+                path: linePath,
+                stroke: '#999',
+                'stroke-opacity': 1
+            });
+        }
     },
 
     /**
