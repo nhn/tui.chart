@@ -30,6 +30,14 @@ describe('Test for BoundsModel', function() {
             options: {
                 legend: {
                     visible: true
+                },
+                chart: {
+                    title: {
+                        text: 'This is title'
+                    }
+                },
+                chartExportMenu: {
+                    visible: true
                 }
             }
         });
@@ -76,6 +84,73 @@ describe('Test for BoundsModel', function() {
             actual = boundsModel.getDimension('title');
             expected = {
                 height: 30
+            };
+
+            expect(actual).toEqual(expected);
+        });
+        it('title 옵션이 없는 경우 너비 높이가 0, 0 인 정보를 등록합니다.', function() {
+            var actual, expected;
+
+            boundsModel = new BoundsModel({
+                dataProcessor: dataProcessor,
+                options: {
+                    legend: {
+                        visible: true
+                    },
+                    chart: {
+                    },
+                    chartExportMenu: {
+                        visible: true
+                    }
+                }
+            });
+
+            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+            boundsModel._registerTitleDimension();
+            actual = boundsModel.getDimension('title');
+            expected = {
+                height: 0
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_registerChartExportMenuDimension()', function() {
+        it('chartExportMenu dimension 정보를 등록합니다.', function() {
+            var actual, expected;
+
+            boundsModel._registerChartExportMenuDimension();
+            actual = boundsModel.getDimension('chartExportMenu');
+            expected = {
+                height: 27,
+                width: 60
+            };
+
+            expect(actual).toEqual(expected);
+        });
+        it('chartExportMenu 옵션이 없는 경우 너비 높이가 0, 0 인 정보를 등록합니다.', function() {
+            var actual, expected;
+
+            boundsModel = new BoundsModel({
+                dataProcessor: dataProcessor,
+                options: {
+                    legend: {
+                        visible: true
+                    },
+                    chart: {
+                    },
+                    chartExportMenu: {
+                        visible: false
+                    }
+                }
+            });
+
+            boundsModel._registerChartExportMenuDimension();
+            actual = boundsModel.getDimension('chartExportMenu');
+            expected = {
+                height: 0,
+                width: 0
             };
 
             expect(actual).toEqual(expected);
