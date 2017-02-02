@@ -29,7 +29,7 @@ module.exports = function(config) {
         files: [
             {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
             {pattern: 'lib/tui-component-animation/dist/tui-component-animation.js', watched: false},
-            {pattern: 'lib/raphael/raphael-min.js', watched: false},
+            {pattern: 'lib/raphael/raphael.js', watched: false},
 
             'test/test.bundle.js'
         ],
