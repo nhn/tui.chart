@@ -135,6 +135,8 @@ var axisTypeMixer = {
             this._addPlotComponent(options.xAxis.type);
         }
 
+        this._addSeriesComponents(params.series, options);
+
         this._addAxisComponents(params.axis, aligned);
 
         if (options.legend.visible) {
@@ -149,7 +151,6 @@ var axisTypeMixer = {
             this._addTitleComponent(params.title);
         }
 
-        this._addSeriesComponents(params.series, options);
         this._addTooltipComponent();
         this._addMouseEventDetectorComponent();
     },

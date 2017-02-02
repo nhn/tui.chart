@@ -110,44 +110,37 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
         var paper = this.paper;
         var theme = this.theme;
         var labelData = this.labelData;
+        var attributes = {
+            fill: theme.lineColor,
+            'font-size': theme.label.fontSize,
+            'font-family': theme.label.fontFamily,
+            'text-anchor': 'end',
+            'font-weight': '100',
+            'dominant-baseline': 'middle'
+        };
 
         tui.util.forEachArray(labelData.category, function(item) {
-            var attrs = {
-                fill: theme.label.color,
-                'font-size': theme.label.fontSize,
-                'font-family': theme.label.fontFamily,
-                'text-anchor': item.position.anchor,
-                'font-weight': '100',
-                'dominant-baseline': 'middle'
-            };
-
-            raphaelRenderUtil.renderText(paper, item.position, {
-                text: item.text,
-                attributes: attrs,
-                set: plotSet,
-                toBack: true
+            var categoryAttributes = tui.util.extend({}, attributes, {
+                'text-anchor': item.position.anchor
             });
+            var label = raphaelRenderUtil.renderText(paper, item.position, item.text, categoryAttributes);
+
+            label.node.style.userSelect = 'none';
+            label.node.style.cursor = 'default';
+
+            plotSet.push(label);
         });
 
         tui.util.forEachArray(labelData.step, function(item) {
-            var attrs = {
-                fill: theme.lineColor,
-                'font-size': theme.label.fontSize,
-                'font-family': theme.label.fontFamily,
-                'text-anchor': 'end',
-                'font-weight': '100',
-                'dominant-baseline': 'middle'
-            };
+            var stepLabel = raphaelRenderUtil.renderText(paper, item.position, item.text, attributes);
 
             item.position.top -= STEP_TOP_ADJUSTMENT;
             item.position.left -= STEP_LEFT_ADJUSTMENT;
 
-            raphaelRenderUtil.renderText(paper, item.position, {
-                text: item.text,
-                attributes: attrs,
-                set: plotSet,
-                toBack: true
-            });
+            stepLabel.node.style.userSelect = 'none';
+            stepLabel.node.style.cursor = 'default';
+
+            plotSet.push(stepLabel);
         });
     },
 

@@ -44,13 +44,10 @@ var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.pr
 
             circleLegendSet.push(circle);
 
-            raphaelRenderUtil.renderText(paper, {
+            circleLegendSet.push(raphaelRenderUtil.renderText(paper, {
                 left: left,
                 top: top - radius - 5
-            }, {
-                text: labels[index],
-                set: circleLegendSet
-            });
+            }, labels[index]));
         });
 
         return circleLegendSet;

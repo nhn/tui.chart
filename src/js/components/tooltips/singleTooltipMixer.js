@@ -136,7 +136,7 @@ var singleTooltipMixer = {
             alignOption = params.alignOption || '',
             tooltipHeight = params.dimension.height,
             baseLeft = bound.left - this.layout.position.left + positionOption.left,
-            baseTop = bound.top - this.layout.position.top + positionOption.top;
+            baseTop = bound.top - this.layout.position.top + positionOption.top - chartConst.TOOLTIP_GAP;
 
         return {
             left: this._makeLeftPositionOfNotBarChart(baseLeft, alignOption, minusWidth, lineGap),
@@ -235,13 +235,14 @@ var singleTooltipMixer = {
      * @private
      */
     _makeTooltipPositionForTreemapChart: function(params) {
+        var position = this.layout.position;
         var bound = params.bound;
         var positionOption = params.positionOption;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.labelTheme);
 
         return {
-            left: bound.left + ((bound.width - params.dimension.width) / 2) + positionOption.left,
-            top: bound.top + ((bound.height - labelHeight) / 2) - params.dimension.height + positionOption.top
+            left: bound.left + ((bound.width - params.dimension.width) / 2) + positionOption.left - position.left,
+            top: bound.top + (bound.height / 2) - labelHeight + positionOption.top - position.top
         };
     },
 

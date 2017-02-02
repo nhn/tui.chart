@@ -56,6 +56,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.paper = paper;
         this.isSpline = data.options.spline;
         this.dimension = dimension;
+        this.position = data.position;
+
         this.zeroTop = data.zeroTop;
         this.hasRangeData = data.hasRangeData;
 
@@ -63,7 +65,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.groupPaths = this._getAreaChartPath(groupPositions, null, data.options.connectNulls);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
-        this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
@@ -421,19 +422,21 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
             tui.util.forEach(categoryLabel, function(label, seriesIndex) {
                 var position = groupPositions[categoryIndex][seriesIndex];
+                var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
+                var startLabel;
 
-                raphaelRenderUtil.renderText(paper, position.end, {
-                    text: label.end,
-                    attributes: attributes,
-                    set: set
-                });
+                set.push(endLabel);
+
+                endLabel.node.style.userSelect = 'none';
+                endLabel.node.style.cursor = 'default';
 
                 if (position.start) {
-                    raphaelRenderUtil.renderText(paper, position.start, {
-                        text: label.start,
-                        attributes: attributes,
-                        set: set
-                    });
+                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
+
+                    startLabel.node.style.userSelect = 'none';
+                    startLabel.node.style.cursor = 'default';
+
+                    set.push(startLabel);
                 }
             });
         });

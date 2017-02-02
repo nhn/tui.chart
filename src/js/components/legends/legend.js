@@ -191,7 +191,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         var legendData = this.legendModel.getData();
         var graphRenderer = this.graphRenderer;
         var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
-        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
+        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme) - 1;
         var isHorizontal = predicate.isHorizontalLegend(this.options.align);
         var labelCount = labelWidths.length;
         var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
@@ -202,7 +202,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         var basePosition = this.layout.position;
         var position = {
             left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
-            top: basePosition.top
+            top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
         };
         var legendRenderingData;
 

@@ -206,8 +206,10 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      * @private
      */
     _hideChartExportMenu: function() {
-        dom.removeClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
-        this.chartExportMenu.style.display = 'none';
+        if (this.chartExportMenuContainer) {
+            dom.removeClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
+            this.chartExportMenu.style.display = 'none';
+        }
     },
 
     /**

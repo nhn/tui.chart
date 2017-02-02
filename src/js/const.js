@@ -315,7 +315,7 @@ var chartConst = {
      */
     AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
     /** label padding top */
-    LABEL_PADDING_TOP: 2,
+    LABEL_PADDING_TOP: 3,
     /** line margin top */
     LINE_MARGIN_TOP: 5,
     /** tooltip gap */

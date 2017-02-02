@@ -342,7 +342,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             y: bound.top,
             width: bound.width,
             height: bound.height
-        }, ANIMATION_DURATION);
+        }, ANIMATION_DURATION, '>');
     },
 
     /**
@@ -357,7 +357,9 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         var paths = this._makeBorderLinesPaths(bound, chartType, item);
 
         tui.util.forEach(lines, function(line, name) {
-            line.animate({path: paths[name]}, ANIMATION_DURATION);
+            line.animate({
+                path: paths[name]
+            }, ANIMATION_DURATION, '>');
         });
     },
 
@@ -567,6 +569,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
+            opacity: 0,
             'text-anchor': isStacked ? 'middle' : 'start'
         };
         var labelSet = paper.set();
@@ -574,19 +577,19 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
             tui.util.forEach(categoryLabel, function(label, seriesIndex) {
                 var position = groupPositions[categoryIndex][seriesIndex];
+                var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
+                var startLabel;
 
-                raphaelRenderUtil.renderText(paper, position.end, {
-                    text: label.end,
-                    attributes: attributes,
-                    set: labelSet
-                });
+                endLabel.node.style.userSelect = 'none';
+                endLabel.node.style.cursor = 'default';
+
+                labelSet.push(endLabel);
 
                 if (position.start) {
-                    raphaelRenderUtil.renderText(paper, position.start, {
-                        text: label.start,
-                        attributes: attributes,
-                        set: labelSet
-                    });
+                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
+                    startLabel.node.style.userSelect = 'none';
+                    startLabel.node.style.cursor = 'default';
+                    labelSet.push(startLabel);
                 }
             });
         });

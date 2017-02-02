@@ -116,29 +116,28 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
      * @private
      */
     _renderLabel: function(position, data) {
-        var self = this;
+        var eventBus = this.eventBus;
         var labelTheme = this.labelTheme;
         var pos = {
             left: position.left,
-            top: position.top + (data.labelHeight / 2)
+            top: position.top + data.labelHeight
         };
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1,
+            'text-anchor': 'start'
+        };
+        var label = raphaelRenderUtil.renderText(this.paper, pos, data.labelText, attributes);
 
-        raphaelRenderUtil.renderText(this.paper, pos, {
-            text: data.labelText,
-            attributes: {
-                'font-size': labelTheme.fontSize,
-                'font-family': labelTheme.fontFamily,
-                'font-weight': labelTheme.fontWeight,
-                opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1,
-                'text-anchor': 'start'
-            },
-            events: [{
-                name: 'click',
-                handler: function() {
-                    self.eventBus.fire('labelClicked', data.legendIndex);
-                }
-            }],
-            set: data.legendSet
+        label.node.style.userSelect = 'none';
+        label.node.style.cursor = 'pointer';
+
+        data.legendSet.push(label);
+
+        label.click(function() {
+            eventBus.fire('labelClicked', data.legendIndex);
         });
     },
 

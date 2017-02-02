@@ -64,10 +64,7 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
 
             legendSet.push(raphaelRenderUtil.renderLine(paper, path, '#ccc', 1));
 
-            raphaelRenderUtil.renderText(paper, pos, {
-                text: label,
-                set: legendSet
-            });
+            legendSet.push(raphaelRenderUtil.renderText(paper, pos, label));
         });
     },
 

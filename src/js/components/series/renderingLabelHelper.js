@@ -22,7 +22,7 @@ var renderingLabelHelper = {
      * @private
      */
     _calculateLeftPositionForCenterAlign: function(bound) {
-        return bound.left + ((bound.width) / 2);
+        return bound.left + (bound.width / 2);
     },
 
     /**
@@ -32,7 +32,7 @@ var renderingLabelHelper = {
      * @private
      */
     _calculateTopPositionForMiddleAlign: function(bound) {
-        return bound.top + ((bound.height) / 2);
+        return bound.top + (bound.height / 2) + chartConst.LABEL_PADDING_TOP;
     },
 
     /**

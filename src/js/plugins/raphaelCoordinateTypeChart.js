@@ -186,7 +186,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         circle.animate({
             r: radius,
             opacity: CIRCLE_OPACITY
-        }, ANIMATION_DURATION);
+        }, ANIMATION_DURATION, '>');
     },
 
     /**

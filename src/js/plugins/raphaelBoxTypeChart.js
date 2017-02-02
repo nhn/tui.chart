@@ -281,7 +281,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
             properties.fill = color;
         }
 
-        rect.animate(properties, ANIMATION_DURATION);
+        rect.animate(properties, ANIMATION_DURATION, '>');
     },
 
     /**
@@ -320,6 +320,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         var colorSpectrum = this.colorSpectrum;
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
         var opacity = 1;
+        var paper = box.rect.paper;
         var color;
 
         if (!box) {
@@ -340,7 +341,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         setTimeout(function() {
             if (!colorSpectrum && box.seriesItem.hasChild) {
                 box.rect.toBack();
-                box.rect.paper.pushDownBackgroundToBottom();
+                paper.pushDownBackgroundToBottom();
             }
         }, ANIMATION_DURATION);
     },
@@ -377,19 +378,23 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
 
     renderSeriesLabel: function(paper, positionSet, labels, labelTheme) {
         var labelSet = paper.set();
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            fill: labelTheme.color,
+            opacity: 1
+        };
 
         tui.util.forEach(labels, function(categoryLabel, categoryIndex) {
             tui.util.forEach(categoryLabel, function(label, seriesIndex) {
-                raphaelRenderUtil.renderText(paper, positionSet[categoryIndex][seriesIndex].end, {
-                    text: label,
-                    attributes: {
-                        'font-size': labelTheme.fontSize,
-                        'font-family': labelTheme.fontFamily,
-                        'font-weight': labelTheme.fontWeight,
-                        fill: labelTheme.color
-                    },
-                    set: labelSet
-                });
+                var seriesLabel = raphaelRenderUtil.renderText(paper, positionSet[categoryIndex][seriesIndex].end,
+                    label, attributes);
+
+                seriesLabel.node.style.userSelect = 'none';
+                seriesLabel.node.style.cursor = 'default';
+
+                labelSet.push(seriesLabel);
             });
         });
 
@@ -398,18 +403,21 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
 
     renderSeriesLabelForTreemap: function(paper, positions, labels, labelTheme) {
         var labelSet = paper.set();
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            fill: labelTheme.color,
+            opacity: 1
+        };
 
         tui.util.forEach(labels, function(label, index) {
-            raphaelRenderUtil.renderText(paper, positions[index], {
-                text: label,
-                attributes: {
-                    'font-size': labelTheme.fontSize,
-                    'font-family': labelTheme.fontFamily,
-                    'font-weight': labelTheme.fontWeight,
-                    fill: labelTheme.color
-                },
-                set: labelSet
-            });
+            var seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
+
+            seriesLabel.node.style.userSelect = 'none';
+            seriesLabel.node.style.cursor = 'default';
+
+            labelSet.push(seriesLabel);
         });
 
         return labelSet;
