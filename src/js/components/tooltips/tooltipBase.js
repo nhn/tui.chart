@@ -55,6 +55,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * @type {object}
          */
         this.options = params.options;
+        this.colors = params.colors;
 
         /**
          * Theme
