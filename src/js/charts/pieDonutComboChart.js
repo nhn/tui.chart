@@ -8,10 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var rawDataHandler = require('../models/data/rawDataHandler');
-var pieTypeMixer = require('./pieTypeMixer');
-var comboTypeMixer = require('./comboTypeMixer');
-var predicate = require('../helpers/predicate');
-var arrayUtil = require('../helpers/arrayUtil');
 
 var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
     /**
@@ -50,51 +46,17 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
     },
 
     /**
-     * Make data for adding series component.
-     * @returns {Array.<object>}
-     * @private
-     */
-    _makeDataForAddingSeriesComponent: function() {
-        var seriesTypes = this.seriesTypes;
-        var optionsMap = this._makeOptionsMap(seriesTypes);
-        var dataProcessor = this.dataProcessor;
-        var isShowOuterLabel = arrayUtil.any(optionsMap, predicate.isShowOuterLabel);
-        var seriesData = tui.util.map(seriesTypes, function(seriesType) {
-            var chartType = dataProcessor.findChartType(seriesType);
-            var additionalParams = {
-                chartType: chartType,
-                seriesType: seriesType,
-                options: optionsMap[seriesType],
-                isShowOuterLabel: isShowOuterLabel,
-                isCombo: true
-            };
-
-            return {
-                name: seriesType + 'Series',
-                additionalParams: additionalParams
-            };
-        });
-
-        return seriesData;
-    },
-
-    /**
      * Add components
      * @override
      */
     addComponents: function() {
-        this._addLegendComponent(this.seriesTypes);
-        this._addTooltipComponent({
-            labelFormatter: this.labelFormatter
-        });
-
-        if (this.options.chartExportMenu.visible) {
-            this._addChartExportMenuComponent(this.options.chartExportMenu);
-        }
-        this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
-        this._addMouseEventDetectorComponent();
+        this.componentManager.register('legend', 'legend');
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+        this.componentManager.register('pie1Series', 'pieSeries');
+        this.componentManager.register('pie2Series', 'pieSeries');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
-
     /**
      * Add data ratios.
      * @override
@@ -120,16 +82,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
             seriesTypes: this.seriesTypes
         });
-    },
-    _makeOptionsMap: comboTypeMixer._makeOptionsMap,
-    _getBaseSeriesOptions: comboTypeMixer._getBaseSeriesOptions,
-
-    _addLegendComponent: pieTypeMixer._addLegendComponent,
-    _addTooltipComponent: pieTypeMixer._addTooltipComponent,
-    _addChartExportMenuComponent: pieTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: pieTypeMixer._addSeriesComponents,
-    _addMouseEventDetectorComponent: pieTypeMixer._addMouseEventDetectorComponent,
-    labelFormatter: pieTypeMixer.labelFormatter
+    }
 });
 
 module.exports = PieDonutComboChart;

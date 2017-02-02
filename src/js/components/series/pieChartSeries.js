@@ -27,7 +27,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
         this.isCombo = !!params.isCombo;
 
-        this.isShowOuterLabel = !!params.isShowOuterLabel || predicate.isShowOuterLabel(this.options);
+        this.isShowOuterLabel = predicate.isShowOuterLabel(this.options);
 
         /**
          * range for quadrant.
@@ -734,9 +734,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 function pieSeriesFactory(params) {
     var libType = params.chartOptions.libType;
     var chartTheme = params.chartTheme;
+    var chartType = params.chartOptions.chartType;
 
     params.libType = libType;
     params.chartType = 'pie';
+
+    if (chartType === 'combo') {
+        params.seriesType = params.name.split('Series')[0];
+        params.isCombo = true;
+    }
+
     params.chartBackground = chartTheme.chart.background;
 
     return new PieChartSeries(params);

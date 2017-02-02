@@ -252,7 +252,8 @@ var predicate = {
      * @returns {boolean}
      */
     isPieChart: function(chartType) {
-        return chartType === chartConst.CHART_TYPE_PIE;
+        // alias 때문에 indexOf로 변경
+        return chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
     },
 
     /**

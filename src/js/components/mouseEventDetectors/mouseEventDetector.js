@@ -23,7 +23,8 @@ function mouseEventDetectorFactory(params) {
     } else if (predicate.isBarTypeChart(chartType)) {
         factory = boundsTypeEventDetectorFactory;
     } else if (predicate.isCoordinateTypeChart(chartType)
-         || predicate.isPieChart(chartType)) {
+               || predicate.isPieChart(chartType)
+               || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
         factory = simpleEventDetectorFactory;
     } else {
         factory = areaTypeEventDetectorFactory;

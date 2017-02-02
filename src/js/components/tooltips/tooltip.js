@@ -8,6 +8,7 @@
 
 var normalTooltipFactory = require('./normalTooltip');
 var groupTooltipFactory = require('./groupTooltip');
+var predicate = require('../../helpers/predicate');
 
 /**
  * Label formatter function for pie chart
@@ -37,7 +38,7 @@ function tooltipFactory(params) {
     var xAxisOptions = params.chartOptions.xAxis;
     var factory = params.options.grouped ? groupTooltipFactory : normalTooltipFactory;
 
-    if (chartType === 'pie') {
+    if (chartType === 'pie' || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
         params.labelFormatter = pieTooltipLabelFormatter;
     }
 

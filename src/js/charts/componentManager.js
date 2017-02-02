@@ -187,8 +187,6 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
             componentType = componentFactory.componentType;
         }
 
-
-
         params.chartTheme = this.theme;
         params.chartOptions = this.options;
         params.seriesTypes = this.seriesTypes;
