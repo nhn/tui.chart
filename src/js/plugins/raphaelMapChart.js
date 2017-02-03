@@ -15,27 +15,6 @@ var STROKE_COLOR = 'gray';
 var ANIMATION_DURATION = 100;
 var G_ID = 'tui-chart-series-group';
 
-
-/**
- * Create clip rect with layout
- * @param {object} paper Raphael paper
- * @param {Array.<object>} sectorSet sectorSet
- * @param {string} id ID string
- * @returns {object}
- */
-function createGElement(paper, sectorSet, id) {
-    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.id = id;
-
-    sectorSet.forEach(function(sector) {
-        dom.append(g, sector.node);
-    });
-
-    paper.canvas.appendChild(g);
-
-    return g;
-}
-
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
  * @class RaphaelMapChart
@@ -54,6 +33,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         var mapDimension = data.mapModel.getMapDimension();
 
         this.ratio = this._getDimensionRatio(data.layout.dimension, mapDimension);
+        this.dimension = data.layout.dimension;
         this.paper = paper;
         this.sectorSet = paper.set();
         this.sectors = this._renderMap(data, this.ratio);
@@ -155,13 +135,41 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
     scaleMapPaths: function(changedRatio, position, mapRatio, limitPosition, mapDimension) {
         var isZoomIn = changedRatio > 1;
-        var zoomFactor = isZoomIn ? 1 / changedRatio / mapRatio : changedRatio / mapRatio;
         var transformList = this.g.transform.baseVal;
         var zoom = this.paper.canvas.createSVGTransform();
         var matrix = this.paper.canvas.createSVGMatrix();
         var raphaelMatrix = this.paper.raphael.matrix();
+        var transformMatrix = transformList.numberOfItems ? transformList.getItem(0).matrix : {
+            a: 1,
+            b: 0,
+            c: 0,
+            d: 1,
+            e: 0,
+            f: 0
+        };
+        var maxRight = mapDimension.width - this.dimension.width;
+        var maxTop = mapDimension.height - this.dimension.height;
+        var previousTranslateX = (transformMatrix.e / transformMatrix.a);
+        var previousTranslateY = (transformMatrix.f / transformMatrix.d);
+        var transformX, transformY;
 
-        raphaelMatrix.scale(changedRatio, changedRatio, position.left * zoomFactor, position.top * zoomFactor);
+        raphaelMatrix.scale(changedRatio, changedRatio,
+            (position.left * mapRatio) - (previousTranslateX * changedRatio),
+            (position.top * mapRatio) - (previousTranslateY * changedRatio));
+        transformX = (raphaelMatrix.e / raphaelMatrix.a) + previousTranslateX;
+        transformY = (raphaelMatrix.f / raphaelMatrix.d) + previousTranslateY;
+
+        if (!isZoomIn && transformX >= 0) {
+            raphaelMatrix.e = -previousTranslateX;
+        } else if (transformX < -maxRight / transformMatrix.a) {
+            raphaelMatrix.e = -(maxRight / transformMatrix.a) - previousTranslateX;
+        }
+
+        if (!isZoomIn && transformY >= 0) {
+            raphaelMatrix.f = -previousTranslateY;
+        } else if (transformY < -maxTop / transformMatrix.d) {
+            raphaelMatrix.f = -(maxRight / transformMatrix.d) - previousTranslateY;
+        }
 
         matrix.a = raphaelMatrix.a;
         matrix.b = raphaelMatrix.b;
@@ -175,14 +183,72 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         transformList.initialize(transformList.consolidate());
     },
 
-    moveMapPaths: function(distances) {
+    moveMapPaths: function(distances, mapDimension) {
+        var matrix = this.paper.canvas.createSVGMatrix();
+        var raphaelMatrix = this.paper.raphael.matrix();
         var transformList = this.g.transform.baseVal;
         var translate = this.paper.canvas.createSVGTransform();
+        var maxRight = mapDimension.width - this.dimension.width;
+        var maxTop = mapDimension.height - this.dimension.height;
+        var transformMatrix = transformList.numberOfItems ? transformList.getItem(0).matrix : {
+            a: 1,
+            b: 0,
+            c: 0,
+            d: 1,
+            e: 0,
+            f: 0
+        };
+        var translateX, translateY, currentTranslateX, currentTranslateY;
 
-        translate.setTranslate(distances.x, distances.y);
+        raphaelMatrix.translate(distances.x, distances.y);
+
+        currentTranslateX = (raphaelMatrix.e / raphaelMatrix.a);
+        currentTranslateY = (raphaelMatrix.f / raphaelMatrix.d);
+        translateX = currentTranslateX + (transformMatrix.e / transformMatrix.a);
+        translateY = currentTranslateY + (transformMatrix.f / transformMatrix.d);
+
+        if (translateX >= 0 && currentTranslateX > 0) {
+            raphaelMatrix.e = 0;
+        } else if (translateX < 0 && translateX < -maxRight / transformMatrix.a && currentTranslateX < 0) {
+            raphaelMatrix.e = 0;
+        }
+        if (translateY >= 0 && currentTranslateY > 0) {
+            raphaelMatrix.f = 0;
+        } else if (translateY < 0 && translateY < -maxTop / transformMatrix.d && currentTranslateY < 0) {
+            raphaelMatrix.f = 0;
+        }
+
+        matrix.a = raphaelMatrix.a;
+        matrix.b = raphaelMatrix.b;
+        matrix.c = raphaelMatrix.c;
+        matrix.d = raphaelMatrix.d;
+        matrix.e = raphaelMatrix.e;
+        matrix.f = raphaelMatrix.f;
+
+        translate.setMatrix(matrix);
         transformList.appendItem(translate);
         transformList.initialize(transformList.consolidate());
     }
 });
+
+/**
+ * Create and append sector set
+ * @param {object} paper Raphael paper
+ * @param {Array.<object>} sectorSet sectorSet
+ * @param {string} id ID string
+ * @returns {object}
+ */
+function createGElement(paper, sectorSet, id) {
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.id = id;
+
+    sectorSet.forEach(function(sector) {
+        dom.append(g, sector.node);
+    });
+
+    paper.canvas.appendChild(g);
+
+    return g;
+}
 
 module.exports = RaphaelMapChart;

@@ -100,12 +100,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @private
      */
     _zoom: function(magn, position) {
-        var changedMagn = Math.min(Math.max(1, this.magn * magn), chartConst.MAX_ZOOM_MAGN);
-
-        if (changedMagn !== this.magn) {
-            //this.magn = changedMagn;
-            this.eventBus.fire('zoomMap', this.magn, position);
-        }
+        this.eventBus.fire('zoomMap', magn, position);
     },
 
     /**
@@ -117,10 +112,14 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     _onClick: function(e) {
         var target = e.target || e.srcElement;
         var btnElement = this._findBtnElement(target);
-        var magn;
+        var zoomDirection = btnElement.getAttribute('data-magn');
+        var magn = this._calculateMagn(zoomDirection);
 
-        if (btnElement) {
-            magn = parseFloat(btnElement.getAttribute('data-magn'));
+        if (magn > 5) {
+            this.magn = 5;
+        } else if (magn < 1) {
+            this.magn = 1;
+        } else if (magn >= 1) {
             this._zoom(magn);
         }
 
@@ -141,17 +140,19 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     },
 
     /**
-     * Calculate magnification from wheelDelta.
-     * @param {number} wheelDelta wheelDelta
+     * Calculate magnification from zoomDirection.
+     * @param {number} zoomDirection zoomDirection (positive is zoomIn)
      * @returns {number} magnification
      * @private
      */
-    _calculateMagn: function(wheelDelta) {
-        if (wheelDelta > 0) {
+    _calculateMagn: function(zoomDirection) {
+        if (zoomDirection > 0) {
             this.magn += 0.1;
-        } else if (wheelDelta < 0) {
+        } else if (zoomDirection < 0) {
             this.magn -= 0.1;
         }
+
+        return this.magn;
     },
 
     /**
@@ -160,14 +161,14 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @param {{left: number, top: number}} position mouse position
      */
     onWheel: function(wheelDelta, position) {
-        this._calculateMagn(wheelDelta);
+        var magn = this._calculateMagn(wheelDelta);
 
-        if (this.magn > 5) {
+        if (magn > 5) {
             this.magn = 5;
-        } else if (this.magn < 0.2) {
+        } else if (magn < 1) {
             this.magn = 1;
-        } else if (this.magn >= 1) {
-            this._zoom(this.magn, position);
+        } else if (magn >= 1) {
+            this._zoom(magn, position);
         }
     }
 });

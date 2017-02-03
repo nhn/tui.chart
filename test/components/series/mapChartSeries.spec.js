@@ -38,10 +38,10 @@ describe('MapChartSeries', function() {
                     height: 300
                 }
             };
-            series.mapModel.getMapDimension.and.returnValue({
+            series.graphDimension = {
                 width: 800,
                 height: 600
-            });
+            };
             series._setMapRatio();
 
             actual = series.mapRatio;
@@ -59,10 +59,10 @@ describe('MapChartSeries', function() {
                     height: 300
                 }
             };
-            series.mapModel.getMapDimension.and.returnValue({
+            series.graphDimension = {
                 width: 800,
                 height: 600
-            });
+            };
             series._setMapRatio();
 
             actual = series.mapRatio;

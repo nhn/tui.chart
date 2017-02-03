@@ -343,7 +343,7 @@ var chartConst = {
     OLD_BROWSER_OPACITY_100: 100,
     SERIES_LABEL_OPACITY: 0.3,
     WHEEL_TICK: 120,
-    MAX_ZOOM_MAGN: 32,
+    MAX_ZOOM_MAGN: 5,
     FF_WHEELDELTA_ADJUSTING_VALUE: -40,
     IE7_ROTATION_FILTER_STYLE_MAP: {
         25: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +

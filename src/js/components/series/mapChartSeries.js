@@ -5,13 +5,14 @@
  */
 
 'use strict';
-var raphael = window.Raphael;
 
 var Series = require('./series');
 var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+
+var browser = tui.util.browser;
+var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 
 var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prototype */ {
     /**
@@ -94,11 +95,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          */
         this.startPosition = null;
 
-        this.stackedMovingPositions = {
-            x: 0,
-            y: 0
-        };
-
         Series.call(this, params);
     },
 
@@ -109,12 +105,14 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     _attachToEventBus: function() {
         Series.prototype._attachToEventBus.call(this);
 
-        this.eventBus.on({
-            dragStartMapSeries: this.onDragStartMapSeries,
-            dragMapSeries: this.onDragMapSeries,
-            dragEndMapSeries: this.onDragEndMapSeries,
-            zoomMap: this.onZoomMap
-        }, this);
+        if (!IS_LTE_THAN_IE8) {
+            this.eventBus.on({
+                dragStartMapSeries: this.onDragStartMapSeries,
+                dragMapSeries: this.onDragMapSeries,
+                dragEndMapSeries: this.onDragEndMapSeries,
+                zoomMap: this.onZoomMap
+            }, this);
+        }
     },
 
     /**
@@ -123,7 +121,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _setMapRatio: function() {
         var seriesDimension = this.layout.dimension;
-        var mapDimension = this.mapModel.getMapDimension();
+        var mapDimension = this.graphDimension;
         var widthRatio = seriesDimension.width / mapDimension.width;
         var heightRatio = seriesDimension.height / mapDimension.height;
 
@@ -146,7 +144,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * Render series component.
      * @param {object} data data for rendering
-     * @returns {HTMLElement} series element
      */
     render: function(data) {
         Series.prototype.render.call(this, data);
@@ -169,7 +166,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * Render raphael graph.
-     * @param {{width: number, height: number}} dimension dimension
      * @private
      * @override
      */
@@ -256,6 +252,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * Zoom.
      * @param {number} changedRatio changed ratio
+     * @param {object} position position
      * @private
      */
     _zoom: function(changedRatio, position) {
@@ -266,6 +263,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         this._setLimitPositionToMoveMap();
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
+
+        this._setMapRatio();
 
         this.graphRenderer.scaleMapPaths(changedRatio, position, this.mapRatio, prevDimension, prevDimension);
     },
@@ -283,27 +282,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         this.limitPosition.left *= changedRatio;
         this.limitPosition.top *= changedRatio;
-    },
-
-    /**
-     * Resize graph.
-     * @private
-     */
-    _resizeGraph: function() {
-        var prevRatio = this.mapRatio;
-
-        this._setMapRatio();
-
-        this._setGraphDimension();
-        renderUtil.renderDimension(this.graphContainer, this.graphDimension);
-        this.graphRenderer.setSize(this.graphDimension);
-
-        this._updatePositionsForResizing(prevRatio);
-        renderUtil.renderPosition(this.graphContainer, this.basePosition);
-
-        if (this.seriesLabelContainer) {
-            this._renderSeriesLabel(this.seriesLabelContainer);
-        }
     },
 
     /**
@@ -360,7 +338,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             },
             mousePosition: {
                 left: mousePosition.left,
-                top: mousePosition.top - 15
+                top: mousePosition.top - chartConst.TOOLTIP_GAP
             }
         });
     },
@@ -421,11 +399,11 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _movePosition: function(startPosition, endPosition) {
         var movementPosition = {
-            x: (endPosition.left - startPosition.left) / this.zoomMagn / this.mapRatio,
-            y: (endPosition.top - startPosition.top) / this.zoomMagn / this.mapRatio
+            x: (endPosition.left - startPosition.left) * this.mapRatio,
+            y: (endPosition.top - startPosition.top) * this.mapRatio
         };
 
-        this.graphRenderer.moveMapPaths(movementPosition);
+        this.graphRenderer.moveMapPaths(movementPosition, this.graphDimension);
     },
 
     /**
@@ -451,49 +429,24 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * Move position for zoom.
-     * @param {{left: number, top: number}} position mouse position
-     * @param {number} changedRatio changed ratio
-     * @private
-     */
-    _movePositionForZoom: function(position, changedRatio) {
-        var seriesDimension = this.layout.dimension;
-        var containerBound = this.paper.canvas.getBoundingClientRect();
-        var startPosition = {
-            left: (seriesDimension.width / 2) + containerBound.left,
-            top: (seriesDimension.height / 2) + containerBound.top
-        };
-        var movementPosition = {
-            left: position.left - startPosition.left,
-            top: position.top - startPosition.top
-        };
-        var endPosition;
-
-        changedRatio = changedRatio > 1 ? -(changedRatio / 2) : changedRatio;
-
-        endPosition = {
-            left: startPosition.left + (movementPosition.left * changedRatio),
-            top: startPosition.top + (movementPosition.top * changedRatio)
-        };
-
-        //this._movePosition(startPosition, endPosition);
-    },
-
-    /**
      * On zoom map.
      * @param {number} newMagn new zoom magnification
      * @param {?{left: number, top: number}} position mouse position
      */
     onZoomMap: function(newMagn, position) {
         var changedRatio = newMagn / this.zoomMagn;
+        var positions = this.layout.position;
+        var layerPosition = position ? position : {
+            left: this.layout.dimension.width / 2,
+            top: this.layout.dimension.height / 2
+        };
 
         this.zoomMagn = newMagn;
 
-        this._zoom(changedRatio, position);
-
-        //if (position) {
-        //    this._movePositionForZoom(position, changedRatio);
-        //}
+        this._zoom(changedRatio, {
+            left: layerPosition.left - positions.left,
+            top: layerPosition.top - positions.top
+        });
 
         this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'zoom', newMagn);
     },
