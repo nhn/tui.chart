@@ -10,6 +10,7 @@ var areaTypeEventDetectorFactory = require('./areaTypeEventDetector');
 var simpleEventDetectorFactory = require('./simpleEventDetector');
 var groupTypeEventDetectorFactory = require('./groupTypeEventDetector');
 var boundsTypeEventDetectorFactory = require('./boundsTypeEventDetector');
+var mapChartEventDetectorFactory = require('./mapChartEventDetector');
 
 function mouseEventDetectorFactory(params) {
     var chartType = params.chartOptions.chartType;
@@ -20,6 +21,8 @@ function mouseEventDetectorFactory(params) {
 
     if (params.chartOptions.tooltip.grouped) {
         factory = groupTypeEventDetectorFactory;
+    } else if (predicate.isMapChart(chartType)) {
+        factory = mapChartEventDetectorFactory;
     } else if (predicate.isBarTypeChart(chartType)) {
         factory = boundsTypeEventDetectorFactory;
     } else if (predicate.isCoordinateTypeChart(chartType)

@@ -9,8 +9,8 @@
 var ChartBase = require('./chartBase');
 var mapManager = require('../factories/mapManager');
 var MapChartMapModel = require('./mapChartMapModel');
-var ColorSpectrum = require('./colorSpectrum');
 var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
+var ColorSpectrum = require('./colorSpectrum');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
@@ -46,41 +46,25 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @private
      */
     addComponents: function() {
-        var options = this.options;
         var seriesTheme = this.theme.series[this.chartType];
-        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
-        options.legend = options.legend || {};
+        this.componentManager.register('legend', 'spectrumLegend', {
+            colorSpectrum: colorSpectrum
+        });
 
-        if (options.legend.visible) {
-            this.componentManager.register('legend', {
-                colorSpectrum: colorSpectrum,
-                classType: 'spectrumLegend'
-            });
-        }
-
-        this.componentManager.register('tooltip', tui.util.extend({
+        this.componentManager.register('tooltip', 'tooltip', {
             mapModel: mapModel
-        }, this.makeTooltipData('mapChartTooltip')));
+        });
 
-        this.componentManager.register('mapSeries', {
-            libType: options.libType,
-            chartType: options.chartType,
-            componentType: 'series',
-            classType: 'mapSeries',
+        this.componentManager.register('mapSeries', 'mapSeries', {
             mapModel: mapModel,
             colorSpectrum: colorSpectrum
         });
 
-        this.componentManager.register('zoom', {
-            classType: 'zoom'
-        });
-
-        this.componentManager.register('mouseEventDetector', {
-            chartType: this.chartType,
-            classType: 'mapChartEventDetector'
-        });
+        this.componentManager.register('zoom', 'zoom');
+        this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
     },
 
     /**

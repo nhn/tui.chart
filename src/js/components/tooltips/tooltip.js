@@ -8,6 +8,7 @@
 
 var normalTooltipFactory = require('./normalTooltip');
 var groupTooltipFactory = require('./groupTooltip');
+var mapChartTooltipFactory = require('./mapChartTooltip');
 var predicate = require('../../helpers/predicate');
 
 /**
@@ -36,7 +37,15 @@ function tooltipFactory(params) {
     var chartType = params.chartOptions.chartType;
     var seriesTypes = params.seriesTypes;
     var xAxisOptions = params.chartOptions.xAxis;
-    var factory = params.options.grouped ? groupTooltipFactory : normalTooltipFactory;
+    var factory;
+
+    if (chartType === 'map') {
+        factory = mapChartTooltipFactory;
+    } else if (params.options.grouped) {
+        factory = groupTooltipFactory;
+    } else {
+        factory = normalTooltipFactory;
+    }
 
     if (chartType === 'pie' || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
         params.labelFormatter = pieTooltipLabelFormatter;

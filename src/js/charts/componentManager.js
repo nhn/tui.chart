@@ -157,20 +157,19 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * The component types are axis, legend, plot, series and mouseEventDetector.
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
-     * @param {object} params component parameters
+     * @param {string} classType component factory name
+     * @param {object} params params that for alternative charts, 기본 흐름을 타지않는 특이 차트들을 위해 제공
      */
-    register: function(name, params) {
-        var index, component, componentType, classType, componentFactory, optionKey;
+    register: function(name, classType, params) {
+        var index, component, componentType, componentFactory, optionKey;
 
         // TODO 임시 분기 코드들이 많다.
         // register는 한번더 리팩토링해야함
         var old = false;
-        if (!tui.util.isString(params)) {
-            classType = params.classType || componentType || name;
+        if (!tui.util.isString(classType)) {
+            classType = classType.classType || componentType || name;
+            params = classType;
             old = true;
-        } else {
-            classType = params;
-            params = {};
         }
 
         params = params || {};
@@ -224,6 +223,9 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         params.hasAxes = this.hasAxes;
         params.isVertical = this.isVertical;
         params.eventBus = this.eventBus;
+
+        // 맵과 같이 일반적인 스케일 모델을 사용하지 않는 차트를 위한 개별 구현한 차트 모델
+        params.alternativeModel = this.alternativeModel;
 
         // TODO 팩터리로 전환하기 위한 임시 분기
         if (old) {

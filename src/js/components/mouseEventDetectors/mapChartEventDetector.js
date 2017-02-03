@@ -177,4 +177,10 @@ var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
     }
 });
 
-module.exports = MapChartEventDetector;
+function mapChartEventDetectorFactory(params) {
+    return new MapChartEventDetector(params);
+}
+
+mapChartEventDetectorFactory.componentType = 'mouseEventDetector';
+
+module.exports = mapChartEventDetectorFactory;

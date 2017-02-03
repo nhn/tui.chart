@@ -287,4 +287,17 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
     }
 });
 
-module.exports = SpectrumLegend;
+function spectrumLegendFactory(params) {
+    var isLegendVisible = tui.util.isUndefined(params.options.visible) ? true : params.options.visible;
+    var chartType = params.chartOptions.chartType;
+
+    if (isLegendVisible) {
+        params.chartType = chartType;
+
+        return new SpectrumLegend(params);
+    }
+}
+
+spectrumLegendFactory.componentType = 'legend';
+
+module.exports = spectrumLegendFactory;

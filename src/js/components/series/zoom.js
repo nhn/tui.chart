@@ -178,4 +178,10 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     }
 });
 
-module.exports = Zoom;
+function zoomFactory(params) {
+    return new Zoom(params);
+}
+
+zoomFactory.componentType = 'zoom';
+
+module.exports = zoomFactory;
