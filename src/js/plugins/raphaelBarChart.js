@@ -569,7 +569,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
-            opacity: 1,
+            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0,
             'text-anchor': isStacked ? 'middle' : 'start'
         };
         var labelSet = paper.set();

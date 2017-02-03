@@ -7,7 +7,7 @@
 'use strict';
 var FADE_IN_DURATION = 300;
 var browser = tui.util.browser;
-var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
+var IS_IE7 = browser.msie && browser.version === 7;
 
 var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
@@ -622,7 +622,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        if (IS_LTE_THAN_IE8) {
+        if (IS_IE7) {
             this._fireLoadEvent(isRerendering);
         } else if (this.labelSet && this.labelSet.length) {
             raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, FADE_IN_DURATION);
