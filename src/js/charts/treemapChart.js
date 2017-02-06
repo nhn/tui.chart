@@ -51,6 +51,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             this._addTitleComponent(options.chart.title);
         }
 
+        this._addChartExportMenuComponent();
+
         this.componentManager.register('series', {
             chartBackground: this.theme.chart.background,
             chartType: this.chartType,
@@ -86,6 +88,21 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             classType: 'title'
         });
     },
+
+    /**
+     * Add chartExportMenu component.
+     * @private
+     */
+    _addChartExportMenuComponent: function() {
+        var chartOption = this.options.chart;
+        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
+
+        this.componentManager.register('chartExportMenu', {
+            chartTitle: chartTitle,
+            classType: 'chartExportMenu'
+        });
+    },
+
     /**
      * Get scale option.
      * @returns {{legend: boolean}}
