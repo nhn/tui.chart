@@ -92,13 +92,7 @@
     "series": {
         "showLabel": true,
         "zoomable": true,
-        "useLeafLabel": false,
-        "labelTemplate": function(data) {
-            var percentage = (data.ratio * 100).toFixed(0);
-            return '<div>' + data.label + '</div>' +
-                    '<div>-</div>' +
-                    '<div style="font-size:24px;color:#555555;">'+ percentage + '%</div>';
-        }
+        "useLeafLabel": false
     },
     "tooltip": {
         "suffix": "GB"
@@ -196,13 +190,7 @@
         series: {
             showLabel: true,
             zoomable: true,
-            useLeafLabel: false,
-            labelTemplate: function(data) {
-                var percentage = (data.ratio * 100).toFixed(0);
-                return '<div>' + data.label + '</div>' +
-                        '<div>-</div>' +
-                        '<div style="font-size:24px;color:#555555;">'+ percentage + '%</div>';
-            }
+            useLeafLabel: false
         },
         tooltip: {
             suffix: 'GB'
