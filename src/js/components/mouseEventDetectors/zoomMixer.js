@@ -253,7 +253,7 @@ var zoomMixer = {
         var width = Math.abs(layerX - this.startLayerX);
         var element = this.dragSelectionElement;
 
-        element.style.left = left + chartConst.SERIES_EXPAND_SIZE + 'px';
+        element.style.left = left + 'px';
         element.style.width = width + 'px';
 
         dom.addClass(element, 'show');

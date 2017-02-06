@@ -115,11 +115,12 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * Set map ratio.
+     * @param {object} [graphDimension] graph dimension
      * @private
      */
-    _setMapRatio: function() {
+    _setMapRatio: function(graphDimension) {
         var seriesDimension = this.layout.dimension;
-        var mapDimension = this.graphDimension;
+        var mapDimension = graphDimension || this.mapModel.getMapDimension();
         var widthRatio = seriesDimension.width / mapDimension.width;
         var heightRatio = seriesDimension.height / mapDimension.height;
 
@@ -249,7 +250,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setLimitPositionToMoveMap();
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
 
-        this._setMapRatio();
+        this._setMapRatio(this.graphDimension);
 
         this.graphRenderer.scaleMapPaths(changedRatio, position, this.mapRatio, prevDimension, prevDimension);
     },

@@ -27,7 +27,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
      *      @param {boolean} params.allowSelect - whether has allowSelect option or not
      */
     init: function(params) {
-        var hasLineTypeChart;
+        var isLineTypeChart;
 
         /**
          * type of chart
@@ -89,12 +89,12 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         this.prevFoundData = null;
 
 
-        hasLineTypeChart = predicate.hasLineChart(this.chartType, this.chartTypes);
+        isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
         /**
          * expand size
          * @type {number}
          */
-        this.expandSize = hasLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
+        this.expandSize = isLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
 
         /**
          * series item bounds data
@@ -193,7 +193,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
     render: function(data) {
         var container = data.paper;
         var tickCount;
-
+        this.positionMap = data.positionMap;
         dom.addClass(container, 'tui-chart-series-custom-event-area');
 
         if (data.axisDataMap.xAxis) {
@@ -218,21 +218,23 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
      */
     _calculateLayerPosition: function(clientX, clientY, checkLimit) {
         var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
+        var seriesPosition = this.positionMap.series;
+        var expandSize = this.expandSize;
         var layerPosition = {};
         var maxLeft, minLeft;
 
         checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
 
         if (checkLimit) {
-            maxLeft = bound.right;
-            minLeft = bound.left;
+            maxLeft = bound.right - expandSize;
+            minLeft = bound.left + expandSize;
             clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
         }
 
-        layerPosition.x = clientX - chartConst.CHART_PADDING;
+        layerPosition.x = clientX - bound.left + seriesPosition.left + expandSize - chartConst.CHART_PADDING;
 
         if (!tui.util.isUndefined(clientY)) {
-            layerPosition.y = clientY - chartConst.CHART_PADDING;
+            layerPosition.y = clientY - bound.top + seriesPosition.top + expandSize - chartConst.CHART_PADDING;
         }
 
         return layerPosition;

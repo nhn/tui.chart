@@ -143,7 +143,6 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @param {object} mapDimension map dimension
      */
     scaleMapPaths: function(changedRatio, position, mapRatio, limitPosition, mapDimension) {
-        var isZoomIn = changedRatio > 1;
         var transformList = this.g.transform.baseVal;
         var zoom = this.paper.canvas.createSVGTransform();
         var matrix = this.paper.canvas.createSVGMatrix();
@@ -160,6 +159,8 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         var maxTop = mapDimension.height - this.dimension.height;
         var previousTranslateX = (transformMatrix.e / transformMatrix.a);
         var previousTranslateY = (transformMatrix.f / transformMatrix.d);
+        var currentLimitRight = -maxRight / transformMatrix.a;
+        var currentLimitTop = -maxTop / transformMatrix.d;
         var transformX, transformY;
 
         raphaelMatrix.scale(changedRatio, changedRatio,
@@ -168,16 +169,17 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         transformX = (raphaelMatrix.e / raphaelMatrix.a) + previousTranslateX;
         transformY = (raphaelMatrix.f / raphaelMatrix.d) + previousTranslateY;
 
-        if (!isZoomIn && transformX >= 0) {
-            raphaelMatrix.e = -previousTranslateX;
-        } else if (transformX < -maxRight / transformMatrix.a) {
-            raphaelMatrix.e = -(maxRight / transformMatrix.a) - previousTranslateX;
+
+        if (transformX >= 0) {
+            raphaelMatrix.e = -previousTranslateX * raphaelMatrix.a;
+        } else if (transformX < currentLimitRight) {
+            raphaelMatrix.e = currentLimitRight - previousTranslateX;
         }
 
-        if (!isZoomIn && transformY >= 0) {
-            raphaelMatrix.f = -previousTranslateY;
-        } else if (transformY < -maxTop / transformMatrix.d) {
-            raphaelMatrix.f = -(maxRight / transformMatrix.d) - previousTranslateY;
+        if (transformY >= 0) {
+            raphaelMatrix.f = -previousTranslateY * raphaelMatrix.a;
+        } else if (transformY < currentLimitTop) {
+            raphaelMatrix.f = currentLimitTop - previousTranslateY;
         }
 
         matrix.a = raphaelMatrix.a;

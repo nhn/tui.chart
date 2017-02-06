@@ -16,6 +16,12 @@ describe('Test for MouseEventDetectorBase', function() {
         mouseEventDetectorBase = new MouseEventDetectorBase({
             eventBus: new tui.util.CustomEvents()
         });
+        mouseEventDetectorBase.positionMap = {
+            series: {
+                left: 50,
+                top: 50
+            }
+        };
     });
 
     describe('_isChangedSelectData()', function() {
@@ -103,7 +109,7 @@ describe('Test for MouseEventDetectorBase', function() {
 
             actual = mouseEventDetectorBase._calculateLayerPosition(30);
 
-            expect(actual.x).toBe(40);
+            expect(actual.x).toBe(60);
         });
 
         it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 작더라도 그대로 반환합니다.', function() {

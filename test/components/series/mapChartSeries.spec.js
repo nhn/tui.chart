@@ -26,6 +26,10 @@ describe('MapChartSeries', function() {
             eventBus: new tui.util.CustomEvents()
         });
         series.mapModel = mapModel;
+        series.mapDimension = {
+            width: 600,
+            height: 400
+        };
     });
 
     describe('_setMapRatio()', function() {
@@ -42,7 +46,7 @@ describe('MapChartSeries', function() {
                 width: 800,
                 height: 600
             };
-            series._setMapRatio();
+            series._setMapRatio(series.graphDimension);
 
             actual = series.mapRatio;
             expected = 0.5;
@@ -63,7 +67,7 @@ describe('MapChartSeries', function() {
                 width: 800,
                 height: 600
             };
-            series._setMapRatio();
+            series._setMapRatio(series.graphDimension);
 
             actual = series.mapRatio;
             expected = 0.25;
