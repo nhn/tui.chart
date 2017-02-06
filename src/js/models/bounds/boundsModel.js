@@ -9,6 +9,7 @@
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 var circleLegendCalculator = require('./circleLegendCalculator');
 var axisCalculator = require('./axisCalculator');
 var legendCalculator = require('./legendCalculator');
@@ -211,7 +212,8 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var chartOptions = this.options.chart || {};
         var hasTitleOption = tui.util.isExisty(chartOptions.title);
         var titleHeight =
-            hasTitleOption ? renderUtil.getRenderedLabelHeight(chartOptions.title.text, this.theme.title) : 0;
+            hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
+                    this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
         var dimension = {
             height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
         };

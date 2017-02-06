@@ -9,6 +9,7 @@
 var BoundsModel = require('../../../src/js/models/bounds/boundsModel');
 var chartConst = require('../../../src/js/const');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
+var raphaelRenderUtil = require('../../../src/js/plugins/raphaelRenderUtil');
 
 describe('Test for BoundsModel', function() {
     var boundsModel, dataProcessor, scaleDataModel;
@@ -16,6 +17,7 @@ describe('Test for BoundsModel', function() {
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
+        spyOn(raphaelRenderUtil, 'getRenderedTextSize').and.returnValue(50);
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['getFormattedMaxValue', 'getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getLegendData', 'getCategories',
                 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
@@ -38,6 +40,12 @@ describe('Test for BoundsModel', function() {
                 },
                 chartExportMenu: {
                     visible: true
+                }
+            },
+            theme: {
+                title: {
+                    fontSize: 16,
+                    fontFamily: 'Verdana'
                 }
             }
         });
@@ -79,7 +87,9 @@ describe('Test for BoundsModel', function() {
         it('title dimension 정보를 등록합니다.', function() {
             var actual, expected;
 
-            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+            raphaelRenderUtil.getRenderedTextSize.and.returnValue({
+                height: 20
+            });
             boundsModel._registerTitleDimension();
             actual = boundsModel.getDimension('title');
             expected = {
