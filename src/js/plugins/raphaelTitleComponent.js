@@ -7,6 +7,7 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var chartConst = require('./../const');
 
 var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
     /**
@@ -23,7 +24,7 @@ var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponen
         var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
         var pos = {
             left: paper.width / 2,
-            top: titleSize.height    // for renderText's baseline
+            top: (titleSize.height + chartConst.TITLE_PADDING) / 2    // for renderText's baseline
         };
         var titleSet = paper.set();
 
