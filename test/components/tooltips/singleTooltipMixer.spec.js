@@ -110,7 +110,7 @@ describe('singleTooltip', function() {
 
         it('Bar차트가 아닌 차트에서 align옵션에 "top"이 포함된 경우의 top position 정보를 계산합니다.', function() {
             var actual = tooltip._makeTopPositionOfNotBarChart(50, 'top'),
-                expected = 55;
+                expected = 45;
             expect(actual).toBe(expected);
         });
     });
@@ -136,7 +136,7 @@ describe('singleTooltip', function() {
                 }),
                 expected = {
                     left: 15,
-                    top: 25
+                    top: 15
                 };
 
             expect(actual).toEqual(expected);
@@ -170,7 +170,7 @@ describe('singleTooltip', function() {
             });
             expected = {
                 left: 55,
-                top: 25
+                top: 15
             };
 
             expect(actual).toEqual(expected);
@@ -305,6 +305,8 @@ describe('singleTooltip', function() {
             var actual;
 
             dataProcessor.getValue.and.returnValue(-3);
+
+            tooltip.chartType = 'bar';
 
             actual = tooltip._moveToSymmetry(
                 {
@@ -441,7 +443,7 @@ describe('singleTooltip', function() {
             });
             expected = {
                 left: 5,
-                top: 15
+                top: 5
             };
 
             expect(actual).toEqual(expected);

@@ -113,7 +113,7 @@ var singleTooltipMixer = {
         } else if (alignOption.indexOf('middle') > -1 && offsetNegative) {
             top += offsetNegative / 2;
         } else {
-            top -= offsetNegative - chartConst.TOOLTIP_GAP;
+            top -= offsetNegative + chartConst.TOOLTIP_GAP;
         }
 
         return top;
@@ -333,13 +333,14 @@ var singleTooltipMixer = {
         var positionType = params.positionType;
         var seriesType = params.seriesType || params.chartType;
         var value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, seriesType);
-        var tooltipSizeHalf, barPosition, barSizeHalf, movedPositionValue;
+        var direction = predicate.isBarChart(this.chartType) ? -1 : 1;
+        var tooltipSize, barSize, movedPositionValue;
 
         if (value < 0) {
-            tooltipSizeHalf = params.dimension[sizeType] / 2;
-            barPosition = bound[positionType];
-            barSizeHalf = bound[sizeType] / 2;
-            movedPositionValue = ((barPosition + barSizeHalf - tooltipSizeHalf) * 2) - position[positionType];
+            tooltipSize = params.dimension[sizeType];
+            barSize = bound[sizeType];
+            movedPositionValue = position[positionType]
+                + ((barSize + tooltipSize) * direction);
             position[positionType] = movedPositionValue;
         }
 
