@@ -131,6 +131,8 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         };
         var label = raphaelRenderUtil.renderText(this.paper, pos, data.labelText, attributes);
 
+        label.data('index', data.legendIndex);
+
         label.node.style.userSelect = 'none';
         label.node.style.cursor = 'pointer';
 
@@ -218,6 +220,27 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         });
 
         data.legendSet.push(icon);
+    },
+    selectLegend: function(index, legendSet) {
+        legendSet.forEach(function(element) {
+            var indexData = element.data('index');
+
+            if (tui.util.isNull(indexData) || tui.util.isUndefined(indexData)) {
+                element.attr({
+                    opacity: 1
+                });
+            } else if (!tui.util.isUndefined(indexData)) {
+                if (tui.util.isNumber(index) && indexData !== index) {
+                    element.attr({
+                        opacity: UNSELECTED_LEGEND_LABEL_OPACITY
+                    });
+                } else {
+                    element.attr({
+                        opacity: 1
+                    });
+                }
+            }
+        });
     }
 });
 

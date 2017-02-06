@@ -271,6 +271,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             this._fireChangeCheckedLegendsEvent();
         }
 
+        this.graphRenderer.selectLegend(this.legendModel.getSelectedIndex(), this.legendSet);
+
         this._fireSelectLegendEvent(data);
         this._fireSelectLegendPublicEvent(data);
     },
