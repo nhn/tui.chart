@@ -81,7 +81,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
                 stroke: STROKE_COLOR,
                 'stroke-opacity': 1,
                 transform: 's' + dimensionRatio + ',' + dimensionRatio + ',0,0'
-                    + 't' + position.left + ',' + position.top
+                    + 't' + (position.left / dimensionRatio) + ',' + (position.top / dimensionRatio)
             });
 
             sector.data('index', index);
