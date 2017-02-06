@@ -47,7 +47,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var titleSize = raphaelRenderUtil.getRenderedTextSize(data.text, fontSize, fontFamily);
         var size = data.rotationInfo.isVertical ? data.layout.dimension.height : data.layout.dimension.width;
         var position = data.rotationInfo.isVertical ? data.layout.position.top : data.layout.position.left;
-        var centerPosition = ((size + titleSize.width) / 2) + position;
+        var centerPosition = (size / 2) + position;
         var textHeight = titleSize.height;
         var attributes = {
             'font-family': data.theme.fontFamily,
@@ -65,10 +65,9 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             positionTopAndLeft.top = paper.height - (textHeight / 2);
             positionTopAndLeft.left = data.layout.position.left + (data.layout.dimension.width / 2);
         } else if (data.rotationInfo.isPositionRight) {
-            attributes.transform = 'r90';
-
             positionTopAndLeft.top = centerPosition;
             positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width - textHeight;
+            attributes.transform = 'r90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
         } else if (data.rotationInfo.isVertical) {
             positionTopAndLeft.top = centerPosition;
             positionTopAndLeft.left = data.layout.position.left + textHeight;
