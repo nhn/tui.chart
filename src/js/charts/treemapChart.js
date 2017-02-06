@@ -99,6 +99,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
         this.componentManager.register('chartExportMenu', {
             chartTitle: chartTitle,
+            chartType: this.chartType,
             classType: 'chartExportMenu'
         });
     },

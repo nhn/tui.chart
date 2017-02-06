@@ -11,6 +11,7 @@ var eventListener = require('../../helpers/eventListener');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var chartDataExporter = require('../../helpers/chartDataExporter');
+var predicate = require('../../helpers/predicate');
 
 var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
 var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
@@ -40,6 +41,12 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
          * @type {string}
          */
         this.chartTitle = params.chartTitle;
+
+        /**
+         * chart type
+         * @type {string}
+         */
+        this.chartType = params.chartType;
 
         /**
          * layout bounds information for this components
@@ -98,7 +105,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         var isImageExtension = chartDataExporter.isImageExtension;
         var isImageDownloadAvailable = chartDataExporter.isImageDownloadAvailable;
         var browserSupportsDownload = chartDataExporter.isBrowserSupportClientSideDownload();
-        var isDataDownloadAvailable = chartDataExporter.isDataDownloadAvailable(seriesDataModelMap);
+        var isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
         var chartExportMenuElement = dom.create('ul');
         var menuStyle = chartExportMenuElement.style;
         var menuItems = [];
@@ -226,6 +233,30 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         }
     },
 
+
+    /**
+     * Return boolean value for chart data is able to export
+     * @param {object} seriesDataModels series data model
+     * @returns {boolean}
+     */
+    isDataDownloadAvailable: function(seriesDataModels) {
+        var result = true;
+
+        if (predicate.isTreemapChart(this.chartType)) {
+            result = false;
+        } else {
+            tui.util.forEach(seriesDataModels, function(seriesDataModel) {
+                if (seriesDataModel.isCoordinateType) {
+                    result = false;
+                }
+
+                return false;
+            });
+        }
+
+        return result;
+    },
+
     /**
      * Attach browser event.
      * @param {HTMLElement} target target element
@@ -244,5 +275,6 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         eventListener.off(target, 'click', this._onClick);
     }
 });
+
 
 module.exports = ChartExportMenu;

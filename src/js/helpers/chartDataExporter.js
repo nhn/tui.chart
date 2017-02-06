@@ -366,29 +366,9 @@ function isBrowserSupportClientSideDownload() {
     return method !== 'none';
 }
 
-/**
- * Return boolean value for chart data is able to export
- * @param {object} seriesDataModels series data model
- * @returns {boolean}
- */
-function isDataDownloadAvailable(seriesDataModels) {
-    var result = true;
-
-    tui.util.forEach(seriesDataModels, function(seriesDataModel) {
-        if (seriesDataModel.isCoordinateType) {
-            result = false;
-        }
-
-        return false;
-    });
-
-    return result;
-}
-
 module.exports = {
     exportChartData: exportChartData,
     isBrowserSupportClientSideDownload: isBrowserSupportClientSideDownload,
-    isDataDownloadAvailable: isDataDownloadAvailable,
     isImageDownloadAvailable: isImageDownloadAvailable,
     isImageExtension: isImageExtension
 };
