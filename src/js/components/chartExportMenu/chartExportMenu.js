@@ -66,6 +66,12 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
          */
         this.chartExportMenu = null;
 
+        /**
+         * Event bus
+         * @type {EventBus}
+         */
+        this.eventBus = params.eventBus;
+
         this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
@@ -222,7 +228,11 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
 
         if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
             if (elTarget.id) {
+                this.eventBus.fire('beforeImageDownload');
+
                 chartDataExporter.exportChartData(elTarget.id, this.dataProcessor.rawData, this.chartTitle);
+
+                this.eventBus.fire('afterImageDownload');
             }
 
             this._hideChartExportMenu();

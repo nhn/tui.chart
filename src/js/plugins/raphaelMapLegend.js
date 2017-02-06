@@ -30,12 +30,18 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @param {Array.<object>} legendSet legend set
      */
     render: function(paper, layout, colorSpectrum, isHorizontal, legendSet) {
+        var gradientBar;
+
         layout.position.left += PADDING;
 
-        legendSet.push(this._renderGradientBar(paper, layout, colorSpectrum, isHorizontal));
+        gradientBar = this._renderGradientBar(paper, layout, colorSpectrum, isHorizontal);
+
+        legendSet.push(gradientBar);
 
         this.wedge = this._renderWedge(paper, layout.position);
         legendSet.push(this.wedge);
+
+        this.gradientBar = gradientBar;
     },
 
     /**
@@ -185,6 +191,30 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
         this.wedge.attr({
             opacity: 0
         });
+    },
+
+    /**
+     * Remove location URL from fill attribute
+     * @private
+     */
+    removeLocationURLFromFillAttribute: function() {
+        var gradientBar = this.gradientBar;
+        var fillURL = gradientBar.node.getAttribute('fill');
+        this.locationURL = /url\('([^#]+)#[^#]+'\)/.exec(fillURL)[1];
+
+
+        gradientBar.node.setAttribute('fill', fillURL.replace(/url\('[^#]+(#)/i, 'url(\'$1'));
+    },
+
+    /**
+     * Restore location URL to fill attribute
+     * @private
+     */
+    restoreLocationURLToFillAttribute: function() {
+        var gradientBar = this.gradientBar;
+        var fillURL = gradientBar.node.getAttribute('fill');
+
+        gradientBar.node.setAttribute('fill', fillURL.replace('#', this.locationURL + '#'));
     }
 });
 

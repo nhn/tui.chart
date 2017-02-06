@@ -91,6 +91,24 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             showWedge: this.onShowWedge,
             hideTooltip: this.onHideWedge
         }, this);
+        this.eventBus.on('beforeImageDownload', tui.util.bind(this._removeLocationURLFromFillAttribute, this));
+        this.eventBus.on('afterImageDownload', tui.util.bind(this._restoreLocationURLToFillAttribute, this));
+    },
+
+    /**
+     * Remove location URL from fill attribute
+     * @private
+     */
+    _removeLocationURLFromFillAttribute: function() {
+        this.graphRenderer.removeLocationURLFromFillAttribute();
+    },
+
+    /**
+     * Restore location URL to fill attribute
+     * @private
+     */
+    _restoreLocationURLToFillAttribute: function() {
+        this.graphRenderer.restoreLocationURLToFillAttribute();
     },
 
     /**
