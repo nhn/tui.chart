@@ -210,6 +210,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var seriesDataModel = this._getSeriesDataModel();
         var boundMap = this._getBoundMap();
         var labelTheme = this.theme.label;
+        var labelTemplate = this.options.labelTemplate;
         var positions, seriesItems, labels;
 
         if (this.options.useLeafLabel) {
@@ -218,7 +219,11 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
             seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
         }
 
-        labels = tui.util.pluck(seriesItems, 'label');
+        labels = tui.util.map(seriesItems, function(seriesItem) {
+            var labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
+            return labelText;
+        });
+
         positions = labelHelper.boundsToLabelPostionsForTreemap(seriesItems, boundMap, labelTheme);
 
         return this.graphRenderer.renderSeriesLabelForTreemap(paper, positions, labels, labelTheme);
