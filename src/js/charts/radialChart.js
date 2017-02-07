@@ -53,6 +53,11 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
             this._addTitleComponent(chartOptions.title);
         }
 
+        this.componentManager.register('plot', {
+            componentType: 'plot',
+            classType: 'radialPlot'
+        });
+
         this.componentManager.register('series', {
             libType: options.libType,
             chartType: options.chartType,
@@ -62,11 +67,6 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
         });
 
         this.componentManager.register('tooltip', this._makeTooltipData('tooltip'));
-
-        this.componentManager.register('plot', {
-            componentType: 'plot',
-            classType: 'radialPlot'
-        });
 
         this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,

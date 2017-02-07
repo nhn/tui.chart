@@ -116,29 +116,30 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
      * @private
      */
     _renderLabel: function(position, data) {
-        var self = this;
+        var eventBus = this.eventBus;
         var labelTheme = this.labelTheme;
         var pos = {
             left: position.left,
-            top: position.top + (data.labelHeight / 2)
+            top: position.top + data.labelHeight
         };
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1,
+            'text-anchor': 'start'
+        };
+        var label = raphaelRenderUtil.renderText(this.paper, pos, data.labelText, attributes);
 
-        raphaelRenderUtil.renderText(this.paper, pos, {
-            text: data.labelText,
-            attributes: {
-                'font-size': labelTheme.fontSize,
-                'font-family': labelTheme.fontFamily,
-                'font-weight': labelTheme.fontWeight,
-                opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1,
-                'text-anchor': 'start'
-            },
-            events: [{
-                name: 'click',
-                handler: function() {
-                    self.eventBus.fire('labelClicked', data.legendIndex);
-                }
-            }],
-            set: data.legendSet
+        label.data('index', data.legendIndex);
+
+        label.node.style.userSelect = 'none';
+        label.node.style.cursor = 'pointer';
+
+        data.legendSet.push(label);
+
+        label.click(function() {
+            eventBus.fire('labelClicked', data.legendIndex);
         });
     },
 
@@ -219,6 +220,27 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         });
 
         data.legendSet.push(icon);
+    },
+    selectLegend: function(index, legendSet) {
+        legendSet.forEach(function(element) {
+            var indexData = element.data('index');
+
+            if (tui.util.isNull(indexData) || tui.util.isUndefined(indexData)) {
+                element.attr({
+                    opacity: 1
+                });
+            } else if (!tui.util.isUndefined(indexData)) {
+                if (tui.util.isNumber(index) && indexData !== index) {
+                    element.attr({
+                        opacity: UNSELECTED_LEGEND_LABEL_OPACITY
+                    });
+                } else {
+                    element.attr({
+                        opacity: 1
+                    });
+                }
+            }
+        });
     }
 });
 

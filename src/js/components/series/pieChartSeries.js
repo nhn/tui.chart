@@ -576,13 +576,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         });
 
         this._addEndPosition(centerLeft, filteredPositions);
-        this._renderLegendLabel(paper, {
+
+        this.graphRenderer.renderLegendLines(filteredPositions);
+
+        return this._renderLegendLabel(paper, {
             positions: outerPositions,
             funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
         });
-
-        return this.graphRenderer.renderLegendLines(filteredPositions);
     },
 
     /**

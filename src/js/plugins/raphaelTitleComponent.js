@@ -23,7 +23,7 @@ var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponen
         var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
         var pos = {
             left: paper.width / 2,
-            top: titleSize.height / 2    // for renderText's baseline
+            top: titleSize.height    // for renderText's baseline
         };
         var titleSet = paper.set();
 
@@ -34,17 +34,14 @@ var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponen
                 pos.top += offset.y;
             }
         }
-        raphaelRenderUtil.renderText(paper, pos, {
-            text: titleText,
-            attributes: {
-                'font-family': theme.fontFamily,
-                'font-size': theme.fontSize,
-                'font-weight': theme.fontWeight,
-                fill: theme.color,
-                'text-anchor': 'middle'
-            },
-            set: titleSet
-        });
+
+        titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
+            'font-family': theme.fontFamily,
+            'font-size': theme.fontSize,
+            'font-weight': theme.fontWeight,
+            fill: theme.color,
+            'text-anchor': 'middle'
+        }));
 
         return titleSet;
     }

@@ -165,8 +165,6 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var labelData = this._makeLabelData(data.axisDataMap, data.layout, plotPositions);
 
         this.plotSet = this._renderPlotArea(data.paper, data.layout, plotPositions, labelData);
-
-        this.plotSet.toBack();
     },
 
     /**

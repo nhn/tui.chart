@@ -5,16 +5,16 @@
  */
 
 'use strict';
-var FADE_IN_DURATION = 1000;
-var EASING_FORMULA = 'easeInQuint';
+var FADE_IN_DURATION = 300;
+var browser = tui.util.browser;
+var IS_IE7 = browser.msie && browser.version === 7;
 
 var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
-
-var animation = tui.component.animation;
+var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -297,6 +297,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _makeParamsForGraphRendering: function(dimension, seriesData) {
         return tui.util.extend({
             dimension: dimension,
+            position: this.layout.position,
             chartType: this.seriesType,
             theme: this.theme,
             options: this.options
@@ -431,8 +432,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
             if (checkedLegends) {
                 this.animateComponent(true);
-            } else {
-                this._showGraphWithoutAnimation();
             }
 
             if (!tui.util.isNull(this.selectedLegendIndex)) {
@@ -447,25 +446,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _isLabelVisible: function() {
-        return this.seriesLabelContainer && (this.options.showLabel || this.options.showLegend);
-    },
-
-    /**
-     * Show series label without animation.
-     * @private
-     */
-    _showSeriesLabelWithoutAnimation: function() {
-        dom.addClass(this.seriesLabelContainer, 'show opacity');
-    },
-
-    /**
-     * Show graph without animation.
-     * @private
-     */
-    _showGraphWithoutAnimation: function() {
-        if (this._isLabelVisible()) {
-            this._showSeriesLabelWithoutAnimation();
-        }
+        return !!(this.options.showLabel || this.options.showLegend);
     },
 
     /**
@@ -613,7 +594,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering));
+            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
         } else {
             this.animateSeriesLabelArea(isRerendering);
         }
@@ -635,38 +616,16 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {boolean} [isRerendering] - whether rerendering or not
      */
     animateSeriesLabelArea: function(isRerendering) {
-        var self = this;
-        var labelContainerStyle;
-
         if (!this._isLabelVisible()) {
             this._fireLoadEvent(isRerendering);
 
             return;
         }
 
-        if (renderUtil.isIE7()) {
-            this._showSeriesLabelWithoutAnimation();
+        if (IS_IE7) {
             this._fireLoadEvent(isRerendering);
-        } else {
-            dom.addClass(this.seriesLabelContainer, 'show');
-            labelContainerStyle = this.seriesLabelContainer.style;
-            this.labelShowEffector = animation.anim({
-                from: 0,
-                to: 100,
-                easing: EASING_FORMULA,
-                duration: FADE_IN_DURATION,
-                frame: function(opacity) {
-                    labelContainerStyle.opacity = opacity;
-                },
-                complete: function() {
-                    if (self.labelShowEffector) {
-                        self.labelShowEffector = null;
-                    }
-                    dom.addClass(self.seriesLabelContainer, 'opacity');
-                    self._fireLoadEvent(isRerendering);
-                }
-            });
-            this.labelShowEffector.run();
+        } else if (this.labelSet && this.labelSet.length) {
+            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, FADE_IN_DURATION);
         }
     },
 
@@ -680,16 +639,16 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var indexes = seriesData.indexes;
         var legendIndex = tui.util.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
-        var index = indexes.groupIndex;
-        var result = {
-            chartType: legendData.chartType,
-            legend: legendData.label,
-            legendIndex: legendIndex
-        };
-        var seriesItem;
+        var index = tui.util.isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
+        var seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
+        var result;
 
-        if (tui.util.isExisty(index)) {
-            seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
+        if (tui.util.isExisty(seriesItem)) {
+            result = {
+                chartType: legendData.chartType,
+                legend: legendData.label,
+                legendIndex: legendIndex
+            };
             result.index = seriesItem.index;
         }
 
@@ -791,8 +750,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.seriesLabelContainer) {
             this._renderSeriesLabelArea(this.paper);
         }
-
-        this._showSeriesLabelWithoutAnimation();
     },
 
     /**

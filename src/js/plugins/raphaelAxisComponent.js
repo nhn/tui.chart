@@ -6,13 +6,32 @@
 
 'use strict';
 
-var chartConst = require('../const');
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
     init: function() {
         this.ticks = [];
     },
+
+    /**
+     * Render background with plot background color
+     * @param {object} paper Raphael paper
+     * @param {object} position axis position
+     * @param {object} dimension axis dimension
+     * @private
+     */
+    renderBackground: function(paper, position, dimension) {
+        raphaelRenderUtil.renderRect(paper, {
+            left: position.left - 5,
+            top: position.top,
+            width: dimension.width,
+            height: dimension.height
+        }, {
+            fill: '#fff',
+            'stroke-width': 0
+        });
+    },
+
     /**
      * Render title
      * @param {object} paper raphael paper
@@ -28,8 +47,8 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var titleSize = raphaelRenderUtil.getRenderedTextSize(data.text, fontSize, fontFamily);
         var size = data.rotationInfo.isVertical ? data.layout.dimension.height : data.layout.dimension.width;
         var position = data.rotationInfo.isVertical ? data.layout.position.top : data.layout.position.left;
-        var centerPosition = ((size + titleSize.width) / 2) + position;
-        var halfTextHeight = titleSize.height / 2;
+        var centerPosition = (size / 2) + position;
+        var textHeight = titleSize.height;
         var attributes = {
             'font-family': data.theme.fontFamily,
             'font-size': data.theme.fontSize,
@@ -38,32 +57,32 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             'text-anchor': 'start'
         };
         var positionTopAndLeft = {};
+        var title;
 
         attributes['text-anchor'] = 'middle';
 
         if (data.rotationInfo.isCenter) {
-            positionTopAndLeft.top = data.layout.position.top + (data.layout.dimension.height * 1.1) + halfTextHeight;
+            positionTopAndLeft.top = paper.height - (textHeight / 2);
             positionTopAndLeft.left = data.layout.position.left + (data.layout.dimension.width / 2);
         } else if (data.rotationInfo.isPositionRight) {
-            attributes.transform = 'r90';
-
             positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width - halfTextHeight;
+            positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width - textHeight;
+            attributes.transform = 'r90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
         } else if (data.rotationInfo.isVertical) {
-            attributes.transform = 'r-90';
-
             positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = data.layout.position.left + halfTextHeight;
+            positionTopAndLeft.left = data.layout.position.left + textHeight;
+            attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
         } else {
-            positionTopAndLeft.top = paper.height - halfTextHeight - chartConst.CHART_PADDING;
+            positionTopAndLeft.top = paper.height - textHeight;
             positionTopAndLeft.left = centerPosition;
         }
 
-        raphaelRenderUtil.renderText(paper, positionTopAndLeft, {
-            text: data.text,
-            attributes: attributes,
-            set: data.set
-        });
+        title = raphaelRenderUtil.renderText(paper, positionTopAndLeft, data.text, attributes);
+
+        title.node.style.userSelect = 'none';
+        title.node.style.cursor = 'default';
+
+        data.set.push(title);
     },
 
     /**
@@ -93,6 +112,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             'font-weight': theme.fontWeight,
             fill: theme.color
         };
+        var textObj;
 
         if (isPositionRight) {
             attributes['text-anchor'] = 'start';
@@ -102,11 +122,13 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             attributes['text-anchor'] = 'middle';
         }
 
-        raphaelRenderUtil.renderText(paper, positionTopAndLeft, {
-            text: labelText,
-            attributes: attributes,
-            set: [data.set, this.ticks]
-        });
+        textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, attributes);
+
+        textObj.node.style.userSelect = 'none';
+        textObj.node.style.cursor = 'default';
+
+        data.set.push(textObj);
+        this.ticks.push(textObj);
     },
 
     /**
@@ -127,20 +149,20 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var labelText = data.labelText;
         var paper = data.paper;
         var theme = data.theme;
-        var degree = data.degree;
-
-        raphaelRenderUtil.renderText(paper, positionTopAndLeft, {
-            text: labelText,
-            attributes: {
-                'font-family': theme.fontFamily,
-                'font-size': theme.fontSize,
-                'font-weight': theme.fontWeight,
-                fill: theme.color,
-                'text-anchor': 'end',
-                transform: 'r' + (-degree)
-            },
-            set: [data.set, this.ticks]
+        var textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, {
+            'font-family': theme.fontFamily,
+            'font-size': theme.fontSize,
+            'font-weight': theme.fontWeight,
+            fill: theme.color,
+            'text-anchor': 'end',
+            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left + 20) + ',' + (positionTopAndLeft.top)
         });
+
+        textObj.node.style.userSelect = 'none';
+        textObj.node.style.cursor = 'arrow';
+
+        data.set.push(textObj);
+        this.ticks.push(textObj);
     },
 
     /**

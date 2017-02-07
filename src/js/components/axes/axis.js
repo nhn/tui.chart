@@ -111,6 +111,21 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Render vertical axis background
+     * @private
+     */
+    _renderBackground: function() {
+        var dimension = tui.util.extend({}, this.layout.dimension);
+        var position = tui.util.extend({}, this.layout.position);
+
+        if (this.isVertical) {
+            dimension.height = this.dimensionMap.chart.height;
+            position.top = 0;
+        }
+
+        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.plot);
+    },
+    /**
      * Render child containers like title area, label area and tick area.
      * @param {number} size xAxis width or yAxis height
      * @param {number} tickCount tick count
@@ -120,6 +135,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
         var isVerticalLineType = this.isVertical && this.data.aligned;
+
+        if (this.isVertical && !this.data.isPositionRight && !this.options.isCenter) {
+            this._renderBackground();
+        }
 
         this._renderTitleArea();
         this._renderLabelArea(size, tickCount, categories, additionalWidth);
@@ -144,12 +163,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var lCategories = categories.slice(0, halfTickCount);
         var rCategories = categories.slice(halfTickCount - 1, tickCount);
         var tickInterval = lSideWidth / halfTickCount;
-        var secondXAxisAdditionalPosition = lSideWidth + this.dimensionMap.yAxis.width;
+        var secondXAxisAdditionalPosition = lSideWidth + this.dimensionMap.yAxis.width - 1;
 
         this.paperAdditionalWidth = tickInterval;
 
         this._renderChildContainers(lSideWidth, halfTickCount, lCategories, 0);
-        this._renderChildContainers(rSideWidth, halfTickCount, rCategories,
+        this._renderChildContainers(rSideWidth + 1, halfTickCount, rCategories,
             secondXAxisAdditionalPosition);
     },
 
@@ -186,7 +205,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             this._renderDividedAxis(dimension);
             dimension.width = this.containerWidth;
         } else {
-            dimension.width += this.options.isCenter ? 2 : 0;
+            dimension.width += this.options.isCenter ? 1 : 0;
             this._renderNotDividedAxis(dimension);
         }
     },
@@ -375,8 +394,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var theme = this.theme.label;
         var degree = this.data.degree;
         var halfWidth = labelSize / 2;
-        var horizontalTop = (calculator.calculateRotatedHeight(degree, labelSize, this.theme.label.fontSize) * 3 / 4)
-            + this.layout.position.top;
+        var horizontalTop = this.layout.position.top + chartConst.AXIS_LABEL_PADDING;
         var baseLeft = this.layout.position.left;
 
         tui.util.forEach(positions, function(position, index) {
@@ -388,7 +406,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.left = labelSize;
             } else {
                 positionTopAndLeft.top = horizontalTop;
-                positionTopAndLeft.left = baseLeft + labelPosition + halfWidth;
+                positionTopAndLeft.left = baseLeft + labelPosition;
+
+                if (!self.options.divided) {
+                    positionTopAndLeft.left += halfWidth;
+                }
             }
 
             renderer.renderRotatedLabel({
@@ -424,7 +446,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         tui.util.forEach(positions, function(position, index) {
             var labelPosition = position + additionalSize;
-            var fontSize = theme.fontSize;
             var halfLabelDistance = labelSize / 2;
             var positionTopAndLeft = {};
             var labelTopPosition, labelLeftPosition;
@@ -444,7 +465,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                     labelLeftPosition = layout.position.left + layout.dimension.width - chartConst.CHART_PADDING;
                 }
             } else {
-                labelTopPosition = fontSize + layout.position.top;
+                labelTopPosition = layout.position.top + chartConst.CHART_PADDING + chartConst.AXIS_LABEL_PADDING;
                 labelLeftPosition = labelPosition + layout.position.left;
 
                 if (isCategoryLabel) {

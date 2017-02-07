@@ -108,6 +108,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     /**
      * Render series label.
      * @param {object} paper - paper
+     * @returns {Array.<object>}
      * @private
      */
     _renderSeriesLabel: function(paper) {
@@ -120,7 +121,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
             return datum.valuesMap.value;
         });
 
-        this.labelSet = this.graphRenderer.renderSeriesLabel(paper, positionsSet, labels, labelTheme, selectedIndex);
+        return this.graphRenderer.renderSeriesLabel(paper, positionsSet, labels, labelTheme, selectedIndex);
     },
 
     /**

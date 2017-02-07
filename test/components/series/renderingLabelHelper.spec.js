@@ -35,7 +35,7 @@ describe('Test for renderingLabelHelper', function() {
             };
             var actual = labelHelper._calculateTopPositionForMiddleAlign(bound, 60);
 
-            expect(actual).toBe(70);
+            expect(actual).toBe(73);
         });
     });
 
@@ -50,7 +50,7 @@ describe('Test for renderingLabelHelper', function() {
             var actual = labelHelper._makePositionForBoundType(bound, 20, 'label');
 
             expect(actual.left).toBe(50);
-            expect(actual.top).toBe(45);
+            expect(actual.top).toBe(48);
         });
     });
 
@@ -70,7 +70,7 @@ describe('Test for renderingLabelHelper', function() {
 
             expect(actual.end).toEqual({
                 left: 50,
-                top: 45
+                top: 48
             });
             expect(actual.start).toBeUndefined();
         });
@@ -91,11 +91,11 @@ describe('Test for renderingLabelHelper', function() {
 
             expect(actual.end).toEqual({
                 left: 75,
-                top: 45
+                top: 48
             });
             expect(actual.start).toEqual({
                 left: -25,
-                top: 45
+                top: 48
             });
         });
     });

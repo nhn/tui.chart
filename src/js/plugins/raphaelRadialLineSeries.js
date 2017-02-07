@@ -53,6 +53,7 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
 
         this.paper = paper;
         this.dimension = dimension;
+        this.position = data.position;
 
         if (isShowArea) {
             this._renderArea(paper, groupPaths, colors, radialSeriesSet);

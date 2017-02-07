@@ -66,6 +66,12 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
          */
         this.chartExportMenu = null;
 
+        /**
+         * Event bus
+         * @type {EventBus}
+         */
+        this.eventBus = params.eventBus;
+
         this.drawingType = chartConst.COMPONENT_TYPE_DOM;
     },
 
@@ -206,8 +212,10 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      * @private
      */
     _hideChartExportMenu: function() {
-        dom.removeClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
-        this.chartExportMenu.style.display = 'none';
+        if (this.chartExportMenuContainer) {
+            dom.removeClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
+            this.chartExportMenu.style.display = 'none';
+        }
     },
 
     /**
@@ -220,7 +228,11 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
 
         if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
             if (elTarget.id) {
+                this.eventBus.fire('beforeImageDownload');
+
                 chartDataExporter.exportChartData(elTarget.id, this.dataProcessor.rawData, this.chartTitle);
+
+                this.eventBus.fire('afterImageDownload');
             }
 
             this._hideChartExportMenu();

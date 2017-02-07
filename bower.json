@@ -18,8 +18,7 @@
     "package.json"
   ],
   "dependencies": {
-    "raphael": "https://github.com/nhnent/raphael.git#v2.1.4b",
-    "tui-component-animation": "~0.1.0",
+    "raphael": "https://github.com/nhnent/raphael.git#v2.2.7a",
     "tui-code-snippet": "1.0.8"
   }
 }

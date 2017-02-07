@@ -67,51 +67,24 @@ var raphaelRenderUtil = {
      * Render text
      * @param {object} paper - Raphael paper object
      * @param {{left: number, top: number}} pos - text object position
-     * @param {object} data rendering data
-     * @param {string} data.text - text content
-     * @param {object} [data.attributes] - text object's attributes
-     * @param {Array.<object>} [data.events] - events to bind text object
-     * @param {Array.<object>} [data.sets] - raphael set array
+     * @param {string} text - text content
+     * @param {object} [attributes] - text object's attributes
+     * @returns {object}
      */
-    renderText: function(paper, pos, data) {
-        // for raphael's svg bug;
-        // DOM에 붙지 않은 paper에 텍스트 객체 생성시 버그가 있다.
-        setTimeout(function() {
-            var textObj = paper.text(pos.left, pos.top, data.text);
-            var attributes = data.attributes;
+    renderText: function(paper, pos, text, attributes) {
+        var textObj = paper.text(pos.left, pos.top, text);
 
-            if (textObj) {
-                if (attributes) {
-                    textObj.attr(attributes);
-                } else {
-                    attributes = {};
-                }
-
-                if (attributes['dominant-baseline']) {
-                    textObj.node.setAttribute('dominant-baseline', attributes['dominant-baseline']);
-                }
-
-                if (data.events) {
-                    tui.util.forEach(data.events, function(event) {
-                        textObj[event.name](event.handler);
-                    });
-                }
-
-                if (data.set) {
-                    if (tui.util.isArray(data.set)) {
-                        tui.util.forEach(data.set, function(set) {
-                            set.push(textObj);
-                        });
-                    } else {
-                        data.set.push(textObj);
-                    }
-                }
-
-                if (data.toBack) {
-                    textObj.toBack();
-                }
+        if (attributes) {
+            if (attributes['dominant-baseline']) {
+                textObj.node.setAttribute('dominant-baseline', attributes['dominant-baseline']);
+            } else {
+                textObj.node.setAttribute('dominant-baseline', 'auto');
             }
-        });
+
+            textObj.attr(attributes);
+        }
+
+        return textObj;
     },
 
     /**
@@ -249,7 +222,37 @@ var raphaelRenderUtil = {
             width: bBox.width,
             height: bBox.height
         };
+    },
+
+    /**
+     * Animate given element's opacity
+     * @param {object} element element
+     * @param {number} startOpacity endOpacity default is '0'
+     * @param {number} endOpacity endOpacity default is '1'
+     * @param {number} duration endOpacity default is '600'
+     */
+    animateOpacity: function(element, startOpacity, endOpacity, duration) {
+        var animationDuration = isNumber(duration) ? duration : 600;
+        var animationStartOpacity = isNumber(startOpacity) ? startOpacity : 0;
+        var animationEndOpacity = isNumber(endOpacity) ? endOpacity : 1;
+
+        element.attr({
+            opacity: animationStartOpacity
+        });
+
+        element.animate({
+            opacity: animationEndOpacity
+        }, animationDuration);
     }
 };
+
+/**
+ * Return boolean value for given parameter is number or not
+ * @param {*} numberSuspect number suspect
+ * @returns {boolean}
+ */
+function isNumber(numberSuspect) {
+    return tui.util.isExisty(numberSuspect) && typeof numberSuspect === 'number';
+}
 
 module.exports = raphaelRenderUtil;

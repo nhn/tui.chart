@@ -406,7 +406,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             }
 
             attrMap[sectorName] = sectorArgs.concat([angles.startAngle, angles.endAngle]);
-            anim = raphael.animation(attrMap, animationTime);
+            anim = raphael.animation(attrMap, animationTime, '>');
             sectorInfo.sector.animate(anim.delay(delayTime));
             delayTime += animationTime;
         });
@@ -646,18 +646,21 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     renderLabels: function(paper, positions, labels, theme) {
         var labelSet = paper.set();
+        var attributes = {
+            'font-size': theme.fontSize,
+            'font-family': theme.fontFamily,
+            'font-weight': theme.fontWeight,
+            'text-anchor': 'middle',
+            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+        };
 
         tui.util.forEach(positions, function(position, index) {
-            raphaelRenderUtil.renderText(paper, position, {
-                text: labels[index],
-                set: labelSet,
-                attributes: {
-                    'font-size': theme.fontSize,
-                    'font-family': theme.fontFamily,
-                    'font-weight': theme.fontWeight,
-                    'text-anchor': 'middle'
-                }
-            });
+            var label = raphaelRenderUtil.renderText(paper, position, labels[index], attributes);
+
+            label.node.style.userSelect = 'none';
+            label.node.style.cursor = 'default';
+
+            labelSet.push(label);
         });
 
         return labelSet;

@@ -136,7 +136,7 @@ describe('singleTooltip', function() {
                 }),
                 expected = {
                     left: 15,
-                    top: 15
+                    top: 10
                 };
 
             expect(actual).toEqual(expected);
@@ -170,7 +170,7 @@ describe('singleTooltip', function() {
             });
             expected = {
                 left: 55,
-                top: 15
+                top: 10
             };
 
             expect(actual).toEqual(expected);
@@ -266,7 +266,7 @@ describe('singleTooltip', function() {
 
             expect(actual).toEqual({
                 left: 65,
-                top: 20
+                top: 50
             });
         });
 
@@ -295,7 +295,7 @@ describe('singleTooltip', function() {
 
             expect(actual).toEqual({
                 left: 85,
-                top: 0
+                top: 30
             });
         });
     });
@@ -443,7 +443,7 @@ describe('singleTooltip', function() {
             });
             expected = {
                 left: 5,
-                top: 5
+                top: 0
             };
 
             expect(actual).toEqual(expected);
@@ -511,8 +511,8 @@ describe('singleTooltip', function() {
             });
 
             expect(actual).toEqual({
-                left: 0,
-                top: 12.5
+                left: -10,
+                top: 32.5
             });
         });
     });

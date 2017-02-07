@@ -248,10 +248,6 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         this.startDepth = startDepth;
         this.selectedGroup = group;
         this._renderSeriesArea(this.paper, tui.util.bind(this._renderGraph, this));
-
-        if (predicate.isShowLabel(this.options)) {
-            this._showSeriesLabelWithoutAnimation();
-        }
     },
 
     /**

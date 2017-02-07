@@ -90,7 +90,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         sector.sector.animate({
             fill: this.overColor
-        }, ANIMATION_DURATION);
+        }, ANIMATION_DURATION, '>');
     },
 
     /**
@@ -102,7 +102,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         sector.sector.animate({
             fill: sector.color
-        }, ANIMATION_DURATION);
+        }, ANIMATION_DURATION, '>');
     },
 
     /**

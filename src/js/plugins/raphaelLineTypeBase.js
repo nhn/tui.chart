@@ -8,13 +8,15 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
+var browser = tui.util.browser;
+var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
 var DEFAULT_DOT_RADIUS = 3;
 var HOVER_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
-var LEFT_BAR_WIDTH = 10;
+var CLIP_RECT_ID = 'clipRectForAnimation';
 
 var concat = Array.prototype.concat;
 
@@ -24,27 +26,6 @@ var concat = Array.prototype.concat;
  * @private
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
-    /**
-     * Render left bar for hiding overflow graph.
-     * @param {number} height - area height
-     * @param {string} chartBackground - background style of chart
-     * @private
-     * @returns {object}
-     */
-    _renderLeftBar: function(height, chartBackground) {
-        var bound = {
-            left: 0,
-            top: 0,
-            width: LEFT_BAR_WIDTH,
-            height: height
-        };
-
-        return raphaelRenderUtil.renderRect(this.paper, bound, {
-            fill: chartBackground,
-            stroke: 'none'
-        });
-    },
-
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
@@ -622,16 +603,31 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Animate.
      * @param {function} onFinish callback
+     * @param {Array.<object>} seriesSet series set
      */
-    animate: function(onFinish) {
-        if (this.dimension) {
-            tui.chart.renderUtil.cancelAnimation(this.animation);
+    animate: function(onFinish, seriesSet) {
+        var paper = this.paper;
+        var dimension = this.dimension;
+        var position = this.position;
+        var clipRect = this.clipRect;
 
-            this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_DURATION, function(ratio) {
-                if (ratio === 1) {
-                    onFinish();
-                }
+        if (!IS_LTE_THAN_IE8 && dimension) {
+            if (!clipRect) {
+                clipRect = createClipPathRectWithLayout(paper, position, dimension, CLIP_RECT_ID);
+                this.clipRect = clipRect;
+            } else {
+                clipRect.attr({
+                    width: 0
+                });
+            }
+
+            seriesSet.forEach(function(seriesElement) {
+                seriesElement.node.setAttribute('clip-path', 'url(#' + CLIP_RECT_ID + ')');
             });
+
+            clipRect.animate({
+                width: dimension.width
+            }, ANIMATION_DURATION, '>', onFinish);
         }
     },
 
@@ -777,5 +773,25 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         this.paper.clear();
     }
 });
+
+/**
+ * Create clip rect with layout
+ * @param {object} paper Raphael paper
+ * @param {object} position position
+ * @param {object} dimension dimension
+ * @param {string} id ID string
+ * @returns {object}
+ */
+function createClipPathRectWithLayout(paper, position, dimension, id) {
+    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+    var rect = paper.rect((position.left - 10), (position.top - 10), 0, dimension.height);
+
+    clipPath.id = id;
+
+    clipPath.appendChild(rect.node);
+    paper.defs.appendChild(clipPath);
+
+    return rect;
+}
 
 module.exports = RaphaelLineTypeBase;
