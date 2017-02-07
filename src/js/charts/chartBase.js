@@ -254,12 +254,21 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _makeTooltipData: function(classType, tooltipOptions) {
+        var colors = [];
+
+        tui.util.forEach(tui.util.filter(this.theme.legend, function(item) {
+            return tui.util.isArray(item.colors);
+        }), function(series) {
+            colors = colors.concat(series.colors);
+        });
+
         return {
             isVertical: this.isVertical,
             chartType: this.chartType,
             chartTypes: this.chartTypes,
             xAxisType: this.options.xAxis.type,
             dateFormat: this.options.xAxis.dateFormat,
+            colors: colors,
             tooltipOptions: (tooltipOptions || {}),
             classType: (classType || 'tooltip')
         };
