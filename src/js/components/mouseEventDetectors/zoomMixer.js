@@ -253,7 +253,7 @@ var zoomMixer = {
         var width = Math.abs(layerX - this.startLayerX);
         var element = this.dragSelectionElement;
 
-        element.style.left = left + chartConst.SERIES_EXPAND_SIZE + 'px';
+        element.style.left = left + 'px';
         element.style.width = width + 'px';
 
         dom.addClass(element, 'show');
@@ -274,11 +274,13 @@ var zoomMixer = {
      */
     _onDrag: function(e) {
         var clientPos = this.startClientPosition;
-
-        if (tui.util.isNull(this.dragStartIndexes)) {
-            this.dragStartIndexes = this._findDataForZoomable(clientPos.x, clientPos.y).indexes;
-        } else {
-            this._showDragSelection(e.clientX);
+        var target = e.target || e.srcElement;
+        if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
+            if (tui.util.isNull(this.dragStartIndexes)) {
+                this.dragStartIndexes = this._findDataForZoomable(clientPos.x, clientPos.y).indexes;
+            } else {
+                this._showDragSelection(e.clientX);
+            }
         }
     },
 

@@ -8,8 +8,6 @@
 
 var Series = require('./series');
 var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
 
 var browser = tui.util.browser;
 var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
@@ -117,11 +115,12 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * Set map ratio.
+     * @param {object} [graphDimension] graph dimension
      * @private
      */
-    _setMapRatio: function() {
+    _setMapRatio: function(graphDimension) {
         var seriesDimension = this.layout.dimension;
-        var mapDimension = this.graphDimension;
+        var mapDimension = graphDimension || this.mapModel.getMapDimension();
         var widthRatio = seriesDimension.width / mapDimension.width;
         var heightRatio = seriesDimension.height / mapDimension.height;
 
@@ -184,22 +183,13 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * Render series label.
-     * @param {HTMLElement} seriesLabelContainer series label area element
+     * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function(seriesLabelContainer) {
-        var self = this,
-            htmls = tui.util.map(this.mapModel.getLabelData(this.zoomMagn * this.mapRatio), function(datum, index) {
-                var label = datum.name || datum.code,
-                    left = datum.labelPosition.left - (renderUtil.getRenderedLabelWidth(label, self.theme.label) / 2),
-                    top = datum.labelPosition.top - (renderUtil.getRenderedLabelHeight(label, self.theme.label) / 2);
+    _renderSeriesLabel: function() {
+        var labelData = this.mapModel.getLabelData(this.zoomMagn * this.mapRatio);
 
-                return self._makeSeriesLabelHtml({
-                    left: left,
-                    top: top
-                }, datum.name, index);
-            });
-        seriesLabelContainer.innerHTML = htmls.join('');
+        return this.graphRenderer.renderSeriesLabels(this.paper, labelData, this.theme.label);
     },
 
     /**
@@ -211,10 +201,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
         Series.prototype._renderSeriesArea.call(this, seriesContainer, data, funcRenderGraph);
-
-        if (predicate.isShowLabel(this.options) && !this.seriesLabelContainer) {
-            this.graphContainer.appendChild(this.seriesLabelContainer);
-        }
     },
 
     /**
@@ -264,7 +250,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setLimitPositionToMoveMap();
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
 
-        this._setMapRatio();
+        this._setMapRatio(this.graphDimension);
 
         this.graphRenderer.scaleMapPaths(changedRatio, position, this.mapRatio, prevDimension, prevDimension);
     },

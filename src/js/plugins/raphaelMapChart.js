@@ -34,6 +34,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         this.ratio = this._getDimensionRatio(data.layout.dimension, mapDimension);
         this.dimension = data.layout.dimension;
+        this.position = data.layout.position;
         this.paper = paper;
         this.sectorSet = paper.set();
         this.sectors = this._renderMap(data, this.ratio);
@@ -133,8 +134,15 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         }, ANIMATION_DURATION, '>');
     },
 
+    /**
+     * Scale map sector paths
+     * @param {number} changedRatio changed ratio of map
+     * @param {object} position position
+     * @param {number} mapRatio mapdimension ratio by dimansion
+     * @param {object} limitPosition limit position
+     * @param {object} mapDimension map dimension
+     */
     scaleMapPaths: function(changedRatio, position, mapRatio, limitPosition, mapDimension) {
-        var isZoomIn = changedRatio > 1;
         var transformList = this.g.transform.baseVal;
         var zoom = this.paper.canvas.createSVGTransform();
         var matrix = this.paper.canvas.createSVGMatrix();
@@ -151,6 +159,8 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         var maxTop = mapDimension.height - this.dimension.height;
         var previousTranslateX = (transformMatrix.e / transformMatrix.a);
         var previousTranslateY = (transformMatrix.f / transformMatrix.d);
+        var currentLimitRight = -maxRight / transformMatrix.a;
+        var currentLimitTop = -maxTop / transformMatrix.d;
         var transformX, transformY;
 
         raphaelMatrix.scale(changedRatio, changedRatio,
@@ -159,16 +169,17 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         transformX = (raphaelMatrix.e / raphaelMatrix.a) + previousTranslateX;
         transformY = (raphaelMatrix.f / raphaelMatrix.d) + previousTranslateY;
 
-        if (!isZoomIn && transformX >= 0) {
-            raphaelMatrix.e = -previousTranslateX;
-        } else if (transformX < -maxRight / transformMatrix.a) {
-            raphaelMatrix.e = -(maxRight / transformMatrix.a) - previousTranslateX;
+
+        if (transformX >= 0) {
+            raphaelMatrix.e = -previousTranslateX * raphaelMatrix.a;
+        } else if (transformX < currentLimitRight) {
+            raphaelMatrix.e = currentLimitRight - previousTranslateX;
         }
 
-        if (!isZoomIn && transformY >= 0) {
-            raphaelMatrix.f = -previousTranslateY;
-        } else if (transformY < -maxTop / transformMatrix.d) {
-            raphaelMatrix.f = -(maxRight / transformMatrix.d) - previousTranslateY;
+        if (transformY >= 0) {
+            raphaelMatrix.f = -previousTranslateY * raphaelMatrix.a;
+        } else if (transformY < currentLimitTop) {
+            raphaelMatrix.f = currentLimitTop - previousTranslateY;
         }
 
         matrix.a = raphaelMatrix.a;
@@ -183,6 +194,11 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         transformList.initialize(transformList.consolidate());
     },
 
+    /**
+     * Scale map sector paths
+     * @param {object} distances drag distance for moving
+     * @param {object} mapDimension map dimension
+     */
     moveMapPaths: function(distances, mapDimension) {
         var matrix = this.paper.canvas.createSVGMatrix();
         var raphaelMatrix = this.paper.raphael.matrix();
@@ -228,6 +244,44 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         translate.setMatrix(matrix);
         transformList.appendItem(translate);
         transformList.initialize(transformList.consolidate());
+    },
+    /**
+     * Render series labels
+     * @param {object} paper Raphael paper
+     * @param {Array.<object>} labelData label data
+     * @param {object} labelTheme label theme
+     * @returns {Array.<object>}
+     */
+    renderSeriesLabels: function(paper, labelData, labelTheme) {
+        var attributes = {
+            'font-size': labelTheme.fontSize,
+            'font-family': labelTheme.fontFamily,
+            'font-weight': labelTheme.fontWeight,
+            fill: labelTheme.color,
+            'text-anchor': 'middle',
+            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0,
+            transform: 's' + this.ratio + ',' + this.ratio + ',0,0'
+            + 't' + (this.position.left / this.ratio) + ',' + (this.position.top / this.ratio)
+        };
+        var set = paper.set();
+        var self = this;
+
+        tui.util.forEach(labelData, function(labelDatum) {
+            var position = labelDatum.labelPosition;
+            var label = raphaelRenderUtil.renderText(paper, position,
+                    labelDatum.name || labelDatum.code, attributes);
+
+            set.push(label);
+
+            label.node.style.userSelect = 'none';
+            label.node.style.cursor = 'default';
+
+            if (!IS_LTE_THAN_IE8) {
+                self.g.appendChild(label.node);
+            }
+        });
+
+        return set;
     }
 });
 

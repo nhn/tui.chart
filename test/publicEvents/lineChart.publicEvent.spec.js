@@ -67,8 +67,8 @@ describe('Test user events for line chart', function() {
             });
 
             mouseEventDetector._onClick({
-                clientX: 57,
-                clientY: 66
+                clientX: 50,
+                clientY: 100
             });
         });
     });
@@ -96,8 +96,8 @@ describe('Test user events for line chart', function() {
 
             // select
             mouseEventDetector._onClick({
-                clientX: 57,
-                clientY: 66
+                clientX: 50,
+                clientY: 100
             });
 
             setTimeout(function() {
