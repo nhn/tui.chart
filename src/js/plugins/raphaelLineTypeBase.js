@@ -609,10 +609,17 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var paper = this.paper;
         var dimension = this.dimension;
         var position = this.position;
-        var clipRect;
+        var clipRect = this.clipRect;
 
         if (!IS_LTE_THAN_IE8 && dimension) {
-            clipRect = createClipPathRectWithLayout(paper, position, dimension, CLIP_RECT_ID);
+            if (!clipRect) {
+                clipRect = createClipPathRectWithLayout(paper, position, dimension, CLIP_RECT_ID);
+                this.clipRect = clipRect;
+            } else {
+                clipRect.attr({
+                    width: 0
+                });
+            }
 
             seriesSet.forEach(function(seriesElement) {
                 seriesElement.node.setAttribute('clip-path', 'url(#' + CLIP_RECT_ID + ')');
