@@ -214,7 +214,7 @@ var axisTypeMixer = {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
-            zoomable: seriesOptions.zoomable,
+            zoomable: seriesOptions.zoomable && !this.dataProcessor.coordinateType,
             allowSelect: seriesOptions.allowSelect,
             classType: 'groupTypeEventDetector'
         });

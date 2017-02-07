@@ -7,10 +7,6 @@
 'use strict';
 
 var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js');
-var Tooltip = require('../../src/js/components/tooltips/tooltip');
-var GroupTooltip = require('../../src/js/components/tooltips/groupTooltip');
-var GroupTypeEventDetector = require('../../src/js/components/mouseEventDetectors/groupTypeEventDetector');
-var BoundsTypeEventDetector = require('../../src/js/components/mouseEventDetectors/boundsTypeEventDetector');
 
 describe('Test for ComboChart', function() {
     var componentMap = {};
@@ -32,7 +28,7 @@ describe('Test for ComboChart', function() {
         });
 
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-                                    ['getCategories', 'isCoordinateType', 'addDataRatios', 'addDataRatiosForCoordinateType']);
+            ['getCategories', 'isCoordinateType', 'addDataRatios', 'addDataRatiosForCoordinateType']);
 
         axisTypeMixer.dataProcessor = dataProcessor;
         axisTypeMixer.options = {};
