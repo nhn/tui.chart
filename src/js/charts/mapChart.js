@@ -50,9 +50,24 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
         var chartOptions = options.chart;
+        var chartOption = this.options.chart;
+        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
+
+        this.componentManager.register('chartExportMenu', {
+            chartTitle: chartTitle,
+            classType: 'chartExportMenu'
+        });
+
+        this.componentManager.register('mapSeries', {
+            libType: options.libType,
+            chartType: options.chartType,
+            componentType: 'series',
+            classType: 'mapSeries',
+            mapModel: mapModel,
+            colorSpectrum: colorSpectrum
+        });
 
         options.legend = options.legend || {};
-
         if (options.legend.visible) {
             this.componentManager.register('legend', {
                 colorSpectrum: colorSpectrum,
@@ -67,15 +82,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         this.componentManager.register('tooltip', tui.util.extend({
             mapModel: mapModel
         }, this._makeTooltipData('mapChartTooltip')));
-
-        this.componentManager.register('mapSeries', {
-            libType: options.libType,
-            chartType: options.chartType,
-            componentType: 'series',
-            classType: 'mapSeries',
-            mapModel: mapModel,
-            colorSpectrum: colorSpectrum
-        });
 
         this.componentManager.register('zoom', {
             classType: 'zoom'

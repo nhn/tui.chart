@@ -15,9 +15,9 @@ var htmls = {
         'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
     TEXT_CSS_TEXT_FOR_LINE_TYPE: 'left:{{ left }}%;top:{{ top }}%;font-family:{{ fontFamily }};' +
     'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
-    HTML_ZOOM_BUTTONS: '<a class="tui-chart-zoom-btn" href="#" data-magn="2">' +
+    HTML_ZOOM_BUTTONS: '<a class="tui-chart-zoom-btn" href="#" data-magn="1">' +
             '<div class="horizontal-line"></div><div class="vertical-line"></div></a>' +
-        '<a class="tui-chart-zoom-btn" href="#" data-magn="0.5"><div class="horizontal-line"></div></a>',
+        '<a class="tui-chart-zoom-btn" href="#" data-magn="-1"><div class="horizontal-line"></div></a>',
     HTML_SERIES_BLOCK: '<div class="tui-chart-series-block" style="{{ cssText }}">{{ label }}</div>'
 };
 

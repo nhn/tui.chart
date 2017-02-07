@@ -5,6 +5,7 @@
  */
 
 'use strict';
+var IS_MSIE_VERSION_LTE_THAN_8 = tui.util.browser.msie && tui.util.browser.version <= 8;
 
 var seriesTemplate = require('./seriesTemplate');
 var chartConst = require('../../const');
@@ -43,7 +44,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
          */
         this.stackedWheelDelta = 0;
 
-        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
 
         this._attachToEventBus();
     },
@@ -62,11 +63,15 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @returns {HTMLElement} zoom container
      */
     render: function(data) {
-        var container = dom.create('DIV', this.className);
+        var container;
 
-        container.innerHTML += seriesTemplate.ZOOM_BUTTONS;
-        renderUtil.renderPosition(container, data.positionMap.series);
-        this._attachEvent(container);
+        if (!IS_MSIE_VERSION_LTE_THAN_8) {
+            container = dom.create('DIV', this.className);
+
+            container.innerHTML += seriesTemplate.ZOOM_BUTTONS;
+            renderUtil.renderPosition(container, data.positionMap.series);
+            this._attachEvent(container);
+        }
 
         return container;
     },
@@ -95,12 +100,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @private
      */
     _zoom: function(magn, position) {
-        var changedMagn = Math.min(Math.max(1, this.magn * magn), chartConst.MAX_ZOOM_MAGN);
-
-        if (changedMagn !== this.magn) {
-            this.magn = changedMagn;
-            this.eventBus.fire('zoomMap', this.magn, position);
-        }
+        this.eventBus.fire('zoomMap', magn, position);
     },
 
     /**
@@ -110,12 +110,16 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @private
      */
     _onClick: function(e) {
-        var target = e.target || e.srcElement,
-            btnElement = this._findBtnElement(target),
-            magn;
+        var target = e.target || e.srcElement;
+        var btnElement = this._findBtnElement(target);
+        var zoomDirection = btnElement.getAttribute('data-magn');
+        var magn = this._calculateMagn(zoomDirection);
 
-        if (btnElement) {
-            magn = parseFloat(btnElement.getAttribute('data-magn'));
+        if (magn > 5) {
+            this.magn = 5;
+        } else if (magn < 1) {
+            this.magn = 1;
+        } else if (magn >= 1) {
             this._zoom(magn);
         }
 
@@ -136,22 +140,19 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     },
 
     /**
-     * Calculate magnification from wheelDelta.
-     * @param {number} wheelDelta wheelDelta
+     * Calculate magnification from zoomDirection.
+     * @param {number} zoomDirection zoomDirection (positive is zoomIn)
      * @returns {number} magnification
      * @private
      */
-    _calculateMagn: function(wheelDelta) {
-        var tick = parseInt(wheelDelta / chartConst.WHEEL_TICK, 10),
-            magn;
-
-        if (tick > 0) {
-            magn = Math.pow(2, tick);
-        } else {
-            magn = Math.pow(0.5, Math.abs(tick));
+    _calculateMagn: function(zoomDirection) {
+        if (zoomDirection > 0) {
+            this.magn += 0.1;
+        } else if (zoomDirection < 0) {
+            this.magn -= 0.1;
         }
 
-        return magn;
+        return this.magn;
     },
 
     /**
@@ -160,23 +161,15 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      * @param {{left: number, top: number}} position mouse position
      */
     onWheel: function(wheelDelta, position) {
-        var magn;
+        var magn = this._calculateMagn(wheelDelta);
 
-        if (Math.abs(wheelDelta) < chartConst.WHEEL_TICK) {
-            this.stackedWheelDelta += wheelDelta;
-        } else {
-            this.stackedWheelDelta = wheelDelta;
+        if (magn > 5) {
+            this.magn = 5;
+        } else if (magn < 1) {
+            this.magn = 1;
+        } else if (magn >= 1) {
+            this._zoom(magn, position);
         }
-
-        if (Math.abs(this.stackedWheelDelta) < chartConst.WHEEL_TICK) {
-            return;
-        }
-
-        magn = this._calculateMagn(this.stackedWheelDelta);
-
-        this._zoom(magn, position);
-
-        this.stackedWheelDelta = this.stackedWheelDelta % chartConst.WHEEL_TICK;
     }
 });
 
