@@ -367,7 +367,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _findSeriesItemByValue: function(valueType, value, condition) {
         condition = condition || function() {
-            return;
+            return null;
         };
 
         return this._findSeriesItem(function(seriesItem) {
