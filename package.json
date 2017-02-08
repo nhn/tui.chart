@@ -9,7 +9,7 @@
     "deploy": "webpack --production & webpack --production --minify",
     "test": "karma start karma.conf.js",
     "test:ne": "karma start karma.conf.ne.js",
-    "docs": "./node_modules/.bin/jsdoc -t ./node_modules/tui-doc-template -c ./jsdoc-conf.json",
+    "doc": "./node_modules/.bin/jsdoc -t ./node_modules/tui-doc-template -c ./jsdoc-conf.json && git checkout gh-pages && npm run update",
     "eslint": "eslint src/js"
   },
   "repository": {
