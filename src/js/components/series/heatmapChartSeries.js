@@ -136,4 +136,15 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     }
 });
 
-module.exports = HeatmapChartSeries;
+function heatmapChartSeriesFactory(params) {
+    var libType = params.chartOptions.libType;
+
+    params.libType = libType;
+    params.chartType = 'heatmap';
+
+    return new HeatmapChartSeries(params);
+}
+
+heatmapChartSeriesFactory.componentType = 'series';
+
+module.exports = heatmapChartSeriesFactory;

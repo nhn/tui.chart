@@ -94,25 +94,36 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             legend: true
         };
     },
-    _addComponentsForAxisType: axisTypeMixer._addComponentsForAxisType,
-    _addPlotComponent: axisTypeMixer._addPlotComponent,
-    _addLegendComponent: axisTypeMixer._addLegendComponent,
-    _addAxisComponents: axisTypeMixer._addAxisComponents,
-    _addChartExportMenuComponent: axisTypeMixer._addChartExportMenuComponent,
-    _addSeriesComponents: axisTypeMixer._addSeriesComponents,
-    _addTooltipComponent: axisTypeMixer._addTooltipComponent,
-    _addMouseEventDetectorComponent: axisTypeMixer._addMouseEventDetectorComponent,
 
-    _addMouseEventDetectorComponentForNormalTooltip: axisTypeMixer._addMouseEventDetectorComponentForNormalTooltip
+    /**
+     * Add data ratios.
+     * @override
+     */
+    addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
+    },
+
+    /**
+     * Add components.
+     * @override
+     * @private
+     */
+    addComponents: function() {
+        var seriesTheme = this.theme.series[this.chartType];
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+
+        this.componentManager.register('legend', 'spectrumLegend', {
+            colorSpectrum: colorSpectrum
+        });
+
+        this.componentManager.register('tooltip', 'tooltip');
+
+        this.componentManager.register('heatmapSeries', 'heatmapSeries', {
+            colorSpectrum: colorSpectrum
+        });
+
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+    }
 });
-
-/**
- * Add data ratios for rendering graph.
- * @private
- * @override
- */
-HeatmapChart.prototype.addDataRatios = function(limitMap) {
-    this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
-};
 
 module.exports = HeatmapChart;

@@ -23,7 +23,7 @@ function mouseEventDetectorFactory(params) {
         factory = groupTypeEventDetectorFactory;
     } else if (predicate.isMapChart(chartType)) {
         factory = mapChartEventDetectorFactory;
-    } else if (predicate.isBarTypeChart(chartType)) {
+    } else if (predicate.isBarTypeChart(chartType) || predicate.isHeatmapChart(chartType)) {
         factory = boundsTypeEventDetectorFactory;
     } else if (predicate.isCoordinateTypeChart(chartType)
                || predicate.isPieChart(chartType)
