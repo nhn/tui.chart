@@ -115,14 +115,12 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
         this.componentManager.register('legend', 'spectrumLegend', {
             colorSpectrum: colorSpectrum
         });
-
         this.componentManager.register('tooltip', 'tooltip');
-
         this.componentManager.register('heatmapSeries', 'heatmapSeries', {
             colorSpectrum: colorSpectrum
         });
-
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
     }
 });
 

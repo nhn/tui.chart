@@ -339,4 +339,17 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     }
 });
 
-module.exports = TreemapChartSeries;
+function treemapChartSeriesFactory(params) {
+    var libType = params.chartOptions.libType;
+    var chartTheme = params.chartTheme;
+
+    params.libType = libType;
+    params.chartType = 'treemap';
+    params.chartBackground = chartTheme.chart.background;
+
+    return new TreemapChartSeries(params);
+}
+
+treemapChartSeriesFactory.componentType = 'series';
+
+module.exports = treemapChartSeriesFactory;

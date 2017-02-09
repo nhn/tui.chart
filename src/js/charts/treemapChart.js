@@ -46,30 +46,22 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         var useColorValue = this.options.series.useColorValue;
         var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
 
-        this.componentManager.register('series', {
-            chartBackground: this.theme.chart.background,
-            chartType: this.chartType,
-            classType: 'treemapSeries',
+        this.componentManager.register('treemapSeries', 'treemapSeries', {
             colorSpectrum: colorSpectrum
         });
 
-        this.componentManager.register('tooltip', tui.util.extend({
-            labelTheme: tui.util.pick(this.theme, 'series', 'label')
-        }, this.makeTooltipData()));
-
         if (useColorValue && this.options.legend.visible) {
-            this.componentManager.register('legend', {
-                chartType: this.chartType,
-                classType: 'spectrumLegend',
+            this.componentManager.register('legend', 'spectrumLegend', {
                 colorSpectrum: colorSpectrum
             });
         }
 
-        this.componentManager.register('mouseEventDetector', {
-            chartType: this.chartType,
-            classType: 'boundsTypeEventDetector',
-            isVertical: this.isVertical
-        });
+        this.componentManager.register('tooltip', 'tooltip', tui.util.extend({
+            labelTheme: tui.util.pick(this.theme, 'series', 'label')
+        }));
+
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
     },
 
     /**
