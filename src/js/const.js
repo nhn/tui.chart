@@ -377,6 +377,8 @@ var chartConst = {
     RADIAL_CATEGORY_PADDING: 20,
 
     COMPONENT_TYPE_DOM: 'DOM',
-    COMPONENT_TYPE_RAPHAEL: 'Raphael'
+    COMPONENT_TYPE_RAPHAEL: 'Raphael',
+
+    IMAGE_EXTENSIONS: ['png', 'jpeg']
 };
 module.exports = chartConst;
