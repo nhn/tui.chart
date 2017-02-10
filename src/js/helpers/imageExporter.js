@@ -7,18 +7,19 @@
 'use strict';
 
 var downloader = require('./downloader');
+var chartConst = require('../const');
 
 var browser = tui.util.browser;
 var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
 var DOMURL = window.URL || window.webkitURL || window;
+var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
 
 /**
  * Return svg outerHTML string
  * @param {HTMLElement} svgElement svg element
  * @returns {string}
- * @private
  */
-function _getSvgString(svgElement) {
+function getSvgString(svgElement) {
     var svgParent = svgElement.parentNode;
     var tempWrapper = document.createElement('DIV');
     var svgString;
@@ -39,9 +40,8 @@ function _getSvgString(svgElement) {
  * @param {string} svgString svg HTML string
  * @param {string} fileName file name
  * @param {string} extension file extension
- * @private
  */
-function _downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
+function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
     var ctx = canvas.getContext('2d');
 
     // remove name space for IE
@@ -63,9 +63,8 @@ function _downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
  * @param {string} svgString svg HTML string
  * @param {string} fileName file name
  * @param {string} extension file extension
- * @private
  */
-function _downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
+function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
     var ctx = canvas.getContext('2d');
     var blob = new Blob([svgString], {type: 'image/svg+xml'});
     var url = DOMURL.createObjectURL(blob);
@@ -82,37 +81,43 @@ function _downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
     img.src = url;
 }
 
-/**
- * Download image with png format
- * @param {string} fileName - file name to save
- * @param {string} extension - extension type
- * @param {HTMLElement} imageSourceElement - image source element
- */
-function downloadImage(fileName, extension, imageSourceElement) {
-    var svgString, parentNode, canvas;
-
-    if (imageSourceElement.tagName === 'svg') {
-        parentNode = imageSourceElement.parentNode;
-
-        canvas = document.createElement('canvas');
-
-        canvas.width = parentNode.offsetWidth;
-        canvas.height = parentNode.offsetHeight;
-
-        svgString = _getSvgString(imageSourceElement);
-
-        if (isIE10OrIE11) {
-            _downloadSvgWithCanvg(canvas, svgString, fileName, extension);
-        } else {
-            _downloadSvgWithBlobURL(canvas, svgString, fileName, extension);
-        }
-    } else if (imageSourceElement.tagName === 'canvas') {
-        canvas = imageSourceElement;
-
-        downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
-    }
-}
-
 module.exports = {
-    downloadImage: downloadImage
+    /**
+     * Download image with png format
+     * @param {string} fileName - file name to save
+     * @param {string} extension - extension type
+     * @param {HTMLElement} imageSourceElement - image source element
+     */
+    downloadImage: function(fileName, extension, imageSourceElement) {
+        var svgString, parentNode, canvas;
+
+        if (imageSourceElement.tagName === 'svg') {
+            parentNode = imageSourceElement.parentNode;
+
+            canvas = document.createElement('canvas');
+
+            canvas.width = parentNode.offsetWidth;
+            canvas.height = parentNode.offsetHeight;
+
+            svgString = getSvgString(imageSourceElement);
+
+            if (isIE10OrIE11) {
+                downloadSvgWithCanvg(canvas, svgString, fileName, extension);
+            } else {
+                downloadSvgWithBlobURL(canvas, svgString, fileName, extension);
+            }
+        } else if (imageSourceElement.tagName === 'canvas') {
+            canvas = imageSourceElement;
+
+            downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+        }
+    },
+
+    /**
+     * Returns data extensions
+     * @returns {Array.<string>}
+     */
+    getExtensions: function() {
+        return imageExtensions;
+    }
 };

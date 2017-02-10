@@ -9,16 +9,15 @@ var arrayUtil = require('../helpers/arrayUtil');
 var chartConst = require('../const');
 
 var DOWNLOAD_HANDLERS = {
-    downloadAttribute: _downloadWithAnchorElementDownloadAttribute,
-    msSaveOrOpenBlob: _downloadWithMsSaveOrOpenBlob
+    downloadAttribute: downloadWithAnchorElementDownloadAttribute,
+    msSaveOrOpenBlob: downloadWithMsSaveOrOpenBlob
 };
 
 /**
  * Return download method name of current browser supports
  * @returns {string}
- * @private
  */
-function _getDownloadMethod() {
+function getDownloadMethod() {
     var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
     var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
     var method;
@@ -34,11 +33,12 @@ function _getDownloadMethod() {
 
 /**
  * Base64 string to blob
+ * original source ref: https://github.com/miguelmota/base64toblob/blob/master/base64toblob.js
+ * Licence: MIT Licence
  * @param {string} base64String - base64 string
  * @returns {Blob}
- * @private
  */
-function _base64toBlob(base64String) {
+function base64toBlob(base64String) {
     var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
     var sliceSize = 1024;
     var byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
@@ -68,9 +68,8 @@ function _base64toBlob(base64String) {
  * Return given extension type is image format
  * @param {string} extension extension
  * @returns {boolean}
- * @private
  */
-function _isImageExtension(extension) {
+function isImageExtension(extension) {
     return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, function(imageExtension) {
         return extension === imageExtension;
     });
@@ -81,10 +80,9 @@ function _isImageExtension(extension) {
  * @param {string} fileName - file name
  * @param {string} extension - file extension
  * @param {string} content - file content
- * @private
  */
-function _downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
-    var blobObject = _isImageExtension(extension) ? _base64toBlob(content) : new Blob([content]);
+function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
+    var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
 
     window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
 }
@@ -94,9 +92,8 @@ function _downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
  * @param {string} fileName - file name
  * @param {string} extension - file extension
  * @param {string} content - file content
- * @private
  */
-function _downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
+function downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
     var anchorElement;
 
     if (content) {
@@ -120,7 +117,7 @@ function _downloadWithAnchorElementDownloadAttribute(fileName, extension, conten
  * @param {string} content - file content
  */
 function execDownload(fileName, extension, content) {
-    var downloadMethod = _getDownloadMethod();
+    var downloadMethod = getDownloadMethod();
 
     if (downloadMethod && tui.util.isString(content)) {
         DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content);

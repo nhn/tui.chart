@@ -379,6 +379,7 @@ var chartConst = {
     COMPONENT_TYPE_DOM: 'DOM',
     COMPONENT_TYPE_RAPHAEL: 'Raphael',
 
-    IMAGE_EXTENSIONS: ['png', 'jpeg']
+    IMAGE_EXTENSIONS: ['png', 'jpeg'],
+    DATA_EXTENSIONS: ['xls', 'csv']
 };
 module.exports = chartConst;

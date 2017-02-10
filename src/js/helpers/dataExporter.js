@@ -7,14 +7,40 @@
 'use strict';
 
 var downloader = require('./downloader');
+var chartConst = require('../const');
 
 var DATA_URI_HEADERS = {
     xls: 'data:application/vnd.ms-excel;base64,',
     csv: 'data:text/csv,'
 };
-var EXPORT_DATA_MAKERS = {
-    xls: _makeXlsStringWithRawData,
-    csv: _makeCsvTextWithRawData
+var DATA_URI_BODY_MAKERS = {
+    xls: _makeXlsBodyWithRawData,
+    csv: _makeCsvBodyWithRawData
+};
+var dataExtensions = [].concat([], chartConst.DATA_EXTENSIONS);
+
+var dataExporter = {
+    /**
+     * Download chart data
+     * @param {string} fileName file name
+     * @param {string} extension file extension
+     * @param {object} rawData raw data of chart
+     * @param {object} [downloadOption] download option
+     */
+    downloadData: function(fileName, extension, rawData, downloadOption) {
+        var chartData2DArray = _get2DArrayFromRawData(rawData);
+        var content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
+
+        downloader.execDownload(fileName, extension, content);
+    },
+
+    /**
+     * Returns data extensions
+     * @returns {Array.<string>}
+     */
+    getExtensions: function() {
+        return dataExtensions;
+    }
 };
 
 /**
@@ -85,12 +111,11 @@ function _getTableElementStringForXls(chartData2DArray) {
 
 /**
  * Make xls file with chart series data
- * @param {rawData} rawData - chart rawData
- * @returns {string} xls file content
+ * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
+ * @returns {string} base64 xls file content
  * @private
  */
-function _makeXlsStringWithRawData(rawData) {
-    var chartData2DArray = _get2DArrayFromRawData(rawData);
+function _makeXlsBodyWithRawData(chartData2DArray) {
     var xlsString = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
         'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
         'xmlns="http://www.w3.org/TR/REC-html40">' +
@@ -123,23 +148,24 @@ function _makeXlsStringWithRawData(rawData) {
 
 /**
  * Make csv text with chart series data
- * @param {rawData} rawData - chart rawData
- * @param {object} option - download option
- * @returns {string} csv text
+ * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
+ * @param {object} [option] - download option
+ * @param {object} [option.itemDelimiter = ','] - item delimiter
+ * @param {object} [option.lineDelimiter = '\n'] - line delimiter
+ * @returns {string} URI encoded csv text
  * @private
  */
-function _makeCsvTextWithRawData(rawData, option) {
-    var chartData2DArray = _get2DArrayFromRawData(rawData);
+function _makeCsvBodyWithRawData(chartData2DArray, option) {
     var csvText = '';
-    var lineDelimiter = option.lineDelimiter || '\u000a';
-    var itemDelimiter = option.itemDelimiter || ',';
+    var lineDelimiter = (option && option.lineDelimiter) || '\u000a';
+    var itemDelimiter = (option && option.itemDelimiter) || ',';
     var lastRowIndex = chartData2DArray.length - 1;
 
     tui.util.forEachArray(chartData2DArray, function(row, rowIndex) {
         var lastCellIndex = row.length - 1;
 
         tui.util.forEachArray(row, function(cell, cellIndex) {
-            var cellContent = typeof cell === 'number' ? cell : '"' + cell + '"';
+            var cellContent = (tui.util.isNumber(cell) ? cell : '"' + cell + '"');
 
             csvText += cellContent;
 
@@ -156,19 +182,9 @@ function _makeCsvTextWithRawData(rawData, option) {
     return encodeURIComponent(csvText);
 }
 
-/**
- * Download chart data
- * @param {string} fileName file name
- * @param {string} extension file extension
- * @param {object} rawData raw data of chart
- * @param {object} [downloadOption] download option
- */
-function downloadData(fileName, extension, rawData, downloadOption) {
-    var content = DATA_URI_HEADERS[extension] + EXPORT_DATA_MAKERS[extension](rawData, downloadOption);
+// export private methods for Test
+dataExporter._makeCsvBodyWithRawData = _makeCsvBodyWithRawData;
+dataExporter._makeXlsBodyWithRawData = _makeXlsBodyWithRawData;
+dataExporter._get2DArrayFromRawData = _get2DArrayFromRawData;
 
-    downloader.execDownload(fileName, extension, content);
-}
-
-module.exports = {
-    downloadData: downloadData
-};
+module.exports = dataExporter;

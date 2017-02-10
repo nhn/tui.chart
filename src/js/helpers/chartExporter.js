@@ -7,7 +7,6 @@
 'use strict';
 
 var arrayUtil = require('../helpers/arrayUtil');
-var chartConst = require('../const');
 var dataExporter = require('./dataExporter');
 var imageExporter = require('./imageExporter');
 
@@ -26,8 +25,18 @@ var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBl
  * @returns {boolean}
  */
 function isImageExtension(extension) {
-    return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, function(imageExtension) {
+    return arrayUtil.any(imageExporter.getExtensions(), function(imageExtension) {
         return extension === imageExtension;
+    });
+}
+/**
+ * Return given extension type is data format
+ * @param {string} extension extension
+ * @returns {boolean}
+ */
+function isDataExtension(extension) {
+    return arrayUtil.any(dataExporter.getExtensions(), function(dataExtension) {
+        return extension === dataExtension;
     });
 }
 
@@ -40,11 +49,11 @@ function isImageExtension(extension) {
  * @param {object} [downloadOptions] download option
  */
 function exportChart(fileName, extension, rawData, svgElement, downloadOptions) {
-    var downloadOption = downloadOptions ? downloadOptions[extension] : {};
+    var downloadOption = (downloadOptions && downloadOptions[extension] ? downloadOptions[extension] : {});
 
     if (isImageExtension(extension)) {
         imageExporter.downloadImage(fileName, extension, svgElement);
-    } else if (extension === 'xls') {
+    } else if (isDataExtension(extension)) {
         dataExporter.downloadData(fileName, extension, rawData, downloadOption);
     }
 }
@@ -53,5 +62,26 @@ module.exports = {
     exportChart: exportChart,
     isDownloadSupported: isDownloadAttributeSupported || isMsSaveOrOpenBlobSupported,
     isImageDownloadAvailable: isImageDownloadAvailable,
-    isImageExtension: isImageExtension
+    isImageExtension: isImageExtension,
+
+    /**
+     * Add file extension to dataExtension
+     * @param {string} type file extension type
+     * @param {string} extension file extension
+     */
+    addExtension: function(type, extension) {
+        var isValidExtension = extension && tui.util.isString(extension);
+        var exporter, extensions;
+
+        if (type === 'data') {
+            exporter = dataExporter;
+        } else if (type === 'image') {
+            exporter = imageExporter;
+        }
+
+        if (exporter && isValidExtension) {
+            extensions = exporter.getExtensions();
+            extensions.push(extension);
+        }
+    }
 };
