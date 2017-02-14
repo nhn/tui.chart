@@ -6,14 +6,14 @@
 
 'use strict';
 
-var AreaChartSeries = require('../../../src/js/components/series/areaChartSeries'),
+var areaSeriesFactory = require('../../../src/js/components/series/areaChartSeries'),
     chartConst = require('../../../src/js/const');
 
 describe('AreaChartSeries', function() {
     var series;
 
     beforeEach(function() {
-        series = new AreaChartSeries({
+        series = new areaSeriesFactory.AreaChartSeries({
             chartType: 'area',
             theme: {},
             options: {},

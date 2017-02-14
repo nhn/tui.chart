@@ -240,5 +240,6 @@ function barSeriesFactory(params) {
 
 // TODO 더나은 방법 찾아보자
 barSeriesFactory.componentType = 'series';
+barSeriesFactory.BarChartSeries = BarChartSeries;
 
 module.exports = barSeriesFactory;

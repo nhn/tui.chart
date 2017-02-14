@@ -146,5 +146,6 @@ function heatmapChartSeriesFactory(params) {
 }
 
 heatmapChartSeriesFactory.componentType = 'series';
+heatmapChartSeriesFactory.HeatmapChartSeries = HeatmapChartSeries;
 
 module.exports = heatmapChartSeriesFactory;

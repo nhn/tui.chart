@@ -299,5 +299,6 @@ function spectrumLegendFactory(params) {
 }
 
 spectrumLegendFactory.componentType = 'legend';
+spectrumLegendFactory.SpectrumLegend = SpectrumLegend;
 
 module.exports = spectrumLegendFactory;

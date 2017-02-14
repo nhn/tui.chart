@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Axis = require('../../../src/js/components/axes/axis');
+var axisFactory = require('../../../src/js/components/axes/axis');
 var dom = require('../../../src/js/helpers/domHandler');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
@@ -23,7 +23,7 @@ describe('Test for Axis', function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType']);
 
-        axis = new Axis({
+        axis = new axisFactory.Axis({
             theme: {
                 title: {
                     fontSize: 12
@@ -92,7 +92,7 @@ describe('Test for Axis', function() {
             var container = dom.create('DIV'),
                 actual, expected;
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
             axis._addCssClasses(container);
             actual = container.className;
             expected = 'vertical';
@@ -266,7 +266,7 @@ describe('Test for Axis', function() {
             spyOn(axis, '_moveToLeft');
             spyOn(axis, '_resizeByTickSize');
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
 
             axis.animateForAddingData();
 
@@ -278,7 +278,7 @@ describe('Test for Axis', function() {
             spyOn(axis, '_moveToLeft');
             spyOn(axis, '_resizeByTickSize');
 
-            axis.isVertical = false;
+            axis.isYAxis = false;
             dataProcessor.isCoordinateType.and.returnValue(true);
 
             axis.animateForAddingData();
@@ -601,7 +601,7 @@ describe('Test for Axis', function() {
                 text: 'Axis Title'
             };
             axis.theme.fontSize = 12;
-            axis.isVertical = true;
+            axis.isYAxis = true;
             elTitle = axis._renderTitleArea(200);
 
             expect(elTitle.innerHTML).toBe('Axis Title');
@@ -613,7 +613,7 @@ describe('Test for Axis', function() {
 
             delete axis.options.title;
             axis.theme.fontSize = 12;
-            axis.isVertical = true;
+            axis.isYAxis = true;
             elTitle = axis._renderTitleArea(200);
 
             expect(elTitle).toBeNull();
@@ -673,7 +673,7 @@ describe('Test for Axis', function() {
         it('세로 축 tick line 엘리먼트를 생성합니다.', function() {
             var actual;
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
 
             actual = axis._renderTickLine(200, false, 0);
 
@@ -709,7 +709,7 @@ describe('Test for Axis', function() {
             var categories = [];
             var elTickArea, childNodes;
 
-            axis.data.isVertical = false;
+            axis.data.isYAxis = false;
             axis.data.labels = ['label1', 'label2', 'label3', 'label4', 'label5'];
             axis.data.tickCount = 5;
 
@@ -746,10 +746,10 @@ describe('Test for Axis', function() {
             expect(labelContainer.style.color).toBe('red');
         });
 
-        it('세로차트(isVertical=true)인 경우에는 너비값(width)도 설정합니다.', function() {
+        it('세로차트(isYAxis=true)인 경우에는 너비값(width)도 설정합니다.', function() {
             var labelContainer = dom.create('DIV');
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
             axis._applyLabelAreaStyle(labelContainer, 50);
 
             expect(labelContainer.style.width).toBe('20px');
@@ -765,7 +765,7 @@ describe('Test for Axis', function() {
             var elLabelArea, childNodes;
 
             axis.isLabel = true;
-            axis.isVertical = false;
+            axis.isYAxis = false;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
@@ -793,7 +793,7 @@ describe('Test for Axis', function() {
             var elLabelArea, childNodes;
 
             axis.isLabel = true;
-            axis.isVertical = true;
+            axis.isYAxis = true;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
@@ -848,7 +848,7 @@ describe('Test for Axis', function() {
             var categories = ['0.00', '30.00', '60.00'];
             var elLabelArea, childNodes;
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
@@ -875,7 +875,7 @@ describe('Test for Axis', function() {
         it('레이블 높이가 100인 레이블 타입 y축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
             axis.isLabel = true;
             actual = axis._makeLabelCssText(100);
             expected = 'height:100px;line-height:100px;';
@@ -886,7 +886,7 @@ describe('Test for Axis', function() {
         it('레이블 너비가 100인 타입 x축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.isVertical = false;
+            axis.isYAxis = false;
             axis.isLabel = true;
             actual = axis._makeLabelCssText(100);
             expected = 'width:100px;';
@@ -897,7 +897,7 @@ describe('Test for Axis', function() {
         it('벨류 타입 y축의 경우는 빈 cssText가 생성됩니다.', function() {
             var actual, expected;;
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
             axis.isLabel = false;
             actual = axis._makeLabelCssText();
             expected = '';
@@ -908,7 +908,7 @@ describe('Test for Axis', function() {
         it('너비가 100인 벨류 타입 x축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.isVertical = false;
+            axis.isYAxis = false;
             axis.isLabel = false;
             actual = axis._makeLabelCssText(100);
             expected = 'width:100px;';
@@ -1140,7 +1140,7 @@ describe('Test for Axis', function() {
             var labelContainer = dom.create('DIV'),
                 actual, expected;
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
             axis._changeLabelAreaPosition(labelContainer);
 
             actual = labelContainer.style.top;
@@ -1183,14 +1183,14 @@ describe('Test for Axis', function() {
             expect(actual[4]).toBeUndefined();
         });
 
-        it('line type(isVertical=true, aligned=true)의 경우 틱 영역은 제외합니다.', function() {
+        it('line type(isYAxis=true, aligned=true)의 경우 틱 영역은 제외합니다.', function() {
             var size = 300;
             var axisWidth = 300;
             var tickCount = 4;
             var categories = ['label1', 'label2', 'label3'];
             var actual;
 
-            axis.isVertical = true;
+            axis.isYAxis = true;
             axis.data.aligned = true;
 
             actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);

@@ -436,5 +436,6 @@ function groupTooltipFactory(params) {
 }
 
 groupTooltipFactory.componentType = 'tooltip';
+groupTooltipFactory.GroupTooltip = GroupTooltip;
 
 module.exports = groupTooltipFactory;

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var CircleLegend = require('../../../src/js/components/legends/circleLegend');
+var circleLegendFactory = require('../../../src/js/components/legends/circleLegend');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('Test for CircleLegend', function() {
@@ -14,7 +14,7 @@ describe('Test for CircleLegend', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormatFunctions', 'getMaxValue', 'getFormattedMaxValue']);
-        circleLegend = new CircleLegend({
+        circleLegend = new circleLegendFactory.CircleLegend({
             dataProcessor: dataProcessor
         });
     });

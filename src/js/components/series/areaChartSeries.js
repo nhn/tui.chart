@@ -144,5 +144,6 @@ function areaSeriesFactory(params) {
 }
 
 areaSeriesFactory.componentType = 'series';
+areaSeriesFactory.AreaChartSeries = AreaChartSeries;
 
 module.exports = areaSeriesFactory;

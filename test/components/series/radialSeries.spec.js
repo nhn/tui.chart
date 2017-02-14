@@ -6,13 +6,13 @@
 
 'use strict';
 
-var RadialSeries = require('../../../src/js/components/series/radialSeries');
+var radialSeriesFactory = require('../../../src/js/components/series/radialSeries');
 
 describe('Test for RadialSeries', function() {
     var series;
 
     beforeEach(function() {
-        series = new RadialSeries({
+        series = new radialSeriesFactory.RadialChartSeries({
             chartType: 'radial',
             theme: {
                 radial: {

@@ -207,5 +207,6 @@ function normalTooltipFactory(params) {
 }
 
 normalTooltipFactory.componentType = 'tooltip';
+normalTooltipFactory.NormalTooltip = NormalTooltip;
 
 module.exports = normalTooltipFactory;

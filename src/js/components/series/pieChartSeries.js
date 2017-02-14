@@ -753,5 +753,6 @@ function pieSeriesFactory(params) {
 }
 
 pieSeriesFactory.componentType = 'series';
+pieSeriesFactory.PieChartSeries = PieChartSeries;
 
 module.exports = pieSeriesFactory;

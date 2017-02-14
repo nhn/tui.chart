@@ -142,5 +142,6 @@ function radialSeriesFactory(params) {
 }
 
 radialSeriesFactory.componentType = 'series';
+radialSeriesFactory.RadialChartSeries = RadialChartSeries;
 
 module.exports = radialSeriesFactory;

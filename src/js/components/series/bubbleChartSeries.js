@@ -142,5 +142,6 @@ function bubbleSeriesFactory(params) {
 }
 
 bubbleSeriesFactory.componentType = 'series';
+bubbleSeriesFactory.BubbleChartSeries = BubbleChartSeries;
 
 module.exports = bubbleSeriesFactory;

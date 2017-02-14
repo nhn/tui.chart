@@ -591,5 +591,6 @@ function plotFactory(param) {
 }
 
 plotFactory.componentType = 'plot';
+plotFactory.Plot = Plot;
 
 module.exports = plotFactory;

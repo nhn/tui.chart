@@ -19,14 +19,12 @@ describe('Series', function() {
             chartType: 'bar',
             tooltipPrefix: 'tooltip-prefix-',
             theme: {
-                bar: {
-                    label: {
-                        fontFamily: 'Verdana',
-                        fontSize: 11,
-                        fontWeight: 'normal'
-                    },
-                    colors: ['blue']
-                }
+                label: {
+                    fontFamily: 'Verdana',
+                    fontSize: 11,
+                    fontWeight: 'normal'
+                },
+                colors: ['blue']
             },
             options: {},
             eventBus: new tui.util.CustomEvents()

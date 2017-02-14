@@ -7,8 +7,6 @@
 'use strict';
 
 var BubbleChart = require('../../src/js/charts/bubbleChart');
-var axisDataMaker = require('../../src/js/models/scaleData/axisDataMaker');
-var CircleLegend = require('../../src/js/components/legends/circleLegend');
 
 describe('Test for BubbleChart', function() {
     var bubbleChart, componentManager, dataProcessor, boundsModel, scaleDataModel, sereisDataModel;
@@ -27,43 +25,6 @@ describe('Test for BubbleChart', function() {
         bubbleChart.boundsModel = boundsModel;
         bubbleChart.scaleDataModel = scaleDataModel;
         bubbleChart.chartType = 'bubble';
-    });
-
-    describe('addComponents()', function() {
-        it('circleLegend.visible 옵션이 true이면 componentManager.register를 호출하여 circleLegend 컴포넌트를 생성합니다.', function() {
-            spyOn(bubbleChart, '_addComponentsForAxisType');
-            bubbleChart.options = {
-                circleLegend: {
-                    visible: true
-                },
-                legend: {}
-            };
-            bubbleChart.theme = {
-                chart: {
-                    fontFamily: 'Verdana'
-                }
-            };
-
-            bubbleChart.addComponents('bubble');
-
-            expect(componentManager.register).toHaveBeenCalledWith('circleLegend', {
-                chartType: 'bubble',
-                baseFontFamily: 'Verdana',
-                classType: 'circleLegend'
-            });
-        });
-
-        it('circleLegend.visible 옵션이 false이면 componentManager.register를 호출하지 않아, circleLegend 컴포넌트를 생성하지 않습니다.', function() {
-            spyOn(bubbleChart, '_addComponentsForAxisType');
-            bubbleChart.options = {
-                circleLegend: {
-                    visible: false
-                }
-            };
-            bubbleChart.addComponents();
-
-            expect(componentManager.register).not.toHaveBeenCalled();
-        });
     });
 
     describe('addDataRatios()', function() {

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Legend = require('../../../src/js/components/legends/legend'),
+var legendFactory = require('../../../src/js/components/legends/legend'),
     chartConst = require('../../../src/js/const'),
     dom = require('../../../src/js/helpers/domHandler'),
     renderUtil = require('../../../src/js/helpers/renderUtil');
@@ -32,7 +32,7 @@ describe('Test for Legend', function() {
     });
 
     beforeEach(function() {
-        legend = new Legend({
+        legend = new legendFactory.Legend({
             dataProcessor: dataProcessor,
             theme: {
                 label: {

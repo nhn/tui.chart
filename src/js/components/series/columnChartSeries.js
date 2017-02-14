@@ -238,5 +238,6 @@ function columnSeriesFactory(params) {
 }
 
 columnSeriesFactory.componentType = 'series';
+columnSeriesFactory.ColumnChartSeries = ColumnChartSeries;
 
 module.exports = columnSeriesFactory;

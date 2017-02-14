@@ -222,5 +222,6 @@ function circleLegendFactory(params) {
 }
 
 circleLegendFactory.componentType = 'legend';
+circleLegendFactory.CircleLegend = CircleLegend;
 
 module.exports = circleLegendFactory;

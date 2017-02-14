@@ -10,7 +10,6 @@
 var ChartBase = require('./chartBase');
 var ColorSpectrum = require('./colorSpectrum');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 
 var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
     /**
@@ -44,43 +43,6 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
             options: options,
             hasAxes: true,
             isVertical: true
-        });
-    },
-
-    /**
-     * Add components.
-     * @override
-     */
-    addComponents: function() {
-        var seriesTheme = this.theme.series[this.chartType];
-        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
-
-        this._addComponentsForAxisType({
-            axis: [
-                {
-                    name: 'yAxis',
-                    isVertical: true
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
-            legend: {
-                classType: 'spectrumLegend',
-                additionalParams: {
-                    colorSpectrum: colorSpectrum
-                }
-            },
-            series: [
-                {
-                    name: 'heatmapSeries',
-                    data: {
-                        colorSpectrum: colorSpectrum
-                    }
-                }
-            ],
-            tooltip: true,
-            mouseEventDetector: true
         });
     },
 

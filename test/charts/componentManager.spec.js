@@ -6,8 +6,7 @@
 
 'use strict';
 
-var ComponentManager = require('../../src/js/charts/componentManager'),
-    Plot = require('../../src/js/components/plots/plot');
+var ComponentManager = require('../../src/js/charts/componentManager');
 
 describe('Test for ComponentManager', function() {
     var componentManager;
@@ -19,11 +18,14 @@ describe('Test for ComponentManager', function() {
     describe('register()', function() {
         it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function() {
             var plot;
-            componentManager.register('plot', Plot, {});
+            componentManager.options = {
+                xAxis: {}
+            }
+            componentManager.register('plot', 'plot');
 
             plot = componentManager.componentMap.plot;
             expect(plot).toBeTruthy();
-            expect(plot.constructor).toEqual(Plot);
+            expect(plot.componentType).toEqual('plot');
             expect(tui.util.inArray('plot', tui.util.pluck(componentManager.components, 'componentName'))).toBe(0);
         });
 

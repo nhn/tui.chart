@@ -414,5 +414,6 @@ function legendFactory(params) {
 }
 
 legendFactory.componentType = 'legend';
+legendFactory.Legend = Legend;
 
 module.exports = legendFactory;

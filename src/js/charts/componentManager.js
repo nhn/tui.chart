@@ -163,15 +163,6 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     register: function(name, classType, params) {
         var index, component, componentType, componentFactory, optionKey;
 
-        // TODO 임시 분기 코드들이 많다.
-        // register는 한번더 리팩토링해야함
-        var old = false;
-        if (!tui.util.isString(classType)) {
-            classType = classType.classType || componentType || name;
-            params = classType;
-            old = true;
-        }
-
         params = params || {};
 
         params.name = name;
@@ -179,12 +170,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         index = params.index || 0;
 
         componentFactory = COMPONENT_FACTORY_MAP[classType];
-
-        if (old) {
-            componentType = params.componentType || name;
-        } else {
-            componentType = componentFactory.componentType;
-        }
+        componentType = componentFactory.componentType;
 
         params.chartTheme = this.theme;
         params.chartOptions = this.options;
@@ -227,12 +213,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         // 맵과 같이 일반적인 스케일 모델을 사용하지 않는 차트를 위한 개별 구현한 차트 모델
         params.alternativeModel = this.alternativeModel;
 
-        // TODO 팩터리로 전환하기 위한 임시 분기
-        if (old) {
-            component = new componentFactory(params);
-        } else {
-            component = componentFactory(params);
-        }
+        component = componentFactory(params);
 
         // 팩토리에서 옵션에따라 생성을 거부할 수 있다.
         if (component) {

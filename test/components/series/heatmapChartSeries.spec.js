@@ -6,16 +6,15 @@
 
 'use strict';
 
-var HeatmapChartSeries = require('../../../src/js/components/series/heatmapChartSeries.js');
+var heatmapSeriesFactory = require('../../../src/js/components/series/heatmapChartSeries.js');
 
 describe('HeatmapChartSeries', function() {
     var series;
 
     beforeEach(function() {
-        series = new HeatmapChartSeries({
+        series = new heatmapSeriesFactory.HeatmapChartSeries({
             chartType: 'heatmap',
             theme: {
-                heatmap: {}
             },
             eventBus: new tui.util.CustomEvents()
         });

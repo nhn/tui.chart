@@ -313,5 +313,6 @@ function RadialPlotFactory(param) {
 }
 
 RadialPlotFactory.componentType = 'plot';
+RadialPlotFactory.RadialPlot = RadialPlot;
 
 module.exports = RadialPlotFactory;

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var TreemapChartSeries = require('../../../src/js/components/series/treemapChartSeries.js');
+var treemapSeriesFactory = require('../../../src/js/components/series/treemapChartSeries.js');
 var SeriesDataModel = require('../../../src/js/models/data/seriesDataModelForTreemap');
 var chartConst = require('../../../src/js/const');
 var dom = require('../../../src/js/helpers/domHandler');
@@ -22,15 +22,13 @@ describe('TreemapChartSeries', function() {
     });
 
     beforeEach(function() {
-        series = new TreemapChartSeries({
+        series = new treemapSeriesFactory.TreemapChartSeries({
             chartType: 'treemap',
             theme: {
-                treemap: {
-                    label: {
-                        fontSize: 12,
-                        fontFamily: 'Verdana',
-                        fontWeight: 'normal'
-                    }
+                label: {
+                    fontSize: 12,
+                    fontFamily: 'Verdana',
+                    fontWeight: 'normal'
                 }
             },
             eventBus: new tui.util.CustomEvents()

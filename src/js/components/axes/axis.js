@@ -1018,5 +1018,6 @@ function axisFactory(axisParam) {
 }
 
 axisFactory.componentType = 'axis';
+axisFactory.Axis = Axis;
 
 module.exports = axisFactory;

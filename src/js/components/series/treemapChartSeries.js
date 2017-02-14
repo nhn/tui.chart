@@ -351,5 +351,6 @@ function treemapChartSeriesFactory(params) {
 }
 
 treemapChartSeriesFactory.componentType = 'series';
+treemapChartSeriesFactory.TreemapChartSeries = TreemapChartSeries;
 
 module.exports = treemapChartSeriesFactory;

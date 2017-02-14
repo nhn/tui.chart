@@ -75,5 +75,6 @@ function scatterSeriesFactory(params) {
 }
 
 scatterSeriesFactory.componentType = 'series';
+scatterSeriesFactory.ScatterChartSeries = ScatterChartSeries;
 
 module.exports = scatterSeriesFactory;
