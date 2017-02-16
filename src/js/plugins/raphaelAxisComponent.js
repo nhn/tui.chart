@@ -50,6 +50,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var centerPosition = (size / 2) + position;
         var textHeight = titleSize.height;
         var attributes = {
+            'dominant-baseline': 'auto',
             'font-family': data.theme.fontFamily,
             'font-size': data.theme.fontSize,
             'font-weight': data.theme.fontWeight,
@@ -107,6 +108,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var isPositionRight = data.isPositionRight;
         var theme = data.theme;
         var attributes = {
+            'dominant-baseline': 'central',
             'font-family': theme.fontFamily,
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
@@ -150,6 +152,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var paper = data.paper;
         var theme = data.theme;
         var textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, {
+            'dominant-baseline': 'central',
             'font-family': theme.fontFamily,
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
