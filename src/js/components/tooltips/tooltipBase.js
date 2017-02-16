@@ -148,6 +148,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.dimensionMap = null;
 
         /**
+         * position map for layout of chart
+         * @type {null|object}
+         */
+        this.positionMap = null;
+
+        /**
          * Drawing type
          * @type {string}
          */
@@ -223,6 +229,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     _setDataForRendering: function(data) {
         this.layout = data.layout;
         this.dimensionMap = data.dimensionMap;
+        this.positionMap = data.positionMap;
     },
 
     /**

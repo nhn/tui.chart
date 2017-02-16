@@ -153,8 +153,10 @@ var singleTooltipMixer = {
      * @private
      */
     _makeTooltipPositionToMousePosition: function(params) {
-        params.bound = params.bound || {};
-        tui.util.extend(params.bound, params.mousePosition);
+        if (!params.bound) {
+            params.bound = params.bound || {};
+            tui.util.extend(params.bound, params.mousePosition);
+        }
 
         return this._makeTooltipPositionForNotBarChart(params);
     },
@@ -367,12 +369,20 @@ var singleTooltipMixer = {
      * @private
      */
     _showTooltip: function(elTooltip, params, prevPosition) {
+        var boundingClientRect = this.tooltipContainer.parentNode.getBoundingClientRect();
         var indexes = params.indexes;
         var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
         var offset = this.options.offset || {};
         var positionOption = {};
         var prevChartType = elTooltip && elTooltip.getAttribute('data-chart-type');
         var position;
+
+        if (!params.bound && params.mousePosition) {
+            params.bound = {
+                left: params.mousePosition.left - boundingClientRect.left + chartConst.CHART_PADDING,
+                top: params.mousePosition.top - boundingClientRect.top + chartConst.CHART_PADDING
+            };
+        }
 
         if (this._isChangedIndexes(prevIndexes, indexes) || prevChartType !== params.chartType) {
             this.eventBus.fire('hoverOffSeries', prevIndexes, prevChartType);

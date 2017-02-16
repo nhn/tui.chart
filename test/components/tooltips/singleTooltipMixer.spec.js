@@ -153,7 +153,6 @@ describe('singleTooltip', function() {
 
             tooltip.containerBound = {left: 10, top: 0};
             actual = tooltip._makeTooltipPositionToMousePosition({
-                bound: {},
                 mousePosition: {
                     left: 50,
                     top: 50
