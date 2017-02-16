@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.7.0
+ * @version 2.7.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Feb 08 2017 12:28:38 GMT+0900 (KST)"
+ * bundle created at "Thu Feb 16 2017 13:50:28 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -6061,6 +6061,8 @@
 	     */
 	    resize: function(data) {
 	        this.rerender(data);
+	        this.plotSet.toBack();
+	        this.paper.pushDownBackgroundToBottom();
 	    },
 
 	    /**
@@ -9463,7 +9465,7 @@
 	     */
 	    rerender: function(data) {
 	        this.legnedSet.remove();
-	        this.legnedSet = this.render(data);
+	        this.render(data);
 	    },
 
 	    /**
@@ -10029,6 +10031,12 @@
 	        this.dimensionMap = null;
 
 	        /**
+	         * position map for layout of chart
+	         * @type {null|object}
+	         */
+	        this.positionMap = null;
+
+	        /**
 	         * Drawing type
 	         * @type {string}
 	         */
@@ -10104,6 +10112,7 @@
 	    _setDataForRendering: function(data) {
 	        this.layout = data.layout;
 	        this.dimensionMap = data.dimensionMap;
+	        this.positionMap = data.positionMap;
 	    },
 
 	    /**
@@ -10495,8 +10504,10 @@
 	     * @private
 	     */
 	    _makeTooltipPositionToMousePosition: function(params) {
-	        params.bound = params.bound || {};
-	        tui.util.extend(params.bound, params.mousePosition);
+	        if (!params.bound) {
+	            params.bound = params.bound || {};
+	            tui.util.extend(params.bound, params.mousePosition);
+	        }
 
 	        return this._makeTooltipPositionForNotBarChart(params);
 	    },
@@ -10709,12 +10720,20 @@
 	     * @private
 	     */
 	    _showTooltip: function(elTooltip, params, prevPosition) {
+	        var boundingClientRect = this.tooltipContainer.parentNode.getBoundingClientRect();
 	        var indexes = params.indexes;
 	        var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
 	        var offset = this.options.offset || {};
 	        var positionOption = {};
 	        var prevChartType = elTooltip && elTooltip.getAttribute('data-chart-type');
 	        var position;
+
+	        if (!params.bound && params.mousePosition) {
+	            params.bound = {
+	                left: params.mousePosition.left - boundingClientRect.left + chartConst.CHART_PADDING,
+	                top: params.mousePosition.top - boundingClientRect.top + chartConst.CHART_PADDING
+	            };
+	        }
 
 	        if (this._isChangedIndexes(prevIndexes, indexes) || prevChartType !== params.chartType) {
 	            this.eventBus.fire('hoverOffSeries', prevIndexes, prevChartType);
@@ -14534,7 +14553,7 @@
 	 */
 
 	'use strict';
-	var FADE_IN_DURATION = 300;
+	var LABEL_FADE_IN_DURATION = 800;
 	var browser = tui.util.browser;
 	var IS_IE7 = browser.msie && browser.version === 7;
 
@@ -14982,12 +15001,15 @@
 	     * Resize raphael graph by given dimension and series data
 	     * @param {{width: number, height: number}} dimension - chart dimension
 	     * @param {object} seriesData - series data
+	     * @returns {Array.<object>}
 	     * @private
 	     */
 	    _resizeGraph: function(dimension, seriesData) {
 	        this.graphRenderer.resize(tui.util.extend({
-	            dimension: dimension
+	            dimension: this.dimensionMap.chart
 	        }, seriesData));
+
+	        return this.seriesSet;
 	    },
 
 	    /**
@@ -14996,8 +15018,10 @@
 	     * @param {object} data data for rendering
 	     */
 	    resize: function(data) {
-	        this._clearSeriesContainer();
 	        this._setDataForRendering(data);
+	        if (this.labelSet && this.labelSet.remove) {
+	            this.labelSet.remove();
+	        }
 	        this._renderSeriesArea(data.paper, tui.util.bind(this._resizeGraph, this));
 	    },
 
@@ -15123,10 +15147,10 @@
 	     */
 	    animateComponent: function(isRerendering) {
 	        if (this.graphRenderer.animate) {
-	            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
-	        } else {
-	            this.animateSeriesLabelArea(isRerendering);
+	            this.graphRenderer.animate(null, this.seriesSet);
 	        }
+
+	        this.animateSeriesLabelArea(isRerendering);
 	    },
 
 	    /**
@@ -15154,7 +15178,7 @@
 	        if (IS_IE7) {
 	            this._fireLoadEvent(isRerendering);
 	        } else if (this.labelSet && this.labelSet.length) {
-	            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, FADE_IN_DURATION);
+	            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
 	        }
 	    },
 
@@ -15389,7 +15413,7 @@
 	            if (attributes['dominant-baseline']) {
 	                textObj.node.setAttribute('dominant-baseline', attributes['dominant-baseline']);
 	            } else {
-	                textObj.node.setAttribute('dominant-baseline', 'auto');
+	                textObj.node.setAttribute('dominant-baseline', 'central');
 	            }
 
 	            textObj.attr(attributes);
@@ -15546,14 +15570,15 @@
 	        var animationDuration = isNumber(duration) ? duration : 600;
 	        var animationStartOpacity = isNumber(startOpacity) ? startOpacity : 0;
 	        var animationEndOpacity = isNumber(endOpacity) ? endOpacity : 1;
+	        var animation = raphael.animation({
+	            opacity: animationEndOpacity
+	        }, animationDuration);
 
 	        element.attr({
 	            opacity: animationStartOpacity
 	        });
 
-	        element.animate({
-	            opacity: animationEndOpacity
-	        }, animationDuration);
+	        element.animate(animation.delay(600));
 	    }
 	};
 
@@ -15586,6 +15611,7 @@
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var renderUtil = __webpack_require__(30);
+	var raphaelRenderUtil = __webpack_require__(56);
 
 	var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
 
@@ -15794,6 +15820,41 @@
 	        return positions;
 	    },
 
+	    getGroupLabels: function(seriesDataModel, sumPlusValues, sumMinusValues) {
+	        var isNormalStack = predicate.isNormalStack(this.options.stackType);
+
+	        return seriesDataModel.map(function(seriesGroup) {
+	            var labels = seriesGroup.map(function(seriesDatum) {
+	                return {
+	                    end: seriesDatum.endLabel
+	                };
+	            });
+	            var minusSum;
+
+	            if (isNormalStack) {
+	                sumPlusValues.push(calculator.sumPlusValues(seriesGroup.pluck('value')));
+
+	                minusSum = calculator.sumMinusValues(seriesGroup.pluck('value'));
+	                if (minusSum < 0) {
+	                    sumMinusValues.push(minusSum);
+	                }
+	            }
+
+	            return labels;
+	        });
+	    },
+
+	    getGroupPositions: function(seriesDataModel, groupBounds) {
+	        var self = this;
+
+	        return seriesDataModel.map(function(seriesGroup, index) {
+	            return self._makeStackedLabelPositions({
+	                seriesGroup: seriesGroup,
+	                bounds: groupBounds[index]
+	            });
+	        });
+	    },
+
 	    /**
 	     * Render series label, when has stackType option.
 	     * @param {object} paper paper
@@ -15802,26 +15863,70 @@
 	     */
 	    _renderStackedSeriesLabel: function(paper) {
 	        var self = this;
-	        var graphRenderer = this.graphRenderer;
+	        var sumPlusValues = [];
+	        var sumMinusValues = [];
 	        var labelTheme = this.theme.label;
 	        var groupBounds = this.seriesData.groupBounds;
 	        var seriesDataModel = this._getSeriesDataModel();
-	        var groupPositions = seriesDataModel.map(function(seriesGroup, index) {
-	            return self._makeStackedLabelPositions({
-	                seriesGroup: seriesGroup,
-	                bounds: groupBounds[index]
-	            });
-	        });
-	        var groupLabels = seriesDataModel.map(function(seriesGroup) {
-	            return seriesGroup.map(function(seriesDatum) {
-	                return {
-	                    end: seriesDatum.endLabel
-	                };
-	            });
-	        });
+	        var groupPositions = this.getGroupPositions(seriesDataModel, groupBounds);
+	        var groupLabels = this.getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues);
 	        var isStacked = true;
+	        var isNormalStack = predicate.isNormalStack(this.options.stackType);
+	        var isBarChart = predicate.isBarChart(this.chartType);
+	        var dimensionType = isBarChart ? 'width' : 'height';
+	        var positionType = isBarChart ? 'left' : 'top';
+	        var direction = isBarChart ? 1 : -1;
 
-	        return graphRenderer.renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme, isStacked);
+	        if (isNormalStack) {
+	            tui.util.forEach(groupLabels, function(labels, index) {
+	                var plusSumValue = sumPlusValues[index];
+	                var minusSumValue = sumMinusValues[index];
+
+	                if (minusSumValue < 0 && self.options.diverging) {
+	                    minusSumValue *= -1;
+	                }
+
+	                labels.push({
+	                    end: renderUtil.formatToComma(plusSumValue)
+	                });
+
+	                if (sumMinusValues.length) {
+	                    labels.push({
+	                        end: renderUtil.formatToComma(minusSumValue)
+	                    });
+	                }
+	            });
+
+	            tui.util.forEach(groupPositions, function(positions, index) {
+	                var bounds = groupBounds[index];
+	                var lastBound = bounds[bounds.length - 1].end;
+	                var firstBound = bounds[parseInt(bounds.length / 2, 10) - 1].end;
+	                var plusEnd = self._makeStackedLabelPosition(lastBound);
+	                var minusEnd = self._makeStackedLabelPosition(firstBound);
+	                var plusLabel = sumPlusValues[index];
+	                var minusLabel = sumMinusValues[index];
+	                var plusLabelSize = raphaelRenderUtil.getRenderedTextSize(plusLabel, labelTheme.fontSize,
+	                    labelTheme.fontFamily);
+	                var minusLabelSize = raphaelRenderUtil.getRenderedTextSize(minusLabel, labelTheme.fontSize,
+	                    labelTheme.fontFamily);
+	                var lastBoundEndPosition = ((lastBound[dimensionType] + plusLabelSize[dimensionType]) / 2);
+	                var firstBoundStartPosition = ((firstBound[dimensionType] + minusLabelSize[dimensionType]) / 2);
+
+	                plusEnd[positionType] += (lastBoundEndPosition + chartConst.LEGEND_LABEL_LEFT_PADDING) * direction;
+	                minusEnd[positionType] -= (firstBoundStartPosition + chartConst.LEGEND_LABEL_LEFT_PADDING) * direction;
+
+	                positions.push({
+	                    end: plusEnd
+	                });
+	                if (sumMinusValues.length) {
+	                    positions.push({
+	                        end: minusEnd
+	                    });
+	                }
+	            });
+	        }
+
+	        return this.graphRenderer.renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme, isStacked);
 	    },
 
 	    /**
@@ -15888,7 +15993,7 @@
 	     * @private
 	     */
 	    _calculateTopPositionForMiddleAlign: function(bound) {
-	        return bound.top + (bound.height / 2) + chartConst.LABEL_PADDING_TOP;
+	        return bound.top + chartConst.LABEL_PADDING_TOP;
 	    },
 
 	    /**
@@ -21275,7 +21380,7 @@
 	     */
 	    _findSeriesItemByValue: function(valueType, value, condition) {
 	        condition = condition || function() {
-	            return;
+	            return null;
 	        };
 
 	        return this._findSeriesItem(function(seriesItem) {
@@ -29822,16 +29927,11 @@
 
 	    /**
 	     * Animate.
-	     * @param {function} onFinish finish callback function
 	     */
-	    animate: function(onFinish) {
+	    animate: function() {
 	        var self = this,
 	            groupBorders = this.groupBorders || [];
 
-	        if (this.callbackTimeout) {
-	            clearTimeout(this.callbackTimeout);
-	            delete this.callbackTimeout;
-	        }
 	        raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
 	            var lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
 	            if (!bar) {
@@ -29842,13 +29942,6 @@
 	                self._animateBorders(lines, bar.bound, self.chartType, bar.item);
 	            }
 	        });
-
-	        if (onFinish) {
-	            this.callbackTimeout = setTimeout(function() {
-	                onFinish();
-	                delete self.callbackTimeout;
-	            }, ANIMATION_DURATION);
-	        }
 	    },
 
 	    /**
@@ -30026,7 +30119,7 @@
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
-	            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0,
+	            opacity: 1,
 	            'text-anchor': isStacked ? 'middle' : 'start'
 	        };
 	        var labelSet = paper.set();
@@ -30204,6 +30297,8 @@
 	            dimension = params.dimension,
 	            groupPositions = params.groupPositions;
 
+	        this.resizeClipRect(dimension);
+
 	        this.groupPositions = groupPositions;
 	        this.groupPaths = this.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
 	        this.paper.setSize(dimension.width, dimension.height);
@@ -30288,7 +30383,7 @@
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
 	            'text-anchor': 'middle',
-	            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+	            opacity: 1
 	        };
 	        var set = paper.set();
 
@@ -31098,6 +31193,19 @@
 	    clear: function() {
 	        delete this.paper.dots;
 	        this.paper.clear();
+	    },
+
+	    /**
+	     * Resize clip rect size
+	     * @param {object} dimension series dimension
+	     */
+	    resizeClipRect: function(dimension) {
+	        var clipRect = this.paper.getById(CLIP_RECT_ID + '_rect');
+
+	        clipRect.attr({
+	            width: dimension.width,
+	            height: dimension.height
+	        });
 	    }
 	});
 
@@ -31113,6 +31221,7 @@
 	    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
 	    var rect = paper.rect((position.left - 10), (position.top - 10), 0, dimension.height);
 
+	    rect.id = id + '_rect';
 	    clipPath.id = id;
 
 	    clipPath.appendChild(rect.node);
@@ -31420,6 +31529,8 @@
 	            dimension = params.dimension,
 	            groupPositions = params.groupPositions;
 
+	        this.resizeClipRect(dimension);
+
 	        this.zeroTop = params.zeroTop;
 	        this.groupPositions = groupPositions;
 	        this.groupPaths = this._getAreaChartPath(groupPositions);
@@ -31546,7 +31657,7 @@
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
 	            'text-anchor': 'middle',
-	            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+	            opacity: 1
 	        };
 	        var set = paper.set();
 
@@ -32034,15 +32145,27 @@
 	        var dimension = params.dimension;
 	        var circleBound = params.circleBound;
 	        var sectorName = this.sectorName;
+	        var labelSet = this.labelSet;
 
 	        this.circleBound = circleBound;
 	        this.paper.setSize(dimension.width, dimension.height);
 
-	        tui.util.forEachArray(this.sectorInfos, function(sectorInfo) {
+	        tui.util.forEachArray(this.sectorInfos, function(sectorInfo, index) {
 	            var angles = sectorInfo.angles;
 	            var attrs = {};
+	            var bBox;
+
 	            attrs[sectorName] = [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle];
 	            sectorInfo.sector.attr(attrs);
+
+	            if (labelSet && labelSet.length) {
+	                bBox = sectorInfo.sector.getBBox();
+
+	                labelSet[index].attr({
+	                    x: bBox.x + (bBox.width / 2),
+	                    y: bBox.y + (bBox.height / 2)
+	                });
+	            }
 	        });
 	    },
 
@@ -32236,7 +32359,7 @@
 	            'font-family': theme.fontFamily,
 	            'font-weight': theme.fontWeight,
 	            'text-anchor': 'middle',
-	            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+	            opacity: 1
 	        };
 
 	        tui.util.forEach(positions, function(position, index) {
@@ -32247,6 +32370,8 @@
 
 	            labelSet.push(label);
 	        });
+
+	        this.labelSet = labelSet;
 
 	        return labelSet;
 	    }
@@ -32317,7 +32442,7 @@
 	        this.position = data.position;
 
 	        if (isShowArea) {
-	            this._renderArea(paper, groupPaths, colors, radialSeriesSet);
+	            this.groupAreas = this._renderArea(paper, groupPaths, colors, radialSeriesSet);
 	        }
 
 	        this.groupLines = this._renderLines(paper, groupPaths, colors, null, radialSeriesSet);
@@ -32400,7 +32525,8 @@
 
 	    /**
 	     * Resize graph of line chart.
-	     * raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
+	     * 1raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
+	     * 그룹툴팁 동작 안해서 tooltipLine 관련 코드 제거됨
 	     * @param {object} params parameters
 	     *      @param {{width: number, height:number}} params.dimension dimension
 	     *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
@@ -32413,10 +32539,10 @@
 	        this.groupPositions = groupPositions;
 	        this.groupPaths = this._getLinesPath(groupPositions);
 	        this.paper.setSize(dimension.width, dimension.height);
-	        this.tooltipLine.attr({top: dimension.height});
 
 	        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
 	            self.groupLines[groupIndex].attr({path: path.join(' ')});
+	            self.groupAreas[groupIndex].attr({path: path.join(' ')});
 
 	            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
 	                self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
@@ -32651,15 +32777,9 @@
 
 	    /**
 	     * Animate.
-	     * @param {function} onFinish - finish callback function
 	     */
-	    animate: function(onFinish) {
+	    animate: function() {
 	        var self = this;
-
-	        if (this.animationTimeoutId) {
-	            clearTimeout(this.animationTimeoutId);
-	            this.animationTimeoutId = null;
-	        }
 
 	        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo) {
 	            if (!circleInfo) {
@@ -32667,13 +32787,6 @@
 	            }
 	            self._animateCircle(circleInfo.circle, circleInfo.bound.radius);
 	        });
-
-	        if (onFinish) {
-	            this.animationTimeoutId = setTimeout(function() {
-	                onFinish();
-	                this.animationTimeoutId = null;
-	            }, ANIMATION_DURATION);
-	        }
 	    },
 
 	    /**
@@ -32706,9 +32819,10 @@
 
 	        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
 	            var bound = groupBounds[groupIndex][index];
-
-	            circleInfo.bound = bound;
-	            self._updatePosition(circleInfo.circle, bound);
+	            if (circleInfo) {
+	                circleInfo.bound = bound;
+	                self._updatePosition(circleInfo.circle, bound);
+	            }
 	        });
 	    },
 
@@ -33282,7 +33396,7 @@
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
-	            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+	            opacity: 1
 	        };
 
 	        tui.util.forEach(labels, function(categoryLabel, categoryIndex) {
@@ -33591,7 +33705,7 @@
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
 	            'text-anchor': 'middle',
-	            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0,
+	            opacity: 1,
 	            transform: 's' + this.ratio + ',' + this.ratio + ',0,0'
 	            + 't' + (this.position.left / this.ratio) + ',' + (this.position.top / this.ratio)
 	        };
@@ -33766,7 +33880,7 @@
 	        var labelTheme = this.labelTheme;
 	        var pos = {
 	            left: position.left,
-	            top: position.top + data.labelHeight
+	            top: position.top + (data.labelHeight / 2)
 	        };
 	        var attributes = {
 	            'font-size': labelTheme.fontSize,
@@ -34297,6 +34411,7 @@
 	        var centerPosition = (size / 2) + position;
 	        var textHeight = titleSize.height;
 	        var attributes = {
+	            'dominant-baseline': 'auto',
 	            'font-family': data.theme.fontFamily,
 	            'font-size': data.theme.fontSize,
 	            'font-weight': data.theme.fontWeight,
@@ -34354,6 +34469,7 @@
 	        var isPositionRight = data.isPositionRight;
 	        var theme = data.theme;
 	        var attributes = {
+	            'dominant-baseline': 'central',
 	            'font-family': theme.fontFamily,
 	            'font-size': theme.fontSize,
 	            'font-weight': theme.fontWeight,
@@ -34397,6 +34513,7 @@
 	        var paper = data.paper;
 	        var theme = data.theme;
 	        var textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, {
+	            'dominant-baseline': 'central',
 	            'font-family': theme.fontFamily,
 	            'font-size': theme.fontSize,
 	            'font-weight': theme.fontWeight,
@@ -34593,6 +34710,9 @@
 
 	        this._renderPlot(plotSet);
 	        this._renderLabels(plotSet);
+
+	        plotSet.toBack();
+	        this.paper.pushDownBackgroundToBottom();
 
 	        return plotSet;
 	    },
