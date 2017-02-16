@@ -103,6 +103,11 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @override
      */
     addComponents: function() {
+        var titleOptions = this.options.chart && this.options.chart.title;
+
+        if (titleOptions && this.options.chart.title.text) {
+            this.componentManager.register('title', 'title');
+        }
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');

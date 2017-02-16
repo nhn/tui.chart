@@ -601,6 +601,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate) {
             this.graphRenderer.animate(null, this.seriesSet);
+            this._fireLoadEvent(isRerendering);
         }
 
         this.animateSeriesLabelArea(isRerendering);

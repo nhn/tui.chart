@@ -49,6 +49,11 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
      * @override
      */
     addComponents: function() {
+        var titleOptions = this.options.chart && this.options.chart.title;
+
+        if (titleOptions && this.options.chart.title.text) {
+            this.componentManager.register('title', 'title');
+        }
         this.componentManager.register('radialSeries', 'radialSeries');
         this.componentManager.register('plot', 'radialPlot');
 

@@ -32,7 +32,7 @@ var renderingLabelHelper = {
      * @private
      */
     _calculateTopPositionForMiddleAlign: function(bound) {
-        return bound.top + chartConst.LABEL_PADDING_TOP;
+        return bound.top + (bound.height / 2);
     },
 
     /**

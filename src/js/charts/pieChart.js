@@ -43,6 +43,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     addComponents: function() {
+        var titleOptions = this.options.chart && this.options.chart.title;
+
+        if (titleOptions && this.options.chart.title.text) {
+            this.componentManager.register('title', 'title');
+        }
         this.componentManager.register('legend', 'legend');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('chartExportMenu', 'chartExportMenu');

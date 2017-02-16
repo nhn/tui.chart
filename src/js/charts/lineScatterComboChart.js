@@ -39,58 +39,6 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
     },
 
     /**
-     * Add components.
-     * @private
-     */
-    _addComponents: function() {
-        var optionsMap = this._makeOptionsMap(this.seriesTypes);
-
-        this._addPlotComponent(this.options.xAxis.type);
-        this._addAxisComponents([
-            {
-                name: 'yAxis',
-                seriesType: this.seriesTypes[0],
-                isVertical: true
-            },
-            {
-                name: 'xAxis'
-            }
-        ], false);
-        this._addLegendComponent({});
-        this._addSeriesComponents([
-            {
-                name: 'lineSeries',
-                SeriesClass: LineSeries,
-                data: {
-                    allowNegativeTooltip: true,
-                    chartType: 'line',
-                    seriesType: 'line',
-                    options: optionsMap.line
-                }
-            },
-            {
-                name: 'scatterSeries',
-                SeriesClass: ScatterSeries,
-                data: {
-                    allowNegativeTooltip: true,
-                    chartType: 'scatter',
-                    seriesType: 'scatter',
-                    options: optionsMap.scatter
-                }
-            }
-        ], this.options);
-
-        this.componentManager.register('mouseEventDetector', {
-            chartType: this.chartType,
-            isVertical: this.isVertical,
-            allowSelect: this.options.series.allowSelect,
-            classType: 'areaTypeEventDetector'
-        });
-
-        this._addTooltipComponent();
-    },
-
-    /**
      * Get scale option.
      * @returns {{
      *      yAxis: {valueType: string, additionalOptions: {isSingleYAxis: boolean}},
@@ -131,6 +79,11 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
      * @override
      */
     addComponents: function() {
+        var titleOptions = this.options.chart && this.options.chart.title;
+
+        if (titleOptions && this.options.chart.title.text) {
+            this.componentManager.register('title', 'title');
+        }
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');

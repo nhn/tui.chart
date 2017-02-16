@@ -7,9 +7,6 @@
 'use strict';
 
 var labelHelper = require('../../../src/js/components/series/renderingLabelHelper');
-var treemapSeriesFactory = require('../../../src/js/components/series/treemapChartSeries');
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModelForTreemap');
-var seriesTemplate = require('../../../src/js/components/series/seriesTemplate');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('Test for renderingLabelHelper', function() {
@@ -38,7 +35,7 @@ describe('Test for renderingLabelHelper', function() {
             };
             var actual = labelHelper._calculateTopPositionForMiddleAlign(bound, 60);
 
-            expect(actual).toBe(53);
+            expect(actual).toBe(70);
         });
     });
 
@@ -53,7 +50,7 @@ describe('Test for renderingLabelHelper', function() {
             var actual = labelHelper._makePositionForBoundType(bound, 20, 'label');
 
             expect(actual.left).toBe(50);
-            expect(actual.top).toBe(23);
+            expect(actual.top).toBe(45);
         });
     });
 
@@ -73,7 +70,7 @@ describe('Test for renderingLabelHelper', function() {
 
             expect(actual.end).toEqual({
                 left: 50,
-                top: 23
+                top: 45
             });
             expect(actual.start).toBeUndefined();
         });
@@ -94,11 +91,11 @@ describe('Test for renderingLabelHelper', function() {
 
             expect(actual.end).toEqual({
                 left: 75,
-                top: 23
+                top: 45
             });
             expect(actual.start).toEqual({
                 left: -25,
-                top: 23
+                top: 45
             });
         });
     });

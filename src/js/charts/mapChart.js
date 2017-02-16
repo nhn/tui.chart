@@ -49,6 +49,11 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         var seriesTheme = this.theme.series[this.chartType];
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+        var titleOptions = this.options.chart && this.options.chart.title;
+
+        if (titleOptions && this.options.chart.title.text) {
+            this.componentManager.register('title', 'title');
+        }
 
         this.componentManager.register('legend', 'spectrumLegend', {
             colorSpectrum: colorSpectrum
@@ -65,16 +70,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
         this.componentManager.register('zoom', 'zoom');
         this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
-    },
-
-    _addTitleComponent: function(options) {
-        this.componentManager.register('title', {
-            dataProcessor: this.dataProcessor,
-            libType: options.libType,
-            text: options.text,
-            theme: this.theme.title,
-            classType: 'title'
-        });
     },
 
     /**

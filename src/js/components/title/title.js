@@ -36,13 +36,13 @@ var Title = tui.util.defineClass(/** @lends Title.prototype */ {
          * Relative offset position
          * @type {object}
          */
-        this.offset = params.options.offset;
+        this.offset = params.offset;
 
         /**
          * Graph renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get(params.options.libType, 'title');
+        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'title');
 
         /**
          * Drawing type
@@ -88,4 +88,16 @@ var Title = tui.util.defineClass(/** @lends Title.prototype */ {
     }
 });
 
-module.exports = Title;
+function titleFactory(param) {
+    var options = param.chartOptions.chart || {title: {}};
+
+    param.text = options.title.text;
+    param.offset = options.title.offset;
+
+    return new Title(param);
+}
+
+titleFactory.componentType = 'title';
+titleFactory.Title = Title;
+
+module.exports = titleFactory;

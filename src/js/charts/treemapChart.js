@@ -43,9 +43,13 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      */
     addComponents: function() {
         var seriesTheme = this.theme.series[this.chartType];
-        var useColorValue = options.series.useColorValue;
+        var useColorValue = this.options.series.useColorValue;
         var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
+        var titleOptions = this.options.chart && this.options.chart.title;
 
+        if (titleOptions && this.options.chart.title.text) {
+            this.componentManager.register('title', 'title');
+        }
         this.componentManager.register('treemapSeries', 'treemapSeries', {
             colorSpectrum: colorSpectrum
         });
@@ -62,31 +66,6 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
-    },
-
-    _addTitleComponent: function(options) {
-        this.componentManager.register('title', {
-            dataProcessor: this.dataProcessor,
-            libType: options.libType,
-            text: options.text,
-            theme: this.theme.title || {},
-            classType: 'title'
-        });
-    },
-
-    /**
-     * Add chartExportMenu component.
-     * @private
-     */
-    _addChartExportMenuComponent: function() {
-        var chartOption = this.options.chart;
-        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
-
-        this.componentManager.register('chartExportMenu', {
-            chartTitle: chartTitle,
-            chartType: this.chartType,
-            classType: 'chartExportMenu'
-        });
     },
 
     /**

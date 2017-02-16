@@ -22,7 +22,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      *      @param {object} params.options axis options
      *      @param {object} params.dataProcessor data processor of chart
      *      @param {object} params.seriesType series type
-     *      @param {boolean} params.isVertical boolean value for axis is vertical or not
+     *      @param {boolean} params.isYAxis boolean value for axis is vertical or not
      */
     init: function(params) {
         /**
@@ -89,7 +89,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get(params.options.libType, 'axis');
+        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'axis');
 
         /**
          * Drawing type
@@ -118,7 +118,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var dimension = tui.util.extend({}, this.layout.dimension);
         var position = tui.util.extend({}, this.layout.position);
 
-        if (this.isVertical) {
+        if (this.isYAxis) {
             dimension.height = this.dimensionMap.chart.height;
             position.top = 0;
         }
@@ -134,16 +134,16 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
-        var isVerticalLineType = this.isVertical && this.data.aligned;
+        var isYAxisLineType = this.isYAxis && this.data.aligned;
 
-        if (this.isVertical && !this.data.isPositionRight && !this.options.isCenter) {
+        if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter) {
             this._renderBackground();
         }
 
         this._renderTitleArea();
         this._renderLabelArea(size, tickCount, categories, additionalWidth);
 
-        if (!isVerticalLineType) {
+        if (!isYAxisLineType) {
             this._renderTickArea(size, tickCount, additionalWidth);
         }
     },
@@ -179,8 +179,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _renderNotDividedAxis: function(dimension) {
         var axisData = this.data;
-        var isVertical = this.isVertical;
-        var size = isVertical ? dimension.height : dimension.width;
+        var isYAxis = this.isYAxis;
+        var size = isYAxis ? dimension.height : dimension.width;
         var additionalSize = 0;
 
         if (axisData.positionRatio) {
@@ -279,7 +279,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 text: title.text,
                 theme: this.theme.title,
                 rotationInfo: {
-                    isYAxis: this.isYAxis,
+                    isVertical: this.isYAxis,
                     isPositionRight: this.data.isPositionRight,
                     isCenter: this.options.isCenter
                 },
@@ -305,7 +305,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             isPositionRight: this.data.isPositionRight,
             isCenter: this.data.options.isCenter,
             isNotDividedXAxis: isNotDividedXAxis,
-            isYAxis: this.isYAxis,
+            isVertical: this.isYAxis,
             layout: this.layout,
             paper: this.paper,
             set: this.axisSet
@@ -337,7 +337,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             paper: this.paper,
             layout: this.layout,
             positions: positions,
-            isYAxis: isYAxis,
+            isVertical: isYAxis,
             isCenter: isCenter,
             additionalSize: additionalSize,
             additionalWidth: additionalWidth,
@@ -480,7 +480,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
             renderer.renderLabel({
                 isPositionRight: isPositionRight,
-                isYAxis: isYAxis,
+                isVertical: isYAxis,
                 labelSize: labelSize,
                 labelText: categories[index],
                 paper: self.paper,
