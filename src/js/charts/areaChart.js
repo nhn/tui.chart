@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var DynamicDataHelper = require('./dynamicDataHelper');
-var predicate = require('../helpers/predicate');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var Series = require('../components/series/areaChartSeries');
 
@@ -96,11 +95,7 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
      * @override
      */
     addComponents: function() {
-        var titleOptions = this.options.chart && this.options.chart.title;
-
-        if (titleOptions && this.options.chart.title.text) {
-            this.componentManager.register('title', 'title');
-        }
+        this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');

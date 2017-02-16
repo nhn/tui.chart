@@ -33,11 +33,23 @@ function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
     return tooltipDatum;
 }
 
+/**
+ * Factory for Tooltip
+ * @param {object} params parameter
+ * @returns {object|null}
+ */
 function tooltipFactory(params) {
     var chartType = params.chartOptions.chartType;
     var seriesTypes = params.seriesTypes;
     var xAxisOptions = params.chartOptions.xAxis;
+    var colors = [];
     var factory;
+
+    tui.util.forEach(tui.util.filter(params.chartTheme.legend, function(item) {
+        return tui.util.isArray(item.colors);
+    }), function(series) {
+        colors = colors.concat(series.colors);
+    });
 
     if (chartType === 'map') {
         factory = mapChartTooltipFactory;
@@ -55,6 +67,7 @@ function tooltipFactory(params) {
     params.chartTypes = seriesTypes;
     params.xAxisType = xAxisOptions.type;
     params.dateFormat = xAxisOptions.dateFormat;
+    params.colors = colors;
 
     return factory(params);
 }

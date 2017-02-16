@@ -45,11 +45,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         var seriesTheme = this.theme.series[this.chartType];
         var useColorValue = this.options.series.useColorValue;
         var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
-        var titleOptions = this.options.chart && this.options.chart.title;
-
-        if (titleOptions && this.options.chart.title.text) {
-            this.componentManager.register('title', 'title');
-        }
+        this.componentManager.register('title', 'title');
         this.componentManager.register('treemapSeries', 'treemapSeries', {
             colorSpectrum: colorSpectrum
         });

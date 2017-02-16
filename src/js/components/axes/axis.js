@@ -531,6 +531,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     }
 });
 
+
+/**
+ * Factory for Axis
+ * @param {object} axisParam parameter
+ * @returns {object}
+ */
 function axisFactory(axisParam) {
     var chartType = axisParam.chartOptions.chartType;
     var name = axisParam.name;

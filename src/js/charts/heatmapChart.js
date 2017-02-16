@@ -47,6 +47,43 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
     },
 
     /**
+     * Add components.
+     * @private
+     */
+    _addComponents: function() {
+        var seriesTheme = this.theme.series[this.chartType];
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+
+        this._addComponentsForAxisType({
+            axis: [
+                {
+                    name: 'yAxis',
+                    isVertical: true
+                },
+                {
+                    name: 'xAxis'
+                }
+            ],
+            legend: {
+                classType: 'spectrumLegend',
+                additionalParams: {
+                    colorSpectrum: colorSpectrum
+                }
+            },
+            series: [
+                {
+                    name: 'heatmapSeries',
+                    data: {
+                        colorSpectrum: colorSpectrum
+                    }
+                }
+            ],
+            tooltip: true,
+            mouseEventDetector: true
+        });
+    },
+
+    /**
      * Get scale option.
      * @returns {{legend: boolean}}
      * @override
@@ -74,11 +111,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
         var seriesTheme = this.theme.series[this.chartType];
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
-        var titleOptions = this.options.chart && this.options.chart.title;
-
-        if (titleOptions && this.options.chart.title.text) {
-            this.componentManager.register('title', 'title');
-        }
+        this.componentManager.register('title', 'title');
         this.componentManager.register('xAxis', 'axis');
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('legend', 'spectrumLegend', {

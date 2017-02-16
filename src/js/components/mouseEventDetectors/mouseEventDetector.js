@@ -12,6 +12,11 @@ var groupTypeEventDetectorFactory = require('./groupTypeEventDetector');
 var boundsTypeEventDetectorFactory = require('./boundsTypeEventDetector');
 var mapChartEventDetectorFactory = require('./mapChartEventDetector');
 
+/**
+ * Factory for MouseEventDetector
+ * @param {object} params parameter
+ * @returns {object}
+ */
 function mouseEventDetectorFactory(params) {
     var chartType = params.chartOptions.chartType;
     var seriesTypes = params.seriesTypes;

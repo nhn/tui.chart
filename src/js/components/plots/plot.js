@@ -623,6 +623,11 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     }
 });
 
+/**
+ * Factory for Plot
+ * @param {object} param parameter
+ * @returns {object}
+ */
 function plotFactory(param) {
     var chartType = param.chartOptions.chartType;
     var seriesTypes = param.seriesTypes;

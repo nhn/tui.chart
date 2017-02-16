@@ -88,13 +88,23 @@ var Title = tui.util.defineClass(/** @lends Title.prototype */ {
     }
 });
 
+/**
+ * Factory for Title
+ * @param {object} param parameter
+ * @returns {object|null}
+ */
 function titleFactory(param) {
     var options = param.chartOptions.chart || {title: {}};
+    var title = null;
 
-    param.text = options.title.text;
-    param.offset = options.title.offset;
+    if (options.title.text) {
+        param.text = options.title.text;
+        param.offset = options.title.offset;
 
-    return new Title(param);
+        title = new Title(param);
+    }
+
+    return title;
 }
 
 titleFactory.componentType = 'title';

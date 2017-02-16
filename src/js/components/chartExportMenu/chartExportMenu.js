@@ -289,12 +289,20 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
 });
 
 
+/**
+ * Factory for ChartExportMenu
+ * @param {object} params parameter
+ * @returns {object|null}
+ */
 function chartExportMenuFactory(params) {
     var isVisible = params.options.visible;
+    var chartExportMenu = null;
 
     if (isVisible) {
-        return new ChartExportMenu(params);
+        chartExportMenu = new ChartExportMenu(params);
     }
+
+    return chartExportMenu;
 }
 
 chartExportMenuFactory.componentType = 'chartExportMenu';

@@ -163,10 +163,16 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     }
 });
 
+/**
+ * Factory for CircleLegend
+ * @param {object} params parameter
+ * @returns {object|null}
+ */
 function circleLegendFactory(params) {
     var chartType = params.chartOptions.chartType;
     var chartTheme = params.chartTheme;
     var visibleOption = tui.util.pick(params.chartOptions, 'circleLegend', 'visible');
+    var circleLegend = null;
     var isLegendVisible;
 
     if (tui.util.isUndefined(visibleOption)) {
@@ -179,8 +185,10 @@ function circleLegendFactory(params) {
         params.chartType = chartType;
         params.baseFontFamily = chartTheme.chart.fontFamily;
 
-        return new CircleLegend(params);
+        circleLegend = new CircleLegend(params);
     }
+
+    return circleLegend;
 }
 
 circleLegendFactory.componentType = 'legend';
