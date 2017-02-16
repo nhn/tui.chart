@@ -5,7 +5,6 @@
  */
 
 'use strict';
-var FADE_IN_DURATION = 300;
 var LABEL_FADE_IN_DURATION = 800;
 var browser = tui.util.browser;
 var IS_IE7 = browser.msie && browser.version === 7;
@@ -454,6 +453,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Resize raphael graph by given dimension and series data
      * @param {{width: number, height: number}} dimension - chart dimension
      * @param {object} seriesData - series data
+     * @returns {Array.<object>}
      * @private
      */
     _resizeGraph: function(dimension, seriesData) {
