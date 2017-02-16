@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.7.1
+ * @version 2.7.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Feb 16 2017 13:50:28 GMT+0900 (KST)"
+ * bundle created at "Thu Feb 16 2017 17:36:28 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -72,7 +72,7 @@
 	__webpack_require__(15);
 	__webpack_require__(17);
 	__webpack_require__(18);
-	__webpack_require__(119);
+	__webpack_require__(116);
 
 	/**
 	 * Raw series datum.
@@ -1454,7 +1454,7 @@
 	    drawingToolPicker.addRendererType(libType, getPaperCallback);
 	};
 
-	__webpack_require__(120);
+	__webpack_require__(117);
 
 
 /***/ },
@@ -2444,7 +2444,8 @@
 	     * @returns {boolean}
 	     */
 	    isPieChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_PIE;
+	        // alias 때문에 indexOf로 변경
+	        return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
 	    },
 
 	    /**
@@ -3885,20 +3886,20 @@
 	var chartConst = __webpack_require__(2);
 	var chartFactory = __webpack_require__(3);
 	var BarChart = __webpack_require__(19);
-	var ColumnChart = __webpack_require__(95);
-	var LineChart = __webpack_require__(96);
-	var AreaChart = __webpack_require__(100);
-	var ColumnLineComboChart = __webpack_require__(101);
-	var LineScatterComboChart = __webpack_require__(104);
-	var LineAreaComboChart = __webpack_require__(105);
-	var PieDonutComboChart = __webpack_require__(106);
-	var PieChart = __webpack_require__(108);
-	var BubbleChart = __webpack_require__(109);
-	var ScatterChart = __webpack_require__(110);
-	var HeatmapChart = __webpack_require__(111);
-	var TreemapChart = __webpack_require__(114);
-	var MapChart = __webpack_require__(115);
-	var RadialChart = __webpack_require__(118);
+	var ColumnChart = __webpack_require__(96);
+	var LineChart = __webpack_require__(97);
+	var AreaChart = __webpack_require__(99);
+	var ColumnLineComboChart = __webpack_require__(100);
+	var LineScatterComboChart = __webpack_require__(102);
+	var LineAreaComboChart = __webpack_require__(103);
+	var PieDonutComboChart = __webpack_require__(104);
+	var PieChart = __webpack_require__(105);
+	var BubbleChart = __webpack_require__(106);
+	var ScatterChart = __webpack_require__(107);
+	var HeatmapChart = __webpack_require__(108);
+	var TreemapChart = __webpack_require__(111);
+	var MapChart = __webpack_require__(112);
+	var RadialChart = __webpack_require__(115);
 
 	chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 	chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);
@@ -3931,7 +3932,6 @@
 
 	var ChartBase = __webpack_require__(20);
 	var chartConst = __webpack_require__(2);
-	var axisTypeMixer = __webpack_require__(94);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
 
@@ -3998,46 +3998,29 @@
 
 	    /**
 	     * Add components
-	     * @private
+	     * @override
 	     */
-	    _addComponents: function() {
-	        var chartOptions = this.options.chart || {};
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
 
-	        var axes = [
-	            {
-	                name: 'yAxis',
-	                isVertical: true
-	            },
-	            {
-	                name: 'xAxis'
-	            }
-	        ];
+	        this.componentManager.register('legend', 'legend');
 
-	        if (this.hasRightYAxis) {
-	            axes.push({
-	                name: 'rightYAxis',
-	                isVertical: true
-	            });
-	        }
-	        this._addComponentsForAxisType({
-	            axis: axes,
-	            series: [
-	                {
-	                    name: 'barSeries'
-	                }
-	            ],
-	            plot: true,
-	            title: chartOptions.title
-	        });
+	        this.componentManager.register('barSeries', 'barSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
 
 	    /**
 	     * Get scale option.
 	     * @returns {{xAxis: boolean}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            xAxis: true
 	        };
@@ -4055,12 +4038,21 @@
 	                optionChartTypes: ['bar', 'bar']
 	            };
 	        }
-
 	        ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, null, boundParams);
+	    },
+	    /**
+	     * Add data ratios.
+	     * @override
+	     * modified from axisTypeMixer
+	     */
+	    addDataRatios: function(limitMap) {
+	        var seriesOption = this.options.series || {};
+	        var chartType = this.chartType;
+	        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+	        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
 	    }
 	});
-
-	tui.util.extend(BarChart.prototype, axisTypeMixer);
 
 	module.exports = BarChart;
 
@@ -4079,11 +4071,11 @@
 
 	var chartConst = __webpack_require__(2);
 	var ComponentManager = __webpack_require__(21);
-	var DefaultDataProcessor = __webpack_require__(74);
+	var DefaultDataProcessor = __webpack_require__(76);
 	var rawDataHandler = __webpack_require__(4);
 	var dom = __webpack_require__(14);
 	var renderUtil = __webpack_require__(30);
-	var boundsAndScaleBuilder = __webpack_require__(82);
+	var boundsAndScaleBuilder = __webpack_require__(84);
 
 	var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 	    /**
@@ -4148,7 +4140,7 @@
 	         */
 	        this.componentManager = this._createComponentManager();
 
-	        this._addComponents();
+	        this.addComponents();
 
 	        this._attachToEventBus();
 	    },
@@ -4256,6 +4248,7 @@
 	     * @private
 	     */
 	    _initializeOptions: function(options) {
+	        options.chartTypes = this.charTypes;
 	        options.xAxis = options.xAxis || {};
 	        options.series = options.series || {};
 	        options.tooltip = options.tooltip || {};
@@ -4313,51 +4306,23 @@
 	            theme: this.theme,
 	            dataProcessor: this.dataProcessor,
 	            hasAxes: this.hasAxes,
-	            eventBus: this.eventBus
-	        });
-	    },
-
-	    /**
-	     * Make data for initialize tooltip component.
-	     * @param {string} classType - component class type
-	     * @param {object} tooltipOptions tooltip option
-	     * @returns {object} tooltip data
-	     * @private
-	     */
-	    _makeTooltipData: function(classType, tooltipOptions) {
-	        var colors = [];
-
-	        tui.util.forEach(tui.util.filter(this.theme.legend, function(item) {
-	            return tui.util.isArray(item.colors);
-	        }), function(series) {
-	            colors = colors.concat(series.colors);
-	        });
-
-	        return {
+	            eventBus: this.eventBus,
 	            isVertical: this.isVertical,
-	            chartType: this.chartType,
-	            chartTypes: this.chartTypes,
-	            xAxisType: this.options.xAxis.type,
-	            dateFormat: this.options.xAxis.dateFormat,
-	            colors: colors,
-	            tooltipOptions: (tooltipOptions || {}),
-	            classType: (classType || 'tooltip')
-	        };
+	            seriesTypes: this.seriesTypes || [this.chartType]
+	        });
 	    },
 
 	    /**
 	     * Add components.
-	     * @private
 	     * @abstract
 	     */
-	    _addComponents: function() {},
+	    addComponents: function() {},
 
 	    /**
 	     * Get scale option.
-	     * @private
 	     * @abstract
 	     */
-	    _getScaleOption: function() {},
+	    getScaleOption: function() {},
 
 	    /**
 	     * Build bounds and scale data.
@@ -4406,7 +4371,7 @@
 	            options: this.options,
 	            theme: this.theme,
 	            hasAxes: this.hasAxes,
-	            scaleOption: this._getScaleOption(),
+	            scaleOption: this.getScaleOption(),
 	            isVertical: this.isVertical,
 	            hasRightYAxis: this.hasRightYAxis,
 	            addedDataCount: this.addedDataCount,
@@ -4417,10 +4382,9 @@
 
 	    /**
 	     * Add data ratios.
-	     * @private
 	     * @abstract
 	     */
-	    _addDataRatios: function() {},
+	    addDataRatios: function() {},
 
 	    /**
 	     * Common render function for rendering functions like render, rerender, resize and zoom.
@@ -4436,7 +4400,7 @@
 	        }
 
 	        // 비율값 추가
-	        this._addDataRatios(boundsAndScale.limitMap);
+	        this.addDataRatios(boundsAndScale.limitMap);
 
 	        onRender(boundsAndScale);
 	    },
@@ -4473,9 +4437,8 @@
 	     * Rerender.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
 	     * @param {?object} rawData rawData
-	     * @private
 	     */
-	    _rerender: function(checkedLegends, rawData) {
+	    rerender: function(checkedLegends, rawData) {
 	        var self = this;
 	        var dataProcessor = this.dataProcessor;
 
@@ -4499,7 +4462,7 @@
 	     * @param {?object} boundsParams addition params for calculating bounds
 	     */
 	    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-	        this._rerender(checkedLegends, rawData, boundsParams);
+	        this.rerender(checkedLegends, rawData, boundsParams);
 	    },
 
 	    /**
@@ -4714,32 +4677,29 @@
 
 	// tooltips
 	var Tooltip = __webpack_require__(36);
-	var GroupTooltip = __webpack_require__(41);
-	var MapChartTooltip = __webpack_require__(43);
+	var GroupTooltip = __webpack_require__(42);
+	var MapChartTooltip = __webpack_require__(44);
 
 	// mouse event detectors
-	var AreaTypeEventDetector = __webpack_require__(44);
-	var BoundsTypeEventDetector = __webpack_require__(50);
-	var GroupTypeEventDetector = __webpack_require__(51);
-	var MapChartEventDetector = __webpack_require__(52);
-	var SimpleEventDetector = __webpack_require__(53);
+	var MapChartEventDetector = __webpack_require__(45);
+	var mouseEventDetector = __webpack_require__(49);
 
 	// series
-	var BarSeries = __webpack_require__(54);
-	var ColumnSeries = __webpack_require__(59);
-	var LineSeries = __webpack_require__(60);
-	var RadialSeries = __webpack_require__(62);
-	var AreaSeries = __webpack_require__(63);
-	var BubbleSeries = __webpack_require__(64);
-	var ScatterSeries = __webpack_require__(66);
-	var MapSeries = __webpack_require__(67);
-	var PieSeries = __webpack_require__(68);
-	var HeatmapSeries = __webpack_require__(69);
-	var TreemapSeries = __webpack_require__(70);
+	var BarSeries = __webpack_require__(56);
+	var ColumnSeries = __webpack_require__(61);
+	var LineSeries = __webpack_require__(62);
+	var RadialSeries = __webpack_require__(64);
+	var AreaSeries = __webpack_require__(65);
+	var BubbleSeries = __webpack_require__(66);
+	var ScatterSeries = __webpack_require__(68);
+	var MapSeries = __webpack_require__(69);
+	var PieSeries = __webpack_require__(70);
+	var HeatmapSeries = __webpack_require__(71);
+	var TreemapSeries = __webpack_require__(72);
 
-	var Zoom = __webpack_require__(72);
+	var Zoom = __webpack_require__(74);
 
-	var COMPONENT_CLASS_MAP = {
+	var COMPONENT_FACTORY_MAP = {
 	    axis: Axis,
 	    plot: Plot,
 	    radialPlot: RadialPlot,
@@ -4749,11 +4709,8 @@
 	    tooltip: Tooltip,
 	    groupTooltip: GroupTooltip,
 	    mapChartTooltip: MapChartTooltip,
-	    areaTypeEventDetector: AreaTypeEventDetector,
-	    boundsTypeEventDetector: BoundsTypeEventDetector,
-	    groupTypeEventDetector: GroupTypeEventDetector,
 	    mapChartEventDetector: MapChartEventDetector,
-	    simpleEventDetector: SimpleEventDetector,
+	    mouseEventDetector: mouseEventDetector,
 	    barSeries: BarSeries,
 	    columnSeries: ColumnSeries,
 	    lineSeries: LineSeries,
@@ -4793,7 +4750,7 @@
 	        this.components = [];
 
 	        /**
-	         * Component map.
+	         * componentFactory map.
 	         * @type {object}
 	         */
 	        this.componentMap = {};
@@ -4823,6 +4780,12 @@
 	        this.hasAxes = params.hasAxes;
 
 	        /**
+	         * whether chart is vertical or not
+	         * @type {boolean}
+	         */
+	        this.isVertical = params.isVertical;
+
+	        /**
 	         * event bus for transmitting message
 	         * @type {object}
 	         */
@@ -4838,18 +4801,25 @@
 	            width: width,
 	            height: height
 	        });
+
+	        /**
+	         * seriesTypes of chart
+	         * @type {Array.<string>}
+	         */
+	        this.seriesTypes = params.seriesTypes;
 	    },
 
 	    /**
 	     * Make component options.
 	     * @param {object} options options
-	     * @param {string} componentType component type
+	     * @param {string} optionKey component option key
+	     * @param {string} componentName component name
 	     * @param {number} index component index
 	     * @returns {object} options
 	     * @private
 	     */
-	    _makeComponentOptions: function(options, componentType, index) {
-	        options = options || this.options[componentType];
+	    _makeComponentOptions: function(options, optionKey, componentName, index) {
+	        options = options || this.options[optionKey];
 	        options = tui.util.isArray(options) ? options[index] : options || {};
 
 	        return options;
@@ -4861,32 +4831,72 @@
 	     * The component types are axis, legend, plot, series and mouseEventDetector.
 	     * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
 	     * @param {string} name component name
-	     * @param {object} params component parameters
+	     * @param {string} classType component factory name
+	     * @param {object} params params that for alternative charts, 기본 흐름을 타지않는 특이 차트들을 위해 제공
 	     */
-	    register: function(name, params) {
-	        var index, component, componentType, classType, Component;
+	    register: function(name, classType, params) {
+	        var index, component, componentType, componentFactory, optionKey;
 
 	        params = params || {};
 
-	        componentType = params.componentType || name;
-	        classType = params.classType || componentType || name;
+	        params.name = name;
 
 	        index = params.index || 0;
 
-	        params.theme = params.theme || this.theme[componentType];
-	        params.options = this._makeComponentOptions(params.options, componentType, index);
+	        componentFactory = COMPONENT_FACTORY_MAP[classType];
+	        componentType = componentFactory.componentType;
+
+	        params.chartTheme = this.theme;
+	        params.chartOptions = this.options;
+	        params.seriesTypes = this.seriesTypes;
+
+	        // axis의 경우 name으로 테마와 옵션을 가져온다. xAxis, yAxis
+	        if (componentType === 'axis') {
+	            optionKey = name;
+	        } else {
+	            optionKey = componentType;
+	        }
+
+	        params.theme = this.theme[optionKey];
+	        params.options = this.options[optionKey];
+
+	        if (optionKey === 'series') {
+	            // 시리즈는 옵션과 테마가 시리즈 이름으로 뎊스가 한번더 들어간다.
+	            // 테마는 항상 뎊스가 더들어가고 옵션은 콤보인경우에만 더들어간다.
+	            tui.util.forEach(this.seriesTypes, function(seriesType) {
+	                if (name.indexOf(seriesType) === 0) {
+	                    params.options = params.options[seriesType] || params.options;
+	                    params.theme = params.theme[seriesType];
+
+	                    if (tui.util.isArray(params.options)) {
+	                        params.options = params.options[index] || {};
+	                    }
+
+	                    return false;
+	                }
+
+	                return true;
+	            });
+	        }
 
 	        params.dataProcessor = this.dataProcessor;
 	        params.hasAxes = this.hasAxes;
+	        params.isVertical = this.isVertical;
 	        params.eventBus = this.eventBus;
 
-	        Component = COMPONENT_CLASS_MAP[classType];
-	        component = new Component(params);
-	        component.componentName = name;
-	        component.componentType = componentType;
+	        // 맵과 같이 일반적인 스케일 모델을 사용하지 않는 차트를 위한 개별 구현한 차트 모델
+	        params.alternativeModel = this.alternativeModel;
 
-	        this.components.push(component);
-	        this.componentMap[name] = component;
+	        component = componentFactory(params);
+
+	        // 팩토리에서 옵션에따라 생성을 거부할 수 있다.
+	        if (component) {
+	            component.componentName = name;
+	            component.componentType = componentType;
+
+	            this.components.push(component);
+	            this.componentMap[name] = component;
+	        }
 	    },
 
 	    /**
@@ -5053,7 +5063,7 @@
 	     *      @param {object} params.options axis options
 	     *      @param {object} params.dataProcessor data processor of chart
 	     *      @param {object} params.seriesType series type
-	     *      @param {boolean} params.isVertical boolean value for axis is vertical or not
+	     *      @param {boolean} params.isYAxis boolean value for axis is vertical or not
 	     */
 	    init: function(params) {
 	        /**
@@ -5078,7 +5088,7 @@
 	         * Theme
 	         * @type {object}
 	         */
-	        this.theme = params.theme[params.seriesType] || params.theme;
+	        this.theme = params.theme;
 
 	        /**
 	         * Whether label type axis or not.
@@ -5090,7 +5100,7 @@
 	         * Whether vertical type or not.
 	         * @type {boolean}
 	         */
-	        this.isVertical = params.isVertical;
+	        this.isYAxis = params.isYAxis;
 
 	        /**
 	         * cached axis data
@@ -5120,7 +5130,7 @@
 	         * Renderer
 	         * @type {object}
 	         */
-	        this.graphRenderer = pluginFactory.get(params.options.libType, 'axis');
+	        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'axis');
 
 	        /**
 	         * Drawing type
@@ -5149,7 +5159,7 @@
 	        var dimension = tui.util.extend({}, this.layout.dimension);
 	        var position = tui.util.extend({}, this.layout.position);
 
-	        if (this.isVertical) {
+	        if (this.isYAxis) {
 	            dimension.height = this.dimensionMap.chart.height;
 	            position.top = 0;
 	        }
@@ -5165,16 +5175,16 @@
 	     * @private
 	     */
 	    _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
-	        var isVerticalLineType = this.isVertical && this.data.aligned;
+	        var isYAxisLineType = this.isYAxis && this.data.aligned;
 
-	        if (this.isVertical && !this.data.isPositionRight && !this.options.isCenter) {
+	        if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter) {
 	            this._renderBackground();
 	        }
 
 	        this._renderTitleArea();
 	        this._renderLabelArea(size, tickCount, categories, additionalWidth);
 
-	        if (!isVerticalLineType) {
+	        if (!isYAxisLineType) {
 	            this._renderTickArea(size, tickCount, additionalWidth);
 	        }
 	    },
@@ -5210,8 +5220,8 @@
 	     */
 	    _renderNotDividedAxis: function(dimension) {
 	        var axisData = this.data;
-	        var isVertical = this.isVertical;
-	        var size = isVertical ? dimension.height : dimension.width;
+	        var isYAxis = this.isYAxis;
+	        var size = isYAxis ? dimension.height : dimension.width;
 	        var additionalSize = 0;
 
 	        if (axisData.positionRatio) {
@@ -5310,7 +5320,7 @@
 	                text: title.text,
 	                theme: this.theme.title,
 	                rotationInfo: {
-	                    isVertical: this.isVertical,
+	                    isVertical: this.isYAxis,
 	                    isPositionRight: this.data.isPositionRight,
 	                    isCenter: this.options.isCenter
 	                },
@@ -5336,7 +5346,7 @@
 	            isPositionRight: this.data.isPositionRight,
 	            isCenter: this.data.options.isCenter,
 	            isNotDividedXAxis: isNotDividedXAxis,
-	            isVertical: this.isVertical,
+	            isVertical: this.isYAxis,
 	            layout: this.layout,
 	            paper: this.paper,
 	            set: this.axisSet
@@ -5355,7 +5365,7 @@
 	        var tickColor = this.theme.tickColor;
 	        var axisData = this.data;
 	        var sizeRatio = axisData.sizeRatio || 1;
-	        var isVertical = this.isVertical;
+	        var isYAxis = this.isYAxis;
 	        var isCenter = this.data.options.isCenter;
 	        var isPositionRight = this.data.isPositionRight;
 	        var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
@@ -5368,7 +5378,7 @@
 	            paper: this.paper,
 	            layout: this.layout,
 	            positions: positions,
-	            isVertical: isVertical,
+	            isVertical: isYAxis,
 	            isCenter: isCenter,
 	            additionalSize: additionalSize,
 	            additionalWidth: additionalWidth,
@@ -5387,7 +5397,7 @@
 	     * @private
 	     */
 	    _renderTickArea: function(size, tickCount, additionalSize) {
-	        var isNotDividedXAxis = !this.isVertical && !this.options.divided;
+	        var isNotDividedXAxis = !this.isYAxis && !this.options.divided;
 
 	        this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0));
 
@@ -5421,7 +5431,7 @@
 	    _renderRotationLabels: function(positions, categories, labelSize, additionalSize) {
 	        var self = this;
 	        var renderer = this.graphRenderer;
-	        var isVertical = this.isVertical;
+	        var isYAxis = this.isYAxis;
 	        var theme = this.theme.label;
 	        var degree = this.data.degree;
 	        var halfWidth = labelSize / 2;
@@ -5432,7 +5442,7 @@
 	            var labelPosition = position + (additionalSize || 0);
 	            var positionTopAndLeft = {};
 
-	            if (isVertical) {
+	            if (isYAxis) {
 	                positionTopAndLeft.top = labelPosition + halfWidth;
 	                positionTopAndLeft.left = labelSize;
 	            } else {
@@ -5466,7 +5476,7 @@
 	    _renderNormalLabels: function(positions, categories, labelSize, additionalSize) {
 	        var self = this;
 	        var renderer = this.graphRenderer;
-	        var isVertical = this.isVertical;
+	        var isYAxis = this.isYAxis;
 	        var isPositionRight = this.data.isPositionRight;
 	        var isCategoryLabel = this.isLabelAxis;
 	        var theme = this.theme.label;
@@ -5481,7 +5491,7 @@
 	            var positionTopAndLeft = {};
 	            var labelTopPosition, labelLeftPosition;
 
-	            if (isVertical) {
+	            if (isYAxis) {
 	                labelTopPosition = labelPosition;
 
 	                if (isCategoryLabel) {
@@ -5511,7 +5521,7 @@
 
 	            renderer.renderLabel({
 	                isPositionRight: isPositionRight,
-	                isVertical: isVertical,
+	                isVertical: isYAxis,
 	                labelSize: labelSize,
 	                labelText: categories[index],
 	                paper: self.paper,
@@ -5531,7 +5541,7 @@
 	     * @private
 	     */
 	    _renderLabels: function(positions, categories, labelSize, additionalSize) {
-	        var isRotationlessXAxis = !this.isVertical && this.isLabelAxis && (this.options.rotateLabel === false);
+	        var isRotationlessXAxis = !this.isYAxis && this.isLabelAxis && (this.options.rotateLabel === false);
 	        var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.data.degree;
 	        var axisLabels;
 
@@ -5556,13 +5566,49 @@
 	     * @param {object} data rendering data
 	     */
 	    animateForAddingData: function(data) {
-	        if (!this.isVertical) {
+	        if (!this.isYAxis) {
 	            this.graphRenderer.animateForAddingData(data.tickSize);
 	        }
 	    }
 	});
 
-	module.exports = Axis;
+
+	/**
+	 * Factory for Axis
+	 * @param {object} axisParam parameter
+	 * @returns {object}
+	 */
+	function axisFactory(axisParam) {
+	    var chartType = axisParam.chartOptions.chartType;
+	    var name = axisParam.name;
+
+	    axisParam.isYAxis = (name === 'yAxis');
+
+	    // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
+	    // 나중에 테마에서 시리즈로 다시 분기되는게 아니라 커포넌트 네임인 rightYAxis로 따로 받도록 테마 구조를 변경하자.
+	    if (chartType === 'combo') {
+	        if (axisParam.isYAxis) {
+	            axisParam.theme = axisParam.theme[axisParam.seriesTypes[0]];
+	        } else if (name === 'rightYAxis') {
+	            axisParam.componentType = 'yAxis';
+	            axisParam.theme = axisParam.theme[axisParam.seriesTypes[1]];
+	            axisParam.index = 1;
+	        }
+	    // 왜 싱글타입의  yAxis도 내부에 차트이름으로 한번더 분기가 되는 지는 모르겠다 일관성이 없는 느낌, 추가 개선요소
+	    } else if (axisParam.isYAxis) {
+	        axisParam.theme = axisParam.theme[chartType];
+	    // 싱글에 xAxis인 경우
+	    } else {
+	        axisParam.theme = axisParam.theme;
+	    }
+
+	    return new Axis(axisParam);
+	}
+
+	axisFactory.componentType = 'axis';
+	axisFactory.Axis = Axis;
+
+	module.exports = axisFactory;
 
 
 /***/ },
@@ -6537,7 +6583,28 @@
 	    }
 	});
 
-	module.exports = Plot;
+	/**
+	 * Factory for Plot
+	 * @param {object} param parameter
+	 * @returns {object}
+	 */
+	function plotFactory(param) {
+	    var chartType = param.chartOptions.chartType;
+	    var seriesTypes = param.seriesTypes;
+	    var xAxisType = param.chartOptions.xAxis.type;
+
+	    // bar, chart, line, area동일
+	    param.chartType = chartType;
+	    param.chartTypes = seriesTypes;
+	    param.xAxisTypeOption = xAxisType;
+
+	    return new Plot(param);
+	}
+
+	plotFactory.componentType = 'plot';
+	plotFactory.Plot = Plot;
+
+	module.exports = plotFactory;
 
 
 /***/ },
@@ -6582,13 +6649,13 @@
 	         * Relative offset position
 	         * @type {object}
 	         */
-	        this.offset = params.options.offset;
+	        this.offset = params.offset;
 
 	        /**
 	         * Graph renderer
 	         * @type {object}
 	         */
-	        this.graphRenderer = pluginFactory.get(params.options.libType, 'title');
+	        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'title');
 
 	        /**
 	         * Drawing type
@@ -6634,7 +6701,29 @@
 	    }
 	});
 
-	module.exports = Title;
+	/**
+	 * Factory for Title
+	 * @param {object} param parameter
+	 * @returns {object|null}
+	 */
+	function titleFactory(param) {
+	    var options = param.chartOptions.chart || {title: {}};
+	    var title = null;
+
+	    if (options.title.text) {
+	        param.text = options.title.text;
+	        param.offset = options.title.offset;
+
+	        title = new Title(param);
+	    }
+
+	    return title;
+	}
+
+	titleFactory.componentType = 'title';
+	titleFactory.Title = Title;
+
+	module.exports = titleFactory;
 
 
 /***/ },
@@ -6923,7 +7012,14 @@
 	    return points;
 	}
 
-	module.exports = RadialPlot;
+	function RadialPlotFactory(param) {
+	    return new RadialPlot(param);
+	}
+
+	RadialPlotFactory.componentType = 'plot';
+	RadialPlotFactory.RadialPlot = RadialPlot;
+
+	module.exports = RadialPlotFactory;
 
 
 /***/ },
@@ -7262,7 +7358,25 @@
 	});
 
 
-	module.exports = ChartExportMenu;
+	/**
+	 * Factory for ChartExportMenu
+	 * @param {object} params parameter
+	 * @returns {object|null}
+	 */
+	function chartExportMenuFactory(params) {
+	    var isVisible = params.options.visible;
+	    var chartExportMenu = null;
+
+	    if (isVisible) {
+	        chartExportMenu = new ChartExportMenu(params);
+	    }
+
+	    return chartExportMenu;
+	}
+
+	chartExportMenuFactory.componentType = 'chartExportMenu';
+
+	module.exports = chartExportMenuFactory;
 
 
 /***/ },
@@ -8891,7 +9005,32 @@
 
 	tui.util.CustomEvents.mixin(Legend);
 
-	module.exports = Legend;
+	/**
+	 * Factory for Legend
+	 * @param {object} params parameter
+	 * @returns {object|null}
+	 */
+	function legendFactory(params) {
+	    var isLegendVisible = tui.util.isUndefined(params.options.visible) ? true : params.options.visible;
+	    var seriesTypes = params.dataProcessor.seriesTypes;
+	    var chartType = params.chartOptions.chartType;
+	    var legend = null;
+
+	    if (isLegendVisible) {
+	        params.seriesTypes = seriesTypes;
+	        params.chartType = chartType;
+
+	        // TODO axisTypeMixer에서 addComponents에서 추가된 additionalParams가 extends되야됨 우선 생략 그내용이 뭔지 파악해서 여기서 그옵션을 넣어야함
+	        legend = new Legend(params);
+	    }
+
+	    return legend;
+	}
+
+	legendFactory.componentType = 'legend';
+	legendFactory.Legend = Legend;
+
+	module.exports = legendFactory;
 
 
 /***/ },
@@ -9492,7 +9631,29 @@
 	    }
 	});
 
-	module.exports = SpectrumLegend;
+	/**
+	 * Factory for SpectrumLegend
+	 * @param {object} params parameter
+	 * @returns {object|null}
+	 */
+	function spectrumLegendFactory(params) {
+	    var isLegendVisible = tui.util.isUndefined(params.options.visible) ? true : params.options.visible;
+	    var chartType = params.chartOptions.chartType;
+	    var spectrumLegend = null;
+
+	    if (isLegendVisible) {
+	        params.chartType = chartType;
+
+	        spectrumLegend = new SpectrumLegend(params);
+	    }
+
+	    return spectrumLegend;
+	}
+
+	spectrumLegendFactory.componentType = 'legend';
+	spectrumLegendFactory.SpectrumLegend = SpectrumLegend;
+
+	module.exports = spectrumLegendFactory;
 
 
 /***/ },
@@ -9664,7 +9825,38 @@
 	    }
 	});
 
-	module.exports = CircleLegend;
+	/**
+	 * Factory for CircleLegend
+	 * @param {object} params parameter
+	 * @returns {object|null}
+	 */
+	function circleLegendFactory(params) {
+	    var chartType = params.chartOptions.chartType;
+	    var chartTheme = params.chartTheme;
+	    var visibleOption = tui.util.pick(params.chartOptions, 'circleLegend', 'visible');
+	    var circleLegend = null;
+	    var isLegendVisible;
+
+	    if (tui.util.isUndefined(visibleOption)) {
+	        isLegendVisible = true;
+	    } else {
+	        isLegendVisible = visibleOption;
+	    }
+
+	    if (isLegendVisible) {
+	        params.chartType = chartType;
+	        params.baseFontFamily = chartTheme.chart.fontFamily;
+
+	        circleLegend = new CircleLegend(params);
+	    }
+
+	    return circleLegend;
+	}
+
+	circleLegendFactory.componentType = 'legend';
+	circleLegendFactory.CircleLegend = CircleLegend;
+
+	module.exports = circleLegendFactory;
 
 
 /***/ },
@@ -9672,29 +9864,112 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Tooltip component.
+	 * @fileoverview NormalTooltip component.
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
 	 */
 
 	'use strict';
 
-	var TooltipBase = __webpack_require__(37);
-	var singleTooltipMixer = __webpack_require__(38);
+	var normalTooltipFactory = __webpack_require__(37);
+	var groupTooltipFactory = __webpack_require__(42);
+	var mapChartTooltipFactory = __webpack_require__(44);
+	var predicate = __webpack_require__(5);
+
+	/**
+	 * Label formatter function for pie chart
+	 * @param {object} seriesItem series item
+	 * @param {object} tooltipDatum tooltip datum object
+	 * @param {string} labelPrefix label prefix
+	 * @returns {object}
+	 */
+	function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
+	    var ratioLabel;
+	    var percentageString = (seriesItem.ratio * 100).toFixed(4);
+	    var percent = parseFloat(percentageString);
+	    var needSlice = (percent < 0.0009 || percentageString.length > 5);
+
+	    percentageString = needSlice ? percentageString.substr(0, 4) : String(percent);
+	    ratioLabel = percentageString + '&nbsp;%&nbsp;' || '';
+
+	    tooltipDatum.ratioLabel = labelPrefix + ratioLabel;
+	    tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? seriesItem.label : '');
+
+	    return tooltipDatum;
+	}
+
+	/**
+	 * Factory for Tooltip
+	 * @param {object} params parameter
+	 * @returns {object|null}
+	 */
+	function tooltipFactory(params) {
+	    var chartType = params.chartOptions.chartType;
+	    var seriesTypes = params.seriesTypes;
+	    var xAxisOptions = params.chartOptions.xAxis;
+	    var colors = [];
+	    var factory;
+
+	    tui.util.forEach(tui.util.filter(params.chartTheme.legend, function(item) {
+	        return tui.util.isArray(item.colors);
+	    }), function(series) {
+	        colors = colors.concat(series.colors);
+	    });
+
+	    if (chartType === 'map') {
+	        factory = mapChartTooltipFactory;
+	    } else if (params.options.grouped) {
+	        factory = groupTooltipFactory;
+	    } else {
+	        factory = normalTooltipFactory;
+	    }
+
+	    if (chartType === 'pie' || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
+	        params.labelFormatter = pieTooltipLabelFormatter;
+	    }
+
+	    params.chartType = chartType;
+	    params.chartTypes = seriesTypes;
+	    params.xAxisType = xAxisOptions.type;
+	    params.dateFormat = xAxisOptions.dateFormat;
+	    params.colors = colors;
+
+	    return factory(params);
+	}
+
+	tooltipFactory.componentType = 'tooltip';
+
+	module.exports = tooltipFactory;
+
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview NormalTooltip component.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var TooltipBase = __webpack_require__(38);
+	var singleTooltipMixer = __webpack_require__(39);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var renderUtil = __webpack_require__(30);
-	var tooltipTemplate = __webpack_require__(39);
+	var tooltipTemplate = __webpack_require__(40);
 
 	/**
-	 * @classdesc Tooltip component.
-	 * @class Tooltip
+	 * @classdesc NormalTooltip component.
+	 * @class NormalTooltip
 	 * @private
 	 */
-	var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
+	var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.prototype */ {
 	    /**
-	     * Tooltip component.
-	     * @constructs Tooltip
+	     * NormalTooltip component.
+	     * @constructs NormalTooltip
 	     * @private
 	     * @override
 	     */
@@ -9813,7 +10088,7 @@
 	    _makeTooltipDatum: function(legendLabel, category, seriesItem) {
 	        var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
 	        var tooltipLabel = seriesItem.tooltipLabel;
-	        var labelFormatter = this.tooltipOptions && this.tooltipOptions.labelFormatter;
+	        var labelFormatter = this.labelFormatter;
 	        var tooltipDatum = {
 	            legend: (legendLabel || '')
 	        };
@@ -9838,7 +10113,7 @@
 	     * @returns {Array.<object>} tooltip data
 	     * @override
 	     */
-	    _makeTooltipData: function() {
+	    makeTooltipData: function() {
 	        var self = this;
 	        var orgLegendLabels = this.dataProcessor.getLegendLabels();
 	        var isPivot = predicate.isTreemapChart(this.chartType);
@@ -9873,12 +10148,20 @@
 	    }
 	});
 
-	singleTooltipMixer.mixin(Tooltip);
-	module.exports = Tooltip;
+	singleTooltipMixer.mixin(NormalTooltip);
+
+	function normalTooltipFactory(params) {
+	    return new NormalTooltip(params);
+	}
+
+	normalTooltipFactory.componentType = 'tooltip';
+	normalTooltipFactory.NormalTooltip = NormalTooltip;
+
+	module.exports = normalTooltipFactory;
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9910,7 +10193,7 @@
 	     *      @param {object} params.labelTheme - theme for label
 	     *      @param {string} params.xAxisType - xAxis type
 	     *      @param {string} params.dateFormat - date format
-	     *      @param {object} params.tooltipOptions - label formatter function
+	     *      @param {object} params.labelFormatter - label formatter function
 	     */
 	    init: function(params) {
 	        var isPieChart = predicate.isPieChart(params.chartType);
@@ -9980,7 +10263,7 @@
 	         * tooltip options for each chart
 	         * @type {?function}
 	         */
-	        this.tooltipOptions = params.tooltipOptions;
+	        this.labelFormatter = params.labelFormatter;
 
 	        /**
 	         * className
@@ -10096,7 +10379,7 @@
 	     * @private
 	     * @abstract
 	     */
-	    _makeTooltipData: function() {},
+	    makeTooltipData: function() {},
 
 	    /**
 	     * Set data for rendering.
@@ -10126,7 +10409,7 @@
 	        dom.addClass(el, this.className);
 
 	        this._setDataForRendering(data);
-	        this.data = this._makeTooltipData();
+	        this.data = this.makeTooltipData();
 
 	        renderUtil.renderPosition(el, this.layout.position);
 
@@ -10141,7 +10424,7 @@
 	     */
 	    rerender: function(data) {
 	        this.resize(data);
-	        this.data = this._makeTooltipData();
+	        this.data = this.makeTooltipData();
 	    },
 
 	    /**
@@ -10162,7 +10445,7 @@
 	     * Zoom.
 	     */
 	    zoom: function() {
-	        this.data = this._makeTooltipData();
+	        this.data = this.makeTooltipData();
 	    },
 
 	    /**
@@ -10346,7 +10629,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10860,7 +11143,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10871,7 +11154,7 @@
 
 	'use strict';
 
-	var templateMaker = __webpack_require__(40);
+	var templateMaker = __webpack_require__(41);
 
 	var htmls = {
 	    HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
@@ -10924,7 +11207,7 @@
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	/**
@@ -10962,7 +11245,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10973,13 +11256,13 @@
 
 	'use strict';
 
-	var TooltipBase = __webpack_require__(37);
-	var GroupTooltipPositionModel = __webpack_require__(42);
+	var TooltipBase = __webpack_require__(38);
+	var GroupTooltipPositionModel = __webpack_require__(43);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var renderUtil = __webpack_require__(30);
 	var defaultTheme = __webpack_require__(9);
-	var tooltipTemplate = __webpack_require__(39);
+	var tooltipTemplate = __webpack_require__(40);
 
 	/**
 	 * @classdesc GroupTooltip component.
@@ -11107,7 +11390,7 @@
 	     * @returns {Array.<object>} tooltip data
 	     * @override
 	     */
-	    _makeTooltipData: function() {
+	    makeTooltipData: function() {
 	        var self = this;
 
 	        return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
@@ -11399,11 +11682,18 @@
 	    }
 	});
 
-	module.exports = GroupTooltip;
+	function groupTooltipFactory(params) {
+	    return new GroupTooltip(params);
+	}
+
+	groupTooltipFactory.componentType = 'tooltip';
+	groupTooltipFactory.GroupTooltip = GroupTooltip;
+
+	module.exports = groupTooltipFactory;
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11882,7 +12172,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11894,9 +12184,9 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2),
-	    TooltipBase = __webpack_require__(37),
-	    singleTooltipMixer = __webpack_require__(38),
-	    tooltipTemplate = __webpack_require__(39);
+	    TooltipBase = __webpack_require__(38),
+	    singleTooltipMixer = __webpack_require__(39),
+	    tooltipTemplate = __webpack_require__(40);
 
 	/**
 	 * @classdesc MapChartTooltip component.
@@ -11984,193 +12274,212 @@
 	});
 
 	singleTooltipMixer.mixin(MapChartTooltip);
-	module.exports = MapChartTooltip;
+
+	function mapChartTooltipFactory(params) {
+	    return new MapChartTooltip(params);
+	}
+
+	mapChartTooltipFactory.componentType = 'tooltip';
+
+	module.exports = mapChartTooltipFactory;
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview AreaTypeEventDetector is mouse event detector for line type chart.
+	 * @fileoverview MapChartEventDetector is mouse event detector for map chart.
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
 	 */
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(45);
-	var zoomMixer = __webpack_require__(48);
-	var AreaTypeDataModel = __webpack_require__(49);
+	var MouseEventDetectorBase = __webpack_require__(46);
+	var chartConst = __webpack_require__(2);
+	var eventListener = __webpack_require__(29);
+	var dom = __webpack_require__(14);
+	var renderUtil = __webpack_require__(30);
 
-	var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
-
-	var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends AreaTypeEventDetector.prototype */ {
+	var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
 	    /**
-	     * AreaTypeEventDetector is mouse event detector for line type chart.
+	     * MapChartEventDetector is mouse event detector for map chart.
 	     * @param {object} params parameters
-	     * @constructs AreaTypeEventDetector
+	     *      @param {string} params.chartType - chart type
+	     * @constructs MapChartEventDetector
 	     * @private
 	     * @extends MouseEventDetectorBase
 	     */
 	    init: function(params) {
-	        MouseEventDetectorBase.call(this, params);
-
 	        /**
-	         * previous found data
-	         * @type {null | object}
+	         * chart type
+	         * {string}
+	         *
 	         */
-	        this.prevFoundData = null;
+	        this.chartType = params.chartType;
 
 	        /**
-	         * whether zoomable or not
+	         * event bus for transmitting message
+	         * @type {object}
+	         */
+	        this.eventBus = params.eventBus;
+
+	        /**
+	         * whether mouse down or not
 	         * @type {boolean}
 	         */
-	        this.zoomable = params.zoomable;
+	        this.isDown = false;
 
-	        if (this.zoomable) {
-	            tui.util.extend(this, zoomMixer);
-	            this._initForZoom(params.zoomable);
-	        }
+	        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
 	    },
 
 	    /**
-	     * Create areaTypeDataModel from seriesItemBoundsData for mouse event detector.
-	     * @param {Array.<object>} seriesItemBoundsDatum - series item bounds datum
-	     * @override
+	     * Render event handle layer area
+	     * @param {HTMLElement} mouseEventDetectorContainer mouse event detector container element
+	     * @private
 	     */
-	    onReceiveSeriesData: function(seriesItemBoundsDatum) {
-	        var seriesItemBoundsData = this.seriesItemBoundsData;
-	        var seriesCount = this.seriesCount;
-
-	        if (seriesItemBoundsData.length === seriesCount) {
-	            seriesItemBoundsData = [];
-	        }
-
-	        seriesItemBoundsData.push(seriesItemBoundsDatum);
-
-	        if (seriesItemBoundsData.length === seriesCount) {
-	            this.dataModel = new AreaTypeDataModel(seriesItemBoundsData);
-	        }
-
-	        if (this.zoomable) {
-	            this._showTooltipAfterZoom();
-	        }
+	    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
+	        renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
+	        renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
 	    },
 
 	    /**
-	     * Find data by client position.
-	     * @param {number} clientX - clientX
-	     * @param {number} clientY - clientY
-	     * @returns {object}
+	     * On click.
 	     * @private
 	     * @override
 	     */
-	    _findData: function(clientX, clientY) {
-	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+	    _onClick: function() {},
 
-	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
+	    /**
+	     * Call 'dragStartMapSeries' event, when occur mouse down event.
+	     * @param {mouseevent} e mouse event
+	     * @private
+	     * @override
+	     */
+	    _onMousedown: function(e) {
+	        this.isDown = true;
+	        this.eventBus.fire('dragStartMapSeries', {
+	            left: e.clientX,
+	            top: e.clientY
+	        });
 	    },
 
 	    /**
-	     * Find data by client position for zoomable
-	     * @param {number} clientX - clientX
-	     * @param {number} clientY - clientY
-	     * @returns {object}
+	     * Drag end.
 	     * @private
 	     */
-	    _findDataForZoomable: function(clientX, clientY) {
-	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
-
-	        return this.dataModel.findData(layerPosition);
+	    _dragEnd: function() {
+	        this.isDrag = false;
+	        dom.removeClass(this.mouseEventDetectorContainer, 'drag');
+	        this.eventBus.fire('dragEndMapSeries');
 	    },
 
 	    /**
-	     * Get first model data.
-	     * @param {number} index - index
-	     * @returns {object}
+	     * If drag, call dragEnd function.
+	     * But if not drag, occur click event.
+	     * @param {mouseevent} e mouse event
 	     * @private
+	     * @override
 	     */
-	    _getFirstData: function(index) {
-	        return this.dataModel.getFirstData(index);
+	    _onMouseup: function(e) {
+	        this.isDown = false;
+
+	        if (this.isDrag) {
+	            this._dragEnd();
+	        } else {
+	            this._onMouseEvent('click', e);
+	        }
+
+	        this.isMove = false;
 	    },
 
 	    /**
-	     * Get last model data.
-	     * @param {number} index - index
-	     * @returns {object}
-	     * @private
-	     */
-	    _getLastData: function(index) {
-	        return this.dataModel.getLastData(index);
-	    },
-
-	    /**
-	     * Show tooltip.
-	     * @param {object} foundData - model data
-	     * @private
-	     */
-	    _showTooltip: function(foundData) {
-	        this.eventBus.fire('showTooltip', foundData);
-	    },
-
-	    /**
-	     * Hide tooltip.
-	     * @private
-	     */
-	    _hideTooltip: function() {
-	        this.eventBus.fire('hideTooltip', this.prevFoundData);
-	    },
-
-	    /**
-	     * On mousemove.
-	     * @param {MouseEvent} e - mouse event
+	     * If mouse downed, set drag mode.
+	     * But if not downed, set move mode.
+	     * @param {mouseevent} e mouse event
 	     * @private
 	     * @override
 	     */
 	    _onMousemove: function(e) {
-	        var dragMoseupResult, foundData;
-
-	        MouseEventDetectorBase.prototype._onMousemove.call(this, e);
-
-	        foundData = this._findData(e.clientX, e.clientY);
-
-	        if (this.zoomable) {
-	            dragMoseupResult = this._isAfterDragMouseup();
+	        if (this.isDown) {
+	            if (!this.isDrag) {
+	                dom.addClass(this.mouseEventDetectorContainer, 'drag');
+	            }
+	            this.isDrag = true;
+	            this.eventBus.fire('dragMapSeries', {
+	                left: e.clientX,
+	                top: e.clientY
+	            });
+	        } else {
+	            this.isMove = true;
+	            this._onMouseEvent('move', e);
 	        }
-
-	        if (dragMoseupResult || !this._isChangedSelectData(this.prevFoundData, foundData)) {
-	            return;
-	        }
-
-	        if (foundData) {
-	            this._showTooltip(foundData);
-	        } else if (this.prevFoundData) {
-	            this._hideTooltip();
-	        }
-
-	        this.prevFoundData = foundData;
 	    },
 
 	    /**
-	     * On mouseout.
+	     * If drag mode, call dragEnd.
+	     * But if not drag mode, occur move event.
 	     * @private
 	     * @override
 	     */
-	    _onMouseout: function() {
-	        if (this.prevFoundData) {
-	            this._hideTooltip();
+	    _onMouseout: function(e) {
+	        if (this.isDrag) {
+	            this._dragEnd();
+	        } else {
+	            this._onMouseEvent('move', e);
+	        }
+	        this.isDown = false;
+	    },
+
+	    /**
+	     * On mouse wheel.
+	     * @param {mouseevent} e mouse event
+	     * @returns {?boolean}
+	     * @private
+	     */
+	    _onMousewheel: function(e) {
+	        var wheelDelta = e.wheelDelta || e.detail * chartConst.FF_WHEELDELTA_ADJUSTING_VALUE;
+
+	        this.eventBus.fire('wheel', wheelDelta, {
+	            left: e.clientX,
+	            top: e.clientY
+	        });
+
+	        if (e.preventDefault) {
+	            e.preventDefault();
 	        }
 
-	        MouseEventDetectorBase.prototype._onMouseout.call(this);
+	        return false;
+	    },
+
+	    /**
+	     * Attach event.
+	     * @param {HTMLElement} target target element
+	     * @override
+	     */
+	    attachEvent: function(target) {
+	        MouseEventDetectorBase.prototype.attachEvent.call(this, target);
+
+	        if (tui.util.browser.firefox) {
+	            eventListener.on(target, 'DOMMouseScroll', this._onMousewheel, this);
+	        } else {
+	            eventListener.on(target, 'mousewheel', this._onMousewheel, this);
+	        }
 	    }
 	});
 
-	module.exports = AreaTypeEventDetector;
+	function mapChartEventDetectorFactory(params) {
+	    return new MapChartEventDetector(params);
+	}
+
+	mapChartEventDetectorFactory.componentType = 'mouseEventDetector';
+
+	module.exports = mapChartEventDetectorFactory;
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12181,8 +12490,8 @@
 
 	'use strict';
 
-	var TickBaseCoordinateModel = __webpack_require__(46);
-	var BoundsBaseCoordinateModel = __webpack_require__(47);
+	var TickBaseCoordinateModel = __webpack_require__(47);
+	var BoundsBaseCoordinateModel = __webpack_require__(48);
 	var chartConst = __webpack_require__(2);
 	var eventListener = __webpack_require__(29);
 	var predicate = __webpack_require__(5);
@@ -12635,7 +12944,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12826,7 +13135,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13074,7 +13383,256 @@
 
 
 /***/ },
-/* 48 */
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var predicate = __webpack_require__(5);
+	var areaTypeEventDetectorFactory = __webpack_require__(50);
+	var simpleEventDetectorFactory = __webpack_require__(53);
+	var groupTypeEventDetectorFactory = __webpack_require__(54);
+	var boundsTypeEventDetectorFactory = __webpack_require__(55);
+	var mapChartEventDetectorFactory = __webpack_require__(45);
+
+	/**
+	 * Factory for MouseEventDetector
+	 * @param {object} params parameter
+	 * @returns {object}
+	 */
+	function mouseEventDetectorFactory(params) {
+	    var chartType = params.chartOptions.chartType;
+	    var seriesTypes = params.seriesTypes;
+	    var zoomable = params.chartOptions.series.zoomable;
+	    var seriesAllowSelect = params.chartOptions.series.allowSelect;
+	    var factory;
+
+	    if (params.chartOptions.tooltip.grouped) {
+	        factory = groupTypeEventDetectorFactory;
+	    } else if (predicate.isMapChart(chartType)) {
+	        factory = mapChartEventDetectorFactory;
+	    } else if (predicate.isBarTypeChart(chartType)
+	               || predicate.isHeatmapChart(chartType)
+	               || predicate.isTreemapChart(chartType)
+	              ) {
+	        factory = boundsTypeEventDetectorFactory;
+	    } else if (predicate.isCoordinateTypeChart(chartType)
+	               || predicate.isPieChart(chartType)
+	               || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
+	        factory = simpleEventDetectorFactory;
+	    } else {
+	        factory = areaTypeEventDetectorFactory;
+	    }
+
+	    params.chartType = chartType;
+	    // TODO chartType이나 chartTypes없이 모두 seriesTypes만 보도록 변경해야한다.컴포넌트 전체의 문제임
+	    params.chartTypes = seriesTypes;
+	    params.zoomable = zoomable;
+	    params.allowSelect = seriesAllowSelect;
+
+	    return factory(params);
+	}
+
+	mouseEventDetectorFactory.componentType = 'mouseEventDetector';
+
+	module.exports = mouseEventDetectorFactory;
+
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview AreaTypeEventDetector is mouse event detector for line type chart.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var MouseEventDetectorBase = __webpack_require__(46);
+	var zoomMixer = __webpack_require__(51);
+	var AreaTypeDataModel = __webpack_require__(52);
+
+	var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
+
+	var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends AreaTypeEventDetector.prototype */ {
+	    /**
+	     * AreaTypeEventDetector is mouse event detector for line type chart.
+	     * @param {object} params parameters
+	     * @constructs AreaTypeEventDetector
+	     * @private
+	     * @extends MouseEventDetectorBase
+	     */
+	    init: function(params) {
+	        MouseEventDetectorBase.call(this, params);
+
+	        /**
+	         * previous found data
+	         * @type {null | object}
+	         */
+	        this.prevFoundData = null;
+
+	        /**
+	         * whether zoomable or not
+	         * @type {boolean}
+	         */
+	        this.zoomable = params.zoomable;
+
+	        if (this.zoomable) {
+	            tui.util.extend(this, zoomMixer);
+	            this._initForZoom(params.zoomable);
+	        }
+	    },
+
+	    /**
+	     * Create areaTypeDataModel from seriesItemBoundsData for mouse event detector.
+	     * @param {Array.<object>} seriesItemBoundsDatum - series item bounds datum
+	     * @override
+	     */
+	    onReceiveSeriesData: function(seriesItemBoundsDatum) {
+	        var seriesItemBoundsData = this.seriesItemBoundsData;
+	        var seriesCount = this.seriesCount;
+
+	        if (seriesItemBoundsData.length === seriesCount) {
+	            seriesItemBoundsData = [];
+	        }
+
+	        seriesItemBoundsData.push(seriesItemBoundsDatum);
+
+	        if (seriesItemBoundsData.length === seriesCount) {
+	            this.dataModel = new AreaTypeDataModel(seriesItemBoundsData);
+	        }
+
+	        if (this.zoomable) {
+	            this._showTooltipAfterZoom();
+	        }
+	    },
+
+	    /**
+	     * Find data by client position.
+	     * @param {number} clientX - clientX
+	     * @param {number} clientY - clientY
+	     * @returns {object}
+	     * @private
+	     * @override
+	     */
+	    _findData: function(clientX, clientY) {
+	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+
+	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
+	    },
+
+	    /**
+	     * Find data by client position for zoomable
+	     * @param {number} clientX - clientX
+	     * @param {number} clientY - clientY
+	     * @returns {object}
+	     * @private
+	     */
+	    _findDataForZoomable: function(clientX, clientY) {
+	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+
+	        return this.dataModel.findData(layerPosition);
+	    },
+
+	    /**
+	     * Get first model data.
+	     * @param {number} index - index
+	     * @returns {object}
+	     * @private
+	     */
+	    _getFirstData: function(index) {
+	        return this.dataModel.getFirstData(index);
+	    },
+
+	    /**
+	     * Get last model data.
+	     * @param {number} index - index
+	     * @returns {object}
+	     * @private
+	     */
+	    _getLastData: function(index) {
+	        return this.dataModel.getLastData(index);
+	    },
+
+	    /**
+	     * Show tooltip.
+	     * @param {object} foundData - model data
+	     * @private
+	     */
+	    _showTooltip: function(foundData) {
+	        this.eventBus.fire('showTooltip', foundData);
+	    },
+
+	    /**
+	     * Hide tooltip.
+	     * @private
+	     */
+	    _hideTooltip: function() {
+	        this.eventBus.fire('hideTooltip', this.prevFoundData);
+	    },
+
+	    /**
+	     * On mousemove.
+	     * @param {MouseEvent} e - mouse event
+	     * @private
+	     * @override
+	     */
+	    _onMousemove: function(e) {
+	        var dragMoseupResult, foundData;
+
+	        MouseEventDetectorBase.prototype._onMousemove.call(this, e);
+
+	        foundData = this._findData(e.clientX, e.clientY);
+
+	        if (this.zoomable) {
+	            dragMoseupResult = this._isAfterDragMouseup();
+	        }
+
+	        if (dragMoseupResult || !this._isChangedSelectData(this.prevFoundData, foundData)) {
+	            return;
+	        }
+
+	        if (foundData) {
+	            this._showTooltip(foundData);
+	        } else if (this.prevFoundData) {
+	            this._hideTooltip();
+	        }
+
+	        this.prevFoundData = foundData;
+	    },
+
+	    /**
+	     * On mouseout.
+	     * @private
+	     * @override
+	     */
+	    _onMouseout: function() {
+	        if (this.prevFoundData) {
+	            this._hideTooltip();
+	        }
+
+	        MouseEventDetectorBase.prototype._onMouseout.call(this);
+	    }
+	});
+
+	function areaTypeEventDetectorFactory(params) {
+	    return new AreaTypeEventDetector(params);
+	}
+
+	areaTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+	module.exports = areaTypeEventDetectorFactory;
+
+
+/***/ },
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13085,7 +13643,7 @@
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(45);
+	var MouseEventDetectorBase = __webpack_require__(46);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var renderUtil = __webpack_require__(30);
@@ -13494,7 +14052,7 @@
 
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13649,7 +14207,326 @@
 
 
 /***/ },
-/* 50 */
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview SimpleEventDetector is event handle layer for simply sending clientX, clientY.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(2);
+	var MouseEventDetectorBase = __webpack_require__(46);
+	var renderUtil = __webpack_require__(30);
+
+	var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
+	    /**
+	     * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
+	     * @constructs SimpleEventDetector
+	     * @private
+	     * @param {object} params parameters
+	     *      @param {string} params.chartType - chart type
+	     * @extends MouseEventDetectorBase
+	     */
+	    init: function(params) {
+	        /**
+	         * chart type
+	         * @type {string}
+	         */
+	        this.chartType = params.chartType;
+
+	        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
+
+	        /**
+	         * event bus for transmitting message
+	         * @type {object}
+	         */
+	        this.eventBus = params.eventBus;
+	    },
+
+	    /**
+	     * Render mouse event detector area
+	     * @param {HTMLElement} mouseEventDetectorContainer - container element for mouse event detector
+	     * @private
+	     */
+	    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
+	        renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
+	        renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
+	    },
+
+	    /**
+	     * Initialize data of mouse event detector
+	     * @override
+	     */
+	    onReceiveSeriesData: function() {},
+
+	    /**
+	     * On click.
+	     * @param {MouseEvent} e - mouse event
+	     * @private
+	     * @override
+	     */
+	    _onClick: function(e) {
+	        this._onMouseEvent('click', e);
+	    },
+
+	    /**
+	     * On mouse move.
+	     * @param {MouseEvent} e - mouse event
+	     * @private
+	     * @override
+	     */
+	    _onMousemove: function(e) {
+	        this._onMouseEvent('move', e);
+	    },
+
+	    /**
+	     * On mouse out.
+	     * @param {MouseEvent} e - mouse event
+	     * @private
+	     * @override
+	     */
+	    _onMouseout: function(e) {
+	        this._onMouseEvent('move', e);
+	    }
+	});
+
+	function simpleTypeEventDetectorFactory(params) {
+	    return new SimpleEventDetector(params);
+	}
+
+	simpleTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+	module.exports = simpleTypeEventDetectorFactory;
+
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview GroupTypeEventDetector is mouse event detector for grouped tooltip.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(2);
+	var EventDetectorBase = __webpack_require__(46);
+	var zoomMixer = __webpack_require__(51);
+
+	var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
+	    /**
+	     * GroupTypeEventDetector is mouse event detector for grouped tooltip.
+	     * @param {object} params parameters
+	     * @constructs GroupTypeEventDetector
+	     * @private
+	     * @extends EventDetectorBase
+	     */
+	    init: function(params) {
+	        EventDetectorBase.call(this, params);
+
+	        /**
+	         * previous index of group data
+	         * @type {null}
+	         */
+	        this.prevIndex = null;
+
+	        /**
+	         * whether zoomable or not
+	         * @type {boolean}
+	         */
+	        this.zoomable = params.zoomable;
+
+	        /**
+	         * type of size
+	         * @type {string}
+	         */
+	        this.sizeType = this.isVertical ? 'height' : 'width';
+
+	        if (this.zoomable) {
+	            tui.util.extend(this, zoomMixer);
+	            this._initForZoom(params.zoomable);
+	        }
+	    },
+
+	    /**
+	     * Initialize data of mouse event detector
+	     * @param {Array.<object>} seriesInfos series infos
+	     * @override
+	     */
+	    initMouseEventDetectorData: function(seriesInfos) {
+	        EventDetectorBase.prototype.initMouseEventDetectorData.call(this, seriesInfos);
+
+	        if (this.zoomable) {
+	            this._showTooltipAfterZoom();
+	        }
+	    },
+
+	    /**
+	     * Find data by client position.
+	     * @param {number} clientX - clientX
+	     * @param {number} clientY - clientY
+	     * @returns {object}
+	     * @private
+	     */
+	    _findGroupData: function(clientX, clientY) {
+	        var layerPosition = this._calculateLayerPosition(clientX, clientY, true);
+	        var pointValue;
+
+	        if (this.isVertical) {
+	            pointValue = layerPosition.x;
+	        } else {
+	            pointValue = layerPosition.y;
+	        }
+
+	        return {
+	            indexes: {
+	                groupIndex: this.tickBaseCoordinateModel.findIndex(pointValue)
+	            }
+	        };
+	    },
+
+	    /**
+	     * Find data by client position for zoomable
+	     * @param {number} clientX - clientX
+	     * @param {number} clientY - clientY
+	     * @returns {object}
+	     * @private
+	     */
+	    _findDataForZoomable: function(clientX, clientY) {
+	        return this._findGroupData(clientX, clientY);
+	    },
+
+	    /**
+	     * Get first data.
+	     * @returns {{indexes: {groupIndex: number}}} - data
+	     * @private
+	     */
+	    _getFirstData: function() {
+	        return {
+	            indexes: {
+	                groupIndex: 0
+	            }
+	        };
+	    },
+
+	    /**
+	     * Get last data.
+	     * @returns {{indexes: {groupIndex: number}}} - data
+	     * @private
+	     */
+	    _getLastData: function() {
+	        return {
+	            indexes: {
+	                groupIndex: this.tickBaseCoordinateModel.getLastIndex()
+	            }
+	        };
+	    },
+
+	    /**
+	     * Whether outer position or not.
+	     * @param {number} layerX layerX
+	     * @param {number} layerY layerY
+	     * @returns {boolean} result boolean
+	     * @private
+	     */
+	    _isOuterPosition: function(layerX, layerY) {
+	        var dimension = this.dimension;
+
+	        return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
+	    },
+
+	    /**
+	     * Show tooltip.
+	     * @param {{indexes: {groupIndex: number}}} foundData - data
+	     * @param {boolean} [isMoving] - whether moving or not
+	     * @private
+	     */
+	    _showTooltip: function(foundData, isMoving) {
+	        var index = foundData.indexes.groupIndex;
+	        var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top)
+	            - chartConst.CHART_PADDING;
+
+	        this.prevIndex = index;
+	        this.eventBus.fire('showTooltip', {
+	            index: index,
+	            range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
+	            size: this.dimension[this.sizeType],
+	            isVertical: this.isVertical,
+	            isMoving: isMoving
+	        });
+	    },
+
+	    /**
+	     * Hide tooltip
+	     * @private
+	     */
+	    _hideTooltip: function() {
+	        this.eventBus.fire('hideTooltip', this.prevIndex);
+	        this.prevIndex = null;
+	    },
+
+	    /**
+	     * If found position data by client position, show tooltip.
+	     * And if not found, call onMouseout function.
+	     * @param {MouseEvent} e mouse event object
+	     * @private
+	     * @override
+	     */
+	    _onMousemove: function(e) {
+	        var foundData, index;
+
+	        EventDetectorBase.prototype._onMousemove.call(this, e);
+
+	        if (this.zoomable && this._isAfterDragMouseup()) {
+	            return;
+	        }
+
+	        foundData = this._findGroupData(e.clientX, e.clientY);
+
+	        index = foundData.indexes.groupIndex;
+
+	        if (index === -1) {
+	            this._onMouseout(e);
+	        } else if (this.prevIndex !== index) {
+	            this._showTooltip(foundData);
+	        }
+	    },
+
+	    /**
+	     * If mouse position gets out mouse event detector area, hide tooltip.
+	     * @override
+	     */
+	    _onMouseout: function(e) {
+	        var layerPosition;
+
+	        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
+
+	        if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
+	            this._hideTooltip();
+	        }
+
+	        EventDetectorBase.prototype._onMouseout.call(this);
+	    }
+	});
+
+
+	function groupTypeEventDetectorFactory(params) {
+	    return new GroupTypeEventDetector(params);
+	}
+
+	groupTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+	module.exports = groupTypeEventDetectorFactory;
+
+
+/***/ },
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13661,7 +14538,7 @@
 
 	'use strict';
 
-	var EventDetectorBase = __webpack_require__(45);
+	var EventDetectorBase = __webpack_require__(46);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var dom = __webpack_require__(14);
@@ -13867,505 +14744,17 @@
 	    }
 	});
 
-	module.exports = BoundsTypeEventDetector;
+	function boundsTypeEventDetectorFactory(params) {
+	    return new BoundsTypeEventDetector(params);
+	}
+
+	boundsTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+	module.exports = boundsTypeEventDetectorFactory;
 
 
 /***/ },
-/* 51 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview GroupTypeEventDetector is mouse event detector for grouped tooltip.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(2);
-	var EventDetectorBase = __webpack_require__(45);
-	var zoomMixer = __webpack_require__(48);
-
-	var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
-	    /**
-	     * GroupTypeEventDetector is mouse event detector for grouped tooltip.
-	     * @param {object} params parameters
-	     * @constructs GroupTypeEventDetector
-	     * @private
-	     * @extends EventDetectorBase
-	     */
-	    init: function(params) {
-	        EventDetectorBase.call(this, params);
-
-	        /**
-	         * previous index of group data
-	         * @type {null}
-	         */
-	        this.prevIndex = null;
-
-	        /**
-	         * whether zoomable or not
-	         * @type {boolean}
-	         */
-	        this.zoomable = params.zoomable;
-
-	        /**
-	         * type of size
-	         * @type {string}
-	         */
-	        this.sizeType = this.isVertical ? 'height' : 'width';
-
-	        if (this.zoomable) {
-	            tui.util.extend(this, zoomMixer);
-	            this._initForZoom(params.zoomable);
-	        }
-	    },
-
-	    /**
-	     * Initialize data of mouse event detector
-	     * @param {Array.<object>} seriesInfos series infos
-	     * @override
-	     */
-	    initMouseEventDetectorData: function(seriesInfos) {
-	        EventDetectorBase.prototype.initMouseEventDetectorData.call(this, seriesInfos);
-
-	        if (this.zoomable) {
-	            this._showTooltipAfterZoom();
-	        }
-	    },
-
-	    /**
-	     * Find data by client position.
-	     * @param {number} clientX - clientX
-	     * @param {number} clientY - clientY
-	     * @returns {object}
-	     * @private
-	     */
-	    _findGroupData: function(clientX, clientY) {
-	        var layerPosition = this._calculateLayerPosition(clientX, clientY, true);
-	        var pointValue;
-
-	        if (this.isVertical) {
-	            pointValue = layerPosition.x;
-	        } else {
-	            pointValue = layerPosition.y;
-	        }
-
-	        return {
-	            indexes: {
-	                groupIndex: this.tickBaseCoordinateModel.findIndex(pointValue)
-	            }
-	        };
-	    },
-
-	    /**
-	     * Find data by client position for zoomable
-	     * @param {number} clientX - clientX
-	     * @param {number} clientY - clientY
-	     * @returns {object}
-	     * @private
-	     */
-	    _findDataForZoomable: function(clientX, clientY) {
-	        return this._findGroupData(clientX, clientY);
-	    },
-
-	    /**
-	     * Get first data.
-	     * @returns {{indexes: {groupIndex: number}}} - data
-	     * @private
-	     */
-	    _getFirstData: function() {
-	        return {
-	            indexes: {
-	                groupIndex: 0
-	            }
-	        };
-	    },
-
-	    /**
-	     * Get last data.
-	     * @returns {{indexes: {groupIndex: number}}} - data
-	     * @private
-	     */
-	    _getLastData: function() {
-	        return {
-	            indexes: {
-	                groupIndex: this.tickBaseCoordinateModel.getLastIndex()
-	            }
-	        };
-	    },
-
-	    /**
-	     * Whether outer position or not.
-	     * @param {number} layerX layerX
-	     * @param {number} layerY layerY
-	     * @returns {boolean} result boolean
-	     * @private
-	     */
-	    _isOuterPosition: function(layerX, layerY) {
-	        var dimension = this.dimension;
-
-	        return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
-	    },
-
-	    /**
-	     * Show tooltip.
-	     * @param {{indexes: {groupIndex: number}}} foundData - data
-	     * @param {boolean} [isMoving] - whether moving or not
-	     * @private
-	     */
-	    _showTooltip: function(foundData, isMoving) {
-	        var index = foundData.indexes.groupIndex;
-	        var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top)
-	            - chartConst.CHART_PADDING;
-
-	        this.prevIndex = index;
-	        this.eventBus.fire('showTooltip', {
-	            index: index,
-	            range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
-	            size: this.dimension[this.sizeType],
-	            isVertical: this.isVertical,
-	            isMoving: isMoving
-	        });
-	    },
-
-	    /**
-	     * Hide tooltip
-	     * @private
-	     */
-	    _hideTooltip: function() {
-	        this.eventBus.fire('hideTooltip', this.prevIndex);
-	        this.prevIndex = null;
-	    },
-
-	    /**
-	     * If found position data by client position, show tooltip.
-	     * And if not found, call onMouseout function.
-	     * @param {MouseEvent} e mouse event object
-	     * @private
-	     * @override
-	     */
-	    _onMousemove: function(e) {
-	        var foundData, index;
-
-	        EventDetectorBase.prototype._onMousemove.call(this, e);
-
-	        if (this.zoomable && this._isAfterDragMouseup()) {
-	            return;
-	        }
-
-	        foundData = this._findGroupData(e.clientX, e.clientY);
-
-	        index = foundData.indexes.groupIndex;
-
-	        if (index === -1) {
-	            this._onMouseout(e);
-	        } else if (this.prevIndex !== index) {
-	            this._showTooltip(foundData);
-	        }
-	    },
-
-	    /**
-	     * If mouse position gets out mouse event detector area, hide tooltip.
-	     * @override
-	     */
-	    _onMouseout: function(e) {
-	        var layerPosition;
-
-	        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
-
-	        if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
-	            this._hideTooltip();
-	        }
-
-	        EventDetectorBase.prototype._onMouseout.call(this);
-	    }
-	});
-
-	module.exports = GroupTypeEventDetector;
-
-
-/***/ },
-/* 52 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview MapChartEventDetector is mouse event detector for map chart.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var MouseEventDetectorBase = __webpack_require__(45);
-	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(29);
-	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
-
-	var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
-	    /**
-	     * MapChartEventDetector is mouse event detector for map chart.
-	     * @param {object} params parameters
-	     *      @param {string} params.chartType - chart type
-	     * @constructs MapChartEventDetector
-	     * @private
-	     * @extends MouseEventDetectorBase
-	     */
-	    init: function(params) {
-	        /**
-	         * chart type
-	         * {string}
-	         *
-	         */
-	        this.chartType = params.chartType;
-
-	        /**
-	         * event bus for transmitting message
-	         * @type {object}
-	         */
-	        this.eventBus = params.eventBus;
-
-	        /**
-	         * whether mouse down or not
-	         * @type {boolean}
-	         */
-	        this.isDown = false;
-
-	        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
-	    },
-
-	    /**
-	     * Render event handle layer area
-	     * @param {HTMLElement} mouseEventDetectorContainer mouse event detector container element
-	     * @private
-	     */
-	    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
-	        renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
-	        renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
-	    },
-
-	    /**
-	     * On click.
-	     * @private
-	     * @override
-	     */
-	    _onClick: function() {},
-
-	    /**
-	     * Call 'dragStartMapSeries' event, when occur mouse down event.
-	     * @param {mouseevent} e mouse event
-	     * @private
-	     * @override
-	     */
-	    _onMousedown: function(e) {
-	        this.isDown = true;
-	        this.eventBus.fire('dragStartMapSeries', {
-	            left: e.clientX,
-	            top: e.clientY
-	        });
-	    },
-
-	    /**
-	     * Drag end.
-	     * @private
-	     */
-	    _dragEnd: function() {
-	        this.isDrag = false;
-	        dom.removeClass(this.mouseEventDetectorContainer, 'drag');
-	        this.eventBus.fire('dragEndMapSeries');
-	    },
-
-	    /**
-	     * If drag, call dragEnd function.
-	     * But if not drag, occur click event.
-	     * @param {mouseevent} e mouse event
-	     * @private
-	     * @override
-	     */
-	    _onMouseup: function(e) {
-	        this.isDown = false;
-
-	        if (this.isDrag) {
-	            this._dragEnd();
-	        } else {
-	            this._onMouseEvent('click', e);
-	        }
-
-	        this.isMove = false;
-	    },
-
-	    /**
-	     * If mouse downed, set drag mode.
-	     * But if not downed, set move mode.
-	     * @param {mouseevent} e mouse event
-	     * @private
-	     * @override
-	     */
-	    _onMousemove: function(e) {
-	        if (this.isDown) {
-	            if (!this.isDrag) {
-	                dom.addClass(this.mouseEventDetectorContainer, 'drag');
-	            }
-	            this.isDrag = true;
-	            this.eventBus.fire('dragMapSeries', {
-	                left: e.clientX,
-	                top: e.clientY
-	            });
-	        } else {
-	            this.isMove = true;
-	            this._onMouseEvent('move', e);
-	        }
-	    },
-
-	    /**
-	     * If drag mode, call dragEnd.
-	     * But if not drag mode, occur move event.
-	     * @private
-	     * @override
-	     */
-	    _onMouseout: function(e) {
-	        if (this.isDrag) {
-	            this._dragEnd();
-	        } else {
-	            this._onMouseEvent('move', e);
-	        }
-	        this.isDown = false;
-	    },
-
-	    /**
-	     * On mouse wheel.
-	     * @param {mouseevent} e mouse event
-	     * @returns {?boolean}
-	     * @private
-	     */
-	    _onMousewheel: function(e) {
-	        var wheelDelta = e.wheelDelta || e.detail * chartConst.FF_WHEELDELTA_ADJUSTING_VALUE;
-
-	        this.eventBus.fire('wheel', wheelDelta, {
-	            left: e.clientX,
-	            top: e.clientY
-	        });
-
-	        if (e.preventDefault) {
-	            e.preventDefault();
-	        }
-
-	        return false;
-	    },
-
-	    /**
-	     * Attach event.
-	     * @param {HTMLElement} target target element
-	     * @override
-	     */
-	    attachEvent: function(target) {
-	        MouseEventDetectorBase.prototype.attachEvent.call(this, target);
-
-	        if (tui.util.browser.firefox) {
-	            eventListener.on(target, 'DOMMouseScroll', this._onMousewheel, this);
-	        } else {
-	            eventListener.on(target, 'mousewheel', this._onMousewheel, this);
-	        }
-	    }
-	});
-
-	module.exports = MapChartEventDetector;
-
-
-/***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview SimpleEventDetector is event handle layer for simply sending clientX, clientY.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(2);
-	var MouseEventDetectorBase = __webpack_require__(45);
-	var renderUtil = __webpack_require__(30);
-
-	var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
-	    /**
-	     * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
-	     * @constructs SimpleEventDetector
-	     * @private
-	     * @param {object} params parameters
-	     *      @param {string} params.chartType - chart type
-	     * @extends MouseEventDetectorBase
-	     */
-	    init: function(params) {
-	        /**
-	         * chart type
-	         * @type {string}
-	         */
-	        this.chartType = params.chartType;
-
-	        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
-
-	        /**
-	         * event bus for transmitting message
-	         * @type {object}
-	         */
-	        this.eventBus = params.eventBus;
-	    },
-
-	    /**
-	     * Render mouse event detector area
-	     * @param {HTMLElement} mouseEventDetectorContainer - container element for mouse event detector
-	     * @private
-	     */
-	    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
-	        renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
-	        renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
-	    },
-
-	    /**
-	     * Initialize data of mouse event detector
-	     * @override
-	     */
-	    onReceiveSeriesData: function() {},
-
-	    /**
-	     * On click.
-	     * @param {MouseEvent} e - mouse event
-	     * @private
-	     * @override
-	     */
-	    _onClick: function(e) {
-	        this._onMouseEvent('click', e);
-	    },
-
-	    /**
-	     * On mouse move.
-	     * @param {MouseEvent} e - mouse event
-	     * @private
-	     * @override
-	     */
-	    _onMousemove: function(e) {
-	        this._onMouseEvent('move', e);
-	    },
-
-	    /**
-	     * On mouse out.
-	     * @param {MouseEvent} e - mouse event
-	     * @private
-	     * @override
-	     */
-	    _onMouseout: function(e) {
-	        this._onMouseEvent('move', e);
-	    }
-	});
-
-	module.exports = SimpleEventDetector;
-
-
-/***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14376,8 +14765,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
-	var BarTypeSeriesBase = __webpack_require__(57);
+	var Series = __webpack_require__(57);
+	var BarTypeSeriesBase = __webpack_require__(59);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -14539,11 +14928,26 @@
 
 	BarTypeSeriesBase.mixin(BarChartSeries);
 
-	module.exports = BarChartSeries;
+	function barSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'bar';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new BarChartSeries(params);
+	}
+
+	// TODO 더나은 방법 찾아보자
+	barSeriesFactory.componentType = 'series';
+	barSeriesFactory.BarChartSeries = BarChartSeries;
+
+	module.exports = barSeriesFactory;
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14562,7 +14966,7 @@
 	var predicate = __webpack_require__(5);
 	var renderUtil = __webpack_require__(30);
 	var pluginFactory = __webpack_require__(7);
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 	    /**
@@ -14627,7 +15031,8 @@
 	         * Theme
 	         * @type {object}
 	         */
-	        this.orgTheme = this.theme = params.theme[this.seriesType];
+
+	        this.orgTheme = this.theme = params.theme;
 
 	        /**
 	         * Graph renderer
@@ -15147,7 +15552,8 @@
 	     */
 	    animateComponent: function(isRerendering) {
 	        if (this.graphRenderer.animate) {
-	            this.graphRenderer.animate(null, this.seriesSet);
+	            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
+	            this._fireLoadEvent(isRerendering);
 	        }
 
 	        this.animateSeriesLabelArea(isRerendering);
@@ -15177,6 +15583,9 @@
 
 	        if (IS_IE7) {
 	            this._fireLoadEvent(isRerendering);
+	            this.labelSet.attr({
+	                opacity: 1
+	            });
 	        } else if (this.labelSet && this.labelSet.length) {
 	            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
 	        }
@@ -15330,7 +15739,7 @@
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports) {
 
 	/**
@@ -15595,7 +16004,7 @@
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15607,11 +16016,11 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var labelHelper = __webpack_require__(58);
+	var labelHelper = __webpack_require__(60);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var renderUtil = __webpack_require__(30);
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
 
@@ -15956,7 +16365,7 @@
 
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15993,7 +16402,7 @@
 	     * @private
 	     */
 	    _calculateTopPositionForMiddleAlign: function(bound) {
-	        return bound.top + chartConst.LABEL_PADDING_TOP;
+	        return bound.top + (bound.height / 2);
 	    },
 
 	    /**
@@ -16165,7 +16574,7 @@
 
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16176,8 +16585,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
-	var BarTypeSeriesBase = __webpack_require__(57);
+	var Series = __webpack_require__(57);
+	var BarTypeSeriesBase = __webpack_require__(59);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var renderUtil = __webpack_require__(30);
@@ -16325,11 +16734,25 @@
 
 	BarTypeSeriesBase.mixin(ColumnChartSeries);
 
-	module.exports = ColumnChartSeries;
+	function columnSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'column';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new ColumnChartSeries(params);
+	}
+
+	columnSeriesFactory.componentType = 'series';
+	columnSeriesFactory.ColumnChartSeries = ColumnChartSeries;
+
+	module.exports = columnSeriesFactory;
 
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16340,8 +16763,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55),
-	    LineTypeSeriesBase = __webpack_require__(61);
+	var Series = __webpack_require__(57),
+	    LineTypeSeriesBase = __webpack_require__(63);
 
 	var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
 	    /**
@@ -16411,11 +16834,24 @@
 
 	LineTypeSeriesBase.mixin(LineChartSeries);
 
-	module.exports = LineChartSeries;
+	function lineSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'line';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new LineChartSeries(params);
+	}
+
+	lineSeriesFactory.componentType = 'series';
+
+	module.exports = lineSeriesFactory;
 
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16813,7 +17249,7 @@
 
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16824,7 +17260,7 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
+	var Series = __webpack_require__(57);
 	var chartConst = __webpack_require__(2);
 	var geom = __webpack_require__(27);
 
@@ -16952,11 +17388,26 @@
 	    }
 	});
 
-	module.exports = RadialChartSeries;
+	function radialSeriesFactory(params) {
+	    var chartType = params.chartOptions.chartType;
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = chartType;
+	    params.chartBackground = chartTheme.background;
+
+	    return new RadialChartSeries(params);
+	}
+
+	radialSeriesFactory.componentType = 'series';
+	radialSeriesFactory.RadialChartSeries = RadialChartSeries;
+
+	module.exports = radialSeriesFactory;
 
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16967,8 +17418,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
-	var LineTypeSeriesBase = __webpack_require__(61);
+	var Series = __webpack_require__(57);
+	var LineTypeSeriesBase = __webpack_require__(63);
 	var predicate = __webpack_require__(5);
 
 	var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
@@ -17095,11 +17546,25 @@
 
 	LineTypeSeriesBase.mixin(AreaChartSeries);
 
-	module.exports = AreaChartSeries;
+	function areaSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'area';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new AreaChartSeries(params);
+	}
+
+	areaSeriesFactory.componentType = 'series';
+	areaSeriesFactory.AreaChartSeries = AreaChartSeries;
+
+	module.exports = areaSeriesFactory;
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17111,8 +17576,8 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var Series = __webpack_require__(55);
-	var CoordinateTypeSeriesBase = __webpack_require__(65);
+	var Series = __webpack_require__(57);
+	var CoordinateTypeSeriesBase = __webpack_require__(67);
 
 	var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
 	    /**
@@ -17231,18 +17696,31 @@
 	     */
 	    _setDataForRendering: function(data) {
 	        this.maxRadius = data.maxRadius;
-
 	        Series.prototype._setDataForRendering.call(this, data);
 	    }
 	});
 
 	CoordinateTypeSeriesBase.mixin(BubbleChartSeries);
 
-	module.exports = BubbleChartSeries;
+	function bubbleSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'bubble';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new BubbleChartSeries(params);
+	}
+
+	bubbleSeriesFactory.componentType = 'series';
+	bubbleSeriesFactory.BubbleChartSeries = BubbleChartSeries;
+
+	module.exports = bubbleSeriesFactory;
 
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports) {
 
 	/**
@@ -17378,7 +17856,7 @@
 
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17389,8 +17867,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
-	var CoordinateTypeSeriesBase = __webpack_require__(65);
+	var Series = __webpack_require__(57);
+	var CoordinateTypeSeriesBase = __webpack_require__(67);
 	var chartConst = __webpack_require__(2);
 
 	var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
@@ -17447,11 +17925,25 @@
 
 	CoordinateTypeSeriesBase.mixin(ScatterChartSeries);
 
-	module.exports = ScatterChartSeries;
+	function scatterSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'scatter';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new ScatterChartSeries(params);
+	}
+
+	scatterSeriesFactory.componentType = 'series';
+	scatterSeriesFactory.ScatterChartSeries = ScatterChartSeries;
+
+	module.exports = scatterSeriesFactory;
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17462,7 +17954,7 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
+	var Series = __webpack_require__(57);
 	var chartConst = __webpack_require__(2);
 
 	var browser = tui.util.browser;
@@ -17908,11 +18400,23 @@
 	    }
 	});
 
-	module.exports = MapChartSeries;
+	function mapSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+
+	    params.libType = libType;
+	    params.chartType = 'map';
+
+	    return new MapChartSeries(params);
+	}
+
+	mapSeriesFactory.componentType = 'series';
+	mapSeriesFactory.MapChartSeries = MapChartSeries;
+
+	module.exports = mapSeriesFactory;
 
 
 /***/ },
-/* 68 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17923,7 +18427,7 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
+	var Series = __webpack_require__(57);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -17943,7 +18447,7 @@
 
 	        this.isCombo = !!params.isCombo;
 
-	        this.isShowOuterLabel = !!params.isShowOuterLabel || predicate.isShowOuterLabel(this.options);
+	        this.isShowOuterLabel = predicate.isShowOuterLabel(this.options);
 
 	        /**
 	         * range for quadrant.
@@ -18610,11 +19114,35 @@
 	    }
 	});
 
-	module.exports = PieChartSeries;
+	function pieSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+	    var chartType = params.chartOptions.chartType;
+
+	    params.libType = libType;
+	    params.chartType = 'pie';
+
+	    if (chartType === 'combo') {
+	        // 앨리어스라고 불리는 시리즈 매핑 키가 내부에서는 seriesType으로 사용되고 있다.(ex pie1)
+	        // 기존 내용과 맞추기 위해 우선은 컴포넌트 메니저에 등록될 당시의 이름으로 구분
+	        // 추후 차트 생성자를 통합하게되면 데이터에 시리즈 타입이 포함되기 앨리어스가 필요 없어진다.
+	        params.seriesType = params.name.split('Series')[0];
+	        params.isCombo = true;
+	    }
+
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new PieChartSeries(params);
+	}
+
+	pieSeriesFactory.componentType = 'series';
+	pieSeriesFactory.PieChartSeries = PieChartSeries;
+
+	module.exports = pieSeriesFactory;
 
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18625,8 +19153,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
-	var labelHelper = __webpack_require__(58);
+	var Series = __webpack_require__(57);
+	var labelHelper = __webpack_require__(60);
 
 	var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
 	    /**
@@ -18767,11 +19295,23 @@
 	    }
 	});
 
-	module.exports = HeatmapChartSeries;
+	function heatmapChartSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+
+	    params.libType = libType;
+	    params.chartType = 'heatmap';
+
+	    return new HeatmapChartSeries(params);
+	}
+
+	heatmapChartSeriesFactory.componentType = 'series';
+	heatmapChartSeriesFactory.HeatmapChartSeries = HeatmapChartSeries;
+
+	module.exports = heatmapChartSeriesFactory;
 
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18782,9 +19322,9 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(55);
-	var squarifier = __webpack_require__(71);
-	var labelHelper = __webpack_require__(58);
+	var Series = __webpack_require__(57);
+	var squarifier = __webpack_require__(73);
+	var labelHelper = __webpack_require__(60);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -19113,11 +19653,25 @@
 	    }
 	});
 
-	module.exports = TreemapChartSeries;
+	function treemapChartSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'treemap';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new TreemapChartSeries(params);
+	}
+
+	treemapChartSeriesFactory.componentType = 'series';
+	treemapChartSeriesFactory.TreemapChartSeries = TreemapChartSeries;
+
+	module.exports = treemapChartSeriesFactory;
 
 
 /***/ },
-/* 71 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19394,7 +19948,7 @@
 
 
 /***/ },
-/* 72 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19406,7 +19960,7 @@
 	'use strict';
 	var IS_MSIE_VERSION_LTE_THAN_8 = tui.util.browser.msie && tui.util.browser.version <= 8;
 
-	var seriesTemplate = __webpack_require__(73);
+	var seriesTemplate = __webpack_require__(75);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var renderUtil = __webpack_require__(30);
@@ -19572,11 +20126,17 @@
 	    }
 	});
 
-	module.exports = Zoom;
+	function zoomFactory(params) {
+	    return new Zoom(params);
+	}
+
+	zoomFactory.componentType = 'zoom';
+
+	module.exports = zoomFactory;
 
 
 /***/ },
-/* 73 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19587,7 +20147,7 @@
 
 	'use strict';
 
-	var templateMaker = __webpack_require__(40);
+	var templateMaker = __webpack_require__(41);
 
 	var htmls = {
 	    HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}"{{ rangeLabelAttribute }}>' +
@@ -19612,7 +20172,7 @@
 
 
 /***/ },
-/* 74 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19626,10 +20186,10 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var DataProcessorBase = __webpack_require__(75);
-	var SeriesDataModel = __webpack_require__(76);
-	var SeriesDataModelForTreemap = __webpack_require__(80);
-	var SeriesGroup = __webpack_require__(77);
+	var DataProcessorBase = __webpack_require__(77);
+	var SeriesDataModel = __webpack_require__(78);
+	var SeriesDataModelForTreemap = __webpack_require__(82);
+	var SeriesGroup = __webpack_require__(79);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
 	var renderUtil = __webpack_require__(30);
@@ -20808,7 +21368,7 @@
 
 
 /***/ },
-/* 75 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21008,7 +21568,7 @@
 
 
 /***/ },
-/* 76 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21046,9 +21606,9 @@
 	 * SeriesItem has processed terminal data like value, ratio, etc.
 	 */
 
-	var SeriesGroup = __webpack_require__(77);
-	var SeriesItem = __webpack_require__(78);
-	var SeriesItemForCoordinateType = __webpack_require__(79);
+	var SeriesGroup = __webpack_require__(79);
+	var SeriesItem = __webpack_require__(80);
+	var SeriesItemForCoordinateType = __webpack_require__(81);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var arrayUtil = __webpack_require__(6);
@@ -21670,7 +22230,7 @@
 
 
 /***/ },
-/* 77 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21952,7 +22512,7 @@
 
 
 /***/ },
-/* 78 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22208,7 +22768,7 @@
 
 
 /***/ },
-/* 79 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22371,7 +22931,7 @@
 
 
 /***/ },
-/* 80 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22383,8 +22943,8 @@
 
 	'use strict';
 
-	var SeriesDataModel = __webpack_require__(76);
-	var SeriesItem = __webpack_require__(81);
+	var SeriesDataModel = __webpack_require__(78);
+	var SeriesItem = __webpack_require__(83);
 	var chartConst = __webpack_require__(2);
 	var calculator = __webpack_require__(23);
 
@@ -22684,7 +23244,7 @@
 
 
 /***/ },
-/* 81 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22792,7 +23352,7 @@
 
 
 /***/ },
-/* 82 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22803,8 +23363,8 @@
 
 	'use strict';
 
-	var BoundsModel = __webpack_require__(83);
-	var ScaleDataModel = __webpack_require__(89);
+	var BoundsModel = __webpack_require__(85);
+	var ScaleDataModel = __webpack_require__(91);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -23032,7 +23592,7 @@
 
 
 /***/ },
-/* 83 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23046,12 +23606,12 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var renderUtil = __webpack_require__(30);
-	var raphaelRenderUtil = __webpack_require__(56);
-	var circleLegendCalculator = __webpack_require__(84);
-	var axisCalculator = __webpack_require__(85);
-	var legendCalculator = __webpack_require__(86);
-	var seriesCalculator = __webpack_require__(87);
-	var spectrumLegendCalculator = __webpack_require__(88);
+	var raphaelRenderUtil = __webpack_require__(58);
+	var circleLegendCalculator = __webpack_require__(86);
+	var axisCalculator = __webpack_require__(87);
+	var legendCalculator = __webpack_require__(88);
+	var seriesCalculator = __webpack_require__(89);
+	var spectrumLegendCalculator = __webpack_require__(90);
 
 	/**
 	 * Dimension.
@@ -23784,7 +24344,7 @@
 
 
 /***/ },
-/* 84 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23886,7 +24446,7 @@
 
 
 /***/ },
-/* 85 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23956,7 +24516,7 @@
 
 
 /***/ },
-/* 86 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24160,7 +24720,7 @@
 
 
 /***/ },
-/* 87 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24239,7 +24799,7 @@
 
 
 /***/ },
-/* 88 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24297,14 +24857,14 @@
 
 
 /***/ },
-/* 89 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var scaleDataMaker = __webpack_require__(90);
-	var scaleLabelFormatter = __webpack_require__(92);
-	var axisDataMaker = __webpack_require__(93);
+	var scaleDataMaker = __webpack_require__(92);
+	var scaleLabelFormatter = __webpack_require__(94);
+	var axisDataMaker = __webpack_require__(95);
 	var predicate = __webpack_require__(5);
 
 	var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */{
@@ -24735,7 +25295,7 @@
 
 
 /***/ },
-/* 90 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24750,7 +25310,7 @@
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var arrayUtil = __webpack_require__(6);
-	var coordinateScaleCalculator = __webpack_require__(91);
+	var coordinateScaleCalculator = __webpack_require__(93);
 
 	var abs = Math.abs;
 
@@ -25058,7 +25618,7 @@
 
 
 /***/ },
-/* 91 */
+/* 93 */
 /***/ function(module, exports) {
 
 	/**
@@ -25238,7 +25798,7 @@
 
 
 /***/ },
-/* 92 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25332,7 +25892,7 @@
 
 
 /***/ },
-/* 93 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25891,265 +26451,7 @@
 
 
 /***/ },
-/* 94 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area,
-	 *                  bubble, column&line combo.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var predicate = __webpack_require__(5);
-
-	/**
-	 * Axis limit value.
-	 * @typedef {{min: number, max: number}} axisLimit
-	 */
-
-	/**
-	 * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, column&line combo.
-	 * @mixin
-	 * @private */
-	var axisTypeMixer = {
-	    /**
-	     * Add axis components.
-	     * @param {Array.<object>} axes axes option
-	     * @param {boolean} aligned whether aligned or not
-	     * @private
-	     */
-	    _addAxisComponents: function(axes, aligned) {
-	        var self = this;
-	        tui.util.forEach(axes, function(axis) {
-	            var axisParams = {
-	                aligned: aligned,
-	                isVertical: !!axis.isVertical,
-	                seriesType: axis.seriesType || self.chartType,
-	                classType: 'axis'
-	            };
-
-	            if (axis.name === 'rightYAxis') {
-	                axisParams.componentType = 'yAxis';
-	                axisParams.index = 1;
-	            }
-
-	            self.componentManager.register(axis.name, axisParams);
-	        });
-	    },
-
-	    /**
-	     * Add series components
-	     * @param {Array<object>} seriesSet - series set
-	     * @param {object} options - options
-	     * @private
-	     */
-	    _addSeriesComponents: function(seriesSet, options) {
-	        var self = this,
-	            seriesBaseParams = {
-	                libType: options.libType,
-	                chartType: options.chartType,
-	                componentType: 'series',
-	                chartBackground: this.theme.chart.background
-	            };
-
-	        tui.util.forEach(seriesSet, function(series) {
-	            var seriesParams = tui.util.extend(seriesBaseParams, series.data);
-
-	            seriesParams.classType = series.name;
-	            self.componentManager.register(series.name, seriesParams);
-	        });
-	    },
-
-	    /**
-	     * Add tooltip component.
-	     * @private
-	     */
-	    _addTooltipComponent: function() {
-	        var classType = this.options.tooltip.grouped ? 'groupTooltip' : 'tooltip';
-	        this.componentManager.register('tooltip', this._makeTooltipData(classType));
-	    },
-
-	    /**
-	     * Add legend component.
-	     * @param {{LegendClass: ?function, additionalParams: ?object}} legendData - data for register legend
-	     * @private
-	     */
-	    _addLegendComponent: function(legendData) {
-	        var classType = legendData.classType || 'legend';
-
-	        this.componentManager.register('legend', tui.util.extend({
-	            seriesTypes: this.seriesTypes,
-	            chartType: this.chartType,
-	            classType: classType
-	        }, legendData.additionalParams));
-	    },
-
-	    /**
-	     * Add plot component.
-	     * @param {?string} xAxisTypeOption - xAxis type option like 'datetime'
-	     * @private
-	     */
-	    _addPlotComponent: function(xAxisTypeOption) {
-	        this.componentManager.register('plot', {
-	            chartType: this.chartType,
-	            chartTypes: this.chartTypes,
-	            xAxisTypeOption: xAxisTypeOption,
-	            classType: 'plot'
-	        });
-	    },
-
-	    /**
-	     * Add chartExportMenu component.
-	     * @private
-	     */
-	    _addChartExportMenuComponent: function() {
-	        var chartOption = this.options.chart;
-	        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
-
-	        this.componentManager.register('chartExportMenu', {
-	            chartTitle: chartTitle,
-	            classType: 'chartExportMenu'
-	        });
-	    },
-
-	    /**
-	     * Add components for axis type chart.
-	     * @param {object} params parameters
-	     *      @param {object} params.axes axes data
-	     *      @param {object} params.plotData plot data
-	     *      @param {function} params.serieses serieses
-	     * @private
-	     */
-	    _addComponentsForAxisType: function(params) {
-	        var options = this.options;
-	        var aligned = !!params.aligned;
-
-	        if (params.plot) {
-	            this._addPlotComponent(options.xAxis.type);
-	        }
-
-	        this._addSeriesComponents(params.series, options);
-
-	        this._addAxisComponents(params.axis, aligned);
-
-	        if (options.legend.visible) {
-	            this._addLegendComponent(params.legend || {});
-	        }
-
-	        if (options.chartExportMenu.visible) {
-	            this._addChartExportMenuComponent(options.chartExportMenu);
-	        }
-
-	        if (params.title) {
-	            this._addTitleComponent(params.title);
-	        }
-
-	        this._addTooltipComponent();
-	        this._addMouseEventDetectorComponent();
-	    },
-
-	    _addTitleComponent: function(options) {
-	        this.componentManager.register('title', {
-	            dataProcessor: this.dataProcessor,
-	            libType: this.options.libType,
-	            text: options.text,
-	            theme: this.theme.chart ? this.theme.chart.title : {},
-	            classType: 'title'
-	        });
-	    },
-
-	    /**
-	     * Add data ratios.
-	     * @private
-	     * @override
-	     */
-	    _addDataRatios: function(limitMap) {
-	        var self = this;
-	        var chartTypes = this.chartTypes || [this.chartType];
-	        var seriesOption = this.options.series || {};
-	        var addDataRatio;
-
-	        if (this.dataProcessor.isCoordinateType()) {
-	            addDataRatio = function(chartType) {
-	                var hasRadius = predicate.isBubbleChart(chartType);
-	                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, hasRadius);
-	            };
-	        } else {
-	            addDataRatio = function(chartType) {
-	                var stackType = (seriesOption[chartType] || seriesOption).stackType;
-
-	                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
-	            };
-	        }
-
-	        tui.util.forEachArray(chartTypes, addDataRatio);
-	    },
-
-	    /**
-	     * Add simple mouseEventDetector component.
-	     * @private
-	     */
-	    _addSimpleEventDetectorComponent: function() {
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            classType: 'simpleEventDetector'
-	        });
-	    },
-
-	    /**
-	     * Add mouseEventDetector components for group tooltip.
-	     * @private
-	     * @override
-	     */
-	    _addMouseEventDetectorComponentForGroupTooltip: function() {
-	        var seriesOptions = this.options.series;
-
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            isVertical: this.isVertical,
-	            chartTypes: this.chartTypes,
-	            zoomable: seriesOptions.zoomable && !this.dataProcessor.coordinateType,
-	            allowSelect: seriesOptions.allowSelect,
-	            classType: 'groupTypeEventDetector'
-	        });
-	    },
-
-	    /**
-	     * Add mouse event detector component for normal(single) tooltip.
-	     * @private
-	     */
-	    _addMouseEventDetectorComponentForNormalTooltip: function() {
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            isVertical: this.isVertical,
-	            allowSelect: this.options.series.allowSelect,
-	            classType: 'boundsTypeEventDetector'
-	        });
-	    },
-
-	    /**
-	     * Add mouse event detector component.
-	     * @private
-	     */
-	    _addMouseEventDetectorComponent: function() {
-	        if (predicate.isCoordinateTypeChart(this.chartType)) {
-	            this._addSimpleEventDetectorComponent();
-	        } else if (this.options.tooltip.grouped) {
-	            this._addMouseEventDetectorComponentForGroupTooltip();
-	        } else {
-	            this._addMouseEventDetectorComponentForNormalTooltip();
-	        }
-	    }
-	};
-
-	module.exports = axisTypeMixer;
-
-
-/***/ },
-/* 95 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26162,7 +26464,6 @@
 
 	var ChartBase = __webpack_require__(20);
 	var chartConst = __webpack_require__(2);
-	var axisTypeMixer = __webpack_require__(94);
 	var rawDataHandler = __webpack_require__(4);
 
 	var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
@@ -26209,54 +26510,52 @@
 
 	    /**
 	     * Add components
-	     * @private
+	     * @override
 	     */
-	    _addComponents: function() {
-	        var chartOptions = this.options.chart || {};
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
 
-	        this._addComponentsForAxisType({
-	            axis: [
-	                {
-	                    name: 'yAxis',
-	                    isVertical: true
-	                },
-	                {
-	                    name: 'xAxis'
-	                }
-	            ],
-	            series: [
-	                {
-	                    name: 'columnSeries',
-	                    data: {
-	                        allowNegativeTooltip: true
-	                    }
-	                }
-	            ],
-	            plot: true,
-	            title: chartOptions.title
-	        });
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('columnSeries', 'columnSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
 
 	    /**
 	     * Get scale option.
 	     * @returns {{yAxis: boolean}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            yAxis: true
 	        };
+	    },
+	    /**
+	     * Add data ratios.
+	     * @override
+	     * modified from axisTypeMixer
+	     */
+	    addDataRatios: function(limitMap) {
+	        var seriesOption = this.options.series || {};
+	        var chartType = this.chartType;
+	        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+	        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
 	    }
 	});
-
-	tui.util.extend(ColumnChart.prototype, axisTypeMixer);
 
 	module.exports = ColumnChart;
 
 
 /***/ },
-/* 96 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26268,11 +26567,10 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var lineTypeMixer = __webpack_require__(97);
-	var zoomMixer = __webpack_require__(98);
-	var axisTypeMixer = __webpack_require__(94);
-	var addingDynamicDataMixer = __webpack_require__(99);
-	var Series = __webpack_require__(60);
+	var predicate = __webpack_require__(5);
+	var DynamicDataHelper = __webpack_require__(98);
+	var Series = __webpack_require__(62);
+	var rawDataHandler = __webpack_require__(4);
 
 	var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
 	    /**
@@ -26305,7 +26603,22 @@
 	            hasAxes: true,
 	            isVertical: true
 	        });
-	        this._initForAddingData();
+
+	        if (this.dataProcessor.isCoordinateType()) {
+	            delete this.options.xAxis.tickInterval;
+	            this.options.tooltip.grouped = false;
+	            this.options.series.shifting = false;
+	        }
+
+	        this._dynamicDataHelper = new DynamicDataHelper(this);
+	    },
+	    /**
+	     * Add data.
+	     * @param {string} category - category
+	     * @param {Array} values - values
+	     */
+	    addData: function(category, values) {
+	        this._dynamicDataHelper.addData(category, values);
 	    },
 
 	    /**
@@ -26316,41 +26629,60 @@
 	     * @override
 	     */
 	    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-	        this._initForAddingData();
-	        this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
-	    }
-	});
-
-	tui.util.extend(LineChart.prototype,
-	    axisTypeMixer, lineTypeMixer, zoomMixer, addingDynamicDataMixer);
-
-	module.exports = LineChart;
-
-
-/***/ },
-/* 97 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview lineTypeMixer is mixer of line type chart(line, area).
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	/**
-	 * lineTypeMixer is mixer of line type chart(line, area).
-	 * @mixin
-	 * @private */
-	var lineTypeMixer = {
+	        this._dynamicDataHelper.reset();
+	        this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, boundsParams);
+	    },
 	    /**
-	     * Get scale option.
-	     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
-	     * @private
+	     * Add data ratios.
+	     * @override
+	     * from axisTypeMixer
+	     */
+	    addDataRatios: function(limitMap) {
+	        var self = this;
+	        var chartTypes = this.chartTypes || [this.chartType];
+	        var seriesOption = this.options.series || {};
+	        var addDataRatio;
+
+	        if (this.dataProcessor.isCoordinateType()) {
+	            addDataRatio = function(chartType) {
+	                var hasRadius = predicate.isBubbleChart(chartType);
+	                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, hasRadius);
+	            };
+	        } else {
+	            addDataRatio = function(chartType) {
+	                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+	                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+	            };
+	        }
+
+	        tui.util.forEachArray(chartTypes, addDataRatio);
+	    },
+	    /**
+	     * Add components
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('lineSeries', 'lineSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+	    /**
+	     * Get scale option.
+	     * from lineTypeMixer
+	     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
+	     * @override
+	     */
+	    getScaleOption: function() {
 	        var scaleOption = {};
 
 	        if (this.dataProcessor.isCoordinateType()) {
@@ -26365,57 +26697,6 @@
 	        }
 
 	        return scaleOption;
-	    },
-
-	    /**
-	     * Add mouse event detector component for normal tooltip.
-	     * @private
-	     */
-	    _addMouseEventDetectorComponentForNormalTooltip: function() {
-	        var seriesOptions = this.options.series;
-
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            isVertical: this.isVertical,
-	            zoomable: seriesOptions.zoomable && !this.dataProcessor.coordinateType,
-	            allowSelect: seriesOptions.allowSelect,
-	            classType: 'areaTypeEventDetector'
-	        });
-	    },
-
-	    /**
-	     * Add components
-	     * @param {string} chartType chart type
-	     * @private
-	     */
-	    _addComponents: function() {
-	        var chartOptions = this.options.chart || {};
-
-	        if (this.dataProcessor.isCoordinateType()) {
-	            delete this.options.xAxis.tickInterval;
-	            this.options.tooltip.grouped = false;
-	            this.options.series.shifting = false;
-	        }
-
-	        this._addComponentsForAxisType({
-	            axis: [
-	                {
-	                    name: 'yAxis',
-	                    seriesType: this.chartType,
-	                    isVertical: true
-	                },
-	                {
-	                    name: 'xAxis'
-	                }
-	            ],
-	            series: [
-	                {
-	                    name: this.chartType + 'Series'
-	                }
-	            ],
-	            plot: true,
-	            title: chartOptions.title
-	        });
 	    },
 
 	    /**
@@ -26456,33 +26737,10 @@
 	     */
 	    removePlotBand: function(id) {
 	        this.componentManager.get('plot').removePlotBand(id);
-	    }
-	};
-
-	module.exports = lineTypeMixer;
-
-
-/***/ },
-/* 98 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview zoomMixer is mixer of line type chart(line, area).
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var rawDataHandler = __webpack_require__(4);
-
-	/**
-	 * zoomMixer is mixer of line type chart(line, area).
-	 * @mixin
-	 * @private */
-	var zoomMixer = {
+	    },
 	    /**
 	     * Render for zoom.
+	     * from chart/zoomMixer
 	     * @param {boolean} isResetZoom - whether reset zoom or not
 	     * @private
 	     */
@@ -26492,45 +26750,47 @@
 	        this._render(function(boundsAndScale) {
 	            self.componentManager.render('zoom', boundsAndScale, {
 	                isResetZoom: isResetZoom
-	            }, self.chartContainer);
+	            });
 	        });
 	    },
 
 	    /**
 	     * On zoom.
+	     * nnfrom chart/zoomMixer
 	     * @param {Array.<number>} indexRange - index range for zoom
 	     * @override
 	     */
 	    onZoom: function(indexRange) {
-	        this._pauseAnimationForAddingData();
+	        this._dynamicDataHelper.pauseAnimation();
 	        this.dataProcessor.updateRawDataForZoom(indexRange);
 	        this._renderForZoom(false);
 	    },
 
 	    /**
 	     * On reset zoom.
+	     * from chart/zoomMixer
 	     * @override
 	     */
 	    onResetZoom: function() {
 	        var rawData = this.dataProcessor.getOriginalRawData();
 
-	        if (this.checkedLegends) {
-	            rawData = rawDataHandler.filterCheckedRawData(rawData, this.checkedLegends);
+	        if (this._dynamicDataHelper.checkedLegends) {
+	            rawData = rawDataHandler.filterCheckedRawData(rawData, this._dynamicDataHelper.checkedLegends);
 	        }
 
 	        this.dataProcessor.initData(rawData);
 	        this.dataProcessor.initZoomedRawData();
 	        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
 	        this._renderForZoom(true);
-	        this._restartAnimationForAddingData();
+	        this._dynamicDataHelper.restartAnimation();
 	    }
-	};
+	});
 
-	module.exports = zoomMixer;
+	module.exports = LineChart;
 
 
 /***/ },
-/* 99 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26538,17 +26798,16 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
-	/**
-	 * addingDynamicData is mixer for adding dynamic data.
-	 * @mixin
-	 * @private
-	 */
-	var addingDynamicDataMixer = {
-	    /**
-	     * Initialize for adding data.
-	     * @private
-	     */
-	    _initForAddingData: function() {
+	var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.prototype */ {
+	    init: function(chart) {
+	        /**
+	         * chart instance
+	         * @type {ChartBase}
+	         */
+	        this.chart = chart;
+	        this.reset();
+	    },
+	    reset: function() {
 	        /**
 	         * whether lookupping or not
 	         * @type {boolean}
@@ -26585,7 +26844,6 @@
 	         */
 	        this.prevXAxisData = null;
 	    },
-
 	    /**
 	     * Calculate animate tick size.
 	     * @param {number} xAxisWidth - x axis width
@@ -26593,13 +26851,13 @@
 	     * @private
 	     */
 	    _calculateAnimateTickSize: function(xAxisWidth) {
-	        var dataProcessor = this.dataProcessor;
-	        var tickInterval = this.options.xAxis.tickInterval;
-	        var shiftingOption = !!this.options.series.shifting;
+	        var dataProcessor = this.chart.dataProcessor;
+	        var tickInterval = this.chart.options.xAxis.tickInterval;
+	        var shiftingOption = !!this.chart.options.series.shifting;
 	        var tickCount;
 
 	        if (dataProcessor.isCoordinateType()) {
-	            tickCount = dataProcessor.getValues(this.chartType, 'x').length - 1;
+	            tickCount = dataProcessor.getValues(this.chart.chartType, 'x').length - 1;
 	        } else {
 	            tickCount = dataProcessor.getCategoryCount(false) - 1;
 	        }
@@ -26616,22 +26874,23 @@
 	     * @private
 	     */
 	    _animateForAddingData: function() {
+	        var chart = this.chart;
 	        var self = this;
-	        var shiftingOption = !!this.options.series.shifting;
+	        var shiftingOption = !!this.chart.options.series.shifting;
 
 	        this.addedDataCount += 1;
 
-	        this._render(function(boundsAndScale) {
+	        chart._render(function(boundsAndScale) {
 	            var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
 
-	            self.componentManager.render('animateForAddingData', boundsAndScale, {
+	            chart.componentManager.render('animateForAddingData', boundsAndScale, {
 	                tickSize: tickSize,
 	                shifting: shiftingOption
 	            });
 	        }, true);
 
 	        if (shiftingOption) {
-	            this.dataProcessor.shiftData();
+	            chart.dataProcessor.shiftData();
 	        }
 	    },
 
@@ -26640,10 +26899,10 @@
 	     * @private
 	     */
 	    _rerenderForAddingData: function() {
-	        var self = this;
+	        var chart = this.chart;
 
-	        this._render(function(boundsAndScale) {
-	            self.componentManager.render('rerender', boundsAndScale);
+	        chart._render(function(boundsAndScale) {
+	            chart.componentManager.render('rerender', boundsAndScale);
 	        });
 	    },
 
@@ -26652,8 +26911,9 @@
 	     * @private
 	     */
 	    _checkForAddedData: function() {
+	        var chart = this.chart;
 	        var self = this;
-	        var added = this.dataProcessor.addDataFromDynamicData();
+	        var added = chart.dataProcessor.addDataFromDynamicData();
 
 	        if (!added) {
 	            this.lookupping = false;
@@ -26662,8 +26922,8 @@
 	        }
 
 	        if (this.paused) {
-	            if (this.options.series.shifting) {
-	                this.dataProcessor.shiftData();
+	            if (chart.options.series.shifting) {
+	                chart.dataProcessor.shiftData();
 	            }
 
 	            return;
@@ -26678,27 +26938,52 @@
 	    },
 
 	    /**
-	     * Pause animation for adding data.
-	     * @private
+	     * Change checked legend.
+	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+	     * @param {?object} rawData rawData
+	     * @param {?object} boundsParams addition params for calculating bounds
 	     */
-	    _pauseAnimationForAddingData: function() {
+	    changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+	        var self = this;
+	        var chart = this.chart;
+	        var shiftingOption = !!chart.options.series.shifting;
+	        var pastPaused = this.paused;
+
+	        if (!pastPaused) {
+	            this.pauseAnimation();
+	        }
+
+	        this.checkedLegends = checkedLegends;
+	        chart.rerender(checkedLegends, rawData, boundsParams);
+
+	        if (!pastPaused) {
+	            setTimeout(function() {
+	                chart.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
+	                self.restartAnimation();
+	            }, chartConst.RERENDER_TIME);
+	        }
+	    },
+
+	    /**
+	     * Pause animation for adding data.
+	     */
+	    pauseAnimation: function() {
 	        this.paused = true;
 
 	        if (this.rerenderingDelayTimerId) {
 	            clearTimeout(this.rerenderingDelayTimerId);
 	            this.rerenderingDelayTimerId = null;
 
-	            if (this.options.series.shifting) {
-	                this.dataProcessor.shiftData();
+	            if (this.chart.options.series.shifting) {
+	                this.chart.dataProcessor.shiftData();
 	            }
 	        }
 	    },
 
 	    /**
 	     * Restart animation for adding data.
-	     * @private
 	     */
-	    _restartAnimationForAddingData: function() {
+	    restartAnimation: function() {
 	        this.paused = false;
 	        this.lookupping = false;
 	        this._startLookup();
@@ -26729,44 +27014,16 @@
 	            category = null;
 	        }
 
-	        this.dataProcessor.addDynamicData(category, values);
+	        this.chart.dataProcessor.addDynamicData(category, values);
 	        this._startLookup();
-	    },
-
-
-	    /**
-	     * Change checked legend.
-	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-	     * @param {?object} rawData rawData
-	     * @param {?object} boundsParams addition params for calculating bounds
-	     * @override
-	     */
-	    _changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-	        var self = this;
-	        var shiftingOption = !!this.options.series.shifting;
-	        var pastPaused = this.paused;
-
-	        if (!pastPaused) {
-	            this._pauseAnimationForAddingData();
-	        }
-
-	        this.checkedLegends = checkedLegends;
-	        this._rerender(checkedLegends, rawData, boundsParams);
-
-	        if (!pastPaused) {
-	            setTimeout(function() {
-	                self.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
-	                self._restartAnimationForAddingData();
-	            }, chartConst.RERENDER_TIME);
-	        }
 	    }
-	};
+	});
 
-	module.exports = addingDynamicDataMixer;
+	module.exports = DynamicDataHelper;
 
 
 /***/ },
-/* 100 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26778,12 +27035,9 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var lineTypeMixer = __webpack_require__(97);
-	var zoomMixer = __webpack_require__(98);
-	var axisTypeMixer = __webpack_require__(94);
-	var addingDynamicDataMixer = __webpack_require__(99);
+	var DynamicDataHelper = __webpack_require__(98);
 	var rawDataHandler = __webpack_require__(4);
-	var Series = __webpack_require__(63);
+	var Series = __webpack_require__(65);
 
 	var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
 	    /**
@@ -26817,9 +27071,17 @@
 	            hasAxes: true,
 	            isVertical: true
 	        });
-	        this._initForAddingData();
-	    },
 
+	        this._dynamicDataHelper = new DynamicDataHelper(this);
+	    },
+	    /**
+	     * Add data.
+	     * @param {string} category - category
+	     * @param {Array} values - values
+	     */
+	    addData: function(category, values) {
+	        this._dynamicDataHelper.addData(category, values);
+	    },
 	    /**
 	     * On change checked legend.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
@@ -26828,19 +27090,168 @@
 	     * @override
 	     */
 	    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-	        this._initForAddingData();
-	        this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
+	        this._dynamicDataHelper.reset();
+	        this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, boundsParams);
+	    },
+	    /**
+	     * Add data ratios.
+	     * @override
+	     * from axisTypeMixer
+	     */
+	    addDataRatios: function(limitMap) {
+	        var self = this;
+	        var chartTypes = this.chartTypes || [this.chartType];
+	        var seriesOption = this.options.series || {};
+	        var addDataRatio;
+
+	        if (this.dataProcessor.isCoordinateType()) {
+	            addDataRatio = function(chartType) {
+	                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+	            };
+	        } else {
+	            addDataRatio = function(chartType) {
+	                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+	                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+	            };
+	        }
+
+	        tui.util.forEachArray(chartTypes, addDataRatio);
+	    },
+
+	    /**
+	     * Add components
+	     * @override
+	     */
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('areaSeries', 'areaSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+	    /**
+	     * Get scale option.
+	     * from lineTypeMixer
+	     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
+	     * @override
+	     */
+	    getScaleOption: function() {
+	        var scaleOption = {};
+
+	        if (this.dataProcessor.isCoordinateType()) {
+	            scaleOption.xAxis = {
+	                valueType: 'x'
+	            };
+	            scaleOption.yAxis = {
+	                valueType: 'y'
+	            };
+	        } else {
+	            scaleOption.yAxis = true;
+	        }
+
+	        return scaleOption;
+	    },
+
+	    /**
+	     * Add plot line.
+	     * @param {{index: number, color: string, id: string}} data - data
+	     * @override
+	     * @api
+	     */
+	    addPlotLine: function(data) {
+	        this.componentManager.get('plot').addPlotLine(data);
+	    },
+
+	    /**
+	     * Add plot band.
+	     * @param {{range: Array.<number>, color: string, id: string}} data - data
+	     * @override
+	     * @api
+	     */
+	    addPlotBand: function(data) {
+	        this.componentManager.get('plot').addPlotBand(data);
+	    },
+
+	    /**
+	     * Remove plot line.
+	     * @param {string} id - line id
+	     * @override
+	     * @api
+	     */
+	    removePlotLine: function(id) {
+	        this.componentManager.get('plot').removePlotLine(id);
+	    },
+
+	    /**
+	     * Remove plot band.
+	     * @param {string} id - band id
+	     * @override
+	     * @api
+	     */
+	    removePlotBand: function(id) {
+	        this.componentManager.get('plot').removePlotBand(id);
+	    },
+	    /**
+	     * Render for zoom.
+	     * from chart/zoomMixer
+	     * @param {boolean} isResetZoom - whether reset zoom or not
+	     * @private
+	     */
+	    _renderForZoom: function(isResetZoom) {
+	        var self = this;
+
+	        this._render(function(boundsAndScale) {
+	            self.componentManager.render('zoom', boundsAndScale, {
+	                isResetZoom: isResetZoom
+	            });
+	        });
+	    },
+
+	    /**
+	     * On zoom.
+	     * nnfrom chart/zoomMixer
+	     * @param {Array.<number>} indexRange - index range for zoom
+	     * @override
+	     */
+	    onZoom: function(indexRange) {
+	        this._dynamicDataHelper.pauseAnimation();
+	        this.dataProcessor.updateRawDataForZoom(indexRange);
+	        this._renderForZoom(false);
+	    },
+
+	    /**
+	     * On reset zoom.
+	     * from chart/zoomMixer
+	     * @override
+	     */
+	    onResetZoom: function() {
+	        var rawData = this.dataProcessor.getOriginalRawData();
+
+	        if (this._dynamicDataHelper.checkedLegends) {
+	            rawData = rawDataHandler.filterCheckedRawData(rawData, this._dynamicDataHelper.checkedLegends);
+	        }
+
+	        this.dataProcessor.initData(rawData);
+	        this.dataProcessor.initZoomedRawData();
+	        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
+	        this._renderForZoom(true);
+	        this._dynamicDataHelper.restartAnimation();
 	    }
 	});
-
-	tui.util.extend(AreaChart.prototype,
-	    axisTypeMixer, lineTypeMixer, zoomMixer, addingDynamicDataMixer);
 
 	module.exports = AreaChart;
 
 
 /***/ },
-/* 101 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26853,9 +27264,8 @@
 
 	var ChartBase = __webpack_require__(20);
 	var rawDataHandler = __webpack_require__(4);
-	var axisTypeMixer = __webpack_require__(94);
-	var comboTypeMixer = __webpack_require__(102);
-	var verticalTypeComboMixer = __webpack_require__(103);
+	var predicate = __webpack_require__(5);
+	var validTypeMakerForYAxisOptions = __webpack_require__(101);
 
 	var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
 	    /**
@@ -26867,7 +27277,37 @@
 	     * @param {object} options chart options
 	     */
 	    init: function(rawData, theme, options) {
-	        this._initForVerticalTypeCombo(rawData, options);
+	        var typeData = validTypeMakerForYAxisOptions({
+	            rawSeriesData: rawData.series,
+	            yAxisOptions: options.yAxis
+	        });
+
+	        /**
+	         * chart types
+	         * @type {Object}
+	         */
+	        this.chartTypes = typeData.chartTypes;
+
+	        /**
+	         * series types
+	         * @type {Object|Array.<T>}
+	         */
+	        this.seriesTypes = typeData.seriesTypes;
+
+	        /**
+	         * yAxis options
+	         * @type {object}
+	         */
+	        this.yAxisOptions = this._makeYAxisOptions(this.chartTypes, options.yAxis);
+
+	        /**
+	         * whether has right y axis or not
+	         * @type {boolean}
+	         */
+	        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+
+	        options.tooltip = options.tooltip || {};
+	        options.tooltip.grouped = true;
 
 	        ChartBase.call(this, {
 	            rawData: rawData,
@@ -26879,191 +27319,113 @@
 	    },
 
 	    /**
+	     * Make yAxis options.
+	     * @param {Array.<string>} chartTypes chart types
+	     * @param {?object} yAxisOptions yAxis options
+	     * @returns {{column: ?object, line: ?object}} options map
+	     * @private
+	     * from verticalTypeComboMixer
+	     */
+	    _makeYAxisOptions: function(chartTypes, yAxisOptions) {
+	        var options = {};
+	        yAxisOptions = yAxisOptions || {};
+	        tui.util.forEachArray(chartTypes, function(chartType, index) {
+	            options[chartType] = yAxisOptions[index] || yAxisOptions;
+	        });
+
+	        return options;
+	    },
+
+	    /**
 	     * On change selected legend.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
 	     */
 	    onChangeCheckedLegends: function(checkedLegends) {
 	        var originalRawData = this.dataProcessor.getOriginalRawData();
 	        var rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
-	        var chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
-
-	        tui.util.extend(this, chartTypesMap);
-
-	        this._rerender(checkedLegends, rawData, chartTypesMap);
-	    }
-	});
-
-	tui.util.extend(ColumnLineComboChart.prototype, axisTypeMixer, comboTypeMixer, verticalTypeComboMixer);
-
-	module.exports = ColumnLineComboChart;
-
-
-/***/ },
-/* 102 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview comboTypeMixer is mixer of combo type chart.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	/**
-	 * comboTypeMixer is mixer of combo type chart.
-	 * @mixin
-	 * @private */
-	var comboTypeMixer = {
-	    /**
-	     * Get base series options.
-	     * @param {object.<string, object>} seriesOptions - series options
-	     * @param {Array.<string>} seriesTypes - seriens names
-	     * @returns {object}
-	     * @private
-	     */
-	    _getBaseSeriesOptions: function(seriesOptions, seriesTypes) {
-	        var baseSeriesOptions = tui.util.extend({}, seriesOptions);
-
-	        tui.util.forEachArray(seriesTypes, function(seriesType) {
-	            delete baseSeriesOptions[seriesType];
+	        var typeData = validTypeMakerForYAxisOptions({
+	            rawSeriesData: rawData.series,
+	            yAxisOptions: this.options.yAxis
 	        });
 
-	        return baseSeriesOptions;
+	        this.chartTypes = typeData.chartTypes;
+	        this.seriesTypes = typeData.seriesTypes;
+
+	        this.rerender(checkedLegends, rawData, typeData);
 	    },
 
 	    /**
-	     * Make options map
-	     * @param {Array.<string>} seriesTypes - series types
-	     * @returns {object}
-	     * @private
+	     * Add components
+	     * @override
 	     */
-	    _makeOptionsMap: function(seriesTypes) {
-	        var seriesOptions = this.options.series;
-	        var baseSeriesOptions = this._getBaseSeriesOptions(seriesOptions, seriesTypes);
-	        var optionsMap = {};
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
 
-	        tui.util.forEachArray(seriesTypes, function(seriesType) {
-	            optionsMap[seriesType] = tui.util.extend({}, baseSeriesOptions, seriesOptions[seriesType]);
-	        });
+	        this.componentManager.register('legend', 'legend');
 
-	        return optionsMap;
-	    }
-	};
+	        this.componentManager.register('columnSeries', 'columnSeries');
+	        this.componentManager.register('lineSeries', 'lineSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
-	module.exports = comboTypeMixer;
-
-
-/***/ },
-/* 103 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Column and Line Combo chart.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var predicate = __webpack_require__(5);
-	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
-
-	var verticalTypeComboMixer = {
-	    /**
-	     * Column and Line Combo chart.
-	     * @constructs verticalTypeComboMixer
-	     * @private
-	     * @extends ChartBase
-	     * @param {Array.<Array>} rawData raw data
-	     * @param {object} options chart options
-	     */
-	    _initForVerticalTypeCombo: function(rawData, options) {
-	        var chartTypesMap = this._makeChartTypesMap(rawData.series, options.yAxis, options.chartType);
-
-	        options.tooltip = options.tooltip || {};
-	        options.tooltip.grouped = true;
-
-	        /**
-	         * chart types map
-	         * @type {Object}
-	         */
-	        this.chartTypes = chartTypesMap.chartTypes;
-
-	        /**
-	         * series types
-	         * @type {Object|Array.<T>}
-	         */
-	        this.seriesTypes = chartTypesMap.seriesTypes;
-
-	        /**
-	         * whether has right y axis or not
-	         * @type {boolean}
-	         */
-	        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
-
-	        /**
-	         * yAxis options map
-	         * @type {object}
-	         */
-	        this.yAxisOptionsMap = this._makeYAxisOptionsMap(chartTypesMap.chartTypes, options.yAxis);
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
-
 	    /**
-	     * Make chart types map.
-	     * @param {object} rawSeriesData raw series data
-	     * @param {object} yAxisOption option for y axis
-	     * @returns {object} chart types map
-	     * @private
+	     * Get scale option.
+	     * @returns {{
+	     *      yAxis: {options: object, areaType: string, chartType: string, additionalParams: object},
+	     *      rightYAxis: {options: object, areaType: string, chartType: string, additionalParams: object}
+	     * }}
+	     * @override
 	     */
-	    _makeChartTypesMap: function(rawSeriesData, yAxisOption) {
-	        var seriesTypes = tui.util.keys(rawSeriesData).sort();
-	        var optionChartTypes = this._getYAxisOptionChartTypes(seriesTypes, yAxisOption);
-	        var chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
-	        var validChartTypes = tui.util.filter(optionChartTypes, function(_chartType) {
-	            return rawSeriesData[_chartType].length;
-	        });
-	        var chartTypesMap;
+	    getScaleOption: function() {
+	        var scaleOption = {
+	            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
+	        };
 
-	        if (validChartTypes.length === 1) {
-	            chartTypesMap = {
-	                chartTypes: validChartTypes,
-	                seriesTypes: validChartTypes
-	            };
-	        } else {
-	            chartTypesMap = {
-	                chartTypes: chartTypes,
-	                seriesTypes: seriesTypes
-	            };
+	        if (this.hasRightYAxis) {
+	            scaleOption.rightYAxis = this._makeYAxisScaleOption('rightYAxis', this.chartTypes[1]);
 	        }
 
-	        return chartTypesMap;
+	        return scaleOption;
 	    },
-
 	    /**
-	     * Make yAxis options map.
-	     * @param {Array.<string>} chartTypes chart types
-	     * @param {?object} yAxisOptions yAxis options
-	     * @returns {{column: ?object, line: ?object}} options map
+	     * Make y axis scale option.
+	     * @param {string} name - component name
+	     * @param {string} chartType - chart type
+	     * @param {boolean} isSingleYAxis - whether single y axis or not
+	     * @returns {{options: object, areaType: string, chartType: string, additionalParams: object}}
 	     * @private
+	     * from verticalTypeComboMixer
 	     */
-	    _makeYAxisOptionsMap: function(chartTypes, yAxisOptions) {
-	        var optionsMap = {};
-	        yAxisOptions = yAxisOptions || {};
-	        tui.util.forEachArray(chartTypes, function(chartType, index) {
-	            optionsMap[chartType] = yAxisOptions[index] || yAxisOptions;
-	        });
+	    _makeYAxisScaleOption: function(name, chartType, isSingleYAxis) {
+	        var yAxisOption = this.yAxisOptions[chartType];
+	        var additionalOptions = {
+	            isSingleYAxis: !!isSingleYAxis
+	        };
 
-	        return optionsMap;
+	        if (isSingleYAxis && this.options.series) {
+	            this._setAdditionalOptions(additionalOptions);
+	        }
+
+	        return {
+	            options: yAxisOption,
+	            areaType: 'yAxis',
+	            chartType: chartType,
+	            additionalOptions: additionalOptions
+	        };
 	    },
 
 	    /**
 	     * Set additional parameter for making y axis scale option.
 	     * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
 	     * @private
+	     * from verticalTypeComboMixer
 	     */
-	    setAdditionalOptions: function(additionalOptions) {
+	    _setAdditionalOptions: function(additionalOptions) {
 	        var dataProcessor = this.dataProcessor;
 
 	        tui.util.forEach(this.options.series, function(seriesOption, seriesType) {
@@ -27083,188 +27445,134 @@
 	            additionalOptions.stackType = seriesOption.stackType;
 	        });
 	    },
-
 	    /**
-	     * Make y axis scale option.
-	     * @param {string} name - component name
-	     * @param {string} chartType - chart type
-	     * @param {boolean} isSingleYAxis - whether single y axis or not
-	     * @returns {{options: object, areaType: string, chartType: string, additionalParams: object}}
-	     * @private
-	     */
-	    _makeYAxisScaleOption: function(name, chartType, isSingleYAxis) {
-	        var yAxisOption = this.yAxisOptionsMap[chartType];
-	        var additionalOptions = {
-	            isSingleYAxis: !!isSingleYAxis
-	        };
-
-	        if (isSingleYAxis && this.options.series) {
-	            this.setAdditionalOptions(additionalOptions);
-	        }
-
-	        return {
-	            options: yAxisOption,
-	            areaType: 'yAxis',
-	            chartType: chartType,
-	            additionalOptions: additionalOptions
-	        };
-	    },
-
-	    /**
-	     * Get scale option.
-	     * @returns {{
-	     *      yAxis: {options: object, areaType: string, chartType: string, additionalParams: object},
-	     *      rightYAxis: {options: object, areaType: string, chartType: string, additionalParams: object}
-	     * }}
-	     * @private
+	     * Add data ratios.
 	     * @override
+	     * from axisTypeMixer
 	     */
-	    _getScaleOption: function() {
-	        var scaleOption = {
-	            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
+	    addDataRatios: function(limitMap) {
+	        var self = this;
+	        var chartTypes = this.chartTypes || [this.chartType];
+	        var seriesOption = this.options.series || {};
+	        var addDataRatio;
+
+	        addDataRatio = function(chartType) {
+	            var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+	            self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
 	        };
 
-	        if (this.hasRightYAxis) {
-	            scaleOption.rightYAxis = this._makeYAxisScaleOption('rightYAxis', this.chartTypes[1]);
-	        }
-
-	        return scaleOption;
-	    },
-
-	    /**
-	     * Make data for adding series component.
-	     * @param {Array.<string>} seriesTypes - series types
-	     * @returns {Array.<object>}
-	     * @private
-	     */
-	    _makeDataForAddingSeriesComponent: function(seriesTypes) {
-	        var optionsMap = this._makeOptionsMap(seriesTypes);
-	        var dataProcessor = this.dataProcessor;
-	        var serieses = tui.util.map(seriesTypes, function(seriesType) {
-	            var chartType = dataProcessor.findChartType(seriesType);
-	            var data = {
-	                allowNegativeTooltip: true,
-	                chartType: chartType,
-	                seriesType: seriesType,
-	                options: optionsMap[seriesType]
-	            };
-
-	            return {
-	                name: seriesType + 'Series',
-	                data: data
-	            };
-	        });
-
-	        return serieses;
-	    },
-
-	    /**
-	     * Add components.
-	     * @private
-	     */
-	    _addComponents: function() {
-	        var chartOptions = this.options.chart || {};
-	        var axes = [
-	            {
-	                name: 'yAxis',
-	                seriesType: this.seriesTypes[0],
-	                isVertical: true
-	            },
-	            {
-	                name: 'xAxis'
-	            }
-	        ];
-	        var serieses = this._makeDataForAddingSeriesComponent(this.seriesTypes);
-
-	        if (this.hasRightYAxis) {
-	            axes.push({
-	                name: 'rightYAxis',
-	                seriesType: this.seriesTypes[1],
-	                isVertical: true
-	            });
-	        }
-
-	        this._addComponentsForAxisType({
-	            seriesTypes: this.seriesTypes,
-	            axis: axes,
-	            series: serieses,
-	            plot: true,
-	            title: chartOptions.title
-	        });
-	    },
-
-	    /**
-	     * Get y axis option chart types.
-	     * @param {Array.<string>} chartTypes chart types
-	     * @param {object} yAxisOption - options for y axis
-	     * @returns {Array.<string>}
-	     * @private
-	     */
-	    _getYAxisOptionChartTypes: function(chartTypes, yAxisOption) {
-	        var resultChartTypes = chartTypes.slice();
-	        var yAxisOptions = [].concat(yAxisOption || []);
-	        var isReverse = false;
-	        var optionChartTypes;
-
-	        if (!yAxisOptions.length || (yAxisOptions.length === 1 && !yAxisOptions[0].chartType)) {
-	            resultChartTypes = [];
-	        } else if (yAxisOptions.length) {
-	            optionChartTypes = tui.util.map(yAxisOptions, function(option) {
-	                return option.chartType;
-	            });
-
-	            tui.util.forEachArray(optionChartTypes, function(chartType, index) {
-	                isReverse = isReverse || ((chartType && resultChartTypes[index] !== chartType) || false);
-	            });
-
-	            if (isReverse) {
-	                resultChartTypes.reverse();
-	            }
-	        }
-
-	        return resultChartTypes;
-	    },
-
-	    /**
-	     * Increase yAxis tick count.
-	     * @param {number} increaseTickCount increase tick count
-	     * @param {object} yAxisData yAxis data
-	     * @private
-	     */
-	    _increaseYAxisTickCount: function(increaseTickCount, yAxisData) {
-	        var formatFunctions = this.dataProcessor.getFormatFunctions();
-	        var labels;
-
-	        yAxisData.limit.max += yAxisData.step * increaseTickCount;
-	        labels = calculator.makeLabelsFromLimit(yAxisData.limit, yAxisData.step);
-	        yAxisData.labels = renderUtil.formatValues(labels, formatFunctions, this.chartType, 'yAxis');
-	        yAxisData.tickCount += increaseTickCount;
-	        yAxisData.validTickCount += increaseTickCount;
-	    },
-
-	    /**
-	     * Update tick count to make the same tick count of y Axes(yAxis, rightYAxis).
-	     * @param {{yAxis: object, rightYAxis: object}} axesData - axesData
-	     * @private
-	     */
-	    _updateYAxisTickCount: function(axesData) {
-	        var yAxisData = axesData.yAxis;
-	        var rightYAxisData = axesData.rightYAxis;
-	        var tickCountDiff = rightYAxisData.tickCount - yAxisData.tickCount;
-
-	        if (tickCountDiff > 0) {
-	            this._increaseYAxisTickCount(tickCountDiff, yAxisData);
-	        } else if (tickCountDiff < 0) {
-	            this._increaseYAxisTickCount(-tickCountDiff, rightYAxisData);
-	        }
+	        tui.util.forEachArray(chartTypes, addDataRatio);
 	    }
-	};
+	});
 
-	module.exports = verticalTypeComboMixer;
+	module.exports = ColumnLineComboChart;
 
 
 /***/ },
-/* 104 */
+/* 101 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements valid type maker on yAxisOptions
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	/**
+	 * Make valid types on yAxisOptions
+	 * @param {object} params parameters
+	 * @param {Array.<Array>} params.rawSeriesData raw series data
+	 * @param {object} params.yAxisOptions chart yAxis options
+	 * @param {string} params.chartType chart type
+	 * @returns {object} {
+	 *     chartTypes: Array.<string>,
+	 *     seriesTypes: Array.<string>,
+	 *     hasRightYAxis: boolean,
+	 *     yAxisOptionsMap: object
+	 * }
+	 */
+	function validTypeMakerForYAxisOptions(params) {
+	    var rawSeriesData = params.rawSeriesData;
+	    var yAxisOptions = params.yAxisOptions;
+	    var chartTypesMap = makeChartTypesMap(rawSeriesData, yAxisOptions);
+
+	    return {
+	        chartTypes: chartTypesMap.chartTypes,
+	        seriesTypes: chartTypesMap.seriesTypes
+	    };
+	}
+
+	/**
+	 * Make chart types map.
+	 * @param {object} rawSeriesData raw series data
+	 * @param {object} yAxisOption option for y axis
+	 * @returns {object} chart types map
+	 * @private
+	 */
+	function makeChartTypesMap(rawSeriesData, yAxisOption) {
+	    var seriesTypes = tui.util.keys(rawSeriesData).sort();
+	    var optionChartTypes = getYAxisOptionChartTypes(seriesTypes, yAxisOption);
+	    var chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
+	    var validChartTypes = tui.util.filter(optionChartTypes, function(_chartType) {
+	        return rawSeriesData[_chartType].length;
+	    });
+	    var chartTypesMap;
+
+	    if (validChartTypes.length === 1) {
+	        chartTypesMap = {
+	            chartTypes: validChartTypes,
+	            seriesTypes: validChartTypes
+	        };
+	    } else {
+	        chartTypesMap = {
+	            chartTypes: chartTypes,
+	            seriesTypes: seriesTypes
+	        };
+	    }
+
+	    return chartTypesMap;
+	}
+
+	/**
+	 * Get y axis option chart types.
+	 * @param {Array.<string>} chartTypes chart types
+	 * @param {object} yAxisOption - options for y axis
+	 * @returns {Array.<string>}
+	 * @private
+	 */
+	function getYAxisOptionChartTypes(chartTypes, yAxisOption) {
+	    var resultChartTypes = chartTypes.slice();
+	    var yAxisOptions = [].concat(yAxisOption || []);
+	    var isReverse = false;
+	    var optionChartTypes;
+
+	    if (!yAxisOptions.length || (yAxisOptions.length === 1 && !yAxisOptions[0].chartType)) {
+	        resultChartTypes = [];
+	    } else if (yAxisOptions.length) {
+	        optionChartTypes = tui.util.map(yAxisOptions, function(option) {
+	            return option.chartType;
+	        });
+
+	        tui.util.forEachArray(optionChartTypes, function(chartType, index) {
+	            isReverse = isReverse || ((chartType && resultChartTypes[index] !== chartType) || false);
+	        });
+
+	        if (isReverse) {
+	            resultChartTypes.reverse();
+	        }
+	    }
+
+	    return resultChartTypes;
+	}
+
+	module.exports = validTypeMakerForYAxisOptions;
+
+
+/***/ },
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27276,12 +27584,6 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var axisTypeMixer = __webpack_require__(94);
-	var comboTypeMixer = __webpack_require__(102);
-
-	var LineSeries = __webpack_require__(60);
-	var ScatterSeries = __webpack_require__(66);
-
 	var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
 	    /**
 	     * Line and Scatter Combo chart.
@@ -27314,73 +27616,14 @@
 	    },
 
 	    /**
-	     * Add components.
-	     * @private
-	     */
-	    _addComponents: function() {
-	        var options = this.options;
-	        var optionsMap = this._makeOptionsMap(this.seriesTypes);
-	        var chartOptions = this.options.chart || {};
-
-	        if (chartOptions.title) {
-	            this._addTitleComponent(options.chart.title);
-	        }
-
-	        this._addPlotComponent(options.xAxis.type);
-	        this._addAxisComponents([
-	            {
-	                name: 'yAxis',
-	                seriesType: this.seriesTypes[0],
-	                isVertical: true
-	            },
-	            {
-	                name: 'xAxis'
-	            }
-	        ], false);
-	        this._addLegendComponent({});
-	        this._addSeriesComponents([
-	            {
-	                name: 'lineSeries',
-	                SeriesClass: LineSeries,
-	                data: {
-	                    allowNegativeTooltip: true,
-	                    chartType: 'line',
-	                    seriesType: 'line',
-	                    options: optionsMap.line
-	                }
-	            },
-	            {
-	                name: 'scatterSeries',
-	                SeriesClass: ScatterSeries,
-	                data: {
-	                    allowNegativeTooltip: true,
-	                    chartType: 'scatter',
-	                    seriesType: 'scatter',
-	                    options: optionsMap.scatter
-	                }
-	            }
-	        ], options);
-
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            isVertical: this.isVertical,
-	            allowSelect: options.series.allowSelect,
-	            classType: 'areaTypeEventDetector'
-	        });
-
-	        this._addTooltipComponent();
-	    },
-
-	    /**
 	     * Get scale option.
 	     * @returns {{
 	     *      yAxis: {valueType: string, additionalOptions: {isSingleYAxis: boolean}},
 	     *      xAxis: {valueType: string}
 	     * }}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            yAxis: {
 	                valueType: 'y'
@@ -27389,16 +27632,51 @@
 	                valueType: 'x'
 	            }
 	        };
+	    },
+
+	    /**
+	     * Add data ratios.
+	     * @override
+	     * from axisTypeMixer
+	     */
+	    addDataRatios: function(limitMap) {
+	        var self = this;
+	        var chartTypes = this.chartTypes || [this.chartType];
+	        var addDataRatio;
+
+	        addDataRatio = function(chartType) {
+	            self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+	        };
+
+	        tui.util.forEachArray(chartTypes, addDataRatio);
+	    },
+
+	    /**
+	     * Add components
+	     * @override
+	     */
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('lineSeries', 'lineSeries');
+	        this.componentManager.register('scatterSeries', 'scatterSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    }
 	});
-
-	tui.util.extend(LineScatterComboChart.prototype, axisTypeMixer, comboTypeMixer);
 
 	module.exports = LineScatterComboChart;
 
 
 /***/ },
-/* 105 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27411,11 +27689,9 @@
 
 	var ChartBase = __webpack_require__(20);
 	var rawDataHandler = __webpack_require__(4);
-	var axisTypeMixer = __webpack_require__(94);
-	var zoomMixer = __webpack_require__(98);
-	var addingDynamicDataMixer = __webpack_require__(99);
-	var comboTypeMixer = __webpack_require__(102);
-	var verticalTypeComboMixer = __webpack_require__(103);
+	var predicate = __webpack_require__(5);
+	var validTypeMakerForYAxisOptions = __webpack_require__(101);
+	var DynamicDataHelper = __webpack_require__(98);
 
 	var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComboChart.prototype */ {
 	    /**
@@ -27432,8 +27708,37 @@
 	     * @param {object} options - chart options
 	     */
 	    init: function(rawData, theme, options) {
-	        this._initForVerticalTypeCombo(rawData, options);
-	        this._initForAddingData();
+	        var typeData = validTypeMakerForYAxisOptions({
+	            rawSeriesData: rawData.series,
+	            yAxisOptions: options.yAxis
+	        });
+
+	        /**
+	         * chart types
+	         * @type {Object}
+	         */
+	        this.chartTypes = typeData.chartTypes;
+
+	        /**
+	         * series types
+	         * @type {Object|Array.<T>}
+	         */
+	        this.seriesTypes = typeData.seriesTypes;
+
+	        /**
+	         * yAxis options
+	         * @type {object}
+	         */
+	        this.yAxisOptions = this._makeYAxisOptions(this.chartTypes, options.yAxis);
+
+	        /**
+	         * whether has right y axis or not
+	         * @type {boolean}
+	         */
+	        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+
+	        options.tooltip = options.tooltip || {};
+	        options.tooltip.grouped = true;
 
 	        ChartBase.call(this, {
 	            rawData: rawData,
@@ -27442,6 +27747,8 @@
 	            hasAxes: true,
 	            isVertical: true
 	        });
+
+	        this._dynamicDataHelper = new DynamicDataHelper(this);
 	    },
 
 	    /**
@@ -27451,23 +27758,206 @@
 	    onChangeCheckedLegends: function(checkedLegends) {
 	        var zoomedRawData = this.dataProcessor.getZoomedRawData();
 	        var rawData = rawDataHandler.filterCheckedRawData(zoomedRawData, checkedLegends);
-	        var chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
+	        var typeData = validTypeMakerForYAxisOptions({
+	            rawSeriesData: rawData.series,
+	            yAxisOptions: this.options.yAxis
+	        });
 
-	        tui.util.extend(this, chartTypesMap);
+	        this._dynamicDataHelper.reset();
+	        this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, typeData);
+	    },
+	    /**
+	     * Add components
+	     * @override
+	     */
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
 
-	        this._initForAddingData();
-	        this._changeCheckedLegends(checkedLegends, rawData, chartTypesMap);
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('areaSeries', 'areaSeries');
+	        this.componentManager.register('lineSeries', 'lineSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+	    /**
+	     * Get scale option.
+	     * @returns {{
+	     *      yAxis: {options: object, areaType: string, chartType: string, additionalParams: object},
+	     *      rightYAxis: {options: object, areaType: string, chartType: string, additionalParams: object}
+	     * }}
+	     * @override
+	     */
+	    getScaleOption: function() {
+	        var scaleOption = {
+	            yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
+	        };
+
+	        if (this.hasRightYAxis) {
+	            scaleOption.rightYAxis = this._makeYAxisScaleOption('rightYAxis', this.chartTypes[1]);
+	        }
+
+	        return scaleOption;
+	    },
+	    /**
+	     * Make y axis scale option.
+	     * @param {string} name - component name
+	     * @param {string} chartType - chart type
+	     * @param {boolean} isSingleYAxis - whether single y axis or not
+	     * @returns {{options: object, areaType: string, chartType: string, additionalParams: object}}
+	     * @private
+	     * from verticalTypeComboMixer
+	     */
+	    _makeYAxisScaleOption: function(name, chartType, isSingleYAxis) {
+	        var yAxisOption = this.yAxisOptions[chartType];
+	        var additionalOptions = {
+	            isSingleYAxis: !!isSingleYAxis
+	        };
+
+	        if (isSingleYAxis && this.options.series) {
+	            this._setAdditionalOptions(additionalOptions);
+	        }
+
+	        return {
+	            options: yAxisOption,
+	            areaType: 'yAxis',
+	            chartType: chartType,
+	            additionalOptions: additionalOptions
+	        };
+	    },
+	    /**
+	     * Make yAxis options.
+	     * @param {Array.<string>} chartTypes chart types
+	     * @param {?object} yAxisOptions yAxis options
+	     * @returns {{column: ?object, line: ?object}} options map
+	     * @private
+	     * from verticalTypeComboMixer
+	     */
+	    _makeYAxisOptions: function(chartTypes, yAxisOptions) {
+	        var options = {};
+	        yAxisOptions = yAxisOptions || {};
+	        tui.util.forEachArray(chartTypes, function(chartType, index) {
+	            options[chartType] = yAxisOptions[index] || yAxisOptions;
+	        });
+
+	        return options;
+	    },
+	    /**
+	     * Add data.
+	     * @param {string} category - category
+	     * @param {Array} values - values
+	     */
+	    addData: function(category, values) {
+	        this._dynamicDataHelper.addData(category, values);
+	    },
+	    /**
+	     * Set additional parameter for making y axis scale option.
+	     * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
+	     * @private
+	     * from verticalTypeComboMixer
+	     */
+	    _setAdditionalOptions: function(additionalOptions) {
+	        var dataProcessor = this.dataProcessor;
+
+	        tui.util.forEach(this.options.series, function(seriesOption, seriesType) {
+	            var chartType;
+
+	            if (!seriesOption.stackType) {
+	                return;
+	            }
+
+	            chartType = dataProcessor.findChartType(seriesType);
+
+	            if (!predicate.isAllowedStackOption(chartType)) {
+	                return;
+	            }
+
+	            additionalOptions.chartType = chartType;
+	            additionalOptions.stackType = seriesOption.stackType;
+	        });
+	    },
+	    /**
+	     * Add data ratios.
+	     * @override
+	     */
+	    addDataRatios: function(limitMap) {
+	        var self = this;
+	        var chartTypes = this.chartTypes || [this.chartType];
+	        var seriesOption = this.options.series || {};
+	        var addDataRatio;
+
+	        if (this.dataProcessor.isCoordinateType()) {
+	            addDataRatio = function(chartType) {
+	                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+	            };
+	        } else {
+	            addDataRatio = function(chartType) {
+	                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+	                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+	            };
+	        }
+
+	        tui.util.forEachArray(chartTypes, addDataRatio);
+	    },
+	    /**
+	     * Render for zoom.
+	     * from chart/zoomMixer
+	     * @param {boolean} isResetZoom - whether reset zoom or not
+	     * @private
+	     */
+	    _renderForZoom: function(isResetZoom) {
+	        var self = this;
+
+	        this._render(function(boundsAndScale) {
+	            self.componentManager.render('zoom', boundsAndScale, {
+	                isResetZoom: isResetZoom
+	            });
+	        });
+	    },
+
+	    /**
+	     * On zoom.
+	     * nnfrom chart/zoomMixer
+	     * @param {Array.<number>} indexRange - index range for zoom
+	     * @override
+	     */
+	    onZoom: function(indexRange) {
+	        this._dynamicDataHelper.pauseAnimation();
+	        this.dataProcessor.updateRawDataForZoom(indexRange);
+	        this._renderForZoom(false);
+	    },
+
+	    /**
+	     * On reset zoom.
+	     * from chart/zoomMixer
+	     * @override
+	     */
+	    onResetZoom: function() {
+	        var rawData = this.dataProcessor.getOriginalRawData();
+
+	        if (this._dynamicDataHelper.checkedLegends) {
+	            rawData = rawDataHandler.filterCheckedRawData(rawData, this._dynamicDataHelper.checkedLegends);
+	        }
+
+	        this.dataProcessor.initData(rawData);
+	        this.dataProcessor.initZoomedRawData();
+	        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
+	        this._renderForZoom(true);
+	        this._dynamicDataHelper.restartAnimation();
 	    }
 	});
-
-	tui.util.extend(LineAreaComboChart.prototype,
-	    axisTypeMixer, zoomMixer, addingDynamicDataMixer, comboTypeMixer, verticalTypeComboMixer);
 
 	module.exports = LineAreaComboChart;
 
 
 /***/ },
-/* 106 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27480,10 +27970,6 @@
 
 	var ChartBase = __webpack_require__(20);
 	var rawDataHandler = __webpack_require__(4);
-	var pieTypeMixer = __webpack_require__(107);
-	var comboTypeMixer = __webpack_require__(102);
-	var predicate = __webpack_require__(5);
-	var arrayUtil = __webpack_require__(6);
 
 	var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
 	    /**
@@ -27522,64 +28008,23 @@
 	    },
 
 	    /**
-	     * Make data for adding series component.
-	     * @returns {Array.<object>}
-	     * @private
-	     */
-	    _makeDataForAddingSeriesComponent: function() {
-	        var seriesTypes = this.seriesTypes;
-	        var optionsMap = this._makeOptionsMap(seriesTypes);
-	        var dataProcessor = this.dataProcessor;
-	        var isShowOuterLabel = arrayUtil.any(optionsMap, predicate.isShowOuterLabel);
-	        var seriesData = tui.util.map(seriesTypes, function(seriesType) {
-	            var chartType = dataProcessor.findChartType(seriesType);
-	            var additionalParams = {
-	                chartType: chartType,
-	                seriesType: seriesType,
-	                options: optionsMap[seriesType],
-	                isShowOuterLabel: isShowOuterLabel,
-	                isCombo: true
-	            };
-
-	            return {
-	                name: seriesType + 'Series',
-	                additionalParams: additionalParams
-	            };
-	        });
-
-	        return seriesData;
-	    },
-
-	    /**
 	     * Add components
-	     * @private
-	     */
-	    _addComponents: function() {
-	        var options = this.options;
-	        var chartOptions = options.chart || {};
-
-	        if (chartOptions.title) {
-	            this._addTitleComponent(options.chart.title);
-	        }
-
-	        this._addLegendComponent(this.seriesTypes);
-	        this._addTooltipComponent({
-	            labelFormatter: this.labelFormatter
-	        });
-
-	        if (options.chartExportMenu.visible) {
-	            this._addChartExportMenuComponent(options.chartExportMenu);
-	        }
-	        this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
-	        this._addMouseEventDetectorComponent();
-	    },
-
-	    /**
-	     * Add data ratios.
-	     * @private
 	     * @override
 	     */
-	    _addDataRatios: function() {
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('legend', 'legend');
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+	        this.componentManager.register('pie1Series', 'pieSeries');
+	        this.componentManager.register('pie2Series', 'pieSeries');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+	    /**
+	     * Add data ratios.
+	     * @override
+	     */
+	    addDataRatios: function() {
 	        var self = this;
 	        var seriesTypes = this.seriesTypes || [this.chartType];
 
@@ -27603,139 +28048,11 @@
 	    }
 	});
 
-	tui.util.extend(PieDonutComboChart.prototype, pieTypeMixer, comboTypeMixer);
-
 	module.exports = PieDonutComboChart;
 
 
 /***/ },
-/* 107 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview pieTypeMixer is mixer of pie type chart.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	/**
-	 * pieTypeMixer is mixer of pie type chart.
-	 * @mixin
-	 * @private */
-	var pieTypeMixer = {
-	    /**
-	     * Add legend component.
-	     * @param {Array.<string>} [seriesTypes] - series types
-	     * @private
-	     */
-	    _addLegendComponent: function(seriesTypes) {
-	        var legendOption = this.options.legend || {};
-
-	        if (legendOption.visible) {
-	            this.componentManager.register('legend', {
-	                seriesTypes: seriesTypes,
-	                chartType: this.chartType,
-	                classType: 'legend'
-	            });
-	        }
-	    },
-
-	    _addTitleComponent: function(options) {
-	        this.componentManager.register('title', {
-	            dataProcessor: this.dataProcessor,
-	            libType: options.libType,
-	            text: options.text,
-	            theme: this.theme.chart ? this.theme.chart.title : {},
-	            options: this.options.chart ? this.options.chart.title : {},
-	            classType: 'title'
-	        });
-	    },
-	    /**
-	     * Add tooltip component.
-	     * @param {object} tooltipOptions tooltip options
-	     * @private
-	     */
-	    _addTooltipComponent: function(tooltipOptions) {
-	        this.componentManager.register('tooltip', this._makeTooltipData('tooltip', tooltipOptions));
-	    },
-
-	    /**
-	     * Add series components.
-	     * @param {Array.<{name: string, additionalParams: ?object}>} seriesData - data for adding series component
-	     * @private
-	     */
-	    _addSeriesComponents: function(seriesData) {
-	        var componentManager = this.componentManager;
-	        var seriesBaseParams = {
-	            libType: this.options.libType,
-	            componentType: 'series',
-	            chartBackground: this.theme.chart.background,
-	            classType: 'pieSeries'
-	        };
-
-	        tui.util.forEach(seriesData, function(seriesDatum) {
-	            var seriesParams = tui.util.extend(seriesBaseParams, seriesDatum.additionalParams);
-
-	            componentManager.register(seriesDatum.name, seriesParams);
-	        });
-	    },
-
-	    /**
-	     * Add chartExportMenu component.
-	     * @private
-	     */
-	    _addChartExportMenuComponent: function() {
-	        var chartOption = this.options.chart;
-	        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
-
-	        this.componentManager.register('chartExportMenu', {
-	            chartTitle: chartTitle,
-	            classType: 'chartExportMenu'
-	        });
-	    },
-
-	    /**
-	     * Add mouse event detector component.
-	     * @private
-	     * @override
-	     */
-	    _addMouseEventDetectorComponent: function() {
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            classType: 'simpleEventDetector'
-	        });
-	    },
-
-	    /**
-	     * Label formatter function for pie chart
-	     * @param {object} seriesItem series item
-	     * @param {object} tooltipDatum tooltip datum object
-	     * @param {string} labelPrefix label prefix
-	     * @returns {object}
-	     */
-	    labelFormatter: function(seriesItem, tooltipDatum, labelPrefix) {
-	        var ratioLabel;
-	        var percentageString = (seriesItem.ratio * 100).toFixed(4);
-	        var percent = parseFloat(percentageString);
-	        var needSlice = (percent < 0.0009 || percentageString.length > 5);
-
-	        percentageString = needSlice ? percentageString.substr(0, 4) : String(percent);
-	        ratioLabel = percentageString + '&nbsp;%&nbsp;' || '';
-
-	        tooltipDatum.ratioLabel = labelPrefix + ratioLabel;
-	        tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? seriesItem.label : '');
-
-	        return tooltipDatum;
-	    }
-	};
-
-	module.exports = pieTypeMixer;
-
-
-/***/ },
-/* 108 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27747,7 +28064,6 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var pieTypeMixer = __webpack_require__(107);
 	var chartConst = __webpack_require__(2);
 
 	var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
@@ -27781,59 +28097,31 @@
 
 	    /**
 	     * Add components
-	     * @private
+	     * @override
 	     */
-	    _addComponents: function() {
-	        var chartExportMenu = this.options.chartExportMenu;
-	        var chartOptions = this.options.chart || {};
-
-	        if (chartOptions.title) {
-	            this._addTitleComponent(chartOptions.title);
-	        }
-
-	        this._addLegendComponent();
-	        this._addTooltipComponent({
-	            labelFormatter: this.labelFormatter
-	        });
-
-	        if (chartExportMenu.visible) {
-	            this._addChartExportMenuComponent(chartExportMenu);
-	        }
-	        this._addSeriesComponents([{
-	            name: 'pieSeries',
-	            additionalParams: {
-	                chartType: this.chartType
-	            }
-	        }]);
-	        this._addMouseEventDetectorComponent();
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('legend', 'legend');
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+	        this.componentManager.register('pieSeries', 'pieSeries');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
 
 	    /**
 	     * Add data ratios.
-	     * @private
 	     * @override
 	     */
-	    _addDataRatios: function() {
+	    addDataRatios: function() {
 	        this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
-	    },
-
-	    /**
-	     * Send series data.
-	     * @private
-	     * @override
-	     */
-	    _sendSeriesData: function() {
-	        ChartBase.prototype._sendSeriesData.call(this, chartConst.CHART_TYPE_PIE);
 	    }
 	});
-
-	tui.util.extend(PieChart.prototype, pieTypeMixer);
 
 	module.exports = PieChart;
 
 
 /***/ },
-/* 109 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27846,7 +28134,6 @@
 
 	var ChartBase = __webpack_require__(20);
 	var chartConst = __webpack_require__(2);
-	var axisTypeMixer = __webpack_require__(94);
 
 	var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
 	    /**
@@ -27886,10 +28173,9 @@
 	    /**
 	     * Get scale option.
 	     * @returns {{xAxis: ?{valueType:string}, yAxis: ?{valueType:string}}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        var scaleOption = {};
 
 	        if (this.dataProcessor.hasXValue(this.chartType)) {
@@ -27923,47 +28209,37 @@
 
 	    /**
 	     * Add components
-	     * @private
+	     * @override
 	     */
-	    _addComponents: function() {
-	        var chartOptions = this.options.chart || {};
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
 
-	        this._addComponentsForAxisType({
-	            axis: [
-	                {
-	                    name: 'yAxis',
-	                    isVertical: true
-	                },
-	                {
-	                    name: 'xAxis'
-	                }
-	            ],
-	            series: [
-	                {
-	                    name: 'bubbleSeries'
-	                }
-	            ],
-	            plot: true,
-	            title: chartOptions.title
-	        });
+	        this.componentManager.register('legend', 'legend');
+	        this.componentManager.register('circleLegend', 'circleLegend');
 
-	        if (this.options.circleLegend.visible) {
-	            this.componentManager.register('circleLegend', {
-	                chartType: this.chartType,
-	                classType: 'circleLegend',
-	                baseFontFamily: this.theme.chart.fontFamily
-	            });
-	        }
+	        this.componentManager.register('bubbleSeries', 'bubbleSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+	    /**
+	     * Add data ratios.
+	     * @override
+	     */
+	    addDataRatios: function(limitMap) {
+	        this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);
 	    }
 	});
-
-	tui.util.extend(BubbleChart.prototype, axisTypeMixer);
 
 	module.exports = BubbleChart;
 
 
 /***/ },
-/* 110 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27977,7 +28253,6 @@
 
 	var ChartBase = __webpack_require__(20);
 	var chartConst = __webpack_require__(2);
-	var axisTypeMixer = __webpack_require__(94);
 
 	var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
 	    /**
@@ -28011,39 +28286,11 @@
 	    },
 
 	    /**
-	     * Add components
-	     * @private
-	     */
-	    _addComponents: function() {
-	        var chartOptions = this.options.chart || {};
-
-	        this._addComponentsForAxisType({
-	            axis: [
-	                {
-	                    name: 'yAxis',
-	                    isVertical: true
-	                },
-	                {
-	                    name: 'xAxis'
-	                }
-	            ],
-	            series: [
-	                {
-	                    name: 'scatterSeries'
-	                }
-	            ],
-	            plot: true,
-	            title: chartOptions.title
-	        });
-	    },
-
-	    /**
 	     * Get scale option.
 	     * @returns {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            xAxis: {
 	                valueType: 'x'
@@ -28052,16 +28299,39 @@
 	                valueType: 'y'
 	            }
 	        };
+	    },
+	    /**
+	     * Add components
+	     * @override
+	     */
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('scatterSeries', 'scatterSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+	    /**
+	     * Add data ratios.
+	     * @override
+	     */
+	    addDataRatios: function(limitMap) {
+	        this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, false);
 	    }
 	});
-
-	tui.util.extend(ScatterChart.prototype, axisTypeMixer);
 
 	module.exports = ScatterChart;
 
 
 /***/ },
-/* 111 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28074,9 +28344,8 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var ColorSpectrum = __webpack_require__(112);
+	var ColorSpectrum = __webpack_require__(109);
 	var chartConst = __webpack_require__(2);
-	var axisTypeMixer = __webpack_require__(94);
 
 	var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
 	    /**
@@ -28120,7 +28389,6 @@
 	    _addComponents: function() {
 	        var seriesTheme = this.theme.series[this.chartType];
 	        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
-	        var chartOptions = this.options.chart || {};
 
 	        this._addComponentsForAxisType({
 	            axis: [
@@ -28147,40 +28415,58 @@
 	                }
 	            ],
 	            tooltip: true,
-	            mouseEventDetector: true,
-	            title: chartOptions.title
+	            mouseEventDetector: true
 	        });
 	    },
 
 	    /**
 	     * Get scale option.
 	     * @returns {{legend: boolean}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            legend: true
 	        };
+	    },
+
+	    /**
+	     * Add data ratios.
+	     * @override
+	     */
+	    addDataRatios: function(limitMap) {
+	        this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
+	    },
+
+	    /**
+	     * Add components.
+	     * @override
+	     * @private
+	     */
+	    addComponents: function() {
+	        var seriesTheme = this.theme.series[this.chartType];
+	        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('xAxis', 'axis');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('legend', 'spectrumLegend', {
+	            colorSpectrum: colorSpectrum
+	        });
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('heatmapSeries', 'heatmapSeries', {
+	            colorSpectrum: colorSpectrum
+	        });
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	    }
 	});
-
-	tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
-
-	/**
-	 * Add data ratios for rendering graph.
-	 * @private
-	 * @override
-	 */
-	HeatmapChart.prototype._addDataRatios = function(limitMap) {
-	    this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
-	};
 
 	module.exports = HeatmapChart;
 
 
 /***/ },
-/* 112 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28191,7 +28477,7 @@
 
 	'use strict';
 
-	var colorutil = __webpack_require__(113);
+	var colorutil = __webpack_require__(110);
 
 	var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
 	    /**
@@ -28251,7 +28537,7 @@
 
 
 /***/ },
-/* 113 */
+/* 110 */
 /***/ function(module, exports) {
 
 	/**
@@ -28503,7 +28789,7 @@
 
 
 /***/ },
-/* 114 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28515,7 +28801,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var ColorSpectrum = __webpack_require__(112);
+	var ColorSpectrum = __webpack_require__(109);
 
 	var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
 	    /**
@@ -28547,78 +28833,37 @@
 
 	    /**
 	     * Add components.
-	     * @private
+	     * @override
 	     */
-	    _addComponents: function() {
-	        var options = this.options;
+	    addComponents: function() {
 	        var seriesTheme = this.theme.series[this.chartType];
-	        var useColorValue = options.series.useColorValue;
+	        var useColorValue = this.options.series.useColorValue;
 	        var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
-
-	        if (options.chart && options.chart.title) {
-	            this._addTitleComponent(options.chart.title);
-	        }
-
-	        this._addChartExportMenuComponent();
-
-	        this.componentManager.register('series', {
-	            chartBackground: this.theme.chart.background,
-	            chartType: this.chartType,
-	            classType: 'treemapSeries',
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('treemapSeries', 'treemapSeries', {
 	            colorSpectrum: colorSpectrum
 	        });
 
-	        this.componentManager.register('tooltip', tui.util.extend({
-	            labelTheme: tui.util.pick(this.theme, 'series', 'label')
-	        }, this._makeTooltipData()));
-
-	        if (useColorValue && options.legend.visible) {
-	            this.componentManager.register('legend', {
-	                chartType: this.chartType,
-	                classType: 'spectrumLegend',
+	        if (useColorValue && this.options.legend.visible) {
+	            this.componentManager.register('legend', 'spectrumLegend', {
 	                colorSpectrum: colorSpectrum
 	            });
 	        }
 
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            classType: 'boundsTypeEventDetector',
-	            isVertical: this.isVertical
-	        });
-	    },
+	        this.componentManager.register('tooltip', 'tooltip', tui.util.extend({
+	            labelTheme: tui.util.pick(this.theme, 'series', 'label')
+	        }));
 
-	    _addTitleComponent: function(options) {
-	        this.componentManager.register('title', {
-	            dataProcessor: this.dataProcessor,
-	            libType: options.libType,
-	            text: options.text,
-	            theme: this.theme.title || {},
-	            classType: 'title'
-	        });
-	    },
-
-	    /**
-	     * Add chartExportMenu component.
-	     * @private
-	     */
-	    _addChartExportMenuComponent: function() {
-	        var chartOption = this.options.chart;
-	        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
-
-	        this.componentManager.register('chartExportMenu', {
-	            chartTitle: chartTitle,
-	            chartType: this.chartType,
-	            classType: 'chartExportMenu'
-	        });
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	    },
 
 	    /**
 	     * Get scale option.
 	     * @returns {{legend: boolean}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            legend: true
 	        };
@@ -28626,10 +28871,9 @@
 
 	    /**
 	     * Add data ratios to dataProcessor for rendering graph.
-	     * @private
 	     * @override
 	     */
-	    _addDataRatios: function(limitMap) {
+	    addDataRatios: function(limitMap) {
 	        this.dataProcessor.addDataRatiosForTreemapChart(limitMap.legend, this.chartType);
 	    },
 
@@ -28648,7 +28892,7 @@
 
 
 /***/ },
-/* 115 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28661,9 +28905,9 @@
 
 	var ChartBase = __webpack_require__(20);
 	var mapManager = __webpack_require__(10);
-	var MapChartMapModel = __webpack_require__(116);
-	var ColorSpectrum = __webpack_require__(112);
-	var MapChartDataProcessor = __webpack_require__(117);
+	var MapChartMapModel = __webpack_require__(113);
+	var MapChartDataProcessor = __webpack_require__(114);
+	var ColorSpectrum = __webpack_require__(109);
 
 	var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
 	    /**
@@ -28695,74 +28939,39 @@
 
 	    /**
 	     * Add components.
+	     * @override
 	     * @private
 	     */
-	    _addComponents: function() {
-	        var options = this.options;
+	    addComponents: function() {
 	        var seriesTheme = this.theme.series[this.chartType];
-	        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 	        var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
-	        var chartOptions = options.chart;
-	        var chartOption = this.options.chart;
-	        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
+	        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
-	        this.componentManager.register('chartExportMenu', {
-	            chartTitle: chartTitle,
-	            classType: 'chartExportMenu'
+	        this.componentManager.register('title', 'title');
+
+	        this.componentManager.register('legend', 'spectrumLegend', {
+	            colorSpectrum: colorSpectrum
 	        });
 
-	        this.componentManager.register('mapSeries', {
-	            libType: options.libType,
-	            chartType: options.chartType,
-	            componentType: 'series',
-	            classType: 'mapSeries',
+	        this.componentManager.register('tooltip', 'tooltip', {
+	            mapModel: mapModel
+	        });
+
+	        this.componentManager.register('mapSeries', 'mapSeries', {
 	            mapModel: mapModel,
 	            colorSpectrum: colorSpectrum
 	        });
 
-	        options.legend = options.legend || {};
-	        if (options.legend.visible) {
-	            this.componentManager.register('legend', {
-	                colorSpectrum: colorSpectrum,
-	                classType: 'spectrumLegend'
-	            });
-	        }
-
-	        if (chartOptions.title) {
-	            this._addTitleComponent(chartOptions.title);
-	        }
-
-	        this.componentManager.register('tooltip', tui.util.extend({
-	            mapModel: mapModel
-	        }, this._makeTooltipData('mapChartTooltip')));
-
-	        this.componentManager.register('zoom', {
-	            classType: 'zoom'
-	        });
-
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            classType: 'mapChartEventDetector'
-	        });
-	    },
-
-	    _addTitleComponent: function(options) {
-	        this.componentManager.register('title', {
-	            dataProcessor: this.dataProcessor,
-	            libType: options.libType,
-	            text: options.text,
-	            theme: this.theme.title,
-	            classType: 'title'
-	        });
+	        this.componentManager.register('zoom', 'zoom');
+	        this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
 	    },
 
 	    /**
 	     * Get scale option.
 	     * @returns {{legend: boolean}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            legend: true
 	        };
@@ -28770,10 +28979,9 @@
 
 	    /**
 	     * Add data ratios.
-	     * @private
 	     * @override
 	     */
-	    _addDataRatios: function(limitMap) {
+	    addDataRatios: function(limitMap) {
 	        this.dataProcessor.addDataRatios(limitMap.legend);
 	    }
 	});
@@ -28782,7 +28990,7 @@
 
 
 /***/ },
-/* 116 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29200,7 +29408,7 @@
 
 
 /***/ },
-/* 117 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29211,7 +29419,7 @@
 
 	'use strict';
 
-	var DataProcessorBase = __webpack_require__(75);
+	var DataProcessorBase = __webpack_require__(77);
 	var renderUtil = __webpack_require__(30);
 
 	/**
@@ -29346,7 +29554,7 @@
 
 
 /***/ },
-/* 118 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29358,7 +29566,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var Series = __webpack_require__(60);
+	var Series = __webpack_require__(62);
 
 	var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototype */ {
 	    /**
@@ -29382,6 +29590,11 @@
 	     * @param {object} options chart options
 	     */
 	    init: function(rawData, theme, options) {
+	        // Radial차트는 그룹툴팁을 지원하지 않음, 지원하게되면 아래 코드 삭제
+	        if (options.tooltip) {
+	            options.tooltip.grouped = false;
+	        }
+
 	        ChartBase.call(this, {
 	            rawData: rawData,
 	            theme: theme,
@@ -29390,92 +29603,47 @@
 	            isVertical: true
 	        });
 	    },
-
 	    /**
 	     * Add components
-	     * @private
 	     * @override
 	     */
-	    _addComponents: function() {
-	        var options = this.options;
-	        var chartOptions = options.chart || {};
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('radialSeries', 'radialSeries');
+	        this.componentManager.register('plot', 'radialPlot');
 
-	        if (chartOptions.title) {
-	            this._addTitleComponent(chartOptions.title);
-	        }
+	        this.componentManager.register('legend', 'legend');
 
-	        this.componentManager.register('plot', {
-	            componentType: 'plot',
-	            classType: 'radialPlot'
-	        });
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
-	        this.componentManager.register('series', {
-	            libType: options.libType,
-	            chartType: options.chartType,
-	            componentType: 'series',
-	            classType: 'radialSeries',
-	            chartBackground: this.theme.chart.background
-	        });
-
-	        this.componentManager.register('tooltip', this._makeTooltipData('tooltip'));
-
-	        this.componentManager.register('mouseEventDetector', {
-	            chartType: this.chartType,
-	            isVertical: true,
-	            allowSelect: true,
-	            classType: 'areaTypeEventDetector'
-	        });
-
-	        this.componentManager.register('legend', tui.util.extend({
-	            seriesNames: this.seriesNames,
-	            chartType: this.chartType,
-	            classType: 'legend'
-	        }));
-
-	        this.componentManager.register('chartExportMenu', {
-	            chartTitle: chartOptions && chartOptions.title ? chartOptions.title.text : 'chart',
-	            classType: 'chartExportMenu'
-	        });
-	    },
-
-	    _addTitleComponent: function(options) {
-	        this.componentManager.register('title', {
-	            dataProcessor: this.dataProcessor,
-	            libType: options.libType,
-	            text: options.text,
-	            theme: this.theme.chart ? this.theme.chart.title : {},
-	            classType: 'title'
-	        });
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
 	    /**
 	     * Add data ratios.
-	     * @private
 	     * @override
 	     */
-	    _addDataRatios: function(limitMap) {
+	    addDataRatios: function(limitMap) {
 	        this.dataProcessor.addDataRatios(limitMap[this.chartType], null, this.chartType);
 	    },
 
 	    /**
 	     * Get scale option.
 	     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
-	     * @private
 	     * @override
 	     */
-	    _getScaleOption: function() {
+	    getScaleOption: function() {
 	        return {
 	            yAxis: {}
 	        };
 	    }
 	});
 
-	tui.util.extend(RadialChart.prototype);
-
 	module.exports = RadialChart;
 
 
 /***/ },
-/* 119 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29488,7 +29656,7 @@
 
 
 /***/ },
-/* 120 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29500,22 +29668,22 @@
 	'use strict';
 	var raphael = window.Raphael;
 
-	var BarChart = __webpack_require__(121);
-	var LineChart = __webpack_require__(122);
-	var AreaChart = __webpack_require__(124);
-	var PieChart = __webpack_require__(125);
-	var RadialLineSeries = __webpack_require__(126);
-	var CoordinateTypeChart = __webpack_require__(127);
-	var BoxTypeChart = __webpack_require__(128);
-	var MapChart = __webpack_require__(129);
+	var BarChart = __webpack_require__(118);
+	var LineChart = __webpack_require__(119);
+	var AreaChart = __webpack_require__(121);
+	var PieChart = __webpack_require__(122);
+	var RadialLineSeries = __webpack_require__(123);
+	var CoordinateTypeChart = __webpack_require__(124);
+	var BoxTypeChart = __webpack_require__(125);
+	var MapChart = __webpack_require__(126);
 
-	var legend = __webpack_require__(130);
-	var MapLegend = __webpack_require__(131);
-	var CircleLegend = __webpack_require__(132);
-	var title = __webpack_require__(133);
-	var axis = __webpack_require__(134);
+	var legend = __webpack_require__(127);
+	var MapLegend = __webpack_require__(128);
+	var CircleLegend = __webpack_require__(129);
+	var title = __webpack_require__(130);
+	var axis = __webpack_require__(131);
 
-	var RadialPlot = __webpack_require__(135);
+	var RadialPlot = __webpack_require__(132);
 
 	var pluginName = 'Raphael';
 	var pluginRaphael = {
@@ -29557,7 +29725,7 @@
 
 
 /***/ },
-/* 121 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29567,7 +29735,7 @@
 	 */
 
 	'use strict';
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var raphael = window.Raphael;
 
@@ -30119,7 +30287,7 @@
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
-	            opacity: 1,
+	            opacity: 0,
 	            'text-anchor': isStacked ? 'middle' : 'start'
 	        };
 	        var labelSet = paper.set();
@@ -30152,7 +30320,7 @@
 
 
 /***/ },
-/* 122 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30163,8 +30331,8 @@
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(123),
-	    raphaelRenderUtil = __webpack_require__(56);
+	var RaphaelLineBase = __webpack_require__(120),
+	    raphaelRenderUtil = __webpack_require__(58);
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -30383,7 +30551,7 @@
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
 	            'text-anchor': 'middle',
-	            opacity: 1
+	            opacity: 0
 	        };
 	        var set = paper.set();
 
@@ -30417,7 +30585,7 @@
 
 
 /***/ },
-/* 123 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30428,7 +30596,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var browser = tui.util.browser;
 	var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
@@ -31234,7 +31402,7 @@
 
 
 /***/ },
-/* 124 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31245,8 +31413,8 @@
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(123);
-	var raphaelRenderUtil = __webpack_require__(56);
+	var RaphaelLineBase = __webpack_require__(120);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -31657,7 +31825,7 @@
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
 	            'text-anchor': 'middle',
-	            opacity: 1
+	            opacity: 0
 	        };
 	        var set = paper.set();
 
@@ -31691,7 +31859,7 @@
 
 
 /***/ },
-/* 125 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31702,7 +31870,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var raphael = window.Raphael;
 
@@ -32359,7 +32527,7 @@
 	            'font-family': theme.fontFamily,
 	            'font-weight': theme.fontWeight,
 	            'text-anchor': 'middle',
-	            opacity: 1
+	            opacity: 0
 	        };
 
 	        tui.util.forEach(positions, function(position, index) {
@@ -32381,7 +32549,7 @@
 
 
 /***/ },
-/* 126 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32392,8 +32560,8 @@
 
 	'use strict';
 
-	var RaphaelLineTypeBase = __webpack_require__(123);
-	var raphaelRenderUtil = __webpack_require__(56);
+	var RaphaelLineTypeBase = __webpack_require__(120);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -32581,7 +32749,7 @@
 
 
 /***/ },
-/* 127 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32591,7 +32759,7 @@
 	 */
 
 	'use strict';
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var raphael = window.Raphael;
 
@@ -33008,7 +33176,7 @@
 
 
 /***/ },
-/* 128 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33018,7 +33186,7 @@
 	 */
 
 	'use strict';
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var ANIMATION_DURATION = 100;
 	var MIN_BORDER_WIDTH = 1;
@@ -33396,7 +33564,7 @@
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
-	            opacity: 1
+	            opacity: 0
 	        };
 
 	        tui.util.forEach(labels, function(categoryLabel, categoryIndex) {
@@ -33421,7 +33589,7 @@
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
-	            opacity: 1
+	            opacity: 0
 	        };
 
 	        tui.util.forEach(labels, function(label, index) {
@@ -33441,7 +33609,7 @@
 
 
 /***/ },
-/* 129 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33452,7 +33620,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 	var dom = __webpack_require__(14);
 	var browser = tui.util.browser;
 
@@ -33705,7 +33873,7 @@
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
 	            'text-anchor': 'middle',
-	            opacity: 1,
+	            opacity: 0,
 	            transform: 's' + this.ratio + ',' + this.ratio + ',0,0'
 	            + 't' + (this.position.left / this.ratio) + ',' + (this.position.top / this.ratio)
 	        };
@@ -33755,7 +33923,7 @@
 
 
 /***/ },
-/* 130 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33766,7 +33934,7 @@
 
 	'use strict';
 	var chartConst = __webpack_require__(2);
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
 	var CHECKBOX_WIDTH = 10;
@@ -34008,7 +34176,7 @@
 
 
 /***/ },
-/* 131 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34019,7 +34187,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 	var chartConst = __webpack_require__(2);
 
 	var PADDING = chartConst.LEGEND_AREA_PADDING;
@@ -34236,7 +34404,7 @@
 
 
 /***/ },
-/* 132 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34247,7 +34415,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	/**
 	 * @classdesc RaphaelCircleLegend is graph renderer for circleLegend.
@@ -34299,7 +34467,7 @@
 
 
 /***/ },
-/* 133 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34310,7 +34478,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 	var chartConst = __webpack_require__(2);
 
 	var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
@@ -34356,7 +34524,7 @@
 
 
 /***/ },
-/* 134 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34367,7 +34535,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 
 	var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
 	    init: function() {
@@ -34666,7 +34834,7 @@
 
 
 /***/ },
-/* 135 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34677,7 +34845,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(56);
+	var raphaelRenderUtil = __webpack_require__(58);
 	var arrayUtil = __webpack_require__(6);
 
 	var STEP_TOP_ADJUSTMENT = 8;

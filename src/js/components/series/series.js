@@ -600,7 +600,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(null, this.seriesSet);
+            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
             this._fireLoadEvent(isRerendering);
         }
 
@@ -631,6 +631,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (IS_IE7) {
             this._fireLoadEvent(isRerendering);
+            this.labelSet.attr({
+                opacity: 1
+            });
         } else if (this.labelSet && this.labelSet.length) {
             raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
         }

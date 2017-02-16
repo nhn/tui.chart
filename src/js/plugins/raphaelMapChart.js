@@ -259,7 +259,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
             'text-anchor': 'middle',
-            opacity: 1,
+            opacity: 0,
             transform: 's' + this.ratio + ',' + this.ratio + ',0,0'
             + 't' + (this.position.left / this.ratio) + ',' + (this.position.top / this.ratio)
         };

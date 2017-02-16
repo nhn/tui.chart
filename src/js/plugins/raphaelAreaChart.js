@@ -418,7 +418,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
             'text-anchor': 'middle',
-            opacity: 1
+            opacity: 0
         };
         var set = paper.set();
 

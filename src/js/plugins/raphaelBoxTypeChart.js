@@ -383,7 +383,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
-            opacity: 1
+            opacity: 0
         };
 
         tui.util.forEach(labels, function(categoryLabel, categoryIndex) {
@@ -408,7 +408,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
-            opacity: 1
+            opacity: 0
         };
 
         tui.util.forEach(labels, function(label, index) {
