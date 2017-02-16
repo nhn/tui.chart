@@ -6,7 +6,7 @@
 
 'use strict';
 
-var GroupTooltip = require('../../../src/js/components/tooltips/groupTooltip'),
+var groupTooltipFactory = require('../../../src/js/components/tooltips/groupTooltip'),
     seriesGroup = require('../../../src/js/models/data/seriesGroup'),
     defaultTheme = require('../../../src/js/themes/defaultTheme'),
     dom = require('../../../src/js/helpers/domHandler');
@@ -19,14 +19,14 @@ describe('GroupTooltip', function() {
     });
 
     beforeEach(function() {
-        tooltip = new GroupTooltip({
+        tooltip = new groupTooltipFactory.GroupTooltip({
             dataProcessor: dataProcessor,
             eventBus: new tui.util.CustomEvents(),
             options: {}
         });
     });
 
-    describe('_makeTooltipData()', function() {
+    describe('makeTooltipData()', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function() {
             var actual, expected;
 
@@ -51,7 +51,7 @@ describe('GroupTooltip', function() {
                 return categories[index];
             });
 
-            actual = tooltip._makeTooltipData();
+            actual = tooltip.makeTooltipData();
             expected = [
                 {category: 'Silver', values: ['10', '20']},
                 {category: 'Gold', values: ['30', '40']}

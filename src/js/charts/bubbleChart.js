@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
     /**
@@ -48,10 +47,9 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     /**
      * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?{valueType:string}}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         var scaleOption = {};
 
         if (this.dataProcessor.hasXValue(this.chartType)) {
@@ -85,40 +83,29 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
-        var chartOptions = this.options.chart || {};
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
 
-        this._addComponentsForAxisType({
-            axis: [
-                {
-                    name: 'yAxis',
-                    isVertical: true
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
-            series: [
-                {
-                    name: 'bubbleSeries'
-                }
-            ],
-            plot: true,
-            title: chartOptions.title
-        });
+        this.componentManager.register('legend', 'legend');
+        this.componentManager.register('circleLegend', 'circleLegend');
 
-        if (this.options.circleLegend.visible) {
-            this.componentManager.register('circleLegend', {
-                chartType: this.chartType,
-                classType: 'circleLegend',
-                baseFontFamily: this.theme.chart.fontFamily
-            });
-        }
+        this.componentManager.register('bubbleSeries', 'bubbleSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+    },
+    /**
+     * Add data ratios.
+     * @override
+     */
+    addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);
     }
 });
-
-tui.util.extend(BubbleChart.prototype, axisTypeMixer);
 
 module.exports = BubbleChart;

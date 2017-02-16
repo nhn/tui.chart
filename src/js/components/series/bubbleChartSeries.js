@@ -127,11 +127,24 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      */
     _setDataForRendering: function(data) {
         this.maxRadius = data.maxRadius;
-
         Series.prototype._setDataForRendering.call(this, data);
     }
 });
 
 CoordinateTypeSeriesBase.mixin(BubbleChartSeries);
 
-module.exports = BubbleChartSeries;
+function bubbleSeriesFactory(params) {
+    var libType = params.chartOptions.libType;
+    var chartTheme = params.chartTheme;
+
+    params.libType = libType;
+    params.chartType = 'bubble';
+    params.chartBackground = chartTheme.chart.background;
+
+    return new BubbleChartSeries(params);
+}
+
+bubbleSeriesFactory.componentType = 'series';
+bubbleSeriesFactory.BubbleChartSeries = BubbleChartSeries;
+
+module.exports = bubbleSeriesFactory;

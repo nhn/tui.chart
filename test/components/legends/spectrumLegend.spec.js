@@ -6,14 +6,14 @@
 
 'use strict';
 
-var SpectrumLegend = require('../../../src/js/components/legends/spectrumLegend');
+var spectrumLegendFactory = require('../../../src/js/components/legends/spectrumLegend');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('Test for SpectrumLegend', function() {
     var legend;
 
     beforeEach(function() {
-        legend = new SpectrumLegend({
+        legend = new spectrumLegendFactory.SpectrumLegend({
             eventBus: new tui.util.CustomEvents(),
             theme: {}
         });

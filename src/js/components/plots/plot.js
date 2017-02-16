@@ -623,4 +623,20 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     }
 });
 
-module.exports = Plot;
+function plotFactory(param) {
+    var chartType = param.chartOptions.chartType;
+    var seriesTypes = param.seriesTypes;
+    var xAxisType = param.chartOptions.xAxis.type;
+
+    // bar, chart, line, area동일
+    param.chartType = chartType;
+    param.chartTypes = seriesTypes;
+    param.xAxisTypeOption = xAxisType;
+
+    return new Plot(param);
+}
+
+plotFactory.componentType = 'plot';
+plotFactory.Plot = Plot;
+
+module.exports = plotFactory;

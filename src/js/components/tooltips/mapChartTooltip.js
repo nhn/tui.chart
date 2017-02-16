@@ -97,4 +97,11 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
 });
 
 singleTooltipMixer.mixin(MapChartTooltip);
-module.exports = MapChartTooltip;
+
+function mapChartTooltipFactory(params) {
+    return new MapChartTooltip(params);
+}
+
+mapChartTooltipFactory.componentType = 'tooltip';
+
+module.exports = mapChartTooltipFactory;

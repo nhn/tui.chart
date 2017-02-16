@@ -6,13 +6,13 @@
 
 'use strict';
 
-var RadialPlot = require('../../../src/js/components/plots/radialPlot');
+var radialPlotFactory = require('../../../src/js/components/plots/radialPlot');
 
 describe('Test for RadialPlot', function() {
     var plot;
 
     beforeEach(function() {
-        plot = new RadialPlot({
+        plot = new radialPlotFactory.RadialPlot({
             theme: {
                 lineColor: 'black'
             }

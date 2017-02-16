@@ -173,4 +173,10 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
     }
 });
 
-module.exports = AreaTypeEventDetector;
+function areaTypeEventDetectorFactory(params) {
+    return new AreaTypeEventDetector(params);
+}
+
+areaTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+module.exports = areaTypeEventDetectorFactory;

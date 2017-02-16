@@ -1,17 +1,17 @@
 /**
- * @fileoverview Test for Tooltip.
+ * @fileoverview Test for NormalTooltip.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var Tooltip = require('../../../src/js/components/tooltips/tooltip'),
+var normalTooltipFactory = require('../../../src/js/components/tooltips/normalTooltip'),
     DataProcessor = require('../../../src/js/models/data/dataProcessor'),
     SeriesDataModel = require('../../../src/js/models/data/seriesDataModel'),
     seriesGroup = require('../../../src/js/models/data/seriesGroup');
 
-describe('Tooltip', function() {
+describe('NormalTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
@@ -19,7 +19,7 @@ describe('Tooltip', function() {
     });
 
     beforeEach(function() {
-        tooltip = new Tooltip({
+        tooltip = new normalTooltipFactory.NormalTooltip({
             chartType: 'column',
             dataProcessor: dataProcessor,
             eventBus: new tui.util.CustomEvents(),
@@ -50,18 +50,16 @@ describe('Tooltip', function() {
                 'pie': ['legend1']
             };
 
-            tooltip = new Tooltip({
+            tooltip = new normalTooltipFactory.NormalTooltip({
                 chartType: 'pie',
                 dataProcessor: dataProcessor,
                 eventBus: new tui.util.CustomEvents(),
                 options: {},
-                tooltipOptions: {
-                    labelFormatter: function(seriesDatum, tooltipDatum) {
-                        tooltipDatum.label = seriesDatum.label;
-                        tooltipDatum.ratioLabel = ':&nbsp;' + (seriesItem.ratio * 100) + '&nbsp;%&nbsp;';
+                labelFormatter: function(seriesDatum, tooltipDatum) {
+                    tooltipDatum.label = seriesDatum.label;
+                    tooltipDatum.ratioLabel = ':&nbsp;' + (seriesItem.ratio * 100) + '&nbsp;%&nbsp;';
 
-                        return tooltipDatum;
-                    }
+                    return tooltipDatum;
                 }
             });
 
@@ -122,7 +120,7 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_makeTooltipData()', function() {
+    describe('makeTooltipData()', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function() {
             var actual, expected;
             var seriesDataModel = new SeriesDataModel();
@@ -148,7 +146,7 @@ describe('Tooltip', function() {
             tooltip.chartType = 'column';
             tooltip.isVertical = true;
 
-            actual = tooltip._makeTooltipData();
+            actual = tooltip.makeTooltipData();
             expected = {
                 column: [[
                     {category: 'Silver', label: ':&nbsp;10', legend: 'Density1'},

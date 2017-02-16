@@ -25,11 +25,8 @@ var GroupTooltip = require('../components/tooltips/groupTooltip');
 var MapChartTooltip = require('../components/tooltips/mapChartTooltip');
 
 // mouse event detectors
-var AreaTypeEventDetector = require('../components/mouseEventDetectors/areaTypeEventDetector');
-var BoundsTypeEventDetector = require('../components/mouseEventDetectors/boundsTypeEventDetector');
-var GroupTypeEventDetector = require('../components/mouseEventDetectors/groupTypeEventDetector');
 var MapChartEventDetector = require('../components/mouseEventDetectors/mapChartEventDetector');
-var SimpleEventDetector = require('../components/mouseEventDetectors/simpleEventDetector');
+var mouseEventDetector = require('../components/mouseEventDetectors/mouseEventDetector');
 
 // series
 var BarSeries = require('../components/series/barChartSeries');
@@ -46,7 +43,7 @@ var TreemapSeries = require('../components/series/treemapChartSeries');
 
 var Zoom = require('../components/series/zoom');
 
-var COMPONENT_CLASS_MAP = {
+var COMPONENT_FACTORY_MAP = {
     axis: Axis,
     plot: Plot,
     radialPlot: RadialPlot,
@@ -56,11 +53,8 @@ var COMPONENT_CLASS_MAP = {
     tooltip: Tooltip,
     groupTooltip: GroupTooltip,
     mapChartTooltip: MapChartTooltip,
-    areaTypeEventDetector: AreaTypeEventDetector,
-    boundsTypeEventDetector: BoundsTypeEventDetector,
-    groupTypeEventDetector: GroupTypeEventDetector,
     mapChartEventDetector: MapChartEventDetector,
-    simpleEventDetector: SimpleEventDetector,
+    mouseEventDetector: mouseEventDetector,
     barSeries: BarSeries,
     columnSeries: ColumnSeries,
     lineSeries: LineSeries,
@@ -100,7 +94,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         this.components = [];
 
         /**
-         * Component map.
+         * componentFactory map.
          * @type {object}
          */
         this.componentMap = {};
@@ -130,6 +124,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         this.hasAxes = params.hasAxes;
 
         /**
+         * whether chart is vertical or not
+         * @type {boolean}
+         */
+        this.isVertical = params.isVertical;
+
+        /**
          * event bus for transmitting message
          * @type {object}
          */
@@ -145,18 +145,25 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
             width: width,
             height: height
         });
+
+        /**
+         * seriesTypes of chart
+         * @type {Array.<string>}
+         */
+        this.seriesTypes = params.seriesTypes;
     },
 
     /**
      * Make component options.
      * @param {object} options options
-     * @param {string} componentType component type
+     * @param {string} optionKey component option key
+     * @param {string} componentName component name
      * @param {number} index component index
      * @returns {object} options
      * @private
      */
-    _makeComponentOptions: function(options, componentType, index) {
-        options = options || this.options[componentType];
+    _makeComponentOptions: function(options, optionKey, componentName, index) {
+        options = options || this.options[optionKey];
         options = tui.util.isArray(options) ? options[index] : options || {};
 
         return options;
@@ -168,32 +175,72 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * The component types are axis, legend, plot, series and mouseEventDetector.
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
-     * @param {object} params component parameters
+     * @param {string} classType component factory name
+     * @param {object} params params that for alternative charts, 기본 흐름을 타지않는 특이 차트들을 위해 제공
      */
-    register: function(name, params) {
-        var index, component, componentType, classType, Component;
+    register: function(name, classType, params) {
+        var index, component, componentType, componentFactory, optionKey;
 
         params = params || {};
 
-        componentType = params.componentType || name;
-        classType = params.classType || componentType || name;
+        params.name = name;
 
         index = params.index || 0;
 
-        params.theme = params.theme || this.theme[componentType];
-        params.options = this._makeComponentOptions(params.options, componentType, index);
+        componentFactory = COMPONENT_FACTORY_MAP[classType];
+        componentType = componentFactory.componentType;
+
+        params.chartTheme = this.theme;
+        params.chartOptions = this.options;
+        params.seriesTypes = this.seriesTypes;
+
+        // axis의 경우 name으로 테마와 옵션을 가져온다. xAxis, yAxis
+        if (componentType === 'axis') {
+            optionKey = name;
+        } else {
+            optionKey = componentType;
+        }
+
+        params.theme = this.theme[optionKey];
+        params.options = this.options[optionKey];
+
+        if (optionKey === 'series') {
+            // 시리즈는 옵션과 테마가 시리즈 이름으로 뎊스가 한번더 들어간다.
+            // 테마는 항상 뎊스가 더들어가고 옵션은 콤보인경우에만 더들어간다.
+            tui.util.forEach(this.seriesTypes, function(seriesType) {
+                if (name.indexOf(seriesType) === 0) {
+                    params.options = params.options[seriesType] || params.options;
+                    params.theme = params.theme[seriesType];
+
+                    if (tui.util.isArray(params.options)) {
+                        params.options = params.options[index] || {};
+                    }
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;
+        params.isVertical = this.isVertical;
         params.eventBus = this.eventBus;
 
-        Component = COMPONENT_CLASS_MAP[classType];
-        component = new Component(params);
-        component.componentName = name;
-        component.componentType = componentType;
+        // 맵과 같이 일반적인 스케일 모델을 사용하지 않는 차트를 위한 개별 구현한 차트 모델
+        params.alternativeModel = this.alternativeModel;
 
-        this.components.push(component);
-        this.componentMap[name] = component;
+        component = componentFactory(params);
+
+        // 팩토리에서 옵션에따라 생성을 거부할 수 있다.
+        if (component) {
+            component.componentName = name;
+            component.componentType = componentType;
+
+            this.components.push(component);
+            this.componentMap[name] = component;
+        }
     },
 
     /**

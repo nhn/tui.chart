@@ -6,14 +6,14 @@
 
 'use strict';
 
-var ScatterChartSeries = require('../../../src/js/components/series/scatterChartSeries');
+var scatterSeriesFactory = require('../../../src/js/components/series/scatterChartSeries');
 var chartConst = require('../../../src/js/const');
 
 describe('ScatterChartSeries', function() {
     var series;
 
     beforeEach(function() {
-        series = new ScatterChartSeries({
+        series = new scatterSeriesFactory.ScatterChartSeries({
             chartType: 'scatter',
             theme: {
                 label: {

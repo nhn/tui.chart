@@ -134,4 +134,18 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
 LineTypeSeriesBase.mixin(AreaChartSeries);
 
-module.exports = AreaChartSeries;
+function areaSeriesFactory(params) {
+    var libType = params.chartOptions.libType;
+    var chartTheme = params.chartTheme;
+
+    params.libType = libType;
+    params.chartType = 'area';
+    params.chartBackground = chartTheme.chart.background;
+
+    return new AreaChartSeries(params);
+}
+
+areaSeriesFactory.componentType = 'series';
+areaSeriesFactory.AreaChartSeries = AreaChartSeries;
+
+module.exports = areaSeriesFactory;

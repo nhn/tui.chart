@@ -9,7 +9,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 
 var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
     /**
@@ -43,39 +42,11 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
     },
 
     /**
-     * Add components
-     * @private
-     */
-    _addComponents: function() {
-        var chartOptions = this.options.chart || {};
-
-        this._addComponentsForAxisType({
-            axis: [
-                {
-                    name: 'yAxis',
-                    isVertical: true
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
-            series: [
-                {
-                    name: 'scatterSeries'
-                }
-            ],
-            plot: true,
-            title: chartOptions.title
-        });
-    },
-
-    /**
      * Get scale option.
      * @returns {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             xAxis: {
                 valueType: 'x'
@@ -84,9 +55,31 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
                 valueType: 'y'
             }
         };
+    },
+    /**
+     * Add components
+     * @override
+     */
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
+
+        this.componentManager.register('legend', 'legend');
+
+        this.componentManager.register('scatterSeries', 'scatterSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+    },
+    /**
+     * Add data ratios.
+     * @override
+     */
+    addDataRatios: function(limitMap) {
+        this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, false);
     }
 });
-
-tui.util.extend(ScatterChart.prototype, axisTypeMixer);
 
 module.exports = ScatterChart;

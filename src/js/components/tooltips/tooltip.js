@@ -1,204 +1,64 @@
 /**
- * @fileoverview Tooltip component.
+ * @fileoverview NormalTooltip component.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var TooltipBase = require('./tooltipBase');
-var singleTooltipMixer = require('./singleTooltipMixer');
-var chartConst = require('../../const');
+var normalTooltipFactory = require('./normalTooltip');
+var groupTooltipFactory = require('./groupTooltip');
+var mapChartTooltipFactory = require('./mapChartTooltip');
 var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var tooltipTemplate = require('./tooltipTemplate');
 
 /**
- * @classdesc Tooltip component.
- * @class Tooltip
- * @private
+ * Label formatter function for pie chart
+ * @param {object} seriesItem series item
+ * @param {object} tooltipDatum tooltip datum object
+ * @param {string} labelPrefix label prefix
+ * @returns {object}
  */
-var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
-    /**
-     * Tooltip component.
-     * @constructs Tooltip
-     * @private
-     * @override
-     */
-    init: function() {
-        TooltipBase.apply(this, arguments);
-    },
+function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
+    var ratioLabel;
+    var percentageString = (seriesItem.ratio * 100).toFixed(4);
+    var percent = parseFloat(percentageString);
+    var needSlice = (percent < 0.0009 || percentageString.length > 5);
 
-    /**
-     * Make tooltip html.
-     * @param {string} category category
-     * @param {{value: string, legend: string, chartType: string, suffix: ?string}} item item data
-     * @returns {string} tooltip html
-     * @private
-     */
-    _makeTooltipHtml: function(category, item) {
-        var isPieOrPieDonutComboChart = predicate.isPieChart(this.chartType)
-            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
-        var template;
+    percentageString = needSlice ? percentageString.substr(0, 4) : String(percent);
+    ratioLabel = percentageString + '&nbsp;%&nbsp;' || '';
 
-        if (isPieOrPieDonutComboChart) {
-            template = tooltipTemplate.tplPieChart;
-        } else if (this.dataProcessor.coordinateType) {
-            template = tooltipTemplate.tplCoordinatetypeChart;
-        } else {
-            template = tooltipTemplate.tplDefault;
-        }
+    tooltipDatum.ratioLabel = labelPrefix + ratioLabel;
+    tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? seriesItem.label : '');
 
-        return template(tui.util.extend({
-            categoryVisible: category ? 'show' : 'hide',
-            category: category
-        }, item));
-    },
+    return tooltipDatum;
+}
 
-    /**
-     * Make html for value types like x, y, r
-     * @param {{x: ?number, y: ?number, r: ?number}} data - data
-     * @param {Array.<string>} valueTypes - types of value
-     * @returns {string}
-     * @private
-     */
-    _makeHtmlForValueTypes: function(data, valueTypes) {
-        return tui.util.map(valueTypes, function(type) {
-            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
-        }).join('');
-    },
+function tooltipFactory(params) {
+    var chartType = params.chartOptions.chartType;
+    var seriesTypes = params.seriesTypes;
+    var xAxisOptions = params.chartOptions.xAxis;
+    var factory;
 
-    /**
-     * Make single tooltip html.
-     * @param {string} chartType chart type
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @returns {string} tooltip html
-     * @private
-     */
-    _makeSingleTooltipHtml: function(chartType, indexes) {
-        var data = tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index);
-
-        data = tui.util.extend({
-            suffix: this.suffix
-        }, data);
-        data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
-
-        return this.templateFunc(data.category, data);
-    },
-
-    /**
-     * Set default align option of tooltip.
-     * @private
-     * @override
-     */
-    _setDefaultTooltipPositionOption: function() {
-        if (this.options.align) {
-            return;
-        }
-
-        if (this.isVertical) {
-            this.options.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
-        } else {
-            this.options.align = chartConst.TOOLTIP_DEFAULT_HORIZONTAL_ALIGN_OPTION;
-        }
-    },
-
-    /**
-     * Make parameters for show tooltip user event.
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @param {object} additionParams addition parameters
-     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip
-     * @private
-     */
-    _makeShowTooltipParams: function(indexes, additionParams) {
-        var legendIndex = indexes.index;
-        var legendData = this.dataProcessor.getLegendItem(legendIndex);
-        var params;
-
-        if (!legendData) {
-            return null;
-        }
-
-        params = tui.util.extend({
-            chartType: legendData.chartType,
-            legend: legendData.label,
-            legendIndex: legendIndex,
-            index: indexes.groupIndex
-        }, additionParams);
-
-        return params;
-    },
-
-    /**
-     * Make tooltip datum.
-     * @param {string} legendLabel - legend label
-     * @param {string} category - category
-     * @param {SeriesItem} seriesItem - SeriesItem
-     * @returns {Object}
-     * @private
-     */
-    _makeTooltipDatum: function(legendLabel, category, seriesItem) {
-        var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
-        var tooltipLabel = seriesItem.tooltipLabel;
-        var labelFormatter = this.tooltipOptions && this.tooltipOptions.labelFormatter;
-        var tooltipDatum = {
-            legend: (legendLabel || '')
-        };
-
-        tooltipDatum.label = tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
-
-        if (labelFormatter) {
-            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
-        }
-
-        if (category && predicate.isDatetimeType(this.xAxisType)) {
-            category = renderUtil.formatDate(category, this.dateFormat);
-        }
-
-        tooltipDatum.category = category || '';
-
-        return tui.util.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
-    },
-
-    /**
-     * Make tooltip data.
-     * @returns {Array.<object>} tooltip data
-     * @override
-     */
-    _makeTooltipData: function() {
-        var self = this;
-        var orgLegendLabels = this.dataProcessor.getLegendLabels();
-        var isPivot = predicate.isTreemapChart(this.chartType);
-        var legendLabels = {};
-        var tooltipData = {};
-
-        if (tui.util.isArray(orgLegendLabels)) {
-            legendLabels[this.chartType] = orgLegendLabels;
-        } else {
-            legendLabels = orgLegendLabels;
-        }
-
-        this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
-            var data;
-
-            chartType = chartType || self.chartType;
-
-            data = seriesGroup.map(function(seriesItem, index) {
-                var category = self.dataProcessor.makeTooltipCategory(groupIndex, index, self.isVertical);
-
-                return seriesItem ? self._makeTooltipDatum(legendLabels[chartType][index], category, seriesItem) : null;
-            });
-
-            if (!tooltipData[chartType]) {
-                tooltipData[chartType] = [];
-            }
-
-            tooltipData[chartType].push(data);
-        }, isPivot);
-
-        return tooltipData;
+    if (chartType === 'map') {
+        factory = mapChartTooltipFactory;
+    } else if (params.options.grouped) {
+        factory = groupTooltipFactory;
+    } else {
+        factory = normalTooltipFactory;
     }
-});
 
-singleTooltipMixer.mixin(Tooltip);
-module.exports = Tooltip;
+    if (chartType === 'pie' || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
+        params.labelFormatter = pieTooltipLabelFormatter;
+    }
+
+    params.chartType = chartType;
+    params.chartTypes = seriesTypes;
+    params.xAxisType = xAxisOptions.type;
+    params.dateFormat = xAxisOptions.dateFormat;
+
+    return factory(params);
+}
+
+tooltipFactory.componentType = 'tooltip';
+
+module.exports = tooltipFactory;

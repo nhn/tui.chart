@@ -7,7 +7,6 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var pieTypeMixer = require('./pieTypeMixer');
 var chartConst = require('../const');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
@@ -41,52 +40,23 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
-        var chartExportMenu = this.options.chartExportMenu;
-        var chartOptions = this.options.chart || {};
-
-        if (chartOptions.title) {
-            this._addTitleComponent(chartOptions.title);
-        }
-
-        this._addLegendComponent();
-        this._addTooltipComponent({
-            labelFormatter: this.labelFormatter
-        });
-
-        if (chartExportMenu.visible) {
-            this._addChartExportMenuComponent(chartExportMenu);
-        }
-        this._addSeriesComponents([{
-            name: 'pieSeries',
-            additionalParams: {
-                chartType: this.chartType
-            }
-        }]);
-        this._addMouseEventDetectorComponent();
+    addComponents: function() {
+        this.componentManager.register('legend', 'legend');
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+        this.componentManager.register('pieSeries', 'pieSeries');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
 
     /**
      * Add data ratios.
-     * @private
      * @override
      */
-    _addDataRatios: function() {
+    addDataRatios: function() {
         this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
-    },
-
-    /**
-     * Send series data.
-     * @private
-     * @override
-     */
-    _sendSeriesData: function() {
-        ChartBase.prototype._sendSeriesData.call(this, chartConst.CHART_TYPE_PIE);
     }
 });
-
-tui.util.extend(PieChart.prototype, pieTypeMixer);
 
 module.exports = PieChart;

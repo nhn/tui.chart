@@ -52,14 +52,12 @@ describe('Test public APIs for line chart', function() {
     describe('addData()', function() {
         beforeEach(function() {
             spyOn(lineChart.dataProcessor, 'addDynamicData');
-            spyOn(lineChart, '_startLookup');
         });
 
         it('add data', function() {
             lineChart.addData('category', [1, 2, 3]);
 
             expect(lineChart.dataProcessor.addDynamicData).toHaveBeenCalledWith('category', [1, 2, 3]);
-            expect(lineChart._startLookup).toHaveBeenCalled();
         });
 
         it('add data, when coordinate data type', function() {

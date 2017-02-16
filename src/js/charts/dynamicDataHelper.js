@@ -3,17 +3,16 @@
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 
-/**
- * addingDynamicData is mixer for adding dynamic data.
- * @mixin
- * @private
- */
-var addingDynamicDataMixer = {
-    /**
-     * Initialize for adding data.
-     * @private
-     */
-    _initForAddingData: function() {
+var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.prototype */ {
+    init: function(chart) {
+        /**
+         * chart instance
+         * @type {ChartBase}
+         */
+        this.chart = chart;
+        this.reset();
+    },
+    reset: function() {
         /**
          * whether lookupping or not
          * @type {boolean}
@@ -50,7 +49,6 @@ var addingDynamicDataMixer = {
          */
         this.prevXAxisData = null;
     },
-
     /**
      * Calculate animate tick size.
      * @param {number} xAxisWidth - x axis width
@@ -58,13 +56,13 @@ var addingDynamicDataMixer = {
      * @private
      */
     _calculateAnimateTickSize: function(xAxisWidth) {
-        var dataProcessor = this.dataProcessor;
-        var tickInterval = this.options.xAxis.tickInterval;
-        var shiftingOption = !!this.options.series.shifting;
+        var dataProcessor = this.chart.dataProcessor;
+        var tickInterval = this.chart.options.xAxis.tickInterval;
+        var shiftingOption = !!this.chart.options.series.shifting;
         var tickCount;
 
         if (dataProcessor.isCoordinateType()) {
-            tickCount = dataProcessor.getValues(this.chartType, 'x').length - 1;
+            tickCount = dataProcessor.getValues(this.chart.chartType, 'x').length - 1;
         } else {
             tickCount = dataProcessor.getCategoryCount(false) - 1;
         }
@@ -81,22 +79,23 @@ var addingDynamicDataMixer = {
      * @private
      */
     _animateForAddingData: function() {
+        var chart = this.chart;
         var self = this;
-        var shiftingOption = !!this.options.series.shifting;
+        var shiftingOption = !!this.chart.options.series.shifting;
 
         this.addedDataCount += 1;
 
-        this._render(function(boundsAndScale) {
+        chart._render(function(boundsAndScale) {
             var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
 
-            self.componentManager.render('animateForAddingData', boundsAndScale, {
+            chart.componentManager.render('animateForAddingData', boundsAndScale, {
                 tickSize: tickSize,
                 shifting: shiftingOption
             });
         }, true);
 
         if (shiftingOption) {
-            this.dataProcessor.shiftData();
+            chart.dataProcessor.shiftData();
         }
     },
 
@@ -105,10 +104,10 @@ var addingDynamicDataMixer = {
      * @private
      */
     _rerenderForAddingData: function() {
-        var self = this;
+        var chart = this.chart;
 
-        this._render(function(boundsAndScale) {
-            self.componentManager.render('rerender', boundsAndScale);
+        chart._render(function(boundsAndScale) {
+            chart.componentManager.render('rerender', boundsAndScale);
         });
     },
 
@@ -117,8 +116,9 @@ var addingDynamicDataMixer = {
      * @private
      */
     _checkForAddedData: function() {
+        var chart = this.chart;
         var self = this;
-        var added = this.dataProcessor.addDataFromDynamicData();
+        var added = chart.dataProcessor.addDataFromDynamicData();
 
         if (!added) {
             this.lookupping = false;
@@ -127,8 +127,8 @@ var addingDynamicDataMixer = {
         }
 
         if (this.paused) {
-            if (this.options.series.shifting) {
-                this.dataProcessor.shiftData();
+            if (chart.options.series.shifting) {
+                chart.dataProcessor.shiftData();
             }
 
             return;
@@ -143,27 +143,52 @@ var addingDynamicDataMixer = {
     },
 
     /**
-     * Pause animation for adding data.
-     * @private
+     * Change checked legend.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @param {?object} boundsParams addition params for calculating bounds
      */
-    _pauseAnimationForAddingData: function() {
+    changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        var self = this;
+        var chart = this.chart;
+        var shiftingOption = !!chart.options.series.shifting;
+        var pastPaused = this.paused;
+
+        if (!pastPaused) {
+            this.pauseAnimation();
+        }
+
+        this.checkedLegends = checkedLegends;
+        chart.rerender(checkedLegends, rawData, boundsParams);
+
+        if (!pastPaused) {
+            setTimeout(function() {
+                chart.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
+                self.restartAnimation();
+            }, chartConst.RERENDER_TIME);
+        }
+    },
+
+    /**
+     * Pause animation for adding data.
+     */
+    pauseAnimation: function() {
         this.paused = true;
 
         if (this.rerenderingDelayTimerId) {
             clearTimeout(this.rerenderingDelayTimerId);
             this.rerenderingDelayTimerId = null;
 
-            if (this.options.series.shifting) {
-                this.dataProcessor.shiftData();
+            if (this.chart.options.series.shifting) {
+                this.chart.dataProcessor.shiftData();
             }
         }
     },
 
     /**
      * Restart animation for adding data.
-     * @private
      */
-    _restartAnimationForAddingData: function() {
+    restartAnimation: function() {
         this.paused = false;
         this.lookupping = false;
         this._startLookup();
@@ -194,37 +219,9 @@ var addingDynamicDataMixer = {
             category = null;
         }
 
-        this.dataProcessor.addDynamicData(category, values);
+        this.chart.dataProcessor.addDynamicData(category, values);
         this._startLookup();
-    },
-
-
-    /**
-     * Change checked legend.
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @param {?object} rawData rawData
-     * @param {?object} boundsParams addition params for calculating bounds
-     * @override
-     */
-    _changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-        var self = this;
-        var shiftingOption = !!this.options.series.shifting;
-        var pastPaused = this.paused;
-
-        if (!pastPaused) {
-            this._pauseAnimationForAddingData();
-        }
-
-        this.checkedLegends = checkedLegends;
-        this._rerender(checkedLegends, rawData, boundsParams);
-
-        if (!pastPaused) {
-            setTimeout(function() {
-                self.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
-                self._restartAnimationForAddingData();
-            }, chartConst.RERENDER_TIME);
-        }
     }
-};
+});
 
-module.exports = addingDynamicDataMixer;
+module.exports = DynamicDataHelper;

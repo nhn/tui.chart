@@ -6,7 +6,7 @@
 
 'use strict';
 
-var ColumnChartSeries = require('../../../src/js/components/series/columnChartSeries.js');
+var columnSeriesFactory = require('../../../src/js/components/series/columnChartSeries.js');
 var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
 var seriesGroup = require('../../../src/js/models/data/seriesGroup');
 var renderUtil = require('../../../src/js/helpers/renderUtil.js');
@@ -25,15 +25,13 @@ describe('ColumnChartSeries', function() {
         dataProcessor.getFirstItemLabel.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
-        series = new ColumnChartSeries({
+        series = new columnSeriesFactory.ColumnChartSeries({
             chartType: 'column',
             theme: {
-                column: {
-                    label: {
-                        fontFamily: 'Verdana',
-                        fontSize: 11,
-                        fontWeight: 'normal'
-                    }
+                label: {
+                    fontFamily: 'Verdana',
+                    fontSize: 11,
+                    fontWeight: 'normal'
                 }
             },
             options: {},

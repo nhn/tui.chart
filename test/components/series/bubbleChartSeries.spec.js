@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BubbleChartSeries = require('../../../src/js/components/series/bubbleChartSeries');
+var bubbleSeriesFactory = require('../../../src/js/components/series/bubbleChartSeries');
 
 describe('BubbleChartSeries', function() {
     var series, dataProcessor, seriesDataModel;
@@ -18,7 +18,7 @@ describe('BubbleChartSeries', function() {
     });
 
     beforeEach(function() {
-        series = new BubbleChartSeries({
+        series = new bubbleSeriesFactory.BubbleChartSeries({
             chartType: 'bubble',
             theme: {
                 label: {

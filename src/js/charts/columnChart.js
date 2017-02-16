@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 var rawDataHandler = require('../models/data/rawDataHandler');
 
 var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
@@ -55,47 +54,44 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
-        var chartOptions = this.options.chart || {};
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
 
-        this._addComponentsForAxisType({
-            axis: [
-                {
-                    name: 'yAxis',
-                    isVertical: true
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
-            series: [
-                {
-                    name: 'columnSeries',
-                    data: {
-                        allowNegativeTooltip: true
-                    }
-                }
-            ],
-            plot: true,
-            title: chartOptions.title
-        });
+        this.componentManager.register('legend', 'legend');
+
+        this.componentManager.register('columnSeries', 'columnSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
 
     /**
      * Get scale option.
      * @returns {{yAxis: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             yAxis: true
         };
+    },
+    /**
+     * Add data ratios.
+     * @override
+     * modified from axisTypeMixer
+     */
+    addDataRatios: function(limitMap) {
+        var seriesOption = this.options.series || {};
+        var chartType = this.chartType;
+        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
 });
-
-tui.util.extend(ColumnChart.prototype, axisTypeMixer);
 
 module.exports = ColumnChart;

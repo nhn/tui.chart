@@ -452,4 +452,16 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     }
 });
 
-module.exports = MapChartSeries;
+function mapSeriesFactory(params) {
+    var libType = params.chartOptions.libType;
+
+    params.libType = libType;
+    params.chartType = 'map';
+
+    return new MapChartSeries(params);
+}
+
+mapSeriesFactory.componentType = 'series';
+mapSeriesFactory.MapChartSeries = MapChartSeries;
+
+module.exports = mapSeriesFactory;

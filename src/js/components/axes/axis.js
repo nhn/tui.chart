@@ -47,7 +47,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Theme
          * @type {object}
          */
-        this.theme = params.theme[params.seriesType] || params.theme;
+        this.theme = params.theme;
 
         /**
          * Whether label type axis or not.
@@ -59,7 +59,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Whether vertical type or not.
          * @type {boolean}
          */
-        this.isVertical = params.isVertical;
+        this.isYAxis = params.isYAxis;
 
         /**
          * cached axis data
@@ -279,7 +279,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 text: title.text,
                 theme: this.theme.title,
                 rotationInfo: {
-                    isVertical: this.isVertical,
+                    isYAxis: this.isYAxis,
                     isPositionRight: this.data.isPositionRight,
                     isCenter: this.options.isCenter
                 },
@@ -305,7 +305,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             isPositionRight: this.data.isPositionRight,
             isCenter: this.data.options.isCenter,
             isNotDividedXAxis: isNotDividedXAxis,
-            isVertical: this.isVertical,
+            isYAxis: this.isYAxis,
             layout: this.layout,
             paper: this.paper,
             set: this.axisSet
@@ -324,7 +324,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var tickColor = this.theme.tickColor;
         var axisData = this.data;
         var sizeRatio = axisData.sizeRatio || 1;
-        var isVertical = this.isVertical;
+        var isYAxis = this.isYAxis;
         var isCenter = this.data.options.isCenter;
         var isPositionRight = this.data.isPositionRight;
         var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
@@ -337,7 +337,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             paper: this.paper,
             layout: this.layout,
             positions: positions,
-            isVertical: isVertical,
+            isYAxis: isYAxis,
             isCenter: isCenter,
             additionalSize: additionalSize,
             additionalWidth: additionalWidth,
@@ -356,7 +356,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderTickArea: function(size, tickCount, additionalSize) {
-        var isNotDividedXAxis = !this.isVertical && !this.options.divided;
+        var isNotDividedXAxis = !this.isYAxis && !this.options.divided;
 
         this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0));
 
@@ -390,7 +390,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _renderRotationLabels: function(positions, categories, labelSize, additionalSize) {
         var self = this;
         var renderer = this.graphRenderer;
-        var isVertical = this.isVertical;
+        var isYAxis = this.isYAxis;
         var theme = this.theme.label;
         var degree = this.data.degree;
         var halfWidth = labelSize / 2;
@@ -401,7 +401,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             var labelPosition = position + (additionalSize || 0);
             var positionTopAndLeft = {};
 
-            if (isVertical) {
+            if (isYAxis) {
                 positionTopAndLeft.top = labelPosition + halfWidth;
                 positionTopAndLeft.left = labelSize;
             } else {
@@ -435,7 +435,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _renderNormalLabels: function(positions, categories, labelSize, additionalSize) {
         var self = this;
         var renderer = this.graphRenderer;
-        var isVertical = this.isVertical;
+        var isYAxis = this.isYAxis;
         var isPositionRight = this.data.isPositionRight;
         var isCategoryLabel = this.isLabelAxis;
         var theme = this.theme.label;
@@ -450,7 +450,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             var positionTopAndLeft = {};
             var labelTopPosition, labelLeftPosition;
 
-            if (isVertical) {
+            if (isYAxis) {
                 labelTopPosition = labelPosition;
 
                 if (isCategoryLabel) {
@@ -480,7 +480,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
             renderer.renderLabel({
                 isPositionRight: isPositionRight,
-                isVertical: isVertical,
+                isYAxis: isYAxis,
                 labelSize: labelSize,
                 labelText: categories[index],
                 paper: self.paper,
@@ -500,7 +500,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderLabels: function(positions, categories, labelSize, additionalSize) {
-        var isRotationlessXAxis = !this.isVertical && this.isLabelAxis && (this.options.rotateLabel === false);
+        var isRotationlessXAxis = !this.isYAxis && this.isLabelAxis && (this.options.rotateLabel === false);
         var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.data.degree;
         var axisLabels;
 
@@ -525,10 +525,40 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {object} data rendering data
      */
     animateForAddingData: function(data) {
-        if (!this.isVertical) {
+        if (!this.isYAxis) {
             this.graphRenderer.animateForAddingData(data.tickSize);
         }
     }
 });
 
-module.exports = Axis;
+function axisFactory(axisParam) {
+    var chartType = axisParam.chartOptions.chartType;
+    var name = axisParam.name;
+
+    axisParam.isYAxis = (name === 'yAxis');
+
+    // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
+    // 나중에 테마에서 시리즈로 다시 분기되는게 아니라 커포넌트 네임인 rightYAxis로 따로 받도록 테마 구조를 변경하자.
+    if (chartType === 'combo') {
+        if (axisParam.isYAxis) {
+            axisParam.theme = axisParam.theme[axisParam.seriesTypes[0]];
+        } else if (name === 'rightYAxis') {
+            axisParam.componentType = 'yAxis';
+            axisParam.theme = axisParam.theme[axisParam.seriesTypes[1]];
+            axisParam.index = 1;
+        }
+    // 왜 싱글타입의  yAxis도 내부에 차트이름으로 한번더 분기가 되는 지는 모르겠다 일관성이 없는 느낌, 추가 개선요소
+    } else if (axisParam.isYAxis) {
+        axisParam.theme = axisParam.theme[chartType];
+    // 싱글에 xAxis인 경우
+    } else {
+        axisParam.theme = axisParam.theme;
+    }
+
+    return new Axis(axisParam);
+}
+
+axisFactory.componentType = 'axis';
+axisFactory.Axis = Axis;
+
+module.exports = axisFactory;

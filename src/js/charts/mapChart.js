@@ -9,8 +9,8 @@
 var ChartBase = require('./chartBase');
 var mapManager = require('../factories/mapManager');
 var MapChartMapModel = require('./mapChartMapModel');
-var ColorSpectrum = require('./colorSpectrum');
 var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
+var ColorSpectrum = require('./colorSpectrum');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
@@ -42,55 +42,29 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
     /**
      * Add components.
+     * @override
      * @private
      */
-    _addComponents: function() {
-        var options = this.options;
+    addComponents: function() {
         var seriesTheme = this.theme.series[this.chartType];
-        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
-        var chartOptions = options.chart;
-        var chartOption = this.options.chart;
-        var chartTitle = chartOption && chartOption.title ? chartOption.title.text : 'chart';
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
-        this.componentManager.register('chartExportMenu', {
-            chartTitle: chartTitle,
-            classType: 'chartExportMenu'
+        this.componentManager.register('legend', 'spectrumLegend', {
+            colorSpectrum: colorSpectrum
         });
 
-        this.componentManager.register('mapSeries', {
-            libType: options.libType,
-            chartType: options.chartType,
-            componentType: 'series',
-            classType: 'mapSeries',
+        this.componentManager.register('tooltip', 'tooltip', {
+            mapModel: mapModel
+        });
+
+        this.componentManager.register('mapSeries', 'mapSeries', {
             mapModel: mapModel,
             colorSpectrum: colorSpectrum
         });
 
-        options.legend = options.legend || {};
-        if (options.legend.visible) {
-            this.componentManager.register('legend', {
-                colorSpectrum: colorSpectrum,
-                classType: 'spectrumLegend'
-            });
-        }
-
-        if (chartOptions.title) {
-            this._addTitleComponent(chartOptions.title);
-        }
-
-        this.componentManager.register('tooltip', tui.util.extend({
-            mapModel: mapModel
-        }, this._makeTooltipData('mapChartTooltip')));
-
-        this.componentManager.register('zoom', {
-            classType: 'zoom'
-        });
-
-        this.componentManager.register('mouseEventDetector', {
-            chartType: this.chartType,
-            classType: 'mapChartEventDetector'
-        });
+        this.componentManager.register('zoom', 'zoom');
+        this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
     },
 
     _addTitleComponent: function(options) {
@@ -106,10 +80,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     /**
      * Get scale option.
      * @returns {{legend: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             legend: true
         };
@@ -117,10 +90,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
     /**
      * Add data ratios.
-     * @private
      * @override
      */
-    _addDataRatios: function(limitMap) {
+    addDataRatios: function(limitMap) {
         this.dataProcessor.addDataRatios(limitMap.legend);
     }
 });

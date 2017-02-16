@@ -82,4 +82,10 @@ var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lend
     }
 });
 
-module.exports = SimpleEventDetector;
+function simpleTypeEventDetectorFactory(params) {
+    return new SimpleEventDetector(params);
+}
+
+simpleTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+module.exports = simpleTypeEventDetectorFactory;

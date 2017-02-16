@@ -213,4 +213,10 @@ var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends
     }
 });
 
-module.exports = BoundsTypeEventDetector;
+function boundsTypeEventDetectorFactory(params) {
+    return new BoundsTypeEventDetector(params);
+}
+
+boundsTypeEventDetectorFactory.componentType = 'mouseEventDetector';
+
+module.exports = boundsTypeEventDetectorFactory;

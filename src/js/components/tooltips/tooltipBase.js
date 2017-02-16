@@ -27,7 +27,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      *      @param {object} params.labelTheme - theme for label
      *      @param {string} params.xAxisType - xAxis type
      *      @param {string} params.dateFormat - date format
-     *      @param {object} params.tooltipOptions - label formatter function
+     *      @param {object} params.labelFormatter - label formatter function
      */
     init: function(params) {
         var isPieChart = predicate.isPieChart(params.chartType);
@@ -97,7 +97,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * tooltip options for each chart
          * @type {?function}
          */
-        this.tooltipOptions = params.tooltipOptions;
+        this.labelFormatter = params.labelFormatter;
 
         /**
          * className
@@ -213,7 +213,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      * @abstract
      */
-    _makeTooltipData: function() {},
+    makeTooltipData: function() {},
 
     /**
      * Set data for rendering.
@@ -243,7 +243,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         dom.addClass(el, this.className);
 
         this._setDataForRendering(data);
-        this.data = this._makeTooltipData();
+        this.data = this.makeTooltipData();
 
         renderUtil.renderPosition(el, this.layout.position);
 
@@ -258,7 +258,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     rerender: function(data) {
         this.resize(data);
-        this.data = this._makeTooltipData();
+        this.data = this.makeTooltipData();
     },
 
     /**
@@ -279,7 +279,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * Zoom.
      */
     zoom: function() {
-        this.data = this._makeTooltipData();
+        this.data = this.makeTooltipData();
     },
 
     /**

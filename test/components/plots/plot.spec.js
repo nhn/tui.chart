@@ -7,7 +7,7 @@
 'use strict';
 var raphael = window.Raphael;
 
-var Plot = require('../../../src/js/components/plots/plot.js');
+var plotFactory = require('../../../src/js/components/plots/plot.js');
 var DataProcessor = require('../../../src/js/models/data/dataProcessor');
 var chartConst = require('../../../src/js/const');
 var dom = require('../../../src/js/helpers/domHandler.js');
@@ -19,7 +19,7 @@ describe('Test for Plot', function() {
         paper = raphael(dom.create('div'));
 
         dataProcessor = new DataProcessor({}, '', {});
-        plot = new Plot({
+        plot = new plotFactory.Plot({
             dataProcessor: dataProcessor,
             theme: {
                 lineColor: 'black'

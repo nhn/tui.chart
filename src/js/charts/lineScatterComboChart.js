@@ -7,12 +7,6 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var axisTypeMixer = require('./axisTypeMixer');
-var comboTypeMixer = require('./comboTypeMixer');
-
-var LineSeries = require('../components/series/lineChartSeries');
-var ScatterSeries = require('../components/series/scatterChartSeries');
-
 var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
     /**
      * Line and Scatter Combo chart.
@@ -49,15 +43,9 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
      * @private
      */
     _addComponents: function() {
-        var options = this.options;
         var optionsMap = this._makeOptionsMap(this.seriesTypes);
-        var chartOptions = this.options.chart || {};
 
-        if (chartOptions.title) {
-            this._addTitleComponent(options.chart.title);
-        }
-
-        this._addPlotComponent(options.xAxis.type);
+        this._addPlotComponent(this.options.xAxis.type);
         this._addAxisComponents([
             {
                 name: 'yAxis',
@@ -90,12 +78,12 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
                     options: optionsMap.scatter
                 }
             }
-        ], options);
+        ], this.options);
 
         this.componentManager.register('mouseEventDetector', {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            allowSelect: options.series.allowSelect,
+            allowSelect: this.options.series.allowSelect,
             classType: 'areaTypeEventDetector'
         });
 
@@ -108,10 +96,9 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
      *      yAxis: {valueType: string, additionalOptions: {isSingleYAxis: boolean}},
      *      xAxis: {valueType: string}
      * }}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             yAxis: {
                 valueType: 'y'
@@ -120,9 +107,43 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
                 valueType: 'x'
             }
         };
+    },
+
+    /**
+     * Add data ratios.
+     * @override
+     * from axisTypeMixer
+     */
+    addDataRatios: function(limitMap) {
+        var self = this;
+        var chartTypes = this.chartTypes || [this.chartType];
+        var addDataRatio;
+
+        addDataRatio = function(chartType) {
+            self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+        };
+
+        tui.util.forEachArray(chartTypes, addDataRatio);
+    },
+
+    /**
+     * Add components
+     * @override
+     */
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
+
+        this.componentManager.register('legend', 'legend');
+
+        this.componentManager.register('lineSeries', 'lineSeries');
+        this.componentManager.register('scatterSeries', 'scatterSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
 });
-
-tui.util.extend(LineScatterComboChart.prototype, axisTypeMixer, comboTypeMixer);
 
 module.exports = LineScatterComboChart;

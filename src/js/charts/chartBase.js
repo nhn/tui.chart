@@ -77,7 +77,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.componentManager = this._createComponentManager();
 
-        this._addComponents();
+        this.addComponents();
 
         this._attachToEventBus();
     },
@@ -185,6 +185,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _initializeOptions: function(options) {
+        options.chartTypes = this.charTypes;
         options.xAxis = options.xAxis || {};
         options.series = options.series || {};
         options.tooltip = options.tooltip || {};
@@ -242,18 +243,19 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             theme: this.theme,
             dataProcessor: this.dataProcessor,
             hasAxes: this.hasAxes,
-            eventBus: this.eventBus
+            eventBus: this.eventBus,
+            isVertical: this.isVertical,
+            seriesTypes: this.seriesTypes || [this.chartType]
         });
     },
 
     /**
      * Make data for initialize tooltip component.
      * @param {string} classType - component class type
-     * @param {object} tooltipOptions tooltip option
      * @returns {object} tooltip data
-     * @private
+     * todo 이작업은 툴팁 팩토리에서 하게 됨으로 이메서드는 제거되어야한다.
      */
-    _makeTooltipData: function(classType, tooltipOptions) {
+    makeTooltipData: function(classType) {
         var colors = [];
 
         tui.util.forEach(tui.util.filter(this.theme.legend, function(item) {
@@ -261,7 +263,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }), function(series) {
             colors = colors.concat(series.colors);
         });
-
         return {
             isVertical: this.isVertical,
             chartType: this.chartType,
@@ -276,17 +277,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Add components.
-     * @private
      * @abstract
      */
-    _addComponents: function() {},
+    addComponents: function() {},
 
     /**
      * Get scale option.
-     * @private
      * @abstract
      */
-    _getScaleOption: function() {},
+    getScaleOption: function() {},
 
     /**
      * Build bounds and scale data.
@@ -335,7 +334,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             options: this.options,
             theme: this.theme,
             hasAxes: this.hasAxes,
-            scaleOption: this._getScaleOption(),
+            scaleOption: this.getScaleOption(),
             isVertical: this.isVertical,
             hasRightYAxis: this.hasRightYAxis,
             addedDataCount: this.addedDataCount,
@@ -346,10 +345,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Add data ratios.
-     * @private
      * @abstract
      */
-    _addDataRatios: function() {},
+    addDataRatios: function() {},
 
     /**
      * Common render function for rendering functions like render, rerender, resize and zoom.
@@ -365,7 +363,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         // 비율값 추가
-        this._addDataRatios(boundsAndScale.limitMap);
+        this.addDataRatios(boundsAndScale.limitMap);
 
         onRender(boundsAndScale);
     },
@@ -402,9 +400,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Rerender.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
-     * @private
      */
-    _rerender: function(checkedLegends, rawData) {
+    rerender: function(checkedLegends, rawData) {
         var self = this;
         var dataProcessor = this.dataProcessor;
 
@@ -428,7 +425,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {?object} boundsParams addition params for calculating bounds
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-        this._rerender(checkedLegends, rawData, boundsParams);
+        this.rerender(checkedLegends, rawData, boundsParams);
     },
 
     /**

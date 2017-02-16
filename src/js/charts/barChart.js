@@ -8,7 +8,6 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
-var axisTypeMixer = require('./axisTypeMixer');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
 
@@ -75,46 +74,28 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
     /**
      * Add components
-     * @private
+     * @override
      */
-    _addComponents: function() {
-        var chartOptions = this.options.chart || {};
+    addComponents: function() {
+        this.componentManager.register('plot', 'plot');
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
 
-        var axes = [
-            {
-                name: 'yAxis',
-                isVertical: true
-            },
-            {
-                name: 'xAxis'
-            }
-        ];
+        this.componentManager.register('legend', 'legend');
 
-        if (this.hasRightYAxis) {
-            axes.push({
-                name: 'rightYAxis',
-                isVertical: true
-            });
-        }
-        this._addComponentsForAxisType({
-            axis: axes,
-            series: [
-                {
-                    name: 'barSeries'
-                }
-            ],
-            plot: true,
-            title: chartOptions.title
-        });
+        this.componentManager.register('barSeries', 'barSeries');
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
 
     /**
      * Get scale option.
      * @returns {{xAxis: boolean}}
-     * @private
      * @override
      */
-    _getScaleOption: function() {
+    getScaleOption: function() {
         return {
             xAxis: true
         };
@@ -132,11 +113,20 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
                 optionChartTypes: ['bar', 'bar']
             };
         }
-
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, null, boundParams);
+    },
+    /**
+     * Add data ratios.
+     * @override
+     * modified from axisTypeMixer
+     */
+    addDataRatios: function(limitMap) {
+        var seriesOption = this.options.series || {};
+        var chartType = this.chartType;
+        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
 });
-
-tui.util.extend(BarChart.prototype, axisTypeMixer);
 
 module.exports = BarChart;

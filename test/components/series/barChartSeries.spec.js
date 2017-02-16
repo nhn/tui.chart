@@ -6,7 +6,7 @@
 
 'use strict';
 
-var BarChartSeries = require('../../../src/js/components/series/barChartSeries');
+var barSeriesFactory = require('../../../src/js/components/series/barChartSeries');
 var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
 var seriesGroup = require('../../../src/js/models/data/seriesGroup');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
@@ -25,15 +25,13 @@ describe('BarChartSeries', function() {
     });
 
     beforeEach(function() {
-        series = new BarChartSeries({
+        series = new barSeriesFactory.BarChartSeries({
             chartType: 'bar',
             theme: {
-                bar: {
-                    label: {
-                        fontFamily: 'Verdana',
-                        fontSize: 11,
-                        fontWeight: 'normal'
-                    }
+                label: {
+                    fontFamily: 'Verdana',
+                    fontSize: 11,
+                    fontWeight: 'normal'
                 }
             },
             options: {},

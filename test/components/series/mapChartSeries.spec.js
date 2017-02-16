@@ -6,7 +6,7 @@
 
 'use strict';
 
-var MapChartSeries = require('../../../src/js/components/series/mapChartSeries.js');
+var mapSeriesFactory = require('../../../src/js/components/series/mapChartSeries.js');
 
 describe('MapChartSeries', function() {
     var series, dataProcessor, mapModel;
@@ -17,7 +17,7 @@ describe('MapChartSeries', function() {
     });
 
     beforeEach(function() {
-        series = new MapChartSeries({
+        series = new mapSeriesFactory.MapChartSeries({
             dataProcessor: dataProcessor,
             chartType: 'map',
             theme: {

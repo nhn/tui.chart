@@ -7,7 +7,7 @@
 'use strict';
 var raphael = window.Raphael;
 
-var Axis = require('../../../src/js/components/axes/axis');
+var axisFactory = require('../../../src/js/components/axes/axis');
 var dom = require('../../../src/js/helpers/domHandler');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
@@ -24,7 +24,7 @@ describe('Test for Axis', function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType']);
 
-        axis = new Axis({
+        axis = new axisFactory.Axis({
             theme: {
                 title: {
                     fontSize: 12
