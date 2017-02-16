@@ -372,9 +372,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Render chart.
-     * @returns {HTMLElement} chart element
+     * @param {HTMLElement} wrapper chart wrapper element
      */
-    render: function() {
+    render: function(wrapper) {
         var container = dom.create('DIV', 'tui-chart ' + this.className);
         var componentManager = this.componentManager;
         var dataProcessor = this.dataProcessor;
@@ -386,6 +386,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderBackground(container, this.theme.chart.background);
         renderUtil.renderFontFamily(container, this.theme.chart.fontFamily);
 
+        dom.append(wrapper, container);
+
         this._render(function(boundsAndScale) {
             renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
             componentManager.render('render', boundsAndScale, {
@@ -394,8 +396,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         });
 
         this.chartContainer = container;
-
-        return container;
     },
 
     /**

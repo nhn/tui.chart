@@ -106,7 +106,8 @@ function _createChart(container, rawData, options, chartType) {
             theme = themeManager.get(themeName, chartType, rawData.series);
 
             chart = chartFactory.get(options.chartType, rawData, theme, options);
-            container.appendChild(chart.render());
+
+            chart.render(container);
             chart.animateChart();
         }
     }
