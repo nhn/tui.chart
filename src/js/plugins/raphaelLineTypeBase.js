@@ -771,6 +771,19 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     clear: function() {
         delete this.paper.dots;
         this.paper.clear();
+    },
+
+    /**
+     * Resize clip rect size
+     * @param {object} dimension series dimension
+     */
+    resizeClipRect: function(dimension) {
+        var clipRect = this.paper.getById(CLIP_RECT_ID + '_rect');
+
+        clipRect.attr({
+            width: dimension.width,
+            height: dimension.height
+        });
     }
 });
 
@@ -786,6 +799,7 @@ function createClipPathRectWithLayout(paper, position, dimension, id) {
     var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
     var rect = paper.rect((position.left - 10), (position.top - 10), 0, dimension.height);
 
+    rect.id = id + '_rect';
     clipPath.id = id;
 
     clipPath.appendChild(rect.node);

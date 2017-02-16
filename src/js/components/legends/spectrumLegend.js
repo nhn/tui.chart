@@ -232,7 +232,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      */
     rerender: function(data) {
         this.legnedSet.remove();
-        this.legnedSet = this.render(data);
+        this.render(data);
     },
 
     /**

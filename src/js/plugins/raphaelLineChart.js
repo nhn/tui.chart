@@ -140,6 +140,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             dimension = params.dimension,
             groupPositions = params.groupPositions;
 
+        this.resizeClipRect(dimension);
+
         this.groupPositions = groupPositions;
         this.groupPaths = this.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
@@ -224,7 +226,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
             'text-anchor': 'middle',
-            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+            opacity: 1
         };
         var set = paper.set();
 

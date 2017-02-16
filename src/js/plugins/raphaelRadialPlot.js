@@ -40,6 +40,9 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
         this._renderPlot(plotSet);
         this._renderLabels(plotSet);
 
+        plotSet.toBack();
+        this.paper.pushDownBackgroundToBottom();
+
         return plotSet;
     },
 

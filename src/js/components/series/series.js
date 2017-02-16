@@ -6,6 +6,7 @@
 
 'use strict';
 var FADE_IN_DURATION = 300;
+var LABEL_FADE_IN_DURATION = 800;
 var browser = tui.util.browser;
 var IS_IE7 = browser.msie && browser.version === 7;
 
@@ -457,8 +458,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _resizeGraph: function(dimension, seriesData) {
         this.graphRenderer.resize(tui.util.extend({
-            dimension: dimension
+            dimension: this.dimensionMap.chart
         }, seriesData));
+
+        return this.seriesSet;
     },
 
     /**
@@ -467,8 +470,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     resize: function(data) {
-        this._clearSeriesContainer();
         this._setDataForRendering(data);
+        if (this.labelSet && this.labelSet.remove) {
+            this.labelSet.remove();
+        }
         this._renderSeriesArea(data.paper, tui.util.bind(this._resizeGraph, this));
     },
 
@@ -594,10 +599,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
-        } else {
-            this.animateSeriesLabelArea(isRerendering);
+            this.graphRenderer.animate(null, this.seriesSet);
         }
+
+        this.animateSeriesLabelArea(isRerendering);
     },
 
     /**
@@ -625,7 +630,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (IS_IE7) {
             this._fireLoadEvent(isRerendering);
         } else if (this.labelSet && this.labelSet.length) {
-            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, FADE_IN_DURATION);
+            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
         }
     },
 
