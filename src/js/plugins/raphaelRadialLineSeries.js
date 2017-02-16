@@ -56,7 +56,7 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
         this.position = data.position;
 
         if (isShowArea) {
-            this._renderArea(paper, groupPaths, colors, radialSeriesSet);
+            this.groupAreas = this._renderArea(paper, groupPaths, colors, radialSeriesSet);
         }
 
         this.groupLines = this._renderLines(paper, groupPaths, colors, null, radialSeriesSet);
@@ -139,7 +139,8 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
 
     /**
      * Resize graph of line chart.
-     * raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
+     * 1raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
+     * 그룹툴팁 동작 안해서 tooltipLine 관련 코드 제거됨
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
@@ -152,10 +153,10 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
         this.groupPositions = groupPositions;
         this.groupPaths = this._getLinesPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
-        this.tooltipLine.attr({top: dimension.height});
 
         tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
             self.groupLines[groupIndex].attr({path: path.join(' ')});
+            self.groupAreas[groupIndex].attr({path: path.join(' ')});
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
                 self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);

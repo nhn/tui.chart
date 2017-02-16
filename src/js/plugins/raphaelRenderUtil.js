@@ -235,14 +235,15 @@ var raphaelRenderUtil = {
         var animationDuration = isNumber(duration) ? duration : 600;
         var animationStartOpacity = isNumber(startOpacity) ? startOpacity : 0;
         var animationEndOpacity = isNumber(endOpacity) ? endOpacity : 1;
+        var animation = raphael.animation({
+            opacity: animationEndOpacity
+        }, animationDuration);
 
         element.attr({
             opacity: animationStartOpacity
         });
 
-        element.animate({
-            opacity: animationEndOpacity
-        }, animationDuration);
+        element.animate(animation.delay(600));
     }
 };
 

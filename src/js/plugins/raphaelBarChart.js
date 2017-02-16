@@ -365,16 +365,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Animate.
-     * @param {function} onFinish finish callback function
      */
-    animate: function(onFinish) {
+    animate: function() {
         var self = this,
             groupBorders = this.groupBorders || [];
 
-        if (this.callbackTimeout) {
-            clearTimeout(this.callbackTimeout);
-            delete this.callbackTimeout;
-        }
         raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
             var lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
             if (!bar) {
@@ -385,13 +380,6 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 self._animateBorders(lines, bar.bound, self.chartType, bar.item);
             }
         });
-
-        if (onFinish) {
-            this.callbackTimeout = setTimeout(function() {
-                onFinish();
-                delete self.callbackTimeout;
-            }, ANIMATION_DURATION);
-        }
     },
 
     /**
@@ -569,7 +557,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
-            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0,
+            opacity: 1,
             'text-anchor': isStacked ? 'middle' : 'start'
         };
         var labelSet = paper.set();

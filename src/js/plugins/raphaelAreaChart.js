@@ -290,6 +290,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             dimension = params.dimension,
             groupPositions = params.groupPositions;
 
+        this.resizeClipRect(dimension);
+
         this.zeroTop = params.zeroTop;
         this.groupPositions = groupPositions;
         this.groupPaths = this._getAreaChartPath(groupPositions);
@@ -416,7 +418,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
             'text-anchor': 'middle',
-            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+            opacity: 1
         };
         var set = paper.set();
 

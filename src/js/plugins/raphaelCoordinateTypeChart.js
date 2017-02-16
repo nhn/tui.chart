@@ -191,15 +191,9 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Animate.
-     * @param {function} onFinish - finish callback function
      */
-    animate: function(onFinish) {
+    animate: function() {
         var self = this;
-
-        if (this.animationTimeoutId) {
-            clearTimeout(this.animationTimeoutId);
-            this.animationTimeoutId = null;
-        }
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo) {
             if (!circleInfo) {
@@ -207,13 +201,6 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
             }
             self._animateCircle(circleInfo.circle, circleInfo.bound.radius);
         });
-
-        if (onFinish) {
-            this.animationTimeoutId = setTimeout(function() {
-                onFinish();
-                this.animationTimeoutId = null;
-            }, ANIMATION_DURATION);
-        }
     },
 
     /**
@@ -246,9 +233,10 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
             var bound = groupBounds[groupIndex][index];
-
-            circleInfo.bound = bound;
-            self._updatePosition(circleInfo.circle, bound);
+            if (circleInfo) {
+                circleInfo.bound = bound;
+                self._updatePosition(circleInfo.circle, bound);
+            }
         });
     },
 

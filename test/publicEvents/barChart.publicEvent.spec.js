@@ -43,12 +43,6 @@ describe('Test user events for bar chart', function() {
         });
     });
 
-    describe('load', function() {
-        it('load chart', function(done) {
-            barChart.on('load', done);
-        });
-    });
-
     describe('selectSeries', function() {
         it('select series', function(done) {
             var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');

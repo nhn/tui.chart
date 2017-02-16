@@ -383,7 +383,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
-            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+            opacity: 1
         };
 
         tui.util.forEach(labels, function(categoryLabel, categoryIndex) {

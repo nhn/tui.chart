@@ -449,15 +449,27 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var dimension = params.dimension;
         var circleBound = params.circleBound;
         var sectorName = this.sectorName;
+        var labelSet = this.labelSet;
 
         this.circleBound = circleBound;
         this.paper.setSize(dimension.width, dimension.height);
 
-        tui.util.forEachArray(this.sectorInfos, function(sectorInfo) {
+        tui.util.forEachArray(this.sectorInfos, function(sectorInfo, index) {
             var angles = sectorInfo.angles;
             var attrs = {};
+            var bBox;
+
             attrs[sectorName] = [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle];
             sectorInfo.sector.attr(attrs);
+
+            if (labelSet && labelSet.length) {
+                bBox = sectorInfo.sector.getBBox();
+
+                labelSet[index].attr({
+                    x: bBox.x + (bBox.width / 2),
+                    y: bBox.y + (bBox.height / 2)
+                });
+            }
         });
     },
 
@@ -651,7 +663,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             'font-family': theme.fontFamily,
             'font-weight': theme.fontWeight,
             'text-anchor': 'middle',
-            opacity: tui.util.browser.msie && tui.util.browser.version === 7 ? 1 : 0
+            opacity: 1
         };
 
         tui.util.forEach(positions, function(position, index) {
@@ -662,6 +674,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
             labelSet.push(label);
         });
+
+        this.labelSet = labelSet;
 
         return labelSet;
     }

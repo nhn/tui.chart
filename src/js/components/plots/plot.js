@@ -147,6 +147,8 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     resize: function(data) {
         this.rerender(data);
+        this.plotSet.toBack();
+        this.paper.pushDownBackgroundToBottom();
     },
 
     /**
