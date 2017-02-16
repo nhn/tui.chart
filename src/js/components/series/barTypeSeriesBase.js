@@ -11,6 +11,7 @@ var labelHelper = require('./renderingLabelHelper');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 
 var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
 
@@ -219,6 +220,41 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         return positions;
     },
 
+    getGroupLabels: function(seriesDataModel, sumPlusValues, sumMinusValues) {
+        var isNormalStack = predicate.isNormalStack(this.options.stackType);
+
+        return seriesDataModel.map(function(seriesGroup) {
+            var labels = seriesGroup.map(function(seriesDatum) {
+                return {
+                    end: seriesDatum.endLabel
+                };
+            });
+            var minusSum;
+
+            if (isNormalStack) {
+                sumPlusValues.push(calculator.sumPlusValues(seriesGroup.pluck('value')));
+
+                minusSum = calculator.sumMinusValues(seriesGroup.pluck('value'));
+                if (minusSum < 0) {
+                    sumMinusValues.push(minusSum);
+                }
+            }
+
+            return labels;
+        });
+    },
+
+    getGroupPositions: function(seriesDataModel, groupBounds) {
+        var self = this;
+
+        return seriesDataModel.map(function(seriesGroup, index) {
+            return self._makeStackedLabelPositions({
+                seriesGroup: seriesGroup,
+                bounds: groupBounds[index]
+            });
+        });
+    },
+
     /**
      * Render series label, when has stackType option.
      * @param {object} paper paper
@@ -227,26 +263,70 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _renderStackedSeriesLabel: function(paper) {
         var self = this;
-        var graphRenderer = this.graphRenderer;
+        var sumPlusValues = [];
+        var sumMinusValues = [];
         var labelTheme = this.theme.label;
         var groupBounds = this.seriesData.groupBounds;
         var seriesDataModel = this._getSeriesDataModel();
-        var groupPositions = seriesDataModel.map(function(seriesGroup, index) {
-            return self._makeStackedLabelPositions({
-                seriesGroup: seriesGroup,
-                bounds: groupBounds[index]
-            });
-        });
-        var groupLabels = seriesDataModel.map(function(seriesGroup) {
-            return seriesGroup.map(function(seriesDatum) {
-                return {
-                    end: seriesDatum.endLabel
-                };
-            });
-        });
+        var groupPositions = this.getGroupPositions(seriesDataModel, groupBounds);
+        var groupLabels = this.getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues);
         var isStacked = true;
+        var isNormalStack = predicate.isNormalStack(this.options.stackType);
+        var isBarChart = predicate.isBarChart(this.chartType);
+        var dimensionType = isBarChart ? 'width' : 'height';
+        var positionType = isBarChart ? 'left' : 'top';
+        var direction = isBarChart ? 1 : -1;
 
-        return graphRenderer.renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme, isStacked);
+        if (isNormalStack) {
+            tui.util.forEach(groupLabels, function(labels, index) {
+                var plusSumValue = sumPlusValues[index];
+                var minusSumValue = sumMinusValues[index];
+
+                if (minusSumValue < 0 && self.options.diverging) {
+                    minusSumValue *= -1;
+                }
+
+                labels.push({
+                    end: renderUtil.formatToComma(plusSumValue)
+                });
+
+                if (sumMinusValues.length) {
+                    labels.push({
+                        end: renderUtil.formatToComma(minusSumValue)
+                    });
+                }
+            });
+
+            tui.util.forEach(groupPositions, function(positions, index) {
+                var bounds = groupBounds[index];
+                var lastBound = bounds[bounds.length - 1].end;
+                var firstBound = bounds[parseInt(bounds.length / 2, 10) - 1].end;
+                var plusEnd = self._makeStackedLabelPosition(lastBound);
+                var minusEnd = self._makeStackedLabelPosition(firstBound);
+                var plusLabel = sumPlusValues[index];
+                var minusLabel = sumMinusValues[index];
+                var plusLabelSize = raphaelRenderUtil.getRenderedTextSize(plusLabel, labelTheme.fontSize,
+                    labelTheme.fontFamily);
+                var minusLabelSize = raphaelRenderUtil.getRenderedTextSize(minusLabel, labelTheme.fontSize,
+                    labelTheme.fontFamily);
+                var lastBoundEndPosition = ((lastBound[dimensionType] + plusLabelSize[dimensionType]) / 2);
+                var firstBoundStartPosition = ((firstBound[dimensionType] + minusLabelSize[dimensionType]) / 2);
+
+                plusEnd[positionType] += (lastBoundEndPosition + chartConst.LEGEND_LABEL_LEFT_PADDING) * direction;
+                minusEnd[positionType] -= (firstBoundStartPosition + chartConst.LEGEND_LABEL_LEFT_PADDING) * direction;
+
+                positions.push({
+                    end: plusEnd
+                });
+                if (sumMinusValues.length) {
+                    positions.push({
+                        end: minusEnd
+                    });
+                }
+            });
+        }
+
+        return this.graphRenderer.renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme, isStacked);
     },
 
     /**

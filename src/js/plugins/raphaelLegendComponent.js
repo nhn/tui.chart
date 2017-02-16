@@ -120,7 +120,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         var labelTheme = this.labelTheme;
         var pos = {
             left: position.left,
-            top: position.top + data.labelHeight
+            top: position.top + (data.labelHeight / 2)
         };
         var attributes = {
             'font-size': labelTheme.fontSize,

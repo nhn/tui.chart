@@ -78,7 +78,7 @@ var raphaelRenderUtil = {
             if (attributes['dominant-baseline']) {
                 textObj.node.setAttribute('dominant-baseline', attributes['dominant-baseline']);
             } else {
-                textObj.node.setAttribute('dominant-baseline', 'auto');
+                textObj.node.setAttribute('dominant-baseline', 'central');
             }
 
             textObj.attr(attributes);
