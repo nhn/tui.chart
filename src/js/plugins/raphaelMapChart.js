@@ -275,6 +275,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
             label.node.style.userSelect = 'none';
             label.node.style.cursor = 'default';
+            label.node.setAttribute('filter', 'url(#glow)');
 
             if (!IS_LTE_THAN_IE8) {
                 self.g.appendChild(label.node);

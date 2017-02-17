@@ -671,6 +671,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
             label.node.style.userSelect = 'none';
             label.node.style.cursor = 'default';
+            label.node.setAttribute('filter', 'url(#glow)');
 
             labelSet.push(label);
         });

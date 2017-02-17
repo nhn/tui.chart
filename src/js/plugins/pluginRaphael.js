@@ -48,6 +48,10 @@ var callback = function(container, dimension) {
     var paper = raphael(container, dimension.width, dimension.height);
     var rect = paper.rect(0, 0, dimension.width, dimension.height);
 
+    if (paper.raphael.svg) {
+        appendGlowFilterToDefs(paper);
+    }
+
     paper.pushDownBackgroundToBottom = function() {
         rect.toBack();
     };
@@ -57,7 +61,58 @@ var callback = function(container, dimension) {
         'stroke-width': 0
     });
 
+
     return paper;
 };
+
+/**
+ * Append glow filter for series label
+ * @param {object} paper Raphael paper object
+ */
+function appendGlowFilterToDefs(paper) {
+    var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+    var feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
+    var feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
+    var feMorphology = document.createElementNS('http://www.w3.org/2000/svg', 'feMorphology');
+    var feMerge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
+    var feMergeNodeColoredBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+    var feMergeNodeSourceGraphic = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+
+    filter.id = 'glow';
+
+    feFlood.setAttribute('result', 'flood');
+    feFlood.setAttribute('flood-color', '#ffffff');
+    feFlood.setAttribute('flood-opacity', '0.5');
+
+    feComposite.setAttribute('in', 'flood');
+    feComposite.setAttribute('result', 'mask');
+    feComposite.setAttribute('in2', 'SourceGraphic');
+    feComposite.setAttribute('operator', 'in');
+
+    feMorphology.setAttribute('in', 'mask');
+    feMorphology.setAttribute('result', 'dilated');
+    feMorphology.setAttribute('operator', 'dilate');
+    feMorphology.setAttribute('radius', '2');
+
+    feGaussianBlur.setAttribute('in', 'dilated');
+    feGaussianBlur.setAttribute('result', 'blurred');
+    feGaussianBlur.setAttribute('stdDeviation', '1');
+
+    feMergeNodeColoredBlur.setAttribute('in', 'blurred');
+    feMergeNodeSourceGraphic.setAttribute('in', 'SourceGraphic');
+
+    filter.appendChild(feFlood);
+    filter.appendChild(feComposite);
+    filter.appendChild(feMorphology);
+    filter.appendChild(feGaussianBlur);
+
+    filter.appendChild(feMerge);
+
+    feMerge.appendChild(feMergeNodeColoredBlur);
+    feMerge.appendChild(feMergeNodeSourceGraphic);
+
+    paper.defs.appendChild(filter);
+}
 
 tui.chart.registerPlugin(pluginName, pluginRaphael, callback);
