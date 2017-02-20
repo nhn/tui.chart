@@ -427,13 +427,15 @@
     position: absolute;
     font-family: Verdana;
     margin: 0;
-    padding: 0;
+    padding: 10px 0 0 0;
     z-index: 5000;
     .tui-chart-chartExportMenu-button{
       position: absolute;
+      width: 26px;
+      height: 20px;
       right :0;
-      background-color: #fff;
-      border: 1px solid #000;
+      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAKklEQVQ4EWMsKCj4z0BFwERFs8BGUd1AajtwCJjHOBrLQyCWKHXiCIxlAM/yBv2WsAlAAAAAAElFTkSuQmCC) top left no-repeat;
+      border: 0px;
       font-size: 12px;
       padding: 3px 5px;
       margin: 0;
@@ -442,24 +444,26 @@
     ul {
       display: none;
       position: absolute;
-      top: 20px;
+      top: 30px;
       right: 0;
       width: 120px;
-      background: #fafaff;
-      border: 1px solid #000;
+      background: #fff;
+      border: 0.5px solid #000;
       font-size: 0.8em;
       padding: 0;
       margin: 0;
+      box-shadow: 3px 3px 5px #888888;
         > li {
           margin: 0;
           padding: 7px 3px;
-          border-right: 0.5px solid #000;
-          border-bottom: 0.5px solid #000;
           border-collapse: collapse;
           text-align: center;
           list-style-type: none;
           line-height: 1;
           cursor: pointer;
+          &:hover {
+            background-color: #91ade5;
+          }
         }
     }
   }

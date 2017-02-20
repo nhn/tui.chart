@@ -73,6 +73,8 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         this.eventBus = params.eventBus;
 
         this.drawingType = chartConst.COMPONENT_TYPE_DOM;
+
+        this.theme = params.theme || null;
     },
 
     /**
@@ -82,7 +84,6 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      */
     _createChartExportMenuButton: function() {
         var menuButton = dom.create('div', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
-        menuButton.innerHTML = 'menu';
 
         return menuButton;
     },
@@ -114,6 +115,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         var isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
         var chartExportMenuElement = dom.create('ul');
         var menuStyle = chartExportMenuElement.style;
+        var menuTheme = this.theme;
         var menuItems = [];
 
         if (browserSupportsDownload && (isDataDownloadAvailable || isImageDownloadAvailable)) {
@@ -134,6 +136,24 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
             menuStyle.width = '200px';
             menuItems[0] = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
             menuItems[0].innerHTML = 'Browser does not support client-side download.';
+        }
+
+        if (menuTheme) {
+            if (menuTheme.borderWidth) {
+                menuStyle.borderWidth = menuTheme.borderWidth;
+            }
+
+            if (menuTheme.borderRadius) {
+                menuStyle.borderRadius = menuTheme.borderRadius;
+            }
+
+            if (menuTheme.backgroundColor) {
+                menuStyle.backgroundColor = menuTheme.backgroundColor;
+            }
+
+            if (menuTheme.fontColor) {
+                menuStyle.color = menuTheme.fontColor;
+            }
         }
 
         dom.append(chartExportMenuElement, menuItems);
@@ -236,7 +256,9 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
             }
 
             this._hideChartExportMenu();
-        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)) {
+        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
+            && (this.chartExportMenuContainer === elTarget.parentNode)
+        ) {
             if (dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
                 this._hideChartExportMenu();
             } else {
@@ -276,7 +298,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      * @private
      */
     _attachEvent: function() {
-        eventListener.on(document.body, 'click', this._onClick, this);
+        eventListener.on(this.chartExportMenuContainer.parentNode, 'click', this._onClick, this);
     },
 
     /**
@@ -284,7 +306,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      * @private
      */
     _detachEvent: function() {
-        eventListener.off(document.body, 'click', this._onClick);
+        eventListener.off(this.chartExportMenuContainer.parentNode, 'click', this._onClick);
     }
 });
 
