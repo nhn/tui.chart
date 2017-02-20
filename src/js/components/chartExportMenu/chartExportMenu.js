@@ -40,7 +40,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
          * chart title
          * @type {string}
          */
-        this.chartTitle = params.chartTitle;
+        this.chartTitle = params.chartTitle || 'tui-chart';
 
         /**
          * chart type
@@ -151,8 +151,8 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
                 menuStyle.backgroundColor = menuTheme.backgroundColor;
             }
 
-            if (menuTheme.fontColor) {
-                menuStyle.color = menuTheme.fontColor;
+            if (menuTheme.color) {
+                menuStyle.color = menuTheme.color;
             }
         }
 
@@ -319,6 +319,11 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
 function chartExportMenuFactory(params) {
     var isVisible = params.options.visible;
     var chartExportMenu = null;
+    var chartOption = params.chartOptions.chart || {};
+
+    if (chartOption.title) {
+        params.chartTitle = chartOption.title.text;
+    }
 
     if (isVisible) {
         chartExportMenu = new ChartExportMenu(params);

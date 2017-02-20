@@ -66,7 +66,13 @@ var defaultTheme = {
             fontWeight: DEFAULT_FONTWEIGHT
         }
     },
-    tooltip: {}
+    tooltip: {},
+    chartExportMenu: {
+        backgroundColor: '#fff',
+        borderRadius: 0,
+        borderWidth: 1,
+        color: '#000'
+    }
 };
 
 module.exports = defaultTheme;
