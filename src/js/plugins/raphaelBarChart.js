@@ -365,8 +365,9 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Animate.
+     * @param {function} onFinish finish callback function
      */
-    animate: function() {
+    animate: function(onFinish) {
         var self = this,
             groupBorders = this.groupBorders || [];
 
@@ -380,6 +381,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 self._animateBorders(lines, bar.bound, self.chartType, bar.item);
             }
         });
+
+        if (onFinish) {
+            this.callbackTimeout = setTimeout(function() {
+                onFinish();
+                delete self.callbackTimeout;
+            }, ANIMATION_DURATION);
+        }
     },
 
     /**

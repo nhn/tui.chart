@@ -601,10 +601,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate) {
             this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
-            this._fireLoadEvent(isRerendering);
+        } else {
+            this.animateSeriesLabelArea(isRerendering);
         }
-
-        this.animateSeriesLabelArea(isRerendering);
     },
 
     /**
