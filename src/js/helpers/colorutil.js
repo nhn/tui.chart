@@ -2,6 +2,7 @@
  * @fileoverview Utility methods to manipulate colors
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;

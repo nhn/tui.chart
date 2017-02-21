@@ -1,4 +1,5 @@
 'use strict';
+
 var dom = require('../helpers/domHandler');
 
 /**

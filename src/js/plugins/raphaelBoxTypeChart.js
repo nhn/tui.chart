@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var ANIMATION_DURATION = 100;
@@ -258,7 +259,6 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
                         seriesSet.push(result.rect);
                     }
                 }
-
 
                 return result;
             });

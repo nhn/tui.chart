@@ -206,7 +206,6 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
     }
 });
 
-
 function groupTypeEventDetectorFactory(params) {
     return new GroupTypeEventDetector(params);
 }

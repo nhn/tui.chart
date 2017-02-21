@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-
 'use strict';
 
 var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSeriesBase.prototype */ {

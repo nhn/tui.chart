@@ -130,7 +130,6 @@ var eventListener = {
         delete bindHandlerMap[type + handler];
     },
 
-
     /**
      * Unbind DOM event.
      * @memberOf module:eventListener

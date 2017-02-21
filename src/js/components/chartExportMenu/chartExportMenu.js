@@ -271,7 +271,6 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         }
     },
 
-
     /**
      * Return boolean value for chart data is able to export
      * @param {object} seriesDataModels series data model
@@ -311,7 +310,6 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         eventListener.off(this.chartExportMenuContainer.parentNode, 'click', this._onClick);
     }
 });
-
 
 /**
  * Factory for ChartExportMenu

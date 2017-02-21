@@ -203,7 +203,6 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
         var fillURL = gradientBar.node.getAttribute('fill');
         this.locationURL = /url\('?([^#]+)#[^#]+'?\)/.exec(fillURL)[1];
 
-
         gradientBar.node.setAttribute('fill', fillURL.replace(this.locationURL, ''));
     },
 

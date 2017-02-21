@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;

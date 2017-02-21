@@ -269,7 +269,6 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
         return !!this.checkedWholeIndexes[index];
     },
 
-
     /**
      * Add sending datum.
      * @param {number} index legend index

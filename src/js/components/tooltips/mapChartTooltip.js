@@ -83,7 +83,6 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
         return params;
     },
 
-
     /**
      * Set default align option of tooltip.
      * @private

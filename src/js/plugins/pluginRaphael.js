@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var raphael = window.Raphael;
 
 var BarChart = require('./raphaelBarChart');
@@ -60,7 +61,6 @@ var callback = function(container, dimension) {
         fill: '#fff',
         'stroke-width': 0
     });
-
 
     return paper;
 };

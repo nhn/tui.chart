@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var chartConst = require('../const');
 var raphaelRenderUtil = require('../plugins/raphaelRenderUtil');
 

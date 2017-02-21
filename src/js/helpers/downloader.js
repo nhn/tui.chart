@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var arrayUtil = require('../helpers/arrayUtil');
 var chartConst = require('../const');
 

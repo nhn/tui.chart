@@ -88,7 +88,6 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
          */
         this.prevFoundData = null;
 
-
         isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
         /**
          * expand size

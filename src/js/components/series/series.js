@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var LABEL_FADE_IN_DURATION = 800;
 var browser = tui.util.browser;
 var IS_IE7 = browser.msie && browser.version === 7;

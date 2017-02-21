@@ -18,7 +18,6 @@ var isImageDownloadAvailable = !isIE10OrIE11
 var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
 var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
 
-
 /**
  * Return given extension type is image format
  * @param {string} extension extension

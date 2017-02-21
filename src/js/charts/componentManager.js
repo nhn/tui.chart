@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
 var Axis = require('../components/axes/axis');

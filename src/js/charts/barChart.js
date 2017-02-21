@@ -59,7 +59,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             options.xAxis = options.xAxis || {};
             options.plot = options.plot || {};
 
-
             options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
             this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
 

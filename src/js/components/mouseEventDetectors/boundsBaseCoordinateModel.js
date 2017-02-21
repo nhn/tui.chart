@@ -113,6 +113,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
                 if (!position) {
                     return null;
                 }
+
                 return {
                     sendData: {
                         chartType: chartType,

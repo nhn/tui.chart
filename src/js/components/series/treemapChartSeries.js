@@ -221,6 +221,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
 
         labels = tui.util.map(seriesItems, function(seriesItem) {
             var labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
+
             return labelText;
         });
 

@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var IS_MSIE_VERSION_LTE_THAN_8 = tui.util.browser.msie && tui.util.browser.version <= 8;
 
 var seriesTemplate = require('./seriesTemplate');

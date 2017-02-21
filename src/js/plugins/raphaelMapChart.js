@@ -169,7 +169,6 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         transformX = (raphaelMatrix.e / raphaelMatrix.a) + previousTranslateX;
         transformY = (raphaelMatrix.f / raphaelMatrix.d) + previousTranslateY;
 
-
         if (transformX >= 0) {
             raphaelMatrix.e = -previousTranslateX * raphaelMatrix.a;
         } else if (transformX < currentLimitRight) {

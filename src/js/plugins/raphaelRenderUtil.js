@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var raphael = window.Raphael;
 
 /**

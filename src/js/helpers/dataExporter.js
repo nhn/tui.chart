@@ -142,7 +142,6 @@ function _makeXlsBodyWithRawData(chartData2DArray) {
         '</body>' +
         '</html>';
 
-
     return window.btoa(unescape(encodeURIComponent(xlsString)));
 }
 

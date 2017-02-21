@@ -6,6 +6,7 @@
 
 'use strict';
 
+var chartExporter = require('../../src/js/helpers/chartExporter');
 var dataExporter = require('../../src/js/helpers/dataExporter');
 var downloader = require('../../src/js/helpers/downloader');
 
@@ -19,6 +20,9 @@ describe('Test for dataExporter', function() {
     };
     var rawData = [];
 
+    if (!chartExporter.isDownloadSupported) {
+        return;
+    }
 
     describe('downloadData()', function() {
         beforeEach(function() {
