@@ -7,11 +7,11 @@
 'use strict';
 
 var chartConst = require('../../const');
-var eventListener = require('../../helpers/eventListener');
+var chartExporter = require('../../helpers/chartExporter');
 var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var chartDataExporter = require('../../helpers/chartDataExporter');
+var eventListener = require('../../helpers/eventListener');
 var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
 
 var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
 var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
@@ -109,16 +109,16 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      */
     _renderChartExportMenu: function(chartExportMenuContainer) {
         var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-        var isImageExtension = chartDataExporter.isImageExtension;
-        var isImageDownloadAvailable = chartDataExporter.isImageDownloadAvailable;
-        var browserSupportsDownload = chartDataExporter.isBrowserSupportClientSideDownload();
         var isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
-        var chartExportMenuElement = dom.create('ul');
-        var menuStyle = chartExportMenuElement.style;
+        var isDownloadSupported = chartExporter.isDownloadSupported;
+        var isImageExtension = chartExporter.isImageExtension;
+        var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
+        var menuElement = dom.create('ul');
+        var menuStyle = menuElement.style;
         var menuTheme = this.theme;
         var menuItems = [];
 
-        if (browserSupportsDownload && (isDataDownloadAvailable || isImageDownloadAvailable)) {
+        if (isDownloadSupported && (isDataDownloadAvailable || isImageDownloadAvailable)) {
             menuItems = tui.util.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
                 var itemElement;
 
@@ -156,11 +156,11 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
             }
         }
 
-        dom.append(chartExportMenuElement, menuItems);
+        dom.append(menuElement, menuItems);
 
-        this.chartExportMenu = chartExportMenuElement;
+        this.chartExportMenu = menuElement;
 
-        dom.append(chartExportMenuContainer, chartExportMenuElement);
+        dom.append(chartExportMenuContainer, menuElement);
     },
 
     /**
@@ -190,8 +190,8 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
     render: function(data) {
         var container = null;
 
-        if (chartDataExporter.isBrowserSupportClientSideDownload()) {
-            container = data.paper;
+        if (chartExporter.isDownloadSupported) {
+            container = this.container = data.paper;
 
             dom.addClass(container, this.className);
 
@@ -245,12 +245,14 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      */
     _onClick: function(e) {
         var elTarget = e.target || e.srcElement;
+        var svgElement = this.container.parentNode.getElementsByTagName('svg')[0];
 
         if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
             if (elTarget.id) {
                 this.eventBus.fire('beforeImageDownload');
 
-                chartDataExporter.exportChartData(elTarget.id, this.dataProcessor.rawData, this.chartTitle);
+                chartExporter.exportChart(this.chartTitle, elTarget.id,
+                    this.dataProcessor.rawData, svgElement, this.options);
 
                 this.eventBus.fire('afterImageDownload');
             }
