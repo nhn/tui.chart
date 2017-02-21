@@ -5,26 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>[Map chart] taiwan map</title>
     <link rel="stylesheet" type="text/css" href="../dist/chart.css" />
-    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+
+    <link rel='stylesheet' type='text/css' href='../lib/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../lib/codemirror/theme/neat.css'/>
+    <link rel='stylesheet' type='text/css' href='../lib/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='css/sample.css'/>
 </head>
 <body>
 <div class='wrap'>
     <div class='code-html'>
-<div id='chart-area'></div>
+        <div id='chart-area'></div>
     </div>
 </div>
-<div class="custom-area">
-    <div class="apply-btn-area">
-        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
-        &nbsp; &nbsp;
-        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
-        <input type="hidden" id="type" value="mapChart" />
-    </div>
-    <div>
-        <div>Chart Data</div>
-        <textarea id="data">
-{
-    "series": [
+<div class='custom-area'>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'>
+var container = document.getElementById('chart-area');
+var data = {
+    series: [
         {
             "code": "TW-LCG",
             "data": 13
@@ -46,20 +44,12 @@
             "data": 705
         },
         {
-            "code": "TW-TXQ",
-            "data": 0
-        },
-        {
             "code": "TW-NAN",
             "data": 514
         },
         {
             "code": "TW-HUA",
             "data": 333
-        },
-        {
-            "code": "TW-CYI",
-            "data": 0
         },
         {
             "code": "TW-CYQ",
@@ -70,24 +60,8 @@
             "data": 1291
         },
         {
-            "code": "TW-TAO",
-            "data": 0
-        },
-        {
-            "code": "TW-TPQ",
-            "data": 6870
-        },
-        {
-            "code": "TW-TPE",
-            "data": 0
-        },
-        {
             "code": "TW-MIA",
             "data": 567
-        },
-        {
-            "code": "TW-KEE",
-            "data": 0
         },
         {
             "code": "TW-ILA",
@@ -98,139 +72,76 @@
             "data": 538
         },
         {
-            "code": "TW-HSQ",
-            "data": 0
-        },
-        {
-            "code": "TW-TNQ",
-            "data": 0
-        },
-        {
             "code": "TW-PIF",
             "data": 847
-        },
-        {
-            "code": "TW-KHQ",
-            "data": 0
         }
     ]
-}
-        </textarea>
-    </div>
-    <div>
-        <div>Chart Options</div>
-        <textarea id="options">
-{
-    "chart": {
-        "width": 480,
-        "height": 550,
-        "title": "Population of Taiwan (thousand person)",
-        "format": "1,000"
+};
+var options = {
+    chart: {
+        width:480,
+        height: 550,
+        title: 'Population of Taiwan (thousand person)',
+        format: '1,000'
     },
-    "map": "taiwan",
-    "legend": {
-        "align": "right"
+    map: 'taiwan',
+    legend: {
+        align: 'right'
     }
-}
-        </textarea>
-        <div class="btn-area">
-            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
-        </div>
-    </div>
-    <div id="theme-area">
-        <div>Chart Theme</div>
-        <textarea id="theme">
-{
-    "series": {
-            "startColor": "#ffefef",
-            "endColor": "#ac4142",
-            "overColor": "#75b5aa"
+};
+var theme = {
+    series: {
+        startColor: '#ffefef',
+        endColor: '#ac4142',
+        overColor: '#75b5aa'
     }
-}
+};
+
+// For apply theme
+
+// tui.chart.registerTheme('myTheme', theme);
+// options.theme = 'myTheme';
+
+tui.chart.mapChart(container, data, options);
+
         </textarea>
-        <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
-        </div>
     </div>
 
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button id='btn' style='position: absolute; right: 0; margin: 5px 0 0 0;' onclick='evaluationCode(chartCM, codeString);'>Run
+        </button>
+        <button onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
 </div>
-<script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.0.8/code-snippet.js"></script>
-<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.animation/0.1.0/dist/tui-component-animation.min.js"></script>
-<script type="text/javascript" src="https://rawgit.com/nhnent/raphael/v2.2.0a/raphael.js"></script>
-<script src="../dist/chart.js"></script>
-<script src="../dist/maps/taiwan.js"></script>
-<script src="js/sample.js"></script>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/1.0.8/code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/chart.js'></script>
+<script src='../dist/maps/taiwan.js'></script>
+
+<!--For tutorial page-->
+<script src='../lib/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../lib/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../lib/codemirror/mode/javascript/javascript.js'></script>
+<script src='../lib/codemirror/addon/lint/lint.js'></script>
+<script src='../lib/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='js/sample.js'></script>
 <script class='code-js'>
-    var container = document.getElementById('chart-area'),
-        data = {
-            series: [
-                {
-                    "code": "TW-LCG",
-                    "data": 13
-                },
-                {
-                    "code": "TW-KNM",
-                    "data": 128
-                },
-                {
-                    "code": "TW-PEN",
-                    "data": 102
-                },
-                {
-                    "code": "TW-TTT",
-                    "data": 224
-                },
-                {
-                    "code": "TW-YUN",
-                    "data": 705
-                },
-                {
-                    "code": "TW-NAN",
-                    "data": 514
-                },
-                {
-                    "code": "TW-HUA",
-                    "data": 333
-                },
-                {
-                    "code": "TW-CYQ",
-                    "data": 525
-                },
-                {
-                    "code": "TW-CHA",
-                    "data": 1291
-                },
-                {
-                    "code": "TW-MIA",
-                    "data": 567
-                },
-                {
-                    "code": "TW-ILA",
-                    "data": 458
-                },
-                {
-                    "code": "TW-HSZ",
-                    "data": 538
-                },
-                {
-                    "code": "TW-PIF",
-                    "data": 847
-                }
-            ]
-        },
-        options = {
-            chart: {
-                width:480,
-                height: 550,
-                title: 'Population of Taiwan (thousand person)',
-                format: '1,000'
-            },
-            map: 'taiwan',
-            legend: {
-                align: 'right'
-            }
-        };
-    tui.chart.mapChart(container, data, options);
+    window.chartCM = CodeMirror.fromTextArea(document.getElementById('code'), {
+        mode: 'javascript',
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        theme: 'neat',
+        gutters: ["CodeMirror-lint-markers"],
+        lint: true
+    });
+    chartCM.setSize(600, 500);
+    window.codeString = chartCM.doc.getValue();
+
+    window.evaluationCode(chartCM, codeString);
 </script>
 </body>
 </html>
