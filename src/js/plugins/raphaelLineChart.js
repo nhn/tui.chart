@@ -240,12 +240,14 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
                 endLabel.node.style.userSelect = 'none';
                 endLabel.node.style.cursor = 'default';
+                endLabel.node.setAttribute('filter', 'url(#glow)');
 
                 if (position.start) {
                     startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
 
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
+                    startLabel.node.setAttribute('filter', 'url(#glow)');
 
                     set.push(startLabel);
                 }

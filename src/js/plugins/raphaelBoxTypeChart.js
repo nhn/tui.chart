@@ -393,6 +393,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
 
                 seriesLabel.node.style.userSelect = 'none';
                 seriesLabel.node.style.cursor = 'default';
+                seriesLabel.node.setAttribute('filter', 'url(#glow)');
 
                 labelSet.push(seriesLabel);
             });
@@ -416,6 +417,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
 
             seriesLabel.node.style.userSelect = 'none';
             seriesLabel.node.style.cursor = 'default';
+            seriesLabel.node.setAttribute('filter', 'url(#glow)');
 
             labelSet.push(seriesLabel);
         });

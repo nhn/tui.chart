@@ -570,6 +570,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
                 endLabel.node.style.userSelect = 'none';
                 endLabel.node.style.cursor = 'default';
+                endLabel.node.setAttribute('filter', 'url(#glow)');
 
                 labelSet.push(endLabel);
 
@@ -577,6 +578,8 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
+                    startLabel.node.setAttribute('filter', 'url(#glow)');
+
                     labelSet.push(startLabel);
                 }
             });
