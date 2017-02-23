@@ -226,7 +226,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             attrs: {
                 fill: 'none',
                 opacity: 0,
-                stroke: this.chartBackground,
+                stroke: this.chartBackground.color,
                 'stroke-width': 1
             }
         };
@@ -285,8 +285,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 circleBound: circleBound,
                 angles: sectorDatum.angles.start,
                 attrs: {
-                    fill: chartBackground,
-                    stroke: chartBackground,
+                    fill: chartBackground.color,
+                    stroke: chartBackground.color,
                     'stroke-width': 1
                 }
             });

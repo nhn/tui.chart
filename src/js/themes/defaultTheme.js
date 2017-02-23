@@ -22,7 +22,10 @@ var DEFAULT_AXIS = {
 
 var defaultTheme = {
     chart: {
-        background: DEFAULT_BACKGROUND,
+        background: {
+            color: DEFAULT_BACKGROUND,
+            opacity: 1
+        },
         fontFamily: 'Verdana'
     },
     title: {

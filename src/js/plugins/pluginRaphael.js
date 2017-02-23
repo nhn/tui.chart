@@ -57,6 +57,18 @@ var callback = function(container, dimension) {
         rect.toBack();
     };
 
+    paper.changeChartBackgroundColor = function(color) {
+        rect.attr({
+            fill: color
+        });
+    };
+
+    paper.changeChartBackgroundOpacity = function(opacity) {
+        rect.attr({
+            opacity: opacity
+        });
+    };
+
     rect.attr({
         fill: '#fff',
         'stroke-width': 0

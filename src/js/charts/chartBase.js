@@ -352,10 +352,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var dataProcessor = this.dataProcessor;
         var seriesVisibilityMap = dataProcessor.getLegendVisibility();
         var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
+        var raphaelPaper = componentManager.drawingToolPicker.getPaper(container, chartConst.COMPONENT_TYPE_RAPHAEL);
 
         this.dataProcessor.initData(rawData);
 
-        renderUtil.renderBackground(container, this.theme.chart.background);
+        raphaelPaper.changeChartBackgroundColor(this.theme.chart.background.color);
+        raphaelPaper.changeChartBackgroundOpacity(this.theme.chart.background.opacity);
         renderUtil.renderFontFamily(container, this.theme.chart.fontFamily);
 
         dom.append(wrapper, container);
