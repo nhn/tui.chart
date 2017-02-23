@@ -18,16 +18,22 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
      * @param {object} paper Raphael paper
      * @param {object} position axis position
      * @param {object} dimension axis dimension
+     * @param {object} theme chart theme
      * @private
      */
-    renderBackground: function(paper, position, dimension) {
+    renderBackground: function(paper, position, dimension, theme) {
+        var background = (theme.background || {});
+        var fillColor = (background.color || '#fff');
+        var opacity = (background.opacity || 1);
+
         raphaelRenderUtil.renderRect(paper, {
             left: position.left - 5,
             top: position.top,
             width: dimension.width,
             height: dimension.height
         }, {
-            fill: '#fff',
+            fill: fillColor,
+            opacity: opacity,
             'stroke-width': 0
         });
     },

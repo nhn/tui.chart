@@ -123,7 +123,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             position.top = 0;
         }
 
-        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.plot);
+        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.chart);
     },
     /**
      * Render child containers like title area, label area and tick area.
@@ -136,7 +136,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
         var isYAxisLineType = this.isYAxis && this.data.aligned;
 
-        if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter) {
+        if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
             this._renderBackground();
         }
 
