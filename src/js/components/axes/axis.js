@@ -279,6 +279,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 text: title.text,
                 theme: this.theme.title,
                 rotationInfo: {
+                    rotateTitle: this.options.rotateTitle,
                     isVertical: this.isYAxis,
                     isPositionRight: this.data.isPositionRight,
                     isCenter: this.options.isCenter

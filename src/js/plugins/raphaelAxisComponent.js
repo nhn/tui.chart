@@ -73,7 +73,10 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         } else if (data.rotationInfo.isVertical) {
             positionTopAndLeft.top = centerPosition;
             positionTopAndLeft.left = data.layout.position.left + textHeight;
-            attributes.transform = rotateTitle ? ('r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top) : '';
+
+            if (rotateTitle) {
+                attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
+            }
         } else {
             positionTopAndLeft.top = paper.height - textHeight;
             positionTopAndLeft.left = centerPosition;
