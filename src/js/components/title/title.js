@@ -97,7 +97,7 @@ function titleFactory(param) {
     var options = param.chartOptions.chart || {title: {}};
     var title = null;
 
-    if (options.title.text) {
+    if (options.title && options.title.text) {
         param.text = options.title.text;
         param.offset = options.title.offset;
 
