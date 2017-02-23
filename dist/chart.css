@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.7.2
+ * @version 2.7.3
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Feb 16 2017 17:36:28 GMT+0900 (KST)"
+ * bundle created at "Thu Feb 23 2017 18:45:18 GMT+0900 (KST)"
  */
 .tui-chart {
   position: relative;
@@ -439,14 +439,16 @@
   position: absolute;
   font-family: Verdana;
   margin: 0;
-  padding: 0;
+  padding: 10px 0 0 0;
   z-index: 5000;
 }
 .tui-chart .tui-chart-chartExportMenu-area .tui-chart-chartExportMenu-button {
   position: absolute;
+  width: 26px;
+  height: 20px;
   right: 0;
-  background-color: #fff;
-  border: 1px solid #000;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAKklEQVQ4EWMsKCj4z0BFwERFs8BGUd1AajtwCJjHOBrLQyCWKHXiCIxlAM/yBv2WsAlAAAAAAElFTkSuQmCC) top left no-repeat;
+  border: 0px;
   font-size: 12px;
   padding: 3px 5px;
   margin: 0;
@@ -455,25 +457,27 @@
 .tui-chart .tui-chart-chartExportMenu-area ul {
   display: none;
   position: absolute;
-  top: 20px;
+  top: 30px;
   right: 0;
   width: 120px;
-  background: #fafaff;
-  border: 1px solid #000;
+  background: #fff;
+  border: 0.5px solid #000;
   font-size: 0.8em;
   padding: 0;
   margin: 0;
+  box-shadow: 3px 3px 5px #888888;
 }
 .tui-chart .tui-chart-chartExportMenu-area ul > li {
   margin: 0;
   padding: 7px 3px;
-  border-right: 0.5px solid #000;
-  border-bottom: 0.5px solid #000;
   border-collapse: collapse;
   text-align: center;
   list-style-type: none;
   line-height: 1;
   cursor: pointer;
+}
+.tui-chart .tui-chart-chartExportMenu-area ul > li:hover {
+  background-color: #91ade5;
 }
 .tui-chart .tui-chart-legend-area {
   z-index: 400;

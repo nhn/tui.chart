@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.7.2
+ * @version 2.7.3
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Feb 16 2017 17:36:28 GMT+0900 (KST)"
+ * bundle created at "Thu Feb 23 2017 18:45:18 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -72,7 +72,7 @@
 	__webpack_require__(15);
 	__webpack_require__(17);
 	__webpack_require__(18);
-	__webpack_require__(116);
+	__webpack_require__(119);
 
 	/**
 	 * Raw series datum.
@@ -160,7 +160,8 @@
 	            theme = themeManager.get(themeName, chartType, rawData.series);
 
 	            chart = chartFactory.get(options.chartType, rawData, theme, options);
-	            container.appendChild(chart.render());
+
+	            chart.render(container);
 	            chart.animateChart();
 	        }
 	    }
@@ -1454,7 +1455,7 @@
 	    drawingToolPicker.addRendererType(libType, getPaperCallback);
 	};
 
-	__webpack_require__(117);
+	__webpack_require__(120);
 
 
 /***/ },
@@ -1841,7 +1842,10 @@
 	    RADIAL_CATEGORY_PADDING: 20,
 
 	    COMPONENT_TYPE_DOM: 'DOM',
-	    COMPONENT_TYPE_RAPHAEL: 'Raphael'
+	    COMPONENT_TYPE_RAPHAEL: 'Raphael',
+
+	    IMAGE_EXTENSIONS: ['png', 'jpeg'],
+	    DATA_EXTENSIONS: ['xls', 'csv']
 	};
 	module.exports = chartConst;
 
@@ -1858,6 +1862,7 @@
 	 */
 
 	'use strict';
+
 	var chartConst = __webpack_require__(2);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
@@ -2884,6 +2889,7 @@
 	 */
 
 	'use strict';
+
 	var chartConst = __webpack_require__(2);
 
 	var plugins = {},
@@ -3285,7 +3291,10 @@
 
 	var defaultTheme = {
 	    chart: {
-	        background: DEFAULT_BACKGROUND,
+	        background: {
+	            color: DEFAULT_BACKGROUND,
+	            opacity: 1
+	        },
 	        fontFamily: 'Verdana'
 	    },
 	    title: {
@@ -3329,7 +3338,13 @@
 	            fontWeight: DEFAULT_FONTWEIGHT
 	        }
 	    },
-	    tooltip: {}
+	    tooltip: {},
+	    chartExportMenu: {
+	        backgroundColor: '#fff',
+	        borderRadius: 0,
+	        borderWidth: 1,
+	        color: '#000'
+	    }
 	};
 
 	module.exports = defaultTheme;
@@ -3538,6 +3553,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
 	var dom = __webpack_require__(14);
 
 	/**
@@ -3886,20 +3902,20 @@
 	var chartConst = __webpack_require__(2);
 	var chartFactory = __webpack_require__(3);
 	var BarChart = __webpack_require__(19);
-	var ColumnChart = __webpack_require__(96);
-	var LineChart = __webpack_require__(97);
-	var AreaChart = __webpack_require__(99);
-	var ColumnLineComboChart = __webpack_require__(100);
-	var LineScatterComboChart = __webpack_require__(102);
-	var LineAreaComboChart = __webpack_require__(103);
-	var PieDonutComboChart = __webpack_require__(104);
-	var PieChart = __webpack_require__(105);
-	var BubbleChart = __webpack_require__(106);
-	var ScatterChart = __webpack_require__(107);
-	var HeatmapChart = __webpack_require__(108);
-	var TreemapChart = __webpack_require__(111);
-	var MapChart = __webpack_require__(112);
-	var RadialChart = __webpack_require__(115);
+	var ColumnChart = __webpack_require__(99);
+	var LineChart = __webpack_require__(100);
+	var AreaChart = __webpack_require__(102);
+	var ColumnLineComboChart = __webpack_require__(103);
+	var LineScatterComboChart = __webpack_require__(105);
+	var LineAreaComboChart = __webpack_require__(106);
+	var PieDonutComboChart = __webpack_require__(107);
+	var PieChart = __webpack_require__(108);
+	var BubbleChart = __webpack_require__(109);
+	var ScatterChart = __webpack_require__(110);
+	var HeatmapChart = __webpack_require__(111);
+	var TreemapChart = __webpack_require__(114);
+	var MapChart = __webpack_require__(115);
+	var RadialChart = __webpack_require__(118);
 
 	chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 	chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);
@@ -3982,7 +3998,6 @@
 	            options.yAxis = options.yAxis || {};
 	            options.xAxis = options.xAxis || {};
 	            options.plot = options.plot || {};
-
 
 	            options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
 	            this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
@@ -4071,11 +4086,11 @@
 
 	var chartConst = __webpack_require__(2);
 	var ComponentManager = __webpack_require__(21);
-	var DefaultDataProcessor = __webpack_require__(76);
+	var DefaultDataProcessor = __webpack_require__(79);
 	var rawDataHandler = __webpack_require__(4);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
-	var boundsAndScaleBuilder = __webpack_require__(84);
+	var renderUtil = __webpack_require__(34);
+	var boundsAndScaleBuilder = __webpack_require__(87);
 
 	var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 	    /**
@@ -4407,19 +4422,23 @@
 
 	    /**
 	     * Render chart.
-	     * @returns {HTMLElement} chart element
+	     * @param {HTMLElement} wrapper chart wrapper element
 	     */
-	    render: function() {
+	    render: function(wrapper) {
 	        var container = dom.create('DIV', 'tui-chart ' + this.className);
 	        var componentManager = this.componentManager;
 	        var dataProcessor = this.dataProcessor;
 	        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
 	        var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
+	        var raphaelPaper = componentManager.drawingToolPicker.getPaper(container, chartConst.COMPONENT_TYPE_RAPHAEL);
 
 	        this.dataProcessor.initData(rawData);
 
-	        renderUtil.renderBackground(container, this.theme.chart.background);
+	        raphaelPaper.changeChartBackgroundColor(this.theme.chart.background.color);
+	        raphaelPaper.changeChartBackgroundOpacity(this.theme.chart.background.opacity);
 	        renderUtil.renderFontFamily(container, this.theme.chart.fontFamily);
+
+	        dom.append(wrapper, container);
 
 	        this._render(function(boundsAndScale) {
 	            renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
@@ -4429,8 +4448,6 @@
 	        });
 
 	        this.chartContainer = container;
-
-	        return container;
 	    },
 
 	    /**
@@ -4661,6 +4678,7 @@
 	 */
 
 	'use strict';
+
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var Axis = __webpack_require__(22);
@@ -4671,33 +4689,33 @@
 	var drawingToolPicker = __webpack_require__(13);
 
 	// legends
-	var Legend = __webpack_require__(32);
-	var SpectrumLegend = __webpack_require__(34);
-	var CircleLegend = __webpack_require__(35);
+	var Legend = __webpack_require__(35);
+	var SpectrumLegend = __webpack_require__(37);
+	var CircleLegend = __webpack_require__(38);
 
 	// tooltips
-	var Tooltip = __webpack_require__(36);
-	var GroupTooltip = __webpack_require__(42);
-	var MapChartTooltip = __webpack_require__(44);
+	var Tooltip = __webpack_require__(39);
+	var GroupTooltip = __webpack_require__(45);
+	var MapChartTooltip = __webpack_require__(47);
 
 	// mouse event detectors
-	var MapChartEventDetector = __webpack_require__(45);
-	var mouseEventDetector = __webpack_require__(49);
+	var MapChartEventDetector = __webpack_require__(48);
+	var mouseEventDetector = __webpack_require__(52);
 
 	// series
-	var BarSeries = __webpack_require__(56);
-	var ColumnSeries = __webpack_require__(61);
-	var LineSeries = __webpack_require__(62);
-	var RadialSeries = __webpack_require__(64);
-	var AreaSeries = __webpack_require__(65);
-	var BubbleSeries = __webpack_require__(66);
-	var ScatterSeries = __webpack_require__(68);
-	var MapSeries = __webpack_require__(69);
-	var PieSeries = __webpack_require__(70);
-	var HeatmapSeries = __webpack_require__(71);
-	var TreemapSeries = __webpack_require__(72);
+	var BarSeries = __webpack_require__(59);
+	var ColumnSeries = __webpack_require__(64);
+	var LineSeries = __webpack_require__(65);
+	var RadialSeries = __webpack_require__(67);
+	var AreaSeries = __webpack_require__(68);
+	var BubbleSeries = __webpack_require__(69);
+	var ScatterSeries = __webpack_require__(71);
+	var MapSeries = __webpack_require__(72);
+	var PieSeries = __webpack_require__(73);
+	var HeatmapSeries = __webpack_require__(74);
+	var TreemapSeries = __webpack_require__(75);
 
-	var Zoom = __webpack_require__(74);
+	var Zoom = __webpack_require__(77);
 
 	var COMPONENT_FACTORY_MAP = {
 	    axis: Axis,
@@ -5164,7 +5182,7 @@
 	            position.top = 0;
 	        }
 
-	        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.plot);
+	        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.chart);
 	    },
 	    /**
 	     * Render child containers like title area, label area and tick area.
@@ -5177,7 +5195,7 @@
 	    _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
 	        var isYAxisLineType = this.isYAxis && this.data.aligned;
 
-	        if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter) {
+	        if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
 	            this._renderBackground();
 	        }
 
@@ -5320,6 +5338,7 @@
 	                text: title.text,
 	                theme: this.theme.title,
 	                rotationInfo: {
+	                    rotateTitle: this.options.rotateTitle,
 	                    isVertical: this.isYAxis,
 	                    isPositionRight: this.data.isPositionRight,
 	                    isCenter: this.options.isCenter
@@ -5571,7 +5590,6 @@
 	        }
 	    }
 	});
-
 
 	/**
 	 * Factory for Axis
@@ -6710,7 +6728,7 @@
 	    var options = param.chartOptions.chart || {title: {}};
 	    var title = null;
 
-	    if (options.title.text) {
+	    if (options.title && options.title.text) {
 	        param.text = options.title.text;
 	        param.offset = options.title.offset;
 
@@ -7076,11 +7094,11 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(29);
+	var chartExporter = __webpack_require__(29);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
-	var chartDataExporter = __webpack_require__(31);
+	var eventListener = __webpack_require__(33);
 	var predicate = __webpack_require__(5);
+	var renderUtil = __webpack_require__(34);
 
 	var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
 	var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
@@ -7109,7 +7127,7 @@
 	         * chart title
 	         * @type {string}
 	         */
-	        this.chartTitle = params.chartTitle;
+	        this.chartTitle = params.chartTitle || 'tui-chart';
 
 	        /**
 	         * chart type
@@ -7142,6 +7160,8 @@
 	        this.eventBus = params.eventBus;
 
 	        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
+
+	        this.theme = params.theme || null;
 	    },
 
 	    /**
@@ -7151,7 +7171,6 @@
 	     */
 	    _createChartExportMenuButton: function() {
 	        var menuButton = dom.create('div', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
-	        menuButton.innerHTML = 'menu';
 
 	        return menuButton;
 	    },
@@ -7177,15 +7196,16 @@
 	     */
 	    _renderChartExportMenu: function(chartExportMenuContainer) {
 	        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-	        var isImageExtension = chartDataExporter.isImageExtension;
-	        var isImageDownloadAvailable = chartDataExporter.isImageDownloadAvailable;
-	        var browserSupportsDownload = chartDataExporter.isBrowserSupportClientSideDownload();
 	        var isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
-	        var chartExportMenuElement = dom.create('ul');
-	        var menuStyle = chartExportMenuElement.style;
+	        var isDownloadSupported = chartExporter.isDownloadSupported;
+	        var isImageExtension = chartExporter.isImageExtension;
+	        var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
+	        var menuElement = dom.create('ul');
+	        var menuStyle = menuElement.style;
+	        var menuTheme = this.theme;
 	        var menuItems = [];
 
-	        if (browserSupportsDownload && (isDataDownloadAvailable || isImageDownloadAvailable)) {
+	        if (isDownloadSupported && (isDataDownloadAvailable || isImageDownloadAvailable)) {
 	            menuItems = tui.util.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
 	                var itemElement;
 
@@ -7205,11 +7225,29 @@
 	            menuItems[0].innerHTML = 'Browser does not support client-side download.';
 	        }
 
-	        dom.append(chartExportMenuElement, menuItems);
+	        if (menuTheme) {
+	            if (menuTheme.borderWidth) {
+	                menuStyle.borderWidth = menuTheme.borderWidth;
+	            }
 
-	        this.chartExportMenu = chartExportMenuElement;
+	            if (menuTheme.borderRadius) {
+	                menuStyle.borderRadius = menuTheme.borderRadius;
+	            }
 
-	        dom.append(chartExportMenuContainer, chartExportMenuElement);
+	            if (menuTheme.backgroundColor) {
+	                menuStyle.backgroundColor = menuTheme.backgroundColor;
+	            }
+
+	            if (menuTheme.color) {
+	                menuStyle.color = menuTheme.color;
+	            }
+	        }
+
+	        dom.append(menuElement, menuItems);
+
+	        this.chartExportMenu = menuElement;
+
+	        dom.append(chartExportMenuContainer, menuElement);
 	    },
 
 	    /**
@@ -7239,8 +7277,8 @@
 	    render: function(data) {
 	        var container = null;
 
-	        if (chartDataExporter.isBrowserSupportClientSideDownload()) {
-	            container = data.paper;
+	        if (chartExporter.isDownloadSupported) {
+	            container = this.container = data.paper;
 
 	            dom.addClass(container, this.className);
 
@@ -7294,18 +7332,22 @@
 	     */
 	    _onClick: function(e) {
 	        var elTarget = e.target || e.srcElement;
+	        var svgElement = this.container.parentNode.getElementsByTagName('svg')[0];
 
 	        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
 	            if (elTarget.id) {
 	                this.eventBus.fire('beforeImageDownload');
 
-	                chartDataExporter.exportChartData(elTarget.id, this.dataProcessor.rawData, this.chartTitle);
+	                chartExporter.exportChart(this.chartTitle, elTarget.id,
+	                    this.dataProcessor.rawData, svgElement, this.options);
 
 	                this.eventBus.fire('afterImageDownload');
 	            }
 
 	            this._hideChartExportMenu();
-	        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)) {
+	        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
+	            && (this.chartExportMenuContainer === elTarget.parentNode)
+	        ) {
 	            if (dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
 	                this._hideChartExportMenu();
 	            } else {
@@ -7315,7 +7357,6 @@
 	            this._hideChartExportMenu();
 	        }
 	    },
-
 
 	    /**
 	     * Return boolean value for chart data is able to export
@@ -7345,7 +7386,7 @@
 	     * @private
 	     */
 	    _attachEvent: function() {
-	        eventListener.on(document.body, 'click', this._onClick, this);
+	        eventListener.on(this.chartExportMenuContainer.parentNode, 'click', this._onClick, this);
 	    },
 
 	    /**
@@ -7353,10 +7394,9 @@
 	     * @private
 	     */
 	    _detachEvent: function() {
-	        eventListener.off(document.body, 'click', this._onClick);
+	        eventListener.off(this.chartExportMenuContainer.parentNode, 'click', this._onClick);
 	    }
 	});
-
 
 	/**
 	 * Factory for ChartExportMenu
@@ -7366,6 +7406,11 @@
 	function chartExportMenuFactory(params) {
 	    var isVisible = params.options.visible;
 	    var chartExportMenu = null;
+	    var chartOption = params.chartOptions.chart || {};
+
+	    if (chartOption.title) {
+	        params.chartTitle = chartOption.title.text;
+	    }
 
 	    if (isVisible) {
 	        chartExportMenu = new ChartExportMenu(params);
@@ -7381,6 +7426,558 @@
 
 /***/ },
 /* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview Chart exporter
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var arrayUtil = __webpack_require__(6);
+	var dataExporter = __webpack_require__(30);
+	var imageExporter = __webpack_require__(32);
+
+	var browser = tui.util.browser;
+
+	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
+	var isImageDownloadAvailable = !isIE10OrIE11
+	    || (isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg);
+	var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
+	var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+
+	/**
+	 * Return given extension type is image format
+	 * @param {string} extension extension
+	 * @returns {boolean}
+	 */
+	function isImageExtension(extension) {
+	    return arrayUtil.any(imageExporter.getExtensions(), function(imageExtension) {
+	        return extension === imageExtension;
+	    });
+	}
+	/**
+	 * Return given extension type is data format
+	 * @param {string} extension extension
+	 * @returns {boolean}
+	 */
+	function isDataExtension(extension) {
+	    return arrayUtil.any(dataExporter.getExtensions(), function(dataExtension) {
+	        return extension === dataExtension;
+	    });
+	}
+
+	/**
+	 * Download chart data with given export type
+	 * @param {string} fileName - file name = chart title
+	 * @param {string} extension - file extension
+	 * @param {object} rawData - chart raw data
+	 * @param {HTMLElement} svgElement - svg element
+	 * @param {object} [downloadOptions] download option
+	 */
+	function exportChart(fileName, extension, rawData, svgElement, downloadOptions) {
+	    var downloadOption = (downloadOptions && downloadOptions[extension] ? downloadOptions[extension] : {});
+
+	    if (isImageExtension(extension)) {
+	        imageExporter.downloadImage(fileName, extension, svgElement);
+	    } else if (isDataExtension(extension)) {
+	        dataExporter.downloadData(fileName, extension, rawData, downloadOption);
+	    }
+	}
+
+	module.exports = {
+	    exportChart: exportChart,
+	    isDownloadSupported: isDownloadAttributeSupported || isMsSaveOrOpenBlobSupported,
+	    isImageDownloadAvailable: isImageDownloadAvailable,
+	    isImageExtension: isImageExtension,
+
+	    /**
+	     * Add file extension to dataExtension
+	     * @param {string} type file extension type
+	     * @param {string} extension file extension
+	     */
+	    addExtension: function(type, extension) {
+	        var isValidExtension = extension && tui.util.isString(extension);
+	        var exporter, extensions;
+
+	        if (type === 'data') {
+	            exporter = dataExporter;
+	        } else if (type === 'image') {
+	            exporter = imageExporter;
+	        }
+
+	        if (exporter && isValidExtension) {
+	            extensions = exporter.getExtensions();
+	            extensions.push(extension);
+	        }
+	    }
+	};
+
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview Chart data exporter
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var downloader = __webpack_require__(31);
+	var chartConst = __webpack_require__(2);
+
+	var DATA_URI_HEADERS = {
+	    xls: 'data:application/vnd.ms-excel;base64,',
+	    csv: 'data:text/csv,'
+	};
+	var DATA_URI_BODY_MAKERS = {
+	    xls: _makeXlsBodyWithRawData,
+	    csv: _makeCsvBodyWithRawData
+	};
+	var dataExtensions = [].concat([], chartConst.DATA_EXTENSIONS);
+
+	var dataExporter = {
+	    /**
+	     * Download chart data
+	     * @param {string} fileName file name
+	     * @param {string} extension file extension
+	     * @param {object} rawData raw data of chart
+	     * @param {object} [downloadOption] download option
+	     */
+	    downloadData: function(fileName, extension, rawData, downloadOption) {
+	        var chartData2DArray = _get2DArrayFromRawData(rawData);
+	        var content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
+
+	        downloader.execDownload(fileName, extension, content);
+	    },
+
+	    /**
+	     * Returns data extensions
+	     * @returns {Array.<string>}
+	     */
+	    getExtensions: function() {
+	        return dataExtensions;
+	    }
+	};
+
+	/**
+	 * Get pivoted second dimension array from table to use element.innerText
+	 * @param {rawData} rawData - chart's raw data
+	 * @returns {Array.<Array>}
+	 * @private
+	 */
+	function _get2DArrayFromRawData(rawData) {
+	    var resultArray = [];
+	    var categories, seriesName, data;
+	    var isHeatMap = (rawData.categories && tui.util.isExisty(rawData.categories.x));
+
+	    if (rawData) {
+	        if (isHeatMap) {
+	            categories = rawData.categories.x;
+	        } else if (rawData.categories) {
+	            categories = rawData.categories;
+	        }
+
+	        resultArray.push([''].concat(categories));
+
+	        tui.util.forEach(rawData.series, function(seriesDatum) {
+	            tui.util.forEach(seriesDatum, function(seriesItem, index) {
+	                if (isHeatMap) {
+	                    seriesName = rawData.categories.y[index];
+	                    data = seriesItem;
+	                } else {
+	                    seriesName = seriesItem.name;
+	                    data = seriesItem.data;
+	                }
+
+	                resultArray.push([seriesName].concat(data));
+	            });
+	        });
+	    }
+
+	    return resultArray;
+	}
+
+	/**
+	 * Get table element from chart data 2D array for xls content
+	 * @param {Array.<Array<*>>} chartData2DArray - chart data 2D array
+	 * @returns {string}
+	 * @private
+	 */
+	function _getTableElementStringForXls(chartData2DArray) {
+	    var tableElementString = '<table>';
+	    tui.util.forEach(chartData2DArray, function(row, rowIndex) {
+	        var cellTagName = rowIndex === 0 ? 'th' : 'td';
+
+	        tableElementString += '<tr>';
+
+	        tui.util.forEach(row, function(cell, cellIndex) {
+	            var cellNumberClass = (rowIndex !== 0 || cellIndex === 0) ? ' class="number"' : '';
+	            var cellString = '<' + cellTagName + cellNumberClass + '>' + cell + '</' + cellTagName + '>';
+
+	            tableElementString += cellString;
+	        });
+
+	        tableElementString += '</tr>';
+	    });
+
+	    tableElementString += '</table>';
+
+	    return tableElementString;
+	}
+
+	/**
+	 * Make xls file with chart series data
+	 * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
+	 * @returns {string} base64 xls file content
+	 * @private
+	 */
+	function _makeXlsBodyWithRawData(chartData2DArray) {
+	    var xlsString = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+	        'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+	        'xmlns="http://www.w3.org/TR/REC-html40">' +
+	        '<head>' +
+	            '<!--[if gte mso 9]>' +
+	                '<xml>' +
+	                    '<x:ExcelWorkbook>' +
+	                        '<x:ExcelWorksheets>' +
+	                            '<x:ExcelWorksheet>' +
+	                                '<x:Name>Ark1</x:Name>' +
+	                                '<x:WorksheetOptions>' +
+	                                    '<x:DisplayGridlines/>' +
+	                                '</x:WorksheetOptions>' +
+	                            '</x:ExcelWorksheet>' +
+	                        '</x:ExcelWorksheets>' +
+	                        '</x:ExcelWorkbook>' +
+	                '</xml>' +
+	            '<![endif]-->' +
+	            '<meta name=ProgId content=Excel.Sheet>' +
+	            '<meta charset=UTF-8>' +
+	        '</head>' +
+	        '<body>' +
+	            _getTableElementStringForXls(chartData2DArray) +
+	        '</body>' +
+	        '</html>';
+
+	    return window.btoa(unescape(encodeURIComponent(xlsString)));
+	}
+
+	/**
+	 * Make csv text with chart series data
+	 * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
+	 * @param {object} [option] - download option
+	 * @param {object} [option.itemDelimiter = ','] - item delimiter
+	 * @param {object} [option.lineDelimiter = '\n'] - line delimiter
+	 * @returns {string} URI encoded csv text
+	 * @private
+	 */
+	function _makeCsvBodyWithRawData(chartData2DArray, option) {
+	    var csvText = '';
+	    var lineDelimiter = (option && option.lineDelimiter) || '\u000a';
+	    var itemDelimiter = (option && option.itemDelimiter) || ',';
+	    var lastRowIndex = chartData2DArray.length - 1;
+
+	    tui.util.forEachArray(chartData2DArray, function(row, rowIndex) {
+	        var lastCellIndex = row.length - 1;
+
+	        tui.util.forEachArray(row, function(cell, cellIndex) {
+	            var cellContent = (tui.util.isNumber(cell) ? cell : '"' + cell + '"');
+
+	            csvText += cellContent;
+
+	            if (cellIndex < lastCellIndex) {
+	                csvText += itemDelimiter;
+	            }
+	        });
+
+	        if (rowIndex < lastRowIndex) {
+	            csvText += lineDelimiter;
+	        }
+	    });
+
+	    return encodeURIComponent(csvText);
+	}
+
+	// export private methods for Test
+	dataExporter._makeCsvBodyWithRawData = _makeCsvBodyWithRawData;
+	dataExporter._makeXlsBodyWithRawData = _makeXlsBodyWithRawData;
+	dataExporter._get2DArrayFromRawData = _get2DArrayFromRawData;
+
+	module.exports = dataExporter;
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview File downloader for client-side download
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var arrayUtil = __webpack_require__(6);
+	var chartConst = __webpack_require__(2);
+
+	var DOWNLOAD_HANDLERS = {
+	    downloadAttribute: downloadWithAnchorElementDownloadAttribute,
+	    msSaveOrOpenBlob: downloadWithMsSaveOrOpenBlob
+	};
+
+	/**
+	 * Return download method name of current browser supports
+	 * @returns {string}
+	 */
+	function getDownloadMethod() {
+	    var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
+	    var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+	    var method;
+
+	    if (isMsSaveOrOpenBlobSupported) {
+	        method = 'msSaveOrOpenBlob';
+	    } else if (isDownloadAttributeSupported) {
+	        method = 'downloadAttribute';
+	    }
+
+	    return method;
+	}
+
+	/**
+	 * Base64 string to blob
+	 * original source ref: https://github.com/miguelmota/base64toblob/blob/master/base64toblob.js
+	 * Licence: MIT Licence
+	 * @param {string} base64String - base64 string
+	 * @returns {Blob}
+	 */
+	function base64toBlob(base64String) {
+	    var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
+	    var sliceSize = 1024;
+	    var byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
+	    var byteArrays = [];
+	    var offset, slice, byteNumbers, i, byteArray, resultBlob;
+
+	    for (offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+	        slice = byteCharacters.slice(offset, offset + sliceSize);
+
+	        byteNumbers = new Array(slice.length);
+
+	        for (i = 0; i < slice.length; i += 1) {
+	            byteNumbers[i] = slice.charCodeAt(i);
+	        }
+
+	        byteArray = new window.Uint8Array(byteNumbers);
+
+	        byteArrays.push(byteArray);
+	    }
+
+	    resultBlob = new Blob(byteArrays, {type: contentType});
+
+	    return resultBlob;
+	}
+
+	/**
+	 * Return given extension type is image format
+	 * @param {string} extension extension
+	 * @returns {boolean}
+	 */
+	function isImageExtension(extension) {
+	    return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, function(imageExtension) {
+	        return extension === imageExtension;
+	    });
+	}
+
+	/**
+	 * Download content to file with msSaveOrOpenBlob
+	 * @param {string} fileName - file name
+	 * @param {string} extension - file extension
+	 * @param {string} content - file content
+	 */
+	function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
+	    var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
+
+	    window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
+	}
+
+	/**
+	 * Download content to file with anchor element's download attribute
+	 * @param {string} fileName - file name
+	 * @param {string} extension - file extension
+	 * @param {string} content - file content
+	 */
+	function downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
+	    var anchorElement;
+
+	    if (content) {
+	        anchorElement = document.createElement('a');
+
+	        anchorElement.href = content;
+	        anchorElement.target = '_blank';
+	        anchorElement.download = fileName + '.' + extension;
+
+	        document.body.appendChild(anchorElement);
+
+	        anchorElement.click();
+	        anchorElement.remove();
+	    }
+	}
+
+	/**
+	 * Download content to file with given filename and extension
+	 * @param {string} fileName - file name
+	 * @param {string} extension - file extension
+	 * @param {string} content - file content
+	 */
+	function execDownload(fileName, extension, content) {
+	    var downloadMethod = getDownloadMethod();
+
+	    if (downloadMethod && tui.util.isString(content)) {
+	        DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content);
+	    }
+	}
+
+	module.exports = {
+	    execDownload: execDownload
+	};
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview Chart image exporter
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var downloader = __webpack_require__(31);
+	var chartConst = __webpack_require__(2);
+
+	var browser = tui.util.browser;
+	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
+	var DOMURL = window.URL || window.webkitURL || window;
+	var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
+
+	/**
+	 * Return svg outerHTML string
+	 * @param {HTMLElement} svgElement svg element
+	 * @returns {string}
+	 */
+	function getSvgString(svgElement) {
+	    var svgParent = svgElement.parentNode;
+	    var tempWrapper = document.createElement('DIV');
+	    var svgString;
+
+	    tempWrapper.appendChild(svgElement);
+	    svgString = tempWrapper.innerHTML;
+	    svgParent.appendChild(svgElement);
+
+	    tempWrapper = null;
+	    svgParent = null;
+
+	    return svgString;
+	}
+
+	/**
+	 * Download with SVG string and canvg
+	 * @param {HTMLElement} canvas canvas element
+	 * @param {string} svgString svg HTML string
+	 * @param {string} fileName file name
+	 * @param {string} extension file extension
+	 */
+	function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
+	    var ctx = canvas.getContext('2d');
+
+	    // remove name space for IE
+	    if (isIE10OrIE11) {
+	        svgString = svgString.replace(/xmlns:NS1=""/, '');
+	        svgString = svgString.replace(/NS1:xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
+	        svgString = svgString.replace(/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, '');
+	        svgString = svgString.replace(/xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
+	    }
+
+	    ctx.drawSvg(svgString, 0, 0);
+
+	    downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+	}
+
+	/**
+	 * Download with SVG string and blob URL
+	 * @param {HTMLElement} canvas canvas element
+	 * @param {string} svgString svg HTML string
+	 * @param {string} fileName file name
+	 * @param {string} extension file extension
+	 */
+	function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
+	    var ctx = canvas.getContext('2d');
+	    var blob = new Blob([svgString], {type: 'image/svg+xml'});
+	    var url = DOMURL.createObjectURL(blob);
+	    var img = new Image();
+
+	    img.onload = function() {
+	        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+	        downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+
+	        DOMURL.revokeObjectURL(url);
+	    };
+
+	    img.src = url;
+	}
+
+	module.exports = {
+	    /**
+	     * Download image with png format
+	     * @param {string} fileName - file name to save
+	     * @param {string} extension - extension type
+	     * @param {HTMLElement} imageSourceElement - image source element
+	     */
+	    downloadImage: function(fileName, extension, imageSourceElement) {
+	        var svgString, parentNode, canvas;
+
+	        if (imageSourceElement.tagName === 'svg') {
+	            parentNode = imageSourceElement.parentNode;
+
+	            canvas = document.createElement('canvas');
+
+	            canvas.width = parentNode.offsetWidth;
+	            canvas.height = parentNode.offsetHeight;
+
+	            svgString = getSvgString(imageSourceElement);
+
+	            if (isIE10OrIE11) {
+	                downloadSvgWithCanvg(canvas, svgString, fileName, extension);
+	            } else {
+	                downloadSvgWithBlobURL(canvas, svgString, fileName, extension);
+	            }
+	        } else if (imageSourceElement.tagName === 'canvas') {
+	            canvas = imageSourceElement;
+
+	            downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+	        }
+	    },
+
+	    /**
+	     * Returns data extensions
+	     * @returns {Array.<string>}
+	     */
+	    getExtensions: function() {
+	        return imageExtensions;
+	    }
+	};
+
+
+/***/ },
+/* 33 */
 /***/ function(module, exports) {
 
 	/**
@@ -7515,7 +8112,6 @@
 	        delete bindHandlerMap[type + handler];
 	    },
 
-
 	    /**
 	     * Unbind DOM event.
 	     * @memberOf module:eventListener
@@ -7561,7 +8157,7 @@
 
 
 /***/ },
-/* 30 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8267,387 +8863,7 @@
 
 
 /***/ },
-/* 31 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileOverview Chart data exporter
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-	var isIE10OrIE11 = tui.util.browser.msie && (tui.util.browser.version === 10 || tui.util.browser.version === 11);
-
-	var isImageDownloadAvailable = isBrowserSupportClientSideDownload()
-	    && (!isIE10OrIE11 || (isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg));
-
-
-	var DATA_URI_HEADERS = {
-	    xls: 'data:application/vnd.ms-excel;base64,',
-	    csv: 'data:text/csv,'
-	};
-	var EXPORT_DATA_MAKERS = {
-	    xls: _makeXlsStringWithRawData,
-	    csv: _makeCsvTextWithRawData
-	};
-	var DOWNLOADER_FUNCTIONS = {
-	    downloadAttribute: _downloadWithAnchorElementDownloadAttribute,
-	    msSaveOrOpenBlob: _downloadWithMsSaveOrOpenBlob
-	};
-
-	/**
-	 * Return given extension type is image format
-	 * @param {string} extension extension
-	 * @returns {boolean}
-	 */
-	function isImageExtension(extension) {
-	    return extension === 'png' || extension === 'jpeg';
-	}
-
-	/**
-	 * Get pivoted second dimension array from table to use element.innerText
-	 * @param {rawData} rawData - chart's raw data
-	 * @returns {Array.<Array>}
-	 * @private
-	 */
-	function _get2DArrayFromRawData(rawData) {
-	    var resultArray = [];
-	    var categories, seriesName, data;
-	    var isHeatMap = (rawData.categories && tui.util.isExisty(rawData.categories.x));
-
-	    if (rawData) {
-	        if (isHeatMap) {
-	            categories = rawData.categories.x;
-	        } else if (rawData.categories) {
-	            categories = rawData.categories;
-	        }
-
-	        resultArray.push([''].concat(categories));
-
-	        tui.util.forEach(rawData.series, function(seriesDatum) {
-	            tui.util.forEach(seriesDatum, function(seriesItem, index) {
-	                if (isHeatMap) {
-	                    seriesName = rawData.categories.y[index];
-	                    data = seriesItem;
-	                } else {
-	                    seriesName = seriesItem.name;
-	                    data = seriesItem.data;
-	                }
-
-	                resultArray.push([seriesName].concat(data));
-	            });
-	        });
-	    }
-
-	    return resultArray;
-	}
-
-	/**
-	 * Return download method name of current browser supports
-	 * @returns {string}
-	 * @private
-	 */
-	function _getDownloadMethod() {
-	    var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
-	    var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
-	    var method = 'none';
-
-	    if (isMsSaveOrOpenBlobSupported) {
-	        method = 'msSaveOrOpenBlob';
-	    } else if (isDownloadAttributeSupported) {
-	        method = 'downloadAttribute';
-	    }
-
-	    return method;
-	}
-
-	/**
-	 * Get table element from chart data 2D array for xls content
-	 * @param {Array.<Array<*>>} chartData2DArray - chart data 2D array
-	 * @returns {string}
-	 * @private
-	 */
-	function _getTableElementStringForXls(chartData2DArray) {
-	    var tableElementString = '<table>';
-	    tui.util.forEach(chartData2DArray, function(row, rowIndex) {
-	        var cellTagName = rowIndex === 0 ? 'th' : 'td';
-
-	        tableElementString += '<tr>';
-
-	        tui.util.forEach(row, function(cell, cellIndex) {
-	            var cellNumberClass = (rowIndex !== 0 || cellIndex === 0) ? ' class="number"' : '';
-	            var cellString = '<' + cellTagName + cellNumberClass + '>' + cell + '</' + cellTagName + '>';
-
-	            tableElementString += cellString;
-	        });
-
-	        tableElementString += '</tr>';
-	    });
-
-	    tableElementString += '</table>';
-
-	    return tableElementString;
-	}
-
-	/**
-	 * Make xls file with chart series data
-	 * @param {rawData} rawData - chart rawData
-	 * @returns {string} xls file content
-	 * @private
-	 */
-	function _makeXlsStringWithRawData(rawData) {
-	    var chartData2DArray = _get2DArrayFromRawData(rawData);
-	    var xlsString = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
-	        'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
-	        'xmlns="http://www.w3.org/TR/REC-html40">' +
-	            '<head>' +
-	                '<!--[if gte mso 9]>' +
-	                    '<xml>' +
-	                        '<x:ExcelWorkbook>' +
-	                            '<x:ExcelWorksheets>' +
-	                                '<x:ExcelWorksheet>' +
-	                                    '<x:Name>Ark1</x:Name>' +
-	                                    '<x:WorksheetOptions>' +
-	                                    '<x:DisplayGridlines/>' +
-	                                    '</x:WorksheetOptions>' +
-	                                '</x:ExcelWorksheet>' +
-	                            '</x:ExcelWorksheets>' +
-	                        '</x:ExcelWorkbook>' +
-	                    '</xml>' +
-	                '<![endif]-->' +
-	                '<meta name=ProgId content=Excel.Sheet>' +
-	                '<meta charset=UTF-8>' +
-	            '</head>' +
-	            '<body>' +
-	                _getTableElementStringForXls(chartData2DArray) +
-	            '</body>' +
-	        '</html>';
-
-
-	    return xlsString;
-	}
-
-	/**
-	 * Make csv text with chart series data
-	 * @param {rawData} rawData - chart rawData
-	 * @param {string} itemDelimiterCharacter - item delimiter
-	 * @param {string} lineDelimiterCharacter - chart rawData
-	 * @returns {string} csv text
-	 * @private
-	 */
-	function _makeCsvTextWithRawData(rawData, itemDelimiterCharacter, lineDelimiterCharacter) {
-	    var chartData2DArray = _get2DArrayFromRawData(rawData);
-	    var csvText = '';
-	    var lineDelimiter = lineDelimiterCharacter ? lineDelimiterCharacter : '\u000a';
-	    var itemDelimiter = itemDelimiterCharacter ? itemDelimiterCharacter : ',';
-	    var lastRowIndex = chartData2DArray.length - 1;
-
-	    tui.util.forEachArray(chartData2DArray, function(row, rowIndex) {
-	        var lastCellIndex = row.length - 1;
-
-	        tui.util.forEachArray(row, function(cell, cellIndex) {
-	            var cellContent = typeof cell === 'number' ? cell : '"' + cell + '"';
-
-	            csvText += cellContent;
-
-	            if (cellIndex < lastCellIndex) {
-	                csvText += itemDelimiter;
-	            }
-	        });
-
-	        if (rowIndex < lastRowIndex) {
-	            csvText += lineDelimiter;
-	        }
-	    });
-
-	    return csvText;
-	}
-
-
-	/**
-	 * Download image with png format
-	 * @param {string} fileName - file name to save
-	 * @param {string} extension - extension type
-	 * @private
-	 */
-	function _downloadImage(fileName, extension) {
-	    var container = document.getElementsByClassName('tui-chart')[0];
-	    var svg = container.getElementsByTagName('svg')[0];
-	    var svgParent = svg.parentNode;
-	    var DOMURL = window.URL || window.webkitURL || window;
-	    var img = new Image();
-	    var width = container.offsetWidth;
-	    var height = container.offsetHeight;
-	    var canvas = document.createElement('canvas');
-	    var ctx = canvas.getContext('2d');
-	    var url, blob, svgString;
-	    var tempWrapper = document.createElement('DIV');
-
-	    tempWrapper.appendChild(svg);
-
-	    svgString = tempWrapper.innerHTML;
-	    svgParent.appendChild(svg);
-	    tempWrapper = null;
-
-	    canvas.width = width;
-	    canvas.height = height;
-
-	    // remove name space for IE
-	    if (isIE10OrIE11) {
-	        svgString = svgString.replace(/xmlns:NS1=""/, '');
-	        svgString = svgString.replace(/NS1:xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
-	        svgString = svgString.replace(/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, '');
-	        svgString = svgString.replace(/xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
-	    }
-
-	    if (isIE10OrIE11 && ctx.drawSvg) {
-	        ctx.drawSvg(svgString, 0, 0);
-
-	        _download(canvas.toDataURL('image/' + extension, 1), fileName, extension);
-	    } else {
-	        blob = new Blob([svgString], {type: 'image/svg+xml'});
-	        url = DOMURL.createObjectURL(blob);
-
-	        img.onload = function() {
-	            ctx.drawImage(img, 0, 0, width, height);
-
-	            _download(canvas.toDataURL('image/' + extension, 1), fileName, extension);
-
-	            DOMURL.revokeObjectURL(url);
-	        };
-	        img.src = url;
-	    }
-	}
-
-	/**
-	 * Base64 string to blob
-	 * @param {string} base64String - base64 string
-	 * @returns {Blob}
-	 * @private
-	 */
-	function base64toBlob(base64String) {
-	    var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
-	    var sliceSize = 1024;
-	    var byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
-	    var byteArrays = [];
-	    var offset, slice, byteNumbers, i, byteArray, resultBlob;
-
-	    for (offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-	        slice = byteCharacters.slice(offset, offset + sliceSize);
-
-	        byteNumbers = new Array(slice.length);
-
-	        for (i = 0; i < slice.length; i += 1) {
-	            byteNumbers[i] = slice.charCodeAt(i);
-	        }
-
-	        byteArray = new window.Uint8Array(byteNumbers);
-
-	        byteArrays.push(byteArray);
-	    }
-
-	    resultBlob = new Blob(byteArrays, {type: contentType});
-
-	    return resultBlob;
-	}
-
-	/**
-	 * Download content to file with msSaveOrOpenBlob
-	 * @param {string} content - file content
-	 * @param {string} fileName - file name
-	 * @param {string} extension - file extension
-	 * @private
-	 */
-	function _downloadWithMsSaveOrOpenBlob(content, fileName, extension) {
-	    var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
-	    window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
-	}
-
-	/**
-	 * Download content to file with anchor element's download attribute
-	 * @param {string} content - file content
-	 * @param {string} fileName - file name
-	 * @param {string} extension - file extension
-	 * @private
-	 */
-	function _downloadWithAnchorElementDownloadAttribute(content, fileName, extension) {
-	    var anchorElement = document.createElement('a');
-	    var data = extension !== 'csv' ? window.btoa(unescape(encodeURIComponent(content))) : encodeURIComponent(content);
-	    var dataUri;
-
-	    if (!content) {
-	        return;
-	    }
-
-	    if (isImageExtension(extension)) {
-	        dataUri = content;
-	    } else {
-	        dataUri = DATA_URI_HEADERS[extension] + data;
-	    }
-
-	    anchorElement.href = dataUri;
-	    anchorElement.target = '_blank';
-	    anchorElement.download = fileName + '.' + extension;
-
-	    document.body.appendChild(anchorElement);
-
-	    anchorElement.click();
-	    anchorElement.remove();
-	}
-
-	/**
-	 * Download content to file with given filename and extension
-	 * @param {string} content - file content
-	 * @param {string} fileName - file name
-	 * @param {string} extension - file extension
-	 * @private
-	 */
-	function _download(content, fileName, extension) {
-	    var downloadMethod = _getDownloadMethod();
-
-	    if (downloadMethod && tui.util.isString(content)) {
-	        DOWNLOADER_FUNCTIONS[downloadMethod](content, fileName, extension);
-	    }
-	}
-
-	/**
-	 * Download chart data with given export type
-	 * @param {string} extension - file extension
-	 * @param {object} rawData - chart raw data
-	 * @param {string} chartTitle - chart title
-	 */
-	function exportChartData(extension, rawData, chartTitle) {
-	    var fileName = chartTitle;
-
-	    // Image downloads asynchronous because of waiting until image loaded from svg data URI.
-	    if (isImageExtension(extension)) {
-	        _downloadImage(fileName, extension);
-	    } else {
-	        _download(EXPORT_DATA_MAKERS[extension](rawData), fileName, extension);
-	    }
-	}
-
-	/**
-	 * Return boolean value for browser support client side download
-	 * @returns {boolean}
-	 */
-	function isBrowserSupportClientSideDownload() {
-	    var method = _getDownloadMethod();
-
-	    return method !== 'none';
-	}
-
-	module.exports = {
-	    exportChartData: exportChartData,
-	    isBrowserSupportClientSideDownload: isBrowserSupportClientSideDownload,
-	    isImageDownloadAvailable: isImageDownloadAvailable,
-	    isImageExtension: isImageExtension
-	};
-
-
-/***/ },
-/* 32 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8660,7 +8876,7 @@
 
 	var arrayUtil = __webpack_require__(6);
 	var chartConst = __webpack_require__(2);
-	var LegendModel = __webpack_require__(33);
+	var LegendModel = __webpack_require__(36);
 	var pluginFactory = __webpack_require__(7);
 	var predicate = __webpack_require__(5);
 
@@ -9034,7 +9250,7 @@
 
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/**
@@ -9308,7 +9524,6 @@
 	        return !!this.checkedWholeIndexes[index];
 	    },
 
-
 	    /**
 	     * Add sending datum.
 	     * @param {number} index legend index
@@ -9367,7 +9582,7 @@
 
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9657,7 +9872,7 @@
 
 
 /***/ },
-/* 35 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9671,7 +9886,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var pluginFactory = __webpack_require__(7);
 
 	var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
@@ -9860,7 +10075,7 @@
 
 
 /***/ },
-/* 36 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9871,9 +10086,9 @@
 
 	'use strict';
 
-	var normalTooltipFactory = __webpack_require__(37);
-	var groupTooltipFactory = __webpack_require__(42);
-	var mapChartTooltipFactory = __webpack_require__(44);
+	var normalTooltipFactory = __webpack_require__(40);
+	var groupTooltipFactory = __webpack_require__(45);
+	var mapChartTooltipFactory = __webpack_require__(47);
 	var predicate = __webpack_require__(5);
 
 	/**
@@ -9943,7 +10158,7 @@
 
 
 /***/ },
-/* 37 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9954,12 +10169,12 @@
 
 	'use strict';
 
-	var TooltipBase = __webpack_require__(38);
-	var singleTooltipMixer = __webpack_require__(39);
+	var TooltipBase = __webpack_require__(41);
+	var singleTooltipMixer = __webpack_require__(42);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(30);
-	var tooltipTemplate = __webpack_require__(40);
+	var renderUtil = __webpack_require__(34);
+	var tooltipTemplate = __webpack_require__(43);
 
 	/**
 	 * @classdesc NormalTooltip component.
@@ -10161,7 +10376,7 @@
 
 
 /***/ },
-/* 38 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10175,7 +10390,7 @@
 	var chartConst = __webpack_require__(2),
 	    dom = __webpack_require__(14),
 	    predicate = __webpack_require__(5),
-	    renderUtil = __webpack_require__(30);
+	    renderUtil = __webpack_require__(34);
 
 	var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 	    /**
@@ -10629,7 +10844,7 @@
 
 
 /***/ },
-/* 39 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10643,7 +10858,7 @@
 	var chartConst = __webpack_require__(2),
 	    predicate = __webpack_require__(5),
 	    dom = __webpack_require__(14),
-	    renderUtil = __webpack_require__(30);
+	    renderUtil = __webpack_require__(34);
 
 	/**
 	 * singleTooltipMixer is single tooltip mixer of map chart.
@@ -11143,7 +11358,7 @@
 
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11154,7 +11369,7 @@
 
 	'use strict';
 
-	var templateMaker = __webpack_require__(41);
+	var templateMaker = __webpack_require__(44);
 
 	var htmls = {
 	    HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
@@ -11207,7 +11422,7 @@
 
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/**
@@ -11245,7 +11460,7 @@
 
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11256,13 +11471,13 @@
 
 	'use strict';
 
-	var TooltipBase = __webpack_require__(38);
-	var GroupTooltipPositionModel = __webpack_require__(43);
+	var TooltipBase = __webpack_require__(41);
+	var GroupTooltipPositionModel = __webpack_require__(46);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var defaultTheme = __webpack_require__(9);
-	var tooltipTemplate = __webpack_require__(40);
+	var tooltipTemplate = __webpack_require__(43);
 
 	/**
 	 * @classdesc GroupTooltip component.
@@ -11693,7 +11908,7 @@
 
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12172,7 +12387,7 @@
 
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12184,9 +12399,9 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2),
-	    TooltipBase = __webpack_require__(38),
-	    singleTooltipMixer = __webpack_require__(39),
-	    tooltipTemplate = __webpack_require__(40);
+	    TooltipBase = __webpack_require__(41),
+	    singleTooltipMixer = __webpack_require__(42),
+	    tooltipTemplate = __webpack_require__(43);
 
 	/**
 	 * @classdesc MapChartTooltip component.
@@ -12260,7 +12475,6 @@
 	        return params;
 	    },
 
-
 	    /**
 	     * Set default align option of tooltip.
 	     * @private
@@ -12285,7 +12499,7 @@
 
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12296,11 +12510,11 @@
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(46);
+	var MouseEventDetectorBase = __webpack_require__(49);
 	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(29);
+	var eventListener = __webpack_require__(33);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
 	    /**
@@ -12479,7 +12693,7 @@
 
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12490,13 +12704,13 @@
 
 	'use strict';
 
-	var TickBaseCoordinateModel = __webpack_require__(47);
-	var BoundsBaseCoordinateModel = __webpack_require__(48);
+	var TickBaseCoordinateModel = __webpack_require__(50);
+	var BoundsBaseCoordinateModel = __webpack_require__(51);
 	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(29);
+	var eventListener = __webpack_require__(33);
 	var predicate = __webpack_require__(5);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
 	    /**
@@ -12571,7 +12785,6 @@
 	         * @type {null | object}
 	         */
 	        this.prevFoundData = null;
-
 
 	        isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
 	        /**
@@ -12944,7 +13157,7 @@
 
 
 /***/ },
-/* 47 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13135,7 +13348,7 @@
 
 
 /***/ },
-/* 48 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13253,6 +13466,7 @@
 	                if (!position) {
 	                    return null;
 	                }
+
 	                return {
 	                    sendData: {
 	                        chartType: chartType,
@@ -13383,7 +13597,7 @@
 
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13394,11 +13608,11 @@
 	'use strict';
 
 	var predicate = __webpack_require__(5);
-	var areaTypeEventDetectorFactory = __webpack_require__(50);
-	var simpleEventDetectorFactory = __webpack_require__(53);
-	var groupTypeEventDetectorFactory = __webpack_require__(54);
-	var boundsTypeEventDetectorFactory = __webpack_require__(55);
-	var mapChartEventDetectorFactory = __webpack_require__(45);
+	var areaTypeEventDetectorFactory = __webpack_require__(53);
+	var simpleEventDetectorFactory = __webpack_require__(56);
+	var groupTypeEventDetectorFactory = __webpack_require__(57);
+	var boundsTypeEventDetectorFactory = __webpack_require__(58);
+	var mapChartEventDetectorFactory = __webpack_require__(48);
 
 	/**
 	 * Factory for MouseEventDetector
@@ -13444,7 +13658,7 @@
 
 
 /***/ },
-/* 50 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13455,9 +13669,9 @@
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(46);
-	var zoomMixer = __webpack_require__(51);
-	var AreaTypeDataModel = __webpack_require__(52);
+	var MouseEventDetectorBase = __webpack_require__(49);
+	var zoomMixer = __webpack_require__(54);
+	var AreaTypeDataModel = __webpack_require__(55);
 
 	var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
 
@@ -13632,7 +13846,7 @@
 
 
 /***/ },
-/* 51 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13643,11 +13857,11 @@
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(46);
+	var MouseEventDetectorBase = __webpack_require__(49);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
-	var eventListener = __webpack_require__(29);
+	var renderUtil = __webpack_require__(34);
+	var eventListener = __webpack_require__(33);
 
 	/**
 	 * Mixer for zoom event of area type mouse event detector.
@@ -14052,7 +14266,7 @@
 
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14207,7 +14421,7 @@
 
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14219,8 +14433,8 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var MouseEventDetectorBase = __webpack_require__(46);
-	var renderUtil = __webpack_require__(30);
+	var MouseEventDetectorBase = __webpack_require__(49);
+	var renderUtil = __webpack_require__(34);
 
 	var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
 	    /**
@@ -14304,7 +14518,7 @@
 
 
 /***/ },
-/* 54 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14316,8 +14530,8 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var EventDetectorBase = __webpack_require__(46);
-	var zoomMixer = __webpack_require__(51);
+	var EventDetectorBase = __webpack_require__(49);
+	var zoomMixer = __webpack_require__(54);
 
 	var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
 	    /**
@@ -14515,7 +14729,6 @@
 	    }
 	});
 
-
 	function groupTypeEventDetectorFactory(params) {
 	    return new GroupTypeEventDetector(params);
 	}
@@ -14526,7 +14739,7 @@
 
 
 /***/ },
-/* 55 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14538,7 +14751,7 @@
 
 	'use strict';
 
-	var EventDetectorBase = __webpack_require__(46);
+	var EventDetectorBase = __webpack_require__(49);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var dom = __webpack_require__(14);
@@ -14754,7 +14967,7 @@
 
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14765,8 +14978,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
-	var BarTypeSeriesBase = __webpack_require__(59);
+	var Series = __webpack_require__(60);
+	var BarTypeSeriesBase = __webpack_require__(62);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -14947,7 +15160,7 @@
 
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14957,6 +15170,7 @@
 	 */
 
 	'use strict';
+
 	var LABEL_FADE_IN_DURATION = 800;
 	var browser = tui.util.browser;
 	var IS_IE7 = browser.msie && browser.version === 7;
@@ -14964,9 +15178,9 @@
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var pluginFactory = __webpack_require__(7);
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 	    /**
@@ -15553,10 +15767,9 @@
 	    animateComponent: function(isRerendering) {
 	        if (this.graphRenderer.animate) {
 	            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
-	            this._fireLoadEvent(isRerendering);
+	        } else {
+	            this.animateSeriesLabelArea(isRerendering);
 	        }
-
-	        this.animateSeriesLabelArea(isRerendering);
 	    },
 
 	    /**
@@ -15739,7 +15952,7 @@
 
 
 /***/ },
-/* 58 */
+/* 61 */
 /***/ function(module, exports) {
 
 	/**
@@ -15749,6 +15962,7 @@
 	 */
 
 	'use strict';
+
 	var raphael = window.Raphael;
 
 	/**
@@ -16004,7 +16218,7 @@
 
 
 /***/ },
-/* 59 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16016,11 +16230,11 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var labelHelper = __webpack_require__(60);
+	var labelHelper = __webpack_require__(63);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
-	var raphaelRenderUtil = __webpack_require__(58);
+	var renderUtil = __webpack_require__(34);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
 
@@ -16365,7 +16579,7 @@
 
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16377,7 +16591,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	/**
 	 * renderingLabelHelper is helper for rendering of series label.
@@ -16574,7 +16788,7 @@
 
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16585,11 +16799,11 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
-	var BarTypeSeriesBase = __webpack_require__(59);
+	var Series = __webpack_require__(60);
+	var BarTypeSeriesBase = __webpack_require__(62);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
 	    /**
@@ -16752,7 +16966,7 @@
 
 
 /***/ },
-/* 62 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16763,8 +16977,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57),
-	    LineTypeSeriesBase = __webpack_require__(63);
+	var Series = __webpack_require__(60),
+	    LineTypeSeriesBase = __webpack_require__(66);
 
 	var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
 	    /**
@@ -16851,7 +17065,7 @@
 
 
 /***/ },
-/* 63 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16866,7 +17080,7 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	/**
 	 * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -17249,7 +17463,7 @@
 
 
 /***/ },
-/* 64 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17260,7 +17474,7 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
+	var Series = __webpack_require__(60);
 	var chartConst = __webpack_require__(2);
 	var geom = __webpack_require__(27);
 
@@ -17407,7 +17621,7 @@
 
 
 /***/ },
-/* 65 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17418,8 +17632,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
-	var LineTypeSeriesBase = __webpack_require__(63);
+	var Series = __webpack_require__(60);
+	var LineTypeSeriesBase = __webpack_require__(66);
 	var predicate = __webpack_require__(5);
 
 	var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
@@ -17564,7 +17778,7 @@
 
 
 /***/ },
-/* 66 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17576,8 +17790,8 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var Series = __webpack_require__(57);
-	var CoordinateTypeSeriesBase = __webpack_require__(67);
+	var Series = __webpack_require__(60);
+	var CoordinateTypeSeriesBase = __webpack_require__(70);
 
 	var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
 	    /**
@@ -17720,7 +17934,7 @@
 
 
 /***/ },
-/* 67 */
+/* 70 */
 /***/ function(module, exports) {
 
 	/**
@@ -17728,7 +17942,6 @@
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
 	 */
-
 
 	'use strict';
 
@@ -17856,7 +18069,7 @@
 
 
 /***/ },
-/* 68 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17867,8 +18080,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
-	var CoordinateTypeSeriesBase = __webpack_require__(67);
+	var Series = __webpack_require__(60);
+	var CoordinateTypeSeriesBase = __webpack_require__(70);
 	var chartConst = __webpack_require__(2);
 
 	var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
@@ -17943,7 +18156,7 @@
 
 
 /***/ },
-/* 69 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17954,7 +18167,7 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
+	var Series = __webpack_require__(60);
 	var chartConst = __webpack_require__(2);
 
 	var browser = tui.util.browser;
@@ -18416,7 +18629,7 @@
 
 
 /***/ },
-/* 70 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18427,7 +18640,7 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
+	var Series = __webpack_require__(60);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -18899,7 +19112,13 @@
 
 	        if (params.funcMoveToPosition) {
 	            positions = tui.util.map(params.positions, function(position, index) {
-	                return params.funcMoveToPosition(position, legendLabels[index]);
+	                var outerPosition = null;
+
+	                if (position) {
+	                    outerPosition = params.funcMoveToPosition(position, legendLabels[index]);
+	                }
+
+	                return outerPosition;
 	            });
 	        } else {
 	            positions = params.positions;
@@ -19142,7 +19361,7 @@
 
 
 /***/ },
-/* 71 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19153,8 +19372,8 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
-	var labelHelper = __webpack_require__(60);
+	var Series = __webpack_require__(60);
+	var labelHelper = __webpack_require__(63);
 
 	var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
 	    /**
@@ -19311,7 +19530,7 @@
 
 
 /***/ },
-/* 72 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19322,9 +19541,9 @@
 
 	'use strict';
 
-	var Series = __webpack_require__(57);
-	var squarifier = __webpack_require__(73);
-	var labelHelper = __webpack_require__(60);
+	var Series = __webpack_require__(60);
+	var squarifier = __webpack_require__(76);
+	var labelHelper = __webpack_require__(63);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -19537,6 +19756,7 @@
 
 	        labels = tui.util.map(seriesItems, function(seriesItem) {
 	            var labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
+
 	            return labelText;
 	        });
 
@@ -19671,7 +19891,7 @@
 
 
 /***/ },
-/* 73 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19948,7 +20168,7 @@
 
 
 /***/ },
-/* 74 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19958,13 +20178,14 @@
 	 */
 
 	'use strict';
+
 	var IS_MSIE_VERSION_LTE_THAN_8 = tui.util.browser.msie && tui.util.browser.version <= 8;
 
-	var seriesTemplate = __webpack_require__(75);
+	var seriesTemplate = __webpack_require__(78);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(30);
-	var eventListener = __webpack_require__(29);
+	var renderUtil = __webpack_require__(34);
+	var eventListener = __webpack_require__(33);
 
 	var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 	    /**
@@ -20136,7 +20357,7 @@
 
 
 /***/ },
-/* 75 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20147,7 +20368,7 @@
 
 	'use strict';
 
-	var templateMaker = __webpack_require__(41);
+	var templateMaker = __webpack_require__(44);
 
 	var htmls = {
 	    HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}"{{ rangeLabelAttribute }}>' +
@@ -20172,7 +20393,7 @@
 
 
 /***/ },
-/* 76 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20186,13 +20407,13 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var DataProcessorBase = __webpack_require__(77);
-	var SeriesDataModel = __webpack_require__(78);
-	var SeriesDataModelForTreemap = __webpack_require__(82);
-	var SeriesGroup = __webpack_require__(79);
+	var DataProcessorBase = __webpack_require__(80);
+	var SeriesDataModel = __webpack_require__(81);
+	var SeriesDataModelForTreemap = __webpack_require__(85);
+	var SeriesGroup = __webpack_require__(82);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var calculator = __webpack_require__(23);
 	var objectUtil = __webpack_require__(11);
 
@@ -21368,7 +21589,7 @@
 
 
 /***/ },
-/* 77 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21380,7 +21601,7 @@
 	'use strict';
 
 	var arrayUtil = __webpack_require__(6);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var calculator = __webpack_require__(23);
 
 	/**
@@ -21568,7 +21789,7 @@
 
 
 /***/ },
-/* 78 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21606,9 +21827,9 @@
 	 * SeriesItem has processed terminal data like value, ratio, etc.
 	 */
 
-	var SeriesGroup = __webpack_require__(79);
-	var SeriesItem = __webpack_require__(80);
-	var SeriesItemForCoordinateType = __webpack_require__(81);
+	var SeriesGroup = __webpack_require__(82);
+	var SeriesItem = __webpack_require__(83);
+	var SeriesItemForCoordinateType = __webpack_require__(84);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var arrayUtil = __webpack_require__(6);
@@ -22230,7 +22451,7 @@
 
 
 /***/ },
-/* 79 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22512,7 +22733,7 @@
 
 
 /***/ },
-/* 80 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22525,7 +22746,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var calculator = __webpack_require__(23);
 
 	var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
@@ -22768,7 +22989,7 @@
 
 
 /***/ },
-/* 81 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22781,7 +23002,7 @@
 	'use strict';
 
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
 	    /**
@@ -22931,7 +23152,7 @@
 
 
 /***/ },
-/* 82 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22943,8 +23164,8 @@
 
 	'use strict';
 
-	var SeriesDataModel = __webpack_require__(78);
-	var SeriesItem = __webpack_require__(83);
+	var SeriesDataModel = __webpack_require__(81);
+	var SeriesItem = __webpack_require__(86);
 	var chartConst = __webpack_require__(2);
 	var calculator = __webpack_require__(23);
 
@@ -23244,7 +23465,7 @@
 
 
 /***/ },
-/* 83 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23256,7 +23477,7 @@
 	'use strict';
 
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.prototype */{
 	    /**
@@ -23352,7 +23573,7 @@
 
 
 /***/ },
-/* 84 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23363,8 +23584,8 @@
 
 	'use strict';
 
-	var BoundsModel = __webpack_require__(85);
-	var ScaleDataModel = __webpack_require__(91);
+	var BoundsModel = __webpack_require__(88);
+	var ScaleDataModel = __webpack_require__(94);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -23592,7 +23813,7 @@
 
 
 /***/ },
-/* 85 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23605,13 +23826,13 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(30);
-	var raphaelRenderUtil = __webpack_require__(58);
-	var circleLegendCalculator = __webpack_require__(86);
-	var axisCalculator = __webpack_require__(87);
-	var legendCalculator = __webpack_require__(88);
-	var seriesCalculator = __webpack_require__(89);
-	var spectrumLegendCalculator = __webpack_require__(90);
+	var renderUtil = __webpack_require__(34);
+	var raphaelRenderUtil = __webpack_require__(61);
+	var circleLegendCalculator = __webpack_require__(89);
+	var axisCalculator = __webpack_require__(90);
+	var legendCalculator = __webpack_require__(91);
+	var seriesCalculator = __webpack_require__(92);
+	var spectrumLegendCalculator = __webpack_require__(93);
 
 	/**
 	 * Dimension.
@@ -24344,7 +24565,7 @@
 
 
 /***/ },
-/* 86 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24356,7 +24577,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	/**
 	 * Calculator for circle legend.
@@ -24446,7 +24667,7 @@
 
 
 /***/ },
-/* 87 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24459,7 +24680,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	/**
 	 * Calculator for dimension of axis.
@@ -24516,7 +24737,7 @@
 
 
 /***/ },
-/* 88 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24530,7 +24751,7 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var arrayUtil = __webpack_require__(6);
 
 	/**
@@ -24720,7 +24941,7 @@
 
 
 /***/ },
-/* 89 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24799,7 +25020,7 @@
 
 
 /***/ },
-/* 90 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24811,7 +25032,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	/**
 	 * Calculator for spectrum legend.
@@ -24857,14 +25078,14 @@
 
 
 /***/ },
-/* 91 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var scaleDataMaker = __webpack_require__(92);
-	var scaleLabelFormatter = __webpack_require__(94);
-	var axisDataMaker = __webpack_require__(95);
+	var scaleDataMaker = __webpack_require__(95);
+	var scaleLabelFormatter = __webpack_require__(97);
+	var axisDataMaker = __webpack_require__(98);
 	var predicate = __webpack_require__(5);
 
 	var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */{
@@ -25295,7 +25516,7 @@
 
 
 /***/ },
-/* 92 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25310,7 +25531,7 @@
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var arrayUtil = __webpack_require__(6);
-	var coordinateScaleCalculator = __webpack_require__(93);
+	var coordinateScaleCalculator = __webpack_require__(96);
 
 	var abs = Math.abs;
 
@@ -25618,7 +25839,7 @@
 
 
 /***/ },
-/* 93 */
+/* 96 */
 /***/ function(module, exports) {
 
 	/**
@@ -25798,7 +26019,7 @@
 
 
 /***/ },
-/* 94 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25811,7 +26032,7 @@
 
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 
 	var abs = Math.abs;
 
@@ -25892,7 +26113,7 @@
 
 
 /***/ },
-/* 95 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25906,7 +26127,7 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(30);
+	var renderUtil = __webpack_require__(34);
 	var arrayUtil = __webpack_require__(6);
 
 	/**
@@ -26451,7 +26672,7 @@
 
 
 /***/ },
-/* 96 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26555,7 +26776,7 @@
 
 
 /***/ },
-/* 97 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26568,8 +26789,8 @@
 
 	var ChartBase = __webpack_require__(20);
 	var predicate = __webpack_require__(5);
-	var DynamicDataHelper = __webpack_require__(98);
-	var Series = __webpack_require__(62);
+	var DynamicDataHelper = __webpack_require__(101);
+	var Series = __webpack_require__(65);
 	var rawDataHandler = __webpack_require__(4);
 
 	var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
@@ -26790,7 +27011,7 @@
 
 
 /***/ },
-/* 98 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27023,7 +27244,7 @@
 
 
 /***/ },
-/* 99 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27035,9 +27256,9 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var DynamicDataHelper = __webpack_require__(98);
+	var DynamicDataHelper = __webpack_require__(101);
 	var rawDataHandler = __webpack_require__(4);
-	var Series = __webpack_require__(65);
+	var Series = __webpack_require__(68);
 
 	var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
 	    /**
@@ -27251,7 +27472,7 @@
 
 
 /***/ },
-/* 100 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27265,7 +27486,7 @@
 	var ChartBase = __webpack_require__(20);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
-	var validTypeMakerForYAxisOptions = __webpack_require__(101);
+	var validTypeMakerForYAxisOptions = __webpack_require__(104);
 
 	var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
 	    /**
@@ -27470,7 +27691,7 @@
 
 
 /***/ },
-/* 101 */
+/* 104 */
 /***/ function(module, exports) {
 
 	/**
@@ -27572,7 +27793,7 @@
 
 
 /***/ },
-/* 102 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27676,7 +27897,7 @@
 
 
 /***/ },
-/* 103 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27690,8 +27911,8 @@
 	var ChartBase = __webpack_require__(20);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
-	var validTypeMakerForYAxisOptions = __webpack_require__(101);
-	var DynamicDataHelper = __webpack_require__(98);
+	var validTypeMakerForYAxisOptions = __webpack_require__(104);
+	var DynamicDataHelper = __webpack_require__(101);
 
 	var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComboChart.prototype */ {
 	    /**
@@ -27957,7 +28178,7 @@
 
 
 /***/ },
-/* 104 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28052,7 +28273,7 @@
 
 
 /***/ },
-/* 105 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28121,7 +28342,7 @@
 
 
 /***/ },
-/* 106 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28239,7 +28460,7 @@
 
 
 /***/ },
-/* 107 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28331,7 +28552,7 @@
 
 
 /***/ },
-/* 108 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28344,7 +28565,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var ColorSpectrum = __webpack_require__(109);
+	var ColorSpectrum = __webpack_require__(112);
 	var chartConst = __webpack_require__(2);
 
 	var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
@@ -28466,7 +28687,7 @@
 
 
 /***/ },
-/* 109 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28477,7 +28698,7 @@
 
 	'use strict';
 
-	var colorutil = __webpack_require__(110);
+	var colorutil = __webpack_require__(113);
 
 	var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
 	    /**
@@ -28537,13 +28758,14 @@
 
 
 /***/ },
-/* 110 */
+/* 113 */
 /***/ function(module, exports) {
 
 	/**
 	 * @fileoverview Utility methods to manipulate colors
 	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
 	 */
+
 	'use strict';
 
 	var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
@@ -28789,7 +29011,7 @@
 
 
 /***/ },
-/* 111 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28801,7 +29023,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var ColorSpectrum = __webpack_require__(109);
+	var ColorSpectrum = __webpack_require__(112);
 
 	var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
 	    /**
@@ -28892,7 +29114,7 @@
 
 
 /***/ },
-/* 112 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28905,9 +29127,9 @@
 
 	var ChartBase = __webpack_require__(20);
 	var mapManager = __webpack_require__(10);
-	var MapChartMapModel = __webpack_require__(113);
-	var MapChartDataProcessor = __webpack_require__(114);
-	var ColorSpectrum = __webpack_require__(109);
+	var MapChartMapModel = __webpack_require__(116);
+	var MapChartDataProcessor = __webpack_require__(117);
+	var ColorSpectrum = __webpack_require__(112);
 
 	var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
 	    /**
@@ -28990,7 +29212,7 @@
 
 
 /***/ },
-/* 113 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29408,7 +29630,7 @@
 
 
 /***/ },
-/* 114 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29419,8 +29641,8 @@
 
 	'use strict';
 
-	var DataProcessorBase = __webpack_require__(77);
-	var renderUtil = __webpack_require__(30);
+	var DataProcessorBase = __webpack_require__(80);
+	var renderUtil = __webpack_require__(34);
 
 	/**
 	 * Raw series data.
@@ -29554,7 +29776,7 @@
 
 
 /***/ },
-/* 115 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29566,7 +29788,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var Series = __webpack_require__(62);
+	var Series = __webpack_require__(65);
 
 	var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototype */ {
 	    /**
@@ -29643,7 +29865,7 @@
 
 
 /***/ },
-/* 116 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29656,7 +29878,7 @@
 
 
 /***/ },
-/* 117 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29666,24 +29888,25 @@
 	 */
 
 	'use strict';
+
 	var raphael = window.Raphael;
 
-	var BarChart = __webpack_require__(118);
-	var LineChart = __webpack_require__(119);
-	var AreaChart = __webpack_require__(121);
-	var PieChart = __webpack_require__(122);
-	var RadialLineSeries = __webpack_require__(123);
-	var CoordinateTypeChart = __webpack_require__(124);
-	var BoxTypeChart = __webpack_require__(125);
-	var MapChart = __webpack_require__(126);
+	var BarChart = __webpack_require__(121);
+	var LineChart = __webpack_require__(122);
+	var AreaChart = __webpack_require__(124);
+	var PieChart = __webpack_require__(125);
+	var RadialLineSeries = __webpack_require__(126);
+	var CoordinateTypeChart = __webpack_require__(127);
+	var BoxTypeChart = __webpack_require__(128);
+	var MapChart = __webpack_require__(129);
 
-	var legend = __webpack_require__(127);
-	var MapLegend = __webpack_require__(128);
-	var CircleLegend = __webpack_require__(129);
-	var title = __webpack_require__(130);
-	var axis = __webpack_require__(131);
+	var legend = __webpack_require__(130);
+	var MapLegend = __webpack_require__(131);
+	var CircleLegend = __webpack_require__(132);
+	var title = __webpack_require__(133);
+	var axis = __webpack_require__(134);
 
-	var RadialPlot = __webpack_require__(132);
+	var RadialPlot = __webpack_require__(135);
 
 	var pluginName = 'Raphael';
 	var pluginRaphael = {
@@ -29709,8 +29932,24 @@
 	    var paper = raphael(container, dimension.width, dimension.height);
 	    var rect = paper.rect(0, 0, dimension.width, dimension.height);
 
+	    if (paper.raphael.svg) {
+	        appendGlowFilterToDefs(paper);
+	    }
+
 	    paper.pushDownBackgroundToBottom = function() {
 	        rect.toBack();
+	    };
+
+	    paper.changeChartBackgroundColor = function(color) {
+	        rect.attr({
+	            fill: color
+	        });
+	    };
+
+	    paper.changeChartBackgroundOpacity = function(opacity) {
+	        rect.attr({
+	            opacity: opacity
+	        });
 	    };
 
 	    rect.attr({
@@ -29721,11 +29960,61 @@
 	    return paper;
 	};
 
+	/**
+	 * Append glow filter for series label
+	 * @param {object} paper Raphael paper object
+	 */
+	function appendGlowFilterToDefs(paper) {
+	    var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+	    var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+	    var feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
+	    var feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
+	    var feMorphology = document.createElementNS('http://www.w3.org/2000/svg', 'feMorphology');
+	    var feMerge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
+	    var feMergeNodeColoredBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+	    var feMergeNodeSourceGraphic = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+
+	    filter.id = 'glow';
+
+	    feFlood.setAttribute('result', 'flood');
+	    feFlood.setAttribute('flood-color', '#ffffff');
+	    feFlood.setAttribute('flood-opacity', '0.5');
+
+	    feComposite.setAttribute('in', 'flood');
+	    feComposite.setAttribute('result', 'mask');
+	    feComposite.setAttribute('in2', 'SourceGraphic');
+	    feComposite.setAttribute('operator', 'in');
+
+	    feMorphology.setAttribute('in', 'mask');
+	    feMorphology.setAttribute('result', 'dilated');
+	    feMorphology.setAttribute('operator', 'dilate');
+	    feMorphology.setAttribute('radius', '2');
+
+	    feGaussianBlur.setAttribute('in', 'dilated');
+	    feGaussianBlur.setAttribute('result', 'blurred');
+	    feGaussianBlur.setAttribute('stdDeviation', '1');
+
+	    feMergeNodeColoredBlur.setAttribute('in', 'blurred');
+	    feMergeNodeSourceGraphic.setAttribute('in', 'SourceGraphic');
+
+	    filter.appendChild(feFlood);
+	    filter.appendChild(feComposite);
+	    filter.appendChild(feMorphology);
+	    filter.appendChild(feGaussianBlur);
+
+	    filter.appendChild(feMerge);
+
+	    feMerge.appendChild(feMergeNodeColoredBlur);
+	    feMerge.appendChild(feMergeNodeSourceGraphic);
+
+	    paper.defs.appendChild(filter);
+	}
+
 	tui.chart.registerPlugin(pluginName, pluginRaphael, callback);
 
 
 /***/ },
-/* 118 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29735,7 +30024,8 @@
 	 */
 
 	'use strict';
-	var raphaelRenderUtil = __webpack_require__(58);
+
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var raphael = window.Raphael;
 
@@ -30095,8 +30385,9 @@
 
 	    /**
 	     * Animate.
+	     * @param {function} onFinish finish callback function
 	     */
-	    animate: function() {
+	    animate: function(onFinish) {
 	        var self = this,
 	            groupBorders = this.groupBorders || [];
 
@@ -30110,6 +30401,13 @@
 	                self._animateBorders(lines, bar.bound, self.chartType, bar.item);
 	            }
 	        });
+
+	        if (onFinish) {
+	            this.callbackTimeout = setTimeout(function() {
+	                onFinish();
+	                delete self.callbackTimeout;
+	            }, ANIMATION_DURATION);
+	        }
 	    },
 
 	    /**
@@ -30300,6 +30598,7 @@
 
 	                endLabel.node.style.userSelect = 'none';
 	                endLabel.node.style.cursor = 'default';
+	                endLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                labelSet.push(endLabel);
 
@@ -30307,6 +30606,8 @@
 	                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
 	                    startLabel.node.style.userSelect = 'none';
 	                    startLabel.node.style.cursor = 'default';
+	                    startLabel.node.setAttribute('filter', 'url(#glow)');
+
 	                    labelSet.push(startLabel);
 	                }
 	            });
@@ -30320,7 +30621,7 @@
 
 
 /***/ },
-/* 119 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30331,8 +30632,8 @@
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(120),
-	    raphaelRenderUtil = __webpack_require__(58);
+	var RaphaelLineBase = __webpack_require__(123),
+	    raphaelRenderUtil = __webpack_require__(61);
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -30565,12 +30866,14 @@
 
 	                endLabel.node.style.userSelect = 'none';
 	                endLabel.node.style.cursor = 'default';
+	                endLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                if (position.start) {
 	                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
 
 	                    startLabel.node.style.userSelect = 'none';
 	                    startLabel.node.style.cursor = 'default';
+	                    startLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                    set.push(startLabel);
 	                }
@@ -30585,7 +30888,7 @@
 
 
 /***/ },
-/* 120 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30596,7 +30899,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var browser = tui.util.browser;
 	var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
@@ -31402,7 +31705,7 @@
 
 
 /***/ },
-/* 121 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31413,8 +31716,8 @@
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(120);
-	var raphaelRenderUtil = __webpack_require__(58);
+	var RaphaelLineBase = __webpack_require__(123);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -31839,6 +32142,7 @@
 
 	                endLabel.node.style.userSelect = 'none';
 	                endLabel.node.style.cursor = 'default';
+	                endLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                if (position.start) {
 	                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
@@ -31859,7 +32163,7 @@
 
 
 /***/ },
-/* 122 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31870,7 +32174,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var raphael = window.Raphael;
 
@@ -32090,7 +32394,7 @@
 	            attrs: {
 	                fill: 'none',
 	                opacity: 0,
-	                stroke: this.chartBackground,
+	                stroke: this.chartBackground.color,
 	                'stroke-width': 1
 	            }
 	        };
@@ -32149,8 +32453,8 @@
 	                circleBound: circleBound,
 	                angles: sectorDatum.angles.start,
 	                attrs: {
-	                    fill: chartBackground,
-	                    stroke: chartBackground,
+	                    fill: chartBackground.color,
+	                    stroke: chartBackground.color,
 	                    'stroke-width': 1
 	                }
 	            });
@@ -32531,11 +32835,15 @@
 	        };
 
 	        tui.util.forEach(positions, function(position, index) {
-	            var label = raphaelRenderUtil.renderText(paper, position, labels[index], attributes);
+	            var label;
 
-	            label.node.style.userSelect = 'none';
-	            label.node.style.cursor = 'default';
+	            if (position) {
+	                label = raphaelRenderUtil.renderText(paper, position, labels[index], attributes);
 
+	                label.node.style.userSelect = 'none';
+	                label.node.style.cursor = 'default';
+	                label.node.setAttribute('filter', 'url(#glow)');
+	            }
 	            labelSet.push(label);
 	        });
 
@@ -32549,7 +32857,7 @@
 
 
 /***/ },
-/* 123 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32560,8 +32868,8 @@
 
 	'use strict';
 
-	var RaphaelLineTypeBase = __webpack_require__(120);
-	var raphaelRenderUtil = __webpack_require__(58);
+	var RaphaelLineTypeBase = __webpack_require__(123);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -32749,7 +33057,7 @@
 
 
 /***/ },
-/* 124 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32759,7 +33067,8 @@
 	 */
 
 	'use strict';
-	var raphaelRenderUtil = __webpack_require__(58);
+
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var raphael = window.Raphael;
 
@@ -33176,7 +33485,7 @@
 
 
 /***/ },
-/* 125 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33186,7 +33495,8 @@
 	 */
 
 	'use strict';
-	var raphaelRenderUtil = __webpack_require__(58);
+
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var ANIMATION_DURATION = 100;
 	var MIN_BORDER_WIDTH = 1;
@@ -33440,7 +33750,6 @@
 	                    }
 	                }
 
-
 	                return result;
 	            });
 	        }, isPivot);
@@ -33574,6 +33883,7 @@
 
 	                seriesLabel.node.style.userSelect = 'none';
 	                seriesLabel.node.style.cursor = 'default';
+	                seriesLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                labelSet.push(seriesLabel);
 	            });
@@ -33597,6 +33907,7 @@
 
 	            seriesLabel.node.style.userSelect = 'none';
 	            seriesLabel.node.style.cursor = 'default';
+	            seriesLabel.node.setAttribute('filter', 'url(#glow)');
 
 	            labelSet.push(seriesLabel);
 	        });
@@ -33609,7 +33920,7 @@
 
 
 /***/ },
-/* 126 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33620,7 +33931,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 	var dom = __webpack_require__(14);
 	var browser = tui.util.browser;
 
@@ -33783,7 +34094,6 @@
 	        transformX = (raphaelMatrix.e / raphaelMatrix.a) + previousTranslateX;
 	        transformY = (raphaelMatrix.f / raphaelMatrix.d) + previousTranslateY;
 
-
 	        if (transformX >= 0) {
 	            raphaelMatrix.e = -previousTranslateX * raphaelMatrix.a;
 	        } else if (transformX < currentLimitRight) {
@@ -33889,6 +34199,7 @@
 
 	            label.node.style.userSelect = 'none';
 	            label.node.style.cursor = 'default';
+	            label.node.setAttribute('filter', 'url(#glow)');
 
 	            if (!IS_LTE_THAN_IE8) {
 	                self.g.appendChild(label.node);
@@ -33923,7 +34234,7 @@
 
 
 /***/ },
-/* 127 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33933,8 +34244,9 @@
 	 */
 
 	'use strict';
+
 	var chartConst = __webpack_require__(2);
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
 	var CHECKBOX_WIDTH = 10;
@@ -34176,7 +34488,7 @@
 
 
 /***/ },
-/* 128 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34187,7 +34499,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 	var chartConst = __webpack_require__(2);
 
 	var PADDING = chartConst.LEGEND_AREA_PADDING;
@@ -34384,7 +34696,6 @@
 	        var fillURL = gradientBar.node.getAttribute('fill');
 	        this.locationURL = /url\('?([^#]+)#[^#]+'?\)/.exec(fillURL)[1];
 
-
 	        gradientBar.node.setAttribute('fill', fillURL.replace(this.locationURL, ''));
 	    },
 
@@ -34404,7 +34715,7 @@
 
 
 /***/ },
-/* 129 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34415,7 +34726,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	/**
 	 * @classdesc RaphaelCircleLegend is graph renderer for circleLegend.
@@ -34467,7 +34778,7 @@
 
 
 /***/ },
-/* 130 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34478,7 +34789,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 	var chartConst = __webpack_require__(2);
 
 	var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
@@ -34524,7 +34835,7 @@
 
 
 /***/ },
-/* 131 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34535,7 +34846,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 
 	var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
 	    init: function() {
@@ -34547,16 +34858,22 @@
 	     * @param {object} paper Raphael paper
 	     * @param {object} position axis position
 	     * @param {object} dimension axis dimension
+	     * @param {object} theme chart theme
 	     * @private
 	     */
-	    renderBackground: function(paper, position, dimension) {
+	    renderBackground: function(paper, position, dimension, theme) {
+	        var background = (theme.background || {});
+	        var fillColor = (background.color || '#fff');
+	        var opacity = (background.opacity || 1);
+
 	        raphaelRenderUtil.renderRect(paper, {
 	            left: position.left - 5,
 	            top: position.top,
 	            width: dimension.width,
 	            height: dimension.height
 	        }, {
-	            fill: '#fff',
+	            fill: fillColor,
+	            opacity: opacity,
 	            'stroke-width': 0
 	        });
 	    },
@@ -34578,6 +34895,7 @@
 	        var position = data.rotationInfo.isVertical ? data.layout.position.top : data.layout.position.left;
 	        var centerPosition = (size / 2) + position;
 	        var textHeight = titleSize.height;
+	        var rotateTitle = !tui.util.isExisty(data.rotationInfo.rotateTitle) || data.rotationInfo.rotateTitle === true;
 	        var attributes = {
 	            'dominant-baseline': 'auto',
 	            'font-family': data.theme.fontFamily,
@@ -34601,7 +34919,10 @@
 	        } else if (data.rotationInfo.isVertical) {
 	            positionTopAndLeft.top = centerPosition;
 	            positionTopAndLeft.left = data.layout.position.left + textHeight;
-	            attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
+
+	            if (rotateTitle) {
+	                attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
+	            }
 	        } else {
 	            positionTopAndLeft.top = paper.height - textHeight;
 	            positionTopAndLeft.left = centerPosition;
@@ -34834,7 +35155,7 @@
 
 
 /***/ },
-/* 132 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34845,7 +35166,7 @@
 
 	'use strict';
 
-	var raphaelRenderUtil = __webpack_require__(58);
+	var raphaelRenderUtil = __webpack_require__(61);
 	var arrayUtil = __webpack_require__(6);
 
 	var STEP_TOP_ADJUSTMENT = 8;
