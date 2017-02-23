@@ -49,6 +49,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var position = data.rotationInfo.isVertical ? data.layout.position.top : data.layout.position.left;
         var centerPosition = (size / 2) + position;
         var textHeight = titleSize.height;
+        var rotateTitle = !tui.util.isExisty(data.rotationInfo.rotateTitle) || data.rotationInfo.rotateTitle === true;
         var attributes = {
             'dominant-baseline': 'auto',
             'font-family': data.theme.fontFamily,
@@ -72,7 +73,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         } else if (data.rotationInfo.isVertical) {
             positionTopAndLeft.top = centerPosition;
             positionTopAndLeft.left = data.layout.position.left + textHeight;
-            attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
+            attributes.transform = rotateTitle ? ('r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top) : '';
         } else {
             positionTopAndLeft.top = paper.height - textHeight;
             positionTopAndLeft.left = centerPosition;

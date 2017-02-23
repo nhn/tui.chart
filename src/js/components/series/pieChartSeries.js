@@ -478,7 +478,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
         if (params.funcMoveToPosition) {
             positions = tui.util.map(params.positions, function(position, index) {
-                return params.funcMoveToPosition(position, legendLabels[index]);
+                var outerPosition = null;
+
+                if (position) {
+                    outerPosition = params.funcMoveToPosition(position, legendLabels[index]);
+                }
+
+                return outerPosition;
             });
         } else {
             positions = params.positions;

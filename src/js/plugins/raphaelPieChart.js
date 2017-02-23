@@ -667,12 +667,15 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         };
 
         tui.util.forEach(positions, function(position, index) {
-            var label = raphaelRenderUtil.renderText(paper, position, labels[index], attributes);
+            var label;
 
-            label.node.style.userSelect = 'none';
-            label.node.style.cursor = 'default';
-            label.node.setAttribute('filter', 'url(#glow)');
+            if (position) {
+                label = raphaelRenderUtil.renderText(paper, position, labels[index], attributes);
 
+                label.node.style.userSelect = 'none';
+                label.node.style.cursor = 'default';
+                label.node.setAttribute('filter', 'url(#glow)');
+            }
             labelSet.push(label);
         });
 
