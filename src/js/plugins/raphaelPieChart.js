@@ -663,6 +663,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             'font-family': theme.fontFamily,
             'font-weight': theme.fontWeight,
             'text-anchor': 'middle',
+            fill: theme.color,
             opacity: 0
         };
 
