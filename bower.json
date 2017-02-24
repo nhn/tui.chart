@@ -9,7 +9,8 @@
   "homepage": "nhnent.github.io/tui.chart",
   "private": true,
   "dependencies": {
-    "tui-chart": "https://github.com/nhnent/tui.chart.git"
+    "tui-chart": "https://github.com/nhnent/tui.chart.git",
+    "codemirror": "~5.24.2"
   },
   "resolutions": {
     "tui-code-snippet": "~1.1.0"

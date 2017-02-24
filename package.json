@@ -6,9 +6,11 @@
     "docs:docCopyToLatest": "cp -r ./doc/* ./latest && cd ./latest && mkdir dist",
     "docs:docCopyToCurrentVersion": "mkdir -p $(node versionPicker.js)/dist && cp -r ./doc/* ./$(node versionPicker.js)",
     "docs:docRemove": "rm -rf ./doc",
-    "copy": "npm run copy:distToLatest && npm run copy:distToCurrentVersion && npm run copy:removeBowerComponents",
+    "copy": "npm run copy:distToLatest && npm run copy:distToCurrentVersion && npm run copy:codemirrorToCurrentVersion && npm run copy:codemirrorToLatest && npm run copy:removeBowerComponents",
     "copy:distToLatest": "cp -r ./bower_components/tui-chart/dist/ ./latest/dist",
     "copy:distToCurrentVersion": "cp -r ./bower_components/tui-chart/dist/ ./$(node versionPicker.js)/dist",
+    "copy:codemirrorToLatest": "mkdir -p latest/lib/codemirror && cp -R ./bower_components/codemirror/ ./latest/lib/codemirror",
+    "copy:codemirrorToCurrentVersion": "mkdir -p $(node versionPicker.js)/lib/codemirror && cp -R ./bower_components/codemirror/ ./$(node versionPicker.js)/lib/codemirror",
     "copy:removeBowerComponents": "rm -rf ./bower_components"
   }
 }
