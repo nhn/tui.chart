@@ -20,5 +20,8 @@
   "dependencies": {
     "raphael": "https://github.com/nhnent/raphael.git#2.2.0b",
     "tui-code-snippet": "1.0.8"
+  },
+  "devDependencies": {
+    "codemirror": "5.24.0"
   }
 }
