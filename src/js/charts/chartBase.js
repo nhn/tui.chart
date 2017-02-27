@@ -311,7 +311,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             scaleOption: this.getScaleOption(),
             isVertical: this.isVertical,
             hasRightYAxis: this.hasRightYAxis,
-            addedDataCount: this.addedDataCount,
+            addedDataCount: this._dynamicDataHelper ? this._dynamicDataHelper.addedDataCount : null,
             prevXAxisData: prevXAxisData,
             addingDataMode: addingDataMode
         });

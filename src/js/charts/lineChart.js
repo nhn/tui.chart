@@ -105,12 +105,14 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
     addComponents: function() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
+
+        this.componentManager.register('lineSeries', 'lineSeries');
+
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');
 
         this.componentManager.register('legend', 'legend');
 
-        this.componentManager.register('lineSeries', 'lineSeries');
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
         this.componentManager.register('tooltip', 'tooltip');
