@@ -81,7 +81,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             positionTopAndLeft.left = data.layout.position.left + textHeight;
 
             if (rotateTitle) {
-                attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
+                attributes.transform = 'r-90,' + (positionTopAndLeft.left - textHeight) + ',' + positionTopAndLeft.top;
             }
         } else {
             positionTopAndLeft.top = paper.height - textHeight;
