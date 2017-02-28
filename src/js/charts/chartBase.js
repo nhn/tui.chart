@@ -324,12 +324,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     addDataRatios: function() {},
 
     /**
-     * Common render function for rendering functions like render, rerender, resize and zoom.
-     * @param {function} onRender render callback function
+     * Make chart ready for render, it should be invoked before render, rerender, resize and zoom.
      * @param {?boolean} addingDataMode - whether adding data mode or not
-     * @private
+     * @returns {object} Bounds and scale data
      */
-    _render: function(onRender, addingDataMode) {
+    readyForRender: function(addingDataMode) {
         var boundsAndScale = this._buildBoundsAndScaleData(this.prevXAxisData, addingDataMode);
 
         if (boundsAndScale.axisDataMap.xAxis) {
@@ -339,7 +338,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         // 비율값 추가
         this.addDataRatios(boundsAndScale.limitMap);
 
-        onRender(boundsAndScale);
+        return boundsAndScale;
     },
 
     /**
@@ -353,6 +352,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var seriesVisibilityMap = dataProcessor.getLegendVisibility();
         var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
         var raphaelPaper = componentManager.drawingToolPicker.getPaper(container, chartConst.COMPONENT_TYPE_RAPHAEL);
+        var boundsAndScale;
 
         this.dataProcessor.initData(rawData);
 
@@ -362,12 +362,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         dom.append(wrapper, container);
 
-        this._render(function(boundsAndScale) {
-            renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
-            componentManager.render('render', boundsAndScale, {
-                checkedLegends: seriesVisibilityMap
-            }, container);
-        });
+        boundsAndScale = this.readyForRender();
+
+        renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
+        componentManager.render('render', boundsAndScale, {
+            checkedLegends: seriesVisibilityMap
+        }, container);
 
         this.chartContainer = container;
     },
@@ -378,8 +378,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {?object} rawData rawData
      */
     rerender: function(checkedLegends, rawData) {
-        var self = this;
         var dataProcessor = this.dataProcessor;
+        var boundsAndScale;
 
         if (!rawData) {
             rawData = rawDataHandler.filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
@@ -387,11 +387,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this.dataProcessor.initData(rawData);
 
-        this._render(function(boundsAndScale) {
-            self.componentManager.render('rerender', boundsAndScale, {
-                checkedLegends: checkedLegends
-            }, self.chartContainer);
-        });
+        boundsAndScale = this.readyForRender();
+
+        this.componentManager.render('rerender', boundsAndScale, {
+            checkedLegends: checkedLegends
+        }, this.chartContainer);
     },
 
     /**
@@ -455,8 +455,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resize: function(dimension) {
-        var self = this;
-        var updated;
+        var updated, boundsAndScale;
 
         if (!dimension) {
             return;
@@ -468,10 +467,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        this._render(function(boundsAndScale) {
-            renderUtil.renderDimension(self.chartContainer, boundsAndScale.dimensionMap.chart);
-            self.componentManager.render('resize', boundsAndScale);
-        });
+        boundsAndScale = this.readyForRender();
+
+        renderUtil.renderDimension(this.chartContainer, boundsAndScale.dimensionMap.chart);
+        this.componentManager.render('resize', boundsAndScale);
     },
 
     /**
