@@ -370,6 +370,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }, container);
 
         this.chartContainer = container;
+        this.paper = raphaelPaper;
     },
 
     /**
@@ -455,7 +456,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resize: function(dimension) {
-        var updated, boundsAndScale;
+        var updated, boundsAndScale, chartDimension;
 
         if (!dimension) {
             return;
@@ -468,8 +469,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         boundsAndScale = this.readyForRender();
+        chartDimension = boundsAndScale.dimensionMap.chart;
 
-        renderUtil.renderDimension(this.chartContainer, boundsAndScale.dimensionMap.chart);
+        renderUtil.renderDimension(this.chartContainer, chartDimension);
+        this.paper.resizeBackground(chartDimension.width, chartDimension.height);
+
         this.componentManager.render('resize', boundsAndScale);
     },
 

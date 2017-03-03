@@ -69,6 +69,13 @@ var callback = function(container, dimension) {
         });
     };
 
+    paper.resizeBackground = function(width, height) {
+        rect.attr({
+            width: width,
+            height: height
+        });
+    };
+
     rect.attr({
         fill: '#fff',
         'stroke-width': 0
