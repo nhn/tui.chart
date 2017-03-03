@@ -44,6 +44,48 @@ var htmls = {
     GROUP_CSS_TEXT: 'background-color:{{ color }}',
     HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div>{{ name }}: {{ value }}{{ suffix }}</div>' +
+    '</div>',
+    HTML_BOXPLOT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
+            '<div>' +
+                '<span>{{ legend }}</span>' +
+            '</div>' +
+            '<div>' +
+                '<span>Maximum: </span>' +
+                '<span>{{ maxLabel }}</span>' +
+                '<span>{{ suffix }}</span>' +
+            '</div>' +
+            '<div>' +
+                '<span>Upper Quartile: </span>' +
+                '<span>{{ uqLabel }}</span>' +
+                '<span>{{ suffix }}</span>' +
+            '</div>' +
+            '<div>' +
+                '<span>Median: </span>' +
+                '<span>{{ medianLabel }}</span>' +
+                '<span>{{ suffix }}</span>' +
+            '</div>' +
+            '<div>' +
+                '<span>Lower Quartile: </span>' +
+                '<span>{{ lqLabel }}</span>' +
+                '<span>{{ suffix }}</span>' +
+            '</div>' +
+            '<div>' +
+                '<span>Minimum: </span>' +
+                '<span>{{ minLabel }}</span>' +
+                '<span>{{ suffix }}</span>' +
+            '</div>' +
+    '</div>',
+    HTML_BOXPLOT_OUTLIER: '<div class="tui-chart-default-tooltip">' +
+        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
+            '<div>' +
+                '<span>{{ legend }}</span>' +
+            '</div>' +
+            '<div>' +
+                '<span>Outlier: </span>' +
+                '<span>{{ label }}</span>' +
+                '<span>{{ suffix }}</span>' +
+            '</div>' +
     '</div>'
 };
 
@@ -54,5 +96,7 @@ module.exports = {
     tplGroup: templateMaker.template(htmls.HTML_GROUP),
     tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
     tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),
-    tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE)
+    tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE),
+    tplBoxplotChartDefault: templateMaker.template(htmls.HTML_BOXPLOT_TEMPLATE),
+    tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER)
 };

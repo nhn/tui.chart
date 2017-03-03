@@ -11,6 +11,7 @@
 var chartConst = require('../../const');
 var DataProcessorBase = require('./dataProcessorBase');
 var SeriesDataModel = require('../data/seriesDataModel');
+var SeriesDataModelForBoxplot = require('../data/seriesDataModelForBoxplot');
 var SeriesDataModelForTreemap = require('../data/seriesDataModelForTreemap');
 var SeriesGroup = require('./seriesGroup');
 var rawDataHandler = require('../../models/data/rawDataHandler');
@@ -531,7 +532,9 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             chartType = this.findChartType(seriesType);
             rawSeriesData = this.rawData.series[seriesType];
 
-            if (predicate.isTreemapChart(this.chartType)) {
+            if (predicate.isBoxplotChart(this.chartType)) {
+                SeriesDataModelClass = SeriesDataModelForBoxplot;
+            } else if (predicate.isTreemapChart(this.chartType)) {
                 SeriesDataModelClass = SeriesDataModelForTreemap;
             } else {
                 SeriesDataModelClass = SeriesDataModel;

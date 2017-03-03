@@ -225,6 +225,23 @@ var rawDataHandler = {
     },
 
     /**
+     * Update raw series data by options.
+     * @param {object} rawData - raw data
+     */
+    appendOutliersToSeriesData: function(rawData) {
+        var boxplot = rawData.series.boxplot;
+        tui.util.forEach(boxplot, function(seriesItem) {
+            var outliers = seriesItem.outliers;
+
+            if (outliers && outliers.length) {
+                tui.util.forEach(outliers, function(outlier) {
+                    seriesItem.data[outlier[0]].push(outlier[1]);
+                });
+            }
+        });
+    },
+
+    /**
      * Filter raw data belong to checked legend.
      * @param {object} rawData raw data
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
@@ -243,6 +260,24 @@ var rawDataHandler = {
                 }
             });
         }
+
+        return cloneData;
+    },
+
+    /**
+     * Append outlier value to boxplot series data end
+     * @param {object} rawData raw data
+     * @returns {object}
+     */
+    appendOutliersToSeriesDataEnd: function(rawData) {
+        var cloneData = tui.util.extend({}, rawData);
+        var series = cloneData.series;
+
+        tui.util.forEach(series, function(seriesItem) {
+            tui.util.forEach(seriesItem.outliers, function(outlier) {
+                seriesItem.data[outlier[0]].push(outlier[1]);
+            });
+        });
 
         return cloneData;
     }

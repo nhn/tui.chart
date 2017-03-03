@@ -95,9 +95,16 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var seriesDataModel = this._getSeriesDataModel();
         var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
         var columnTopOffset = -this.layout.position.top + chartConst.CHART_PADDING;
-        var positionValue =
-            predicate.isColumnChart(this.chartType) ? columnTopOffset : this.layout.position.left;
-        var itemCount, barSize, optionSize, basePosition, pointInterval, baseBounds;
+        var positionValue, itemCount, barSize, optionSize, basePosition, pointInterval, baseBounds;
+        var zeroToMin = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
+
+        if (predicate.isColumnChart(this.chartType)) {
+            positionValue = columnTopOffset;
+        } else if (predicate.isBoxplotChart(this.chartType)) {
+            positionValue = this.layout.position.top - chartConst.CHART_PADDING;
+        } else {
+            positionValue = this.layout.position.left;
+        }
 
         if (seriesDataModel.rawSeriesData.length > 0) {
             if (!isStackType) {
@@ -110,11 +117,14 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
             optionSize = this.options.barWidth;
             barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
-            basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin
-                + positionValue;
+            basePosition = zeroToMin + positionValue;
 
             if (predicate.isColumnChart(this.chartType)) {
                 basePosition = baseBarSize - basePosition;
+            }
+
+            if (predicate.isBoxplotChart(this.chartType) && zeroToMin) {
+                basePosition -= zeroToMin * 2;
             }
 
             baseBounds = {

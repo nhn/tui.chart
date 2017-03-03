@@ -29,6 +29,7 @@ function mouseEventDetectorFactory(params) {
     } else if (predicate.isMapChart(chartType)) {
         factory = mapChartEventDetectorFactory;
     } else if (predicate.isBarTypeChart(chartType)
+               || predicate.isBoxplotChart(chartType)
                || predicate.isHeatmapChart(chartType)
                || predicate.isTreemapChart(chartType)
               ) {
