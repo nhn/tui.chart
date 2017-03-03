@@ -64,7 +64,10 @@ var Title = tui.util.defineClass(/** @lends Title.prototype */ {
      * @param {object} data data for render title
      */
     resize: function(data) {
-        this.rerender(data);
+        var dimensionMap = data.dimensionMap;
+        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
+        var width = dimensionMap.series.width + legendWidth;
+        this.graphRenderer.resize(width, this.titleSet);
     },
 
     /**
