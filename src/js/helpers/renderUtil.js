@@ -276,7 +276,7 @@ var renderUtil = {
         tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
             var value = position[key];
 
-            if (value) {
+            if (tui.util.isNumber(value)) {
                 el.style[key] = position[key] + 'px';
             }
         });
