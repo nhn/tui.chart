@@ -124,5 +124,8 @@
   },
   "sample13-01-radial-chart": {
     "title": "[Radial chart] basic"
+  },
+  "sample14-01-boxplot-chart": {
+    "title": "[Boxplot chart] basic"
   }
 }
