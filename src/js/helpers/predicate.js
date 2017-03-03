@@ -45,6 +45,16 @@ var predicate = {
     },
 
     /**
+     * Whether boxplot chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
+     */
+    isBoxplotChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_BOXPLOT;
+    },
+
+    /**
      * Whether radial type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart

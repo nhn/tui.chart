@@ -1261,6 +1261,10 @@ tui.chart.radialChart = function(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_RADIAL);
 };
 
+tui.chart.boxplotChart = function(container, rawData, options) {
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BOXPLOT);
+};
+
 /**
  * Register theme.
  * @memberOf tui.chart

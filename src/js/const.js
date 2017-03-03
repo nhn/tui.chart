@@ -65,6 +65,8 @@ var chartConst = {
     CHART_TYPE_MAP: 'map',
     /** @type {string} */
     CHART_TYPE_RADIAL: 'radial',
+    /** @type {string} */
+    CHART_TYPE_BOXPLOT: 'boxplot',
     /** chart padding */
     CHART_PADDING: 10,
     /** chart default width */

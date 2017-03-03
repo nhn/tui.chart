@@ -54,7 +54,7 @@ module.exports = {
 
         tui.util.forEach(toTheme, function(item, key) {
             var fromItem = fromTheme[key];
-            if (!fromItem) {
+            if (!fromItem && fromItem !== 0) {
                 return;
             }
 

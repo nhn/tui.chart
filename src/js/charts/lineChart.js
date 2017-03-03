@@ -105,12 +105,14 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
     addComponents: function() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
+
+        this.componentManager.register('lineSeries', 'lineSeries');
+
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');
 
         this.componentManager.register('legend', 'legend');
 
-        this.componentManager.register('lineSeries', 'lineSeries');
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
         this.componentManager.register('tooltip', 'tooltip');
@@ -185,12 +187,10 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @private
      */
     _renderForZoom: function(isResetZoom) {
-        var self = this;
+        var boundsAndScale = this.readyForRender();
 
-        this._render(function(boundsAndScale) {
-            self.componentManager.render('zoom', boundsAndScale, {
-                isResetZoom: isResetZoom
-            });
+        this.componentManager.render('zoom', boundsAndScale, {
+            isResetZoom: isResetZoom
         });
     },
 

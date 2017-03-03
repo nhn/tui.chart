@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.7.3
+ * @version 2.8.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Feb 23 2017 18:45:18 GMT+0900 (KST)"
+ * bundle created at "Fri Mar 03 2017 18:55:04 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -72,7 +72,7 @@
 	__webpack_require__(15);
 	__webpack_require__(17);
 	__webpack_require__(18);
-	__webpack_require__(119);
+	__webpack_require__(123);
 
 	/**
 	 * Raw series datum.
@@ -1315,6 +1315,10 @@
 	    return _createChart(container, rawData, options, chartConst.CHART_TYPE_RADIAL);
 	};
 
+	tui.chart.boxplotChart = function(container, rawData, options) {
+	    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BOXPLOT);
+	};
+
 	/**
 	 * Register theme.
 	 * @memberOf tui.chart
@@ -1455,7 +1459,7 @@
 	    drawingToolPicker.addRendererType(libType, getPaperCallback);
 	};
 
-	__webpack_require__(120);
+	__webpack_require__(124);
 
 
 /***/ },
@@ -1530,6 +1534,8 @@
 	    CHART_TYPE_MAP: 'map',
 	    /** @type {string} */
 	    CHART_TYPE_RADIAL: 'radial',
+	    /** @type {string} */
+	    CHART_TYPE_BOXPLOT: 'boxplot',
 	    /** chart padding */
 	    CHART_PADDING: 10,
 	    /** chart default width */
@@ -2165,6 +2171,23 @@
 	    },
 
 	    /**
+	     * Update raw series data by options.
+	     * @param {object} rawData - raw data
+	     */
+	    appendOutliersToSeriesData: function(rawData) {
+	        var boxplot = rawData.series.boxplot;
+	        tui.util.forEach(boxplot, function(seriesItem) {
+	            var outliers = seriesItem.outliers;
+
+	            if (outliers && outliers.length) {
+	                tui.util.forEach(outliers, function(outlier) {
+	                    seriesItem.data[outlier[0]].push(outlier[1]);
+	                });
+	            }
+	        });
+	    },
+
+	    /**
 	     * Filter raw data belong to checked legend.
 	     * @param {object} rawData raw data
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
@@ -2183,6 +2206,24 @@
 	                }
 	            });
 	        }
+
+	        return cloneData;
+	    },
+
+	    /**
+	     * Append outlier value to boxplot series data end
+	     * @param {object} rawData raw data
+	     * @returns {object}
+	     */
+	    appendOutliersToSeriesDataEnd: function(rawData) {
+	        var cloneData = tui.util.extend({}, rawData);
+	        var series = cloneData.series;
+
+	        tui.util.forEach(series, function(seriesItem) {
+	            tui.util.forEach(seriesItem.outliers, function(outlier) {
+	                seriesItem.data[outlier[0]].push(outlier[1]);
+	            });
+	        });
 
 	        return cloneData;
 	    }
@@ -2239,6 +2280,16 @@
 	     */
 	    isBarTypeChart: function(chartType) {
 	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
+	    },
+
+	    /**
+	     * Whether boxplot chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBoxplotChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BOXPLOT;
 	    },
 
 	    /**
@@ -2990,7 +3041,7 @@
 
 	        tui.util.forEach(toTheme, function(item, key) {
 	            var fromItem = fromTheme[key];
-	            if (!fromItem) {
+	            if (!fromItem && fromItem !== 0) {
 	                return;
 	            }
 
@@ -3577,7 +3628,7 @@
 	    }
 	};
 
-	var DrawingToolPicker = {
+	var DrawingToolPicker = tui.util.defineClass({
 	    /**
 	     * DrawingToolPicker initializer
 	     * @param {{width:number, height:number}} dimension dimension
@@ -3606,16 +3657,16 @@
 	        }
 
 	        return paper;
-	    },
-
-	    /**
-	     * Add renderer type
-	     * @param {string} componentType component renderer type
-	     * @param {function} callback callback function for get renderer's paper
-	     */
-	    addRendererType: function(componentType, callback) {
-	        renderers[componentType] = callback;
 	    }
+	});
+
+	/**
+	 * Add renderer type
+	 * @param {string} componentType component renderer type
+	 * @param {function} callback callback function for get renderer's paper
+	 */
+	DrawingToolPicker.addRendererType = function(componentType, callback) {
+	    renderers[componentType] = callback;
 	};
 
 	module.exports = DrawingToolPicker;
@@ -3902,20 +3953,21 @@
 	var chartConst = __webpack_require__(2);
 	var chartFactory = __webpack_require__(3);
 	var BarChart = __webpack_require__(19);
-	var ColumnChart = __webpack_require__(99);
-	var LineChart = __webpack_require__(100);
-	var AreaChart = __webpack_require__(102);
-	var ColumnLineComboChart = __webpack_require__(103);
-	var LineScatterComboChart = __webpack_require__(105);
-	var LineAreaComboChart = __webpack_require__(106);
-	var PieDonutComboChart = __webpack_require__(107);
-	var PieChart = __webpack_require__(108);
-	var BubbleChart = __webpack_require__(109);
-	var ScatterChart = __webpack_require__(110);
-	var HeatmapChart = __webpack_require__(111);
-	var TreemapChart = __webpack_require__(114);
-	var MapChart = __webpack_require__(115);
-	var RadialChart = __webpack_require__(118);
+	var ColumnChart = __webpack_require__(102);
+	var LineChart = __webpack_require__(103);
+	var AreaChart = __webpack_require__(105);
+	var ColumnLineComboChart = __webpack_require__(106);
+	var LineScatterComboChart = __webpack_require__(108);
+	var LineAreaComboChart = __webpack_require__(109);
+	var PieDonutComboChart = __webpack_require__(110);
+	var PieChart = __webpack_require__(111);
+	var BubbleChart = __webpack_require__(112);
+	var ScatterChart = __webpack_require__(113);
+	var HeatmapChart = __webpack_require__(114);
+	var TreemapChart = __webpack_require__(117);
+	var MapChart = __webpack_require__(118);
+	var RadialChart = __webpack_require__(121);
+	var BoxplotChart = __webpack_require__(122);
 
 	chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 	chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);
@@ -3932,6 +3984,7 @@
 	chartFactory.register(chartConst.CHART_TYPE_TREEMAP, TreemapChart);
 	chartFactory.register(chartConst.CHART_TYPE_MAP, MapChart);
 	chartFactory.register(chartConst.CHART_TYPE_RADIAL, RadialChart);
+	chartFactory.register(chartConst.CHART_TYPE_BOXPLOT, BoxplotChart);
 
 
 /***/ },
@@ -4086,11 +4139,11 @@
 
 	var chartConst = __webpack_require__(2);
 	var ComponentManager = __webpack_require__(21);
-	var DefaultDataProcessor = __webpack_require__(79);
+	var DefaultDataProcessor = __webpack_require__(80);
 	var rawDataHandler = __webpack_require__(4);
 	var dom = __webpack_require__(14);
 	var renderUtil = __webpack_require__(34);
-	var boundsAndScaleBuilder = __webpack_require__(87);
+	var boundsAndScaleBuilder = __webpack_require__(90);
 
 	var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 	    /**
@@ -4389,7 +4442,7 @@
 	            scaleOption: this.getScaleOption(),
 	            isVertical: this.isVertical,
 	            hasRightYAxis: this.hasRightYAxis,
-	            addedDataCount: this.addedDataCount,
+	            addedDataCount: this._dynamicDataHelper ? this._dynamicDataHelper.addedDataCount : null,
 	            prevXAxisData: prevXAxisData,
 	            addingDataMode: addingDataMode
 	        });
@@ -4402,12 +4455,11 @@
 	    addDataRatios: function() {},
 
 	    /**
-	     * Common render function for rendering functions like render, rerender, resize and zoom.
-	     * @param {function} onRender render callback function
+	     * Make chart ready for render, it should be invoked before render, rerender, resize and zoom.
 	     * @param {?boolean} addingDataMode - whether adding data mode or not
-	     * @private
+	     * @returns {object} Bounds and scale data
 	     */
-	    _render: function(onRender, addingDataMode) {
+	    readyForRender: function(addingDataMode) {
 	        var boundsAndScale = this._buildBoundsAndScaleData(this.prevXAxisData, addingDataMode);
 
 	        if (boundsAndScale.axisDataMap.xAxis) {
@@ -4417,7 +4469,7 @@
 	        // 비율값 추가
 	        this.addDataRatios(boundsAndScale.limitMap);
 
-	        onRender(boundsAndScale);
+	        return boundsAndScale;
 	    },
 
 	    /**
@@ -4431,6 +4483,7 @@
 	        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
 	        var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
 	        var raphaelPaper = componentManager.drawingToolPicker.getPaper(container, chartConst.COMPONENT_TYPE_RAPHAEL);
+	        var boundsAndScale;
 
 	        this.dataProcessor.initData(rawData);
 
@@ -4440,14 +4493,15 @@
 
 	        dom.append(wrapper, container);
 
-	        this._render(function(boundsAndScale) {
-	            renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
-	            componentManager.render('render', boundsAndScale, {
-	                checkedLegends: seriesVisibilityMap
-	            }, container);
-	        });
+	        boundsAndScale = this.readyForRender();
+
+	        renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
+	        componentManager.render('render', boundsAndScale, {
+	            checkedLegends: seriesVisibilityMap
+	        }, container);
 
 	        this.chartContainer = container;
+	        this.paper = raphaelPaper;
 	    },
 
 	    /**
@@ -4456,8 +4510,8 @@
 	     * @param {?object} rawData rawData
 	     */
 	    rerender: function(checkedLegends, rawData) {
-	        var self = this;
 	        var dataProcessor = this.dataProcessor;
+	        var boundsAndScale;
 
 	        if (!rawData) {
 	            rawData = rawDataHandler.filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
@@ -4465,11 +4519,11 @@
 
 	        this.dataProcessor.initData(rawData);
 
-	        this._render(function(boundsAndScale) {
-	            self.componentManager.render('rerender', boundsAndScale, {
-	                checkedLegends: checkedLegends
-	            }, self.chartContainer);
-	        });
+	        boundsAndScale = this.readyForRender();
+
+	        this.componentManager.render('rerender', boundsAndScale, {
+	            checkedLegends: checkedLegends
+	        }, this.chartContainer);
 	    },
 
 	    /**
@@ -4533,8 +4587,7 @@
 	     * @api
 	     */
 	    resize: function(dimension) {
-	        var self = this;
-	        var updated;
+	        var updated, boundsAndScale, chartDimension;
 
 	        if (!dimension) {
 	            return;
@@ -4546,10 +4599,13 @@
 	            return;
 	        }
 
-	        this._render(function(boundsAndScale) {
-	            renderUtil.renderDimension(self.chartContainer, boundsAndScale.dimensionMap.chart);
-	            self.componentManager.render('resize', boundsAndScale);
-	        });
+	        boundsAndScale = this.readyForRender();
+	        chartDimension = boundsAndScale.dimensionMap.chart;
+
+	        renderUtil.renderDimension(this.chartContainer, chartDimension);
+	        this.paper.resizeBackground(chartDimension.width, chartDimension.height);
+
+	        this.componentManager.render('resize', boundsAndScale);
 	    },
 
 	    /**
@@ -4686,7 +4742,7 @@
 	var title = __webpack_require__(25);
 	var RadialPlot = __webpack_require__(26);
 	var ChartExportMenu = __webpack_require__(28);
-	var drawingToolPicker = __webpack_require__(13);
+	var DrawingToolPicker = __webpack_require__(13);
 
 	// legends
 	var Legend = __webpack_require__(35);
@@ -4714,8 +4770,9 @@
 	var PieSeries = __webpack_require__(73);
 	var HeatmapSeries = __webpack_require__(74);
 	var TreemapSeries = __webpack_require__(75);
+	var BoxplotSeries = __webpack_require__(77);
 
-	var Zoom = __webpack_require__(77);
+	var Zoom = __webpack_require__(78);
 
 	var COMPONENT_FACTORY_MAP = {
 	    axis: Axis,
@@ -4740,6 +4797,7 @@
 	    pieSeries: PieSeries,
 	    heatmapSeries: HeatmapSeries,
 	    treemapSeries: TreemapSeries,
+	    boxplotSeries: BoxplotSeries,
 	    zoom: Zoom,
 	    chartExportMenu: ChartExportMenu,
 	    title: title
@@ -4813,7 +4871,7 @@
 	         * Drawing tool picker
 	         * @type {object}
 	         */
-	        this.drawingToolPicker = drawingToolPicker;
+	        this.drawingToolPicker = new DrawingToolPicker();
 
 	        this.drawingToolPicker.initDimension({
 	            width: width,
@@ -5119,6 +5177,12 @@
 	         * @type {boolean}
 	         */
 	        this.isYAxis = params.isYAxis;
+
+	        /**
+	         * Whether data dynamic shifting or not.
+	         * @type {boolean}
+	         */
+	        this.shifting = params.shifting;
 
 	        /**
 	         * cached axis data
@@ -5468,7 +5532,7 @@
 	                positionTopAndLeft.top = horizontalTop;
 	                positionTopAndLeft.left = baseLeft + labelPosition;
 
-	                if (!self.options.divided) {
+	                if (self.isLabelAxis) {
 	                    positionTopAndLeft.left += halfWidth;
 	                }
 	            }
@@ -5601,6 +5665,7 @@
 	    var name = axisParam.name;
 
 	    axisParam.isYAxis = (name === 'yAxis');
+	    axisParam.shifting = axisParam.chartOptions.series.shifting;
 
 	    // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
 	    // 나중에 테마에서 시리즈로 다시 분기되는게 아니라 커포넌트 네임인 rightYAxis로 따로 받도록 테마 구조를 변경하자.
@@ -6695,7 +6760,10 @@
 	     * @param {object} data data for render title
 	     */
 	    resize: function(data) {
-	        this.rerender(data);
+	        var dimensionMap = data.dimensionMap;
+	        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
+	        var width = dimensionMap.series.width + legendWidth;
+	        this.graphRenderer.resize(width, this.titleSet);
 	    },
 
 	    /**
@@ -8438,7 +8506,7 @@
 	        tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
 	            var value = position[key];
 
-	            if (value) {
+	            if (tui.util.isNumber(value)) {
 	                el.style[key] = position[key] + 'px';
 	            }
 	        });
@@ -10204,7 +10272,14 @@
 	            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
 	        var template;
 
-	        if (isPieOrPieDonutComboChart) {
+	        if (predicate.isBoxplotChart(this.chartType)) {
+	            if (tui.util.isNumber(item.outlierIndex)) {
+	                template = tooltipTemplate.tplBoxplotChartOutlier;
+	                item.label = item.outliers[item.outlierIndex].label;
+	            } else {
+	                template = tooltipTemplate.tplBoxplotChartDefault;
+	            }
+	        } else if (isPieOrPieDonutComboChart) {
 	            template = tooltipTemplate.tplPieChart;
 	        } else if (this.dataProcessor.coordinateType) {
 	            template = tooltipTemplate.tplCoordinatetypeChart;
@@ -10239,7 +10314,11 @@
 	     * @private
 	     */
 	    _makeSingleTooltipHtml: function(chartType, indexes) {
-	        var data = tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index);
+	        var data = tui.util.extend({}, tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index));
+
+	        if (predicate.isBoxplotChart(this.chartType) && tui.util.isNumber(indexes.outlierIndex)) {
+	            data.outlierIndex = indexes.outlierIndex;
+	        }
 
 	        data = tui.util.extend({
 	            suffix: this.suffix
@@ -11407,6 +11486,48 @@
 	    GROUP_CSS_TEXT: 'background-color:{{ color }}',
 	    HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
 	        '<div>{{ name }}: {{ value }}{{ suffix }}</div>' +
+	    '</div>',
+	    HTML_BOXPLOT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+	        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
+	            '<div>' +
+	                '<span>{{ legend }}</span>' +
+	            '</div>' +
+	            '<div>' +
+	                '<span>Maximum: </span>' +
+	                '<span>{{ maxLabel }}</span>' +
+	                '<span>{{ suffix }}</span>' +
+	            '</div>' +
+	            '<div>' +
+	                '<span>Upper Quartile: </span>' +
+	                '<span>{{ uqLabel }}</span>' +
+	                '<span>{{ suffix }}</span>' +
+	            '</div>' +
+	            '<div>' +
+	                '<span>Median: </span>' +
+	                '<span>{{ medianLabel }}</span>' +
+	                '<span>{{ suffix }}</span>' +
+	            '</div>' +
+	            '<div>' +
+	                '<span>Lower Quartile: </span>' +
+	                '<span>{{ lqLabel }}</span>' +
+	                '<span>{{ suffix }}</span>' +
+	            '</div>' +
+	            '<div>' +
+	                '<span>Minimum: </span>' +
+	                '<span>{{ minLabel }}</span>' +
+	                '<span>{{ suffix }}</span>' +
+	            '</div>' +
+	    '</div>',
+	    HTML_BOXPLOT_OUTLIER: '<div class="tui-chart-default-tooltip">' +
+	        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
+	            '<div>' +
+	                '<span>{{ legend }}</span>' +
+	            '</div>' +
+	            '<div>' +
+	                '<span>Outlier: </span>' +
+	                '<span>{{ label }}</span>' +
+	                '<span>{{ suffix }}</span>' +
+	            '</div>' +
 	    '</div>'
 	};
 
@@ -11417,7 +11538,9 @@
 	    tplGroup: templateMaker.template(htmls.HTML_GROUP),
 	    tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
 	    tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),
-	    tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE)
+	    tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE),
+	    tplBoxplotChartDefault: templateMaker.template(htmls.HTML_BOXPLOT_TEMPLATE),
+	    tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER)
 	};
 
 
@@ -13450,6 +13573,56 @@
 	    },
 
 	    /**
+	     * Make position data for rect type graph
+	     * @param {groupBound} groupBounds group bounds
+	     * @param {string} chartType chart type
+	     * @param {object} resultData resultData
+	     * @private
+	     */
+	    _makeOutliersPositionDataForBoxplot: function(groupBounds, chartType, resultData) {
+	        var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
+	        var _groupBounds = [].concat(groupBounds);
+
+	        tui.util.forEach(_groupBounds, function(bounds, groupIndex) {
+	            tui.util.forEach(bounds, function(_bound, index) {
+	                var outliers;
+
+	                if (_bound.outliers && _bound.outliers.length) {
+	                    outliers = tui.util.map(_bound.outliers, function(outlier, outlierIndex) {
+	                        var bound = {
+	                            top: outlier.top - 3,
+	                            left: outlier.left - 3,
+	                            width: 6,
+	                            height: 6
+	                        };
+
+	                        return {
+	                            sendData: {
+	                                chartType: chartType,
+	                                indexes: {
+	                                    groupIndex: groupIndex,
+	                                    index: index,
+	                                    outlierIndex: outlierIndex
+	                                },
+	                                allowNegativeTooltip: allowNegativeTooltip,
+	                                bound: bound
+	                            },
+	                            bound: {
+	                                left: bound.left,
+	                                top: bound.top,
+	                                right: bound.left + bound.width,
+	                                bottom: bound.top + bound.height
+	                            }
+	                        };
+	                    });
+
+	                    resultData[groupIndex] = resultData[groupIndex].concat(outliers);
+	                }
+	            });
+	        });
+	    },
+
+	    /**
 	     * Make position data for dot type graph
 	     * @param {groupPositions} groupPositions group positions
 	     * @param {string} chartType chart type
@@ -13526,10 +13699,15 @@
 	        var self = this;
 	        var data = tui.util.map(seriesItemBoundsData, function(info) {
 	            var result;
+
 	            if (predicate.isLineTypeChart(info.chartType)) {
 	                result = self._makeDotTypePositionData(info.data.groupPositions, info.chartType);
 	            } else {
 	                result = self._makeRectTypePositionData(info.data.groupBounds, info.chartType);
+	            }
+
+	            if (predicate.isBoxplotChart(info.chartType)) {
+	                self._makeOutliersPositionDataForBoxplot(info.data.groupBounds, info.chartType, result);
 	            }
 
 	            return result;
@@ -13631,6 +13809,7 @@
 	    } else if (predicate.isMapChart(chartType)) {
 	        factory = mapChartEventDetectorFactory;
 	    } else if (predicate.isBarTypeChart(chartType)
+	               || predicate.isBoxplotChart(chartType)
 	               || predicate.isHeatmapChart(chartType)
 	               || predicate.isTreemapChart(chartType)
 	              ) {
@@ -16318,9 +16497,16 @@
 	        var seriesDataModel = this._getSeriesDataModel();
 	        var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
 	        var columnTopOffset = -this.layout.position.top + chartConst.CHART_PADDING;
-	        var positionValue =
-	            predicate.isColumnChart(this.chartType) ? columnTopOffset : this.layout.position.left;
-	        var itemCount, barSize, optionSize, basePosition, pointInterval, baseBounds;
+	        var positionValue, itemCount, barSize, optionSize, basePosition, pointInterval, baseBounds;
+	        var zeroToMin = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
+
+	        if (predicate.isColumnChart(this.chartType)) {
+	            positionValue = columnTopOffset;
+	        } else if (predicate.isBoxplotChart(this.chartType)) {
+	            positionValue = this.layout.position.top - chartConst.CHART_PADDING;
+	        } else {
+	            positionValue = this.layout.position.left;
+	        }
 
 	        if (seriesDataModel.rawSeriesData.length > 0) {
 	            if (!isStackType) {
@@ -16333,11 +16519,14 @@
 	            barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
 	            optionSize = this.options.barWidth;
 	            barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
-	            basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin
-	                + positionValue;
+	            basePosition = zeroToMin + positionValue;
 
 	            if (predicate.isColumnChart(this.chartType)) {
 	                basePosition = baseBarSize - basePosition;
+	            }
+
+	            if (predicate.isBoxplotChart(this.chartType) && zeroToMin) {
+	                basePosition -= zeroToMin * 2;
 	            }
 
 	            baseBounds = {
@@ -20172,6 +20361,189 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
+	 * @fileoverview Boxplot chart series component.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var Series = __webpack_require__(60);
+	var BarTypeSeriesBase = __webpack_require__(62);
+	var chartConst = __webpack_require__(2);
+	var predicate = __webpack_require__(5);
+	var renderUtil = __webpack_require__(34);
+
+	var BoxplotChartSeries = tui.util.defineClass(Series, /** @lends BoxplotChartSeries.prototype */ {
+	    /**
+	     * Boxplot chart series component.
+	     * @constructs BoxplotChartSeries
+	     * @private
+	     * @extends Series
+	     * @param {object} params parameters
+	     *      @param {object} params.model series model
+	     *      @param {object} params.options series options
+	     *      @param {object} params.theme series theme
+	     */
+	    init: function() {
+	        Series.apply(this, arguments);
+	    },
+
+	    /**
+	     * Make boxplot chart bound.
+	     * @param {{
+	     *      baseBarSize: number,
+	     *      groupSize: number,
+	     *      barSize: number,
+	     *      pointInterval: number,
+	     *      firstAdditionalPosition: number,
+	     *      basePosition: number
+	     * }} baseData base data for making bound
+	     * @param {{
+	     *      baseLeft: number,
+	     *      left: number,
+	     *      plusTop: number,
+	     *      minusTop: number,
+	     *      prevStack: ?string
+	     * }} iterationData iteration data
+	     * @param {?boolean} isStackType whether stackType option or not.
+	     * @param {SeriesItem} seriesItem series item
+	     * @param {number} index index
+	     * @returns {{
+	     *      start: {left: number, top: number, width: number, height: number},
+	     *      end: {left: number, top: number, width: number, height: number}
+	     * }}
+	     * @private
+	     */
+	    _makeBoxplotChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
+	        var boxHeight = Math.abs(baseData.baseBarSize * seriesItem.ratioDistance);
+	        var boxStartTop = baseData.baseBarSize * (1 - seriesItem.lqRatio);
+	        var startTop = baseData.basePosition + boxStartTop + chartConst.SERIES_EXPAND_SIZE;
+	        var baseTopPosition = baseData.basePosition + chartConst.SERIES_EXPAND_SIZE;
+	        var pointCount, endTop, boundLeft, outliers;
+
+	        pointCount = index;
+	        iterationData.left = iterationData.baseLeft + (baseData.pointInterval * pointCount);
+	        iterationData.plusTop = 0;
+	        iterationData.minusTop = 0;
+
+	        if (seriesItem.value >= 0) {
+	            iterationData.plusTop -= boxHeight;
+	            endTop = startTop + iterationData.plusTop;
+	        } else {
+	            endTop = startTop + iterationData.minusTop;
+	            iterationData.minusTop += boxHeight;
+	        }
+
+	        boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
+
+	        outliers = tui.util.map(seriesItem.outliers, function(outlier) {
+	            return {
+	                top: (baseData.baseBarSize * (1 - outlier.ratio)) + baseTopPosition,
+	                left: boundLeft + (baseData.barSize / 2)
+	            };
+	        });
+
+	        return {
+	            start: {
+	                top: startTop,
+	                left: boundLeft,
+	                width: baseData.barSize,
+	                height: 0
+	            },
+	            end: {
+	                top: endTop,
+	                left: boundLeft,
+	                width: baseData.barSize,
+	                height: boxHeight
+	            },
+	            min: {
+	                top: (baseData.baseBarSize * (1 - seriesItem.minRatio)) + baseTopPosition,
+	                left: boundLeft,
+	                width: baseData.barSize,
+	                height: 0
+	            },
+	            max: {
+	                top: (baseData.baseBarSize * (1 - seriesItem.maxRatio)) + baseTopPosition,
+	                left: boundLeft,
+	                width: baseData.barSize,
+	                height: 0
+	            },
+	            median: {
+	                top: (baseData.baseBarSize * (1 - seriesItem.medianRatio)) + baseTopPosition,
+	                left: boundLeft,
+	                width: baseData.barSize,
+	                height: 0
+	            },
+	            outliers: outliers
+	        };
+	    },
+
+	    /**
+	     * Make bounds of boxplot chart.
+	     * @returns {Array.<Array.<object>>} bounds
+	     * @private
+	     */
+	    _makeBounds: function() {
+	        var self = this;
+	        var seriesDataModel = this._getSeriesDataModel();
+	        var isStackType = predicate.isValidStackOption(this.options.stackType);
+	        var dimension = this.layout.dimension;
+	        var baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
+
+	        return seriesDataModel.map(function(seriesGroup, groupIndex) {
+	            var baseLeft = (groupIndex * baseData.groupSize) + self.layout.position.left;
+	            var iterationData = {
+	                baseLeft: baseLeft,
+	                left: baseLeft,
+	                plusTop: 0,
+	                minusTop: 0,
+	                prevStack: null
+	            };
+	            var iteratee = tui.util.bind(self._makeBoxplotChartBound, self, baseData, iterationData, isStackType);
+
+	            return seriesGroup.map(iteratee);
+	        });
+	    },
+
+	    /**
+	     * Calculate left position of sum label.
+	     * @param {{left: number, top: number}} bound bound
+	     * @param {string} formattedSum formatted sum.
+	     * @returns {number} left position value
+	     * @private
+	     */
+	    _calculateLeftPositionOfSumLabel: function(bound, formattedSum) {
+	        var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
+
+	        return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
+	    }
+	});
+
+	BarTypeSeriesBase.mixin(BoxplotChartSeries);
+
+	function boxplotSeriesFactory(params) {
+	    var libType = params.chartOptions.libType;
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = libType;
+	    params.chartType = 'boxplot';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new BoxplotChartSeries(params);
+	}
+
+	boxplotSeriesFactory.componentType = 'series';
+	boxplotSeriesFactory.BoxplotChartSeries = BoxplotChartSeries;
+
+	module.exports = boxplotSeriesFactory;
+
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
 	 * @fileoverview Zoom component.
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
@@ -20181,7 +20553,7 @@
 
 	var IS_MSIE_VERSION_LTE_THAN_8 = tui.util.browser.msie && tui.util.browser.version <= 8;
 
-	var seriesTemplate = __webpack_require__(78);
+	var seriesTemplate = __webpack_require__(79);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var renderUtil = __webpack_require__(34);
@@ -20357,7 +20729,7 @@
 
 
 /***/ },
-/* 78 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20393,7 +20765,7 @@
 
 
 /***/ },
-/* 79 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20407,10 +20779,11 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var DataProcessorBase = __webpack_require__(80);
-	var SeriesDataModel = __webpack_require__(81);
-	var SeriesDataModelForTreemap = __webpack_require__(85);
-	var SeriesGroup = __webpack_require__(82);
+	var DataProcessorBase = __webpack_require__(81);
+	var SeriesDataModel = __webpack_require__(82);
+	var SeriesDataModelForBoxplot = __webpack_require__(86);
+	var SeriesDataModelForTreemap = __webpack_require__(88);
+	var SeriesGroup = __webpack_require__(83);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
 	var renderUtil = __webpack_require__(34);
@@ -20929,7 +21302,9 @@
 	            chartType = this.findChartType(seriesType);
 	            rawSeriesData = this.rawData.series[seriesType];
 
-	            if (predicate.isTreemapChart(this.chartType)) {
+	            if (predicate.isBoxplotChart(this.chartType)) {
+	                SeriesDataModelClass = SeriesDataModelForBoxplot;
+	            } else if (predicate.isTreemapChart(this.chartType)) {
 	                SeriesDataModelClass = SeriesDataModelForTreemap;
 	            } else {
 	                SeriesDataModelClass = SeriesDataModel;
@@ -21589,7 +21964,7 @@
 
 
 /***/ },
-/* 80 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21789,7 +22164,7 @@
 
 
 /***/ },
-/* 81 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21827,9 +22202,9 @@
 	 * SeriesItem has processed terminal data like value, ratio, etc.
 	 */
 
-	var SeriesGroup = __webpack_require__(82);
-	var SeriesItem = __webpack_require__(83);
-	var SeriesItemForCoordinateType = __webpack_require__(84);
+	var SeriesGroup = __webpack_require__(83);
+	var SeriesItem = __webpack_require__(84);
+	var SeriesItemForCoordinateType = __webpack_require__(85);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var arrayUtil = __webpack_require__(6);
@@ -22451,7 +22826,7 @@
 
 
 /***/ },
-/* 82 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22733,7 +23108,7 @@
 
 
 /***/ },
-/* 83 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22989,7 +23364,7 @@
 
 
 /***/ },
-/* 84 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23123,8 +23498,9 @@
 	    _getFormattedValueForTooltip: function(valueType) {
 	        var ratio = this.ratioMap[valueType];
 	        var value = this[valueType];
+	        var formattedValue = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType);
 
-	        return ratio ? renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType) : null;
+	        return tui.util.isNumber(ratio) ? formattedValue : value;
 	    },
 
 	    /**
@@ -23152,7 +23528,472 @@
 
 
 /***/ },
-/* 85 */
+/* 86 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview SeriesDataModelForBoxplot is boxplot series model for drawing graph of chart series area,
+	 *                  and create from rawSeriesData by user,
+	 * SeriesDataModel.groups has SeriesGroups.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	/*
+	 * Raw series datum.
+	 * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
+	 */
+
+	/*
+	 * Raw series data.
+	 * @typedef {Array.<rawSeriesDatum>} rawSeriesData
+	 */
+
+	/*
+	 * Groups.
+	 * @typedef {Array.<SeriesGroup>} groups
+	 */
+
+	/*
+	 * SeriesGroup is a element of SeriesDataModel.groups.
+	 * SeriesGroup.items has SeriesItem.
+	 */
+
+	/*
+	 * SeriesItem is a element of SeriesGroup.items.
+	 * SeriesItem has processed terminal data like value, ratio, etc.
+	 */
+
+	var SeriesItemForBoxplot = __webpack_require__(87);
+	var SeriesDataModel = __webpack_require__(82);
+
+	var concat = Array.prototype.concat;
+
+	var SeriesDataModelForBoxplot = tui.util.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBoxplot.prototype */{
+	    /**
+	     * SeriesDataModelForBoxplot is series model for boxplot chart
+	     * SeriesDataModel.groups has SeriesGroups.
+	     * @constructs SeriesDataModel
+	     * @param {rawSeriesData} rawSeriesData - raw series data
+	     * @param {string} chartType - chart type
+	     * @param {object} options - options
+	     * @param {Array.<function>} formatFunctions - format functions
+	     */
+	    init: function(rawSeriesData, chartType, options, formatFunctions) {
+	        /**
+	         * chart type
+	         * @type {string}
+	         */
+	        this.chartType = chartType;
+
+	        /**
+	         * chart options
+	         * @type {Object}
+	         */
+	        this.options = options || {};
+
+	        /**
+	         * functions for formatting
+	         * @type {Array.<function>}
+	         */
+	        this.formatFunctions = formatFunctions;
+
+	        /**
+	         * rawData.series
+	         * @type {rawSeriesData}
+	         */
+	        this.rawSeriesData = rawSeriesData || [];
+
+	        /**
+	         * baseGroups is base data for making SeriesGroups.
+	         * SeriesGroups is made by pivoted baseGroups, lf line type chart.
+	         * @type {Array.Array<SeriesItem>}
+	         */
+	        this.baseGroups = null;
+
+	        /**
+	         * groups has SeriesGroups.
+	         * @type {Array.<SeriesGroup>}
+	         */
+	        this.groups = null;
+
+	        this.options.series = this.options.series || {};
+
+	        /**
+	         * map of values by value type like value, x, y, r.
+	         * @type {object.<string, Array.<number>>}
+	         */
+	        this.valuesMap = {};
+	    },
+
+	    /**
+	     * Create base groups.
+	     * Base groups is two-dimensional array by seriesItems.
+	     * @returns {Array.<Array.<(SeriesItem | SeriesItemForCoordinateType)>>}
+	     * @private
+	     * @override
+	     */
+	    _createBaseGroups: function() {
+	        var chartType = this.chartType;
+	        var formatFunctions = this.formatFunctions;
+	        var sortValues = function() {
+	        };
+
+	        return tui.util.map(this.rawSeriesData, function(rawDatum) {
+	            var data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+	            var items = tui.util.map(data, function(datum, index) {
+	                return new SeriesItemForBoxplot({
+	                    datum: datum,
+	                    chartType: chartType,
+	                    formatFunctions: formatFunctions,
+	                    index: index
+	                });
+	            });
+	            sortValues(items);
+
+	            return items;
+	        });
+	    },
+
+	    /**
+	     * Create values that picked value from SeriesItems of SeriesGroups.
+	     * @returns {Array.<number>}
+	     * @private
+	     * * @override
+	     */
+	    _createValues: function() {
+	        var values = [];
+	        this.map(function(seriesGroup) {
+	            tui.util.forEach(seriesGroup.items, function(group) {
+	                values.push(group.min);
+	                values.push(group.max);
+	                values.push(group.uq);
+	                values.push(group.lq);
+	                values.push(group.median);
+	            });
+	        });
+
+	        values = concat.apply([], values);
+
+	        return tui.util.filter(values, function(value) {
+	            return !isNaN(value);
+	        });
+	    }
+	});
+
+	module.exports = SeriesDataModelForBoxplot;
+
+
+/***/ },
+/* 87 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview SeriesItem is a element of SeriesGroup.items.
+	 * SeriesItem has processed terminal data like value, ratio, etc.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var renderUtil = __webpack_require__(34);
+	var calculator = __webpack_require__(23);
+
+	var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
+	    /**
+	     * SeriesItem is a element of SeriesGroup.items.
+	     * SeriesItem has processed terminal data like value, ratio, etc.
+	     * @constructs SeriesItem
+	     * @private
+	     * @param {object} params - parameters
+	     *      @param {number} params.datum - value
+	     *      @param {string} params.chartType - type of chart
+	     *      @param {?Array.<function>} params.formatFunctions - format functions
+	     *      @param {number} params.index - raw data index
+	     *      @param {?string} params.stack - stack
+	     */
+	    init: function(params) {
+	        /**
+	         * type of chart
+	         * @type {string}
+	         */
+	        this.chartType = params.chartType;
+
+	        /**
+	         * format functions
+	         * @type {Array.<function>}
+	         */
+	        this.formatFunctions = params.formatFunctions;
+
+	        /**
+	         * value of item
+	         * @type {number}
+	         */
+	        this.value = null;
+
+	        /**
+	         * label
+	         * @type {string}
+	         */
+	        this.label = null;
+
+	        /**
+	         * ratio of value about distance of limit
+	         * @type {number}
+	         */
+	        this.ratio = null;
+
+	        /**
+	         * min value of item.
+	         * @type {number}
+	         */
+	        this.min = null;
+
+	        /**
+	         * min label
+	         * @type {number}
+	         */
+	        this.minLabel = null;
+
+	        /**
+	         * ratio of end value
+	         * @type {number}
+	         */
+	        this.minRatio = null;
+
+	        /**
+	         * max value of item.
+	         * @type {number}
+	         */
+	        this.max = null;
+
+	        /**
+	         * max label
+	         * @type {number}
+	         */
+	        this.maxLabel = null;
+
+	        /**
+	         * ratio of max value
+	         * @type {number}
+	         */
+	        this.maxRatio = null;
+
+	        /**
+	         * median value of item.
+	         * @type {number}
+	         */
+	        this.median = null;
+
+	        /**
+	         * median label
+	         * @type {number}
+	         */
+	        this.medianLabel = null;
+
+	        /**
+	         * ratio of median value
+	         * @type {number}
+	         */
+	        this.medianRatio = null;
+
+	        /**
+	         * lq value of item.
+	         * @type {number}
+	         */
+	        this.lq = null;
+
+	        /**
+	         * lq label
+	         * @type {number}
+	         */
+	        this.lqLabel = null;
+
+	        /**
+	         * ratio of lq value
+	         * @type {number}
+	         */
+	        this.lqRatio = null;
+
+	        /**
+	         * uq value of item.
+	         * @type {number}
+	         */
+	        this.uq = null;
+
+	        /**
+	         * uq label
+	         * @type {number}
+	         */
+	        this.uqLabel = null;
+
+	        /**
+	         * ratio of uq value
+	         * @type {number}
+	         */
+	        this.uqRatio = null;
+
+	        /**
+	         * distance of start ratio and end ratio
+	         * @type {null}
+	         */
+	        this.ratioDistance = null;
+
+	        this._initValues(params.datum, params.index);
+	    },
+
+	    /**
+	     * Initialize values of item.
+	     * @param {number|Array.<number>} rawValue - raw value
+	     * @param {number} index - raw data index
+	     * @private
+	     */
+	    _initValues: function(rawValue, index) {
+	        var self = this;
+	        var values = this._createValues(rawValue);
+	        var areaType = 'makingSeriesLabel';
+	        var max = values[4];
+	        var uq = values[3];
+	        var median = values[2];
+	        var lq = values[1];
+	        var min = values[0];
+	        var outliers;
+
+	        this.value = this.max = max;
+	        this.uq = uq;
+	        this.median = median;
+	        this.lq = lq;
+	        this.min = min;
+	        this.index = index;
+
+	        if (values.length > 5) {
+	            this.outliers = [];
+
+	            outliers = this.outliers;
+
+	            tui.util.forEach(values.slice(5), function(outlier) {
+	                outliers.push({
+	                    value: outlier,
+	                    label: renderUtil.formatValue(outlier, self.formatFunctions, self.chartType, areaType)
+	                });
+	            });
+	        }
+
+	        this.label = renderUtil.formatValue(max, this.formatFunctions, this.chartType, areaType);
+	        this.maxLabel = this.label;
+	        this.uqLabel = renderUtil.formatValue(uq, this.formatFunctions, this.chartType, areaType);
+	        this.medianLabel = renderUtil.formatValue(median, this.formatFunctions, this.chartType, areaType);
+	        this.lqLabel = renderUtil.formatValue(lq, this.formatFunctions, this.chartType, areaType);
+	        this.minLabel = renderUtil.formatValue(min, this.formatFunctions, this.chartType, areaType);
+	    },
+
+	    /**
+	     * Crete sorted values.
+	     * @param {Array.<number>|number} value value
+	     * @returns {Array.<number>}
+	     * @private
+	     */
+	    _createValues: function(value) {
+	        var values = tui.util.map([].concat(value), function(newValue) {
+	            return tui.util.isNull(newValue) ? null : parseFloat(newValue);
+	        });
+
+	        return values;
+	    },
+
+	    /**
+	     * Add min.
+	     * @param {number} value - value
+	     * @private
+	     */
+	    addStart: function(value) {
+	        if (!tui.util.isNull(this.min)) {
+	            return;
+	        }
+
+	        this.min = value;
+	        this.minLabel = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'series');
+	    },
+
+	    /**
+	     * Update formatted value for range.
+	     * @private
+	     */
+	    _updateFormattedValueforRange: function() {
+	        this.label = this.minLabel + ' ~ ' + this.maxLabel;
+	    },
+
+	    /**
+	     * Add ratio.
+	     * @param {number} divNumber - number for division
+	     * @param {?number} subNumber - number for subtraction
+	     * @param {?number} baseRatio - base ratio
+	     */
+	    addRatio: function(divNumber, subNumber, baseRatio) {
+	        var calculateRatio = calculator.calculateRatio;
+
+	        divNumber = divNumber || 1;
+	        baseRatio = baseRatio || 1;
+	        subNumber = subNumber || 0;
+
+	        this.ratio = this.maxRatio = calculateRatio(this.max, divNumber, subNumber, baseRatio);
+	        this.uqRatio = calculateRatio(this.uq, divNumber, subNumber, baseRatio);
+	        this.medianRatio = calculateRatio(this.median, divNumber, subNumber, baseRatio);
+	        this.lqRatio = calculateRatio(this.lq, divNumber, subNumber, baseRatio);
+	        this.minRatio = calculateRatio(this.min, divNumber, subNumber, baseRatio);
+
+	        tui.util.forEach(this.outliers, function(outlier) {
+	            outlier.ratio = calculateRatio(outlier.value, divNumber, subNumber, baseRatio);
+	        });
+
+	        this.ratioDistance = Math.abs(this.uqRatio - this.lqRatio);
+	    },
+
+	    /**
+	     * Get formatted value for tooltip.
+	     * @param {string} valueType - value type
+	     * @returns {string}
+	     * @private
+	     */
+	    _getFormattedValueForTooltip: function(valueType) {
+	        return renderUtil.formatValue(this[valueType], this.formatFunctions, this.chartType, 'tooltip', valueType);
+	    },
+
+	    /**
+	     * Pick value map for tooltip.
+	     * @returns {{value: number, min: ?number, max: ?number}}
+	     */
+	    pickValueMapForTooltip: function() {
+	        var valueMap = {
+	            value: this._getFormattedValueForTooltip('value'),
+	            ratio: this.ratio
+	        };
+
+	        if (tui.util.isExisty(this.min)) {
+	            valueMap.min = this._getFormattedValueForTooltip('min');
+	            valueMap.max = this._getFormattedValueForTooltip('max');
+	            valueMap.minRatio = this.minRatio;
+	            valueMap.maxRatio = this.maxRatio;
+	            valueMap.maxLabel = this.maxLabel;
+	            valueMap.minLabel = this.minLabel;
+	            valueMap.uqLabel = this.uqLabel;
+	            valueMap.lqLabel = this.lqLabel;
+	            valueMap.medianLabel = this.medianLabel;
+	            valueMap.outliers = this.outliers;
+	        }
+
+	        return valueMap;
+	    }
+	});
+
+	module.exports = SeriesItem;
+
+
+/***/ },
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23164,8 +24005,8 @@
 
 	'use strict';
 
-	var SeriesDataModel = __webpack_require__(81);
-	var SeriesItem = __webpack_require__(86);
+	var SeriesDataModel = __webpack_require__(82);
+	var SeriesItem = __webpack_require__(89);
 	var chartConst = __webpack_require__(2);
 	var calculator = __webpack_require__(23);
 
@@ -23465,7 +24306,7 @@
 
 
 /***/ },
-/* 86 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23573,7 +24414,7 @@
 
 
 /***/ },
-/* 87 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23584,8 +24425,8 @@
 
 	'use strict';
 
-	var BoundsModel = __webpack_require__(88);
-	var ScaleDataModel = __webpack_require__(94);
+	var BoundsModel = __webpack_require__(91);
+	var ScaleDataModel = __webpack_require__(97);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 
@@ -23813,7 +24654,7 @@
 
 
 /***/ },
-/* 88 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23828,11 +24669,11 @@
 	var predicate = __webpack_require__(5);
 	var renderUtil = __webpack_require__(34);
 	var raphaelRenderUtil = __webpack_require__(61);
-	var circleLegendCalculator = __webpack_require__(89);
-	var axisCalculator = __webpack_require__(90);
-	var legendCalculator = __webpack_require__(91);
-	var seriesCalculator = __webpack_require__(92);
-	var spectrumLegendCalculator = __webpack_require__(93);
+	var circleLegendCalculator = __webpack_require__(92);
+	var axisCalculator = __webpack_require__(93);
+	var legendCalculator = __webpack_require__(94);
+	var seriesCalculator = __webpack_require__(95);
+	var spectrumLegendCalculator = __webpack_require__(96);
 
 	/**
 	 * Dimension.
@@ -24565,7 +25406,7 @@
 
 
 /***/ },
-/* 89 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24667,7 +25508,7 @@
 
 
 /***/ },
-/* 90 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24737,7 +25578,7 @@
 
 
 /***/ },
-/* 91 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24941,7 +25782,7 @@
 
 
 /***/ },
-/* 92 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25020,7 +25861,7 @@
 
 
 /***/ },
-/* 93 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25078,14 +25919,14 @@
 
 
 /***/ },
-/* 94 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var scaleDataMaker = __webpack_require__(95);
-	var scaleLabelFormatter = __webpack_require__(97);
-	var axisDataMaker = __webpack_require__(98);
+	var scaleDataMaker = __webpack_require__(98);
+	var scaleLabelFormatter = __webpack_require__(100);
+	var axisDataMaker = __webpack_require__(101);
 	var predicate = __webpack_require__(5);
 
 	var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */{
@@ -25516,7 +26357,7 @@
 
 
 /***/ },
-/* 95 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25531,7 +26372,7 @@
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var arrayUtil = __webpack_require__(6);
-	var coordinateScaleCalculator = __webpack_require__(96);
+	var coordinateScaleCalculator = __webpack_require__(99);
 
 	var abs = Math.abs;
 
@@ -25839,7 +26680,7 @@
 
 
 /***/ },
-/* 96 */
+/* 99 */
 /***/ function(module, exports) {
 
 	/**
@@ -26019,7 +26860,7 @@
 
 
 /***/ },
-/* 97 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26113,7 +26954,7 @@
 
 
 /***/ },
-/* 98 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26672,7 +27513,7 @@
 
 
 /***/ },
-/* 99 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26776,7 +27617,7 @@
 
 
 /***/ },
-/* 100 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26789,7 +27630,7 @@
 
 	var ChartBase = __webpack_require__(20);
 	var predicate = __webpack_require__(5);
-	var DynamicDataHelper = __webpack_require__(101);
+	var DynamicDataHelper = __webpack_require__(104);
 	var Series = __webpack_require__(65);
 	var rawDataHandler = __webpack_require__(4);
 
@@ -26886,12 +27727,14 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
+
+	        this.componentManager.register('lineSeries', 'lineSeries');
+
 	        this.componentManager.register('yAxis', 'axis');
 	        this.componentManager.register('xAxis', 'axis');
 
 	        this.componentManager.register('legend', 'legend');
 
-	        this.componentManager.register('lineSeries', 'lineSeries');
 	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
 	        this.componentManager.register('tooltip', 'tooltip');
@@ -26966,12 +27809,10 @@
 	     * @private
 	     */
 	    _renderForZoom: function(isResetZoom) {
-	        var self = this;
+	        var boundsAndScale = this.readyForRender();
 
-	        this._render(function(boundsAndScale) {
-	            self.componentManager.render('zoom', boundsAndScale, {
-	                isResetZoom: isResetZoom
-	            });
+	        this.componentManager.render('zoom', boundsAndScale, {
+	            isResetZoom: isResetZoom
 	        });
 	    },
 
@@ -27011,7 +27852,7 @@
 
 
 /***/ },
-/* 101 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27096,19 +27937,18 @@
 	     */
 	    _animateForAddingData: function() {
 	        var chart = this.chart;
-	        var self = this;
+	        var boundsAndScale = chart.readyForRender(true);
 	        var shiftingOption = !!this.chart.options.series.shifting;
+	        var tickSize;
 
 	        this.addedDataCount += 1;
 
-	        chart._render(function(boundsAndScale) {
-	            var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
+	        tickSize = this._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
 
-	            chart.componentManager.render('animateForAddingData', boundsAndScale, {
-	                tickSize: tickSize,
-	                shifting: shiftingOption
-	            });
-	        }, true);
+	        chart.componentManager.render('animateForAddingData', boundsAndScale, {
+	            tickSize: tickSize,
+	            shifting: shiftingOption
+	        });
 
 	        if (shiftingOption) {
 	            chart.dataProcessor.shiftData();
@@ -27121,10 +27961,8 @@
 	     */
 	    _rerenderForAddingData: function() {
 	        var chart = this.chart;
-
-	        chart._render(function(boundsAndScale) {
-	            chart.componentManager.render('rerender', boundsAndScale);
-	        });
+	        var boundsAndScale = chart.readyForRender();
+	        chart.componentManager.render('rerender', boundsAndScale);
 	    },
 
 	    /**
@@ -27244,7 +28082,7 @@
 
 
 /***/ },
-/* 102 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27256,7 +28094,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var DynamicDataHelper = __webpack_require__(101);
+	var DynamicDataHelper = __webpack_require__(104);
 	var rawDataHandler = __webpack_require__(4);
 	var Series = __webpack_require__(68);
 
@@ -27427,12 +28265,10 @@
 	     * @private
 	     */
 	    _renderForZoom: function(isResetZoom) {
-	        var self = this;
+	        var boundsAndScale = this.readyForRender();
 
-	        this._render(function(boundsAndScale) {
-	            self.componentManager.render('zoom', boundsAndScale, {
-	                isResetZoom: isResetZoom
-	            });
+	        this.componentManager.render('zoom', boundsAndScale, {
+	            isResetZoom: isResetZoom
 	        });
 	    },
 
@@ -27472,7 +28308,7 @@
 
 
 /***/ },
-/* 103 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27486,7 +28322,7 @@
 	var ChartBase = __webpack_require__(20);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
-	var validTypeMakerForYAxisOptions = __webpack_require__(104);
+	var validTypeMakerForYAxisOptions = __webpack_require__(107);
 
 	var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
 	    /**
@@ -27691,7 +28527,7 @@
 
 
 /***/ },
-/* 104 */
+/* 107 */
 /***/ function(module, exports) {
 
 	/**
@@ -27793,7 +28629,7 @@
 
 
 /***/ },
-/* 105 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27897,7 +28733,7 @@
 
 
 /***/ },
-/* 106 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27911,8 +28747,8 @@
 	var ChartBase = __webpack_require__(20);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
-	var validTypeMakerForYAxisOptions = __webpack_require__(104);
-	var DynamicDataHelper = __webpack_require__(101);
+	var validTypeMakerForYAxisOptions = __webpack_require__(107);
+	var DynamicDataHelper = __webpack_require__(104);
 
 	var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComboChart.prototype */ {
 	    /**
@@ -28133,12 +28969,10 @@
 	     * @private
 	     */
 	    _renderForZoom: function(isResetZoom) {
-	        var self = this;
+	        var boundsAndScale = this.readyForRender();
 
-	        this._render(function(boundsAndScale) {
-	            self.componentManager.render('zoom', boundsAndScale, {
-	                isResetZoom: isResetZoom
-	            });
+	        this.componentManager.render('zoom', boundsAndScale, {
+	            isResetZoom: isResetZoom
 	        });
 	    },
 
@@ -28178,7 +29012,7 @@
 
 
 /***/ },
-/* 107 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28273,7 +29107,7 @@
 
 
 /***/ },
-/* 108 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28342,7 +29176,7 @@
 
 
 /***/ },
-/* 109 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28460,7 +29294,7 @@
 
 
 /***/ },
-/* 110 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28552,7 +29386,7 @@
 
 
 /***/ },
-/* 111 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28565,7 +29399,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var ColorSpectrum = __webpack_require__(112);
+	var ColorSpectrum = __webpack_require__(115);
 	var chartConst = __webpack_require__(2);
 
 	var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
@@ -28687,7 +29521,7 @@
 
 
 /***/ },
-/* 112 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28698,7 +29532,7 @@
 
 	'use strict';
 
-	var colorutil = __webpack_require__(113);
+	var colorutil = __webpack_require__(116);
 
 	var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
 	    /**
@@ -28758,7 +29592,7 @@
 
 
 /***/ },
-/* 113 */
+/* 116 */
 /***/ function(module, exports) {
 
 	/**
@@ -29011,7 +29845,7 @@
 
 
 /***/ },
-/* 114 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29023,7 +29857,7 @@
 	'use strict';
 
 	var ChartBase = __webpack_require__(20);
-	var ColorSpectrum = __webpack_require__(112);
+	var ColorSpectrum = __webpack_require__(115);
 
 	var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
 	    /**
@@ -29114,7 +29948,7 @@
 
 
 /***/ },
-/* 115 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29127,9 +29961,9 @@
 
 	var ChartBase = __webpack_require__(20);
 	var mapManager = __webpack_require__(10);
-	var MapChartMapModel = __webpack_require__(116);
-	var MapChartDataProcessor = __webpack_require__(117);
-	var ColorSpectrum = __webpack_require__(112);
+	var MapChartMapModel = __webpack_require__(119);
+	var MapChartDataProcessor = __webpack_require__(120);
+	var ColorSpectrum = __webpack_require__(115);
 
 	var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
 	    /**
@@ -29212,7 +30046,7 @@
 
 
 /***/ },
-/* 116 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29630,7 +30464,7 @@
 
 
 /***/ },
-/* 117 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29641,7 +30475,7 @@
 
 	'use strict';
 
-	var DataProcessorBase = __webpack_require__(80);
+	var DataProcessorBase = __webpack_require__(81);
 	var renderUtil = __webpack_require__(34);
 
 	/**
@@ -29776,7 +30610,7 @@
 
 
 /***/ },
-/* 118 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29865,7 +30699,112 @@
 
 
 /***/ },
-/* 119 */
+/* 122 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Boxplot chart.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var ChartBase = __webpack_require__(20);
+	var rawDataHandler = __webpack_require__(4);
+
+	var BoxplotChart = tui.util.defineClass(ChartBase, /** @lends BoxplotChart.prototype */ {
+	    /**
+	     * className
+	     * @type {string}
+	     */
+	    className: 'tui-boxplot-chart',
+
+	    /**
+	     * Boxplot chart.
+	     * @constructs BoxplotChart
+	     * @extends ChartBase
+	     * @mixes axisTypeMixer
+	     * @param {Array.<Array>} rawData raw data
+	     * @param {object} theme chart theme
+	     * @param {object} options chart options
+	     */
+	    init: function(rawData, theme, options) {
+	        rawDataHandler.appendOutliersToSeriesData(rawData);
+
+	        ChartBase.call(this, {
+	            rawData: rawData,
+	            theme: theme,
+	            options: options,
+	            hasAxes: true,
+	            isVertical: true
+	        });
+	    },
+
+	    /**
+	     * Add components
+	     * @override
+	     */
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('boxplotSeries', 'boxplotSeries');
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+
+	    /**
+	     * Get scale option.
+	     * @returns {{xAxis: boolean}}
+	     * @override
+	     */
+	    getScaleOption: function() {
+	        return {
+	            yAxis: true
+	        };
+	    },
+
+	    /**
+	     * On change selected legend.
+	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+	     */
+	    onChangeCheckedLegends: function(checkedLegends) {
+	        var boundParams;
+
+	        if (this.hasRightYAxis) {
+	            boundParams = {
+	                optionChartTypes: ['boxplot', 'boxplot']
+	            };
+	        }
+	        ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, null, boundParams);
+	    },
+
+	    /**
+	     * Add data ratios.
+	     * @override
+	     * modified from axisTypeMixer
+	     */
+	    addDataRatios: function(limitMap) {
+	        var seriesOption = this.options.series || {};
+	        var chartType = this.chartType;
+	        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+
+	        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+	    }
+	});
+
+	module.exports = BoxplotChart;
+
+
+/***/ },
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29878,7 +30817,7 @@
 
 
 /***/ },
-/* 120 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -29891,26 +30830,28 @@
 
 	var raphael = window.Raphael;
 
-	var BarChart = __webpack_require__(121);
-	var LineChart = __webpack_require__(122);
-	var AreaChart = __webpack_require__(124);
-	var PieChart = __webpack_require__(125);
-	var RadialLineSeries = __webpack_require__(126);
-	var CoordinateTypeChart = __webpack_require__(127);
-	var BoxTypeChart = __webpack_require__(128);
-	var MapChart = __webpack_require__(129);
+	var BarChart = __webpack_require__(125);
+	var Boxplot = __webpack_require__(126);
+	var LineChart = __webpack_require__(127);
+	var AreaChart = __webpack_require__(129);
+	var PieChart = __webpack_require__(130);
+	var RadialLineSeries = __webpack_require__(131);
+	var CoordinateTypeChart = __webpack_require__(132);
+	var BoxTypeChart = __webpack_require__(133);
+	var MapChart = __webpack_require__(134);
 
-	var legend = __webpack_require__(130);
-	var MapLegend = __webpack_require__(131);
-	var CircleLegend = __webpack_require__(132);
-	var title = __webpack_require__(133);
-	var axis = __webpack_require__(134);
+	var legend = __webpack_require__(135);
+	var MapLegend = __webpack_require__(136);
+	var CircleLegend = __webpack_require__(137);
+	var title = __webpack_require__(138);
+	var axis = __webpack_require__(139);
 
-	var RadialPlot = __webpack_require__(135);
+	var RadialPlot = __webpack_require__(140);
 
 	var pluginName = 'Raphael';
 	var pluginRaphael = {
 	    bar: BarChart,
+	    boxplot: Boxplot,
 	    column: BarChart,
 	    line: LineChart,
 	    area: AreaChart,
@@ -29948,7 +30889,14 @@
 
 	    paper.changeChartBackgroundOpacity = function(opacity) {
 	        rect.attr({
-	            opacity: opacity
+	            'fill-opacity': opacity
+	        });
+	    };
+
+	    paper.resizeBackground = function(width, height) {
+	        rect.attr({
+	            width: width,
+	            height: height
 	        });
 	    };
 
@@ -30014,7 +30962,7 @@
 
 
 /***/ },
-/* 121 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30621,7 +31569,728 @@
 
 
 /***/ },
-/* 122 */
+/* 126 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Raphael boxplot chart renderer.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var raphaelRenderUtil = __webpack_require__(61);
+
+	var raphael = window.Raphael;
+
+	var ANIMATION_DURATION = 700;
+	var EMPHASIS_OPACITY = 1;
+	var DE_EMPHASIS_OPACITY = 0.3;
+	var DEFAULT_LUMINANC = 0.2;
+	var BOX_STROKE_WIDTH = 1;
+	var EDGE_LINE_WIDTH = 2;
+	var MEDIAN_LINE_WIDTH = 2;
+	var WHISKER_LINE_WIDTH = 1;
+
+	/**
+	 * @classdesc RaphaelBoxplotChart is graph renderer for bar, column chart.
+	 * @class RaphaelBoxplotChart
+	 * @private
+	 */
+	var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.prototype */ {
+	    /**
+	     * Render function of bar chart
+	     * @param {object} paper paper object
+	     * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
+	     * @returns {Array.<object>} seriesSet
+	     */
+	    render: function(paper, data) {
+	        var groupBounds = data.groupBounds;
+
+	        if (!groupBounds) {
+	            return null;
+	        }
+
+	        this.paper = paper;
+
+	        this.theme = data.theme;
+	        this.seriesDataModel = data.seriesDataModel;
+	        this.chartType = data.chartType;
+
+	        this.paper.setStart();
+	        this.groupWhiskers = [];
+	        this.groupMedians = [];
+	        this.groupBoxes = this._renderBoxplots(groupBounds);
+	        this.groupBorders = this._renderBoxBorders(groupBounds);
+
+	        this.rectOverlay = this._renderRectOverlay();
+	        this.circleOverlay = this._renderCircleOverlay();
+	        this.theme = data.theme;
+	        this.groupBounds = groupBounds;
+
+	        return this.paper.setFinish();
+	    },
+
+	    /**
+	     * Render overlay.
+	     * @returns {object} raphael object
+	     * @private
+	     */
+	    _renderRectOverlay: function() {
+	        var bound = {
+	            width: 1,
+	            height: 1,
+	            left: 0,
+	            top: 0
+	        };
+	        var attributes = {
+	            'fill-opacity': 0
+	        };
+
+	        return raphaelRenderUtil.renderRect(this.paper, bound, tui.util.extend({
+	            'stroke-width': 0
+	        }, attributes));
+	    },
+
+	    /**
+	     * Render overlay.
+	     * @returns {object} raphael object
+	     * @private
+	     */
+	    _renderCircleOverlay: function() {
+	        var position = {
+	            left: 0,
+	            top: 0
+	        };
+	        var attributes = {
+	            'fill-opacity': 0
+	        };
+
+	        return raphaelRenderUtil.renderCircle(this.paper, position, 0, tui.util.extend({
+	            'stroke-width': 0
+	        }, attributes));
+	    },
+
+	    /**
+	     * Render rect
+	     * @param {{left: number, top: number, width: number, height: number}} bound bound
+	     * @param {string} color series color
+	     * @param {object} [attributes] - attributes
+	     * @returns {object} bar rect
+	     * @private
+	     */
+	    _renderBox: function(bound, color, attributes) {
+	        var rect;
+
+	        if (bound.width < 0 || bound.height < 0) {
+	            return null;
+	        }
+
+	        rect = raphaelRenderUtil.renderRect(this.paper, bound, tui.util.extend({
+	            fill: '#fff',
+	            stroke: color,
+	            'stroke-width': BOX_STROKE_WIDTH
+	        }, attributes));
+
+	        return rect;
+	    },
+
+	    /**
+	     * Render boxes.
+	     * @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
+	     * @returns {Array.<Array.<object>>} bars
+	     * @private
+	     */
+	    _renderBoxes: function(groupBounds) {
+	        var self = this;
+	        var singleColors = [];
+	        var colors = this.theme.colors;
+
+	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
+	            singleColors = this.theme.singleColors;
+	        }
+
+	        return tui.util.map(groupBounds, function(bounds, groupIndex) {
+	            var singleColor = singleColors[groupIndex];
+
+	            return tui.util.map(bounds, function(bound, index) {
+	                var color, rect, item;
+
+	                if (!bound) {
+	                    return null;
+	                }
+
+	                item = self.seriesDataModel.getSeriesItem(groupIndex, index);
+
+	                color = singleColor || colors[index];
+
+	                if (bound.start) {
+	                    rect = self._renderBox(bound.start, color);
+	                }
+
+	                return {
+	                    rect: rect,
+	                    color: color,
+	                    bound: bound.end,
+	                    item: item,
+	                    groupIndex: groupIndex,
+	                    index: index
+	                };
+	            });
+	        });
+	    },
+
+	    /**
+	     * Render boxplots.
+	     * @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
+	     * @returns {Array.<Array.<object>>} bars
+	     * @private
+	     */
+	    _renderBoxplots: function(groupBounds) {
+	        var groupBoxes = this._renderBoxes(groupBounds);
+
+	        this.groupWhiskers = this._renderWhiskers(groupBounds);
+	        this.groupMedians = this._renderMedianLines(groupBounds);
+	        this.groupOutliers = this._renderOutliers(groupBounds);
+
+	        return groupBoxes;
+	    },
+
+	    _renderWhisker: function(end, start, color) {
+	        var paper = this.paper;
+	        var topDistance = start.top - end.top;
+	        var whiskerDirection = topDistance > 0 ? 1 : -1;
+	        var width = end.width;
+	        var left = end.left;
+	        var quartileWidth = width / 4;
+	        var edgePath = 'M' + (left + quartileWidth) + ',' + end.top + 'H' + (left + (quartileWidth * 3));
+	        var whiskerPath = 'M' + (left + (quartileWidth * 2)) + ',' + end.top + 'V' + (end.top + (Math.abs(topDistance) * whiskerDirection));
+	        var edge = raphaelRenderUtil.renderLine(paper, edgePath, color, EDGE_LINE_WIDTH);
+	        var whisker = raphaelRenderUtil.renderLine(paper, whiskerPath, color, WHISKER_LINE_WIDTH);
+	        var whiskers = [];
+
+	        edge.attr({
+	            opacity: 0
+	        });
+	        whisker.attr({
+	            opacity: 0
+	        });
+
+	        whiskers.push(edge);
+	        whiskers.push(whisker);
+
+	        return whiskers;
+	    },
+
+	    _renderWhiskers: function(groupBounds) {
+	        var self = this;
+	        var singleColors = [];
+	        var colors = this.theme.colors;
+	        var groupWhiskers = [];
+
+	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
+	            singleColors = this.theme.singleColors;
+	        }
+
+	        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
+	            var singleColor = singleColors[groupIndex];
+	            var whiskers = [];
+
+	            tui.util.forEach(bounds, function(bound, index) {
+	                var color = singleColor || colors[index];
+
+	                if (!bound) {
+	                    return;
+	                }
+
+	                whiskers = whiskers.concat(self._renderWhisker(bound.min, bound.start, color));
+	                whiskers = whiskers.concat(self._renderWhisker(bound.max, bound.end, color));
+	            });
+
+	            groupWhiskers.push(whiskers);
+	        });
+
+	        return groupWhiskers;
+	    },
+
+	    _renderMedianLine: function(bound, color) {
+	        var width = bound.width;
+	        var medianLinePath = 'M' + bound.left + ',' + bound.top + 'H' + (bound.left + width);
+	        var median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, color, MEDIAN_LINE_WIDTH);
+
+	        median.attr({
+	            opacity: 0
+	        });
+
+	        return median;
+	    },
+
+	    _renderMedianLines: function(groupBounds) {
+	        var self = this;
+	        var singleColors = [];
+	        var colors = this.theme.colors;
+	        var groupMedians = [];
+
+	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
+	            singleColors = this.theme.singleColors;
+	        }
+
+	        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
+	            var singleColor = singleColors[groupIndex];
+	            var medians = [];
+
+	            tui.util.forEach(bounds, function(bound, index) {
+	                var color = singleColor || colors[index];
+
+	                if (!bound) {
+	                    return;
+	                }
+
+	                medians.push(self._renderMedianLine(bound.median, color));
+	            });
+	            groupMedians.push(medians);
+	        });
+
+	        return groupMedians;
+	    },
+
+	    _renderOutlier: function(bound, color) {
+	        var outlier = raphaelRenderUtil.renderCircle(this.paper, {
+	            left: bound.left,
+	            top: bound.top
+	        }, 3, {
+	            stroke: color
+	        });
+
+	        outlier.attr({
+	            opacity: 0
+	        });
+
+	        return outlier;
+	    },
+
+	    _renderOutliers: function(groupBounds) {
+	        var self = this;
+	        var singleColors = [];
+	        var colors = this.theme.colors;
+	        var groupOutliers = [];
+
+	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
+	            singleColors = this.theme.singleColors;
+	        }
+
+	        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
+	            var singleColor = singleColors[groupIndex];
+	            var outliers = [];
+	            tui.util.forEach(bounds, function(bound, index) {
+	                var color = singleColor || colors[index];
+	                var seriesOutliers = [];
+
+	                if (!bound) {
+	                    return;
+	                }
+
+	                if (bound.outliers.length) {
+	                    tui.util.forEach(bound.outliers, function(outlier) {
+	                        seriesOutliers.push(self._renderOutlier(outlier, color));
+	                    });
+	                }
+	                outliers.push(seriesOutliers);
+	            });
+	            groupOutliers.push(outliers);
+	        });
+
+	        return groupOutliers;
+	    },
+
+	    /**
+	     * Make rect points.
+	     * @param {{left: number, top:number, width: number, height: number}} bound rect bound
+	     * @returns {{
+	     *      leftTop: {left: number, top: number},
+	     *      rightTop: {left: number, top: number},
+	     *      rightBottom: {left: number, top: number},
+	     *      leftBottom: {left: number, top: number}
+	     * }} rect points
+	     * @private
+	     */
+	    _makeRectPoints: function(bound) {
+	        return {
+	            leftTop: {
+	                left: Math.ceil(bound.left),
+	                top: Math.ceil(bound.top)
+	            },
+	            rightTop: {
+	                left: Math.ceil(bound.left + bound.width),
+	                top: Math.ceil(bound.top)
+	            },
+	            rightBottom: {
+	                left: Math.ceil(bound.left + bound.width),
+	                top: Math.ceil(bound.top + bound.height)
+	            },
+	            leftBottom: {
+	                left: Math.ceil(bound.left),
+	                top: Math.ceil(bound.top + bound.height)
+	            }
+	        };
+	    },
+
+	    /**
+	     * Render border lines;
+	     * @param {{left: number, top:number, width: number, height: number}} bound bar bound
+	     * @param {string} borderColor border color
+	     * @param {string} chartType chart type
+	     * @param {Item} item item
+	     * @returns {object} raphael object
+	     * @private
+	     */
+	    _renderBorderLines: function(bound, borderColor, chartType, item) {
+	        var self = this;
+	        var borderLinePaths = this._makeBorderLinesPaths(bound, chartType, item);
+	        var lines = {};
+
+	        tui.util.forEach(borderLinePaths, function(path, name) {
+	            lines[name] = raphaelRenderUtil.renderLine(self.paper, path, borderColor, 1);
+	        });
+
+	        return lines;
+	    },
+
+	    /**
+	     * Render bar borders.
+	     * @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
+	     * @returns {Array.<Array.<object>>} borders
+	     * @private
+	     */
+	    _renderBoxBorders: function(groupBounds) {
+	        var self = this,
+	            borderColor = this.theme.borderColor,
+	            groupBorders;
+
+	        if (!borderColor) {
+	            return null;
+	        }
+
+	        groupBorders = tui.util.map(groupBounds, function(bounds, groupIndex) {
+	            return tui.util.map(bounds, function(bound, index) {
+	                var seriesItem;
+
+	                if (!bound) {
+	                    return null;
+	                }
+
+	                seriesItem = self.seriesDataModel.getSeriesItem(groupIndex, index);
+
+	                return self._renderBorderLines(bound.start, borderColor, self.chartType, seriesItem);
+	            });
+	        });
+
+	        return groupBorders;
+	    },
+
+	    /**
+	     * Animate rect.
+	     * @param {object} rect raphael object
+	     * @param {{left: number, top:number, width: number, height: number}} bound rect bound
+	     * @private
+	     */
+	    _animateRect: function(rect, bound) {
+	        rect.animate({
+	            x: bound.left,
+	            y: bound.top,
+	            width: bound.width,
+	            height: bound.height
+	        }, ANIMATION_DURATION, '>');
+	    },
+
+	    /**
+	     * Animate.
+	     * @param {function} onFinish finish callback function
+	     */
+	    animate: function(onFinish) {
+	        var self = this;
+	        var animation = raphael.animation({
+	            opacity: 1
+	        }, ANIMATION_DURATION);
+
+	        raphaelRenderUtil.forEach2dArray(this.groupBoxes, function(box) {
+	            if (!box) {
+	                return;
+	            }
+	            self._animateRect(box.rect, box.bound);
+	        });
+
+	        raphaelRenderUtil.forEach2dArray(self.groupWhiskers, function(whisker) {
+	            whisker.animate(animation.delay(ANIMATION_DURATION));
+	        });
+
+	        raphaelRenderUtil.forEach2dArray(self.groupMedians, function(median) {
+	            median.animate(animation.delay(ANIMATION_DURATION));
+	        });
+
+	        raphaelRenderUtil.forEach2dArray(self.groupOutliers, function(outliers) {
+	            tui.util.forEach(outliers, function(outlier) {
+	                outlier.animate(animation.delay(ANIMATION_DURATION));
+	            });
+	        });
+
+	        if (onFinish) {
+	            this.callbackTimeout = setTimeout(function() {
+	                onFinish();
+	                delete self.callbackTimeout;
+	            }, ANIMATION_DURATION);
+	        }
+	    },
+
+	    /**
+	     * Show animation.
+	     * @param {{groupIndex: number, index:number}} data show info
+	     */
+	    showAnimation: function(data) {
+	        if (tui.util.isNumber(data.outlierIndex)) {
+	            this.showOutlierAnimation(data);
+	        } else {
+	            this.showRectAnimation(data);
+	        }
+	    },
+
+	    /**
+	     * Show animation.
+	     * @param {{groupIndex: number, index:number}} data show info
+	     */
+	    showRectAnimation: function(data) {
+	        var bar = this.groupBoxes[data.groupIndex][data.index],
+	            bound = bar.bound;
+
+	        this.rectOverlay.attr({
+	            width: bound.width,
+	            height: bound.height,
+	            x: bound.left,
+	            y: bound.top,
+	            fill: bar.color,
+	            'fill-opacity': 0.3
+	        });
+	    },
+
+	    /**
+	     * Show animation.
+	     * @param {{groupIndex: number, index:number}} data show info
+	     */
+	    showOutlierAnimation: function(data) {
+	        var targetAttr = this.groupOutliers[data.groupIndex][data.index][data.outlierIndex].attr();
+
+	        this.circleOverlay.attr({
+	            r: targetAttr.r,
+	            cx: targetAttr.cx,
+	            cy: targetAttr.cy,
+	            fill: targetAttr.stroke,
+	            'fill-opacity': 0.3,
+	            stroke: targetAttr.stroke,
+	            'stroke-width': 2
+	        });
+	    },
+
+	    /**
+	     * Hide animation.
+	     */
+	    hideAnimation: function() {
+	        this.circleOverlay.attr({
+	            width: 1,
+	            height: 1,
+	            x: 0,
+	            y: 0,
+	            'fill-opacity': 0,
+	            'stroke-width': 0
+	        });
+	        this.rectOverlay.attr({
+	            width: 1,
+	            height: 1,
+	            x: 0,
+	            y: 0,
+	            'fill-opacity': 0
+	        });
+	    },
+
+	    /**
+	     * Update rect bound
+	     * @param {object} rect raphael object
+	     * @param {{left: number, top: number, width: number, height: number}} bound bound
+	     * @private
+	     */
+	    _updateRectBound: function(rect, bound) {
+	        rect.attr({
+	            x: bound.left,
+	            y: bound.top,
+	            width: bound.width,
+	            height: bound.height
+	        });
+	    },
+
+	    /**
+	     * Resize graph of bar type chart.
+	     * @param {object} params parameters
+	     *      @param {{width: number, height:number}} params.dimension dimension
+	     *      @param {Array.<Array.<{
+	     *                  left:number, top:number, width: number, height: number
+	     *              }>>} params.groupBounds group bounds
+	     */
+	    resize: function(params) {
+	        var dimension = params.dimension;
+	        var groupBounds = params.groupBounds;
+
+	        this.groupBounds = groupBounds;
+	        this.paper.setSize(dimension.width, dimension.height);
+
+	        raphaelRenderUtil.forEach2dArray(this.groupBoxes, function(bar, groupIndex, index) {
+	            var bound;
+
+	            if (!bar) {
+	                return;
+	            }
+
+	            bound = groupBounds[groupIndex][index].end;
+	            bar.bound = bound;
+	            raphaelRenderUtil.updateRectBound(bar.rect, bound);
+	        });
+	    },
+
+	    /**
+	     * Change borders color.
+	     * @param {Array.<object>} lines raphael objects
+	     * @param {borderColor} borderColor border color
+	     * @private
+	     */
+	    _changeBordersColor: function(lines, borderColor) {
+	        tui.util.forEach(lines, function(line) {
+	            line.attr({stroke: borderColor});
+	        });
+	    },
+
+	    /**
+	     * Change bar color.
+	     * @param {{groupIndex: number, index: number}} indexes indexes
+	     * @param {string} color fill color
+	     * @param {?string} borderColor stroke color
+	     * @private
+	     */
+	    _changeBoxColor: function(indexes, color, borderColor) {
+	        var bar = this.groupBoxes[indexes.groupIndex][indexes.index];
+	        var lines;
+
+	        bar.rect.attr({
+	            stroke: color
+	        });
+
+	        if (borderColor) {
+	            lines = this.groupBorders[indexes.groupIndex][indexes.index];
+	            this._changeBordersColor(lines, borderColor);
+	        }
+	    },
+
+	    /**
+	     * Select series.
+	     * @param {{groupIndex: number, index: number}} indexes indexes
+	     */
+	    selectSeries: function(indexes) {
+	        var bar = this.groupBoxes[indexes.groupIndex][indexes.index],
+	            objColor = raphael.color(bar.color),
+	            selectionColorTheme = this.theme.selectionColor,
+	            color = selectionColorTheme || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC),
+	            borderColor = this.theme.borderColor,
+	            objBorderColor;
+
+	        if (borderColor) {
+	            objBorderColor = raphael.color(borderColor);
+	            borderColor = raphaelRenderUtil.makeChangedLuminanceColor(objBorderColor.hex, DEFAULT_LUMINANC);
+	        }
+
+	        this._changeBoxColor(indexes, color, borderColor);
+	    },
+
+	    /**
+	     * Unselect series.
+	     * @param {{groupIndex: number, index: number}} indexes indexes
+	     */
+	    unselectSeries: function(indexes) {
+	        var bar = this.groupBoxes[indexes.groupIndex][indexes.index],
+	            borderColor = this.theme.borderColor;
+	        this._changeBoxColor(indexes, bar.color, borderColor);
+	    },
+
+	    /**
+	     * Select legend.
+	     * @param {?number} legendIndex legend index
+	     */
+	    selectLegend: function(legendIndex) {
+	        var noneSelected = tui.util.isNull(legendIndex);
+
+	        raphaelRenderUtil.forEach2dArray(this.groupBoxes, function(box, groupIndex, index) {
+	            var opacity;
+
+	            if (!box) {
+	                return;
+	            }
+
+	            opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+	            box.rect.attr({'stroke-opacity': opacity});
+	        });
+	        raphaelRenderUtil.forEach2dArray(this.groupWhiskers, function(whisker, groupIndex, index) {
+	            var opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+	            whisker.attr({'stroke-opacity': opacity});
+	        });
+	        raphaelRenderUtil.forEach2dArray(this.groupMedians, function(median, groupIndex, index) {
+	            var opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+	            median.attr({'stroke-opacity': opacity});
+	        });
+	    },
+
+	    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme, isStacked) {
+	        var attributes = {
+	            'font-size': labelTheme.fontSize,
+	            'font-family': labelTheme.fontFamily,
+	            'font-weight': labelTheme.fontWeight,
+	            fill: labelTheme.color,
+	            opacity: 0,
+	            'text-anchor': isStacked ? 'middle' : 'start'
+	        };
+	        var labelSet = paper.set();
+
+	        tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
+	            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+	                var position = groupPositions[categoryIndex][seriesIndex];
+	                var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
+	                var startLabel;
+
+	                endLabel.node.style.userSelect = 'none';
+	                endLabel.node.style.cursor = 'default';
+	                endLabel.node.setAttribute('filter', 'url(#glow)');
+
+	                labelSet.push(endLabel);
+
+	                if (position.start) {
+	                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
+	                    startLabel.node.style.userSelect = 'none';
+	                    startLabel.node.style.cursor = 'default';
+	                    startLabel.node.setAttribute('filter', 'url(#glow)');
+
+	                    labelSet.push(startLabel);
+	                }
+	            });
+	        });
+
+	        return labelSet;
+	    }
+	});
+
+	module.exports = RaphaelBoxplotChart;
+
+
+/***/ },
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30632,7 +32301,7 @@
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(123),
+	var RaphaelLineBase = __webpack_require__(128),
 	    raphaelRenderUtil = __webpack_require__(61);
 
 	var EMPHASIS_OPACITY = 1;
@@ -30888,7 +32557,7 @@
 
 
 /***/ },
-/* 123 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31705,7 +33374,7 @@
 
 
 /***/ },
-/* 124 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31716,7 +33385,7 @@
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(123);
+	var RaphaelLineBase = __webpack_require__(128);
 	var raphaelRenderUtil = __webpack_require__(61);
 
 	var EMPHASIS_OPACITY = 1;
@@ -32163,7 +33832,7 @@
 
 
 /***/ },
-/* 125 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32831,6 +34500,7 @@
 	            'font-family': theme.fontFamily,
 	            'font-weight': theme.fontWeight,
 	            'text-anchor': 'middle',
+	            fill: theme.color,
 	            opacity: 0
 	        };
 
@@ -32857,7 +34527,7 @@
 
 
 /***/ },
-/* 126 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32868,7 +34538,7 @@
 
 	'use strict';
 
-	var RaphaelLineTypeBase = __webpack_require__(123);
+	var RaphaelLineTypeBase = __webpack_require__(128);
 	var raphaelRenderUtil = __webpack_require__(61);
 
 	var EMPHASIS_OPACITY = 1;
@@ -33057,7 +34727,7 @@
 
 
 /***/ },
-/* 127 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33485,7 +35155,7 @@
 
 
 /***/ },
-/* 128 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33920,7 +35590,7 @@
 
 
 /***/ },
-/* 129 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34234,7 +35904,7 @@
 
 
 /***/ },
-/* 130 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34488,7 +36158,7 @@
 
 
 /***/ },
-/* 131 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34715,7 +36385,7 @@
 
 
 /***/ },
-/* 132 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34778,7 +36448,7 @@
 
 
 /***/ },
-/* 133 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34828,6 +36498,16 @@
 	        }));
 
 	        return titleSet;
+	    },
+	    /**
+	     * Resize title component
+	     * @param {number} chartWidth chart width
+	     * @param {Array.<object>} titleSet title set
+	     */
+	    resize: function(chartWidth, titleSet) {
+	        titleSet.attr({
+	            x: chartWidth / 2
+	        });
 	    }
 	});
 
@@ -34835,7 +36515,7 @@
 
 
 /***/ },
-/* 134 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34862,12 +36542,12 @@
 	     * @private
 	     */
 	    renderBackground: function(paper, position, dimension, theme) {
-	        var background = (theme.background || {});
+	        var background = ((theme && theme.background) || {});
 	        var fillColor = (background.color || '#fff');
 	        var opacity = (background.opacity || 1);
 
 	        raphaelRenderUtil.renderRect(paper, {
-	            left: position.left - 5,
+	            left: position.left - 4,
 	            top: position.top,
 	            width: dimension.width,
 	            height: dimension.height
@@ -34921,7 +36601,7 @@
 	            positionTopAndLeft.left = data.layout.position.left + textHeight;
 
 	            if (rotateTitle) {
-	                attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
+	                attributes.transform = 'r-90,' + (positionTopAndLeft.left - textHeight) + ',' + positionTopAndLeft.top;
 	            }
 	        } else {
 	            positionTopAndLeft.top = paper.height - textHeight;
@@ -35155,7 +36835,7 @@
 
 
 /***/ },
-/* 135 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**

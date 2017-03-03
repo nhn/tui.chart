@@ -26,31 +26,10 @@ describe('Test for addingDynamicDataMixer', function() {
                 series: {},
                 xAxis: {}
             },
-            _render: jasmine.createSpy('_render'),
+            readyForRender: jasmine.createSpy('readyForRender'),
             _renderComponents: jasmine.createSpy('_renderComponents)')
         });
     });
-
-    // beforeEach(function() {
-    //     dataProcessor = jasmine.createSpyObj('dataProcessor',
-    //                 ['getCategoryCount', 'shiftData', 'addDataFromDynamicData',
-    //                     'addDataFromRemainDynamicData', 'getValues', 'isCoordinateType']);
-
-    //     componentManager = jasmine.createSpyObj('componentManager', ['render']);
-
-    //     ddh.dataProcessor = dataProcessor;
-    //     ddh.componentManager = componentManager;
-
-    //     ddh._initForAddingData();
-    //     ddh.options = {
-    //         series: {},
-    //         xAxis: {}
-    //     };
-
-    //     ddh._render = jasmine.createSpy('_render');
-
-    //     ddh._renderComponents = jasmine.createSpy('_renderComponents');
-    // });
 
     describe('_calculateAnimateTickSize()', function() {
         it('calculate animate tick size, when is coordinateType chart', function() {
@@ -85,6 +64,7 @@ describe('Test for addingDynamicDataMixer', function() {
         beforeEach(function() {
             dataProcessor.getCategoryCount.and.returnValue(5);
             dataProcessor.isCoordinateType.and.returnValue(false);
+
             ddh.axisDataMap = {
                 xAxis: {}
             };
@@ -93,6 +73,10 @@ describe('Test for addingDynamicDataMixer', function() {
                     width: 200
                 }
             };
+
+            ddh.chart.readyForRender.and.returnValue({
+                dimensionMap: ddh.dimensionMap
+            });
         });
 
         it('_animateForAddingData 함수를 호출하면 addesDataCount를 증가시킵니다.', function() {
@@ -103,10 +87,10 @@ describe('Test for addingDynamicDataMixer', function() {
             expect(ddh.addedDataCount).toBe(1);
         });
 
-        it('_animateForAddingData 함수를 호출하면 _render 함수를 실행합니다.', function() {
+        it('_animateForAddingData 함수를 호출하면 readyForRender 함수를 실행합니다.', function() {
             ddh._animateForAddingData();
 
-            expect(ddh.chart._render).toHaveBeenCalled();
+            expect(ddh.chart.readyForRender).toHaveBeenCalled();
         });
 
         it('_animateForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
@@ -119,8 +103,8 @@ describe('Test for addingDynamicDataMixer', function() {
                    }
                };
 
-               ddh.chart._render.and.callFake(function(callback) {
-                   callback(boundsAndScale);
+               ddh.chart.readyForRender.and.callFake(function() {
+                   return boundsAndScale;
                });
 
                ddh._animateForAddingData();
@@ -140,13 +124,13 @@ describe('Test for addingDynamicDataMixer', function() {
     });
 
     describe('_rerenderForAddingData()', function() {
-        it('_rerenderForAddingData 함수를 호출하면 _render 함수를 실행합니다.', function() {
+        it('_rerenderForAddingData 함수를 호출하면 readyForRender 함수를 실행합니다.', function() {
             ddh._rerenderForAddingData();
 
-            expect(ddh.chart._render).toHaveBeenCalled();
+            expect(ddh.chart.readyForRender).toHaveBeenCalled();
         });
 
-        it('_rerenderForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
+        it('_rerenderForAddingData 함수를 호출하면 _renderComponents를 실행 해' +
            '각 컴포넌트 rerender함수를 animatable=false 값을 전달하며 실행합니다.', function() {
                var boundsAndScale = {dimensionMap: {
                    xAxis: {
@@ -154,8 +138,8 @@ describe('Test for addingDynamicDataMixer', function() {
                    }
                }};
 
-               ddh.chart._render.and.callFake(function(callback) {
-                   callback(boundsAndScale);
+               ddh.chart.readyForRender.and.callFake(function() {
+                   return boundsAndScale;
                });
 
                ddh._rerenderForAddingData();
@@ -165,6 +149,19 @@ describe('Test for addingDynamicDataMixer', function() {
     });
 
     describe('_checkForAddedData()', function() {
+        beforeEach(function() {
+            var boundsAndScale = {
+                dimensionMap: {
+                    xAxis: {
+                        width: 200
+                    }
+                }
+            };
+
+            ddh.chart.readyForRender.and.callFake(function() {
+                return boundsAndScale;
+            });
+        });
         it('동적데이터가 존재하면 dataProcessor.addDataFromDynamicData를 통해 데이터를 추가하고 _animateForAddingData를 호출합니다.', function() {
             dataProcessor.addDataFromDynamicData.and.returnValue(true);
             spyOn(ddh, '_animateForAddingData');

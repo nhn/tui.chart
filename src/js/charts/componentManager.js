@@ -13,7 +13,7 @@ var Plot = require('../components/plots/plot');
 var title = require('../components/title/title');
 var RadialPlot = require('../components/plots/radialPlot');
 var ChartExportMenu = require('../components/chartExportMenu/chartExportMenu');
-var drawingToolPicker = require('../helpers/drawingToolPicker');
+var DrawingToolPicker = require('../helpers/drawingToolPicker');
 
 // legends
 var Legend = require('../components/legends/legend');
@@ -41,6 +41,7 @@ var MapSeries = require('../components/series/mapChartSeries');
 var PieSeries = require('../components/series/pieChartSeries');
 var HeatmapSeries = require('../components/series/heatmapChartSeries');
 var TreemapSeries = require('../components/series/treemapChartSeries');
+var BoxplotSeries = require('../components/series/boxPlotChartSeries');
 
 var Zoom = require('../components/series/zoom');
 
@@ -67,6 +68,7 @@ var COMPONENT_FACTORY_MAP = {
     pieSeries: PieSeries,
     heatmapSeries: HeatmapSeries,
     treemapSeries: TreemapSeries,
+    boxplotSeries: BoxplotSeries,
     zoom: Zoom,
     chartExportMenu: ChartExportMenu,
     title: title
@@ -140,7 +142,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
          * Drawing tool picker
          * @type {object}
          */
-        this.drawingToolPicker = drawingToolPicker;
+        this.drawingToolPicker = new DrawingToolPicker();
 
         this.drawingToolPicker.initDimension({
             width: width,

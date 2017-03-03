@@ -291,17 +291,16 @@ describe('Test for ChartBase', function() {
     });
 
     describe('resize()', function() {
-        it('전댤된 dimension이 없으면 resize를 위한 _render()를 호출하지 않습니다.', function() {
-            spyOn(chartBase, '_render');
+        it('전댤된 dimension이 없으면 resize를 위한 readyForRender()를 호출하지 않습니다.', function() {
+            spyOn(chartBase, 'readyForRender');
 
             chartBase.resize();
 
-            expect(chartBase._render).not.toHaveBeenCalled();
+            expect(chartBase.readyForRender).not.toHaveBeenCalled();
         });
 
         it('dimension이 있다면 _updateChartDimension()를 호출하여 dimension을 갱신 합니다.', function() {
             spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
-            spyOn(chartBase, '_render');
 
             chartBase.resize({
                 width: 400,
@@ -314,33 +313,16 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('dimension이 변경된 내용이 없어도 _render()를 호출하지 않습니다.', function() {
+        it('dimension이 변경된 내용이 없어도 readyForRender()를 호출하지 않습니다.', function() {
             spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
-            spyOn(chartBase, '_render');
+            spyOn(chartBase, 'readyForRender');
 
             chartBase.resize({
                 width: 400,
                 height: 300
             });
 
-            expect(chartBase._render).not.toHaveBeenCalled();
-        });
-
-        it('dimension이 변경되었다면, _render()를 호출하여 렌더링을 수행합니다.', function() {
-            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
-            spyOn(chartBase, '_render');
-            chartBase.options = {
-                chart: 'chart options'
-            };
-            chartBase.chartContainer = 'chart container';
-            spyOn(renderUtil, 'renderDimension');
-
-            chartBase.resize({
-                width: 400,
-                height: 300
-            });
-
-            expect(chartBase._render).toHaveBeenCalled();
+            expect(chartBase.readyForRender).not.toHaveBeenCalled();
         });
     });
 });

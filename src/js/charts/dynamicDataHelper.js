@@ -80,19 +80,18 @@ var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.protot
      */
     _animateForAddingData: function() {
         var chart = this.chart;
-        var self = this;
+        var boundsAndScale = chart.readyForRender(true);
         var shiftingOption = !!this.chart.options.series.shifting;
+        var tickSize;
 
         this.addedDataCount += 1;
 
-        chart._render(function(boundsAndScale) {
-            var tickSize = self._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
+        tickSize = this._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
 
-            chart.componentManager.render('animateForAddingData', boundsAndScale, {
-                tickSize: tickSize,
-                shifting: shiftingOption
-            });
-        }, true);
+        chart.componentManager.render('animateForAddingData', boundsAndScale, {
+            tickSize: tickSize,
+            shifting: shiftingOption
+        });
 
         if (shiftingOption) {
             chart.dataProcessor.shiftData();
@@ -105,10 +104,8 @@ var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.protot
      */
     _rerenderForAddingData: function() {
         var chart = this.chart;
-
-        chart._render(function(boundsAndScale) {
-            chart.componentManager.render('rerender', boundsAndScale);
-        });
+        var boundsAndScale = chart.readyForRender();
+        chart.componentManager.render('rerender', boundsAndScale);
     },
 
     /**

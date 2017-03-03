@@ -231,12 +231,10 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
      * @private
      */
     _renderForZoom: function(isResetZoom) {
-        var self = this;
+        var boundsAndScale = this.readyForRender();
 
-        this._render(function(boundsAndScale) {
-            self.componentManager.render('zoom', boundsAndScale, {
-                isResetZoom: isResetZoom
-            });
+        this.componentManager.render('zoom', boundsAndScale, {
+            isResetZoom: isResetZoom
         });
     },
 

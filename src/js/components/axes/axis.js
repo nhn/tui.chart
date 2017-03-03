@@ -62,6 +62,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.isYAxis = params.isYAxis;
 
         /**
+         * Whether data dynamic shifting or not.
+         * @type {boolean}
+         */
+        this.shifting = params.shifting;
+
+        /**
          * cached axis data
          * @type {object}
          */
@@ -409,7 +415,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.top = horizontalTop;
                 positionTopAndLeft.left = baseLeft + labelPosition;
 
-                if (!self.options.divided) {
+                if (self.isLabelAxis) {
                     positionTopAndLeft.left += halfWidth;
                 }
             }
@@ -542,6 +548,7 @@ function axisFactory(axisParam) {
     var name = axisParam.name;
 
     axisParam.isYAxis = (name === 'yAxis');
+    axisParam.shifting = axisParam.chartOptions.series.shifting;
 
     // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
     // 나중에 테마에서 시리즈로 다시 분기되는게 아니라 커포넌트 네임인 rightYAxis로 따로 받도록 테마 구조를 변경하자.

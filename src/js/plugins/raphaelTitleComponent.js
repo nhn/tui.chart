@@ -45,6 +45,16 @@ var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponen
         }));
 
         return titleSet;
+    },
+    /**
+     * Resize title component
+     * @param {number} chartWidth chart width
+     * @param {Array.<object>} titleSet title set
+     */
+    resize: function(chartWidth, titleSet) {
+        titleSet.attr({
+            x: chartWidth / 2
+        });
     }
 });
 
