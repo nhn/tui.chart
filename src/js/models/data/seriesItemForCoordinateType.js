@@ -129,8 +129,9 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
     _getFormattedValueForTooltip: function(valueType) {
         var ratio = this.ratioMap[valueType];
         var value = this[valueType];
+        var formattedValue = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType);
 
-        return ratio ? renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType) : null;
+        return tui.util.isNumber(ratio) ? formattedValue : value;
     },
 
     /**
