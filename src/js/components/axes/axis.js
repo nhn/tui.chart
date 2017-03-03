@@ -415,7 +415,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.top = horizontalTop;
                 positionTopAndLeft.left = baseLeft + labelPosition;
 
-                if (!self.options.divided) {
+                if (self.isLabelAxis) {
                     positionTopAndLeft.left += halfWidth;
                 }
             }
