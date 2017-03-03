@@ -97,6 +97,56 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     },
 
     /**
+     * Make position data for rect type graph
+     * @param {groupBound} groupBounds group bounds
+     * @param {string} chartType chart type
+     * @param {object} resultData resultData
+     * @private
+     */
+    _makeOutliersPositionDataForBoxplot: function(groupBounds, chartType, resultData) {
+        var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
+        var _groupBounds = [].concat(groupBounds);
+
+        tui.util.forEach(_groupBounds, function(bounds, groupIndex) {
+            tui.util.forEach(bounds, function(_bound, index) {
+                var outliers;
+
+                if (_bound.outliers && _bound.outliers.length) {
+                    outliers = tui.util.map(_bound.outliers, function(outlier, outlierIndex) {
+                        var bound = {
+                            top: outlier.top - 3,
+                            left: outlier.left - 3,
+                            width: 6,
+                            height: 6
+                        };
+
+                        return {
+                            sendData: {
+                                chartType: chartType,
+                                indexes: {
+                                    groupIndex: groupIndex,
+                                    index: index,
+                                    outlierIndex: outlierIndex
+                                },
+                                allowNegativeTooltip: allowNegativeTooltip,
+                                bound: bound
+                            },
+                            bound: {
+                                left: bound.left,
+                                top: bound.top,
+                                right: bound.left + bound.width,
+                                bottom: bound.top + bound.height
+                            }
+                        };
+                    });
+
+                    resultData[groupIndex] = resultData[groupIndex].concat(outliers);
+                }
+            });
+        });
+    },
+
+    /**
      * Make position data for dot type graph
      * @param {groupPositions} groupPositions group positions
      * @param {string} chartType chart type
@@ -173,10 +223,15 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
         var self = this;
         var data = tui.util.map(seriesItemBoundsData, function(info) {
             var result;
+
             if (predicate.isLineTypeChart(info.chartType)) {
                 result = self._makeDotTypePositionData(info.data.groupPositions, info.chartType);
             } else {
                 result = self._makeRectTypePositionData(info.data.groupBounds, info.chartType);
+            }
+
+            if (predicate.isBoxplotChart(info.chartType)) {
+                self._makeOutliersPositionDataForBoxplot(info.data.groupBounds, info.chartType, result);
             }
 
             return result;

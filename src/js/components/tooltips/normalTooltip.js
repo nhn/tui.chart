@@ -41,7 +41,14 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
             || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
         var template;
 
-        if (isPieOrPieDonutComboChart) {
+        if (predicate.isBoxplotChart(this.chartType)) {
+            if (tui.util.isNumber(item.outlierIndex)) {
+                template = tooltipTemplate.tplBoxplotChartOutlier;
+                item.label = item.outliers[item.outlierIndex].label;
+            } else {
+                template = tooltipTemplate.tplBoxplotChartDefault;
+            }
+        } else if (isPieOrPieDonutComboChart) {
             template = tooltipTemplate.tplPieChart;
         } else if (this.dataProcessor.coordinateType) {
             template = tooltipTemplate.tplCoordinatetypeChart;
@@ -76,7 +83,11 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
      * @private
      */
     _makeSingleTooltipHtml: function(chartType, indexes) {
-        var data = tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index);
+        var data = tui.util.extend({}, tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index));
+
+        if (predicate.isBoxplotChart(this.chartType) && tui.util.isNumber(indexes.outlierIndex)) {
+            data.outlierIndex = indexes.outlierIndex;
+        }
 
         data = tui.util.extend({
             suffix: this.suffix

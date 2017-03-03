@@ -9,6 +9,7 @@
 var raphael = window.Raphael;
 
 var BarChart = require('./raphaelBarChart');
+var Boxplot = require('./raphaelBoxplotChart');
 var LineChart = require('./raphaelLineChart');
 var AreaChart = require('./raphaelAreaChart');
 var PieChart = require('./raphaelPieChart');
@@ -28,6 +29,7 @@ var RadialPlot = require('./raphaelRadialPlot');
 var pluginName = 'Raphael';
 var pluginRaphael = {
     bar: BarChart,
+    boxplot: Boxplot,
     column: BarChart,
     line: LineChart,
     area: AreaChart,
@@ -65,7 +67,7 @@ var callback = function(container, dimension) {
 
     paper.changeChartBackgroundOpacity = function(opacity) {
         rect.attr({
-            opacity: opacity
+            'fill-opacity': opacity
         });
     };
 
