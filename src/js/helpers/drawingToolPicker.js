@@ -23,7 +23,7 @@ var renderers = {
     }
 };
 
-var DrawingToolPicker = {
+var DrawingToolPicker = tui.util.defineClass({
     /**
      * DrawingToolPicker initializer
      * @param {{width:number, height:number}} dimension dimension
@@ -52,16 +52,16 @@ var DrawingToolPicker = {
         }
 
         return paper;
-    },
-
-    /**
-     * Add renderer type
-     * @param {string} componentType component renderer type
-     * @param {function} callback callback function for get renderer's paper
-     */
-    addRendererType: function(componentType, callback) {
-        renderers[componentType] = callback;
     }
+});
+
+/**
+ * Add renderer type
+ * @param {string} componentType component renderer type
+ * @param {function} callback callback function for get renderer's paper
+ */
+DrawingToolPicker.addRendererType = function(componentType, callback) {
+    renderers[componentType] = callback;
 };
 
 module.exports = DrawingToolPicker;
