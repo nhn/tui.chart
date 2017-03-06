@@ -105,8 +105,6 @@ var SeriesDataModelForBoxplot = tui.util.defineClass(SeriesDataModel, /** @lends
     _createBaseGroups: function() {
         var chartType = this.chartType;
         var formatFunctions = this.formatFunctions;
-        var sortValues = function() {
-        };
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
             var data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
@@ -118,7 +116,6 @@ var SeriesDataModelForBoxplot = tui.util.defineClass(SeriesDataModel, /** @lends
                     index: index
                 });
             });
-            sortValues(items);
 
             return items;
         });
