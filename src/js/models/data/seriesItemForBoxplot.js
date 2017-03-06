@@ -168,6 +168,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         var median = values[2];
         var lq = values[1];
         var min = values[0];
+        var hasOutlier = values.length > 5;
         var outliers;
 
         this.value = this.max = max;
@@ -177,7 +178,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         this.min = min;
         this.index = index;
 
-        if (values.length > 5) {
+        if (hasOutlier) {
             this.outliers = [];
 
             outliers = this.outliers;

@@ -225,7 +225,7 @@ var rawDataHandler = {
     },
 
     /**
-     * Update raw series data by options.
+     * Append outlier value to boxplot series data end
      * @param {object} rawData - raw data
      */
     appendOutliersToSeriesData: function(rawData) {
@@ -260,24 +260,6 @@ var rawDataHandler = {
                 }
             });
         }
-
-        return cloneData;
-    },
-
-    /**
-     * Append outlier value to boxplot series data end
-     * @param {object} rawData raw data
-     * @returns {object}
-     */
-    appendOutliersToSeriesDataEnd: function(rawData) {
-        var cloneData = tui.util.extend({}, rawData);
-        var series = cloneData.series;
-
-        tui.util.forEach(series, function(seriesItem) {
-            tui.util.forEach(seriesItem.outliers, function(outlier) {
-                seriesItem.data[outlier[0]].push(outlier[1]);
-            });
-        });
 
         return cloneData;
     }
