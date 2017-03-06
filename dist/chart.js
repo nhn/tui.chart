@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.8.0
+ * @version 2.8.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Mar 03 2017 18:55:04 GMT+0900 (KST)"
+ * bundle created at "Mon Mar 06 2017 15:32:40 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -2171,7 +2171,7 @@
 	    },
 
 	    /**
-	     * Update raw series data by options.
+	     * Append outlier value to boxplot series data end
 	     * @param {object} rawData - raw data
 	     */
 	    appendOutliersToSeriesData: function(rawData) {
@@ -2206,24 +2206,6 @@
 	                }
 	            });
 	        }
-
-	        return cloneData;
-	    },
-
-	    /**
-	     * Append outlier value to boxplot series data end
-	     * @param {object} rawData raw data
-	     * @returns {object}
-	     */
-	    appendOutliersToSeriesDataEnd: function(rawData) {
-	        var cloneData = tui.util.extend({}, rawData);
-	        var series = cloneData.series;
-
-	        tui.util.forEach(series, function(seriesItem) {
-	            tui.util.forEach(seriesItem.outliers, function(outlier) {
-	                seriesItem.data[outlier[0]].push(outlier[1]);
-	            });
-	        });
 
 	        return cloneData;
 	    }
@@ -23638,8 +23620,6 @@
 	    _createBaseGroups: function() {
 	        var chartType = this.chartType;
 	        var formatFunctions = this.formatFunctions;
-	        var sortValues = function() {
-	        };
 
 	        return tui.util.map(this.rawSeriesData, function(rawDatum) {
 	            var data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
@@ -23651,7 +23631,6 @@
 	                    index: index
 	                });
 	            });
-	            sortValues(items);
 
 	            return items;
 	        });
@@ -23860,6 +23839,7 @@
 	        var median = values[2];
 	        var lq = values[1];
 	        var min = values[0];
+	        var hasOutlier = values.length > 5;
 	        var outliers;
 
 	        this.value = this.max = max;
@@ -23869,7 +23849,7 @@
 	        this.min = min;
 	        this.index = index;
 
-	        if (values.length > 5) {
+	        if (hasOutlier) {
 	            this.outliers = [];
 
 	            outliers = this.outliers;
