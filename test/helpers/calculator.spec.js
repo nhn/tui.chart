@@ -73,22 +73,6 @@ describe('Test for calculator', function() {
         });
     });
 
-    describe('calculateAdjacent()', function() {
-        it('끼인각이 30도이고 빗변이 2일 경우 인접변 너비는 루트3 입니다.', function() {
-            var actual = calculator.calculateAdjacent(30, 2),
-                expected = Math.sqrt(3);
-            expect(actual).toBeCloseTo(expected, 15); //소수점 16째 자리가 다름
-        });
-    });
-
-    describe('calculateAdjacent()', function() {
-        it('끼인각이 30도이고 빗변이 2일 경우 맞은변 너비는 루트3 입니다.', function() {
-            var actual = calculator.calculateOpposite(60, 2),
-                expected = Math.sqrt(3);
-            expect(actual).toBeCloseTo(expected, 15); //소수점 16째 자리가 다름
-        });
-    });
-
     describe('calculateRatio()', function() {
         it('입력 value에 subNumber를 빼고 divNumber로 나눈뒤 baseRatio로 곱하여 반환합니다.', function() {
             var actual = calculator.calculateRatio(10, 2, 2, 0.5);
