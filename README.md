@@ -65,6 +65,10 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 
 ![radial chart](https://cloud.githubusercontent.com/assets/7088720/21537366/29c89534-cdd4-11e6-83be-513f9a699368.png)
 
+#### Boxplot Chart
+* Represents visually displaying groups of numerical data quartiles. Typically used in descriptive statistics.
+
+![boxplot chart](https://cloud.githubusercontent.com/assets/7088720/23646681/4986f166-0355-11e7-8019-bb70b6718a6b.png)
 
 
 ## Documentation
@@ -75,7 +79,7 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 
 ## Dependency
 * tui.code-snippet 1.0.8
-* Raphaël 2.2.7
+* Raphaël 2.2.0
 
 ## Map Data Attribution
 * https://www.amcharts.com/svg-maps/
