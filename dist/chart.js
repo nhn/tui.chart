@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.8.1
+ * @version 2.8.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Mar 06 2017 15:32:40 GMT+0900 (KST)"
+ * bundle created at "Wed Mar 08 2017 15:49:33 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -4053,14 +4053,14 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('barSeries', 'barSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
@@ -7204,6 +7204,11 @@
 	        this.chartExportMenu = null;
 
 	        /**
+	         * chartExportMenu options
+	         */
+	        this.options = params.options;
+
+	        /**
 	         * Event bus
 	         * @type {EventBus}
 	         */
@@ -7221,6 +7226,10 @@
 	     */
 	    _createChartExportMenuButton: function() {
 	        var menuButton = dom.create('div', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
+
+	        if (this.options.buttonClass) {
+	            dom.addClass(menuButton, this.options.buttonClass);
+	        }
 
 	        return menuButton;
 	    },
@@ -7250,7 +7259,7 @@
 	        var isDownloadSupported = chartExporter.isDownloadSupported;
 	        var isImageExtension = chartExporter.isImageExtension;
 	        var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
-	        var menuElement = dom.create('ul');
+	        var menuElement = dom.create('ul', chartConst.CLASS_NAME_CHART_EXPORT_MENU);
 	        var menuStyle = menuElement.style;
 	        var menuTheme = this.theme;
 	        var menuItems = [];
@@ -7291,6 +7300,10 @@
 	            if (menuTheme.color) {
 	                menuStyle.color = menuTheme.color;
 	            }
+	        }
+
+	        if (this.options.menuClass) {
+	            dom.addClass(menuElement, this.options.menuClass);
 	        }
 
 	        dom.append(menuElement, menuItems);
@@ -15332,7 +15345,7 @@
 
 	'use strict';
 
-	var LABEL_FADE_IN_DURATION = 800;
+	var LABEL_FADE_IN_DURATION = 600;
 	var browser = tui.util.browser;
 	var IS_IE7 = browser.msie && browser.version === 7;
 
@@ -16362,7 +16375,7 @@
 	            opacity: animationStartOpacity
 	        });
 
-	        element.animate(animation.delay(600));
+	        element.animate(animation);
 	    }
 	};
 
@@ -27557,14 +27570,14 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('columnSeries', 'columnSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
@@ -28164,16 +28177,15 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('areaSeries', 'areaSeries');
+
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
 	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
-
 	        this.componentManager.register('tooltip', 'tooltip');
-
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
 	    /**
@@ -28398,15 +28410,15 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('columnSeries', 'columnSeries');
 	        this.componentManager.register('lineSeries', 'lineSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
@@ -28695,15 +28707,15 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('lineSeries', 'lineSeries');
 	        this.componentManager.register('scatterSeries', 'scatterSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    }
@@ -28810,15 +28822,15 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('areaSeries', 'areaSeries');
 	        this.componentManager.register('lineSeries', 'lineSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
@@ -29049,10 +29061,12 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('legend', 'legend');
-	        this.componentManager.register('tooltip', 'tooltip');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
 	        this.componentManager.register('pie1Series', 'pieSeries');
 	        this.componentManager.register('pie2Series', 'pieSeries');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
 	    /**
@@ -29137,9 +29151,11 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('legend', 'legend');
-	        this.componentManager.register('tooltip', 'tooltip');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
 	        this.componentManager.register('pieSeries', 'pieSeries');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
 
@@ -29249,15 +29265,15 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 	        this.componentManager.register('circleLegend', 'circleLegend');
 
 	        this.componentManager.register('bubbleSeries', 'bubbleSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
@@ -29342,14 +29358,14 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('scatterSeries', 'scatterSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
@@ -29483,17 +29499,20 @@
 	        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
 	        this.componentManager.register('title', 'title');
-	        this.componentManager.register('xAxis', 'axis');
-	        this.componentManager.register('yAxis', 'axis');
 	        this.componentManager.register('legend', 'spectrumLegend', {
 	            colorSpectrum: colorSpectrum
 	        });
-	        this.componentManager.register('tooltip', 'tooltip');
+
 	        this.componentManager.register('heatmapSeries', 'heatmapSeries', {
 	            colorSpectrum: colorSpectrum
 	        });
-	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+
+	        this.componentManager.register('xAxis', 'axis');
+	        this.componentManager.register('yAxis', 'axis');
+
 	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    }
 	});
 
@@ -30645,13 +30664,12 @@
 	     */
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
-	        this.componentManager.register('radialSeries', 'radialSeries');
+	        this.componentManager.register('legend', 'legend');
 	        this.componentManager.register('plot', 'radialPlot');
 
-	        this.componentManager.register('legend', 'legend');
+	        this.componentManager.register('radialSeries', 'radialSeries');
 
 	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
-
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
@@ -30728,14 +30746,14 @@
 	    addComponents: function() {
 	        this.componentManager.register('title', 'title');
 	        this.componentManager.register('plot', 'plot');
-	        this.componentManager.register('yAxis', 'axis');
-	        this.componentManager.register('xAxis', 'axis');
-
 	        this.componentManager.register('legend', 'legend');
 
 	        this.componentManager.register('boxplotSeries', 'boxplotSeries');
-	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 	        this.componentManager.register('tooltip', 'tooltip');
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    },
