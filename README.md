@@ -68,7 +68,7 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 #### Boxplot Chart
 * Represents visually displaying groups of numerical data quartiles. Typically used in descriptive statistics.
 
-![boxplot chart](https://cloud.githubusercontent.com/assets/7088720/23646681/4986f166-0355-11e7-8019-bb70b6718a6b.png)
+![boxplot chart](https://cloud.githubusercontent.com/assets/7088720/23646857/2a787816-0356-11e7-96ab-de17fa63c60b.png)
 
 
 ## Documentation
