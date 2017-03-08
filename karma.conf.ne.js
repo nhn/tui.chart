@@ -115,7 +115,7 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'IE8',
+           // 'IE8',
             'IE9',
             'IE10',
             'IE11',
