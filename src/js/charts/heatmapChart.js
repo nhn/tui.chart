@@ -112,17 +112,20 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
         this.componentManager.register('title', 'title');
-        this.componentManager.register('xAxis', 'axis');
-        this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('legend', 'spectrumLegend', {
             colorSpectrum: colorSpectrum
         });
-        this.componentManager.register('tooltip', 'tooltip');
+
         this.componentManager.register('heatmapSeries', 'heatmapSeries', {
             colorSpectrum: colorSpectrum
         });
-        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+
+        this.componentManager.register('xAxis', 'axis');
+        this.componentManager.register('yAxis', 'axis');
+
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
+        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
 });
 

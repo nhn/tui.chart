@@ -52,10 +52,12 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
     addComponents: function() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('legend', 'legend');
-        this.componentManager.register('tooltip', 'tooltip');
-        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
         this.componentManager.register('pie1Series', 'pieSeries');
         this.componentManager.register('pie2Series', 'pieSeries');
+
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+        this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
     /**

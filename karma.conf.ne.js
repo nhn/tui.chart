@@ -35,7 +35,6 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
-            {pattern: 'lib/tui-component-animation/dist/tui-component-animation.js', watched: false},
             {pattern: 'lib/raphael/raphael.js', watched: false},
 
             'test/test.bundle.js'
@@ -116,7 +115,7 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'IE8',
+           // 'IE8',
             'IE9',
             'IE10',
             'IE11',

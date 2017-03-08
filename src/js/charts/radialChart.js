@@ -50,13 +50,12 @@ var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototy
      */
     addComponents: function() {
         this.componentManager.register('title', 'title');
-        this.componentManager.register('radialSeries', 'radialSeries');
+        this.componentManager.register('legend', 'legend');
         this.componentManager.register('plot', 'radialPlot');
 
-        this.componentManager.register('legend', 'legend');
+        this.componentManager.register('radialSeries', 'radialSeries');
 
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
-
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },

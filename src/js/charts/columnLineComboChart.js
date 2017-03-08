@@ -105,15 +105,15 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
     addComponents: function() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
-        this.componentManager.register('yAxis', 'axis');
-        this.componentManager.register('xAxis', 'axis');
-
         this.componentManager.register('legend', 'legend');
 
         this.componentManager.register('columnSeries', 'columnSeries');
         this.componentManager.register('lineSeries', 'lineSeries');
-        this.componentManager.register('chartExportMenu', 'chartExportMenu');
 
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
+
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
