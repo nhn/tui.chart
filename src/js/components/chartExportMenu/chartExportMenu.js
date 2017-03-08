@@ -67,6 +67,11 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         this.chartExportMenu = null;
 
         /**
+         * chartExportMenu options
+         */
+        this.options = params.options;
+
+        /**
          * Event bus
          * @type {EventBus}
          */
@@ -84,6 +89,10 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
      */
     _createChartExportMenuButton: function() {
         var menuButton = dom.create('div', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
+
+        if (this.options.buttonClass) {
+            dom.addClass(menuButton, this.options.buttonClass);
+        }
 
         return menuButton;
     },
@@ -113,7 +122,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         var isDownloadSupported = chartExporter.isDownloadSupported;
         var isImageExtension = chartExporter.isImageExtension;
         var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
-        var menuElement = dom.create('ul');
+        var menuElement = dom.create('ul', chartConst.CLASS_NAME_CHART_EXPORT_MENU);
         var menuStyle = menuElement.style;
         var menuTheme = this.theme;
         var menuItems = [];
@@ -154,6 +163,10 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
             if (menuTheme.color) {
                 menuStyle.color = menuTheme.color;
             }
+        }
+
+        if (this.options.menuClass) {
+            dom.addClass(menuElement, this.options.menuClass);
         }
 
         dom.append(menuElement, menuItems);
