@@ -244,7 +244,7 @@ var raphaelRenderUtil = {
             opacity: animationStartOpacity
         });
 
-        element.animate(animation.delay(600));
+        element.animate(animation);
     }
 };
 
