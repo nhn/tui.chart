@@ -45,9 +45,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     addComponents: function() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('legend', 'legend');
-        this.componentManager.register('tooltip', 'tooltip');
-        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+
         this.componentManager.register('pieSeries', 'pieSeries');
+
+        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+        this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
 

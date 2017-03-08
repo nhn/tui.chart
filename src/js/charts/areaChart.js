@@ -97,16 +97,15 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
     addComponents: function() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
-        this.componentManager.register('yAxis', 'axis');
-        this.componentManager.register('xAxis', 'axis');
-
         this.componentManager.register('legend', 'legend');
 
         this.componentManager.register('areaSeries', 'areaSeries');
+
+        this.componentManager.register('yAxis', 'axis');
+        this.componentManager.register('xAxis', 'axis');
+
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
-
         this.componentManager.register('tooltip', 'tooltip');
-
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     },
     /**
