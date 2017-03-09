@@ -175,10 +175,11 @@ var scaleDataMaker = {
             } else {
                 limit.max = 0;
             }
-        }
-
-        if (limit.min === 0 && limit.max === 0) {
+        } else if (limit.min === 0 && limit.max === 0) {
             limit.max = 10;
+        } else if (limit.min === limit.max) {
+            limit.min -= (limit.min / 10);
+            limit.max += (limit.max / 10);
         }
 
         return limit;

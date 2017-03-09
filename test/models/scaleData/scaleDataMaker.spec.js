@@ -295,4 +295,31 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
     });
+
+    describe('_getLimitSafely', function() {
+        it('get (value +/- 10%) from min, max when baseValue has same values', function() {
+            var actual = scaleDataMaker._getLimitSafely([100, 100]);
+
+            expect(actual).toEqual({
+                min: 90,
+                max: 110
+            });
+        });
+        it('get min = 0, max = value from single value', function() {
+            var actual = scaleDataMaker._getLimitSafely([100]);
+
+            expect(actual).toEqual({
+                min: 0,
+                max: 100
+            });
+        });
+        it('get min = 0, max = 10 from single zero baseValue', function() {
+            var actual = scaleDataMaker._getLimitSafely([0, 0]);
+
+            expect(actual).toEqual({
+                min: 0,
+                max: 10
+            });
+        });
+    });
 });
