@@ -183,8 +183,8 @@ var chartConst = {
      */
     THEME_PROPS_MAP: {
         yAxis: ['tickColor', 'title', 'label'],
-        series: ['label', 'colors', 'borderColor', 'borderWidth', 'singleColors',
-            'selectionColor', 'startColor', 'endColor', 'overColor']
+        series: ['label', 'colors', 'borderColor', 'borderWidth', 'selectionColor', 'startColor', 'endColor',
+            'overColor']
     },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,

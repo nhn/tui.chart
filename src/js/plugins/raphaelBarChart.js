@@ -42,11 +42,12 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         this.paper.setStart();
 
+        this.options = data.options;
+        this.theme = data.theme;
         this.groupBars = this._renderBars(groupBounds);
         this.groupBorders = this._renderBarBorders(groupBounds);
 
         this.overlay = this._renderOverlay();
-        this.theme = data.theme;
         this.groupBounds = groupBounds;
 
         return this.paper.setFinish();
@@ -101,18 +102,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @private
      */
     _renderBars: function(groupBounds) {
-        var self = this,
-            singleColors = [],
-            colors = this.theme.colors,
-            groupBars;
-
-        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-            singleColors = this.theme.singleColors;
-        }
-
-        groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
-
+        var self = this;
+        var colors = this.theme.colors;
+        var colorByPoint = this.options.colorByPoint;
+        var groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
                 var color, rect, item;
 
@@ -122,7 +115,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
                 item = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
-                color = singleColor || colors[index];
+                color = colorByPoint ? colors[groupIndex] : colors[index];
                 rect = self._renderBar(bound.start, color);
 
                 return {

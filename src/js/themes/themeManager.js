@@ -117,20 +117,6 @@ module.exports = {
     },
 
     /**
-     * Set series colors.
-     * @param {object} theme - theme
-     * @param {object} rawTheme - raw theme
-     * @param {Array.<string>} baseColors - base colors
-     * @private
-     */
-    _setSingleColorsThemeIfNeed: function(theme, rawTheme, baseColors) {
-        // TODO 추후 수정을 위해 singleColor파트는 최대한 건드리지 않음
-        if (rawTheme && rawTheme.singleColors && rawTheme.singleColors.length) {
-            theme.singleColors = rawTheme.singleColors.concat(baseColors);
-        }
-    },
-
-    /**
      * Make each series's color
      * @param {Array.<string>} themeColors Theme colors to use
      * @param {number} seriesCount Series count
@@ -168,6 +154,7 @@ module.exports = {
         var self = this;
         var seriesColors, seriesCount, hasOwnColors;
         var colorIndex = 0;
+        var rawSeriesDatum;
 
         rawSeriesThemes = rawSeriesThemes || {}; // 분기문 간소화를위해
 
@@ -180,15 +167,20 @@ module.exports = {
                 hasOwnColors = false;
             }
 
-            seriesCount = rawSeriesData[seriesType] ? rawSeriesData[seriesType].length : 0;
+            rawSeriesDatum = rawSeriesData[seriesType];
+            if (rawSeriesDatum && rawSeriesDatum.length) {
+                if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
+                    seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
+                } else {
+                    seriesCount = rawSeriesDatum.length;
+                }
+            } else {
+                seriesCount = 0;
+            }
 
             seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors,
                                                                          seriesCount,
                                                                          !hasOwnColors && colorIndex);
-
-            self._setSingleColorsThemeIfNeed(seriesThemes[seriesType],
-                                             rawSeriesThemes,
-                                             seriesColors);
 
             // To distinct between series that use default theme, we make the colors different
             if (!hasOwnColors) {
@@ -279,7 +271,6 @@ module.exports = {
     _copySeriesColorTheme: function(seriesTheme, otherTheme, seriesType) {
         otherTheme[seriesType] = {
             colors: seriesTheme.colors,
-            singleColors: seriesTheme.singleColors,
             borderColor: seriesTheme.borderColor,
             selectionColor: seriesTheme.selectionColor
         };

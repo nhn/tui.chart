@@ -83,7 +83,6 @@ describe('Test for LegendModel', function() {
             var legendData = [{}, {}];
             var theme = {
                 colors: ['red', 'blue'],
-                singleColors: ['yellow', 'green'],
                 borderColor: 'black'
             };
 
@@ -92,7 +91,6 @@ describe('Test for LegendModel', function() {
             expect(legendData[0]).toEqual({
                 theme: {
                     color: 'red',
-                    singleColor: 'yellow',
                     borderColor: 'black'
                 },
                 index: 0,
@@ -101,7 +99,6 @@ describe('Test for LegendModel', function() {
             expect(legendData[1]).toEqual({
                 theme: {
                     color: 'blue',
-                    singleColor: 'green',
                     borderColor: 'black'
                 },
                 index: 1,
@@ -113,7 +110,6 @@ describe('Test for LegendModel', function() {
             var legendData = [{}, {}];
             var theme = {
                 colors: ['red', 'blue'],
-                singleColors: ['yellow', 'green'],
                 borderColor: 'black'
             };
             var checkedIndexes = [];
@@ -132,7 +128,6 @@ describe('Test for LegendModel', function() {
             var expected = [{}, {}];
             var colorTheme = {
                 colors: ['red', 'blue'],
-                singleColors: ['yellow', 'green'],
                 borderColor: 'black'
             };
             var actual;

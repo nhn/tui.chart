@@ -40,7 +40,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         this.labelTheme = data.labelTheme;
         tui.util.forEach(legendData, function(legendDatum, index) {
             var legendIndex = legendDatum.index;
-            var legendColor = legendDatum.theme.color;
+            var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
             var checkboxData = legendDatum.checkbox;
             var iconType = legendDatum.iconType;
             var labelText = legendDatum.label;
