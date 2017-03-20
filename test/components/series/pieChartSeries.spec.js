@@ -362,7 +362,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_calculateRadius()', function() {
-        it('시리즈 영역의 너비와 높이 중 작은 값의 반의 80%를 반지름으로 반환합니다.', function() {
+        it('시리즈 영역의 너비와 높이 중 작은 값의 반의 90%를 반지름으로 반환합니다.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -372,10 +372,10 @@ describe('PieChartSeries', function() {
 
             actual = series._calculateRadius();
 
-            expect(actual).toBe(160);
+            expect(actual).toBe(180);
         });
 
-        it('isShowOuterLabel이 true인 경우에는 65%를 반환합니다.', function() {
+        it('isShowOuterLabel이 true인 경우에는 75%를 반환합니다.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -386,7 +386,7 @@ describe('PieChartSeries', function() {
 
             actual = series._calculateRadius();
 
-            expect(actual).toBe(130);
+            expect(actual).toBe(150);
         });
     });
 
@@ -548,7 +548,7 @@ describe('PieChartSeries', function() {
             expect(actual).toEqual({
                 cx: 200,
                 cy: 150,
-                r: 120
+                r: 135
             });
         });
     });
