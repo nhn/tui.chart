@@ -34,7 +34,7 @@ var seriesCalculator = {
         if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             legendWidth = legendDimension ? legendDimension.width : 0;
         } else {
-            legendWidth = 0;
+            legendWidth = 20;
         }
 
         rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;

@@ -76,7 +76,7 @@ describe('Test for seriesCalculator', function() {
             };
             var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
-            expect(actual).toBe(430);
+            expect(actual).toBe(410);
         });
 
         it('calculate width, when align option is bottom', function() {
@@ -97,7 +97,7 @@ describe('Test for seriesCalculator', function() {
             };
             var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
-            expect(actual).toBe(430);
+            expect(actual).toBe(410);
         });
 
         it('calculate width, when visible option is false', function() {
@@ -117,7 +117,7 @@ describe('Test for seriesCalculator', function() {
             };
             var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
-            expect(actual).toBe(430);
+            expect(actual).toBe(410);
         });
     });
 
