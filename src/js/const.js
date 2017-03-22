@@ -184,7 +184,7 @@ var chartConst = {
     THEME_PROPS_MAP: {
         yAxis: ['tickColor', 'title', 'label'],
         series: ['label', 'colors', 'borderColor', 'borderWidth', 'selectionColor', 'startColor', 'endColor',
-            'overColor']
+            'overColor', 'dot']
     },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
