@@ -32,10 +32,11 @@ var legendCalculator = {
      * @private
      */
     _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
+        var restWidth = checkboxWidth + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
         var legendMargin = this.legendMargin;
 
         return calculator.sum(tui.util.map(labels, function(label) {
-            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + checkboxWidth;
+            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + restWidth;
 
             return labelWidth + legendMargin;
         }));

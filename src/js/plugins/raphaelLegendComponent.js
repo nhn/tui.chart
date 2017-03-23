@@ -10,6 +10,7 @@ var chartConst = require('../const');
 var raphaelRenderUtil = require('../plugins/raphaelRenderUtil');
 
 var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
+var ICON_WIDTH = 10;
 var CHECKBOX_WIDTH = 10;
 var CHECKBOX_HEIGHT = 10;
 
@@ -33,6 +34,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         var isHorizontal = data.isHorizontal;
         var position = tui.util.extend({}, data.position);
         var legendSet = data.paper.set();
+        var originalPosition = data.position;
 
         this.eventBus = data.eventBus;
         this.paper = data.paper;
@@ -46,10 +48,19 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
             var labelText = legendDatum.label;
             var isUnselected = legendDatum.isUnselected;
             var labelHeight = legendDatum.labelHeight;
+            var predicatedLegendLength = position.left + ICON_WIDTH + data.labelWidths[index]
+                + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2)
+                + (checkboxData ? CHECKBOX_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING : 0);
+
+            if (isHorizontal && (predicatedLegendLength > self.paper.width)) {
+                position.top += (labelHeight + chartConst.LABEL_PADDING_TOP);
+                position.left = originalPosition.left;
+            }
 
             if (checkboxData) {
                 self._renderCheckbox(position, checkboxData, legendIndex, legendSet);
-                position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
+
+                position.left += (CHECKBOX_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING);
             }
 
             self._renderIcon(position, {
@@ -61,7 +72,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
                 legendSet: legendSet
             });
 
-            position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
+            position.left += ICON_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING;
 
             self._renderLabel(position, {
                 labelText: labelText,
@@ -73,7 +84,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
             if (isHorizontal) {
                 position.left += data.labelWidths[index] + chartConst.LEGEND_LABEL_LEFT_PADDING;
             } else {
-                position.left = data.position.left;
+                position.left = originalPosition.left;
                 position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
             }
         });
