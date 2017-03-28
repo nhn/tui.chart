@@ -59,16 +59,28 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(chartConst.DATE_TYPE_MONTH);
         });
 
-        it('if difference between minimum and maximum value is over month value and' +
-            ' it divided by millisecond of month value is less than data count,' +
-            ' returns chartConst.DATE_TYPE_DATE', function() {
+        it('if difference between minimum and maximum value is over week value and' +
+            ' it divided by millisecond of month value is less than data count and 2 weeks,' +
+            ' returns chartConst.DATE_TYPE_WEEK', function() {
             var baseLimit = {
                 min: new Date(2010, 1, 1).getTime(),
-                max: new Date(2010, 3, 1).getTime()
+                max: new Date(2010, 1, 13).getTime()
             };
             var actual = scaleDataMaker._findDateType(baseLimit, 12);
 
             expect(actual).toBe(chartConst.DATE_TYPE_DATE);
+        });
+
+        it('if difference between minimum and maximum value is over month value and' +
+            ' it divided by millisecond of month value is less than data count and over 2 weeks,' +
+            ' returns chartConst.DATE_TYPE_WEEK', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2010, 1, 15).getTime()
+            };
+            var actual = scaleDataMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_WEEK);
         });
 
         it('if difference between minimum and maximum value is over date value,' +
@@ -83,11 +95,23 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('if difference between minimum and maximum value is over date value and' +
+            ' it divided by millisecond of date value exceeded 2 days,' +
+            ' returns chartConst.DATE_TYPE_DATE', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2010, 1, 3).getTime()
+            };
+            var actual = scaleDataMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_DATE);
+        });
+
+        it('if difference between minimum and maximum value is over date value and' +
             ' it divided by millisecond of date value is less than data count,' +
             ' returns chartConst.DATE_TYPE_HOUR', function() {
             var baseLimit = {
                 min: new Date(2010, 1, 1).getTime(),
-                max: new Date(2010, 1, 3).getTime()
+                max: new Date(2010, 1, 2).getTime()
             };
             var actual = scaleDataMaker._findDateType(baseLimit, 12);
 
@@ -106,11 +130,23 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('if difference between minimum and maximum value is over hour value and' +
-            ' it divided by millisecond of hour value is less than data count,' +
-            ' returns chartConst.DATE_TYPE_MINUTE', function() {
+            ' it divided by millisecond of hour value exceeded 2 hours,' +
+            ' returns chartConst.DATE_TYPE_HOUR', function() {
             var baseLimit = {
                 min: new Date(2010, 1, 1, 1).getTime(),
                 max: new Date(2010, 1, 1, 3).getTime()
+            };
+            var actual = scaleDataMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_HOUR);
+        });
+
+        it('if difference between minimum and maximum value is over hour value and' +
+            ' it divided by millisecond of hour value is less than data count,' +
+            ' returns chartConst.DATE_TYPE_HOUR', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 2).getTime()
             };
             var actual = scaleDataMaker._findDateType(baseLimit, 12);
 
@@ -129,11 +165,23 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('if difference between minimum and maximum value is over minute value and' +
+            ' it divided by millisecond of minute value exceeded 2 minutes,' +
+            ' returns chartConst.DATE_TYPE_MINUTE', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 1, 3).getTime()
+            };
+            var actual = scaleDataMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_MINUTE);
+        });
+
+        it('if difference between minimum and maximum value is over minute value and' +
             ' it divided by millisecond of minute value is less than data count,' +
             ' returns chartConst.DATE_TYPE_SECOND', function() {
             var baseLimit = {
                 min: new Date(2010, 1, 1, 1, 1).getTime(),
-                max: new Date(2010, 1, 1, 1, 3).getTime()
+                max: new Date(2010, 1, 1, 1, 2).getTime()
             };
             var actual = scaleDataMaker._findDateType(baseLimit, 12);
 

@@ -124,10 +124,11 @@ function getNormalizedScale(scale) {
  * @param {number} max max
  * @param {number} offsetSize offset size
  * @param {number} stepCount step count
+ * @param {object} [minimumStepSize] for ensure minimum step size
  * @private
  * @returns {object} scale data
  */
-function getRoughScale(min, max, offsetSize, stepCount) {
+function getRoughScale(min, max, offsetSize, stepCount, minimumStepSize) {
     var limitSize = Math.abs(max - min);
     var valuePerPixel = limitSize / offsetSize;
     var pixelsPerStep, step;
@@ -139,6 +140,11 @@ function getRoughScale(min, max, offsetSize, stepCount) {
     pixelsPerStep = offsetSize / stepCount;
 
     step = valuePerPixel * pixelsPerStep;
+
+    if (tui.util.isNumber(minimumStepSize) && step < minimumStepSize) {
+        step = minimumStepSize;
+        stepCount = limitSize / step;
+    }
 
     return {
         limit: {
@@ -157,6 +163,7 @@ function getRoughScale(min, max, offsetSize, stepCount) {
  * @param {object} options.max max value
  * @param {object} options.offsetSize offset pixel size of screen that needs scale
  * @param {object} [options.stepCount] if need fixed step count
+ * @param {object} [options.minimumStepSize] for ensure minimum step size
  * @returns {object}
  */
 function coordinateScaleCalculator(options) {
@@ -164,8 +171,9 @@ function coordinateScaleCalculator(options) {
     var max = options.max;
     var offsetSize = options.offsetSize;
     var stepCount = options.stepCount;
+    var minimumStepSize = options.minimumStepSize;
 
-    var scale = getRoughScale(min, max, offsetSize, stepCount);
+    var scale = getRoughScale(min, max, offsetSize, stepCount, minimumStepSize);
     scale = getNormalizedScale(scale);
 
     return scale;

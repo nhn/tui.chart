@@ -266,6 +266,7 @@ var chartConst = {
      */
     DATE_TYPE_YEAR: 'year',
     DATE_TYPE_MONTH: 'month',
+    DATE_TYPE_WEEK: 'week',
     DATE_TYPE_DATE: 'date',
     DATE_TYPE_HOUR: 'hour',
     DATE_TYPE_MINUTE: 'minute',

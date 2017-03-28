@@ -126,11 +126,25 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      */
     getScaleOption: function() {
         var scaleOption = {};
+        var xAxisOption = this.options.xAxis;
+        var hasDateFormat, isDateTimeTypeXAxis;
 
         if (this.dataProcessor.isCoordinateType()) {
+            isDateTimeTypeXAxis = xAxisOption && xAxisOption.type === 'datetime';
+            hasDateFormat = isDateTimeTypeXAxis && tui.util.isExisty(xAxisOption.dateFormat);
+
             scaleOption.xAxis = {
                 valueType: 'x'
             };
+
+            if (isDateTimeTypeXAxis) {
+                scaleOption.xAxis.type = (xAxisOption || {}).dateTime;
+            }
+
+            if (hasDateFormat) {
+                scaleOption.xAxis.format = (xAxisOption || {}).dateFormat;
+            }
+
             scaleOption.yAxis = {
                 valueType: 'y'
             };
