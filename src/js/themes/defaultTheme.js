@@ -53,7 +53,6 @@ var defaultTheme = {
             fontWeight: DEFAULT_FONTWEIGHT
         },
         colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
-        singleColors: [],
         borderColor: EMPTY,
         borderWidth: EMPTY,
         selectionColor: EMPTY,

@@ -172,28 +172,6 @@ describe('Test for themeManager', function() {
             });
         });
 
-        it('set series colors theme, when single series and singleColors', function() {
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
-            var seriesThemeMap = {
-                column: {}
-            };
-            var rawSeriesThemeMap = {
-                colors: ['a', 'b', 'c'],
-                singleColors: ['e', 'f', 'g']
-            };
-
-           var rawSeriesData = {
-                column: []
-            };
-
-            themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
-
-            expect(seriesThemeMap.column).toEqual({
-                colors: [],
-                singleColors: ['e', 'f', 'g', 'a', 'b', 'c']
-            });
-        });
-
         it('set series colors theme, when combo series with defaultTheme', function() {
             var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
             var seriesThemeMap = {
@@ -435,7 +413,6 @@ describe('Test for themeManager', function() {
         it('copy color theme to otherTheme from seriesTheme', function() {
             var seriesTheme = {
                 colors: ['red', 'orange'],
-                singleColors: ['red', 'orange'],
                 borderColor: 'blue',
                 selectionColor: 'yellow'
             };
@@ -446,7 +423,6 @@ describe('Test for themeManager', function() {
             expect(otherTheme).toEqual({
                 column: {
                     colors: ['red', 'orange'],
-                    singleColors: ['red', 'orange'],
                     borderColor: 'blue',
                     selectionColor: 'yellow'
                 }
@@ -460,7 +436,6 @@ describe('Test for themeManager', function() {
                 series: {
                     column: {
                         colors: ['red', 'orange'],
-                        singleColors: ['red', 'orange'],
                         borderColor: 'blue',
                         selectionColor: 'yellow'
                     }
@@ -474,7 +449,6 @@ describe('Test for themeManager', function() {
             expect(theme.legend).toEqual({
                 column: {
                     colors: ['red', 'orange'],
-                    singleColors: ['red', 'orange'],
                     borderColor: 'blue',
                     selectionColor: 'yellow'
                 }
@@ -483,7 +457,6 @@ describe('Test for themeManager', function() {
             expect(theme.tooltip).toEqual({
                 column: {
                     colors: ['red', 'orange'],
-                    singleColors: ['red', 'orange'],
                     borderColor: 'blue',
                     selectionColor: 'yellow'
                 }
