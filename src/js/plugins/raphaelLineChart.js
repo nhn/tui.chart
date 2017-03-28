@@ -58,6 +58,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         }
 
         this.paper = paper;
+        this.theme = data.theme;
         this.isSpline = isSpline;
         this.dimension = dimension;
         this.position = data.position;
