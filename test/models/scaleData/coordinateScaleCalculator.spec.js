@@ -99,5 +99,17 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.limit.min).toEqual(0);
             expect(scale.step).toEqual(0.2);
         });
+
+        it('edge range 0.01 ~ 0.47, should have min=0, max=0.6, step=0.2', function() {
+            var scale = csc({
+                min: 0.01,
+                max: 0.47,
+                offsetSize: 196
+            });
+
+            expect(scale.limit.max).toEqual(0.6);
+            expect(scale.limit.min).toEqual(0);
+            expect(scale.step).toEqual(0.2);
+        });
     });
 });
