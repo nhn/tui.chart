@@ -84,7 +84,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
                 attributes.transform = 'r-90,' + (positionTopAndLeft.left - textHeight) + ',' + positionTopAndLeft.top;
             }
         } else {
-            positionTopAndLeft.top = paper.height - textHeight;
+            positionTopAndLeft.top = data.layout.position.top + data.layout.dimension.height;
             positionTopAndLeft.left = centerPosition;
         }
 
