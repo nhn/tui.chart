@@ -18,9 +18,10 @@ body > div {
     position: relative;
 }
 
-#btn {
+.apply-btn-area .btn {
     font-weight: bold;
     font-size: 14px;
+    margin: 5px 0 0 0;
 }
 
 .custom-area > div {
