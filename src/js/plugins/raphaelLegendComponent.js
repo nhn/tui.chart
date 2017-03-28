@@ -10,10 +10,99 @@ var chartConst = require('../const');
 var raphaelRenderUtil = require('../plugins/raphaelRenderUtil');
 
 var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
+var ICON_WIDTH = 10;
 var CHECKBOX_WIDTH = 10;
 var CHECKBOX_HEIGHT = 10;
 
 var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+
+    /**
+     * @param {Array.<object>} legendData Array of legend item data
+     * @private
+     */
+    _renderLegendItems: function(legendData) {
+        var self = this;
+        var labelPaddingLeft = chartConst.LEGEND_LABEL_LEFT_PADDING;
+        var position = tui.util.extend({}, this.basePosition);
+
+        tui.util.forEach(legendData, function(legendDatum, index) {
+            var legendIndex = legendDatum.index;
+            var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
+            var isUnselected = legendDatum.isUnselected;
+            var labelHeight = legendDatum.labelHeight;
+            var checkboxData = legendDatum.checkbox;
+            var predicatedLegendLength = position.left + ICON_WIDTH + self.labelWidths[index]
+                + (labelPaddingLeft * 2) + (checkboxData ? CHECKBOX_WIDTH + labelPaddingLeft : 0);
+            var isNeedBreakLine = (predicatedLegendLength > self.paper.width);
+
+            if (self.isHorizontal && isNeedBreakLine) {
+                position.top += (labelHeight + chartConst.LABEL_PADDING_TOP);
+                position.left = self.basePosition.left;
+            }
+
+            if (checkboxData) {
+                self._renderCheckbox(position, checkboxData, legendIndex, self.legendSet);
+
+                position.left += (CHECKBOX_WIDTH + labelPaddingLeft);
+            }
+
+            self._renderIcon(position, {
+                legendColor: legendColor,
+                iconType: legendDatum.iconType,
+                labelHeight: labelHeight,
+                isUnselected: isUnselected,
+                legendIndex: legendIndex,
+                legendSet: self.legendSet
+            });
+
+            position.left += ICON_WIDTH + labelPaddingLeft;
+
+            self._renderLabel(position, {
+                labelText: legendDatum.label,
+                labelHeight: labelHeight,
+                isUnselected: isUnselected,
+                legendIndex: legendIndex,
+                legendSet: self.legendSet
+            });
+
+            if (self.isHorizontal) {
+                position.left += self.labelWidths[index] + labelPaddingLeft;
+            } else {
+                position.left = self.basePosition.left;
+                position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
+            }
+        });
+    },
+
+    /**
+     * @param {Array.<object>} legendData Array of legend item data
+     * @param {number} sliceIndex slice index of
+     * @returns {Array.<object>}
+     * @private
+     */
+    _getLegendData: function(legendData, sliceIndex) {
+        var positionTop = this.basePosition.top;
+        var totalHeight = this.dimension.height;
+        var chartHeight = this.paper.height;
+        var resultLegendData, pageHeight, singleItemHeight, visibleItemCount;
+
+        if (!legendData.length) {
+            return null;
+        }
+
+        if (totalHeight + (positionTop * 2) > chartHeight) {
+            pageHeight = chartHeight - (positionTop * 2);
+            singleItemHeight = (legendData[0].labelHeight + chartConst.LINE_MARGIN_TOP);
+
+            visibleItemCount = Math.floor(pageHeight / singleItemHeight);
+
+            resultLegendData = legendData.slice((sliceIndex - 1) * visibleItemCount, sliceIndex * visibleItemCount);
+        } else {
+            resultLegendData = legendData;
+        }
+
+        return resultLegendData;
+    },
 
     /**
      * Render legend
@@ -28,57 +117,104 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
      * @returns {object} paper
      */
     render: function(data) {
-        var self = this;
-        var legendData = data.legendData;
-        var isHorizontal = data.isHorizontal;
-        var position = tui.util.extend({}, data.position);
-        var legendSet = data.paper.set();
+        var legendData, legendHeight;
 
         this.eventBus = data.eventBus;
         this.paper = data.paper;
+        this.dimension = data.dimension;
+        this.legendSet = this.paper.set();
         this.labelWidths = data.labelWidths;
         this.labelTheme = data.labelTheme;
-        tui.util.forEach(legendData, function(legendDatum, index) {
-            var legendIndex = legendDatum.index;
-            var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
-            var checkboxData = legendDatum.checkbox;
-            var iconType = legendDatum.iconType;
-            var labelText = legendDatum.label;
-            var isUnselected = legendDatum.isUnselected;
-            var labelHeight = legendDatum.labelHeight;
+        this.basePosition = data.position;
+        this.isHorizontal = data.isHorizontal;
+        this.originalLegendData = data.legendData;
+        if (!tui.util.isNumber(this.currentPageCount)) {
+            this.currentPageCount = 1;
+        }
 
-            if (checkboxData) {
-                self._renderCheckbox(position, checkboxData, legendIndex, legendSet);
-                position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
-            }
+        legendData = this._getLegendData(data.legendData, this.currentPageCount);
 
-            self._renderIcon(position, {
-                legendColor: legendColor,
-                iconType: iconType,
-                labelHeight: labelHeight,
-                isUnselected: isUnselected,
-                legendIndex: legendIndex,
-                legendSet: legendSet
+        this._renderLegendItems(legendData);
+
+        if (legendData.length < data.legendData.length) {
+            legendHeight = this.paper.height - (this.basePosition.top * 2);
+
+            this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
+
+            this._renderPaginationArea(this.basePosition, {
+                width: data.dimension.width,
+                height: legendHeight
             });
+        }
 
-            position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
+        return this.legendSet;
+    },
 
-            self._renderLabel(position, {
-                labelText: labelText,
-                labelHeight: labelHeight,
-                isUnselected: isUnselected,
-                legendIndex: legendIndex,
-                legendSet: legendSet
+    /**
+     * @param {string} direction direction string of paginate 'next' or 'previous'
+     * @private
+     */
+    _paginateLegendAreaTo: function(direction) {
+        var pageNumber = this.currentPageCount;
+
+        this._removeLegendItems();
+
+        if (direction === 'next') {
+            pageNumber += 1;
+        } else {
+            pageNumber -= 1;
+        }
+
+        this._renderLegendItems(this._getLegendData(this.originalLegendData, pageNumber));
+    },
+
+    _removeLegendItems: function() {
+        this.legendSet.forEach(function(legendItem) {
+            tui.util.forEach(legendItem.events, function(event) {
+                event.unbind();
             });
-            if (isHorizontal) {
-                position.left += data.labelWidths[index] + chartConst.LEGEND_LABEL_LEFT_PADDING;
-            } else {
-                position.left = data.position.left;
-                position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
+            legendItem.remove();
+        });
+    },
+
+    /**
+     * @param {{top: number, left: number}} position legend area position
+     * @param {{height: number, width: number}} dimension legend area dimension
+     * @private
+     */
+    _renderPaginationArea: function(position, dimension) {
+        var self = this;
+        var BUTTON_WIDTH = 10;
+        var BUTTON_PADDING_LEFT = 5;
+        var controllerPositionTop = position.top + dimension.height - chartConst.CHART_PADDING;
+        var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
+        var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
+        var leftButtonPositionLeft = rightButtonPositionLeft - (BUTTON_PADDING_LEFT + BUTTON_WIDTH);
+        var lowerArrowPath = [
+            'M', rightButtonPositionLeft, ',', (controllerPositionTop + 3),
+            'L', (rightButtonPositionLeft + 5), ',', (controllerPositionTop + 8),
+            'L', (rightButtonPositionLeft + 10), ',', (controllerPositionTop + 3)].join('');
+        var upperArrowPath = [
+            'M', leftButtonPositionLeft, ',', (controllerPositionTop + 8),
+            'L', (leftButtonPositionLeft + 5), ',', (controllerPositionTop + 3),
+            'L', (leftButtonPositionLeft + 10), ',', (controllerPositionTop + 8)].join('');
+
+        this.upperButton = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 3);
+        this.lowerButton = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 3);
+
+        this.upperButton.click(function() {
+            if (self.currentPageCount > 1) {
+                self._paginateLegendAreaTo('previous');
+                self.currentPageCount -= 1;
             }
         });
 
-        return legendSet;
+        this.lowerButton.click(function() {
+            if (self.currentPageCount < self.availablePageCount) {
+                self._paginateLegendAreaTo('next');
+                self.currentPageCount += 1;
+            }
+        });
     },
 
     /**

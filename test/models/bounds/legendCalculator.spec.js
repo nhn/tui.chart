@@ -21,7 +21,7 @@ describe('Test for legendCalculator', function() {
             var actual = legendCalculator._calculateLegendsWidthSum(
                 ['legend1', 'legend2'], {}, chartConst.LEGEND_CHECKBOX_WIDTH
             );
-            var expected = 194;
+            var expected = 190;
 
             expect(actual).toBe(expected);
         });
@@ -57,7 +57,7 @@ describe('Test for legendCalculator', function() {
             );
             var expected = {
                 labels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
-                maxLineWidth: 194
+                maxLineWidth: 190
             };
 
             expect(actual).toEqual(expected);
@@ -69,7 +69,7 @@ describe('Test for legendCalculator', function() {
             );
             var expected = {
                 labels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
-                maxLineWidth: 97
+                maxLineWidth: 95
             };
 
             expect(actual).toEqual(expected);
@@ -93,7 +93,7 @@ describe('Test for legendCalculator', function() {
                 {}, ['label1', 'label12'], 250, chartConst.LEGEND_CHECKBOX_WIDTH
             );
             var expected = {
-                width: 194,
+                width: 190,
                 height: 40
             };
 
@@ -107,7 +107,7 @@ describe('Test for legendCalculator', function() {
 
             actual = legendCalculator._makeVerticalDimension(
                 {}, ['label1', 'label12'], chartConst.LEGEND_CHECKBOX_WIDTH);
-            expected = 97;
+            expected = 105;
 
             expect(actual.width).toBe(expected);
         });
@@ -157,8 +157,5 @@ describe('Test for legendCalculator', function() {
 
             expect(actual).toEqual(expected);
         });
-
-
     });
-
 });
