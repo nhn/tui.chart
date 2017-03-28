@@ -90,7 +90,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
             return null;
         }
 
-        if (totalHeight + (positionTop * 2) > chartHeight) {
+        if (!this.isHorizontal && totalHeight + (positionTop * 2) > chartHeight) {
             pageHeight = chartHeight - (positionTop * 2);
             singleItemHeight = (legendData[0].labelHeight + chartConst.LINE_MARGIN_TOP);
 
@@ -136,7 +136,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
 
         this._renderLegendItems(legendData);
 
-        if (legendData.length < data.legendData.length) {
+        if (!this.isHorizontal && legendData.length < data.legendData.length) {
             legendHeight = this.paper.height - (this.basePosition.top * 2);
 
             this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
