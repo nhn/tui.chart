@@ -162,8 +162,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _getLegendRenderingData: function(legendData, labelHeight, labelWidths) {
         var self = this;
-        var colorByPoint = predicate.isBarTypeChart(this.chartType)
-            && predicate.isBoxplotChart(this.chartType)
+        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
             && this.dataProcessor.options.series.colorByPoint;
 
         return tui.util.map(legendData, function(legendDatum, index) {
