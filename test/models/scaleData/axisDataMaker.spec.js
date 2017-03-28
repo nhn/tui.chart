@@ -9,7 +9,7 @@
 var maker = require('../../../src/js/models/scaleData/axisDataMaker');
 var chartConst = require('../../../src/js/const');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
-var calculator = require('../../../src/js/helpers/calculator');
+var geometric = require('../../../src/js/helpers/geometric');
 
 describe('Test for axisDataMaker', function() {
     describe('_makeLabelsByIntervalOption()', function() {
@@ -420,7 +420,7 @@ describe('Test for axisDataMaker', function() {
             var actual;
 
             spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
-            spyOn(calculator, 'calculateRotatedHeight').and.returnValue(30);
+            spyOn(geometric, 'calculateRotatedHeight').and.returnValue(30);
             spyOn(maker, '_calculateRotatedWidth').and.returnValue(110);
 
             actual = maker.makeAdditionalDataForRotatedLabels(
