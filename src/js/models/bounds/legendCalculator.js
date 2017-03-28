@@ -164,7 +164,8 @@ var legendCalculator = {
      * @private
      */
     _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth) {
-        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme) + checkboxWidth;
+        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme) + checkboxWidth
+            + chartConst.LEGEND_RECT_WIDTH + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
 
         return {
             width: labelWidth + this.legendMargin,

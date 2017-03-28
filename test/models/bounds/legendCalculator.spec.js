@@ -107,7 +107,7 @@ describe('Test for legendCalculator', function() {
 
             actual = legendCalculator._makeVerticalDimension(
                 {}, ['label1', 'label12'], chartConst.LEGEND_CHECKBOX_WIDTH);
-            expected = 85;
+            expected = 105;
 
             expect(actual.width).toBe(expected);
         });
