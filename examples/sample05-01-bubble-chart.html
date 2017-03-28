@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" href="../dist/chart.css" />
 
     <link rel='stylesheet' type='text/css' href='../lib/codemirror/lib/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='../lib/codemirror/theme/neat.css'/>
     <link rel='stylesheet' type='text/css' href='../lib/codemirror/addon/lint/lint.css'/>
     <link rel='stylesheet' type='text/css' href='css/sample.css'/>
 </head>
@@ -192,6 +191,7 @@ tui.chart.bubbleChart(container, data, options);
 <script src='../lib/codemirror/lib/codemirror.js'></script>
 <script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
 <script src='../lib/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../lib/codemirror/addon/selection/active-line.js'></script>
 <script src='../lib/codemirror/mode/javascript/javascript.js'></script>
 <script src='../lib/codemirror/addon/lint/lint.js'></script>
 <script src='../lib/codemirror/addon/lint/javascript-lint.js'></script>
@@ -202,7 +202,7 @@ tui.chart.bubbleChart(container, data, options);
         lineNumbers: true,
         styleActiveLine: true,
         matchBrackets: true,
-        theme: 'neat',
+        indentUnit: 4,
         gutters: ["CodeMirror-lint-markers"],
         lint: true
     });
