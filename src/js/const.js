@@ -161,9 +161,9 @@ var chartConst = {
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default ratio for pie graph */
-    PIE_GRAPH_DEFAULT_RATIO: 0.8,
+    PIE_GRAPH_DEFAULT_RATIO: 0.9,
     /** small ratio for pie graph */
-    PIE_GRAPH_SMALL_RATIO: 0.65,
+    PIE_GRAPH_SMALL_RATIO: 0.75,
     /** tick count for spectrum legend */
     SPECTRUM_LEGEND_TICK_COUNT: 4,
     /** default position ratio of map chart label
