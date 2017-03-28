@@ -240,16 +240,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @returns {object} raphael dot
      */
     renderDot: function(paper, position, color, opacity) {
-        var dotTheme = this.theme.dot || {};
+        var dotTheme = (this.theme && this.theme.dot) || {dot: {}};
         var dot, dotStyle, raphaelDot;
 
         if (position) {
             dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
             dotStyle = {
                 fill: dotTheme.fillColor || color,
-                'fill-opacity': dotTheme.fillOpacity || opacity,
+                'fill-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
                 stroke: dotTheme.strokeColor || color,
-                'stroke-opacity': dotTheme.strokeOpacity,
+                'stroke-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
                 'stroke-width': dotTheme.strokeWidth
             };
 
@@ -284,7 +284,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {Array.<Array.<object>>} groupPositions positions
      * @param {string[]} colors colors
      * @param {number} opacity opacity
-     * @param {Array.<object>} seriesSet series set
+     * @param {Array.<object>} [seriesSet] series set
      * @returns {Array.<object>} dots
      * @private
      */
@@ -386,11 +386,11 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         }
 
         if (this.chartType === 'area') {
-            strokeWidth = 2;
+            strokeWidth = this.lineWidth * 2;
             startLine = line.startLine;
             line = line.line;
         } else {
-            strokeWidth = 3;
+            strokeWidth = this.lineWidth * 2;
         }
 
         this._updateLineStrokeWidth(line, strokeWidth);
@@ -515,11 +515,11 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         item = groupDot[index];
 
         if (this.chartType === 'area') {
-            strokeWidth = 1;
+            strokeWidth = this.lineWidth;
             startLine = line.startLine;
             line = line.line;
         } else {
-            strokeWidth = 2;
+            strokeWidth = this.lineWidth;
         }
 
         if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {

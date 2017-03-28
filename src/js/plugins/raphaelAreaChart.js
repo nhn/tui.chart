@@ -36,6 +36,12 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
          * @type {string}
          */
         this.chartType = 'area';
+
+        /**
+         * Line width
+         * @type {number}
+         */
+        this.lineWidth = 2;
     },
 
     /**
@@ -49,12 +55,15 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var groupPositions = data.groupPositions;
         var theme = data.theme;
         var colors = theme.colors;
-        var opacity = data.options.showDot ? 1 : 0;
+        var options = data.options;
+        var opacity = options.showDot ? 1 : 0;
         var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
         var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
+        var lineWidth = this.lineWidth = (tui.util.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
 
         this.paper = paper;
-        this.isSpline = data.options.spline;
+        this.theme = data.theme;
+        this.isSpline = options.spline;
         this.dimension = dimension;
         this.position = data.position;
 
@@ -63,12 +72,12 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         paper.setStart();
 
-        this.groupPaths = this._getAreaChartPath(groupPositions, null, data.options.connectNulls);
-        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
+        this.groupPaths = this._getAreaChartPath(groupPositions, null, options.connectNulls);
+        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors, lineWidth);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
-        if (data.options.allowSelect) {
+        if (options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
 
@@ -111,10 +120,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {object} paper paper
      * @param {Array.<object>} groupPaths group paths
      * @param {Array.<string>} colors colors
+     * @param {number} lineWidth line width
      * @returns {Array} raphael objects
      * @private
      */
-    _renderAreas: function(paper, groupPaths, colors) {
+    _renderAreas: function(paper, groupPaths, colors, lineWidth) {
         var groupAreas;
 
         colors = colors.slice(0, groupPaths.length);
@@ -130,7 +140,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                         opacity: 0.5,
                         stroke: areaColor
                     }),
-                    line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, 1)
+                    line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth)
                 };
 
             if (path.startLine) {
