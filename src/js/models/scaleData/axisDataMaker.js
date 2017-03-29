@@ -148,19 +148,21 @@ var axisDataMaker = {
 
         distance = max - min;
 
-        if (limit.min < min) {
-            limit.min += step;
-            positionRatio = (limit.min - min) / distance;
-            sizeRatio -= positionRatio;
-            tickCount -= 1;
-            labels.shift();
-        }
+        if (distance) {
+            if (limit.min < min) {
+                limit.min += step;
+                positionRatio = (limit.min - min) / distance;
+                sizeRatio -= positionRatio;
+                tickCount -= 1;
+                labels.shift();
+            }
 
-        if (limit.max > max) {
-            limit.max -= step;
-            sizeRatio -= (max - limit.max) / distance;
-            tickCount -= 1;
-            labels.pop();
+            if (limit.max > max) {
+                limit.max -= step;
+                sizeRatio -= (max - limit.max) / distance;
+                tickCount -= 1;
+                labels.pop();
+            }
         }
 
         return {
