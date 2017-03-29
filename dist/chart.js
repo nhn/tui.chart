@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.8.2
+ * @version 2.9.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Mar 08 2017 15:49:33 GMT+0900 (KST)"
+ * bundle created at "Wed Mar 29 2017 15:13:01 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -1630,9 +1630,9 @@
 	    /** series outer label padding */
 	    SERIES_OUTER_LABEL_PADDING: 20,
 	    /** default ratio for pie graph */
-	    PIE_GRAPH_DEFAULT_RATIO: 0.8,
+	    PIE_GRAPH_DEFAULT_RATIO: 0.9,
 	    /** small ratio for pie graph */
-	    PIE_GRAPH_SMALL_RATIO: 0.65,
+	    PIE_GRAPH_SMALL_RATIO: 0.75,
 	    /** tick count for spectrum legend */
 	    SPECTRUM_LEGEND_TICK_COUNT: 4,
 	    /** default position ratio of map chart label
@@ -1652,8 +1652,8 @@
 	     */
 	    THEME_PROPS_MAP: {
 	        yAxis: ['tickColor', 'title', 'label'],
-	        series: ['label', 'colors', 'borderColor', 'borderWidth', 'singleColors',
-	            'selectionColor', 'startColor', 'endColor', 'overColor']
+	        series: ['label', 'colors', 'borderColor', 'borderWidth', 'selectionColor', 'startColor', 'endColor',
+	            'overColor', 'dot']
 	    },
 	    /** title area width padding */
 	    TITLE_AREA_WIDTH_PADDING: 20,
@@ -1735,6 +1735,7 @@
 	     */
 	    DATE_TYPE_YEAR: 'year',
 	    DATE_TYPE_MONTH: 'month',
+	    DATE_TYPE_WEEK: 'week',
 	    DATE_TYPE_DATE: 'date',
 	    DATE_TYPE_HOUR: 'hour',
 	    DATE_TYPE_MINUTE: 'minute',
@@ -1744,9 +1745,9 @@
 	    /** legend area padding */
 	    LEGEND_AREA_PADDING: 10,
 	    /** legend checkbox width */
-	    LEGEND_CHECKBOX_WIDTH: 20,
+	    LEGEND_CHECKBOX_WIDTH: 10,
 	    /** legend rect width */
-	    LEGEND_RECT_WIDTH: 12,
+	    LEGEND_RECT_WIDTH: 10,
 	    /** lgend label left padding */
 	    LEGEND_LABEL_LEFT_PADDING: 5,
 	    MIN_LEGEND_WIDTH: 100,
@@ -3086,20 +3087,6 @@
 	    },
 
 	    /**
-	     * Set series colors.
-	     * @param {object} theme - theme
-	     * @param {object} rawTheme - raw theme
-	     * @param {Array.<string>} baseColors - base colors
-	     * @private
-	     */
-	    _setSingleColorsThemeIfNeed: function(theme, rawTheme, baseColors) {
-	        // TODO 추후 수정을 위해 singleColor파트는 최대한 건드리지 않음
-	        if (rawTheme && rawTheme.singleColors && rawTheme.singleColors.length) {
-	            theme.singleColors = rawTheme.singleColors.concat(baseColors);
-	        }
-	    },
-
-	    /**
 	     * Make each series's color
 	     * @param {Array.<string>} themeColors Theme colors to use
 	     * @param {number} seriesCount Series count
@@ -3137,6 +3124,7 @@
 	        var self = this;
 	        var seriesColors, seriesCount, hasOwnColors;
 	        var colorIndex = 0;
+	        var rawSeriesDatum;
 
 	        rawSeriesThemes = rawSeriesThemes || {}; // 분기문 간소화를위해
 
@@ -3149,15 +3137,20 @@
 	                hasOwnColors = false;
 	            }
 
-	            seriesCount = rawSeriesData[seriesType] ? rawSeriesData[seriesType].length : 0;
+	            rawSeriesDatum = rawSeriesData[seriesType];
+	            if (rawSeriesDatum && rawSeriesDatum.length) {
+	                if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
+	                    seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
+	                } else {
+	                    seriesCount = rawSeriesDatum.length;
+	                }
+	            } else {
+	                seriesCount = 0;
+	            }
 
 	            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors,
 	                                                                         seriesCount,
 	                                                                         !hasOwnColors && colorIndex);
-
-	            self._setSingleColorsThemeIfNeed(seriesThemes[seriesType],
-	                                             rawSeriesThemes,
-	                                             seriesColors);
 
 	            // To distinct between series that use default theme, we make the colors different
 	            if (!hasOwnColors) {
@@ -3248,7 +3241,6 @@
 	    _copySeriesColorTheme: function(seriesTheme, otherTheme, seriesType) {
 	        otherTheme[seriesType] = {
 	            colors: seriesTheme.colors,
-	            singleColors: seriesTheme.singleColors,
 	            borderColor: seriesTheme.borderColor,
 	            selectionColor: seriesTheme.selectionColor
 	        };
@@ -3355,13 +3347,28 @@
 	            fontWeight: DEFAULT_FONTWEIGHT
 	        },
 	        colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
-	        singleColors: [],
 	        borderColor: EMPTY,
 	        borderWidth: EMPTY,
 	        selectionColor: EMPTY,
 	        startColor: '#F4F4F4',
 	        endColor: '#345391',
-	        overColor: '#F0C952'
+	        overColor: '#F0C952',
+	        dot: {
+	            fillColor: EMPTY,
+	            fillOpacity: 1,
+	            strokeColor: EMPTY,
+	            strokeOpacity: 1,
+	            strokeWidth: 2,
+	            radius: 2,
+	            hover: {
+	                fillColor: EMPTY,
+	                fillOpacity: 1,
+	                strokeColor: EMPTY,
+	                strokeOpacity: 0.8,
+	                strokeWidth: 3,
+	                radius: 4
+	            }
+	        }
 	    },
 	    legend: {
 	        label: {
@@ -5688,7 +5695,6 @@
 
 	'use strict';
 
-	var chartConst = __webpack_require__(2);
 	var arrayUtil = __webpack_require__(6);
 	var PERCENT_DIVISOR = 100;
 
@@ -5781,67 +5787,6 @@
 	     */
 	    calculateStepFromLimit: function(limit, count) {
 	        return calculator.divide(calculator.subtract(limit.max, limit.min), (count - 1));
-	    },
-
-	    /**
-	     * Calculate adjacent.
-	     * @param {number} degree degree
-	     * @param {number} hypotenuse hypotenuse
-	     * @returns {number} adjacent
-	     *
-	     *   H : Hypotenuse
-	     *   A : Adjacent
-	     *   O : Opposite
-	     *   D : Degree
-	     *
-	     *        /|
-	     *       / |
-	     *    H /  | O
-	     *     /   |
-	     *    /\ D |
-	     *    -----
-	     *       A
-	     */
-	    calculateAdjacent: function(degree, hypotenuse) {
-	        return Math.cos(degree * chartConst.RAD) * hypotenuse;
-	    },
-
-	    /**
-	     * Calculate opposite.
-	     * @param {number} degree degree
-	     * @param {number} hypotenuse hypotenuse
-	     * @returns {number} opposite
-	     */
-	    calculateOpposite: function(degree, hypotenuse) {
-	        return Math.sin(degree * chartConst.RAD) * hypotenuse;
-	    },
-
-	    /**
-	     * Calculate rotated width.
-	     * @param {number} degree - degree
-	     * @param {number} width - width
-	     * @param {number} height - height
-	     * @returns {number}
-	     */
-	    calculateRotatedWidth: function(degree, width, height) {
-	        var centerHalf = calculator.calculateAdjacent(degree, width / 2);
-	        var sideHalf = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
-
-	        return (centerHalf + sideHalf) * 2;
-	    },
-
-	    /**
-	     * Calculate rotated height
-	     * @param {number} degree - degree
-	     * @param {number} width - width
-	     * @param {number} height - height
-	     * @returns {number}
-	     */
-	    calculateRotatedHeight: function(degree, width, height) {
-	        var centerHalf = calculator.calculateOpposite(degree, width / 2);
-	        var sideHalf = calculator.calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
-
-	        return (centerHalf + sideHalf) * 2;
 	    },
 
 	    /**
@@ -7092,7 +7037,7 @@
 
 /***/ },
 /* 27 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview module for geometric operation
@@ -7101,6 +7046,8 @@
 	 */
 
 	'use strict';
+
+	var chartConst = __webpack_require__(2);
 
 	/**
 	 * Rotate a point around the origin with an angle.
@@ -7125,9 +7072,73 @@
 	        y: newY
 	    };
 	}
+	/**
+	 * Calculate adjacent.
+	 * @param {number} degree degree
+	 * @param {number} hypotenuse hypotenuse
+	 * @returns {number} adjacent
+	 *
+	 *   H : Hypotenuse
+	 *   A : Adjacent
+	 *   O : Opposite
+	 *   D : Degree
+	 *
+	 *        /|
+	 *       / |
+	 *    H /  | O
+	 *     /   |
+	 *    /\ D |
+	 *    -----
+	 *       A
+	 */
+	function calculateAdjacent(degree, hypotenuse) {
+	    return Math.cos(degree * chartConst.RAD) * hypotenuse;
+	}
+
+	/**
+	 * Calculate opposite.
+	 * @param {number} degree degree
+	 * @param {number} hypotenuse hypotenuse
+	 * @returns {number} opposite
+	 */
+	function calculateOpposite(degree, hypotenuse) {
+	    return Math.sin(degree * chartConst.RAD) * hypotenuse;
+	}
+
+	/**
+	 * Calculate rotated width.
+	 * @param {number} degree - degree
+	 * @param {number} width - width
+	 * @param {number} height - height
+	 * @returns {number}
+	 */
+	function calculateRotatedWidth(degree, width, height) {
+	    var centerHalf = calculateAdjacent(degree, width / 2);
+	    var sideHalf = calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
+
+	    return (centerHalf + sideHalf) * 2;
+	}
+
+	/**
+	 * Calculate rotated height
+	 * @param {number} degree - degree
+	 * @param {number} width - width
+	 * @param {number} height - height
+	 * @returns {number}
+	 */
+	function calculateRotatedHeight(degree, width, height) {
+	    var centerHalf = calculateOpposite(degree, width / 2);
+	    var sideHalf = calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
+
+	    return (centerHalf + sideHalf) * 2;
+	}
 
 	module.exports = {
-	    rotatePointAroundOrigin: rotatePointAroundOrigin
+	    rotatePointAroundOrigin: rotatePointAroundOrigin,
+	    calculateAdjacent: calculateAdjacent,
+	    calculateRotatedHeight: calculateRotatedHeight,
+	    calculateRotatedWidth: calculateRotatedWidth,
+	    calculateOpposite: calculateOpposite
 	};
 
 
@@ -9093,6 +9104,8 @@
 	     */
 	    _getLegendRenderingData: function(legendData, labelHeight, labelWidths) {
 	        var self = this;
+	        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
+	            && this.dataProcessor.options.series.colorByPoint;
 
 	        return tui.util.map(legendData, function(legendDatum, index) {
 	            var checkbox = self.options.showCheckbox === false ? null : {
@@ -9102,6 +9115,7 @@
 	            return {
 	                checkbox: checkbox,
 	                iconType: legendDatum.chartType || 'rect',
+	                colorByPoint: colorByPoint,
 	                index: index,
 	                theme: legendDatum.theme,
 	                label: legendDatum.label,
@@ -9135,9 +9149,7 @@
 	            left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
 	            top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
 	        };
-	        var legendRenderingData;
-
-	        legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
+	        var legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
 
 	        return graphRenderer.render({
 	            paper: paper,
@@ -9418,7 +9430,6 @@
 	     * @param {Array.<object>} legendData - legend data
 	     * @param {{
 	     *     colors: Array.<string>,
-	     *     singleColors: ?string,
 	     *     borderColor: ?string
 	     *     }} colorTheme - legend theme
 	     * @param {Array.<boolean>} [checkedIndexes] - checked indexes
@@ -9431,10 +9442,6 @@
 	            var itemTheme = {
 	                color: colorTheme.colors[index]
 	            };
-
-	            if (colorTheme.singleColors && colorTheme.singleColors.length) {
-	                itemTheme.singleColor = colorTheme.singleColors[index];
-	            }
 
 	            if (colorTheme.borderColor) {
 	                itemTheme.borderColor = colorTheme.borderColor;
@@ -15702,7 +15709,9 @@
 
 	        if (data.checkedLegends) {
 	            checkedLegends = data.checkedLegends[this.seriesType];
-	            this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
+	            if (!this.options.colorByPoint) {
+	                this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
+	            }
 	        }
 
 	        this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
@@ -16512,7 +16521,7 @@
 
 	            pointInterval = groupSize / (itemCount + 1);
 	            barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
-	            optionSize = this.options.barWidth;
+	            optionSize = this.options.barWidth || this.options.pointWidth;
 	            barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
 	            basePosition = zeroToMin + positionValue;
 
@@ -25608,10 +25617,11 @@
 	     * @private
 	     */
 	    _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
+	        var restWidth = checkboxWidth + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
 	        var legendMargin = this.legendMargin;
 
 	        return calculator.sum(tui.util.map(labels, function(label) {
-	            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + checkboxWidth;
+	            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + restWidth;
 
 	            return labelWidth + legendMargin;
 	        }));
@@ -25739,7 +25749,8 @@
 	     * @private
 	     */
 	    _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth) {
-	        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme) + checkboxWidth;
+	        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme) + checkboxWidth
+	            + chartConst.LEGEND_RECT_WIDTH + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
 
 	        return {
 	            width: labelWidth + this.legendMargin,
@@ -25814,7 +25825,7 @@
 	        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
 	            legendWidth = legendDimension ? legendDimension.width : 0;
 	        } else {
-	            legendWidth = 0;
+	            legendWidth = 20;
 	        }
 
 	        rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
@@ -26423,6 +26434,7 @@
 	    millisecondMap: {
 	        year: 31536000000,
 	        month: 2678400000,
+	        week: 604800000,
 	        date: 86400000,
 	        hour: 3600000,
 	        minute: 60000,
@@ -26432,7 +26444,7 @@
 	    /**
 	     * millisecond types
 	     */
-	    millisecondTypes: ['year', 'month', 'date', 'hour', 'minute', 'second'],
+	    millisecondTypes: ['year', 'month', 'week', 'date', 'hour', 'minute', 'second'],
 
 	    /**
 	     * Find date type.
@@ -26455,7 +26467,7 @@
 	                var foundIndex;
 
 	                if (dividedCount) {
-	                    foundIndex = index < lastTypeIndex && (dividedCount < count) ? index + 1 : index;
+	                    foundIndex = index < lastTypeIndex && dividedCount < 2 && dividedCount < count ? index + 1 : index;
 	                    foundType = millisecondTypes[foundIndex];
 	                }
 
@@ -26530,10 +26542,11 @@
 	            } else {
 	                limit.max = 0;
 	            }
-	        }
-
-	        if (limit.min === 0 && limit.max === 0) {
+	        } else if (limit.min === 0 && limit.max === 0) {
 	            limit.max = 10;
+	        } else if (limit.min === limit.max) {
+	            limit.min -= (limit.min / 10);
+	            limit.max += (limit.max / 10);
 	        }
 
 	        return limit;
@@ -26561,7 +26574,8 @@
 	        scale = coordinateScaleCalculator({
 	            min: limit.min,
 	            max: limit.max,
-	            offsetSize: baseSize
+	            offsetSize: baseSize,
+	            minimumStepSize: 1
 	        });
 
 	        scale = this._restoreScaleToDatetimeType(scale, datetimeInfo.minDate, datetimeInfo.divisionNumber);
@@ -26706,9 +26720,9 @@
 	 * this.getDigits(2145) == 1000
 	 */
 	function getDigits(number) {
-	    var logNumberDevidedLN10 = Math.log(number) / Math.LN10;
+	    var logNumberDividedLN10 = number === 0 ? 1 : (Math.log(Math.abs(number)) / Math.LN10);
 
-	    return Math.pow(10, Math.floor(logNumberDevidedLN10));
+	    return Math.pow(10, Math.floor(logNumberDividedLN10));
 	}
 
 	/**
@@ -26751,18 +26765,24 @@
 	 * @param {number} max max
 	 * @param {number} step step
 	 * @private
-	 * @returns {number}
+	 * @returns {{
+	 *     min: number,
+	 *     max: number
+	 * }}
 	 * max = 155 and step = 10 ---> max = 160
 	 */
 	function getNormalizedLimit(min, max, step) {
+	    var placeNumber = (1 / Math.min(getDigits(max), getDigits(step)));
+	    var fixedStep = (step * placeNumber);
+
 	    // max의 step 자릿수 이하 올림
-	    max = Math.ceil(max / step) * step;
+	    max = Math.ceil((max * placeNumber) / fixedStep) * fixedStep / placeNumber;
 
 	    if (min > step) {
 	        // 최소값을 step 의 배수로 조정
-	        min = step * Math.floor(min / step);
+	        min = Math.floor((min * placeNumber) / fixedStep) * fixedStep / placeNumber;
 	    } else if (min < 0) {
-	        min = -(Math.ceil(Math.abs(min) / step) * step);
+	        min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
 	    } else {
 	        // min값이 양수이고 step 보다 작으면 0으로 설정
 	        min = 0;
@@ -26775,6 +26795,18 @@
 	}
 
 	/**
+	 * Get normalized step count for floating point calculate error
+	 * @param {number} limitSize limit size of chart min max distance
+	 * @param {number} step step distance
+	 * @returns {number}
+	 */
+	function getNormalizedStepCount(limitSize, step) {
+	    var multiplier = 1 / Math.min(getDigits(limitSize), getDigits(step));
+
+	    return ((limitSize * multiplier) / (step * multiplier));
+	}
+
+	/**
 	 * Get normalized scale data
 	 * @param {object} scale scale
 	 * @private
@@ -26784,7 +26816,7 @@
 	    var step = getNormalizedStep(scale.step);
 	    var edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step);
 	    var limitSize = Math.abs(edge.max - edge.min);
-	    var stepCount = limitSize / step;
+	    var stepCount = getNormalizedStepCount(limitSize, step);
 
 	    return {
 	        limit: {
@@ -26802,10 +26834,11 @@
 	 * @param {number} max max
 	 * @param {number} offsetSize offset size
 	 * @param {number} stepCount step count
+	 * @param {object} [minimumStepSize] for ensure minimum step size
 	 * @private
 	 * @returns {object} scale data
 	 */
-	function getRoughScale(min, max, offsetSize, stepCount) {
+	function getRoughScale(min, max, offsetSize, stepCount, minimumStepSize) {
 	    var limitSize = Math.abs(max - min);
 	    var valuePerPixel = limitSize / offsetSize;
 	    var pixelsPerStep, step;
@@ -26817,6 +26850,11 @@
 	    pixelsPerStep = offsetSize / stepCount;
 
 	    step = valuePerPixel * pixelsPerStep;
+
+	    if (tui.util.isNumber(minimumStepSize) && step < minimumStepSize) {
+	        step = minimumStepSize;
+	        stepCount = limitSize / step;
+	    }
 
 	    return {
 	        limit: {
@@ -26835,6 +26873,7 @@
 	 * @param {object} options.max max value
 	 * @param {object} options.offsetSize offset pixel size of screen that needs scale
 	 * @param {object} [options.stepCount] if need fixed step count
+	 * @param {object} [options.minimumStepSize] for ensure minimum step size
 	 * @returns {object}
 	 */
 	function coordinateScaleCalculator(options) {
@@ -26842,8 +26881,9 @@
 	    var max = options.max;
 	    var offsetSize = options.offsetSize;
 	    var stepCount = options.stepCount;
+	    var minimumStepSize = options.minimumStepSize;
 
-	    var scale = getRoughScale(min, max, offsetSize, stepCount);
+	    var scale = getRoughScale(min, max, offsetSize, stepCount, minimumStepSize);
 	    scale = getNormalizedScale(scale);
 
 	    return scale;
@@ -26960,7 +27000,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var calculator = __webpack_require__(23);
+	var geomatric = __webpack_require__(27);
 	var renderUtil = __webpack_require__(34);
 	var arrayUtil = __webpack_require__(6);
 
@@ -27100,19 +27140,21 @@
 
 	        distance = max - min;
 
-	        if (limit.min < min) {
-	            limit.min += step;
-	            positionRatio = (limit.min - min) / distance;
-	            sizeRatio -= positionRatio;
-	            tickCount -= 1;
-	            labels.shift();
-	        }
+	        if (distance) {
+	            if (limit.min < min) {
+	                limit.min += step;
+	                positionRatio = (limit.min - min) / distance;
+	                sizeRatio -= positionRatio;
+	                tickCount -= 1;
+	                labels.shift();
+	            }
 
-	        if (limit.max > max) {
-	            limit.max -= step;
-	            sizeRatio -= (max - limit.max) / distance;
-	            tickCount -= 1;
-	            labels.pop();
+	            if (limit.max > max) {
+	                limit.max -= step;
+	                sizeRatio -= (max - limit.max) / distance;
+	                tickCount -= 1;
+	                labels.pop();
+	            }
 	        }
 
 	        return {
@@ -27412,7 +27454,7 @@
 	        var foundDegree = null;
 
 	        tui.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
-	            var compareWidth = calculator.calculateRotatedWidth(degree, labelWidth, labelHeight);
+	            var compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
 
 	            foundDegree = degree;
 
@@ -27437,10 +27479,10 @@
 	     */
 	    _calculateRotatedWidth: function(degree, firstLabel, labelHeight, labelTheme) {
 	        var firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, labelTheme);
-	        var newLabelWidth = calculator.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
+	        var newLabelWidth = geomatric.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
 
 	        // overflow 체크시에는 우측 상단 꼭지 기준으로 계산해야 함
-	        newLabelWidth -= calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
+	        newLabelWidth -= geomatric.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
 
 	        return newLabelWidth;
 	    },
@@ -27482,7 +27524,7 @@
 	        if (labelAreaWidth < maxLabelWidth) {
 	            labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);
 	            degree = this._findRotationDegree(labelAreaWidth, maxLabelWidth, labelHeight);
-	            rotatedHeight = calculator.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
+	            rotatedHeight = geomatric.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
 	            rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
 	            limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
 
@@ -27741,11 +27783,25 @@
 	     */
 	    getScaleOption: function() {
 	        var scaleOption = {};
+	        var xAxisOption = this.options.xAxis;
+	        var hasDateFormat, isDateTimeTypeXAxis;
 
 	        if (this.dataProcessor.isCoordinateType()) {
+	            isDateTimeTypeXAxis = xAxisOption && xAxisOption.type === 'datetime';
+	            hasDateFormat = isDateTimeTypeXAxis && tui.util.isExisty(xAxisOption.dateFormat);
+
 	            scaleOption.xAxis = {
 	                valueType: 'x'
 	            };
+
+	            if (isDateTimeTypeXAxis) {
+	                scaleOption.xAxis.type = (xAxisOption || {}).dateTime;
+	            }
+
+	            if (hasDateFormat) {
+	                scaleOption.xAxis.format = (xAxisOption || {}).dateFormat;
+	            }
+
 	            scaleOption.yAxis = {
 	                valueType: 'y'
 	            };
@@ -31007,11 +31063,12 @@
 
 	        this.paper.setStart();
 
+	        this.options = data.options;
+	        this.theme = data.theme;
 	        this.groupBars = this._renderBars(groupBounds);
 	        this.groupBorders = this._renderBarBorders(groupBounds);
 
 	        this.overlay = this._renderOverlay();
-	        this.theme = data.theme;
 	        this.groupBounds = groupBounds;
 
 	        return this.paper.setFinish();
@@ -31066,18 +31123,10 @@
 	     * @private
 	     */
 	    _renderBars: function(groupBounds) {
-	        var self = this,
-	            singleColors = [],
-	            colors = this.theme.colors,
-	            groupBars;
-
-	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-	            singleColors = this.theme.singleColors;
-	        }
-
-	        groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
-	            var singleColor = singleColors[groupIndex];
-
+	        var self = this;
+	        var colors = this.theme.colors;
+	        var colorByPoint = this.options.colorByPoint;
+	        var groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
 	            return tui.util.map(bounds, function(bound, index) {
 	                var color, rect, item;
 
@@ -31087,7 +31136,7 @@
 
 	                item = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
-	                color = singleColor || colors[index];
+	                color = colorByPoint ? colors[groupIndex] : colors[index];
 	                rect = self._renderBar(bound.start, color);
 
 	                return {
@@ -31613,6 +31662,7 @@
 	        this.paper = paper;
 
 	        this.theme = data.theme;
+	        this.options = data.options;
 	        this.seriesDataModel = data.seriesDataModel;
 	        this.chartType = data.chartType;
 
@@ -31624,7 +31674,6 @@
 
 	        this.rectOverlay = this._renderRectOverlay();
 	        this.circleOverlay = this._renderCircleOverlay();
-	        this.theme = data.theme;
 	        this.groupBounds = groupBounds;
 
 	        return this.paper.setFinish();
@@ -31702,16 +31751,10 @@
 	     */
 	    _renderBoxes: function(groupBounds) {
 	        var self = this;
-	        var singleColors = [];
 	        var colors = this.theme.colors;
-
-	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-	            singleColors = this.theme.singleColors;
-	        }
+	        var colorByPoint = this.options.colorByPoint;
 
 	        return tui.util.map(groupBounds, function(bounds, groupIndex) {
-	            var singleColor = singleColors[groupIndex];
-
 	            return tui.util.map(bounds, function(bound, index) {
 	                var color, rect, item;
 
@@ -31721,7 +31764,7 @@
 
 	                item = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
-	                color = singleColor || colors[index];
+	                color = colorByPoint ? colors[groupIndex] : colors[index];
 
 	                if (bound.start) {
 	                    rect = self._renderBox(bound.start, color);
@@ -31783,20 +31826,15 @@
 
 	    _renderWhiskers: function(groupBounds) {
 	        var self = this;
-	        var singleColors = [];
 	        var colors = this.theme.colors;
+	        var colorByPoint = this.options.colorByPoint;
 	        var groupWhiskers = [];
 
-	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-	            singleColors = this.theme.singleColors;
-	        }
-
 	        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
-	            var singleColor = singleColors[groupIndex];
 	            var whiskers = [];
 
 	            tui.util.forEach(bounds, function(bound, index) {
-	                var color = singleColor || colors[index];
+	                var color = colorByPoint ? colors[groupIndex] : colors[index];
 
 	                if (!bound) {
 	                    return;
@@ -31826,20 +31864,15 @@
 
 	    _renderMedianLines: function(groupBounds) {
 	        var self = this;
-	        var singleColors = [];
 	        var colors = this.theme.colors;
+	        var colorByPoint = this.options.colorByPoint;
 	        var groupMedians = [];
 
-	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-	            singleColors = this.theme.singleColors;
-	        }
-
 	        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
-	            var singleColor = singleColors[groupIndex];
 	            var medians = [];
 
 	            tui.util.forEach(bounds, function(bound, index) {
-	                var color = singleColor || colors[index];
+	                var color = colorByPoint ? colors[groupIndex] : colors[index];
 
 	                if (!bound) {
 	                    return;
@@ -31870,19 +31903,14 @@
 
 	    _renderOutliers: function(groupBounds) {
 	        var self = this;
-	        var singleColors = [];
 	        var colors = this.theme.colors;
+	        var colorByPoint = this.options.colorByPoint;
 	        var groupOutliers = [];
 
-	        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-	            singleColors = this.theme.singleColors;
-	        }
-
 	        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
-	            var singleColor = singleColors[groupIndex];
 	            var outliers = [];
 	            tui.util.forEach(bounds, function(bound, index) {
-	                var color = singleColor || colors[index];
+	                var color = colorByPoint ? colors[groupIndex] : colors[index];
 	                var seriesOutliers = [];
 
 	                if (!bound) {
@@ -32325,6 +32353,12 @@
 	         * @type {string}
 	         */
 	        this.chartType = 'line';
+
+	        /**
+	         * Line width
+	         * @type {number}
+	         */
+	        this.lineWidth = 2;
 	    },
 
 	    /**
@@ -32338,29 +32372,33 @@
 	        var groupPositions = data.groupPositions;
 	        var theme = data.theme;
 	        var colors = theme.colors;
-	        var opacity = data.options.showDot ? 1 : 0;
-	        var isSpline = data.options.spline;
+	        var options = data.options;
+	        var opacity = options.showDot ? 1 : 0;
+	        var isSpline = options.spline;
+	        var lineWidth = this.lineWidth = (tui.util.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
 	        var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
 	        var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
 	        var groupPaths;
 
 	        if (isSpline) {
-	            groupPaths = this._getSplineLinesPath(groupPositions, data.options.connectNulls);
+	            groupPaths = this._getSplineLinesPath(groupPositions, options.connectNulls);
 	        } else {
-	            groupPaths = this._getLinesPath(groupPositions, data.options.connectNulls);
+	            groupPaths = this._getLinesPath(groupPositions, options.connectNulls);
 	        }
 
 	        this.paper = paper;
+	        this.theme = data.theme;
 	        this.isSpline = isSpline;
 	        this.dimension = dimension;
 	        this.position = data.position;
 
 	        paper.setStart();
-	        this.groupLines = this._renderLines(paper, groupPaths, colors);
+
+	        this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth);
 	        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
 	        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
-	        if (data.options.allowSelect) {
+	        if (options.allowSelect) {
 	            this.selectionDot = this._makeSelectionDot(paper);
 	            this.selectionColor = theme.selectionColor;
 	        }
@@ -32572,7 +32610,6 @@
 	var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 	var ANIMATION_DURATION = 700;
 	var DEFAULT_DOT_RADIUS = 3;
-	var HOVER_DOT_RADIUS = 4;
 	var SELECTION_DOT_RADIUS = 7;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var MOVING_ANIMATION_DURATION = 300;
@@ -32801,14 +32838,17 @@
 	     * @returns {object} raphael dot
 	     */
 	    renderDot: function(paper, position, color, opacity) {
+	        var dotTheme = (this.theme && this.theme.dot) || {dot: {}};
 	        var dot, dotStyle, raphaelDot;
 
 	        if (position) {
-	            dot = paper.circle(position.left, position.top, DEFAULT_DOT_RADIUS);
+	            dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
 	            dotStyle = {
-	                fill: color,
-	                'fill-opacity': opacity,
-	                'stroke-opacity': 0
+	                fill: dotTheme.fillColor || color,
+	                'fill-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
+	                stroke: dotTheme.strokeColor || color,
+	                'stroke-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
+	                'stroke-width': dotTheme.strokeWidth
 	            };
 
 	            dot.attr(dotStyle);
@@ -32842,7 +32882,7 @@
 	     * @param {Array.<Array.<object>>} groupPositions positions
 	     * @param {string[]} colors colors
 	     * @param {number} opacity opacity
-	     * @param {Array.<object>} seriesSet series set
+	     * @param {Array.<object>} [seriesSet] series set
 	     * @returns {Array.<object>} dots
 	     * @private
 	     */
@@ -32895,16 +32935,25 @@
 
 	    /**
 	     * Show dot.
-	     * @param {object} dot raphael object
+	     * @param {object} dotInformation raphael object
 	     * @private
 	     */
-	    _showDot: function(dot) {
-	        dot.attr({
-	            'fill-opacity': 1,
-	            'stroke-opacity': 0.3,
-	            'stroke-width': 2,
-	            r: HOVER_DOT_RADIUS
-	        });
+	    _showDot: function(dotInformation) {
+	        var hoverTheme = this.theme.dot.hover;
+	        var attributes = {
+	            'fill-opacity': hoverTheme.fillOpacity,
+	            stroke: hoverTheme.strokeColor || dotInformation.color,
+	            'stroke-opacity': hoverTheme.strokeOpacity,
+	            'stroke-width': hoverTheme.strokeWidth,
+	            r: hoverTheme.radius
+	        };
+	        this.prevDotAttributes = dotInformation.dot.attr();
+
+	        if (hoverTheme.fillColor) {
+	            attributes.fill = hoverTheme.fillColor;
+	        }
+
+	        dotInformation.dot.attr(attributes);
 	    },
 
 	    /**
@@ -32935,11 +32984,11 @@
 	        }
 
 	        if (this.chartType === 'area') {
-	            strokeWidth = 2;
+	            strokeWidth = this.lineWidth * 2;
 	            startLine = line.startLine;
 	            line = line.line;
 	        } else {
-	            strokeWidth = 3;
+	            strokeWidth = this.lineWidth * 2;
 	        }
 
 	        this._updateLineStrokeWidth(line, strokeWidth);
@@ -32948,10 +32997,10 @@
 	            this._updateLineStrokeWidth(startLine, strokeWidth);
 	        }
 
-	        this._showDot(item.endDot.dot);
+	        this._showDot(item.endDot);
 
 	        if (item.startDot) {
-	            this._showDot(item.startDot.dot);
+	            this._showDot(item.startDot);
 	        }
 	    },
 
@@ -32983,11 +33032,11 @@
 
 	        tui.util.forEachArray(groupDots[index], function(item) {
 	            if (item.endDot) {
-	                self._showDot(item.endDot.dot);
+	                self._showDot(item.endDot);
 	            }
 
 	            if (item.startDot) {
-	                self._showDot(item.startDot.dot);
+	                self._showDot(item.startDot);
 	            }
 	        });
 	    },
@@ -33037,7 +33086,7 @@
 	        var outDotStyle = this.outDotStyle;
 
 	        if (!tui.util.isUndefined(opacity)) {
-	            outDotStyle = tui.util.extend({}, this.outDotStyle, {
+	            outDotStyle = tui.util.extend({}, this.prevDotAttributes, {
 	                'fill-opacity': opacity
 	            });
 	        }
@@ -33064,11 +33113,11 @@
 	        item = groupDot[index];
 
 	        if (this.chartType === 'area') {
-	            strokeWidth = 1;
+	            strokeWidth = this.lineWidth;
 	            startLine = line.startLine;
 	            line = line.line;
 	        } else {
-	            strokeWidth = 2;
+	            strokeWidth = this.lineWidth;
 	        }
 
 	        if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
@@ -33413,6 +33462,12 @@
 	         * @type {string}
 	         */
 	        this.chartType = 'area';
+
+	        /**
+	         * Line width
+	         * @type {number}
+	         */
+	        this.lineWidth = 1;
 	    },
 
 	    /**
@@ -33426,12 +33481,15 @@
 	        var groupPositions = data.groupPositions;
 	        var theme = data.theme;
 	        var colors = theme.colors;
-	        var opacity = data.options.showDot ? 1 : 0;
+	        var options = data.options;
+	        var opacity = options.showDot ? 1 : 0;
 	        var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
 	        var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
+	        var lineWidth = this.lineWidth = (tui.util.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
 
 	        this.paper = paper;
-	        this.isSpline = data.options.spline;
+	        this.theme = data.theme;
+	        this.isSpline = options.spline;
 	        this.dimension = dimension;
 	        this.position = data.position;
 
@@ -33440,12 +33498,12 @@
 
 	        paper.setStart();
 
-	        this.groupPaths = this._getAreaChartPath(groupPositions, null, data.options.connectNulls);
-	        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
+	        this.groupPaths = this._getAreaChartPath(groupPositions, null, options.connectNulls);
+	        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors, lineWidth);
 	        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
 	        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
-	        if (data.options.allowSelect) {
+	        if (options.allowSelect) {
 	            this.selectionDot = this._makeSelectionDot(paper);
 	            this.selectionColor = theme.selectionColor;
 
@@ -33488,10 +33546,11 @@
 	     * @param {object} paper paper
 	     * @param {Array.<object>} groupPaths group paths
 	     * @param {Array.<string>} colors colors
+	     * @param {number} lineWidth line width
 	     * @returns {Array} raphael objects
 	     * @private
 	     */
-	    _renderAreas: function(paper, groupPaths, colors) {
+	    _renderAreas: function(paper, groupPaths, colors, lineWidth) {
 	        var groupAreas;
 
 	        colors = colors.slice(0, groupPaths.length);
@@ -33507,7 +33566,7 @@
 	                        opacity: 0.5,
 	                        stroke: areaColor
 	                    }),
-	                    line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, 1)
+	                    line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth)
 	                };
 
 	            if (path.startLine) {
@@ -34560,6 +34619,12 @@
 	         * @type {string}
 	         */
 	        this.chartType = 'radial';
+
+	        /**
+	         * Line width
+	         * @type {number}
+	         */
+	        this.lineWidth = 2;
 	    },
 
 	    /**
@@ -34580,8 +34645,10 @@
 	        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
 	        var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
 	        var radialSeriesSet = paper.set();
+	        var lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);
 
 	        this.paper = paper;
+	        this.theme = data.theme;
 	        this.dimension = dimension;
 	        this.position = data.position;
 
@@ -34589,7 +34656,7 @@
 	            this.groupAreas = this._renderArea(paper, groupPaths, colors, radialSeriesSet);
 	        }
 
-	        this.groupLines = this._renderLines(paper, groupPaths, colors, null, radialSeriesSet);
+	        this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth, radialSeriesSet);
 	        this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity, radialSeriesSet);
 
 	        if (data.options.allowSelect) {
@@ -34869,21 +34936,14 @@
 	    _renderCircles: function(circleSet) {
 	        var self = this;
 	        var colors = this.theme.colors;
-	        var singleColors = [];
-
-	        if ((this.groupBounds[0].length === 1) && this.theme.singleColors) {
-	            singleColors = this.theme.singleColors;
-	        }
 
 	        return tui.util.map(this.groupBounds, function(bounds, groupIndex) {
-	            var singleColor = singleColors[groupIndex];
-
 	            return tui.util.map(bounds, function(bound, index) {
 	                var circleInfo = null;
 	                var color, circle;
 
 	                if (bound) {
-	                    color = singleColor || colors[index];
+	                    color = colors[index];
 	                    circle = raphaelRenderUtil.renderCircle(self.paper, bound, 0, {
 	                        fill: color,
 	                        opacity: 0,
@@ -35917,10 +35977,99 @@
 	var raphaelRenderUtil = __webpack_require__(61);
 
 	var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
+	var ICON_WIDTH = 10;
 	var CHECKBOX_WIDTH = 10;
 	var CHECKBOX_HEIGHT = 10;
 
 	var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+
+	    /**
+	     * @param {Array.<object>} legendData Array of legend item data
+	     * @private
+	     */
+	    _renderLegendItems: function(legendData) {
+	        var self = this;
+	        var labelPaddingLeft = chartConst.LEGEND_LABEL_LEFT_PADDING;
+	        var position = tui.util.extend({}, this.basePosition);
+
+	        tui.util.forEach(legendData, function(legendDatum, index) {
+	            var legendIndex = legendDatum.index;
+	            var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
+	            var isUnselected = legendDatum.isUnselected;
+	            var labelHeight = legendDatum.labelHeight;
+	            var checkboxData = legendDatum.checkbox;
+	            var predicatedLegendLength = position.left + ICON_WIDTH + self.labelWidths[index]
+	                + (labelPaddingLeft * 2) + (checkboxData ? CHECKBOX_WIDTH + labelPaddingLeft : 0);
+	            var isNeedBreakLine = (predicatedLegendLength > self.paper.width);
+
+	            if (self.isHorizontal && isNeedBreakLine) {
+	                position.top += (labelHeight + chartConst.LABEL_PADDING_TOP);
+	                position.left = self.basePosition.left;
+	            }
+
+	            if (checkboxData) {
+	                self._renderCheckbox(position, checkboxData, legendIndex, self.legendSet);
+
+	                position.left += (CHECKBOX_WIDTH + labelPaddingLeft);
+	            }
+
+	            self._renderIcon(position, {
+	                legendColor: legendColor,
+	                iconType: legendDatum.iconType,
+	                labelHeight: labelHeight,
+	                isUnselected: isUnselected,
+	                legendIndex: legendIndex,
+	                legendSet: self.legendSet
+	            });
+
+	            position.left += ICON_WIDTH + labelPaddingLeft;
+
+	            self._renderLabel(position, {
+	                labelText: legendDatum.label,
+	                labelHeight: labelHeight,
+	                isUnselected: isUnselected,
+	                legendIndex: legendIndex,
+	                legendSet: self.legendSet
+	            });
+
+	            if (self.isHorizontal) {
+	                position.left += self.labelWidths[index] + labelPaddingLeft;
+	            } else {
+	                position.left = self.basePosition.left;
+	                position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
+	            }
+	        });
+	    },
+
+	    /**
+	     * @param {Array.<object>} legendData Array of legend item data
+	     * @param {number} sliceIndex slice index of
+	     * @returns {Array.<object>}
+	     * @private
+	     */
+	    _getLegendData: function(legendData, sliceIndex) {
+	        var positionTop = this.basePosition.top;
+	        var totalHeight = this.dimension.height;
+	        var chartHeight = this.paper.height;
+	        var resultLegendData, pageHeight, singleItemHeight, visibleItemCount;
+
+	        if (!legendData.length) {
+	            return null;
+	        }
+
+	        if (!this.isHorizontal && totalHeight + (positionTop * 2) > chartHeight) {
+	            pageHeight = chartHeight - (positionTop * 2);
+	            singleItemHeight = (legendData[0].labelHeight + chartConst.LINE_MARGIN_TOP);
+
+	            visibleItemCount = Math.floor(pageHeight / singleItemHeight);
+
+	            resultLegendData = legendData.slice((sliceIndex - 1) * visibleItemCount, sliceIndex * visibleItemCount);
+	        } else {
+	            resultLegendData = legendData;
+	        }
+
+	        return resultLegendData;
+	    },
 
 	    /**
 	     * Render legend
@@ -35935,57 +36084,104 @@
 	     * @returns {object} paper
 	     */
 	    render: function(data) {
-	        var self = this;
-	        var legendData = data.legendData;
-	        var isHorizontal = data.isHorizontal;
-	        var position = tui.util.extend({}, data.position);
-	        var legendSet = data.paper.set();
+	        var legendData, legendHeight;
 
 	        this.eventBus = data.eventBus;
 	        this.paper = data.paper;
+	        this.dimension = data.dimension;
+	        this.legendSet = this.paper.set();
 	        this.labelWidths = data.labelWidths;
 	        this.labelTheme = data.labelTheme;
-	        tui.util.forEach(legendData, function(legendDatum, index) {
-	            var legendIndex = legendDatum.index;
-	            var legendColor = legendDatum.theme.color;
-	            var checkboxData = legendDatum.checkbox;
-	            var iconType = legendDatum.iconType;
-	            var labelText = legendDatum.label;
-	            var isUnselected = legendDatum.isUnselected;
-	            var labelHeight = legendDatum.labelHeight;
+	        this.basePosition = data.position;
+	        this.isHorizontal = data.isHorizontal;
+	        this.originalLegendData = data.legendData;
+	        if (!tui.util.isNumber(this.currentPageCount)) {
+	            this.currentPageCount = 1;
+	        }
 
-	            if (checkboxData) {
-	                self._renderCheckbox(position, checkboxData, legendIndex, legendSet);
-	                position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
-	            }
+	        legendData = this._getLegendData(data.legendData, this.currentPageCount);
 
-	            self._renderIcon(position, {
-	                legendColor: legendColor,
-	                iconType: iconType,
-	                labelHeight: labelHeight,
-	                isUnselected: isUnselected,
-	                legendIndex: legendIndex,
-	                legendSet: legendSet
+	        this._renderLegendItems(legendData);
+
+	        if (!this.isHorizontal && legendData.length < data.legendData.length) {
+	            legendHeight = this.paper.height - (this.basePosition.top * 2);
+
+	            this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
+
+	            this._renderPaginationArea(this.basePosition, {
+	                width: data.dimension.width,
+	                height: legendHeight
 	            });
+	        }
 
-	            position.left += 10 + chartConst.LEGEND_LABEL_LEFT_PADDING;
+	        return this.legendSet;
+	    },
 
-	            self._renderLabel(position, {
-	                labelText: labelText,
-	                labelHeight: labelHeight,
-	                isUnselected: isUnselected,
-	                legendIndex: legendIndex,
-	                legendSet: legendSet
+	    /**
+	     * @param {string} direction direction string of paginate 'next' or 'previous'
+	     * @private
+	     */
+	    _paginateLegendAreaTo: function(direction) {
+	        var pageNumber = this.currentPageCount;
+
+	        this._removeLegendItems();
+
+	        if (direction === 'next') {
+	            pageNumber += 1;
+	        } else {
+	            pageNumber -= 1;
+	        }
+
+	        this._renderLegendItems(this._getLegendData(this.originalLegendData, pageNumber));
+	    },
+
+	    _removeLegendItems: function() {
+	        this.legendSet.forEach(function(legendItem) {
+	            tui.util.forEach(legendItem.events, function(event) {
+	                event.unbind();
 	            });
-	            if (isHorizontal) {
-	                position.left += data.labelWidths[index] + chartConst.LEGEND_LABEL_LEFT_PADDING;
-	            } else {
-	                position.left = data.position.left;
-	                position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
+	            legendItem.remove();
+	        });
+	    },
+
+	    /**
+	     * @param {{top: number, left: number}} position legend area position
+	     * @param {{height: number, width: number}} dimension legend area dimension
+	     * @private
+	     */
+	    _renderPaginationArea: function(position, dimension) {
+	        var self = this;
+	        var BUTTON_WIDTH = 10;
+	        var BUTTON_PADDING_LEFT = 5;
+	        var controllerPositionTop = position.top + dimension.height - chartConst.CHART_PADDING;
+	        var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
+	        var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
+	        var leftButtonPositionLeft = rightButtonPositionLeft - (BUTTON_PADDING_LEFT + BUTTON_WIDTH);
+	        var lowerArrowPath = [
+	            'M', rightButtonPositionLeft, ',', (controllerPositionTop + 3),
+	            'L', (rightButtonPositionLeft + 5), ',', (controllerPositionTop + 8),
+	            'L', (rightButtonPositionLeft + 10), ',', (controllerPositionTop + 3)].join('');
+	        var upperArrowPath = [
+	            'M', leftButtonPositionLeft, ',', (controllerPositionTop + 8),
+	            'L', (leftButtonPositionLeft + 5), ',', (controllerPositionTop + 3),
+	            'L', (leftButtonPositionLeft + 10), ',', (controllerPositionTop + 8)].join('');
+
+	        this.upperButton = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 3);
+	        this.lowerButton = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 3);
+
+	        this.upperButton.click(function() {
+	            if (self.currentPageCount > 1) {
+	                self._paginateLegendAreaTo('previous');
+	                self.currentPageCount -= 1;
 	            }
 	        });
 
-	        return legendSet;
+	        this.lowerButton.click(function() {
+	            if (self.currentPageCount < self.availablePageCount) {
+	                self._paginateLegendAreaTo('next');
+	                self.currentPageCount += 1;
+	            }
+	        });
 	    },
 
 	    /**
@@ -36602,7 +36798,7 @@
 	                attributes.transform = 'r-90,' + (positionTopAndLeft.left - textHeight) + ',' + positionTopAndLeft.top;
 	            }
 	        } else {
-	            positionTopAndLeft.top = paper.height - textHeight;
+	            positionTopAndLeft.top = data.layout.position.top + data.layout.dimension.height;
 	            positionTopAndLeft.left = centerPosition;
 	        }
 
