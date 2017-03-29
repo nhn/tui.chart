@@ -68,6 +68,7 @@ var scaleDataMaker = {
     millisecondMap: {
         year: 31536000000,
         month: 2678400000,
+        week: 604800000,
         date: 86400000,
         hour: 3600000,
         minute: 60000,
@@ -77,7 +78,7 @@ var scaleDataMaker = {
     /**
      * millisecond types
      */
-    millisecondTypes: ['year', 'month', 'date', 'hour', 'minute', 'second'],
+    millisecondTypes: ['year', 'month', 'week', 'date', 'hour', 'minute', 'second'],
 
     /**
      * Find date type.
@@ -100,7 +101,7 @@ var scaleDataMaker = {
                 var foundIndex;
 
                 if (dividedCount) {
-                    foundIndex = index < lastTypeIndex && (dividedCount < count) ? index + 1 : index;
+                    foundIndex = index < lastTypeIndex && dividedCount < 2 && dividedCount < count ? index + 1 : index;
                     foundType = millisecondTypes[foundIndex];
                 }
 
@@ -175,10 +176,11 @@ var scaleDataMaker = {
             } else {
                 limit.max = 0;
             }
-        }
-
-        if (limit.min === 0 && limit.max === 0) {
+        } else if (limit.min === 0 && limit.max === 0) {
             limit.max = 10;
+        } else if (limit.min === limit.max) {
+            limit.min -= (limit.min / 10);
+            limit.max += (limit.max / 10);
         }
 
         return limit;
@@ -206,7 +208,8 @@ var scaleDataMaker = {
         scale = coordinateScaleCalculator({
             min: limit.min,
             max: limit.max,
-            offsetSize: baseSize
+            offsetSize: baseSize,
+            minimumStepSize: 1
         });
 
         scale = this._restoreScaleToDatetimeType(scale, datetimeInfo.minDate, datetimeInfo.divisionNumber);

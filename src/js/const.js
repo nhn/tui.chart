@@ -161,9 +161,9 @@ var chartConst = {
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default ratio for pie graph */
-    PIE_GRAPH_DEFAULT_RATIO: 0.8,
+    PIE_GRAPH_DEFAULT_RATIO: 0.9,
     /** small ratio for pie graph */
-    PIE_GRAPH_SMALL_RATIO: 0.65,
+    PIE_GRAPH_SMALL_RATIO: 0.75,
     /** tick count for spectrum legend */
     SPECTRUM_LEGEND_TICK_COUNT: 4,
     /** default position ratio of map chart label
@@ -183,8 +183,8 @@ var chartConst = {
      */
     THEME_PROPS_MAP: {
         yAxis: ['tickColor', 'title', 'label'],
-        series: ['label', 'colors', 'borderColor', 'borderWidth', 'singleColors',
-            'selectionColor', 'startColor', 'endColor', 'overColor']
+        series: ['label', 'colors', 'borderColor', 'borderWidth', 'selectionColor', 'startColor', 'endColor',
+            'overColor', 'dot']
     },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
@@ -266,6 +266,7 @@ var chartConst = {
      */
     DATE_TYPE_YEAR: 'year',
     DATE_TYPE_MONTH: 'month',
+    DATE_TYPE_WEEK: 'week',
     DATE_TYPE_DATE: 'date',
     DATE_TYPE_HOUR: 'hour',
     DATE_TYPE_MINUTE: 'minute',
@@ -275,9 +276,9 @@ var chartConst = {
     /** legend area padding */
     LEGEND_AREA_PADDING: 10,
     /** legend checkbox width */
-    LEGEND_CHECKBOX_WIDTH: 20,
+    LEGEND_CHECKBOX_WIDTH: 10,
     /** legend rect width */
-    LEGEND_RECT_WIDTH: 12,
+    LEGEND_RECT_WIDTH: 10,
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 5,
     MIN_LEGEND_WIDTH: 100,

@@ -53,13 +53,28 @@ var defaultTheme = {
             fontWeight: DEFAULT_FONTWEIGHT
         },
         colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
-        singleColors: [],
         borderColor: EMPTY,
         borderWidth: EMPTY,
         selectionColor: EMPTY,
         startColor: '#F4F4F4',
         endColor: '#345391',
-        overColor: '#F0C952'
+        overColor: '#F0C952',
+        dot: {
+            fillColor: EMPTY,
+            fillOpacity: 1,
+            strokeColor: EMPTY,
+            strokeOpacity: 1,
+            strokeWidth: 2,
+            radius: 2,
+            hover: {
+                fillColor: EMPTY,
+                fillOpacity: 1,
+                strokeColor: EMPTY,
+                strokeOpacity: 0.8,
+                strokeWidth: 3,
+                radius: 4
+            }
+        }
     },
     legend: {
         label: {

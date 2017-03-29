@@ -30,6 +30,12 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
          * @type {string}
          */
         this.chartType = 'radial';
+
+        /**
+         * Line width
+         * @type {number}
+         */
+        this.lineWidth = 2;
     },
 
     /**
@@ -50,8 +56,10 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
         var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         var radialSeriesSet = paper.set();
+        var lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);
 
         this.paper = paper;
+        this.theme = data.theme;
         this.dimension = dimension;
         this.position = data.position;
 
@@ -59,7 +67,7 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
             this.groupAreas = this._renderArea(paper, groupPaths, colors, radialSeriesSet);
         }
 
-        this.groupLines = this._renderLines(paper, groupPaths, colors, null, radialSeriesSet);
+        this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth, radialSeriesSet);
         this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity, radialSeriesSet);
 
         if (data.options.allowSelect) {

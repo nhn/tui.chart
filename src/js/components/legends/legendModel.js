@@ -100,7 +100,6 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @param {Array.<object>} legendData - legend data
      * @param {{
      *     colors: Array.<string>,
-     *     singleColors: ?string,
      *     borderColor: ?string
      *     }} colorTheme - legend theme
      * @param {Array.<boolean>} [checkedIndexes] - checked indexes
@@ -113,10 +112,6 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             var itemTheme = {
                 color: colorTheme.colors[index]
             };
-
-            if (colorTheme.singleColors && colorTheme.singleColors.length) {
-                itemTheme.singleColor = colorTheme.singleColors[index];
-            }
 
             if (colorTheme.borderColor) {
                 itemTheme.borderColor = colorTheme.borderColor;

@@ -331,7 +331,7 @@ describe('Test for BoundsModel', function() {
 
             actual = boundsModel._makeSeriesDimension();
             expected = {
-                width: 430,
+                width: 410,
                 height: 230
             };
 

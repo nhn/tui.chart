@@ -41,6 +41,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         this.paper = paper;
 
         this.theme = data.theme;
+        this.options = data.options;
         this.seriesDataModel = data.seriesDataModel;
         this.chartType = data.chartType;
 
@@ -52,7 +53,6 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
 
         this.rectOverlay = this._renderRectOverlay();
         this.circleOverlay = this._renderCircleOverlay();
-        this.theme = data.theme;
         this.groupBounds = groupBounds;
 
         return this.paper.setFinish();
@@ -130,16 +130,10 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
      */
     _renderBoxes: function(groupBounds) {
         var self = this;
-        var singleColors = [];
         var colors = this.theme.colors;
-
-        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-            singleColors = this.theme.singleColors;
-        }
+        var colorByPoint = this.options.colorByPoint;
 
         return tui.util.map(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
-
             return tui.util.map(bounds, function(bound, index) {
                 var color, rect, item;
 
@@ -149,7 +143,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
 
                 item = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
-                color = singleColor || colors[index];
+                color = colorByPoint ? colors[groupIndex] : colors[index];
 
                 if (bound.start) {
                     rect = self._renderBox(bound.start, color);
@@ -211,20 +205,15 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
 
     _renderWhiskers: function(groupBounds) {
         var self = this;
-        var singleColors = [];
         var colors = this.theme.colors;
+        var colorByPoint = this.options.colorByPoint;
         var groupWhiskers = [];
 
-        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-            singleColors = this.theme.singleColors;
-        }
-
         tui.util.forEach(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
             var whiskers = [];
 
             tui.util.forEach(bounds, function(bound, index) {
-                var color = singleColor || colors[index];
+                var color = colorByPoint ? colors[groupIndex] : colors[index];
 
                 if (!bound) {
                     return;
@@ -254,20 +243,15 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
 
     _renderMedianLines: function(groupBounds) {
         var self = this;
-        var singleColors = [];
         var colors = this.theme.colors;
+        var colorByPoint = this.options.colorByPoint;
         var groupMedians = [];
 
-        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-            singleColors = this.theme.singleColors;
-        }
-
         tui.util.forEach(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
             var medians = [];
 
             tui.util.forEach(bounds, function(bound, index) {
-                var color = singleColor || colors[index];
+                var color = colorByPoint ? colors[groupIndex] : colors[index];
 
                 if (!bound) {
                     return;
@@ -298,19 +282,14 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
 
     _renderOutliers: function(groupBounds) {
         var self = this;
-        var singleColors = [];
         var colors = this.theme.colors;
+        var colorByPoint = this.options.colorByPoint;
         var groupOutliers = [];
 
-        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
-            singleColors = this.theme.singleColors;
-        }
-
         tui.util.forEach(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
             var outliers = [];
             tui.util.forEach(bounds, function(bound, index) {
-                var color = singleColor || colors[index];
+                var color = colorByPoint ? colors[groupIndex] : colors[index];
                 var seriesOutliers = [];
 
                 if (!bound) {

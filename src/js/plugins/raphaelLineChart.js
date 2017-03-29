@@ -32,6 +32,12 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
          * @type {string}
          */
         this.chartType = 'line';
+
+        /**
+         * Line width
+         * @type {number}
+         */
+        this.lineWidth = 2;
     },
 
     /**
@@ -45,29 +51,33 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var groupPositions = data.groupPositions;
         var theme = data.theme;
         var colors = theme.colors;
-        var opacity = data.options.showDot ? 1 : 0;
-        var isSpline = data.options.spline;
+        var options = data.options;
+        var opacity = options.showDot ? 1 : 0;
+        var isSpline = options.spline;
+        var lineWidth = this.lineWidth = (tui.util.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
         var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
         var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
         var groupPaths;
 
         if (isSpline) {
-            groupPaths = this._getSplineLinesPath(groupPositions, data.options.connectNulls);
+            groupPaths = this._getSplineLinesPath(groupPositions, options.connectNulls);
         } else {
-            groupPaths = this._getLinesPath(groupPositions, data.options.connectNulls);
+            groupPaths = this._getLinesPath(groupPositions, options.connectNulls);
         }
 
         this.paper = paper;
+        this.theme = data.theme;
         this.isSpline = isSpline;
         this.dimension = dimension;
         this.position = data.position;
 
         paper.setStart();
-        this.groupLines = this._renderLines(paper, groupPaths, colors);
+
+        this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
-        if (data.options.allowSelect) {
+        if (options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }

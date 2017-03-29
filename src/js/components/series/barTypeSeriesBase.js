@@ -115,7 +115,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
             pointInterval = groupSize / (itemCount + 1);
             barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
-            optionSize = this.options.barWidth;
+            optionSize = this.options.barWidth || this.options.pointWidth;
             barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
             basePosition = zeroToMin + positionValue;
 

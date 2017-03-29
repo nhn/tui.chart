@@ -8,7 +8,7 @@
 
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
+var geomatric = require('../../helpers/geometric');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
 
@@ -148,19 +148,21 @@ var axisDataMaker = {
 
         distance = max - min;
 
-        if (limit.min < min) {
-            limit.min += step;
-            positionRatio = (limit.min - min) / distance;
-            sizeRatio -= positionRatio;
-            tickCount -= 1;
-            labels.shift();
-        }
+        if (distance) {
+            if (limit.min < min) {
+                limit.min += step;
+                positionRatio = (limit.min - min) / distance;
+                sizeRatio -= positionRatio;
+                tickCount -= 1;
+                labels.shift();
+            }
 
-        if (limit.max > max) {
-            limit.max -= step;
-            sizeRatio -= (max - limit.max) / distance;
-            tickCount -= 1;
-            labels.pop();
+            if (limit.max > max) {
+                limit.max -= step;
+                sizeRatio -= (max - limit.max) / distance;
+                tickCount -= 1;
+                labels.pop();
+            }
         }
 
         return {
@@ -460,7 +462,7 @@ var axisDataMaker = {
         var foundDegree = null;
 
         tui.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
-            var compareWidth = calculator.calculateRotatedWidth(degree, labelWidth, labelHeight);
+            var compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
 
             foundDegree = degree;
 
@@ -485,10 +487,10 @@ var axisDataMaker = {
      */
     _calculateRotatedWidth: function(degree, firstLabel, labelHeight, labelTheme) {
         var firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, labelTheme);
-        var newLabelWidth = calculator.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
+        var newLabelWidth = geomatric.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
 
         // overflow 체크시에는 우측 상단 꼭지 기준으로 계산해야 함
-        newLabelWidth -= calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
+        newLabelWidth -= geomatric.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
 
         return newLabelWidth;
     },
@@ -530,7 +532,7 @@ var axisDataMaker = {
         if (labelAreaWidth < maxLabelWidth) {
             labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);
             degree = this._findRotationDegree(labelAreaWidth, maxLabelWidth, labelHeight);
-            rotatedHeight = calculator.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
+            rotatedHeight = geomatric.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
             rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
             limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
 

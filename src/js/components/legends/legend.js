@@ -162,6 +162,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _getLegendRenderingData: function(legendData, labelHeight, labelWidths) {
         var self = this;
+        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
+            && this.dataProcessor.options.series.colorByPoint;
 
         return tui.util.map(legendData, function(legendDatum, index) {
             var checkbox = self.options.showCheckbox === false ? null : {
@@ -171,6 +173,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             return {
                 checkbox: checkbox,
                 iconType: legendDatum.chartType || 'rect',
+                colorByPoint: colorByPoint,
                 index: index,
                 theme: legendDatum.theme,
                 label: legendDatum.label,
@@ -204,9 +207,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
             top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
         };
-        var legendRenderingData;
-
-        legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
+        var legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
 
         return graphRenderer.render({
             paper: paper,

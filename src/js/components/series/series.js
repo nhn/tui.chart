@@ -363,7 +363,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (data.checkedLegends) {
             checkedLegends = data.checkedLegends[this.seriesType];
-            this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
+            if (!this.options.colorByPoint) {
+                this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
+            }
         }
 
         this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));

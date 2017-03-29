@@ -12,7 +12,6 @@ var browser = tui.util.browser;
 var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
 var DEFAULT_DOT_RADIUS = 3;
-var HOVER_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
@@ -241,14 +240,17 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @returns {object} raphael dot
      */
     renderDot: function(paper, position, color, opacity) {
+        var dotTheme = (this.theme && this.theme.dot) || {dot: {}};
         var dot, dotStyle, raphaelDot;
 
         if (position) {
-            dot = paper.circle(position.left, position.top, DEFAULT_DOT_RADIUS);
+            dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
             dotStyle = {
-                fill: color,
-                'fill-opacity': opacity,
-                'stroke-opacity': 0
+                fill: dotTheme.fillColor || color,
+                'fill-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
+                stroke: dotTheme.strokeColor || color,
+                'stroke-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
+                'stroke-width': dotTheme.strokeWidth
             };
 
             dot.attr(dotStyle);
@@ -282,7 +284,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {Array.<Array.<object>>} groupPositions positions
      * @param {string[]} colors colors
      * @param {number} opacity opacity
-     * @param {Array.<object>} seriesSet series set
+     * @param {Array.<object>} [seriesSet] series set
      * @returns {Array.<object>} dots
      * @private
      */
@@ -335,16 +337,25 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Show dot.
-     * @param {object} dot raphael object
+     * @param {object} dotInformation raphael object
      * @private
      */
-    _showDot: function(dot) {
-        dot.attr({
-            'fill-opacity': 1,
-            'stroke-opacity': 0.3,
-            'stroke-width': 2,
-            r: HOVER_DOT_RADIUS
-        });
+    _showDot: function(dotInformation) {
+        var hoverTheme = this.theme.dot.hover;
+        var attributes = {
+            'fill-opacity': hoverTheme.fillOpacity,
+            stroke: hoverTheme.strokeColor || dotInformation.color,
+            'stroke-opacity': hoverTheme.strokeOpacity,
+            'stroke-width': hoverTheme.strokeWidth,
+            r: hoverTheme.radius
+        };
+        this.prevDotAttributes = dotInformation.dot.attr();
+
+        if (hoverTheme.fillColor) {
+            attributes.fill = hoverTheme.fillColor;
+        }
+
+        dotInformation.dot.attr(attributes);
     },
 
     /**
@@ -375,11 +386,11 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         }
 
         if (this.chartType === 'area') {
-            strokeWidth = 2;
+            strokeWidth = this.lineWidth * 2;
             startLine = line.startLine;
             line = line.line;
         } else {
-            strokeWidth = 3;
+            strokeWidth = this.lineWidth * 2;
         }
 
         this._updateLineStrokeWidth(line, strokeWidth);
@@ -388,10 +399,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             this._updateLineStrokeWidth(startLine, strokeWidth);
         }
 
-        this._showDot(item.endDot.dot);
+        this._showDot(item.endDot);
 
         if (item.startDot) {
-            this._showDot(item.startDot.dot);
+            this._showDot(item.startDot);
         }
     },
 
@@ -423,11 +434,11 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         tui.util.forEachArray(groupDots[index], function(item) {
             if (item.endDot) {
-                self._showDot(item.endDot.dot);
+                self._showDot(item.endDot);
             }
 
             if (item.startDot) {
-                self._showDot(item.startDot.dot);
+                self._showDot(item.startDot);
             }
         });
     },
@@ -477,7 +488,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var outDotStyle = this.outDotStyle;
 
         if (!tui.util.isUndefined(opacity)) {
-            outDotStyle = tui.util.extend({}, this.outDotStyle, {
+            outDotStyle = tui.util.extend({}, this.prevDotAttributes, {
                 'fill-opacity': opacity
             });
         }
@@ -504,11 +515,11 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         item = groupDot[index];
 
         if (this.chartType === 'area') {
-            strokeWidth = 1;
+            strokeWidth = this.lineWidth;
             startLine = line.startLine;
             line = line.line;
         } else {
-            strokeWidth = 2;
+            strokeWidth = this.lineWidth;
         }
 
         if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {

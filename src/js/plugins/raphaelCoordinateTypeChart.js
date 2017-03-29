@@ -139,21 +139,14 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     _renderCircles: function(circleSet) {
         var self = this;
         var colors = this.theme.colors;
-        var singleColors = [];
-
-        if ((this.groupBounds[0].length === 1) && this.theme.singleColors) {
-            singleColors = this.theme.singleColors;
-        }
 
         return tui.util.map(this.groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
-
             return tui.util.map(bounds, function(bound, index) {
                 var circleInfo = null;
                 var color, circle;
 
                 if (bound) {
-                    color = singleColor || colors[index];
+                    color = colors[index];
                     circle = raphaelRenderUtil.renderCircle(self.paper, bound, 0, {
                         fill: color,
                         opacity: 0,
