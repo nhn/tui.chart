@@ -41,7 +41,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
          * Line width
          * @type {number}
          */
-        this.lineWidth = 2;
+        this.lineWidth = 1;
     },
 
     /**
