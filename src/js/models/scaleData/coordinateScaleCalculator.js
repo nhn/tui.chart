@@ -80,7 +80,8 @@ function getNormalizedStep(step) {
  * max = 155 and step = 10 ---> max = 160
  */
 function getNormalizedLimit(min, max, step) {
-    var placeNumber = (1 / Math.min(getDigits(max), getDigits(step)));
+    var minNumber = Math.min(getDigits(max), getDigits(step));
+    var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
     var fixedStep = (step * placeNumber);
 
     // max의 step 자릿수 이하 올림
