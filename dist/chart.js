@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.9.0
+ * @version 2.9.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Mar 29 2017 15:13:01 GMT+0900 (KST)"
+ * bundle created at "Thu May 04 2017 10:15:15 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -26772,7 +26772,8 @@
 	 * max = 155 and step = 10 ---> max = 160
 	 */
 	function getNormalizedLimit(min, max, step) {
-	    var placeNumber = (1 / Math.min(getDigits(max), getDigits(step)));
+	    var minNumber = Math.min(getDigits(max), getDigits(step));
+	    var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
 	    var fixedStep = (step * placeNumber);
 
 	    // max의 step 자릿수 이하 올림
