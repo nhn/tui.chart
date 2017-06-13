@@ -127,9 +127,14 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     render: function(data) {
         var paper = (data && data.paper) || this.paper;
         this.plotSet = paper.set();
+        this.additionalPlotSet = paper.set();
 
         this._setDataForRendering(data);
         this._renderPlotArea(this.paper);
+
+        this.additionalPlotSet.toBack();
+        this.plotSet.toBack();
+        paper.pushDownBackgroundToBottom();
     },
 
     /**
@@ -137,6 +142,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} data - bounds and scale data
      */
     rerender: function(data) {
+        this.additionalPlotSet.remove();
         this.plotSet.remove();
         this.render(data);
     },
@@ -147,8 +153,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     resize: function(data) {
         this.rerender(data);
-        this.plotSet.toBack();
-        this.paper.pushDownBackgroundToBottom();
     },
 
     /**
@@ -197,7 +201,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             stroke: attributes.color
         });
 
-        this.plotSet.push(path);
+        this.additionalPlotSet.push(path);
 
         return path;
     },
@@ -223,7 +227,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             stroke: attributes.color
         });
 
-        this.plotSet.push(rect);
+        this.additionalPlotSet.push(rect);
 
         return rect;
     },
@@ -389,7 +393,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         });
         var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
 
-        return tui.util.map(lines, makeOptionalLineHtml).join('');
+        return tui.util.map(lines, makeOptionalLineHtml);
     },
 
     /**
@@ -407,7 +411,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         });
         var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
 
-        return tui.util.map(lines, makeOptionalLineHtml).join('');
+        return tui.util.map(lines, makeOptionalLineHtml);
     },
 
     /**
