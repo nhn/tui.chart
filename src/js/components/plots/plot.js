@@ -181,15 +181,15 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Render line
-     * @param {number} position - start percentage position
+     * @param {number} offsetPosition - start percentage offsetPosition
      * @param {object} attributes - line attributes
      * @returns {object} path
      * @private
      */
-    _renderLine: function(position, attributes) {
+    _renderLine: function(offsetPosition, attributes) {
         var top = this.layout.position.top;
         var height = this.layout.dimension.height;
-        var pathString = 'M' + position + ',' + top + 'V' + (top + height);
+        var pathString = 'M' + offsetPosition + ',' + top + 'V' + (top + height);
         var path = this.paper.path(pathString);
 
         path.attr({
@@ -204,16 +204,18 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Render band
-     * @param {number} position - start percentage position
-     * @param {number} width - width
+     * @param {number} offsetPosition - start percentage offsetPosition
+     * @param {number} plotWidth - plotWidth
      * @param {object} attributes - band attributes
      * @returns {object} band
      * @private
      */
-    _renderBand: function(position, width, attributes) {
-        var top = this.layout.position.top;
-        var height = this.layout.dimension.height;
-        var rect = this.paper.rect(position, top, width, height);
+    _renderBand: function(offsetPosition, plotWidth, attributes) {
+        var position = this.layout.position;
+        var dimension = this.layout.dimension;
+        var remainingWidth = dimension.width - offsetPosition + position.left;
+        var bandWidth = Math.min(plotWidth, remainingWidth);
+        var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
 
         rect.attr({
             fill: attributes.color,
