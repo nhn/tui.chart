@@ -34,12 +34,12 @@ var seriesCalculator = {
         if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             legendWidth = legendDimension ? legendDimension.width : 0;
         } else {
-            legendWidth = 20;
+            legendWidth = 0;
         }
 
         rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
 
-        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisWidth - rightAreaWidth;
+        return chartWidth - (chartConst.CHART_PADDING * 3) - yAxisWidth - rightAreaWidth;
     },
 
     /**
