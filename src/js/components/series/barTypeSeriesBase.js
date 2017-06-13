@@ -310,7 +310,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             tui.util.forEach(groupPositions, function(positions, index) {
                 var bounds = groupBounds[index];
                 var lastBound = bounds[bounds.length - 1].end;
-                var firstBound = bounds[parseInt(bounds.length / 2, 10) - 1].end;
+                var firstBound = bounds[Math.max(parseInt(bounds.length / 2, 10), 1) - 1].end;
                 var plusEnd = self._makeStackedLabelPosition(lastBound);
                 var minusEnd = self._makeStackedLabelPosition(firstBound);
                 var plusLabel = sumPlusValues[index];
