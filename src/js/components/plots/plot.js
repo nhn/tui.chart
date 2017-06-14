@@ -127,9 +127,14 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     render: function(data) {
         var paper = (data && data.paper) || this.paper;
         this.plotSet = paper.set();
+        this.additionalPlotSet = paper.set();
 
         this._setDataForRendering(data);
         this._renderPlotArea(this.paper);
+
+        this.additionalPlotSet.toBack();
+        this.plotSet.toBack();
+        paper.pushDownBackgroundToBottom();
     },
 
     /**
@@ -137,6 +142,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} data - bounds and scale data
      */
     rerender: function(data) {
+        this.additionalPlotSet.remove();
         this.plotSet.remove();
         this.render(data);
     },
@@ -147,8 +153,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     resize: function(data) {
         this.rerender(data);
-        this.plotSet.toBack();
-        this.paper.pushDownBackgroundToBottom();
     },
 
     /**
@@ -181,15 +185,15 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Render line
-     * @param {number} position - start percentage position
+     * @param {number} offsetPosition - start percentage offsetPosition
      * @param {object} attributes - line attributes
      * @returns {object} path
      * @private
      */
-    _renderLine: function(position, attributes) {
+    _renderLine: function(offsetPosition, attributes) {
         var top = this.layout.position.top;
         var height = this.layout.dimension.height;
-        var pathString = 'M' + position + ',' + top + 'V' + (top + height);
+        var pathString = 'M' + offsetPosition + ',' + top + 'V' + (top + height);
         var path = this.paper.path(pathString);
 
         path.attr({
@@ -197,23 +201,25 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             stroke: attributes.color
         });
 
-        this.plotSet.push(path);
+        this.additionalPlotSet.push(path);
 
         return path;
     },
 
     /**
      * Render band
-     * @param {number} position - start percentage position
-     * @param {number} width - width
+     * @param {number} offsetPosition - start percentage offsetPosition
+     * @param {number} plotWidth - plotWidth
      * @param {object} attributes - band attributes
      * @returns {object} band
      * @private
      */
-    _renderBand: function(position, width, attributes) {
-        var top = this.layout.position.top;
-        var height = this.layout.dimension.height;
-        var rect = this.paper.rect(position, top, width, height);
+    _renderBand: function(offsetPosition, plotWidth, attributes) {
+        var position = this.layout.position;
+        var dimension = this.layout.dimension;
+        var remainingWidth = dimension.width - offsetPosition + position.left;
+        var bandWidth = Math.min(plotWidth, remainingWidth);
+        var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
 
         rect.attr({
             fill: attributes.color,
@@ -221,7 +227,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             stroke: attributes.color
         });
 
-        this.plotSet.push(rect);
+        this.additionalPlotSet.push(rect);
 
         return rect;
     },
@@ -387,7 +393,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         });
         var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
 
-        return tui.util.map(lines, makeOptionalLineHtml).join('');
+        return tui.util.map(lines, makeOptionalLineHtml);
     },
 
     /**
@@ -405,7 +411,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         });
         var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
 
-        return tui.util.map(lines, makeOptionalLineHtml).join('');
+        return tui.util.map(lines, makeOptionalLineHtml);
     },
 
     /**
