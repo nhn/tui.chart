@@ -43,6 +43,7 @@ describe('Test public APIs for line chart', function() {
         lineChart = tui.chart.lineChart(container, rawData);
         plot = lineChart.componentManager.get('plot');
         plot.paper = Raphael(plotContainer, 100, 100);
+        plot.paper.pushDownBackgroundToBottom = function() {};
     });
 
     afterEach(function() {

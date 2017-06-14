@@ -17,6 +17,7 @@ describe('Test for Plot', function() {
 
     beforeEach(function() {
         paper = raphael(dom.create('div'));
+        paper.pushDownBackgroundToBottom = function() {};
 
         dataProcessor = new DataProcessor({}, '', {});
         plot = new plotFactory.Plot({
@@ -357,7 +358,7 @@ describe('Test for Plot', function() {
                         validTickCount: 0
                     }
                 },
-                paper: raphael(dom.create('div'))
+                paper: paper
             };
 
             plot.render(data);

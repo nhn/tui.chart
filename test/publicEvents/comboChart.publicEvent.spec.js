@@ -79,7 +79,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onClick({
-                clientX: 130,
+                clientX: 125,
                 clientY: 330
             });
         });
@@ -108,14 +108,14 @@ describe('Test user events for combo chart', function() {
 
             // select
             mouseEventDetector._onClick({
-                clientX: 130,
+                clientX: 125,
                 clientY: 330
             });
 
             setTimeout(function() {
                 // unselect
                 mouseEventDetector._onClick({
-                    clientX: 130,
+                    clientX: 125,
                     clientY: 330
                 });
             });
