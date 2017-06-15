@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.9.1
+ * @version 2.9.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu May 04 2017 10:15:15 GMT+0900 (KST)"
+ * bundle created at "Thu Jun 15 2017 14:16:22 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -6097,9 +6097,14 @@
 	    render: function(data) {
 	        var paper = (data && data.paper) || this.paper;
 	        this.plotSet = paper.set();
+	        this.additionalPlotSet = paper.set();
 
 	        this._setDataForRendering(data);
 	        this._renderPlotArea(this.paper);
+
+	        this.additionalPlotSet.toBack();
+	        this.plotSet.toBack();
+	        paper.pushDownBackgroundToBottom();
 	    },
 
 	    /**
@@ -6107,6 +6112,7 @@
 	     * @param {object} data - bounds and scale data
 	     */
 	    rerender: function(data) {
+	        this.additionalPlotSet.remove();
 	        this.plotSet.remove();
 	        this.render(data);
 	    },
@@ -6117,8 +6123,6 @@
 	     */
 	    resize: function(data) {
 	        this.rerender(data);
-	        this.plotSet.toBack();
-	        this.paper.pushDownBackgroundToBottom();
 	    },
 
 	    /**
@@ -6151,15 +6155,15 @@
 
 	    /**
 	     * Render line
-	     * @param {number} position - start percentage position
+	     * @param {number} offsetPosition - start percentage offsetPosition
 	     * @param {object} attributes - line attributes
 	     * @returns {object} path
 	     * @private
 	     */
-	    _renderLine: function(position, attributes) {
+	    _renderLine: function(offsetPosition, attributes) {
 	        var top = this.layout.position.top;
 	        var height = this.layout.dimension.height;
-	        var pathString = 'M' + position + ',' + top + 'V' + (top + height);
+	        var pathString = 'M' + offsetPosition + ',' + top + 'V' + (top + height);
 	        var path = this.paper.path(pathString);
 
 	        path.attr({
@@ -6167,23 +6171,25 @@
 	            stroke: attributes.color
 	        });
 
-	        this.plotSet.push(path);
+	        this.additionalPlotSet.push(path);
 
 	        return path;
 	    },
 
 	    /**
 	     * Render band
-	     * @param {number} position - start percentage position
-	     * @param {number} width - width
+	     * @param {number} offsetPosition - start percentage offsetPosition
+	     * @param {number} plotWidth - plotWidth
 	     * @param {object} attributes - band attributes
 	     * @returns {object} band
 	     * @private
 	     */
-	    _renderBand: function(position, width, attributes) {
-	        var top = this.layout.position.top;
-	        var height = this.layout.dimension.height;
-	        var rect = this.paper.rect(position, top, width, height);
+	    _renderBand: function(offsetPosition, plotWidth, attributes) {
+	        var position = this.layout.position;
+	        var dimension = this.layout.dimension;
+	        var remainingWidth = dimension.width - offsetPosition + position.left;
+	        var bandWidth = Math.min(plotWidth, remainingWidth);
+	        var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
 
 	        rect.attr({
 	            fill: attributes.color,
@@ -6191,7 +6197,7 @@
 	            stroke: attributes.color
 	        });
 
-	        this.plotSet.push(rect);
+	        this.additionalPlotSet.push(rect);
 
 	        return rect;
 	    },
@@ -6357,7 +6363,7 @@
 	        });
 	        var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
 
-	        return tui.util.map(lines, makeOptionalLineHtml).join('');
+	        return tui.util.map(lines, makeOptionalLineHtml);
 	    },
 
 	    /**
@@ -6375,7 +6381,7 @@
 	        });
 	        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
 
-	        return tui.util.map(lines, makeOptionalLineHtml).join('');
+	        return tui.util.map(lines, makeOptionalLineHtml);
 	    },
 
 	    /**
@@ -16716,7 +16722,7 @@
 	            tui.util.forEach(groupPositions, function(positions, index) {
 	                var bounds = groupBounds[index];
 	                var lastBound = bounds[bounds.length - 1].end;
-	                var firstBound = bounds[parseInt(bounds.length / 2, 10) - 1].end;
+	                var firstBound = bounds[Math.max(parseInt(bounds.length / 2, 10), 1) - 1].end;
 	                var plusEnd = self._makeStackedLabelPosition(lastBound);
 	                var minusEnd = self._makeStackedLabelPosition(firstBound);
 	                var plusLabel = sumPlusValues[index];
@@ -25825,12 +25831,12 @@
 	        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
 	            legendWidth = legendDimension ? legendDimension.width : 0;
 	        } else {
-	            legendWidth = 20;
+	            legendWidth = 0;
 	        }
 
 	        rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
 
-	        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisWidth - rightAreaWidth;
+	        return chartWidth - (chartConst.CHART_PADDING * 3) - yAxisWidth - rightAreaWidth;
 	    },
 
 	    /**
