@@ -10,6 +10,7 @@ var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var pluginFactory = require('../../factories/pluginFactory');
+var renderUtil = require('../../helpers/renderUtil');
 
 var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
@@ -520,6 +521,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         if (axisLabels.length) {
             positions.length = axisLabels.length;
         }
+
+        axisLabels = renderUtil.addPrefixSuffix(axisLabels, this.options.prefix, this.options.suffix);
 
         if (hasRotatedXAxisLabel) {
             this._renderRotationLabels(positions, axisLabels, labelSize, additionalSize);

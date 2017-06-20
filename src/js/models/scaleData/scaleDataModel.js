@@ -4,6 +4,7 @@ var scaleDataMaker = require('./scaleDataMaker');
 var scaleLabelFormatter = require('./scaleLabelFormatter');
 var axisDataMaker = require('./axisDataMaker');
 var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
 
 var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */{
     /**
@@ -336,6 +337,8 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         if (addingDataMode) {
             labels = labels.slice(0, labels.length - 1);
         }
+
+        labels = renderUtil.addPrefixSuffix(labels, this.options.xAxis.prefix, this.options.xAxis.suffix);
 
         validLabels = tui.util.filter(labels, function(label) {
             return !!label;
