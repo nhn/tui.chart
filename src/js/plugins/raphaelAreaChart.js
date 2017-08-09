@@ -321,7 +321,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 var position = groupPositions[groupIndex][index];
                 var startPositon;
 
-                self._moveDot(item.endDot.dot, position);
+                if (item.endDot) {
+                    self._moveDot(item.endDot.dot, position);
+                }
                 if (item.startDot) {
                     startPositon = tui.util.extend({}, position);
                     startPositon.top = startPositon.startTop;
