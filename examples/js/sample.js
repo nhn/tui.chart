@@ -5,21 +5,23 @@
         window.open(url, '_blank');
     };
 
-    var evaluationCode = function(codeMirror, codeString) {
+    var evaluationCode = function(codeMirror) {
         var currentCode = codeMirror.doc.getValue();
-        var isError = false;
+        var errorDimContainer = document.getElementById('error-dim');
 
-        document.getElementById('chart-area').innerHTML = '';
+        var chartArea = document.getElementById('chart-area');
 
         try {
+            errorDimContainer.className = '';
+            chartArea.innerHTML = '';
             eval(currentCode);
         } catch (e) {
-            isError = true;
-            console.warn('An error occur :' + e.message);
-            eval(codeString);
-        }
+            errorDimContainer.className = 'show';
+            document.getElementById('error-text').innerText = 'Exception: ' + e.message;
+            document.getElementById('error-stack').innerText = e.stack;
 
-        return isError;
+            console.error(e);
+        }
     };
 
     root.openWindow = openWindow;
