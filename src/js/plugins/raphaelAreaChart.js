@@ -11,8 +11,6 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
-var LEFT_BAR_WIDTH = 10;
-var ADDING_DATA_ANIMATION_DURATION = 300;
 
 var concat = Array.prototype.concat;
 
