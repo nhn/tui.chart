@@ -193,30 +193,27 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _renderLegendArea: function(paper) {
         var legendData = this.legendModel.getData();
         var graphRenderer = this.graphRenderer;
-        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
-        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme) - 1;
         var isHorizontal = predicate.isHorizontalLegend(this.options.align);
+        var basePosition = this.layout.position;
+        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
+        var labelTheme = legendData[0] ? legendData[0].theme : {};
+        var labelHeight = graphRenderer.getRenderedLabelHeight('DEFAULT_TEXT', labelTheme) - 1;
         var labelCount = labelWidths.length;
-        var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
         var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
         var iconWidth = 10;
-        var width = arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
-            + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
-        var basePosition = this.layout.position;
-        var position = {
-            left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
-            top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
-        };
-        var legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
 
         return graphRenderer.render({
             paper: paper,
-            legendData: legendRenderingData,
+            legendData: this._getLegendRenderingData(legendData, labelHeight, labelWidths),
             isHorizontal: isHorizontal,
-            position: position,
+            position: {
+                left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
+                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
+            },
             dimension: {
-                height: height,
-                width: width
+                height: (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount),
+                width: arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
+                + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2)
             },
             labelTheme: this.theme.label,
             labelWidths: labelWidths,

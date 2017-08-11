@@ -80,8 +80,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         var chartType = typeMap.chartType;
         var isVertical = typeMap.areaType !== 'xAxis';
         var baseValues = this.dataProcessor.createBaseValuesForLimit(
-            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType
-        );
+            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType, typeMap.areaType);
         var baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
         var options = tui.util.extend(baseOptions, {
             isVertical: isVertical,
@@ -125,7 +124,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
     /**
      * Create scale.
      * @param {object} axisOptions - axis options
-     * @param {{chartType: string, areaType: string}} typeMap - type map
+     * @param {{chartType: string, areaType: string, valueType: string}} typeMap - type map
      * @param {?object} additionalOptions - additional options
      * @returns {object}
      * @private

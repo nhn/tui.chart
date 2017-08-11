@@ -39,8 +39,8 @@ var min = function(arr, condition, context) {
  * Pick maximum value from value array.
  * @memberOf module:arrayUtil
  * @param {Array} arr value array
- * @param {?function} condition condition function
- * @param {?object} context target context
+ * @param {?function} [condition] condition function
+ * @param {?object} [context] target context
  * @returns {*} maximum value
  */
 var max = function(arr, condition, context) {
