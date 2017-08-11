@@ -320,7 +320,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         });
     },
 
-     /**
+    /**
      * Render ticks.
      * @param {number} size - width or height
      * @param {number} tickCount - tick count

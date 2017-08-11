@@ -213,7 +213,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var hasTitleOption = tui.util.isExisty(chartOptions.title);
         var titleHeight =
             hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-                    this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
+                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
         var dimension = {
             height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
         };

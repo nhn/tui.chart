@@ -178,9 +178,8 @@ module.exports = {
                 seriesCount = 0;
             }
 
-            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors,
-                                                                         seriesCount,
-                                                                         !hasOwnColors && colorIndex);
+            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors, seriesCount,
+                !hasOwnColors && colorIndex);
 
             // To distinct between series that use default theme, we make the colors different
             if (!hasOwnColors) {

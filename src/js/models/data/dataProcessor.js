@@ -887,14 +887,10 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @returns {boolean}
      */
     isLimitOptionsEmpty: function(axisType) {
-        var isXorYValue = (axisType === 'xAxis' || axisType === 'yAxis');
-        var axisOption = this.options[axisType];
+        var axisOption = this.options[axisType] || {};
+        var isEmptyLimitOption = isUndefined(axisOption.min) && isUndefined(axisOption.max);
 
-        return (isXorYValue && (
-                !axisOption
-                || (axisOption && isUndefined(axisOption.min) && isUndefined(axisOption.max))
-            )
-        );
+        return isEmptyLimitOption;
     },
 
     /**
