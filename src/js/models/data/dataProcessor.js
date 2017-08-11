@@ -22,6 +22,8 @@ var objectUtil = require('../../helpers/objectUtil');
 
 var concat = Array.prototype.concat;
 
+var isUndefined = tui.util.isUndefined;
+
 /*
  * Raw series datum.
  * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
@@ -97,6 +99,8 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
          * @type {Array.<{category: string | number, values: Array.<number>}>}
          */
         this.dynamicData = [];
+
+        this.defaultValues = [0, 500];
 
         this.initData(rawData);
         this.initZoomedRawData();
@@ -851,22 +855,113 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     },
 
     /**
+     * Get fallback datetime values
+     * @returns {[number, number]} milliseconds
+     */
+    getDefaultDatetimeValues: function() {
+        var hour = 60 * 60 * 1000;
+        var now = Date.now();
+
+        return [now - hour, now];
+    },
+
+    /**
+     * Return boolean value of whether seriesData empty or not
+     * @param {string} chartType Type string of chart
+     * @returns {boolean}
+     */
+    isSeriesDataEmpty: function(chartType) {
+        var rawData = this.rawData;
+        var seriesNotExist = rawData && !rawData.series;
+
+        return (
+            !rawData
+            || seriesNotExist
+            || (!(rawData.series[chartType])
+                || (rawData.series[chartType] && !(rawData.series[chartType].length)))
+        );
+    },
+    /**
+     * Return boolean value of whether axis limit option empty or not
+     * @param {string} axisType Type string of axis
+     * @returns {boolean}
+     */
+    isLimitOptionsEmpty: function(axisType) {
+        var isXorYValue = (axisType === 'xAxis' || axisType === 'yAxis');
+        var axisOption = this.options[axisType];
+
+        return (isXorYValue && (
+                !axisOption
+                || (axisOption && isUndefined(axisOption.min) && isUndefined(axisOption.max))
+            )
+        );
+    },
+
+    /**
      * Create values that picked value from SeriesItems of specific SeriesDataModel.
      * @param {?string} chartType - type of chart
      * @param {?string} valueType - type of value like value, x, y, r.
+     * @param {?string} axisName - name of axis value 'xAxis' 'yAxis'
      * @returns {Array.<number>}
      * @private
      */
-    _createValues: function(chartType, valueType) {
-        var values;
+    _createValues: function(chartType, valueType, axisName) {
+        var values, plotValues;
+        var options = this.options;
+        var plotOptions = options.plot;
+        var axisOption = options[axisName] || {};
+        var type = axisOption.type;
+        var isEmptyRawData = this.isSeriesDataEmpty(chartType);
+        var isEmptyLimitOptions = this.isLimitOptionsEmpty(axisName);
+        var isLineOrAreaChart = (predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
+            || predicate.isLineAreaComboChart(chartType, this.seriesTypes));
 
         if (predicate.isComboChart(chartType)) {
             values = [];
             this._eachByAllSeriesDataModel(function(seriesDataModel) {
                 values = values.concat(seriesDataModel.getValues(valueType));
             });
+        } else if (isEmptyRawData && isEmptyLimitOptions) {
+            if (valueType === 'x' && type === 'datetime') {
+                values = this.getDefaultDatetimeValues();
+
+                if (isLineOrAreaChart && plotOptions) {
+                    plotValues = this.getValuesFromPlotOptions(plotOptions, type);
+                    values = values.concat(plotValues);
+                }
+            } else {
+                values = this.defaultValues;
+            }
         } else {
             values = this.getSeriesDataModel(chartType).getValues(valueType);
+        }
+
+        return values;
+    },
+
+    /**
+     * Get values of plot lines, and bands if it exist
+     * @param {{lines: Array.<object>, bands: Array.<object>}} plotOptions plot options
+     * @param {string} [axisType] axis value type 'value' 'datetime'
+     * @returns {Array.<number>}
+     */
+    getValuesFromPlotOptions: function(plotOptions, axisType) {
+        var values = [];
+
+        if (plotOptions.lines) {
+            tui.util.forEach(plotOptions.lines, function(line) {
+                values.push(axisType !== 'datetime' ? line.value : new Date(line.value));
+            });
+        }
+
+        if (plotOptions.bands) {
+            tui.util.forEach(plotOptions.bands, function(line) {
+                var ranges = tui.util.map(line.range, function(range) {
+                    return axisType !== 'datetime' ? range : new Date(range);
+                });
+
+                values = values.concat(ranges);
+            });
         }
 
         return values;
@@ -876,16 +971,17 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * Get values from valuesMap.
      * @param {?string} chartType - type of chart
      * @param {?string} valueType - type of value like value, x, y, r.
+     * @param {?string} axisType - type of axis value 'value', 'datetime'
      * @returns {Array.<number>}
      */
-    getValues: function(chartType, valueType) {
+    getValues: function(chartType, valueType, axisType) {
         var mapKey;
 
         // chartType = chartType || chartConst.DUMMY_KEY;
         mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {
-            this.valuesMap[mapKey] = this._createValues(chartType, valueType);
+            this.valuesMap[mapKey] = this._createValues(chartType, valueType, axisType);
         }
 
         return this.valuesMap[mapKey];
@@ -1149,9 +1245,10 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @param {boolean} isSingleYAxis = whether single y axis or not
      * @param {string} stackType - stack type
      * @param {string} valueType - value type
+     * @param {string} axisType - value type
      * @returns {Array.<number>}
      */
-    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType) {
+    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType, axisType) {
         var baseValues;
 
         if (predicate.isComboChart(this.chartType) && isSingleYAxis) {
@@ -1164,7 +1261,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         } else if (predicate.isNormalStackChart(chartType, stackType)) {
             baseValues = this._createBaseValuesForNormalStackedChart(chartType);
         } else {
-            baseValues = this.getValues(chartType, valueType);
+            baseValues = this.getValues(chartType, valueType, axisType);
         }
 
         return baseValues;

@@ -20,7 +20,7 @@ describe('Test for DataProcessor', function() {
 
     describe('_filterSeriesDataByIndexRange()', function() {
         it('filter seriesData by index range', function() {
-            var seriesData =  [
+            var seriesData = [
                 {
                     data: [1, 2, 3, 4, 5]
                 },
@@ -646,7 +646,7 @@ describe('Test for DataProcessor', function() {
 
     describe('_shiftValues()', function() {
         it('shift value of series data, when single chart', function() {
-            var originalRawSeriesData =  [
+            var originalRawSeriesData = [
                 {
                     name: 'legend1',
                     data: [1, 2, 3]
@@ -712,7 +712,7 @@ describe('Test for DataProcessor', function() {
     describe('_shiftSeriesData', function() {
         it('rawData와 originalRawData의 series배열 각 항목의 data요소 첫번째 항목을 삭제합니다.', function() {
             dataProcessor.rawData.series = {
-                line : [
+                line: [
                     {
                         name: 'legend1',
                         data: [1, 2, 3]
@@ -724,7 +724,7 @@ describe('Test for DataProcessor', function() {
                 ]
             };
             dataProcessor.originalRawData.series = {
-                line : [
+                line: [
                     {
                         name: 'legend1',
                         data: [1, 2, 3]
@@ -746,7 +746,7 @@ describe('Test for DataProcessor', function() {
 
         it('rawData에 선택된 legend만 남은 경우 originalRawData name 기준으로 data요소 첫번째 항목을 삭제합니다.', function() {
             dataProcessor.rawData.series = {
-                line : [
+                line: [
                     {
                         name: 'legend2',
                         data: [4, 5, 6]
@@ -754,7 +754,7 @@ describe('Test for DataProcessor', function() {
                 ]
             };
             dataProcessor.originalRawData.series = {
-                line : [
+                line: [
                     {
                         name: 'legend1',
                         data: [1, 2, 3]
@@ -995,8 +995,12 @@ describe('Test for DataProcessor', function() {
         });
 
         it('single chart인 경우에는 해당하는 chartType에 속하는 sereisItem의 value를 추출 하여 반환합니다.', function() {
-            var actual, expected;
+            var actual;
+            var expected = [10, 5, 30, 20];
 
+            dataProcessor.rawData.series = {
+                column: expected
+            };
             dataProcessor.chartType = 'column';
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
@@ -1019,8 +1023,12 @@ describe('Test for DataProcessor', function() {
         });
 
         it('start값이 null이 아닐경우 포함하여 반환합니다.', function() {
-            var actual, expected;
+            var actual;
+            var expected = [10, 5, 30, 20];
 
+            dataProcessor.rawData.series = {
+                column: expected
+            };
             dataProcessor.chartType = 'column';
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
@@ -1037,9 +1045,42 @@ describe('Test for DataProcessor', function() {
             ];
 
             actual = dataProcessor._createValues('column');
-            expected = [10, 5, 30, 20];
 
             expect(actual).toEqual(expected);
+        });
+
+        it('create temporary values of line/area chart without series data.', function() {
+            var values = [new Date('01/01/2017'), new Date('02/01/2017')];
+
+            spyOn(dataProcessor, 'getDefaultDatetimeValues').and.returnValue(values);
+
+            expect(dataProcessor._createValues('line', 'x', 'xAxis')).toEqual(dataProcessor.defaultValues);
+            expect(dataProcessor._createValues('line', 'y', 'yAxis')).toEqual(dataProcessor.defaultValues);
+
+            dataProcessor.options.xAxis = {
+                type: 'datetime'
+            };
+
+            expect(dataProcessor._createValues('line', 'x', 'xAxis')).toEqual(values);
+        });
+
+        it('create temporary values of line/area chart without series data but plot lines & bands.', function() {
+            var values = [new Date('01/01/2017'), new Date('02/01/2017')];
+            var lineValue = new Date('03/01/2017');
+            var bandRange = [new Date('05/01/2017'), new Date('08/01/2017')];
+
+            spyOn(dataProcessor, 'getDefaultDatetimeValues').and.returnValue(values);
+
+            dataProcessor.options.xAxis = {
+                type: 'datetime'
+            };
+            dataProcessor.options.plot = {
+                lines: [{value: lineValue}],
+                bands: [{range: bandRange}]
+            };
+
+            expect(dataProcessor._createValues('line', 'x', 'xAxis'))
+                .toEqual(values.concat([lineValue].concat(bandRange)));
         });
     });
 
@@ -1082,7 +1123,7 @@ describe('Test for DataProcessor', function() {
 
             dataProcessor.rawData = {
                 series: {
-                    line : [
+                    line: [
                         {
                             name: 'Legend1',
                             data: [20, 30, 50],
@@ -1117,7 +1158,7 @@ describe('Test for DataProcessor', function() {
 
             dataProcessor.rawData = {
                 series: {
-                    line : [
+                    line: [
                         {
                             name: 'Legend1',
                             data: [20, 30, 50],
@@ -1152,7 +1193,7 @@ describe('Test for DataProcessor', function() {
 
             dataProcessor.rawData = {
                 series: {
-                    line : [
+                    line: [
                         {
                             name: 'Legend1',
                             data: [20, 30, 50]
@@ -1345,25 +1386,24 @@ describe('Test for DataProcessor', function() {
     describe('createBaseValuesForLimit()', function() {
         it('create base values for limit.', function() {
             var chartType = chartConst.CHART_TYPE_BAR;
-            var actual, expected;
+            var values = [70, 10, 20, 20, 80, 30];
 
+            dataProcessor.rawData.series = {
+                bar: values
+            };
             dataProcessor.seriesDataModelMap = {
                 bar: new SeriesDataModel()
             };
             dataProcessor.seriesDataModelMap.bar.valuesMap = {
-                value: [70, 10, 20, 20, 80, 30]
+                value: values
             };
 
-            actual = dataProcessor.createBaseValuesForLimit(chartType);
-            expected = [70, 10, 20, 20, 80, 30];
-
-            expect(actual).toEqual(expected);
+            expect(dataProcessor.createBaseValuesForLimit(chartType)).toEqual(values);
         });
 
         it('create base values for limit, when single yAxis in comboChart.', function() {
             var chartType = chartConst.CHART_TYPE_COMBO;
             var isSingleYAxis = true;
-            var actual, expected;
 
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
@@ -1378,11 +1418,8 @@ describe('Test for DataProcessor', function() {
                 value: [1, 2, 3]
             };
 
-
-            actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis);
-            expected = [70, 10, 20, 20, 80, 30, 1, 2, 3];
-
-            expect(actual).toEqual(expected);
+            expect(dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis))
+                .toEqual([70, 10, 20, 20, 80, 30, 1, 2, 3]);
         });
 
         it('Make base values, when single yAxis and has stackType option in comboChart.', function() {
@@ -1442,6 +1479,22 @@ describe('Test for DataProcessor', function() {
             dataProcessor.createBaseValuesForLimit(chartType);
 
             expect(dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_TREEMAP, 'colorValue');
+        });
+    });
+
+    describe('getValuesFromPlotOptions()', function() {
+        it('create values from plotOptions.', function() {
+            expect(dataProcessor.getValuesFromPlotOptions({
+                lines: [{value: 100}],
+                bands: [{range: [20, 40]}, {range: [10, 15]}]
+            })).toEqual([100, 20, 40, 10, 15]);
+        });
+
+        it('create datetime values from plotOptions.', function() {
+            expect(dataProcessor.getValuesFromPlotOptions({
+                lines: [{value: '06/01/2016'}],
+                bands: [{range: ['01/01/2016', '03/01/2016']}, {range: ['06/01/2017', '09/01/2017']}]
+            }, 'datetime')).toEqual([new Date('06/01/2016'), new Date('01/01/2016'), new Date('03/01/2016'), new Date('06/01/2017'), new Date('09/01/2017')]);
         });
     });
 });
