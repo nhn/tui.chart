@@ -267,8 +267,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         tui.util.forEach(labelData, function(labelDatum) {
             var position = labelDatum.labelPosition;
-            var label = raphaelRenderUtil.renderText(paper, position,
-                    labelDatum.name || labelDatum.code, attributes);
+            var label = raphaelRenderUtil.renderText(paper, position, labelDatum.name || labelDatum.code, attributes);
 
             set.push(label);
 

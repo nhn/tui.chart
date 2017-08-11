@@ -88,7 +88,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
          * @type {Array.<Array.<{rect: Object, color: string}>>}
          */
         this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot,
-        seriesSet);
+            seriesSet);
 
         return seriesSet;
     },

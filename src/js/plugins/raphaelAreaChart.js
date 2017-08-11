@@ -11,8 +11,6 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
-var LEFT_BAR_WIDTH = 10;
-var ADDING_DATA_ANIMATION_DURATION = 300;
 
 var concat = Array.prototype.concat;
 
@@ -321,7 +319,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 var position = groupPositions[groupIndex][index];
                 var startPositon;
 
-                self._moveDot(item.endDot.dot, position);
+                if (item.endDot) {
+                    self._moveDot(item.endDot.dot, position);
+                }
                 if (item.startDot) {
                     startPositon = tui.util.extend({}, position);
                     startPositon.top = startPositon.startTop;
@@ -372,23 +372,18 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     animateForAddingData: function(data, tickSize, groupPositions, shiftingOption, zeroTop) {
         var self = this;
+        var groupPaths = this._getAreaChartPath(groupPositions, false);
         var additionalIndex = 0;
-        var groupPaths;
 
         if (!groupPositions.length) {
             return;
         }
 
-        this.zeroTop = zeroTop;
-
-        groupPaths = this._getAreaChartPath(groupPositions, false);
-
         if (shiftingOption) {
-            this.leftBar.animate({
-                width: tickSize + LEFT_BAR_WIDTH
-            }, ADDING_DATA_ANIMATION_DURATION);
             additionalIndex = 1;
         }
+
+        this.zeroTop = zeroTop;
 
         tui.util.forEachArray(this.groupAreas, function(area, groupIndex) {
             var dots = self.groupDots[groupIndex];
@@ -401,22 +396,21 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
             tui.util.forEachArray(dots, function(item, index) {
                 var position = groupPosition[index + additionalIndex];
-
-                self._animateByPosition(item.endDot.dot, position);
+                self._animateByPosition(item.endDot.dot, position, tickSize);
 
                 if (item.startDot) {
                     self._animateByPosition(item.startDot.dot, {
                         left: position.left,
                         top: position.startTop
-                    });
+                    }, tickSize);
                 }
             });
 
-            self._animateByPath(area.area, pathMap.area);
-            self._animateByPath(area.line, pathMap.line);
+            self._animateByPath(area.area, pathMap.area, tickSize);
+            self._animateByPath(area.line, pathMap.line, tickSize);
 
             if (area.startLine) {
-                self._animateByPath(area.startLine, pathMap.startLine);
+                self._animateByPath(area.startLine, pathMap.startLine, tickSize);
             }
         });
     },

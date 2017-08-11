@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.9.2
+ * @version 2.9.3
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Jun 15 2017 14:16:22 GMT+0900 (KST)"
+ * bundle created at "Fri Aug 11 2017 11:45:15 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -140,31 +140,35 @@
 	function _createChart(container, rawData, options, chartType) {
 	    var themeName, theme, chart, temp;
 
-	    if (rawData) {
-	        if (rawData.table) {
-	            rawData = seriesDataImporter.makeDataWithTable(rawData.table);
-	        }
-
-	        if (rawData.series) {
-	            rawData = objectUtil.deepCopy(rawData);
-
-	            if (chartType !== 'combo') {
-	                temp = rawData.series;
-	                rawData.series = {};
-	                rawData.series[chartType] = temp;
-	            }
-
-	            options = options ? objectUtil.deepCopy(options) : {};
-	            options.chartType = chartType;
-	            themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
-	            theme = themeManager.get(themeName, chartType, rawData.series);
-
-	            chart = chartFactory.get(options.chartType, rawData, theme, options);
-
-	            chart.render(container);
-	            chart.animateChart();
-	        }
+	    if (!rawData) {
+	        rawData = {};
 	    }
+
+	    if (rawData.table) {
+	        rawData = seriesDataImporter.makeDataWithTable(rawData.table);
+	    }
+
+	    if (!rawData.series) {
+	        rawData.series = [];
+	    }
+
+	    rawData = objectUtil.deepCopy(rawData);
+
+	    if (chartType !== 'combo') {
+	        temp = rawData.series;
+	        rawData.series = {};
+	        rawData.series[chartType] = temp;
+	    }
+
+	    options = options ? objectUtil.deepCopy(options) : {};
+	    options.chartType = chartType;
+	    themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
+	    theme = themeManager.get(themeName, chartType, rawData.series);
+
+	    chart = chartFactory.get(options.chartType, rawData, theme, options);
+
+	    chart.render(container);
+	    chart.animateChart();
 
 	    return chart;
 	}
@@ -2756,8 +2760,8 @@
 	 * Pick maximum value from value array.
 	 * @memberOf module:arrayUtil
 	 * @param {Array} arr value array
-	 * @param {?function} condition condition function
-	 * @param {?object} context target context
+	 * @param {?function} [condition] condition function
+	 * @param {?object} [context] target context
 	 * @returns {*} maximum value
 	 */
 	var max = function(arr, condition, context) {
@@ -3148,9 +3152,8 @@
 	                seriesCount = 0;
 	            }
 
-	            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors,
-	                                                                         seriesCount,
-	                                                                         !hasOwnColors && colorIndex);
+	            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors, seriesCount,
+	                !hasOwnColors && colorIndex);
 
 	            // To distinct between series that use default theme, we make the colors different
 	            if (!hasOwnColors) {
@@ -4131,7 +4134,7 @@
 	var DefaultDataProcessor = __webpack_require__(80);
 	var rawDataHandler = __webpack_require__(4);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var boundsAndScaleBuilder = __webpack_require__(90);
 
 	var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -4727,10 +4730,10 @@
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var Axis = __webpack_require__(22);
-	var Plot = __webpack_require__(24);
-	var title = __webpack_require__(25);
-	var RadialPlot = __webpack_require__(26);
-	var ChartExportMenu = __webpack_require__(28);
+	var Plot = __webpack_require__(25);
+	var title = __webpack_require__(26);
+	var RadialPlot = __webpack_require__(27);
+	var ChartExportMenu = __webpack_require__(29);
 	var DrawingToolPicker = __webpack_require__(13);
 
 	// legends
@@ -5116,6 +5119,7 @@
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var pluginFactory = __webpack_require__(7);
+	var renderUtil = __webpack_require__(24);
 
 	var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 	    /**
@@ -5425,7 +5429,7 @@
 	        });
 	    },
 
-	     /**
+	    /**
 	     * Render ticks.
 	     * @param {number} size - width or height
 	     * @param {number} tickCount - tick count
@@ -5626,6 +5630,8 @@
 	        if (axisLabels.length) {
 	            positions.length = axisLabels.length;
 	        }
+
+	        axisLabels = renderUtil.addPrefixSuffix(axisLabels, this.options.prefix, this.options.suffix);
 
 	        if (hasRotatedXAxisLabel) {
 	            this._renderRotationLabels(positions, axisLabels, labelSize, additionalSize);
@@ -5966,6 +5972,742 @@
 
 /***/ },
 /* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Util for rendering.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(2);
+	var dom = __webpack_require__(14);
+	var arrayUtil = __webpack_require__(6);
+
+	var concat = Array.prototype.concat;
+
+	var browser = tui.util.browser,
+	    isIE7 = browser.msie && browser.version === 7,
+	    isOldBrowser = browser.msie && browser.version <= 8;
+
+	/**
+	 * Util for rendering.
+	 * @module renderUtil
+	 * @private */
+	var renderUtil = {
+	    /**
+	     * Concat string.
+	     * @memberOf module:renderUtil
+	     * @params {...string} target strings
+	     * @returns {string} concat string
+	     */
+	    concatStr: function() {
+	        return String.prototype.concat.apply('', arguments);
+	    },
+
+	    /**
+	     * Make cssText for font.
+	     * @memberOf module:renderUtil
+	     * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
+	     * @returns {string} cssText
+	     */
+	    makeFontCssText: function(theme) {
+	        var cssTexts = [];
+
+	        if (!theme) {
+	            return '';
+	        }
+
+	        if (theme.fontSize) {
+	            cssTexts.push(this.concatStr('font-size:', theme.fontSize, 'px'));
+	        }
+
+	        if (theme.fontFamily) {
+	            cssTexts.push(this.concatStr('font-family:', theme.fontFamily));
+	        }
+
+	        if (theme.color) {
+	            cssTexts.push(this.concatStr('color:', theme.color));
+	        }
+
+	        if (theme.fontWeight) {
+	            cssTexts.push(this.concatStr('font-weight:', theme.fontWeight));
+	        }
+
+	        return cssTexts.join(';');
+	    },
+
+	    checkEl: null,
+	    /**
+	     * Create element for size check.
+	     * @memberOf module:renderUtil
+	     * @returns {HTMLElement} element
+	     * @private
+	     */
+	    _createSizeCheckEl: function() {
+	        var div, span;
+	        if (!this.checkEl) {
+	            div = dom.create('DIV', 'tui-chart-size-check-element');
+	            span = dom.create('SPAN');
+	            div.appendChild(span);
+	            this.checkEl = div;
+	        } else {
+	            this.checkEl.style.cssText = '';
+	        }
+
+	        return this.checkEl;
+	    },
+
+	    /**
+	     * Make caching key.
+	     * @param {string} label labek
+	     * @param {{fontSize: number, fontFamily: string}} theme theme
+	     * @param {string} offsetType offset type (offsetWidth or offsetHeight)
+	     * @returns {string} key
+	     * @private
+	     */
+	    _makeCachingKey: function(label, theme, offsetType) {
+	        var keys = [label, offsetType];
+
+	        tui.util.forEach(theme, function(key, value) {
+	            keys.push(key + value);
+	        });
+
+	        return keys.join('-');
+	    },
+
+	    /**
+	     * Add css style.
+	     * @param {HTMLElement} div div element
+	     * @param {{fontSize: number, fontFamily: string, cssText: string}} theme theme
+	     * @private
+	     */
+	    _addCssStyle: function(div, theme) {
+	        div.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+
+	        if (theme.fontFamily) {
+	            div.style.fontFamily = theme.fontFamily;
+	        }
+
+	        if (theme.fontWeight) {
+	            div.style.fontWeight = theme.fontWeight;
+	        }
+
+	        if (theme.cssText) {
+	            div.style.cssText += theme.cssText;
+	        }
+	    },
+
+	    /**
+	     * Size cache.
+	     * @type {object}
+	     */
+	    sizeCache: {},
+
+	    /**
+	     * Get rendered label size (width or height).
+	     * @memberOf module:renderUtil
+	     * @param {string | number} label label
+	     * @param {object} theme theme
+	     * @param {string} offsetType offset type (offsetWidth or offsetHeight)
+	     * @returns {number} size
+	     * @private
+	     */
+	    _getRenderedLabelSize: function(label, theme, offsetType) {
+	        var key, div, span, labelSize;
+
+	        theme = theme || {};
+
+	        label = tui.util.isExisty(label) ? String(label) : '';
+
+	        if (!label) {
+	            return 0;
+	        }
+
+	        key = this._makeCachingKey(label, theme, offsetType);
+	        labelSize = this.sizeCache[key];
+
+	        if (!labelSize) {
+	            div = this._createSizeCheckEl();
+	            span = div.firstChild;
+
+	            span.innerHTML = label;
+
+	            this._addCssStyle(div, theme);
+
+	            document.body.appendChild(div);
+	            labelSize = span[offsetType];
+	            document.body.removeChild(div);
+
+	            this.sizeCache[key] = labelSize;
+	        }
+
+	        return labelSize;
+	    },
+
+	    /**
+	     * Get rendered label width.
+	     * @memberOf module:renderUtil
+	     * @param {string} label label
+	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+	     * @returns {number} width
+	     */
+	    getRenderedLabelWidth: function(label, theme) {
+	        var labelWidth = this._getRenderedLabelSize(label, theme, 'offsetWidth');
+
+	        return labelWidth;
+	    },
+
+	    /**
+	     * Get rendered label height.
+	     * @memberOf module:renderUtil
+	     * @param {string} label label
+	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+	     * @returns {number} height
+	     */
+	    getRenderedLabelHeight: function(label, theme) {
+	        var labelHeight = this._getRenderedLabelSize(label, theme, 'offsetHeight');
+
+	        return labelHeight;
+	    },
+
+	    /**
+	     * Get Rendered Labels Max Size(width or height).
+	     * @memberOf module:renderUtil
+	     * @param {string[]} labels labels
+	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+	     * @param {function} iteratee iteratee
+	     * @returns {number} max size (width or height)
+	     * @private
+	     */
+	    _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
+	        var maxSize = 0,
+	            sizes;
+
+	        if (labels && labels.length) {
+	            sizes = tui.util.map(labels, function(label) {
+	                return iteratee(label, theme);
+	            });
+	            maxSize = arrayUtil.max(sizes);
+	        }
+
+	        return maxSize;
+	    },
+
+	    /**
+	     * Get rendered labels max width.
+	     * @memberOf module:renderUtil
+	     * @param {string[]} labels labels
+	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+	     * @returns {number} max width
+	     * @private
+	     */
+	    getRenderedLabelsMaxWidth: function(labels, theme) {
+	        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this);
+	        var maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+
+	        return maxWidth;
+	    },
+
+	    /**
+	     * Get rendered labels max height.
+	     * @memberOf module:renderUtil
+	     * @param {string[]} labels labels
+	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+	     * @returns {number} max height
+	     */
+	    getRenderedLabelsMaxHeight: function(labels, theme) {
+	        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this);
+	        var maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+
+	        return maxHeight;
+	    },
+
+	    /**
+	     * Render dimension.
+	     * @memberOf module:renderUtil
+	     * @param {HTMLElement} el target element
+	     * @param {{width: number, height: number}} dimension dimension
+	     */
+	    renderDimension: function(el, dimension) {
+	        el.style.cssText = [
+	            this.concatStr('width:', dimension.width, 'px'),
+	            this.concatStr('height:', dimension.height, 'px')
+	        ].join(';');
+	    },
+
+	    /**
+	     * Render position(top, right).
+	     * @memberOf module:renderUtil
+	     * @param {HTMLElement} el target element
+	     * @param {{top: number, left: number, right: number}} position position
+	     */
+	    renderPosition: function(el, position) {
+	        if (tui.util.isUndefined(position)) {
+	            return;
+	        }
+
+	        tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
+	            var value = position[key];
+
+	            if (tui.util.isNumber(value)) {
+	                el.style[key] = position[key] + 'px';
+	            }
+	        });
+	    },
+
+	    /**
+	     * Render background.
+	     * @memberOf module:renderUtil
+	     * @param {HTMLElement} el target element
+	     * @param {string} background background option
+	     */
+	    renderBackground: function(el, background) {
+	        if (!background) {
+	            return;
+	        }
+
+	        el.style.background = background;
+	    },
+
+	    /**
+	     * Render font family.
+	     * @memberOf module:renderUtil
+	     * @param {HTMLElement} el target element
+	     * @param {string} fontFamily font family option
+	     */
+	    renderFontFamily: function(el, fontFamily) {
+	        if (!fontFamily) {
+	            return;
+	        }
+
+	        el.style.fontFamily = fontFamily;
+	    },
+
+	    /**
+	     * Render title.
+	     * @memberOf module:renderUtil
+	     * @param {string} title title
+	     * @param {{fontSize: number, color: string, background: string}} theme title theme
+	     * @param {string} className css class name
+	     * @returns {HTMLElement} title element
+	     */
+	    renderTitle: function(title, theme, className) {
+	        var elTitle, cssText;
+
+	        if (!title) {
+	            return null;
+	        }
+
+	        elTitle = dom.create('DIV', className);
+	        elTitle.innerHTML = title;
+
+	        cssText = renderUtil.makeFontCssText(theme);
+
+	        if (theme.background) {
+	            cssText += ';' + this.concatStr('background:', theme.background);
+	        }
+
+	        elTitle.style.cssText = cssText;
+
+	        return elTitle;
+	    },
+
+	    /**
+	     * Expand dimension.
+	     * @param {{
+	     *      dimension: {width: number, height: number},
+	     *      position: {left: number, top: number}
+	     * }} bound series bound
+	     * @returns {{
+	     *      dimension: {width: number, height: number},
+	     *      position: {left: number, top: number}
+	     * }} expended bound
+	     */
+	    expandBound: function(bound) {
+	        var dimension = bound.dimension;
+	        var position = bound.position;
+
+	        return {
+	            dimension: {
+	                width: dimension.width + (chartConst.SERIES_EXPAND_SIZE * 2),
+	                height: dimension.height + (chartConst.SERIES_EXPAND_SIZE * 2)
+	            },
+	            position: {
+	                left: position.left - chartConst.SERIES_EXPAND_SIZE,
+	                top: position.top - chartConst.SERIES_EXPAND_SIZE
+	            }
+	        };
+	    },
+
+	    /**
+	     * Proper case.
+	     * @param {string} value - string value
+	     * @returns {string}
+	     */
+	    _properCase: function(value) {
+	        return value.substring(0, 1).toUpperCase() + value.substring(1);
+	    },
+
+	    /**
+	     * Make mouse event detector name.
+	     * @param {string} prefix prefix
+	     * @param {string} value value
+	     * @param {string} suffix suffix
+	     * @returns {string} mouse event detector name
+	     */
+	    makeMouseEventDetectorName: function(prefix, value, suffix) {
+	        return prefix + this._properCase(value) + this._properCase(suffix);
+	    },
+
+	    /**
+	     * Format value.
+	     * @param {number} value value
+	     * @param {Array.<function>} formatFunctions - functions for format
+	     * @param {string} chartType - type of chart
+	     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
+	     * @param {string} [valueType] - type of value
+	     * @returns {string} formatted value
+	     */
+	    formatValue: function(value, formatFunctions, chartType, areaType, valueType) {
+	        var fns = [String(value)].concat(formatFunctions || []);
+
+	        valueType = valueType || 'value';
+
+	        return tui.util.reduce(fns, function(stored, fn) {
+	            return fn(stored, chartType, areaType, valueType);
+	        });
+	    },
+
+	    /**
+	     * Format values.
+	     * @param {Array.<number>} values values
+	     * @param {Array.<function>} formatFunctions functions for format
+	     * @param {string} chartType - type of chart
+	     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
+	     * @param {string} valueType - type of value
+	     * @returns {Array.<string>}
+	     */
+	    formatValues: function(values, formatFunctions, chartType, areaType, valueType) {
+	        var formatedValues;
+
+	        if (!formatFunctions || !formatFunctions.length) {
+	            return values;
+	        }
+
+	        formatedValues = tui.util.map(values, function(label) {
+	            return renderUtil.formatValue(label, formatFunctions, chartType, areaType, valueType);
+	        });
+
+	        return formatedValues;
+	    },
+
+	    /**
+	     * Format date.
+	     * @param {string | number | date} value - value
+	     * @param {string} format - date format
+	     * @returns {string}
+	     */
+	    formatDate: function(value, format) {
+	        var date = tui.util.isDate(value) ? value : (new Date(value));
+	        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+	        return tui.util.formatDate(format, date) || value;
+	    },
+
+	    /**
+	     * Format dates.
+	     * @param {Array.<string | number | date>} values - values
+	     * @param {string} format - date format
+	     * @returns {Array}
+	     */
+	    formatDates: function(values, format) {
+	        var formatDate = this.formatDate;
+
+	        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+	        return tui.util.map(values, function(value) {
+	            return formatDate(value, format);
+	        });
+	    },
+
+	    /**
+	     * Cancel animation
+	     * @param {{id: number}} animation animaion object
+	     */
+	    cancelAnimation: function(animation) {
+	        if (animation && animation.id) {
+	            cancelAnimationFrame(animation.id);
+	            delete animation.id;
+	        }
+	    },
+
+	    /**
+	     * Start animation.
+	     * @param {number} animationTime - animation time
+	     * @param {function} onAnimation - animation callback function
+	     * @param {function} onCompleted - completed callback function
+	     * @returns {{id: number}} requestAnimationFrame id
+	     */
+	    startAnimation: function(animationTime, onAnimation, onCompleted) {
+	        var animation = {},
+	            startTime;
+
+	        /**
+	         * Animate.
+	         */
+	        function animate() {
+	            var diffTime = (new Date()).getTime() - startTime,
+	                ratio = Math.min((diffTime / animationTime), 1);
+
+	            onAnimation(ratio);
+
+	            if (ratio === 1) {
+	                delete animation.id;
+	                if (onCompleted) {
+	                    onCompleted();
+	                }
+	            } else {
+	                animation.id = requestAnimationFrame(animate);
+	            }
+	        }
+
+	        startTime = (new Date()).getTime();
+	        animation.id = requestAnimationFrame(animate);
+
+	        return animation;
+	    },
+
+	    /**
+	     * Whether IE7 or not.
+	     * @returns {boolean} result boolean
+	     */
+	    isIE7: function() {
+	        return isIE7;
+	    },
+
+	    /**
+	     * Whether oldBrowser or not.
+	     * @memberOf module:renderUtil
+	     * @returns {boolean} result boolean
+	     */
+	    isOldBrowser: function() {
+	        return isOldBrowser;
+	    },
+
+	    /**
+	     * Format to zero fill.
+	     * @param {string} value target value
+	     * @param {number} len length of result
+	     * @returns {string} formatted value
+	     * @private
+	     */
+	    formatToZeroFill: function(value, len) {
+	        var zero = '0';
+
+	        value = String(value);
+
+	        if (value.length >= len) {
+	            return value;
+	        }
+
+	        while (value.length < len) {
+	            value = zero + value;
+	        }
+
+	        return value;
+	    },
+
+	    /**
+	     * Format to Decimal.
+	     * @param {string} value target value
+	     * @param {number} len length of under decimal point
+	     * @returns {string} formatted value
+	     */
+	    formatToDecimal: function(value, len) {
+	        var DECIMAL = 10;
+	        var pow;
+
+	        if (len === 0) {
+	            return Math.round(value);
+	        }
+
+	        pow = Math.pow(DECIMAL, len);
+	        value = Math.round(value * pow) / pow;
+	        value = parseFloat(value).toFixed(len);
+
+	        return value;
+	    },
+
+	    /**
+	     * Format to Comma.
+	     * @param {string} value target value
+	     * @returns {string} formatted value
+	     * @private
+	     */
+	    formatToComma: function(value) {
+	        var comma = ',',
+	            underPointValue = '',
+	            betweenLen = 3,
+	            orgValue = value,
+	            sign, values, lastIndex, formattedValue;
+
+	        value = String(value);
+	        sign = value.indexOf('-') > -1 ? '-' : '';
+
+	        if (value.indexOf('.') > -1) {
+	            values = value.split('.');
+	            value = String(Math.abs(values[0]));
+	            underPointValue = '.' + values[1];
+	        } else {
+	            value = String(Math.abs(value));
+	        }
+
+	        if (value.length <= betweenLen) {
+	            formattedValue = orgValue;
+	        } else {
+	            values = (value).split('').reverse();
+	            lastIndex = values.length - 1;
+	            values = tui.util.map(values, function(char, index) {
+	                var result = [char];
+	                if (index < lastIndex && (index + 1) % betweenLen === 0) {
+	                    result.push(comma);
+	                }
+
+	                return result;
+	            });
+	            formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;
+	        }
+
+	        return formattedValue;
+	    },
+
+	    /**
+	     * Make cssText from map.
+	     * @param {object} cssMap - css map
+	     * @returns {string}
+	     */
+	    makeCssTextFromMap: function(cssMap) {
+	        return tui.util.map(cssMap, function(value, name) {
+	            return renderUtil.concatStr(name, ':', value);
+	        }).join(';');
+	    },
+
+	    /**
+	     * Perse String.
+	     * @param {string} value - string
+	     * @returns {string}
+	     */
+	    _perseString: function(value) {
+	        return typeof value === 'string' || typeof value === 'number' ? String(value) : '';
+	    },
+
+	    /**
+	     * Add prefix or suffix to label.
+	     * @param {array} labels - labels
+	     * @param {string} prefix - string
+	     * @param {string} suffix - string
+	     * @returns {array}
+	     */
+	    addPrefixSuffix: function(labels, prefix, suffix) {
+	        prefix = this._perseString(prefix);
+	        suffix = this._perseString(suffix);
+
+	        if (!(prefix === '' && suffix === '')) {
+	            return tui.util.map(labels, function(label) {
+	                return prefix + label + suffix;
+	            });
+	        }
+
+	        return labels;
+	    }
+
+	};
+
+	/**
+	 * Set css opacity.
+	 * @param {HTMLElement | Array.<HTMLElement>} elements - elements
+	 * @param {function} iteratee - iteratee
+	 */
+	function setOpacity(elements, iteratee) {
+	    elements = tui.util.isArray(elements) ? elements : [elements];
+	    tui.util.forEachArray(elements, iteratee);
+	}
+
+	/**
+	 * Make filter opacity css string.
+	 * @param {number} opacity - opacity
+	 * @returns {string}
+	 */
+	function makeCssFilterOpacityString(opacity) {
+	    return 'alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
+	}
+
+	if (isOldBrowser) {
+	    /**
+	     * Make opacity css text for old browser(IE7, IE8).
+	     * @param {number} opacity - opacity
+	     * @returns {string}
+	     */
+	    renderUtil.makeOpacityCssText = function(opacity) {
+	        var cssText = '';
+
+	        if (tui.util.isExisty(opacity)) {
+	            cssText = ';filter:' + makeCssFilterOpacityString(opacity);
+	        }
+
+	        return cssText;
+	    };
+
+	    /**
+	     * Set css opacity for old browser(IE7, IE8).
+	     * @param {HTMLElement | Array.<HTMLElement>} elements - elements
+	     * @param {number} opacity - opacity
+	     */
+	    renderUtil.setOpacity = function(elements, opacity) {
+	        var filter = makeCssFilterOpacityString(opacity);
+	        setOpacity(elements, function(element) {
+	            element.style.filter = filter;
+	        });
+	    };
+	} else {
+	    /**
+	     * Make opacity css text for browser supporting opacity property of CSS3.
+	     * @param {number} opacity - opacity
+	     * @returns {string}
+	     */
+	    renderUtil.makeOpacityCssText = function(opacity) {
+	        var cssText = '';
+
+	        if (tui.util.isExisty(opacity)) {
+	            cssText = ';opacity:' + opacity;
+	        }
+
+	        return cssText;
+	    };
+
+	    /**
+	     * Set css opacity for browser supporting opacity property of CSS3.
+	     * @param {HTMLElement | Array.<HTMLElement>} elements - elements
+	     * @param {number} opacity - opacity
+	     */
+	    renderUtil.setOpacity = function(elements, opacity) {
+	        setOpacity(elements, function(element) {
+	            element.style.opacity = opacity;
+	        });
+	    };
+	}
+
+	tui.util.defineNamespace('tui.chart');
+	tui.chart.renderUtil = renderUtil;
+
+	module.exports = renderUtil;
+
+
+/***/ },
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6624,7 +7366,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6746,7 +7488,7 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6757,7 +7499,7 @@
 
 	'use strict';
 
-	var geom = __webpack_require__(27);
+	var geom = __webpack_require__(28);
 	var chartConst = __webpack_require__(2);
 	var pluginFactory = __webpack_require__(7);
 
@@ -7042,7 +7784,7 @@
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7149,7 +7891,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7161,11 +7903,11 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var chartExporter = __webpack_require__(29);
+	var chartExporter = __webpack_require__(30);
 	var dom = __webpack_require__(14);
-	var eventListener = __webpack_require__(33);
+	var eventListener = __webpack_require__(34);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
 	var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
@@ -7505,7 +8247,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7517,8 +8259,8 @@
 	'use strict';
 
 	var arrayUtil = __webpack_require__(6);
-	var dataExporter = __webpack_require__(30);
-	var imageExporter = __webpack_require__(32);
+	var dataExporter = __webpack_require__(31);
+	var imageExporter = __webpack_require__(33);
 
 	var browser = tui.util.browser;
 
@@ -7597,7 +8339,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7608,7 +8350,7 @@
 
 	'use strict';
 
-	var downloader = __webpack_require__(31);
+	var downloader = __webpack_require__(32);
 	var chartConst = __webpack_require__(2);
 
 	var DATA_URI_HEADERS = {
@@ -7792,7 +8534,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7928,7 +8670,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7939,7 +8681,7 @@
 
 	'use strict';
 
-	var downloader = __webpack_require__(31);
+	var downloader = __webpack_require__(32);
 	var chartConst = __webpack_require__(2);
 
 	var browser = tui.util.browser;
@@ -8057,7 +8799,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/**
@@ -8234,712 +8976,6 @@
 	};
 
 	module.exports = eventListener;
-
-
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Util for rendering.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(2);
-	var dom = __webpack_require__(14);
-	var arrayUtil = __webpack_require__(6);
-
-	var concat = Array.prototype.concat;
-
-	var browser = tui.util.browser,
-	    isIE7 = browser.msie && browser.version === 7,
-	    isOldBrowser = browser.msie && browser.version <= 8;
-
-	/**
-	 * Util for rendering.
-	 * @module renderUtil
-	 * @private */
-	var renderUtil = {
-	    /**
-	     * Concat string.
-	     * @memberOf module:renderUtil
-	     * @params {...string} target strings
-	     * @returns {string} concat string
-	     */
-	    concatStr: function() {
-	        return String.prototype.concat.apply('', arguments);
-	    },
-
-	    /**
-	     * Make cssText for font.
-	     * @memberOf module:renderUtil
-	     * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
-	     * @returns {string} cssText
-	     */
-	    makeFontCssText: function(theme) {
-	        var cssTexts = [];
-
-	        if (!theme) {
-	            return '';
-	        }
-
-	        if (theme.fontSize) {
-	            cssTexts.push(this.concatStr('font-size:', theme.fontSize, 'px'));
-	        }
-
-	        if (theme.fontFamily) {
-	            cssTexts.push(this.concatStr('font-family:', theme.fontFamily));
-	        }
-
-	        if (theme.color) {
-	            cssTexts.push(this.concatStr('color:', theme.color));
-	        }
-
-	        if (theme.fontWeight) {
-	            cssTexts.push(this.concatStr('font-weight:', theme.fontWeight));
-	        }
-
-	        return cssTexts.join(';');
-	    },
-
-	    checkEl: null,
-	    /**
-	     * Create element for size check.
-	     * @memberOf module:renderUtil
-	     * @returns {HTMLElement} element
-	     * @private
-	     */
-	    _createSizeCheckEl: function() {
-	        var div, span;
-	        if (!this.checkEl) {
-	            div = dom.create('DIV', 'tui-chart-size-check-element');
-	            span = dom.create('SPAN');
-	            div.appendChild(span);
-	            this.checkEl = div;
-	        } else {
-	            this.checkEl.style.cssText = '';
-	        }
-
-	        return this.checkEl;
-	    },
-
-	    /**
-	     * Make caching key.
-	     * @param {string} label labek
-	     * @param {{fontSize: number, fontFamily: string}} theme theme
-	     * @param {string} offsetType offset type (offsetWidth or offsetHeight)
-	     * @returns {string} key
-	     * @private
-	     */
-	    _makeCachingKey: function(label, theme, offsetType) {
-	        var keys = [label, offsetType];
-
-	        tui.util.forEach(theme, function(key, value) {
-	            keys.push(key + value);
-	        });
-
-	        return keys.join('-');
-	    },
-
-	    /**
-	     * Add css style.
-	     * @param {HTMLElement} div div element
-	     * @param {{fontSize: number, fontFamily: string, cssText: string}} theme theme
-	     * @private
-	     */
-	    _addCssStyle: function(div, theme) {
-	        div.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
-
-	        if (theme.fontFamily) {
-	            div.style.fontFamily = theme.fontFamily;
-	        }
-
-	        if (theme.fontWeight) {
-	            div.style.fontWeight = theme.fontWeight;
-	        }
-
-	        if (theme.cssText) {
-	            div.style.cssText += theme.cssText;
-	        }
-	    },
-
-	    /**
-	     * Size cache.
-	     * @type {object}
-	     */
-	    sizeCache: {},
-
-	    /**
-	     * Get rendered label size (width or height).
-	     * @memberOf module:renderUtil
-	     * @param {string | number} label label
-	     * @param {object} theme theme
-	     * @param {string} offsetType offset type (offsetWidth or offsetHeight)
-	     * @returns {number} size
-	     * @private
-	     */
-	    _getRenderedLabelSize: function(label, theme, offsetType) {
-	        var key, div, span, labelSize;
-
-	        theme = theme || {};
-
-	        label = tui.util.isExisty(label) ? String(label) : '';
-
-	        if (!label) {
-	            return 0;
-	        }
-
-	        key = this._makeCachingKey(label, theme, offsetType);
-	        labelSize = this.sizeCache[key];
-
-	        if (!labelSize) {
-	            div = this._createSizeCheckEl();
-	            span = div.firstChild;
-
-	            span.innerHTML = label;
-
-	            this._addCssStyle(div, theme);
-
-	            document.body.appendChild(div);
-	            labelSize = span[offsetType];
-	            document.body.removeChild(div);
-
-	            this.sizeCache[key] = labelSize;
-	        }
-
-	        return labelSize;
-	    },
-
-	    /**
-	     * Get rendered label width.
-	     * @memberOf module:renderUtil
-	     * @param {string} label label
-	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-	     * @returns {number} width
-	     */
-	    getRenderedLabelWidth: function(label, theme) {
-	        var labelWidth = this._getRenderedLabelSize(label, theme, 'offsetWidth');
-
-	        return labelWidth;
-	    },
-
-	    /**
-	     * Get rendered label height.
-	     * @memberOf module:renderUtil
-	     * @param {string} label label
-	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-	     * @returns {number} height
-	     */
-	    getRenderedLabelHeight: function(label, theme) {
-	        var labelHeight = this._getRenderedLabelSize(label, theme, 'offsetHeight');
-
-	        return labelHeight;
-	    },
-
-	    /**
-	     * Get Rendered Labels Max Size(width or height).
-	     * @memberOf module:renderUtil
-	     * @param {string[]} labels labels
-	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-	     * @param {function} iteratee iteratee
-	     * @returns {number} max size (width or height)
-	     * @private
-	     */
-	    _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
-	        var maxSize = 0,
-	            sizes;
-
-	        if (labels && labels.length) {
-	            sizes = tui.util.map(labels, function(label) {
-	                return iteratee(label, theme);
-	            });
-	            maxSize = arrayUtil.max(sizes);
-	        }
-
-	        return maxSize;
-	    },
-
-	    /**
-	     * Get rendered labels max width.
-	     * @memberOf module:renderUtil
-	     * @param {string[]} labels labels
-	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-	     * @returns {number} max width
-	     * @private
-	     */
-	    getRenderedLabelsMaxWidth: function(labels, theme) {
-	        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this);
-	        var maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
-
-	        return maxWidth;
-	    },
-
-	    /**
-	     * Get rendered labels max height.
-	     * @memberOf module:renderUtil
-	     * @param {string[]} labels labels
-	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-	     * @returns {number} max height
-	     */
-	    getRenderedLabelsMaxHeight: function(labels, theme) {
-	        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this);
-	        var maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
-
-	        return maxHeight;
-	    },
-
-	    /**
-	     * Render dimension.
-	     * @memberOf module:renderUtil
-	     * @param {HTMLElement} el target element
-	     * @param {{width: number, height: number}} dimension dimension
-	     */
-	    renderDimension: function(el, dimension) {
-	        el.style.cssText = [
-	            this.concatStr('width:', dimension.width, 'px'),
-	            this.concatStr('height:', dimension.height, 'px')
-	        ].join(';');
-	    },
-
-	    /**
-	     * Render position(top, right).
-	     * @memberOf module:renderUtil
-	     * @param {HTMLElement} el target element
-	     * @param {{top: number, left: number, right: number}} position position
-	     */
-	    renderPosition: function(el, position) {
-	        if (tui.util.isUndefined(position)) {
-	            return;
-	        }
-
-	        tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
-	            var value = position[key];
-
-	            if (tui.util.isNumber(value)) {
-	                el.style[key] = position[key] + 'px';
-	            }
-	        });
-	    },
-
-	    /**
-	     * Render background.
-	     * @memberOf module:renderUtil
-	     * @param {HTMLElement} el target element
-	     * @param {string} background background option
-	     */
-	    renderBackground: function(el, background) {
-	        if (!background) {
-	            return;
-	        }
-
-	        el.style.background = background;
-	    },
-
-	    /**
-	     * Render font family.
-	     * @memberOf module:renderUtil
-	     * @param {HTMLElement} el target element
-	     * @param {string} fontFamily font family option
-	     */
-	    renderFontFamily: function(el, fontFamily) {
-	        if (!fontFamily) {
-	            return;
-	        }
-
-	        el.style.fontFamily = fontFamily;
-	    },
-
-	    /**
-	     * Render title.
-	     * @memberOf module:renderUtil
-	     * @param {string} title title
-	     * @param {{fontSize: number, color: string, background: string}} theme title theme
-	     * @param {string} className css class name
-	     * @returns {HTMLElement} title element
-	     */
-	    renderTitle: function(title, theme, className) {
-	        var elTitle, cssText;
-
-	        if (!title) {
-	            return null;
-	        }
-
-	        elTitle = dom.create('DIV', className);
-	        elTitle.innerHTML = title;
-
-	        cssText = renderUtil.makeFontCssText(theme);
-
-	        if (theme.background) {
-	            cssText += ';' + this.concatStr('background:', theme.background);
-	        }
-
-	        elTitle.style.cssText = cssText;
-
-	        return elTitle;
-	    },
-
-	    /**
-	     * Expand dimension.
-	     * @param {{
-	     *      dimension: {width: number, height: number},
-	     *      position: {left: number, top: number}
-	     * }} bound series bound
-	     * @returns {{
-	     *      dimension: {width: number, height: number},
-	     *      position: {left: number, top: number}
-	     * }} expended bound
-	     */
-	    expandBound: function(bound) {
-	        var dimension = bound.dimension;
-	        var position = bound.position;
-
-	        return {
-	            dimension: {
-	                width: dimension.width + (chartConst.SERIES_EXPAND_SIZE * 2),
-	                height: dimension.height + (chartConst.SERIES_EXPAND_SIZE * 2)
-	            },
-	            position: {
-	                left: position.left - chartConst.SERIES_EXPAND_SIZE,
-	                top: position.top - chartConst.SERIES_EXPAND_SIZE
-	            }
-	        };
-	    },
-
-	    /**
-	     * Proper case.
-	     * @param {string} value - string value
-	     * @returns {string}
-	     */
-	    _properCase: function(value) {
-	        return value.substring(0, 1).toUpperCase() + value.substring(1);
-	    },
-
-	    /**
-	     * Make mouse event detector name.
-	     * @param {string} prefix prefix
-	     * @param {string} value value
-	     * @param {string} suffix suffix
-	     * @returns {string} mouse event detector name
-	     */
-	    makeMouseEventDetectorName: function(prefix, value, suffix) {
-	        return prefix + this._properCase(value) + this._properCase(suffix);
-	    },
-
-	    /**
-	     * Format value.
-	     * @param {number} value value
-	     * @param {Array.<function>} formatFunctions - functions for format
-	     * @param {string} chartType - type of chart
-	     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
-	     * @param {string} [valueType] - type of value
-	     * @returns {string} formatted value
-	     */
-	    formatValue: function(value, formatFunctions, chartType, areaType, valueType) {
-	        var fns = [String(value)].concat(formatFunctions || []);
-
-	        valueType = valueType || 'value';
-
-	        return tui.util.reduce(fns, function(stored, fn) {
-	            return fn(stored, chartType, areaType, valueType);
-	        });
-	    },
-
-	    /**
-	     * Format values.
-	     * @param {Array.<number>} values values
-	     * @param {Array.<function>} formatFunctions functions for format
-	     * @param {string} chartType - type of chart
-	     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
-	     * @param {string} valueType - type of value
-	     * @returns {Array.<string>}
-	     */
-	    formatValues: function(values, formatFunctions, chartType, areaType, valueType) {
-	        var formatedValues;
-
-	        if (!formatFunctions || !formatFunctions.length) {
-	            return values;
-	        }
-
-	        formatedValues = tui.util.map(values, function(label) {
-	            return renderUtil.formatValue(label, formatFunctions, chartType, areaType, valueType);
-	        });
-
-	        return formatedValues;
-	    },
-
-	    /**
-	     * Format date.
-	     * @param {string | number | date} value - value
-	     * @param {string} format - date format
-	     * @returns {string}
-	     */
-	    formatDate: function(value, format) {
-	        var date = tui.util.isDate(value) ? value : (new Date(value));
-	        format = format || chartConst.DEFAULT_DATE_FORMAT;
-
-	        return tui.util.formatDate(format, date) || value;
-	    },
-
-	    /**
-	     * Format dates.
-	     * @param {Array.<string | number | date>} values - values
-	     * @param {string} format - date format
-	     * @returns {Array}
-	     */
-	    formatDates: function(values, format) {
-	        var formatDate = this.formatDate;
-
-	        format = format || chartConst.DEFAULT_DATE_FORMAT;
-
-	        return tui.util.map(values, function(value) {
-	            return formatDate(value, format);
-	        });
-	    },
-
-	    /**
-	     * Cancel animation
-	     * @param {{id: number}} animation animaion object
-	     */
-	    cancelAnimation: function(animation) {
-	        if (animation && animation.id) {
-	            cancelAnimationFrame(animation.id);
-	            delete animation.id;
-	        }
-	    },
-
-	    /**
-	     * Start animation.
-	     * @param {number} animationTime - animation time
-	     * @param {function} onAnimation - animation callback function
-	     * @param {function} onCompleted - completed callback function
-	     * @returns {{id: number}} requestAnimationFrame id
-	     */
-	    startAnimation: function(animationTime, onAnimation, onCompleted) {
-	        var animation = {},
-	            startTime;
-
-	        /**
-	         * Animate.
-	         */
-	        function animate() {
-	            var diffTime = (new Date()).getTime() - startTime,
-	                ratio = Math.min((diffTime / animationTime), 1);
-
-	            onAnimation(ratio);
-
-	            if (ratio === 1) {
-	                delete animation.id;
-	                if (onCompleted) {
-	                    onCompleted();
-	                }
-	            } else {
-	                animation.id = requestAnimationFrame(animate);
-	            }
-	        }
-
-	        startTime = (new Date()).getTime();
-	        animation.id = requestAnimationFrame(animate);
-
-	        return animation;
-	    },
-
-	    /**
-	     * Whether IE7 or not.
-	     * @returns {boolean} result boolean
-	     */
-	    isIE7: function() {
-	        return isIE7;
-	    },
-
-	    /**
-	     * Whether oldBrowser or not.
-	     * @memberOf module:renderUtil
-	     * @returns {boolean} result boolean
-	     */
-	    isOldBrowser: function() {
-	        return isOldBrowser;
-	    },
-
-	    /**
-	     * Format to zero fill.
-	     * @param {string} value target value
-	     * @param {number} len length of result
-	     * @returns {string} formatted value
-	     * @private
-	     */
-	    formatToZeroFill: function(value, len) {
-	        var zero = '0';
-
-	        value = String(value);
-
-	        if (value.length >= len) {
-	            return value;
-	        }
-
-	        while (value.length < len) {
-	            value = zero + value;
-	        }
-
-	        return value;
-	    },
-
-	    /**
-	     * Format to Decimal.
-	     * @param {string} value target value
-	     * @param {number} len length of under decimal point
-	     * @returns {string} formatted value
-	     */
-	    formatToDecimal: function(value, len) {
-	        var DECIMAL = 10;
-	        var pow;
-
-	        if (len === 0) {
-	            return Math.round(value);
-	        }
-
-	        pow = Math.pow(DECIMAL, len);
-	        value = Math.round(value * pow) / pow;
-	        value = parseFloat(value).toFixed(len);
-
-	        return value;
-	    },
-
-	    /**
-	     * Format to Comma.
-	     * @param {string} value target value
-	     * @returns {string} formatted value
-	     * @private
-	     */
-	    formatToComma: function(value) {
-	        var comma = ',',
-	            underPointValue = '',
-	            betweenLen = 3,
-	            orgValue = value,
-	            sign, values, lastIndex, formattedValue;
-
-	        value = String(value);
-	        sign = value.indexOf('-') > -1 ? '-' : '';
-
-	        if (value.indexOf('.') > -1) {
-	            values = value.split('.');
-	            value = String(Math.abs(values[0]));
-	            underPointValue = '.' + values[1];
-	        } else {
-	            value = String(Math.abs(value));
-	        }
-
-	        if (value.length <= betweenLen) {
-	            formattedValue = orgValue;
-	        } else {
-	            values = (value).split('').reverse();
-	            lastIndex = values.length - 1;
-	            values = tui.util.map(values, function(char, index) {
-	                var result = [char];
-	                if (index < lastIndex && (index + 1) % betweenLen === 0) {
-	                    result.push(comma);
-	                }
-
-	                return result;
-	            });
-	            formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;
-	        }
-
-	        return formattedValue;
-	    },
-
-	    /**
-	     * Make cssText from map.
-	     * @param {object} cssMap - css map
-	     * @returns {string}
-	     */
-	    makeCssTextFromMap: function(cssMap) {
-	        return tui.util.map(cssMap, function(value, name) {
-	            return renderUtil.concatStr(name, ':', value);
-	        }).join(';');
-	    }
-	};
-
-	/**
-	 * Set css opacity.
-	 * @param {HTMLElement | Array.<HTMLElement>} elements - elements
-	 * @param {function} iteratee - iteratee
-	 */
-	function setOpacity(elements, iteratee) {
-	    elements = tui.util.isArray(elements) ? elements : [elements];
-	    tui.util.forEachArray(elements, iteratee);
-	}
-
-	/**
-	 * Make filter opacity css string.
-	 * @param {number} opacity - opacity
-	 * @returns {string}
-	 */
-	function makeCssFilterOpacityString(opacity) {
-	    return 'alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
-	}
-
-	if (isOldBrowser) {
-	    /**
-	     * Make opacity css text for old browser(IE7, IE8).
-	     * @param {number} opacity - opacity
-	     * @returns {string}
-	     */
-	    renderUtil.makeOpacityCssText = function(opacity) {
-	        var cssText = '';
-
-	        if (tui.util.isExisty(opacity)) {
-	            cssText = ';filter:' + makeCssFilterOpacityString(opacity);
-	        }
-
-	        return cssText;
-	    };
-
-	    /**
-	     * Set css opacity for old browser(IE7, IE8).
-	     * @param {HTMLElement | Array.<HTMLElement>} elements - elements
-	     * @param {number} opacity - opacity
-	     */
-	    renderUtil.setOpacity = function(elements, opacity) {
-	        var filter = makeCssFilterOpacityString(opacity);
-	        setOpacity(elements, function(element) {
-	            element.style.filter = filter;
-	        });
-	    };
-	} else {
-	    /**
-	     * Make opacity css text for browser supporting opacity property of CSS3.
-	     * @param {number} opacity - opacity
-	     * @returns {string}
-	     */
-	    renderUtil.makeOpacityCssText = function(opacity) {
-	        var cssText = '';
-
-	        if (tui.util.isExisty(opacity)) {
-	            cssText = ';opacity:' + opacity;
-	        }
-
-	        return cssText;
-	    };
-
-	    /**
-	     * Set css opacity for browser supporting opacity property of CSS3.
-	     * @param {HTMLElement | Array.<HTMLElement>} elements - elements
-	     * @param {number} opacity - opacity
-	     */
-	    renderUtil.setOpacity = function(elements, opacity) {
-	        setOpacity(elements, function(element) {
-	            element.style.opacity = opacity;
-	        });
-	    };
-	}
-
-	tui.util.defineNamespace('tui.chart');
-	tui.chart.renderUtil = renderUtil;
-
-	module.exports = renderUtil;
 
 
 /***/ },
@@ -9141,30 +9177,27 @@
 	    _renderLegendArea: function(paper) {
 	        var legendData = this.legendModel.getData();
 	        var graphRenderer = this.graphRenderer;
-	        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
-	        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme) - 1;
 	        var isHorizontal = predicate.isHorizontalLegend(this.options.align);
+	        var basePosition = this.layout.position;
+	        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
+	        var labelTheme = legendData[0] ? legendData[0].theme : {};
+	        var labelHeight = graphRenderer.getRenderedLabelHeight('DEFAULT_TEXT', labelTheme) - 1;
 	        var labelCount = labelWidths.length;
-	        var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
 	        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
 	        var iconWidth = 10;
-	        var width = arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
-	            + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
-	        var basePosition = this.layout.position;
-	        var position = {
-	            left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
-	            top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
-	        };
-	        var legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
 
 	        return graphRenderer.render({
 	            paper: paper,
-	            legendData: legendRenderingData,
+	            legendData: this._getLegendRenderingData(legendData, labelHeight, labelWidths),
 	            isHorizontal: isHorizontal,
-	            position: position,
+	            position: {
+	                left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
+	                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
+	            },
 	            dimension: {
-	                height: height,
-	                width: width
+	                height: (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount),
+	                width: arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
+	                + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2)
 	            },
 	            labelTheme: this.theme.label,
 	            labelWidths: labelWidths,
@@ -9962,7 +9995,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var pluginFactory = __webpack_require__(7);
 
 	var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
@@ -10249,7 +10282,7 @@
 	var singleTooltipMixer = __webpack_require__(42);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var tooltipTemplate = __webpack_require__(43);
 
 	/**
@@ -10477,7 +10510,7 @@
 	var chartConst = __webpack_require__(2),
 	    dom = __webpack_require__(14),
 	    predicate = __webpack_require__(5),
-	    renderUtil = __webpack_require__(34);
+	    renderUtil = __webpack_require__(24);
 
 	var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 	    /**
@@ -10945,7 +10978,7 @@
 	var chartConst = __webpack_require__(2),
 	    predicate = __webpack_require__(5),
 	    dom = __webpack_require__(14),
-	    renderUtil = __webpack_require__(34);
+	    renderUtil = __webpack_require__(24);
 
 	/**
 	 * singleTooltipMixer is single tooltip mixer of map chart.
@@ -11606,7 +11639,7 @@
 	var GroupTooltipPositionModel = __webpack_require__(46);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var defaultTheme = __webpack_require__(9);
 	var tooltipTemplate = __webpack_require__(43);
 
@@ -12643,9 +12676,9 @@
 
 	var MouseEventDetectorBase = __webpack_require__(49);
 	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(33);
+	var eventListener = __webpack_require__(34);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
 	    /**
@@ -12838,10 +12871,10 @@
 	var TickBaseCoordinateModel = __webpack_require__(50);
 	var BoundsBaseCoordinateModel = __webpack_require__(51);
 	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(33);
+	var eventListener = __webpack_require__(34);
 	var predicate = __webpack_require__(5);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
 	    /**
@@ -13817,14 +13850,15 @@
 	    } else if (predicate.isMapChart(chartType)) {
 	        factory = mapChartEventDetectorFactory;
 	    } else if (predicate.isBarTypeChart(chartType)
-	               || predicate.isBoxplotChart(chartType)
-	               || predicate.isHeatmapChart(chartType)
-	               || predicate.isTreemapChart(chartType)
-	              ) {
+	        || predicate.isBoxplotChart(chartType)
+	        || predicate.isHeatmapChart(chartType)
+	        || predicate.isTreemapChart(chartType)
+	    ) {
 	        factory = boundsTypeEventDetectorFactory;
 	    } else if (predicate.isCoordinateTypeChart(chartType)
-	               || predicate.isPieChart(chartType)
-	               || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
+	        || predicate.isPieChart(chartType)
+	        || predicate.isPieDonutComboChart(chartType, seriesTypes)
+	    ) {
 	        factory = simpleEventDetectorFactory;
 	    } else {
 	        factory = areaTypeEventDetectorFactory;
@@ -14047,8 +14081,8 @@
 	var MouseEventDetectorBase = __webpack_require__(49);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
-	var eventListener = __webpack_require__(33);
+	var renderUtil = __webpack_require__(24);
+	var eventListener = __webpack_require__(34);
 
 	/**
 	 * Mixer for zoom event of area type mouse event detector.
@@ -14621,7 +14655,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var MouseEventDetectorBase = __webpack_require__(49);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
 	    /**
@@ -15365,7 +15399,7 @@
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var pluginFactory = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(61);
 
@@ -16422,7 +16456,7 @@
 	var labelHelper = __webpack_require__(63);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var raphaelRenderUtil = __webpack_require__(61);
 
 	var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
@@ -16790,7 +16824,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * renderingLabelHelper is helper for rendering of series label.
@@ -17002,7 +17036,7 @@
 	var BarTypeSeriesBase = __webpack_require__(62);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
 	    /**
@@ -17279,7 +17313,7 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -17675,7 +17709,7 @@
 
 	var Series = __webpack_require__(60);
 	var chartConst = __webpack_require__(2);
-	var geom = __webpack_require__(27);
+	var geom = __webpack_require__(28);
 
 	var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSeries.prototype */ {
 	    /**
@@ -20382,7 +20416,7 @@
 	var BarTypeSeriesBase = __webpack_require__(62);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var BoxplotChartSeries = tui.util.defineClass(Series, /** @lends BoxplotChartSeries.prototype */ {
 	    /**
@@ -20566,8 +20600,8 @@
 	var seriesTemplate = __webpack_require__(79);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
-	var eventListener = __webpack_require__(33);
+	var renderUtil = __webpack_require__(24);
+	var eventListener = __webpack_require__(34);
 
 	var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 	    /**
@@ -20796,11 +20830,13 @@
 	var SeriesGroup = __webpack_require__(83);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 	var objectUtil = __webpack_require__(11);
 
 	var concat = Array.prototype.concat;
+
+	var isUndefined = tui.util.isUndefined;
 
 	/*
 	 * Raw series datum.
@@ -20877,6 +20913,8 @@
 	         * @type {Array.<{category: string | number, values: Array.<number>}>}
 	         */
 	        this.dynamicData = [];
+
+	        this.defaultValues = [0, 500];
 
 	        this.initData(rawData);
 	        this.initZoomedRawData();
@@ -21631,22 +21669,109 @@
 	    },
 
 	    /**
+	     * Get fallback datetime values
+	     * @returns {[number, number]} milliseconds
+	     */
+	    getDefaultDatetimeValues: function() {
+	        var hour = 60 * 60 * 1000;
+	        var now = Date.now();
+
+	        return [now - hour, now];
+	    },
+
+	    /**
+	     * Return boolean value of whether seriesData empty or not
+	     * @param {string} chartType Type string of chart
+	     * @returns {boolean}
+	     */
+	    isSeriesDataEmpty: function(chartType) {
+	        var rawData = this.rawData;
+	        var seriesNotExist = rawData && !rawData.series;
+
+	        return (
+	            !rawData
+	            || seriesNotExist
+	            || (!(rawData.series[chartType])
+	                || (rawData.series[chartType] && !(rawData.series[chartType].length)))
+	        );
+	    },
+	    /**
+	     * Return boolean value of whether axis limit option empty or not
+	     * @param {string} axisType Type string of axis
+	     * @returns {boolean}
+	     */
+	    isLimitOptionsEmpty: function(axisType) {
+	        var axisOption = this.options[axisType] || {};
+	        var isEmptyLimitOption = isUndefined(axisOption.min) && isUndefined(axisOption.max);
+
+	        return isEmptyLimitOption;
+	    },
+
+	    /**
 	     * Create values that picked value from SeriesItems of specific SeriesDataModel.
 	     * @param {?string} chartType - type of chart
 	     * @param {?string} valueType - type of value like value, x, y, r.
+	     * @param {?string} axisName - name of axis value 'xAxis' 'yAxis'
 	     * @returns {Array.<number>}
 	     * @private
 	     */
-	    _createValues: function(chartType, valueType) {
-	        var values;
+	    _createValues: function(chartType, valueType, axisName) {
+	        var values, plotValues;
+	        var options = this.options;
+	        var plotOptions = options.plot;
+	        var axisOption = options[axisName] || {};
+	        var type = axisOption.type;
+	        var isEmptyRawData = this.isSeriesDataEmpty(chartType);
+	        var isEmptyLimitOptions = this.isLimitOptionsEmpty(axisName);
+	        var isLineOrAreaChart = (predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
+	            || predicate.isLineAreaComboChart(chartType, this.seriesTypes));
 
 	        if (predicate.isComboChart(chartType)) {
 	            values = [];
 	            this._eachByAllSeriesDataModel(function(seriesDataModel) {
 	                values = values.concat(seriesDataModel.getValues(valueType));
 	            });
+	        } else if (isEmptyRawData && isEmptyLimitOptions) {
+	            if (valueType === 'x' && type === 'datetime') {
+	                values = this.getDefaultDatetimeValues();
+
+	                if (isLineOrAreaChart && plotOptions) {
+	                    plotValues = this.getValuesFromPlotOptions(plotOptions, type);
+	                    values = values.concat(plotValues);
+	                }
+	            } else {
+	                values = this.defaultValues;
+	            }
 	        } else {
 	            values = this.getSeriesDataModel(chartType).getValues(valueType);
+	        }
+
+	        return values;
+	    },
+
+	    /**
+	     * Get values of plot lines, and bands if it exist
+	     * @param {{lines: Array.<object>, bands: Array.<object>}} plotOptions plot options
+	     * @param {string} [axisType] axis value type 'value' 'datetime'
+	     * @returns {Array.<number>}
+	     */
+	    getValuesFromPlotOptions: function(plotOptions, axisType) {
+	        var values = [];
+
+	        if (plotOptions.lines) {
+	            tui.util.forEach(plotOptions.lines, function(line) {
+	                values.push(axisType !== 'datetime' ? line.value : new Date(line.value));
+	            });
+	        }
+
+	        if (plotOptions.bands) {
+	            tui.util.forEach(plotOptions.bands, function(line) {
+	                var ranges = tui.util.map(line.range, function(range) {
+	                    return axisType !== 'datetime' ? range : new Date(range);
+	                });
+
+	                values = values.concat(ranges);
+	            });
 	        }
 
 	        return values;
@@ -21656,16 +21781,17 @@
 	     * Get values from valuesMap.
 	     * @param {?string} chartType - type of chart
 	     * @param {?string} valueType - type of value like value, x, y, r.
+	     * @param {?string} axisType - type of axis value 'value', 'datetime'
 	     * @returns {Array.<number>}
 	     */
-	    getValues: function(chartType, valueType) {
+	    getValues: function(chartType, valueType, axisType) {
 	        var mapKey;
 
 	        // chartType = chartType || chartConst.DUMMY_KEY;
 	        mapKey = chartType + valueType;
 
 	        if (!this.valuesMap[mapKey]) {
-	            this.valuesMap[mapKey] = this._createValues(chartType, valueType);
+	            this.valuesMap[mapKey] = this._createValues(chartType, valueType, axisType);
 	        }
 
 	        return this.valuesMap[mapKey];
@@ -21929,9 +22055,10 @@
 	     * @param {boolean} isSingleYAxis = whether single y axis or not
 	     * @param {string} stackType - stack type
 	     * @param {string} valueType - value type
+	     * @param {string} axisType - value type
 	     * @returns {Array.<number>}
 	     */
-	    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType) {
+	    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType, axisType) {
 	        var baseValues;
 
 	        if (predicate.isComboChart(this.chartType) && isSingleYAxis) {
@@ -21944,7 +22071,7 @@
 	        } else if (predicate.isNormalStackChart(chartType, stackType)) {
 	            baseValues = this._createBaseValuesForNormalStackedChart(chartType);
 	        } else {
-	            baseValues = this.getValues(chartType, valueType);
+	            baseValues = this.getValues(chartType, valueType, axisType);
 	        }
 
 	        return baseValues;
@@ -21986,7 +22113,7 @@
 	'use strict';
 
 	var arrayUtil = __webpack_require__(6);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 
 	/**
@@ -23131,7 +23258,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 
 	var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
@@ -23387,7 +23514,7 @@
 	'use strict';
 
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
 	    /**
@@ -23706,7 +23833,7 @@
 
 	'use strict';
 
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 
 	var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
@@ -24326,7 +24453,7 @@
 	'use strict';
 
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.prototype */{
 	    /**
@@ -24675,7 +24802,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var raphaelRenderUtil = __webpack_require__(61);
 	var circleLegendCalculator = __webpack_require__(92);
 	var axisCalculator = __webpack_require__(93);
@@ -24880,7 +25007,7 @@
 	        var hasTitleOption = tui.util.isExisty(chartOptions.title);
 	        var titleHeight =
 	            hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-	                    this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
+	                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
 	        var dimension = {
 	            height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
 	        };
@@ -25328,8 +25455,9 @@
 	        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
 	        var seriesPosition = {
 	            top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
-	            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
+	            left: (this.chartLeftPadding * 2) + leftLegendWidth + this.getDimension('yAxis').width
 	        };
+	        // Multiply chart left padding times two for series middle align
 
 	        this.positionMap.series = seriesPosition;
 
@@ -25426,7 +25554,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Calculator for circle legend.
@@ -25529,7 +25657,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Calculator for dimension of axis.
@@ -25562,6 +25690,8 @@
 	        var title = options.title || '';
 	        var titleAreaWidth = 0;
 	        var width = 0;
+
+	        labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
 
 	        if (options.isCenter) {
 	            width += chartConst.AXIS_LABEL_PADDING;
@@ -25600,7 +25730,7 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var arrayUtil = __webpack_require__(6);
 
 	/**
@@ -25836,7 +25966,7 @@
 
 	        rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
 
-	        return chartWidth - (chartConst.CHART_PADDING * 3) - yAxisWidth - rightAreaWidth;
+	        return chartWidth - (chartConst.CHART_PADDING * 4) - yAxisWidth - rightAreaWidth;
 	    },
 
 	    /**
@@ -25883,7 +26013,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Calculator for spectrum legend.
@@ -25938,6 +26068,7 @@
 	var scaleLabelFormatter = __webpack_require__(100);
 	var axisDataMaker = __webpack_require__(101);
 	var predicate = __webpack_require__(5);
+	var renderUtil = __webpack_require__(24);
 
 	var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */{
 	    /**
@@ -26013,8 +26144,7 @@
 	        var chartType = typeMap.chartType;
 	        var isVertical = typeMap.areaType !== 'xAxis';
 	        var baseValues = this.dataProcessor.createBaseValuesForLimit(
-	            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType
-	        );
+	            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType, typeMap.areaType);
 	        var baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
 	        var options = tui.util.extend(baseOptions, {
 	            isVertical: isVertical,
@@ -26058,7 +26188,7 @@
 	    /**
 	     * Create scale.
 	     * @param {object} axisOptions - axis options
-	     * @param {{chartType: string, areaType: string}} typeMap - type map
+	     * @param {{chartType: string, areaType: string, valueType: string}} typeMap - type map
 	     * @param {?object} additionalOptions - additional options
 	     * @returns {object}
 	     * @private
@@ -26270,6 +26400,8 @@
 	        if (addingDataMode) {
 	            labels = labels.slice(0, labels.length - 1);
 	        }
+
+	        labels = renderUtil.addPrefixSuffix(labels, this.options.xAxis.prefix, this.options.xAxis.suffix);
 
 	        validLabels = tui.util.filter(labels, function(label) {
 	            return !!label;
@@ -26913,7 +27045,7 @@
 
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var abs = Math.abs;
 
@@ -27007,8 +27139,8 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var geomatric = __webpack_require__(27);
-	var renderUtil = __webpack_require__(34);
+	var geomatric = __webpack_require__(28);
+	var renderUtil = __webpack_require__(24);
 	var arrayUtil = __webpack_require__(6);
 
 	/**
@@ -30538,7 +30670,7 @@
 	'use strict';
 
 	var DataProcessorBase = __webpack_require__(81);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Raw series data.
@@ -32489,7 +32621,9 @@
 	            self.groupLines[groupIndex].attr({path: path.join(' ')});
 
 	            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
-	                self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+	                if (item.endDot) {
+	                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+	                }
 	            });
 	        });
 	    },
@@ -33090,10 +33224,15 @@
 	     * @private
 	     */
 	    _hideDot: function(dot, opacity) {
+	        var prev = this.prevDotAttributes;
 	        var outDotStyle = this.outDotStyle;
 
 	        if (!tui.util.isUndefined(opacity)) {
-	            outDotStyle = tui.util.extend({}, this.prevDotAttributes, {
+	            outDotStyle = tui.util.extend({
+	                r: prev.r,
+	                'stroke-opacity': prev['stroke-opacity'],
+	                'stroke-width': prev['stroke-width']
+	            }, {
 	                'fill-opacity': opacity
 	            });
 	        }
@@ -33444,8 +33583,6 @@
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
-	var LEFT_BAR_WIDTH = 10;
-	var ADDING_DATA_ANIMATION_DURATION = 300;
 
 	var concat = Array.prototype.concat;
 
@@ -33754,7 +33891,9 @@
 	                var position = groupPositions[groupIndex][index];
 	                var startPositon;
 
-	                self._moveDot(item.endDot.dot, position);
+	                if (item.endDot) {
+	                    self._moveDot(item.endDot.dot, position);
+	                }
 	                if (item.startDot) {
 	                    startPositon = tui.util.extend({}, position);
 	                    startPositon.top = startPositon.startTop;
@@ -33805,23 +33944,18 @@
 	     */
 	    animateForAddingData: function(data, tickSize, groupPositions, shiftingOption, zeroTop) {
 	        var self = this;
+	        var groupPaths = this._getAreaChartPath(groupPositions, false);
 	        var additionalIndex = 0;
-	        var groupPaths;
 
 	        if (!groupPositions.length) {
 	            return;
 	        }
 
-	        this.zeroTop = zeroTop;
-
-	        groupPaths = this._getAreaChartPath(groupPositions, false);
-
 	        if (shiftingOption) {
-	            this.leftBar.animate({
-	                width: tickSize + LEFT_BAR_WIDTH
-	            }, ADDING_DATA_ANIMATION_DURATION);
 	            additionalIndex = 1;
 	        }
+
+	        this.zeroTop = zeroTop;
 
 	        tui.util.forEachArray(this.groupAreas, function(area, groupIndex) {
 	            var dots = self.groupDots[groupIndex];
@@ -33834,22 +33968,21 @@
 
 	            tui.util.forEachArray(dots, function(item, index) {
 	                var position = groupPosition[index + additionalIndex];
-
-	                self._animateByPosition(item.endDot.dot, position);
+	                self._animateByPosition(item.endDot.dot, position, tickSize);
 
 	                if (item.startDot) {
 	                    self._animateByPosition(item.startDot.dot, {
 	                        left: position.left,
 	                        top: position.startTop
-	                    });
+	                    }, tickSize);
 	                }
 	            });
 
-	            self._animateByPath(area.area, pathMap.area);
-	            self._animateByPath(area.line, pathMap.line);
+	            self._animateByPath(area.area, pathMap.area, tickSize);
+	            self._animateByPath(area.line, pathMap.line, tickSize);
 
 	            if (area.startLine) {
-	                self._animateByPath(area.startLine, pathMap.startLine);
+	                self._animateByPath(area.startLine, pathMap.startLine, tickSize);
 	            }
 	        });
 	    },
@@ -35313,7 +35446,7 @@
 	         * @type {Array.<Array.<{rect: Object, color: string}>>}
 	         */
 	        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot,
-	        seriesSet);
+	            seriesSet);
 
 	        return seriesSet;
 	    },
@@ -35927,8 +36060,7 @@
 
 	        tui.util.forEach(labelData, function(labelDatum) {
 	            var position = labelDatum.labelPosition;
-	            var label = raphaelRenderUtil.renderText(paper, position,
-	                    labelDatum.name || labelDatum.code, attributes);
+	            var label = raphaelRenderUtil.renderText(paper, position, labelDatum.name || labelDatum.code, attributes);
 
 	            set.push(label);
 
@@ -36110,7 +36242,7 @@
 
 	        this._renderLegendItems(legendData);
 
-	        if (!this.isHorizontal && legendData.length < data.legendData.length) {
+	        if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
 	            legendHeight = this.paper.height - (this.basePosition.top * 2);
 
 	            this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
@@ -36678,7 +36810,7 @@
 	        var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
 	        var pos = {
 	            left: paper.width / 2,
-	            top: (titleSize.height + chartConst.TITLE_PADDING) / 2    // for renderText's baseline
+	            top: (titleSize.height + chartConst.TITLE_PADDING) / 2 // for renderText's baseline
 	        };
 	        var titleSet = paper.set();
 

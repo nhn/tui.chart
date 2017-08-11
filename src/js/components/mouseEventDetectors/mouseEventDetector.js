@@ -29,14 +29,15 @@ function mouseEventDetectorFactory(params) {
     } else if (predicate.isMapChart(chartType)) {
         factory = mapChartEventDetectorFactory;
     } else if (predicate.isBarTypeChart(chartType)
-               || predicate.isBoxplotChart(chartType)
-               || predicate.isHeatmapChart(chartType)
-               || predicate.isTreemapChart(chartType)
-              ) {
+        || predicate.isBoxplotChart(chartType)
+        || predicate.isHeatmapChart(chartType)
+        || predicate.isTreemapChart(chartType)
+    ) {
         factory = boundsTypeEventDetectorFactory;
     } else if (predicate.isCoordinateTypeChart(chartType)
-               || predicate.isPieChart(chartType)
-               || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
+        || predicate.isPieChart(chartType)
+        || predicate.isPieDonutComboChart(chartType, seriesTypes)
+    ) {
         factory = simpleEventDetectorFactory;
     } else {
         factory = areaTypeEventDetectorFactory;

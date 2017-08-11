@@ -136,7 +136,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
 
         this._renderLegendItems(legendData);
 
-        if (!this.isHorizontal && legendData.length < data.legendData.length) {
+        if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
             legendHeight = this.paper.height - (this.basePosition.top * 2);
 
             this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);

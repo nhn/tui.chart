@@ -485,10 +485,15 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _hideDot: function(dot, opacity) {
+        var prev = this.prevDotAttributes;
         var outDotStyle = this.outDotStyle;
 
         if (!tui.util.isUndefined(opacity)) {
-            outDotStyle = tui.util.extend({}, this.prevDotAttributes, {
+            outDotStyle = tui.util.extend({
+                r: prev.r,
+                'stroke-opacity': prev['stroke-opacity'],
+                'stroke-width': prev['stroke-width']
+            }, {
                 'fill-opacity': opacity
             });
         }

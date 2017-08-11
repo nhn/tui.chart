@@ -39,7 +39,7 @@ var seriesCalculator = {
 
         rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
 
-        return chartWidth - (chartConst.CHART_PADDING * 3) - yAxisWidth - rightAreaWidth;
+        return chartWidth - (chartConst.CHART_PADDING * 4) - yAxisWidth - rightAreaWidth;
     },
 
     /**
