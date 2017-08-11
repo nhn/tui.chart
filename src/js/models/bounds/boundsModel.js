@@ -213,7 +213,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var hasTitleOption = tui.util.isExisty(chartOptions.title);
         var titleHeight =
             hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-                    this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
+                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
         var dimension = {
             height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
         };
@@ -661,8 +661,9 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
         var seriesPosition = {
             top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
-            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
+            left: (this.chartLeftPadding * 2) + leftLegendWidth + this.getDimension('yAxis').width
         };
+        // Multiply chart left padding times two for series middle align
 
         this.positionMap.series = seriesPosition;
 

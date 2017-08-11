@@ -161,7 +161,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             self.groupLines[groupIndex].attr({path: path.join(' ')});
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
-                self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+                if (item.endDot) {
+                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+                }
             });
         });
     },

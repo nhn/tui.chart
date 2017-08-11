@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>[Area Chart] auto tick and zoomable</title>
+    <title>[Line Chart] basic</title>
     <link rel="stylesheet" type="text/css" href="../dist/chart.css" />
 
     <link rel='stylesheet' type='text/css' href='../lib/codemirror/lib/codemirror.css'/>
@@ -24,98 +24,69 @@
     </div>
     <div style='border: 0.2px solid #aaa;'>
         <textarea id='code'>
-function getRandom(start, end) {
-    return start + (Math.floor(Math.random() * (end - start + 1)));
-}
-
-function zeroFill(number) {
-    var filledNumber;
-
-    if (number < 10) {
-        filledNumber = '0' + number;
-    } else {
-        filledNumber = number;
-    }
-
-    return filledNumber;
-}
-
-function adjustTime(time, addTime) {
-    addTime = addTime || 60;
-    if (time < 0) {
-        time += addTime;
-    }
-    return time;
-}
-
-function makeDate(hour, minute, second) {
-    return zeroFill(adjustTime(hour, 24)) + ':' + zeroFill(adjustTime(minute)) + ':' + zeroFill(adjustTime(second));
-}
-
-function makeDivisionTime(time) {
-    time = Math.abs(time);
-    var share = parseInt(time / 60, 10) || 1;
-
-    if (time % 60 === 0) {
-        share += 1;
-    }
-
-    return share;
-}
-
-var legends = ['SiteA'];
-var seriesData = tui.util.map(tui.util.range(1), function(value, index) {
-    var name = legends[index];
-    var data = tui.util.map(tui.util.range(100), function() {
-        return getRandom(150, 200);
-    });
-    return {
-        name: name,
-        data: data
-    };
-});
-var baseNow = new Date();
-var startSecond = baseNow.getSeconds() - seriesData[0].data.length - 1;
-var categories = tui.util.map(seriesData[0].data, function(value, index) {
-    var hour = baseNow.getHours();
-    var minute = baseNow.getMinutes();
-    var second = startSecond + index;
-
-    if (second < 0) {
-        minute -= makeDivisionTime(second);
-        second = second % 60;
-    }
-
-    if (minute < 0) {
-        hour -= makeDivisionTime(minute);
-    }
-    return makeDate(hour, minute, second);
-});
 var container = document.getElementById('chart-area');
 var data = {
-    categories: categories,
-    series: seriesData
+    categories: ['01/01/2016', '02/01/2016', '03/01/2016', '04/01/2016', '05/01/2016', '06/01/2016', '07/01/2016', '08/01/2016', '09/01/2016', '10/01/2016', '11/01/2016', '12/01/2016'],
+    series: [
+    ]
 };
 var options = {
     chart: {
         width: 700,
         height: 400,
-        title: 'Concurrent users'
-    },
-    xAxis: {
-        title: 'seconds',
-        tickInterval: 'auto'
+        title: '24-hr Average Temperature'
     },
     yAxis: {
-        title: 'users',
-        suffix: 'Users'
+        title: 'Temperature (Celsius)'
     },
-    series: {
-        spline: true,
-        zoomable: true
+    xAxis: {
+        title: 'Month',
+        type: 'datetime',
+        dateFormat: 'MMM'
+    },
+    series: {zoomable: true},
+    tooltip: {
+        suffix: '°C'
+    },
+    plot: {
+        lines: [{
+            value: '05/01/2016',
+            color: 'red'
+        }, {
+            value: '08/01/2016',
+            color: 'green'
+        }],
+        bands: [{
+            range: ['04/01/2016', '06/01/2016'],
+            color: 'yellow',
+            opacity: 0.4
+        }, {
+            range: ['07/01/2016', '09/01/2016'],
+            color: 'orange',
+            opacity: 0.4
+        }, {
+            range: ['10/01/2016', '12/01/2016'],
+            color: 'brown',
+            opacity: 0.4
+        }, {
+            range: ['01/01/2016', '03/01/2016'],
+            color: 'lightBlue',
+            opacity: 0.4
+        }]
     }
 };
-var chart = tui.chart.areaChart(container, data, options);
+var theme = {
+    series: {
+        colors: ['#D95576', '#00628C', '#00A8DA', '#1EA399', '#F7A655']
+    }
+};
+
+// For apply theme
+
+// tui.chart.registerTheme('myTheme', theme);
+// options.theme = 'myTheme';
+
+var chart = tui.chart.lineChart(container, data, options);
         </textarea>
     </div>
 
@@ -157,4 +128,3 @@ var chart = tui.chart.areaChart(container, data, options);
 </script>
 </body>
 </html>
-

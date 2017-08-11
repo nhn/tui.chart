@@ -17,6 +17,11 @@
     </div>
 </div>
 <div class="custom-area">
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
     <div style='border: 0.2px solid #aaa;'>
         <textarea id="code">
 var container = document.getElementById('chart-area');
@@ -42,7 +47,7 @@ var options = {
         width: 700,
         height: 400,
         title: 'Monthly Revenue',
-        "format": "1,000"
+        format: '1,000'
     },
     yAxis: {
         title: 'Month'

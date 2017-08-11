@@ -42,6 +42,8 @@ var axisCalculator = {
         var titleAreaWidth = 0;
         var width = 0;
 
+        labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
+
         if (options.isCenter) {
             width += chartConst.AXIS_LABEL_PADDING;
         } else if (options.rotateTitle === false) {

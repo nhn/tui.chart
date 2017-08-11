@@ -275,9 +275,11 @@ var zoomMixer = {
     _onDrag: function(e) {
         var clientPos = this.startClientPosition;
         var target = e.target || e.srcElement;
+        var dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
+
         if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
             if (tui.util.isNull(this.dragStartIndexes)) {
-                this.dragStartIndexes = this._findDataForZoomable(clientPos.x, clientPos.y).indexes;
+                this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : [];
             } else {
                 this._showDragSelection(e.clientX);
             }
@@ -367,11 +369,14 @@ var zoomMixer = {
             } else {
                 MouseEventDetectorBase.prototype._onClick.call(this, e);
             }
-        } else {
+        } else if (this.dragStartIndexes.length) {
             this.dragEndIndexes = this._findDataForZoomable(e.clientX, e.clientY).indexes;
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
             this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
+        } else {
+            this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
+            this._hideDragSelection();
         }
 
         this.startClientPosition = null;

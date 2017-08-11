@@ -617,7 +617,37 @@ var renderUtil = {
         return tui.util.map(cssMap, function(value, name) {
             return renderUtil.concatStr(name, ':', value);
         }).join(';');
+    },
+
+    /**
+     * Perse String.
+     * @param {string} value - string
+     * @returns {string}
+     */
+    _perseString: function(value) {
+        return typeof value === 'string' || typeof value === 'number' ? String(value) : '';
+    },
+
+    /**
+     * Add prefix or suffix to label.
+     * @param {array} labels - labels
+     * @param {string} prefix - string
+     * @param {string} suffix - string
+     * @returns {array}
+     */
+    addPrefixSuffix: function(labels, prefix, suffix) {
+        prefix = this._perseString(prefix);
+        suffix = this._perseString(suffix);
+
+        if (!(prefix === '' && suffix === '')) {
+            return tui.util.map(labels, function(label) {
+                return prefix + label + suffix;
+            });
+        }
+
+        return labels;
     }
+
 };
 
 /**

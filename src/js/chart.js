@@ -86,31 +86,35 @@ tui.util.defineNamespace('tui.chart');
 function _createChart(container, rawData, options, chartType) {
     var themeName, theme, chart, temp;
 
-    if (rawData) {
-        if (rawData.table) {
-            rawData = seriesDataImporter.makeDataWithTable(rawData.table);
-        }
-
-        if (rawData.series) {
-            rawData = objectUtil.deepCopy(rawData);
-
-            if (chartType !== 'combo') {
-                temp = rawData.series;
-                rawData.series = {};
-                rawData.series[chartType] = temp;
-            }
-
-            options = options ? objectUtil.deepCopy(options) : {};
-            options.chartType = chartType;
-            themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
-            theme = themeManager.get(themeName, chartType, rawData.series);
-
-            chart = chartFactory.get(options.chartType, rawData, theme, options);
-
-            chart.render(container);
-            chart.animateChart();
-        }
+    if (!rawData) {
+        rawData = {};
     }
+
+    if (rawData.table) {
+        rawData = seriesDataImporter.makeDataWithTable(rawData.table);
+    }
+
+    if (!rawData.series) {
+        rawData.series = [];
+    }
+
+    rawData = objectUtil.deepCopy(rawData);
+
+    if (chartType !== 'combo') {
+        temp = rawData.series;
+        rawData.series = {};
+        rawData.series[chartType] = temp;
+    }
+
+    options = options ? objectUtil.deepCopy(options) : {};
+    options.chartType = chartType;
+    themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
+    theme = themeManager.get(themeName, chartType, rawData.series);
+
+    chart = chartFactory.get(options.chartType, rawData, theme, options);
+
+    chart.render(container);
+    chart.animateChart();
 
     return chart;
 }
