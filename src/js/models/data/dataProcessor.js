@@ -856,7 +856,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
     /**
      * Get fallback datetime values
-     * @returns {[number, number]} milliseconds
+     * @returns {number[]} milliseconds
      */
     getDefaultDatetimeValues: function() {
         var hour = 60 * 60 * 1000;
