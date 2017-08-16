@@ -43,6 +43,13 @@ ul, ol, li {list-style:none; padding-left:0; margin-left:0;}
     padding-bottom: 5px;
     border-bottom: 1px solid #1f292e;
 }
+.lnb .lnb-api h3 a {
+    color: #fa3282;
+}
+.lnb .lnb-api h3 a:hover {
+    color: #fa3282;
+    text-decoration: underline;
+}
 .lnb .lnb-api a,
 .lnb .lnb-examples a {
     color: #7cafc2;
@@ -50,6 +57,16 @@ ul, ol, li {list-style:none; padding-left:0; margin-left:0;}
 .lnb .lnb-api a:hover,
 .lnb .lnb-examples a:hover {
     color: #a3cfdf;
+}
+.lnb .lnb-api .toggle-subnav {
+    padding: 0 3px;
+    margin-bottom: 0;
+}
+.lnb .lnb-api .toggle-subnav:focus {
+    outline: 0;
+}
+.lnb .lnb-api .toggle-subnav {
+    font-size: 10px;
 }
 .lnb .member-type {
     margin-top: 5px;
@@ -265,12 +282,15 @@ footer {
     text-align: center;
 }
 
-/* README */
+/* README*/
 .readme {
     font-size: 14px;
 }
+.readme p,
 .readme ul,
-.readme ol,
+.readme ol {
+    padding: 3px 0 3px 5px;
+}
 .readme li {
     list-style: initial;
 }
@@ -280,13 +300,11 @@ footer {
 .readme h1 {
     font-size:24px;
     font-weight:normal;
-    margin: 5px 20px;
     padding: 10px 0 5px 0;
     border-bottom: 1px solid #428bca;
 }
-.readme p {
-    padding: 10px 30px 20px 30px;
-    color: #0082c6;
+.readme pre {
+    margin: 15px 3px;
 }
 .readme li p {
     padding: 10px 0;
@@ -296,19 +314,23 @@ footer {
     color:#c7254e;
 }
 .readme h2 {
-    margin: 5px 20px;
     padding-bottom: 3px;
     border-bottom: 1px solid #dedede;
-    font-size: 20px;
+    font-size: 22px;
 }
 .readme h3 {
-    font-size: 17px;
-    color: #666;
-    margin: 5px 32px;
+    font-size: 20px;
     padding-bottom: 3px;
 }
-.readme ul {
-    padding: 5px 30px 20px;
+
+.readme h4 {
+    font-size: 18px;
+}
+.readme h5 {
+    font-size: 16px;
+}
+.readme h6 {
+    font-size: 15px;
 }
 .readme table {
     margin: 5px 30px 20px;
@@ -334,6 +356,12 @@ footer {
 }
 .readme section .container-overview dt {float:left; }
 .readme section .container-overview dd {float:left; margin-left:10px; }
+.readme blockquote {
+    padding: inherit;
+    margin: inherit;
+    font-size: inherit;
+    color: #777;
+}
 
 /* Search box */
 .search-container {

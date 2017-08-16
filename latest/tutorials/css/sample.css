@@ -47,3 +47,39 @@ textarea {
 #theme-area.show {
     display:block;
 }
+
+div#error-dim {
+    padding: 30px 10px 10px 10px;
+    margin-bottom: 20px;
+    display: none;
+    width: 580px;
+    height: 300px;
+    background-color: rgba(242,13,0,0.41);
+}
+
+span#error-text {
+    color: #9f120d;
+    font-weight: bold;
+    font-size: 2em;
+}
+
+div#error-stack {
+    margin-top: 20px;
+    color: #9f120d;
+    font-size: 1em;
+}
+
+span#go-to-dev-tool {
+    display: block;
+    padding-top: 50px;
+    color: #fff;
+    font-size: 1em;
+}
+
+div#error-dim.show {
+    display: block;
+}
+
+div#go-to-dev-tool {
+
+}

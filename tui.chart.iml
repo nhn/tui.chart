@@ -3,9 +3,32 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/1.0.0" />
+      <excludeFolder url="file://$MODULE_DIR$/1.1.0" />
+      <excludeFolder url="file://$MODULE_DIR$/1.1.1" />
+      <excludeFolder url="file://$MODULE_DIR$/1.2.0" />
+      <excludeFolder url="file://$MODULE_DIR$/1.3.0" />
+      <excludeFolder url="file://$MODULE_DIR$/1.4.0" />
+      <excludeFolder url="file://$MODULE_DIR$/1.5.0" />
+      <excludeFolder url="file://$MODULE_DIR$/1.5.1" />
+      <excludeFolder url="file://$MODULE_DIR$/1.5.2" />
+      <excludeFolder url="file://$MODULE_DIR$/2.0.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.1.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.2.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.3.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.4.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.5.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.6.2" />
+      <excludeFolder url="file://$MODULE_DIR$/2.7.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.7.3" />
+      <excludeFolder url="file://$MODULE_DIR$/2.8.1" />
+      <excludeFolder url="file://$MODULE_DIR$/2.8.2" />
+      <excludeFolder url="file://$MODULE_DIR$/2.9.0" />
+      <excludeFolder url="file://$MODULE_DIR$/2.9.3" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
       <excludeFolder url="file://$MODULE_DIR$/maps" />
+      <excludeFolder url="file://$MODULE_DIR$/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/report" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

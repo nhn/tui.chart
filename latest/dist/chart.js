@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.9.0
+ * @version 2.9.3
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Mar 29 2017 15:13:01 GMT+0900 (KST)"
+ * bundle created at "Fri Aug 11 2017 11:45:15 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -140,31 +140,35 @@
 	function _createChart(container, rawData, options, chartType) {
 	    var themeName, theme, chart, temp;
 
-	    if (rawData) {
-	        if (rawData.table) {
-	            rawData = seriesDataImporter.makeDataWithTable(rawData.table);
-	        }
-
-	        if (rawData.series) {
-	            rawData = objectUtil.deepCopy(rawData);
-
-	            if (chartType !== 'combo') {
-	                temp = rawData.series;
-	                rawData.series = {};
-	                rawData.series[chartType] = temp;
-	            }
-
-	            options = options ? objectUtil.deepCopy(options) : {};
-	            options.chartType = chartType;
-	            themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
-	            theme = themeManager.get(themeName, chartType, rawData.series);
-
-	            chart = chartFactory.get(options.chartType, rawData, theme, options);
-
-	            chart.render(container);
-	            chart.animateChart();
-	        }
+	    if (!rawData) {
+	        rawData = {};
 	    }
+
+	    if (rawData.table) {
+	        rawData = seriesDataImporter.makeDataWithTable(rawData.table);
+	    }
+
+	    if (!rawData.series) {
+	        rawData.series = [];
+	    }
+
+	    rawData = objectUtil.deepCopy(rawData);
+
+	    if (chartType !== 'combo') {
+	        temp = rawData.series;
+	        rawData.series = {};
+	        rawData.series[chartType] = temp;
+	    }
+
+	    options = options ? objectUtil.deepCopy(options) : {};
+	    options.chartType = chartType;
+	    themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
+	    theme = themeManager.get(themeName, chartType, rawData.series);
+
+	    chart = chartFactory.get(options.chartType, rawData, theme, options);
+
+	    chart.render(container);
+	    chart.animateChart();
 
 	    return chart;
 	}
@@ -2756,8 +2760,8 @@
 	 * Pick maximum value from value array.
 	 * @memberOf module:arrayUtil
 	 * @param {Array} arr value array
-	 * @param {?function} condition condition function
-	 * @param {?object} context target context
+	 * @param {?function} [condition] condition function
+	 * @param {?object} [context] target context
 	 * @returns {*} maximum value
 	 */
 	var max = function(arr, condition, context) {
@@ -3148,9 +3152,8 @@
 	                seriesCount = 0;
 	            }
 
-	            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors,
-	                                                                         seriesCount,
-	                                                                         !hasOwnColors && colorIndex);
+	            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors, seriesCount,
+	                !hasOwnColors && colorIndex);
 
 	            // To distinct between series that use default theme, we make the colors different
 	            if (!hasOwnColors) {
@@ -4131,7 +4134,7 @@
 	var DefaultDataProcessor = __webpack_require__(80);
 	var rawDataHandler = __webpack_require__(4);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var boundsAndScaleBuilder = __webpack_require__(90);
 
 	var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -4727,10 +4730,10 @@
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var Axis = __webpack_require__(22);
-	var Plot = __webpack_require__(24);
-	var title = __webpack_require__(25);
-	var RadialPlot = __webpack_require__(26);
-	var ChartExportMenu = __webpack_require__(28);
+	var Plot = __webpack_require__(25);
+	var title = __webpack_require__(26);
+	var RadialPlot = __webpack_require__(27);
+	var ChartExportMenu = __webpack_require__(29);
 	var DrawingToolPicker = __webpack_require__(13);
 
 	// legends
@@ -5116,6 +5119,7 @@
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
 	var pluginFactory = __webpack_require__(7);
+	var renderUtil = __webpack_require__(24);
 
 	var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 	    /**
@@ -5425,7 +5429,7 @@
 	        });
 	    },
 
-	     /**
+	    /**
 	     * Render ticks.
 	     * @param {number} size - width or height
 	     * @param {number} tickCount - tick count
@@ -5626,6 +5630,8 @@
 	        if (axisLabels.length) {
 	            positions.length = axisLabels.length;
 	        }
+
+	        axisLabels = renderUtil.addPrefixSuffix(axisLabels, this.options.prefix, this.options.suffix);
 
 	        if (hasRotatedXAxisLabel) {
 	            this._renderRotationLabels(positions, axisLabels, labelSize, additionalSize);
@@ -5966,2272 +5972,6 @@
 
 /***/ },
 /* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Plot component.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(2);
-	var predicate = __webpack_require__(5);
-	var calculator = __webpack_require__(23);
-
-	var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
-	    /**
-	     * Plot component.
-	     * @constructs Plot
-	     * @private
-	     * @param {object} params parameters
-	     *      @param {number} params.vTickCount vertical tick count
-	     *      @param {number} params.hTickCount horizontal tick count
-	     *      @param {object} params.theme axis theme
-	     */
-	    init: function(params) {
-	        /**
-	         * Plot view className
-	         * @type {string}
-	         */
-	        this.className = 'tui-chart-plot-area';
-
-	        /**
-	         * Data processor
-	         * @type {DataProcessor}
-	         */
-	        this.dataProcessor = params.dataProcessor;
-
-	        /**
-	         * Options
-	         * @type {object}
-	         */
-	        this.options = params.options || {};
-	        this.options.showLine = tui.util.isUndefined(this.options.showLine) ? true : this.options.showLine;
-	        this.options.lines = this.options.lines || [];
-	        this.options.bands = this.options.bands || [];
-
-	        /**
-	         * x axis type option
-	         * @type {?string}
-	         */
-	        this.xAxisTypeOption = params.xAxisTypeOption;
-
-	        /**
-	         * Theme
-	         * @type {object}
-	         */
-	        this.theme = params.theme || {};
-
-	        /**
-	         * chart type
-	         * @type {string}
-	         */
-	        this.chartType = params.chartType;
-
-	        /**
-	         * sub charts type
-	         * @type {Array.<string>}
-	         */
-	        this.chartTypes = params.chartTypes;
-
-	        /**
-	         * layout bounds information for this components
-	         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
-	         */
-	        this.layout = null;
-
-	        /**
-	         * axis data map
-	         * @type {null|object}
-	         */
-	        this.axisDataMap = null;
-
-	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-	    },
-
-	    /**
-	     * Render plot area.
-	     * @param {object} paper paper object
-	     * @private
-	     */
-	    _renderPlotArea: function(paper) {
-	        var dimension;
-
-	        dimension = this.layout.dimension;
-
-	        if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
-	            this._renderOptionalLines(paper, dimension);
-	        }
-
-	        if (this.options.showLine) {
-	            this._renderPlotLines(paper, dimension);
-	        }
-	    },
-
-	    /**
-	     * Set data for rendering.
-	     * @param {{
-	     *      layout: {
-	     *          dimension: {width: number, height: number},
-	     *          position: {left: number, top: number}
-	     *      },
-	     *      axisDataMap: object
-	     * }} data - bounds and scale data
-	     * @private
-	     */
-	    _setDataForRendering: function(data) {
-	        if (data) {
-	            this.layout = data.layout;
-	            this.dimensionMap = data.dimensionMap;
-	            this.axisDataMap = data.axisDataMap;
-	            this.paper = data.paper;
-	        }
-	    },
-
-	    /**
-	     * Render plot component.
-	     * @param {object} data - bounds and scale data
-	     */
-	    render: function(data) {
-	        var paper = (data && data.paper) || this.paper;
-	        this.plotSet = paper.set();
-
-	        this._setDataForRendering(data);
-	        this._renderPlotArea(this.paper);
-	    },
-
-	    /**
-	     * Rerender.
-	     * @param {object} data - bounds and scale data
-	     */
-	    rerender: function(data) {
-	        this.plotSet.remove();
-	        this.render(data);
-	    },
-
-	    /**
-	     * Resize plot component.
-	     * @param {object} data - bounds and scale data
-	     */
-	    resize: function(data) {
-	        this.rerender(data);
-	        this.plotSet.toBack();
-	        this.paper.pushDownBackgroundToBottom();
-	    },
-
-	    /**
-	     * Make template params for vertical line.
-	     * @param {object} additionalParams - additional params
-	     * @returns {object}
-	     * @private
-	     */
-	    _makeVerticalLineTemplateParams: function(additionalParams) {
-	        return tui.util.extend({
-	            className: 'vertical',
-	            positionType: 'left',
-	            width: '1px'
-	        }, additionalParams);
-	    },
-
-	    /**
-	     * Make template params for horizontal line.
-	     * @param {object} additionalParams - additional params
-	     * @returns {object}
-	     * @private
-	     */
-	    _makeHorizontalLineTemplateParams: function(additionalParams) {
-	        return tui.util.extend({
-	            className: 'horizontal',
-	            positionType: 'bottom',
-	            height: '1px'
-	        }, additionalParams);
-	    },
-
-	    /**
-	     * Render line
-	     * @param {number} position - start percentage position
-	     * @param {object} attributes - line attributes
-	     * @returns {object} path
-	     * @private
-	     */
-	    _renderLine: function(position, attributes) {
-	        var top = this.layout.position.top;
-	        var height = this.layout.dimension.height;
-	        var pathString = 'M' + position + ',' + top + 'V' + (top + height);
-	        var path = this.paper.path(pathString);
-
-	        path.attr({
-	            opacity: attributes.opacity || 1,
-	            stroke: attributes.color
-	        });
-
-	        this.plotSet.push(path);
-
-	        return path;
-	    },
-
-	    /**
-	     * Render band
-	     * @param {number} position - start percentage position
-	     * @param {number} width - width
-	     * @param {object} attributes - band attributes
-	     * @returns {object} band
-	     * @private
-	     */
-	    _renderBand: function(position, width, attributes) {
-	        var top = this.layout.position.top;
-	        var height = this.layout.dimension.height;
-	        var rect = this.paper.rect(position, top, width, height);
-
-	        rect.attr({
-	            fill: attributes.color,
-	            opacity: attributes.opacity || 1,
-	            stroke: attributes.color
-	        });
-
-	        this.plotSet.push(rect);
-
-	        return rect;
-	    },
-
-	    /**
-	     * Create value range for optional line.
-	     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
-	     * @returns {Array.<number>}
-	     * @private
-	     */
-	    _createOptionalLineValueRange: function(optionalLineData) {
-	        var range = optionalLineData.range || [optionalLineData.value];
-
-	        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-	            range = tui.util.map(range, function(value) {
-	                var date = new Date(value);
-
-	                return date.getTime() || value;
-	            });
-	        }
-
-	        return range;
-	    },
-
-	    /**
-	     * Create position for optional line, when value axis.
-	     * @param {{dataMin: number, distance: number}} xAxisData - x axis data
-	     * @param {number} width - width
-	     * @param {number} value - value
-	     * @returns {number|null}
-	     * @private
-	     */
-	    _createOptionalLinePosition: function(xAxisData, width, value) {
-	        var ratio = (value - xAxisData.dataMin) / xAxisData.distance;
-	        var position = ratio * width;
-
-	        if (ratio === 1) {
-	            position -= 1;
-	        }
-
-	        if (position < 0) {
-	            position = null;
-	        }
-
-	        return position;
-	    },
-
-	    /**
-	     * Create position for optional line, when label axis.
-	     * @param {number} width - width
-	     * @param {number} value - value
-	     * @returns {number|null}
-	     * @private
-	     */
-	    _createOptionalLinePositionWhenLabelAxis: function(width, value) {
-	        var dataProcessor = this.dataProcessor;
-	        var index = dataProcessor.findCategoryIndex(value);
-	        var position = null;
-	        var ratio;
-
-	        if (!tui.util.isNull(index)) {
-	            ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
-	            position = ratio * width;
-	        }
-
-	        if (ratio === 1) {
-	            position -= 1;
-	        }
-
-	        return position;
-	    },
-
-	    /**
-	     * Create position map for optional line.
-	     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
-	     * @param {{isLabelAxis: boolean, dataMin: number, distance: number}} xAxisData - x axis data
-	     * @param {number} width - width
-	     * @returns {{start: number, end: number}}
-	     * @private
-	     */
-	    _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
-	        var range = this._createOptionalLineValueRange(optionalLineData);
-	        var startPosition, endPosition;
-
-	        if (xAxisData.isLabelAxis) {
-	            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
-	            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
-	        } else {
-	            startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
-	            endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
-	        }
-
-	        if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
-	            startPosition = 0;
-	        }
-
-	        return {
-	            start: startPosition,
-	            end: endPosition
-	        };
-	    },
-
-	    /**
-	     * Render optional line.
-	     * @param {Array.<number>} xAxisData - positions
-	     * @param {number} width - standard width
-	     * @param {object} attributes - template parameters
-	     * @param {object} optionalLineData - optional line information
-	     * @returns {object}
-	     * @private
-	     */
-	    _renderOptionalLine: function(xAxisData, width, attributes, optionalLineData) {
-	        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
-	        var line;
-
-	        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
-	            attributes.width = 1;
-
-	            attributes.color = optionalLineData.color || 'transparent';
-	            attributes.opacity = optionalLineData.opacity;
-
-	            line = this._renderLine(positionMap.start + this.layout.position.left, attributes);
-	        }
-
-	        return line;
-	    },
-
-	    /**
-	     * Render optional band.
-	     * @param {Array.<number>} xAxisData - positions
-	     * @param {number} width - standard width
-	     * @param {object} attributes - template parameters
-	     * @param {object} optionalLineData - optional line information
-	     * @returns {object}
-	     * @private
-	     */
-	    _makeOptionalBand: function(xAxisData, width, attributes, optionalLineData) {
-	        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
-	        var bandWidth = positionMap.end - positionMap.start;
-	        var band;
-
-	        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
-	            attributes.color = optionalLineData.color || 'transparent';
-	            attributes.opacity = optionalLineData.opacity;
-	            band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
-	        }
-
-	        return band;
-	    },
-
-	    /**
-	     * Make optional lines html.
-	     * @param {Array.<object>} lines - optional lines
-	     * @param {{width: number, height: number}} dimension - dimension
-	     * @returns {string}
-	     * @private
-	     */
-	    _makeOptionalLines: function(lines, dimension) {
-	        var width = dimension.width;
-	        var xAxisData = this.axisDataMap.xAxis;
-	        var templateParams = this._makeVerticalLineTemplateParams({
-	            height: dimension.height + 'px'
-	        });
-	        var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
-
-	        return tui.util.map(lines, makeOptionalLineHtml).join('');
-	    },
-
-	    /**
-	     * Make optional lines html.
-	     * @param {Array.<object>} lines - optional lines
-	     * @param {{width: number, height: number}} dimension - dimension
-	     * @returns {string}
-	     * @private
-	     */
-	    _makeOptionalBands: function(lines, dimension) {
-	        var width = dimension.width;
-	        var xAxisData = this.axisDataMap.xAxis;
-	        var templateParams = this._makeVerticalLineTemplateParams({
-	            height: dimension.height + 'px'
-	        });
-	        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
-
-	        return tui.util.map(lines, makeOptionalLineHtml).join('');
-	    },
-
-	    /**
-	     * Render optional lines and bands.
-	     * @param {object} paper - paper
-	     * @param {{width: number, height: number}} dimension - dimension
-	     * @private
-	     */
-	    _renderOptionalLines: function(paper, dimension) {
-	        var optionalLines = [];
-	        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
-	        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
-
-	        this.optionalLines = optionalLines;
-	    },
-
-	    /**
-	     * Maker html for vertical lines
-	     * @param {{width: number, height: number}} dimension - dimension
-	     * @param {string} lineColor - line color
-	     * @private
-	     */
-	    _renderVerticalLines: function(dimension, lineColor) {
-	        var positions = this._makeHorizontalPositions(dimension.width);
-	        var self = this;
-	        var layout = this.layout;
-	        var left = layout.position.left;
-	        var top = layout.position.top;
-
-	        tui.util.forEach(positions, function(position) {
-	            var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
-
-	            var path = self.paper.path(pathString);
-
-	            path.attr({
-	                stroke: lineColor,
-	                'stroke-width': 1
-	            });
-
-	            self.plotSet.push(path);
-	        });
-	    },
-
-	    /**
-	     * Maker html for horizontal lines.
-	     * @param {{width: number, height: number}} dimension - dimension
-	     * @param {string} lineColor - line color
-	     * @private
-	     */
-	    _renderHorizontalLines: function(dimension, lineColor) {
-	        var positions = this._makeVerticalPositions(dimension.height);
-	        var self = this;
-	        var layout = this.layout;
-	        var left = layout.position.left;
-	        var top = layout.position.top;
-	        var distance = positions[1] - positions[0];
-
-	        tui.util.forEach(positions, function(position, index) {
-	            var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
-	            var path = self.paper.path(pathString);
-
-	            path.attr({
-	                stroke: lineColor,
-	                'stroke-width': 1
-	            });
-
-	            self.plotSet.push(path);
-	        });
-	    },
-
-	    /**
-	     * Render plot lines.
-	     * @param {HTMLElement} container - container element
-	     * @param {{width: number, height: number}} dimension plot area dimension
-	     * @private
-	     */
-	    _renderPlotLines: function(container, dimension) {
-	        var theme = this.theme;
-
-	        if (!predicate.isLineTypeChart(this.chartType)) {
-	            this._renderVerticalLines(dimension, theme.lineColor);
-	        }
-
-	        this._renderHorizontalLines(dimension, theme.lineColor);
-	    },
-
-	    /**
-	     * Make positions for vertical line.
-	     * @param {number} height plot height
-	     * @returns {Array.<number>} positions
-	     * @private
-	     */
-	    _makeVerticalPositions: function(height) {
-	        var axisDataMap = this.axisDataMap;
-	        var yAxis = axisDataMap.yAxis || axisDataMap.rightYAxis;
-	        var positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
-
-	        positions.shift();
-
-	        return positions;
-	    },
-
-	    /**
-	     * Make divided positions of plot.
-	     * @param {number} width - plot width
-	     * @param {number} tickCount - tick count
-	     * @returns {Array.<number>}
-	     * @private
-	     */
-	    _makeDividedPlotPositions: function(width, tickCount) {
-	        var yAxisWidth = this.dimensionMap.yAxis.width;
-	        var leftWidth, rightWidth, leftPositions, rightPositions;
-
-	        tickCount = parseInt(tickCount / 2, 10) + 1;
-	        width -= yAxisWidth;
-	        leftWidth = Math.round((width) / 2);
-	        rightWidth = width - leftWidth;
-
-	        leftPositions = calculator.makeTickPixelPositions(leftWidth, tickCount);
-	        rightPositions = calculator.makeTickPixelPositions(rightWidth, tickCount, leftWidth + yAxisWidth);
-
-	        leftPositions.pop();
-	        rightPositions.shift();
-
-	        return leftPositions.concat(rightPositions);
-	    },
-
-	    /**
-	     * Make positions for horizontal line.
-	     * @param {number} width plot width
-	     * @returns {Array.<number>} positions
-	     * @private
-	     */
-	    _makeHorizontalPositions: function(width) {
-	        var tickCount = this.axisDataMap.xAxis.validTickCount;
-	        var positions;
-
-	        if (this.options.divided) {
-	            positions = this._makeDividedPlotPositions(width, tickCount);
-	        } else {
-	            positions = calculator.makeTickPixelPositions(width, tickCount);
-	            positions.shift();
-	        }
-
-	        return positions;
-	    },
-
-	    /**
-	     * Add plot line.
-	     * @param {{index: number, color: string, id: string}} data - data
-	     */
-	    addPlotLine: function(data) {
-	        this.options.lines.push(data);
-	        this.rerender();
-	    },
-
-	    /**
-	     * Add plot band.
-	     * @param {{range: Array.<number>, color: string, id: string}} data - data
-	     */
-	    addPlotBand: function(data) {
-	        this.options.bands.push(data);
-	        this.rerender();
-	    },
-
-	    /**
-	     * Remove plot line.
-	     * @param {string} id - line id
-	     */
-	    removePlotLine: function(id) {
-	        this.options.lines = tui.util.filter(this.options.lines, function(line) {
-	            return line.id !== id;
-	        });
-	        this.rerender();
-	    },
-
-	    /**
-	     * Remove plot band.
-	     * @param {string} id - band id
-	     */
-	    removePlotBand: function(id) {
-	        this.options.bands = tui.util.filter(this.options.bands, function(band) {
-	            return band.id !== id;
-	        });
-	        this.rerender();
-	    },
-
-	    /**
-	     * Animate for adding data.
-	     * @param {{tickSize: number, shifting: boolean}} data - data for animation
-	     */
-	    animateForAddingData: function(data) {
-	        var self = this;
-
-	        if (!this.dataProcessor.isCoordinateType()) {
-	            if (data.shifting) {
-	                tui.util.forEach(this.optionalLines, function(line) {
-	                    var bbox = line.getBBox();
-
-	                    if (bbox.x - data.tickSize < self.layout.position.left) {
-	                        line.animate({
-	                            transform: 'T' + data.tickSize + ',' + bbox.y,
-	                            opacity: 0
-	                        }, 300, 'linear', function() {
-	                            line.remove();
-	                        });
-	                    } else {
-	                        line.animate({
-	                            transform: 'T' + data.tickSize + ',' + bbox.y
-	                        }, 300);
-	                    }
-	                });
-	            }
-	        }
-	    }
-	});
-
-	/**
-	 * Factory for Plot
-	 * @param {object} param parameter
-	 * @returns {object}
-	 */
-	function plotFactory(param) {
-	    var chartType = param.chartOptions.chartType;
-	    var seriesTypes = param.seriesTypes;
-	    var xAxisType = param.chartOptions.xAxis.type;
-
-	    // bar, chart, line, area동일
-	    param.chartType = chartType;
-	    param.chartTypes = seriesTypes;
-	    param.xAxisTypeOption = xAxisType;
-
-	    return new Plot(param);
-	}
-
-	plotFactory.componentType = 'plot';
-	plotFactory.Plot = Plot;
-
-	module.exports = plotFactory;
-
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview  Title component.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(2);
-	var pluginFactory = __webpack_require__(7);
-
-	var Title = tui.util.defineClass(/** @lends Title.prototype */ {
-	    /**
-	     * Title component.
-	     * @constructs Title
-	     * @param {object} params parameters
-	     *      @param {object} params.bound title bound
-	     *      @param {object} params.theme title theme
-	     *      @param {object} params.options title options
-	     *      @param {object} params.text title text content
-	     */
-	    init: function(params) {
-	        /**
-	         * Theme
-	         * @type {object}
-	         */
-	        this.theme = params.theme || {};
-
-	        /**
-	         * Title text content
-	         * @type {string}
-	         */
-	        this.titleText = params.text;
-
-	        /**
-	         * Relative offset position
-	         * @type {object}
-	         */
-	        this.offset = params.offset;
-
-	        /**
-	         * Graph renderer
-	         * @type {object}
-	         */
-	        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'title');
-
-	        /**
-	         * Drawing type
-	         * @type {string}
-	         */
-	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-	    },
-
-	    /**
-	     * Render title component
-	     * @param {object} data data for render title
-	     */
-	    render: function(data) {
-	        this.titleSet = this._renderTitleArea(data.paper);
-	    },
-
-	    /**
-	     * Render title component
-	     * @param {object} data data for render title
-	     */
-	    resize: function(data) {
-	        var dimensionMap = data.dimensionMap;
-	        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
-	        var width = dimensionMap.series.width + legendWidth;
-	        this.graphRenderer.resize(width, this.titleSet);
-	    },
-
-	    /**
-	     * Render title component
-	     * @param {object} data data for render title
-	     */
-	    rerender: function(data) {
-	        this.titleSet.remove();
-
-	        this.render(data);
-	    },
-
-	    /**
-	     * Render title on given paper
-	     * @param {object} paper paper object
-	     * @returns {object} raphael paper
-	     * @private
-	     */
-	    _renderTitleArea: function(paper) {
-	        return this.graphRenderer.render(paper, this.titleText, this.offset, this.theme);
-	    }
-	});
-
-	/**
-	 * Factory for Title
-	 * @param {object} param parameter
-	 * @returns {object|null}
-	 */
-	function titleFactory(param) {
-	    var options = param.chartOptions.chart || {title: {}};
-	    var title = null;
-
-	    if (options.title && options.title.text) {
-	        param.text = options.title.text;
-	        param.offset = options.title.offset;
-
-	        title = new Title(param);
-	    }
-
-	    return title;
-	}
-
-	titleFactory.componentType = 'title';
-	titleFactory.Title = Title;
-
-	module.exports = titleFactory;
-
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Radial plot component.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var geom = __webpack_require__(27);
-	var chartConst = __webpack_require__(2);
-	var pluginFactory = __webpack_require__(7);
-
-	var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
-	    /**
-	     * plot component className
-	     * @type {string}
-	     */
-	    className: 'tui-chart-plot-area',
-
-	    /**
-	     * Plot component.
-	     * @constructs Plot
-	     * @param {object} params parameters
-	     *      @param {number} params.vTickCount vertical tick count
-	     *      @param {number} params.hTickCount horizontal tick count
-	     *      @param {object} params.theme axis theme
-	     */
-	    init: function(params) {
-	        /**
-	         * Options
-	         * @type {object}
-	         */
-	        this.options = tui.util.extend({
-	            type: 'spiderweb'
-	        }, params.options);
-
-	        /**
-	         * Theme
-	         * @type {object}
-	         */
-	        this.theme = params.theme || {};
-
-	        /**
-	         * Graph renderer
-	         * @type {object}
-	         */
-	        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'radialPlot');
-
-	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-	    },
-
-	    /**
-	     * Render plot area
-	     * @param {object} paper paper object
-	     * @param {object} layout layout
-	     * @param {Array.<Array>} plotPositions plot positions
-	     * @param {object} labelData label data
-	     * @returns {Array.<object>} plotSet
-	     */
-	    _renderPlotArea: function(paper, layout, plotPositions, labelData) {
-	        var renderParams = {
-	            paper: paper,
-	            layout: layout,
-	            plotPositions: plotPositions,
-	            labelData: labelData,
-	            theme: this.theme,
-	            options: this.options
-	        };
-
-	        return this.graphRenderer.render(renderParams);
-	    },
-
-	    /**
-	     * Make plot positions for render
-	     * @param {object} axisDataMap axisDataMap
-	     * @param {object} layout layout
-	     * @returns {Array.<Array>} plot positions
-	     */
-	    _makePositions: function(axisDataMap, layout) {
-	        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-	        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-	        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
-	            + layout.position.left;
-	        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
-	            - layout.position.top;
-	        var stepCount = axisDataMap.yAxis.tickCount;
-	        var angleStepCount = axisDataMap.xAxis.labels.length;
-
-	        return makeSpiderWebPositions({
-	            width: width,
-	            height: height,
-	            centerX: centerX,
-	            centerY: centerY,
-	            angleStepCount: angleStepCount,
-	            stepCount: stepCount
-	        });
-	    },
-
-	    /**
-	     * Make category positions
-	     * @param {object} axisDataMap axisDataMap
-	     * @param {object} layout layout
-	     * @returns {Array.<object>} category positions
-	     */
-	    _makeCategoryPositions: function(axisDataMap, layout) {
-	        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
-	        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
-	        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_CATEGORY_PADDING / 2)
-	            + layout.position.left;
-	        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_CATEGORY_PADDING / 2)
-	            - layout.position.top;
-	        var angleStepCount = axisDataMap.xAxis.labels.length;
-
-	        return makeRadialCategoryPositions({
-	            width: width,
-	            height: height,
-	            centerX: centerX,
-	            centerY: centerY,
-	            angleStepCount: angleStepCount
-	        });
-	    },
-
-	    /**
-	     * Make label data
-	     * @param {object} axisDataMap axisDataMap
-	     * @param {object} dimension dimension
-	     * @param {Array.<Array>} plotPositions plot positions
-	     * @returns {object}
-	     */
-	    _makeLabelData: function(axisDataMap, dimension, plotPositions) {
-	        var categories = axisDataMap.xAxis.labels;
-	        var stepLabels = axisDataMap.yAxis.labels;
-	        var categoryPositions = this._makeCategoryPositions(axisDataMap, dimension);
-	        var categoryLabelData = [];
-	        var stepLabelData = [];
-	        var i, j;
-
-	        for (i = 0; i < categories.length; i += 1) {
-	            categoryLabelData.push({
-	                text: categories[i],
-	                position: categoryPositions[i]
-	            });
-	        }
-
-	        // 마지막 스탭 라벨은 카테고리랑 겹칠수 있어 만들지 않음
-	        for (j = 0; j < (stepLabels.length - 1); j += 1) {
-	            stepLabelData.push({
-	                text: stepLabels[j],
-	                position: plotPositions[j][0]
-	            });
-	        }
-
-	        return {
-	            category: categoryLabelData,
-	            step: stepLabelData
-	        };
-	    },
-
-	    /**
-	     * Render plot component.
-	     * @param {object} data - bounds and scale data
-	     */
-	    render: function(data) {
-	        var plotPositions = this._makePositions(data.axisDataMap, data.layout);
-	        var labelData = this._makeLabelData(data.axisDataMap, data.layout, plotPositions);
-
-	        this.plotSet = this._renderPlotArea(data.paper, data.layout, plotPositions, labelData);
-	    },
-
-	    /**
-	     * Re render plot component
-	     * @param {object} data - bounds and scale data
-	     */
-	    rerender: function(data) {
-	        this.plotSet.remove();
-
-	        this.render(data);
-	    },
-
-	    /**
-	     * Resize plot component.
-	     * @param {object} data - bounds and scale data
-	     */
-	    resize: function(data) {
-	        this.rerender(data);
-	    }
-	});
-
-	/**
-	 * Make Spider web positions
-	 * @param {object} params parameters
-	 *     @param {number} params.width width
-	 *     @param {number} params.height height
-	 *     @param {number} params.centerX center x coordinate
-	 *     @param {number} params.centerY cneter y coordinate
-	 *     @param {number} params.angleStepCount angle step count
-	 *     @param {number} params.stepCount step count
-	 * @returns {Array<Array>} positions
-	 * @private
-	 */
-	function makeSpiderWebPositions(params) {
-	    var width = params.width;
-	    var height = params.height;
-	    var centerX = params.centerX;
-	    var centerY = params.centerY;
-	    var angleStepCount = params.angleStepCount;
-	    var stepCount = params.stepCount;
-	    var radius = Math.min(width, height) / 2;
-	    var angleStep = 360 / angleStepCount;
-	    var points = [];
-	    var stepPoints, pointY, point, stepPixel, i, j;
-
-	    stepPixel = radius / (stepCount - 1); // 0 스텝에는 크기가 없는 점이니 스텝한개는 제거
-
-	    for (i = 0; i < stepCount; i += 1) {
-	        stepPoints = [];
-	        // 회전할 첫번째 픽셀의 Y축 값
-	        pointY = centerY + (stepPixel * i);
-
-	        for (j = 0; j < angleStepCount; j += 1) {
-	            point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, angleStep * j);
-
-	            stepPoints.push({
-	                left: point.x,
-	                top: height - point.y // y좌표를 top좌표로 전환
-	            });
-	        }
-
-	        stepPoints.push(stepPoints[0]);
-
-	        points[i] = stepPoints;
-	    }
-
-	    return points;
-	}
-
-	/**
-	 * Make radial category positions
-	 * @param {object} params parameters
-	 *     @param {number} params.width width
-	 *     @param {number} params.height height
-	 *     @param {number} params.centerX center x coordinate
-	 *     @param {number} params.centerY cneter y coordinate
-	 *     @param {number} params.angleStepCount angle step count
-	 * @returns {Array<object>} category positions
-	 * @private
-	 */
-	function makeRadialCategoryPositions(params) {
-	    var width = params.width;
-	    var height = params.height;
-	    var centerX = params.centerX;
-	    var centerY = params.centerY;
-	    var angleStepCount = params.angleStepCount;
-	    var radius = Math.min(height, width) / 2;
-	    var angleStep = 360 / angleStepCount;
-	    var points = [];
-	    var anchor, point, i, pointY, reversedAngle;
-
-	    pointY = centerY + radius;
-
-	    for (i = 0; i < angleStepCount; i += 1) {
-	        reversedAngle = 360 - (angleStep * i);
-	        point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, reversedAngle);
-
-	        if (reversedAngle > 0 && reversedAngle < 180) {
-	            anchor = 'end';
-	        } else if (reversedAngle > 180 && reversedAngle < 360) {
-	            anchor = 'start';
-	        } else {
-	            anchor = 'middle';
-	        }
-
-	        points.push({
-	            left: point.x,
-	            top: height - point.y, // y좌표를 top좌표로 전환
-	            anchor: anchor
-	        });
-	    }
-
-	    return points;
-	}
-
-	function RadialPlotFactory(param) {
-	    return new RadialPlot(param);
-	}
-
-	RadialPlotFactory.componentType = 'plot';
-	RadialPlotFactory.RadialPlot = RadialPlot;
-
-	module.exports = RadialPlotFactory;
-
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview module for geometric operation
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(2);
-
-	/**
-	 * Rotate a point around the origin with an angle.
-	 * @param {number} centerX center point x
-	 * @param {number} centerY center point y
-	 * @param {number} pointX point x to rotate
-	 * @param {number} pointY point y to rotate
-	 * @param {number} angle angle
-	 * @returns {object} x, y
-	 */
-	function rotatePointAroundOrigin(centerX, centerY, pointX, pointY, angle) {
-	    var rad = angle * (Math.PI / 180);
-
-	    var newX = ((pointX - centerX) * Math.cos(rad)) - ((pointY - centerY) * Math.sin(rad));
-	    var newY = ((pointX - centerX) * Math.sin(rad)) + ((pointY - centerY) * Math.cos(rad));
-
-	    newX += centerX;
-	    newY += centerY;
-
-	    return {
-	        x: newX,
-	        y: newY
-	    };
-	}
-	/**
-	 * Calculate adjacent.
-	 * @param {number} degree degree
-	 * @param {number} hypotenuse hypotenuse
-	 * @returns {number} adjacent
-	 *
-	 *   H : Hypotenuse
-	 *   A : Adjacent
-	 *   O : Opposite
-	 *   D : Degree
-	 *
-	 *        /|
-	 *       / |
-	 *    H /  | O
-	 *     /   |
-	 *    /\ D |
-	 *    -----
-	 *       A
-	 */
-	function calculateAdjacent(degree, hypotenuse) {
-	    return Math.cos(degree * chartConst.RAD) * hypotenuse;
-	}
-
-	/**
-	 * Calculate opposite.
-	 * @param {number} degree degree
-	 * @param {number} hypotenuse hypotenuse
-	 * @returns {number} opposite
-	 */
-	function calculateOpposite(degree, hypotenuse) {
-	    return Math.sin(degree * chartConst.RAD) * hypotenuse;
-	}
-
-	/**
-	 * Calculate rotated width.
-	 * @param {number} degree - degree
-	 * @param {number} width - width
-	 * @param {number} height - height
-	 * @returns {number}
-	 */
-	function calculateRotatedWidth(degree, width, height) {
-	    var centerHalf = calculateAdjacent(degree, width / 2);
-	    var sideHalf = calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
-
-	    return (centerHalf + sideHalf) * 2;
-	}
-
-	/**
-	 * Calculate rotated height
-	 * @param {number} degree - degree
-	 * @param {number} width - width
-	 * @param {number} height - height
-	 * @returns {number}
-	 */
-	function calculateRotatedHeight(degree, width, height) {
-	    var centerHalf = calculateOpposite(degree, width / 2);
-	    var sideHalf = calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
-
-	    return (centerHalf + sideHalf) * 2;
-	}
-
-	module.exports = {
-	    rotatePointAroundOrigin: rotatePointAroundOrigin,
-	    calculateAdjacent: calculateAdjacent,
-	    calculateRotatedHeight: calculateRotatedHeight,
-	    calculateRotatedWidth: calculateRotatedWidth,
-	    calculateOpposite: calculateOpposite
-	};
-
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview chartExportMenu component.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(2);
-	var chartExporter = __webpack_require__(29);
-	var dom = __webpack_require__(14);
-	var eventListener = __webpack_require__(33);
-	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
-
-	var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
-	var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
-
-	var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype */ {
-	    /**
-	     * ChartExportMenu component.
-	     * @constructs ChartExportMenu
-	     * @private
-	     * @param {object} params parameters
-	     */
-	    init: function(params) {
-	        /**
-	         * ChartExportMenu view className
-	         * @type {string}
-	         */
-	        this.className = 'tui-chart-chartExportMenu-area';
-
-	        /**
-	         * Data processor
-	         * @type {DataProcessor}
-	         */
-	        this.dataProcessor = params.dataProcessor;
-
-	        /**
-	         * chart title
-	         * @type {string}
-	         */
-	        this.chartTitle = params.chartTitle || 'tui-chart';
-
-	        /**
-	         * chart type
-	         * @type {string}
-	         */
-	        this.chartType = params.chartType;
-
-	        /**
-	         * layout bounds information for this components
-	         * @type {null|{dimension:{width:number, height:number}, position:{right:number, top:number}}}
-	         */
-	        this.layout = null;
-
-	        /**
-	         * chartExportMenu container
-	         * @type {HTMLElement}
-	         */
-	        this.chartExportMenuContainer = null;
-
-	        /**
-	         * chartExportMenu element
-	         * @type {HTMLElement}
-	         */
-	        this.chartExportMenu = null;
-
-	        /**
-	         * chartExportMenu options
-	         */
-	        this.options = params.options;
-
-	        /**
-	         * Event bus
-	         * @type {EventBus}
-	         */
-	        this.eventBus = params.eventBus;
-
-	        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
-
-	        this.theme = params.theme || null;
-	    },
-
-	    /**
-	     * Create chartExportMenuButton
-	     * @returns {HTMLElement}
-	     * @private
-	     */
-	    _createChartExportMenuButton: function() {
-	        var menuButton = dom.create('div', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
-
-	        if (this.options.buttonClass) {
-	            dom.addClass(menuButton, this.options.buttonClass);
-	        }
-
-	        return menuButton;
-	    },
-	    /**
-	     * Render chartExportMenu area.
-	     * @param {HTMLElement} chartExportMenuContainer chartExportMenu area element
-	     * @private
-	     */
-	    _renderChartExportMenuArea: function(chartExportMenuContainer) {
-	        var menuButton = this._createChartExportMenuButton();
-	        var dimension = this.layout.dimension;
-
-	        chartExportMenuContainer.appendChild(menuButton);
-
-	        renderUtil.renderDimension(chartExportMenuContainer, dimension);
-	        renderUtil.renderPosition(chartExportMenuContainer, this.layout.position);
-	    },
-
-	    /**
-	     * Render chartExportMenu area.
-	     * @param {HTMLElement} chartExportMenuContainer chartExportMenu area element
-	     * @private
-	     */
-	    _renderChartExportMenu: function(chartExportMenuContainer) {
-	        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-	        var isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
-	        var isDownloadSupported = chartExporter.isDownloadSupported;
-	        var isImageExtension = chartExporter.isImageExtension;
-	        var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
-	        var menuElement = dom.create('ul', chartConst.CLASS_NAME_CHART_EXPORT_MENU);
-	        var menuStyle = menuElement.style;
-	        var menuTheme = this.theme;
-	        var menuItems = [];
-
-	        if (isDownloadSupported && (isDataDownloadAvailable || isImageDownloadAvailable)) {
-	            menuItems = tui.util.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
-	                var itemElement;
-
-	                if ((!isImageExtension(exportItemType) && isDataDownloadAvailable)
-	                    || (isImageExtension(exportItemType) && isImageDownloadAvailable)
-	                ) {
-	                    itemElement = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
-	                    itemElement.id = exportItemType;
-	                    itemElement.innerHTML = 'Export to .' + exportItemType;
-	                }
-
-	                return itemElement;
-	            });
-	        } else {
-	            menuStyle.width = '200px';
-	            menuItems[0] = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
-	            menuItems[0].innerHTML = 'Browser does not support client-side download.';
-	        }
-
-	        if (menuTheme) {
-	            if (menuTheme.borderWidth) {
-	                menuStyle.borderWidth = menuTheme.borderWidth;
-	            }
-
-	            if (menuTheme.borderRadius) {
-	                menuStyle.borderRadius = menuTheme.borderRadius;
-	            }
-
-	            if (menuTheme.backgroundColor) {
-	                menuStyle.backgroundColor = menuTheme.backgroundColor;
-	            }
-
-	            if (menuTheme.color) {
-	                menuStyle.color = menuTheme.color;
-	            }
-	        }
-
-	        if (this.options.menuClass) {
-	            dom.addClass(menuElement, this.options.menuClass);
-	        }
-
-	        dom.append(menuElement, menuItems);
-
-	        this.chartExportMenu = menuElement;
-
-	        dom.append(chartExportMenuContainer, menuElement);
-	    },
-
-	    /**
-	     * Set data for rendering.
-	     * @param {{
-	     *      layout: {
-	     *          dimension: {width: number, height: number},
-	     *          position: {left: number, top: number}
-	     *      },
-	     *      axisDataMap: object
-	     * }} data - bounds and scale data
-	     * @private
-	     */
-	    _setDataForRendering: function(data) {
-	        if (data) {
-	            this.layout = data.layout;
-	            this.dimensionMap = data.dimensionMap;
-	            this.axisDataMap = data.axisDataMap;
-	        }
-	    },
-
-	    /**
-	     * Render chartExportMenu component.
-	     * @param {object} data - bounds and scale data
-	     * @returns {HTMLElement} chartExportMenu element
-	     */
-	    render: function(data) {
-	        var container = null;
-
-	        if (chartExporter.isDownloadSupported) {
-	            container = this.container = data.paper;
-
-	            dom.addClass(container, this.className);
-
-	            this._setDataForRendering(data);
-	            this._renderChartExportMenuArea(container);
-	            this._renderChartExportMenu(container);
-	            this.chartExportMenuContainer = container;
-	            this._attachEvent();
-	        }
-
-	        return container;
-	    },
-
-	    /**
-	     * Rerender.
-	     */
-	    rerender: function() {
-	        this._hideChartExportMenu();
-	    },
-
-	    /**
-	     * Resize.
-	     */
-	    resize: function() {
-	    },
-
-	    /**
-	     * Show chart export menu
-	     * @private
-	     */
-	    _showChartExportMenu: function() {
-	        dom.addClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
-	        this.chartExportMenu.style.display = 'block';
-	    },
-
-	    /**
-	     * Hide chart export menu
-	     * @private
-	     */
-	    _hideChartExportMenu: function() {
-	        if (this.chartExportMenuContainer) {
-	            dom.removeClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
-	            this.chartExportMenu.style.display = 'none';
-	        }
-	    },
-
-	    /**
-	     * onclick event handler
-	     * @param {MouseEvent} e mouse event
-	     * @private
-	     */
-	    _onClick: function(e) {
-	        var elTarget = e.target || e.srcElement;
-	        var svgElement = this.container.parentNode.getElementsByTagName('svg')[0];
-
-	        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
-	            if (elTarget.id) {
-	                this.eventBus.fire('beforeImageDownload');
-
-	                chartExporter.exportChart(this.chartTitle, elTarget.id,
-	                    this.dataProcessor.rawData, svgElement, this.options);
-
-	                this.eventBus.fire('afterImageDownload');
-	            }
-
-	            this._hideChartExportMenu();
-	        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
-	            && (this.chartExportMenuContainer === elTarget.parentNode)
-	        ) {
-	            if (dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
-	                this._hideChartExportMenu();
-	            } else {
-	                this._showChartExportMenu();
-	            }
-	        } else {
-	            this._hideChartExportMenu();
-	        }
-	    },
-
-	    /**
-	     * Return boolean value for chart data is able to export
-	     * @param {object} seriesDataModels series data model
-	     * @returns {boolean}
-	     */
-	    isDataDownloadAvailable: function(seriesDataModels) {
-	        var result = true;
-
-	        if (predicate.isTreemapChart(this.chartType)) {
-	            result = false;
-	        } else {
-	            tui.util.forEach(seriesDataModels, function(seriesDataModel) {
-	                if (seriesDataModel.isCoordinateType) {
-	                    result = false;
-	                }
-
-	                return false;
-	            });
-	        }
-
-	        return result;
-	    },
-
-	    /**
-	     * Attach browser event.
-	     * @private
-	     */
-	    _attachEvent: function() {
-	        eventListener.on(this.chartExportMenuContainer.parentNode, 'click', this._onClick, this);
-	    },
-
-	    /**
-	     * Detach browser event.
-	     * @private
-	     */
-	    _detachEvent: function() {
-	        eventListener.off(this.chartExportMenuContainer.parentNode, 'click', this._onClick);
-	    }
-	});
-
-	/**
-	 * Factory for ChartExportMenu
-	 * @param {object} params parameter
-	 * @returns {object|null}
-	 */
-	function chartExportMenuFactory(params) {
-	    var isVisible = params.options.visible;
-	    var chartExportMenu = null;
-	    var chartOption = params.chartOptions.chart || {};
-
-	    if (chartOption.title) {
-	        params.chartTitle = chartOption.title.text;
-	    }
-
-	    if (isVisible) {
-	        chartExportMenu = new ChartExportMenu(params);
-	    }
-
-	    return chartExportMenu;
-	}
-
-	chartExportMenuFactory.componentType = 'chartExportMenu';
-
-	module.exports = chartExportMenuFactory;
-
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileOverview Chart exporter
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var arrayUtil = __webpack_require__(6);
-	var dataExporter = __webpack_require__(30);
-	var imageExporter = __webpack_require__(32);
-
-	var browser = tui.util.browser;
-
-	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
-	var isImageDownloadAvailable = !isIE10OrIE11
-	    || (isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg);
-	var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
-	var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
-
-	/**
-	 * Return given extension type is image format
-	 * @param {string} extension extension
-	 * @returns {boolean}
-	 */
-	function isImageExtension(extension) {
-	    return arrayUtil.any(imageExporter.getExtensions(), function(imageExtension) {
-	        return extension === imageExtension;
-	    });
-	}
-	/**
-	 * Return given extension type is data format
-	 * @param {string} extension extension
-	 * @returns {boolean}
-	 */
-	function isDataExtension(extension) {
-	    return arrayUtil.any(dataExporter.getExtensions(), function(dataExtension) {
-	        return extension === dataExtension;
-	    });
-	}
-
-	/**
-	 * Download chart data with given export type
-	 * @param {string} fileName - file name = chart title
-	 * @param {string} extension - file extension
-	 * @param {object} rawData - chart raw data
-	 * @param {HTMLElement} svgElement - svg element
-	 * @param {object} [downloadOptions] download option
-	 */
-	function exportChart(fileName, extension, rawData, svgElement, downloadOptions) {
-	    var downloadOption = (downloadOptions && downloadOptions[extension] ? downloadOptions[extension] : {});
-
-	    if (isImageExtension(extension)) {
-	        imageExporter.downloadImage(fileName, extension, svgElement);
-	    } else if (isDataExtension(extension)) {
-	        dataExporter.downloadData(fileName, extension, rawData, downloadOption);
-	    }
-	}
-
-	module.exports = {
-	    exportChart: exportChart,
-	    isDownloadSupported: isDownloadAttributeSupported || isMsSaveOrOpenBlobSupported,
-	    isImageDownloadAvailable: isImageDownloadAvailable,
-	    isImageExtension: isImageExtension,
-
-	    /**
-	     * Add file extension to dataExtension
-	     * @param {string} type file extension type
-	     * @param {string} extension file extension
-	     */
-	    addExtension: function(type, extension) {
-	        var isValidExtension = extension && tui.util.isString(extension);
-	        var exporter, extensions;
-
-	        if (type === 'data') {
-	            exporter = dataExporter;
-	        } else if (type === 'image') {
-	            exporter = imageExporter;
-	        }
-
-	        if (exporter && isValidExtension) {
-	            extensions = exporter.getExtensions();
-	            extensions.push(extension);
-	        }
-	    }
-	};
-
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileOverview Chart data exporter
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var downloader = __webpack_require__(31);
-	var chartConst = __webpack_require__(2);
-
-	var DATA_URI_HEADERS = {
-	    xls: 'data:application/vnd.ms-excel;base64,',
-	    csv: 'data:text/csv,'
-	};
-	var DATA_URI_BODY_MAKERS = {
-	    xls: _makeXlsBodyWithRawData,
-	    csv: _makeCsvBodyWithRawData
-	};
-	var dataExtensions = [].concat([], chartConst.DATA_EXTENSIONS);
-
-	var dataExporter = {
-	    /**
-	     * Download chart data
-	     * @param {string} fileName file name
-	     * @param {string} extension file extension
-	     * @param {object} rawData raw data of chart
-	     * @param {object} [downloadOption] download option
-	     */
-	    downloadData: function(fileName, extension, rawData, downloadOption) {
-	        var chartData2DArray = _get2DArrayFromRawData(rawData);
-	        var content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
-
-	        downloader.execDownload(fileName, extension, content);
-	    },
-
-	    /**
-	     * Returns data extensions
-	     * @returns {Array.<string>}
-	     */
-	    getExtensions: function() {
-	        return dataExtensions;
-	    }
-	};
-
-	/**
-	 * Get pivoted second dimension array from table to use element.innerText
-	 * @param {rawData} rawData - chart's raw data
-	 * @returns {Array.<Array>}
-	 * @private
-	 */
-	function _get2DArrayFromRawData(rawData) {
-	    var resultArray = [];
-	    var categories, seriesName, data;
-	    var isHeatMap = (rawData.categories && tui.util.isExisty(rawData.categories.x));
-
-	    if (rawData) {
-	        if (isHeatMap) {
-	            categories = rawData.categories.x;
-	        } else if (rawData.categories) {
-	            categories = rawData.categories;
-	        }
-
-	        resultArray.push([''].concat(categories));
-
-	        tui.util.forEach(rawData.series, function(seriesDatum) {
-	            tui.util.forEach(seriesDatum, function(seriesItem, index) {
-	                if (isHeatMap) {
-	                    seriesName = rawData.categories.y[index];
-	                    data = seriesItem;
-	                } else {
-	                    seriesName = seriesItem.name;
-	                    data = seriesItem.data;
-	                }
-
-	                resultArray.push([seriesName].concat(data));
-	            });
-	        });
-	    }
-
-	    return resultArray;
-	}
-
-	/**
-	 * Get table element from chart data 2D array for xls content
-	 * @param {Array.<Array<*>>} chartData2DArray - chart data 2D array
-	 * @returns {string}
-	 * @private
-	 */
-	function _getTableElementStringForXls(chartData2DArray) {
-	    var tableElementString = '<table>';
-	    tui.util.forEach(chartData2DArray, function(row, rowIndex) {
-	        var cellTagName = rowIndex === 0 ? 'th' : 'td';
-
-	        tableElementString += '<tr>';
-
-	        tui.util.forEach(row, function(cell, cellIndex) {
-	            var cellNumberClass = (rowIndex !== 0 || cellIndex === 0) ? ' class="number"' : '';
-	            var cellString = '<' + cellTagName + cellNumberClass + '>' + cell + '</' + cellTagName + '>';
-
-	            tableElementString += cellString;
-	        });
-
-	        tableElementString += '</tr>';
-	    });
-
-	    tableElementString += '</table>';
-
-	    return tableElementString;
-	}
-
-	/**
-	 * Make xls file with chart series data
-	 * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
-	 * @returns {string} base64 xls file content
-	 * @private
-	 */
-	function _makeXlsBodyWithRawData(chartData2DArray) {
-	    var xlsString = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
-	        'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
-	        'xmlns="http://www.w3.org/TR/REC-html40">' +
-	        '<head>' +
-	            '<!--[if gte mso 9]>' +
-	                '<xml>' +
-	                    '<x:ExcelWorkbook>' +
-	                        '<x:ExcelWorksheets>' +
-	                            '<x:ExcelWorksheet>' +
-	                                '<x:Name>Ark1</x:Name>' +
-	                                '<x:WorksheetOptions>' +
-	                                    '<x:DisplayGridlines/>' +
-	                                '</x:WorksheetOptions>' +
-	                            '</x:ExcelWorksheet>' +
-	                        '</x:ExcelWorksheets>' +
-	                        '</x:ExcelWorkbook>' +
-	                '</xml>' +
-	            '<![endif]-->' +
-	            '<meta name=ProgId content=Excel.Sheet>' +
-	            '<meta charset=UTF-8>' +
-	        '</head>' +
-	        '<body>' +
-	            _getTableElementStringForXls(chartData2DArray) +
-	        '</body>' +
-	        '</html>';
-
-	    return window.btoa(unescape(encodeURIComponent(xlsString)));
-	}
-
-	/**
-	 * Make csv text with chart series data
-	 * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
-	 * @param {object} [option] - download option
-	 * @param {object} [option.itemDelimiter = ','] - item delimiter
-	 * @param {object} [option.lineDelimiter = '\n'] - line delimiter
-	 * @returns {string} URI encoded csv text
-	 * @private
-	 */
-	function _makeCsvBodyWithRawData(chartData2DArray, option) {
-	    var csvText = '';
-	    var lineDelimiter = (option && option.lineDelimiter) || '\u000a';
-	    var itemDelimiter = (option && option.itemDelimiter) || ',';
-	    var lastRowIndex = chartData2DArray.length - 1;
-
-	    tui.util.forEachArray(chartData2DArray, function(row, rowIndex) {
-	        var lastCellIndex = row.length - 1;
-
-	        tui.util.forEachArray(row, function(cell, cellIndex) {
-	            var cellContent = (tui.util.isNumber(cell) ? cell : '"' + cell + '"');
-
-	            csvText += cellContent;
-
-	            if (cellIndex < lastCellIndex) {
-	                csvText += itemDelimiter;
-	            }
-	        });
-
-	        if (rowIndex < lastRowIndex) {
-	            csvText += lineDelimiter;
-	        }
-	    });
-
-	    return encodeURIComponent(csvText);
-	}
-
-	// export private methods for Test
-	dataExporter._makeCsvBodyWithRawData = _makeCsvBodyWithRawData;
-	dataExporter._makeXlsBodyWithRawData = _makeXlsBodyWithRawData;
-	dataExporter._get2DArrayFromRawData = _get2DArrayFromRawData;
-
-	module.exports = dataExporter;
-
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileOverview File downloader for client-side download
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var arrayUtil = __webpack_require__(6);
-	var chartConst = __webpack_require__(2);
-
-	var DOWNLOAD_HANDLERS = {
-	    downloadAttribute: downloadWithAnchorElementDownloadAttribute,
-	    msSaveOrOpenBlob: downloadWithMsSaveOrOpenBlob
-	};
-
-	/**
-	 * Return download method name of current browser supports
-	 * @returns {string}
-	 */
-	function getDownloadMethod() {
-	    var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
-	    var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
-	    var method;
-
-	    if (isMsSaveOrOpenBlobSupported) {
-	        method = 'msSaveOrOpenBlob';
-	    } else if (isDownloadAttributeSupported) {
-	        method = 'downloadAttribute';
-	    }
-
-	    return method;
-	}
-
-	/**
-	 * Base64 string to blob
-	 * original source ref: https://github.com/miguelmota/base64toblob/blob/master/base64toblob.js
-	 * Licence: MIT Licence
-	 * @param {string} base64String - base64 string
-	 * @returns {Blob}
-	 */
-	function base64toBlob(base64String) {
-	    var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
-	    var sliceSize = 1024;
-	    var byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
-	    var byteArrays = [];
-	    var offset, slice, byteNumbers, i, byteArray, resultBlob;
-
-	    for (offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-	        slice = byteCharacters.slice(offset, offset + sliceSize);
-
-	        byteNumbers = new Array(slice.length);
-
-	        for (i = 0; i < slice.length; i += 1) {
-	            byteNumbers[i] = slice.charCodeAt(i);
-	        }
-
-	        byteArray = new window.Uint8Array(byteNumbers);
-
-	        byteArrays.push(byteArray);
-	    }
-
-	    resultBlob = new Blob(byteArrays, {type: contentType});
-
-	    return resultBlob;
-	}
-
-	/**
-	 * Return given extension type is image format
-	 * @param {string} extension extension
-	 * @returns {boolean}
-	 */
-	function isImageExtension(extension) {
-	    return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, function(imageExtension) {
-	        return extension === imageExtension;
-	    });
-	}
-
-	/**
-	 * Download content to file with msSaveOrOpenBlob
-	 * @param {string} fileName - file name
-	 * @param {string} extension - file extension
-	 * @param {string} content - file content
-	 */
-	function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
-	    var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
-
-	    window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
-	}
-
-	/**
-	 * Download content to file with anchor element's download attribute
-	 * @param {string} fileName - file name
-	 * @param {string} extension - file extension
-	 * @param {string} content - file content
-	 */
-	function downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
-	    var anchorElement;
-
-	    if (content) {
-	        anchorElement = document.createElement('a');
-
-	        anchorElement.href = content;
-	        anchorElement.target = '_blank';
-	        anchorElement.download = fileName + '.' + extension;
-
-	        document.body.appendChild(anchorElement);
-
-	        anchorElement.click();
-	        anchorElement.remove();
-	    }
-	}
-
-	/**
-	 * Download content to file with given filename and extension
-	 * @param {string} fileName - file name
-	 * @param {string} extension - file extension
-	 * @param {string} content - file content
-	 */
-	function execDownload(fileName, extension, content) {
-	    var downloadMethod = getDownloadMethod();
-
-	    if (downloadMethod && tui.util.isString(content)) {
-	        DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content);
-	    }
-	}
-
-	module.exports = {
-	    execDownload: execDownload
-	};
-
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileOverview Chart image exporter
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var downloader = __webpack_require__(31);
-	var chartConst = __webpack_require__(2);
-
-	var browser = tui.util.browser;
-	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
-	var DOMURL = window.URL || window.webkitURL || window;
-	var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
-
-	/**
-	 * Return svg outerHTML string
-	 * @param {HTMLElement} svgElement svg element
-	 * @returns {string}
-	 */
-	function getSvgString(svgElement) {
-	    var svgParent = svgElement.parentNode;
-	    var tempWrapper = document.createElement('DIV');
-	    var svgString;
-
-	    tempWrapper.appendChild(svgElement);
-	    svgString = tempWrapper.innerHTML;
-	    svgParent.appendChild(svgElement);
-
-	    tempWrapper = null;
-	    svgParent = null;
-
-	    return svgString;
-	}
-
-	/**
-	 * Download with SVG string and canvg
-	 * @param {HTMLElement} canvas canvas element
-	 * @param {string} svgString svg HTML string
-	 * @param {string} fileName file name
-	 * @param {string} extension file extension
-	 */
-	function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
-	    var ctx = canvas.getContext('2d');
-
-	    // remove name space for IE
-	    if (isIE10OrIE11) {
-	        svgString = svgString.replace(/xmlns:NS1=""/, '');
-	        svgString = svgString.replace(/NS1:xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
-	        svgString = svgString.replace(/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, '');
-	        svgString = svgString.replace(/xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
-	    }
-
-	    ctx.drawSvg(svgString, 0, 0);
-
-	    downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
-	}
-
-	/**
-	 * Download with SVG string and blob URL
-	 * @param {HTMLElement} canvas canvas element
-	 * @param {string} svgString svg HTML string
-	 * @param {string} fileName file name
-	 * @param {string} extension file extension
-	 */
-	function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
-	    var ctx = canvas.getContext('2d');
-	    var blob = new Blob([svgString], {type: 'image/svg+xml'});
-	    var url = DOMURL.createObjectURL(blob);
-	    var img = new Image();
-
-	    img.onload = function() {
-	        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-	        downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
-
-	        DOMURL.revokeObjectURL(url);
-	    };
-
-	    img.src = url;
-	}
-
-	module.exports = {
-	    /**
-	     * Download image with png format
-	     * @param {string} fileName - file name to save
-	     * @param {string} extension - extension type
-	     * @param {HTMLElement} imageSourceElement - image source element
-	     */
-	    downloadImage: function(fileName, extension, imageSourceElement) {
-	        var svgString, parentNode, canvas;
-
-	        if (imageSourceElement.tagName === 'svg') {
-	            parentNode = imageSourceElement.parentNode;
-
-	            canvas = document.createElement('canvas');
-
-	            canvas.width = parentNode.offsetWidth;
-	            canvas.height = parentNode.offsetHeight;
-
-	            svgString = getSvgString(imageSourceElement);
-
-	            if (isIE10OrIE11) {
-	                downloadSvgWithCanvg(canvas, svgString, fileName, extension);
-	            } else {
-	                downloadSvgWithBlobURL(canvas, svgString, fileName, extension);
-	            }
-	        } else if (imageSourceElement.tagName === 'canvas') {
-	            canvas = imageSourceElement;
-
-	            downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
-	        }
-	    },
-
-	    /**
-	     * Returns data extensions
-	     * @returns {Array.<string>}
-	     */
-	    getExtensions: function() {
-	        return imageExtensions;
-	    }
-	};
-
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview Event listener.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var bindHandlerMap = {};
-
-	/**
-	 * Event listener.
-	 * @module eventListener
-	 * @private */
-	var eventListener = {
-	    /**
-	     * Add event listener for IE.
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target target element
-	     * @param {string} type event type
-	     * @param {function} handler callback function
-	     * @param {?object} context context for callback
-	     * @private
-	     */
-	    _attachEvent: function(target, type, handler, context) {
-	        var bindHandler;
-
-	        if (context) {
-	            bindHandler = tui.util.bind(handler, context);
-	        } else {
-	            bindHandler = handler;
-	        }
-
-	        bindHandlerMap[type + handler] = bindHandler;
-	        target.attachEvent('on' + type, bindHandler);
-	    },
-
-	    /**
-	     * Add event listener for other browsers.
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target - target element
-	     * @param {string} type - event type
-	     * @param {function} handler - handler
-	     * @param {object} [context] - context for handler
-	     * @private
-	     */
-	    _addEventListener: function(target, type, handler, context) {
-	        var bindHandler;
-
-	        if (context) {
-	            bindHandler = tui.util.bind(handler, context);
-	        } else {
-	            bindHandler = handler;
-	        }
-
-	        bindHandlerMap[type + handler] = bindHandler;
-	        target.addEventListener(type, bindHandler);
-	    },
-
-	    /**
-	     * Bind DOM event.
-	     * @memberOf module:eventListener
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target target element
-	     * @param {string} type event type
-	     * @param {function} handler handler function
-	     * @param {object} [context] - context for handler
-	     * @private
-	     */
-	    _bindEvent: function(target, type, handler, context) {
-	        var bindEvent;
-
-	        if ('addEventListener' in target) {
-	            bindEvent = this._addEventListener;
-	        } else if ('attachEvent' in target) {
-	            bindEvent = this._attachEvent;
-	        }
-	        eventListener._bindEvent = bindEvent;
-
-	        bindEvent(target, type, handler, context);
-	    },
-
-	    /**
-	     * Bind DOM events.
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target - target element
-	     * @param {string | object} types - type or map of type and handler
-	     * @param {function | object} [handler] - handler or context
-	     * @param {object} [context] - context
-	     */
-	    on: function(target, types, handler, context) {
-	        var handlerMap = {};
-	        if (tui.util.isString(types)) {
-	            handlerMap[types] = handler;
-	        } else {
-	            handlerMap = types;
-	            context = handler;
-	        }
-
-	        tui.util.forEach(handlerMap, function(_handler, type) {
-	            eventListener._bindEvent(target, type, _handler, context);
-	        });
-	    },
-
-	    /**
-	     * Remove event listener for IE.
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target - target element
-	     * @param {string} type - event type
-	     * @param {function} handler - handler
-	     * @private
-	     */
-	    _detachEvent: function(target, type, handler) {
-	        if (bindHandlerMap[type + handler]) {
-	            target.detachEvent('on' + type, bindHandlerMap[type + handler]);
-	            delete bindHandlerMap[type + handler];
-	        }
-	    },
-
-	    /**
-	     * Add event listener for other browsers.
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target - target element
-	     * @param {string} type - event type
-	     * @param {function} handler - handler
-	     * @private
-	     */
-	    _removeEventListener: function(target, type, handler) {
-	        target.removeEventListener(type, bindHandlerMap[type + handler]);
-	        delete bindHandlerMap[type + handler];
-	    },
-
-	    /**
-	     * Unbind DOM event.
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target - target element
-	     * @param {string} type - event type
-	     * @param {function} handler - handler
-	     * @private
-	     */
-	    _unbindEvent: function(target, type, handler) {
-	        var unbindEvent;
-	        if ('removeEventListener' in target) {
-	            unbindEvent = eventListener._removeEventListener;
-	        } else if ('detachEvent' in target) {
-	            unbindEvent = eventListener._detachEvent;
-	        }
-	        eventListener._unbindEvent = unbindEvent;
-
-	        unbindEvent(target, type, handler);
-	    },
-
-	    /**
-	     * Unbind DOM events.
-	     * @memberOf module:eventListener
-	     * @param {HTMLElement} target - target element
-	     * @param {string | object} types - type or map of type and handler
-	     * @param {function} [handler] - handler
-	     */
-	    off: function(target, types, handler) {
-	        var handlerMap = {};
-	        if (tui.util.isString(types)) {
-	            handlerMap[types] = handler;
-	        } else {
-	            handlerMap = types;
-	        }
-
-	        tui.util.forEach(handlerMap, function(_handler, type) {
-	            eventListener._unbindEvent(target, type, _handler);
-	        });
-	    }
-	};
-
-	module.exports = eventListener;
-
-
-/***/ },
-/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8853,7 +6593,37 @@
 	        return tui.util.map(cssMap, function(value, name) {
 	            return renderUtil.concatStr(name, ':', value);
 	        }).join(';');
+	    },
+
+	    /**
+	     * Perse String.
+	     * @param {string} value - string
+	     * @returns {string}
+	     */
+	    _perseString: function(value) {
+	        return typeof value === 'string' || typeof value === 'number' ? String(value) : '';
+	    },
+
+	    /**
+	     * Add prefix or suffix to label.
+	     * @param {array} labels - labels
+	     * @param {string} prefix - string
+	     * @param {string} suffix - string
+	     * @returns {array}
+	     */
+	    addPrefixSuffix: function(labels, prefix, suffix) {
+	        prefix = this._perseString(prefix);
+	        suffix = this._perseString(suffix);
+
+	        if (!(prefix === '' && suffix === '')) {
+	            return tui.util.map(labels, function(label) {
+	                return prefix + label + suffix;
+	            });
+	        }
+
+	        return labels;
 	    }
+
 	};
 
 	/**
@@ -8934,6 +6704,2278 @@
 	tui.chart.renderUtil = renderUtil;
 
 	module.exports = renderUtil;
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Plot component.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(2);
+	var predicate = __webpack_require__(5);
+	var calculator = __webpack_require__(23);
+
+	var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
+	    /**
+	     * Plot component.
+	     * @constructs Plot
+	     * @private
+	     * @param {object} params parameters
+	     *      @param {number} params.vTickCount vertical tick count
+	     *      @param {number} params.hTickCount horizontal tick count
+	     *      @param {object} params.theme axis theme
+	     */
+	    init: function(params) {
+	        /**
+	         * Plot view className
+	         * @type {string}
+	         */
+	        this.className = 'tui-chart-plot-area';
+
+	        /**
+	         * Data processor
+	         * @type {DataProcessor}
+	         */
+	        this.dataProcessor = params.dataProcessor;
+
+	        /**
+	         * Options
+	         * @type {object}
+	         */
+	        this.options = params.options || {};
+	        this.options.showLine = tui.util.isUndefined(this.options.showLine) ? true : this.options.showLine;
+	        this.options.lines = this.options.lines || [];
+	        this.options.bands = this.options.bands || [];
+
+	        /**
+	         * x axis type option
+	         * @type {?string}
+	         */
+	        this.xAxisTypeOption = params.xAxisTypeOption;
+
+	        /**
+	         * Theme
+	         * @type {object}
+	         */
+	        this.theme = params.theme || {};
+
+	        /**
+	         * chart type
+	         * @type {string}
+	         */
+	        this.chartType = params.chartType;
+
+	        /**
+	         * sub charts type
+	         * @type {Array.<string>}
+	         */
+	        this.chartTypes = params.chartTypes;
+
+	        /**
+	         * layout bounds information for this components
+	         * @type {null|{dimension:{width:number, height:number}, position:{left:number, top:number}}}
+	         */
+	        this.layout = null;
+
+	        /**
+	         * axis data map
+	         * @type {null|object}
+	         */
+	        this.axisDataMap = null;
+
+	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+	    },
+
+	    /**
+	     * Render plot area.
+	     * @param {object} paper paper object
+	     * @private
+	     */
+	    _renderPlotArea: function(paper) {
+	        var dimension;
+
+	        dimension = this.layout.dimension;
+
+	        if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
+	            this._renderOptionalLines(paper, dimension);
+	        }
+
+	        if (this.options.showLine) {
+	            this._renderPlotLines(paper, dimension);
+	        }
+	    },
+
+	    /**
+	     * Set data for rendering.
+	     * @param {{
+	     *      layout: {
+	     *          dimension: {width: number, height: number},
+	     *          position: {left: number, top: number}
+	     *      },
+	     *      axisDataMap: object
+	     * }} data - bounds and scale data
+	     * @private
+	     */
+	    _setDataForRendering: function(data) {
+	        if (data) {
+	            this.layout = data.layout;
+	            this.dimensionMap = data.dimensionMap;
+	            this.axisDataMap = data.axisDataMap;
+	            this.paper = data.paper;
+	        }
+	    },
+
+	    /**
+	     * Render plot component.
+	     * @param {object} data - bounds and scale data
+	     */
+	    render: function(data) {
+	        var paper = (data && data.paper) || this.paper;
+	        this.plotSet = paper.set();
+	        this.additionalPlotSet = paper.set();
+
+	        this._setDataForRendering(data);
+	        this._renderPlotArea(this.paper);
+
+	        this.additionalPlotSet.toBack();
+	        this.plotSet.toBack();
+	        paper.pushDownBackgroundToBottom();
+	    },
+
+	    /**
+	     * Rerender.
+	     * @param {object} data - bounds and scale data
+	     */
+	    rerender: function(data) {
+	        this.additionalPlotSet.remove();
+	        this.plotSet.remove();
+	        this.render(data);
+	    },
+
+	    /**
+	     * Resize plot component.
+	     * @param {object} data - bounds and scale data
+	     */
+	    resize: function(data) {
+	        this.rerender(data);
+	    },
+
+	    /**
+	     * Make template params for vertical line.
+	     * @param {object} additionalParams - additional params
+	     * @returns {object}
+	     * @private
+	     */
+	    _makeVerticalLineTemplateParams: function(additionalParams) {
+	        return tui.util.extend({
+	            className: 'vertical',
+	            positionType: 'left',
+	            width: '1px'
+	        }, additionalParams);
+	    },
+
+	    /**
+	     * Make template params for horizontal line.
+	     * @param {object} additionalParams - additional params
+	     * @returns {object}
+	     * @private
+	     */
+	    _makeHorizontalLineTemplateParams: function(additionalParams) {
+	        return tui.util.extend({
+	            className: 'horizontal',
+	            positionType: 'bottom',
+	            height: '1px'
+	        }, additionalParams);
+	    },
+
+	    /**
+	     * Render line
+	     * @param {number} offsetPosition - start percentage offsetPosition
+	     * @param {object} attributes - line attributes
+	     * @returns {object} path
+	     * @private
+	     */
+	    _renderLine: function(offsetPosition, attributes) {
+	        var top = this.layout.position.top;
+	        var height = this.layout.dimension.height;
+	        var pathString = 'M' + offsetPosition + ',' + top + 'V' + (top + height);
+	        var path = this.paper.path(pathString);
+
+	        path.attr({
+	            opacity: attributes.opacity || 1,
+	            stroke: attributes.color
+	        });
+
+	        this.additionalPlotSet.push(path);
+
+	        return path;
+	    },
+
+	    /**
+	     * Render band
+	     * @param {number} offsetPosition - start percentage offsetPosition
+	     * @param {number} plotWidth - plotWidth
+	     * @param {object} attributes - band attributes
+	     * @returns {object} band
+	     * @private
+	     */
+	    _renderBand: function(offsetPosition, plotWidth, attributes) {
+	        var position = this.layout.position;
+	        var dimension = this.layout.dimension;
+	        var remainingWidth = dimension.width - offsetPosition + position.left;
+	        var bandWidth = Math.min(plotWidth, remainingWidth);
+	        var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
+
+	        rect.attr({
+	            fill: attributes.color,
+	            opacity: attributes.opacity || 1,
+	            stroke: attributes.color
+	        });
+
+	        this.additionalPlotSet.push(rect);
+
+	        return rect;
+	    },
+
+	    /**
+	     * Create value range for optional line.
+	     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
+	     * @returns {Array.<number>}
+	     * @private
+	     */
+	    _createOptionalLineValueRange: function(optionalLineData) {
+	        var range = optionalLineData.range || [optionalLineData.value];
+
+	        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
+	            range = tui.util.map(range, function(value) {
+	                var date = new Date(value);
+
+	                return date.getTime() || value;
+	            });
+	        }
+
+	        return range;
+	    },
+
+	    /**
+	     * Create position for optional line, when value axis.
+	     * @param {{dataMin: number, distance: number}} xAxisData - x axis data
+	     * @param {number} width - width
+	     * @param {number} value - value
+	     * @returns {number|null}
+	     * @private
+	     */
+	    _createOptionalLinePosition: function(xAxisData, width, value) {
+	        var ratio = (value - xAxisData.dataMin) / xAxisData.distance;
+	        var position = ratio * width;
+
+	        if (ratio === 1) {
+	            position -= 1;
+	        }
+
+	        if (position < 0) {
+	            position = null;
+	        }
+
+	        return position;
+	    },
+
+	    /**
+	     * Create position for optional line, when label axis.
+	     * @param {number} width - width
+	     * @param {number} value - value
+	     * @returns {number|null}
+	     * @private
+	     */
+	    _createOptionalLinePositionWhenLabelAxis: function(width, value) {
+	        var dataProcessor = this.dataProcessor;
+	        var index = dataProcessor.findCategoryIndex(value);
+	        var position = null;
+	        var ratio;
+
+	        if (!tui.util.isNull(index)) {
+	            ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
+	            position = ratio * width;
+	        }
+
+	        if (ratio === 1) {
+	            position -= 1;
+	        }
+
+	        return position;
+	    },
+
+	    /**
+	     * Create position map for optional line.
+	     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
+	     * @param {{isLabelAxis: boolean, dataMin: number, distance: number}} xAxisData - x axis data
+	     * @param {number} width - width
+	     * @returns {{start: number, end: number}}
+	     * @private
+	     */
+	    _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
+	        var range = this._createOptionalLineValueRange(optionalLineData);
+	        var startPosition, endPosition;
+
+	        if (xAxisData.isLabelAxis) {
+	            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
+	            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
+	        } else {
+	            startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
+	            endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
+	        }
+
+	        if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
+	            startPosition = 0;
+	        }
+
+	        return {
+	            start: startPosition,
+	            end: endPosition
+	        };
+	    },
+
+	    /**
+	     * Render optional line.
+	     * @param {Array.<number>} xAxisData - positions
+	     * @param {number} width - standard width
+	     * @param {object} attributes - template parameters
+	     * @param {object} optionalLineData - optional line information
+	     * @returns {object}
+	     * @private
+	     */
+	    _renderOptionalLine: function(xAxisData, width, attributes, optionalLineData) {
+	        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
+	        var line;
+
+	        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+	            attributes.width = 1;
+
+	            attributes.color = optionalLineData.color || 'transparent';
+	            attributes.opacity = optionalLineData.opacity;
+
+	            line = this._renderLine(positionMap.start + this.layout.position.left, attributes);
+	        }
+
+	        return line;
+	    },
+
+	    /**
+	     * Render optional band.
+	     * @param {Array.<number>} xAxisData - positions
+	     * @param {number} width - standard width
+	     * @param {object} attributes - template parameters
+	     * @param {object} optionalLineData - optional line information
+	     * @returns {object}
+	     * @private
+	     */
+	    _makeOptionalBand: function(xAxisData, width, attributes, optionalLineData) {
+	        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
+	        var bandWidth = positionMap.end - positionMap.start;
+	        var band;
+
+	        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+	            attributes.color = optionalLineData.color || 'transparent';
+	            attributes.opacity = optionalLineData.opacity;
+	            band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
+	        }
+
+	        return band;
+	    },
+
+	    /**
+	     * Make optional lines html.
+	     * @param {Array.<object>} lines - optional lines
+	     * @param {{width: number, height: number}} dimension - dimension
+	     * @returns {string}
+	     * @private
+	     */
+	    _makeOptionalLines: function(lines, dimension) {
+	        var width = dimension.width;
+	        var xAxisData = this.axisDataMap.xAxis;
+	        var templateParams = this._makeVerticalLineTemplateParams({
+	            height: dimension.height + 'px'
+	        });
+	        var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
+
+	        return tui.util.map(lines, makeOptionalLineHtml);
+	    },
+
+	    /**
+	     * Make optional lines html.
+	     * @param {Array.<object>} lines - optional lines
+	     * @param {{width: number, height: number}} dimension - dimension
+	     * @returns {string}
+	     * @private
+	     */
+	    _makeOptionalBands: function(lines, dimension) {
+	        var width = dimension.width;
+	        var xAxisData = this.axisDataMap.xAxis;
+	        var templateParams = this._makeVerticalLineTemplateParams({
+	            height: dimension.height + 'px'
+	        });
+	        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
+
+	        return tui.util.map(lines, makeOptionalLineHtml);
+	    },
+
+	    /**
+	     * Render optional lines and bands.
+	     * @param {object} paper - paper
+	     * @param {{width: number, height: number}} dimension - dimension
+	     * @private
+	     */
+	    _renderOptionalLines: function(paper, dimension) {
+	        var optionalLines = [];
+	        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
+	        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
+
+	        this.optionalLines = optionalLines;
+	    },
+
+	    /**
+	     * Maker html for vertical lines
+	     * @param {{width: number, height: number}} dimension - dimension
+	     * @param {string} lineColor - line color
+	     * @private
+	     */
+	    _renderVerticalLines: function(dimension, lineColor) {
+	        var positions = this._makeHorizontalPositions(dimension.width);
+	        var self = this;
+	        var layout = this.layout;
+	        var left = layout.position.left;
+	        var top = layout.position.top;
+
+	        tui.util.forEach(positions, function(position) {
+	            var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
+
+	            var path = self.paper.path(pathString);
+
+	            path.attr({
+	                stroke: lineColor,
+	                'stroke-width': 1
+	            });
+
+	            self.plotSet.push(path);
+	        });
+	    },
+
+	    /**
+	     * Maker html for horizontal lines.
+	     * @param {{width: number, height: number}} dimension - dimension
+	     * @param {string} lineColor - line color
+	     * @private
+	     */
+	    _renderHorizontalLines: function(dimension, lineColor) {
+	        var positions = this._makeVerticalPositions(dimension.height);
+	        var self = this;
+	        var layout = this.layout;
+	        var left = layout.position.left;
+	        var top = layout.position.top;
+	        var distance = positions[1] - positions[0];
+
+	        tui.util.forEach(positions, function(position, index) {
+	            var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
+	            var path = self.paper.path(pathString);
+
+	            path.attr({
+	                stroke: lineColor,
+	                'stroke-width': 1
+	            });
+
+	            self.plotSet.push(path);
+	        });
+	    },
+
+	    /**
+	     * Render plot lines.
+	     * @param {HTMLElement} container - container element
+	     * @param {{width: number, height: number}} dimension plot area dimension
+	     * @private
+	     */
+	    _renderPlotLines: function(container, dimension) {
+	        var theme = this.theme;
+
+	        if (!predicate.isLineTypeChart(this.chartType)) {
+	            this._renderVerticalLines(dimension, theme.lineColor);
+	        }
+
+	        this._renderHorizontalLines(dimension, theme.lineColor);
+	    },
+
+	    /**
+	     * Make positions for vertical line.
+	     * @param {number} height plot height
+	     * @returns {Array.<number>} positions
+	     * @private
+	     */
+	    _makeVerticalPositions: function(height) {
+	        var axisDataMap = this.axisDataMap;
+	        var yAxis = axisDataMap.yAxis || axisDataMap.rightYAxis;
+	        var positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
+
+	        positions.shift();
+
+	        return positions;
+	    },
+
+	    /**
+	     * Make divided positions of plot.
+	     * @param {number} width - plot width
+	     * @param {number} tickCount - tick count
+	     * @returns {Array.<number>}
+	     * @private
+	     */
+	    _makeDividedPlotPositions: function(width, tickCount) {
+	        var yAxisWidth = this.dimensionMap.yAxis.width;
+	        var leftWidth, rightWidth, leftPositions, rightPositions;
+
+	        tickCount = parseInt(tickCount / 2, 10) + 1;
+	        width -= yAxisWidth;
+	        leftWidth = Math.round((width) / 2);
+	        rightWidth = width - leftWidth;
+
+	        leftPositions = calculator.makeTickPixelPositions(leftWidth, tickCount);
+	        rightPositions = calculator.makeTickPixelPositions(rightWidth, tickCount, leftWidth + yAxisWidth);
+
+	        leftPositions.pop();
+	        rightPositions.shift();
+
+	        return leftPositions.concat(rightPositions);
+	    },
+
+	    /**
+	     * Make positions for horizontal line.
+	     * @param {number} width plot width
+	     * @returns {Array.<number>} positions
+	     * @private
+	     */
+	    _makeHorizontalPositions: function(width) {
+	        var tickCount = this.axisDataMap.xAxis.validTickCount;
+	        var positions;
+
+	        if (this.options.divided) {
+	            positions = this._makeDividedPlotPositions(width, tickCount);
+	        } else {
+	            positions = calculator.makeTickPixelPositions(width, tickCount);
+	            positions.shift();
+	        }
+
+	        return positions;
+	    },
+
+	    /**
+	     * Add plot line.
+	     * @param {{index: number, color: string, id: string}} data - data
+	     */
+	    addPlotLine: function(data) {
+	        this.options.lines.push(data);
+	        this.rerender();
+	    },
+
+	    /**
+	     * Add plot band.
+	     * @param {{range: Array.<number>, color: string, id: string}} data - data
+	     */
+	    addPlotBand: function(data) {
+	        this.options.bands.push(data);
+	        this.rerender();
+	    },
+
+	    /**
+	     * Remove plot line.
+	     * @param {string} id - line id
+	     */
+	    removePlotLine: function(id) {
+	        this.options.lines = tui.util.filter(this.options.lines, function(line) {
+	            return line.id !== id;
+	        });
+	        this.rerender();
+	    },
+
+	    /**
+	     * Remove plot band.
+	     * @param {string} id - band id
+	     */
+	    removePlotBand: function(id) {
+	        this.options.bands = tui.util.filter(this.options.bands, function(band) {
+	            return band.id !== id;
+	        });
+	        this.rerender();
+	    },
+
+	    /**
+	     * Animate for adding data.
+	     * @param {{tickSize: number, shifting: boolean}} data - data for animation
+	     */
+	    animateForAddingData: function(data) {
+	        var self = this;
+
+	        if (!this.dataProcessor.isCoordinateType()) {
+	            if (data.shifting) {
+	                tui.util.forEach(this.optionalLines, function(line) {
+	                    var bbox = line.getBBox();
+
+	                    if (bbox.x - data.tickSize < self.layout.position.left) {
+	                        line.animate({
+	                            transform: 'T' + data.tickSize + ',' + bbox.y,
+	                            opacity: 0
+	                        }, 300, 'linear', function() {
+	                            line.remove();
+	                        });
+	                    } else {
+	                        line.animate({
+	                            transform: 'T' + data.tickSize + ',' + bbox.y
+	                        }, 300);
+	                    }
+	                });
+	            }
+	        }
+	    }
+	});
+
+	/**
+	 * Factory for Plot
+	 * @param {object} param parameter
+	 * @returns {object}
+	 */
+	function plotFactory(param) {
+	    var chartType = param.chartOptions.chartType;
+	    var seriesTypes = param.seriesTypes;
+	    var xAxisType = param.chartOptions.xAxis.type;
+
+	    // bar, chart, line, area동일
+	    param.chartType = chartType;
+	    param.chartTypes = seriesTypes;
+	    param.xAxisTypeOption = xAxisType;
+
+	    return new Plot(param);
+	}
+
+	plotFactory.componentType = 'plot';
+	plotFactory.Plot = Plot;
+
+	module.exports = plotFactory;
+
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview  Title component.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(2);
+	var pluginFactory = __webpack_require__(7);
+
+	var Title = tui.util.defineClass(/** @lends Title.prototype */ {
+	    /**
+	     * Title component.
+	     * @constructs Title
+	     * @param {object} params parameters
+	     *      @param {object} params.bound title bound
+	     *      @param {object} params.theme title theme
+	     *      @param {object} params.options title options
+	     *      @param {object} params.text title text content
+	     */
+	    init: function(params) {
+	        /**
+	         * Theme
+	         * @type {object}
+	         */
+	        this.theme = params.theme || {};
+
+	        /**
+	         * Title text content
+	         * @type {string}
+	         */
+	        this.titleText = params.text;
+
+	        /**
+	         * Relative offset position
+	         * @type {object}
+	         */
+	        this.offset = params.offset;
+
+	        /**
+	         * Graph renderer
+	         * @type {object}
+	         */
+	        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'title');
+
+	        /**
+	         * Drawing type
+	         * @type {string}
+	         */
+	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+	    },
+
+	    /**
+	     * Render title component
+	     * @param {object} data data for render title
+	     */
+	    render: function(data) {
+	        this.titleSet = this._renderTitleArea(data.paper);
+	    },
+
+	    /**
+	     * Render title component
+	     * @param {object} data data for render title
+	     */
+	    resize: function(data) {
+	        var dimensionMap = data.dimensionMap;
+	        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
+	        var width = dimensionMap.series.width + legendWidth;
+	        this.graphRenderer.resize(width, this.titleSet);
+	    },
+
+	    /**
+	     * Render title component
+	     * @param {object} data data for render title
+	     */
+	    rerender: function(data) {
+	        this.titleSet.remove();
+
+	        this.render(data);
+	    },
+
+	    /**
+	     * Render title on given paper
+	     * @param {object} paper paper object
+	     * @returns {object} raphael paper
+	     * @private
+	     */
+	    _renderTitleArea: function(paper) {
+	        return this.graphRenderer.render(paper, this.titleText, this.offset, this.theme);
+	    }
+	});
+
+	/**
+	 * Factory for Title
+	 * @param {object} param parameter
+	 * @returns {object|null}
+	 */
+	function titleFactory(param) {
+	    var options = param.chartOptions.chart || {title: {}};
+	    var title = null;
+
+	    if (options.title && options.title.text) {
+	        param.text = options.title.text;
+	        param.offset = options.title.offset;
+
+	        title = new Title(param);
+	    }
+
+	    return title;
+	}
+
+	titleFactory.componentType = 'title';
+	titleFactory.Title = Title;
+
+	module.exports = titleFactory;
+
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Radial plot component.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var geom = __webpack_require__(28);
+	var chartConst = __webpack_require__(2);
+	var pluginFactory = __webpack_require__(7);
+
+	var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
+	    /**
+	     * plot component className
+	     * @type {string}
+	     */
+	    className: 'tui-chart-plot-area',
+
+	    /**
+	     * Plot component.
+	     * @constructs Plot
+	     * @param {object} params parameters
+	     *      @param {number} params.vTickCount vertical tick count
+	     *      @param {number} params.hTickCount horizontal tick count
+	     *      @param {object} params.theme axis theme
+	     */
+	    init: function(params) {
+	        /**
+	         * Options
+	         * @type {object}
+	         */
+	        this.options = tui.util.extend({
+	            type: 'spiderweb'
+	        }, params.options);
+
+	        /**
+	         * Theme
+	         * @type {object}
+	         */
+	        this.theme = params.theme || {};
+
+	        /**
+	         * Graph renderer
+	         * @type {object}
+	         */
+	        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'radialPlot');
+
+	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+	    },
+
+	    /**
+	     * Render plot area
+	     * @param {object} paper paper object
+	     * @param {object} layout layout
+	     * @param {Array.<Array>} plotPositions plot positions
+	     * @param {object} labelData label data
+	     * @returns {Array.<object>} plotSet
+	     */
+	    _renderPlotArea: function(paper, layout, plotPositions, labelData) {
+	        var renderParams = {
+	            paper: paper,
+	            layout: layout,
+	            plotPositions: plotPositions,
+	            labelData: labelData,
+	            theme: this.theme,
+	            options: this.options
+	        };
+
+	        return this.graphRenderer.render(renderParams);
+	    },
+
+	    /**
+	     * Make plot positions for render
+	     * @param {object} axisDataMap axisDataMap
+	     * @param {object} layout layout
+	     * @returns {Array.<Array>} plot positions
+	     */
+	    _makePositions: function(axisDataMap, layout) {
+	        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
+	        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
+	        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
+	            + layout.position.left;
+	        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
+	            - layout.position.top;
+	        var stepCount = axisDataMap.yAxis.tickCount;
+	        var angleStepCount = axisDataMap.xAxis.labels.length;
+
+	        return makeSpiderWebPositions({
+	            width: width,
+	            height: height,
+	            centerX: centerX,
+	            centerY: centerY,
+	            angleStepCount: angleStepCount,
+	            stepCount: stepCount
+	        });
+	    },
+
+	    /**
+	     * Make category positions
+	     * @param {object} axisDataMap axisDataMap
+	     * @param {object} layout layout
+	     * @returns {Array.<object>} category positions
+	     */
+	    _makeCategoryPositions: function(axisDataMap, layout) {
+	        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
+	        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
+	        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_CATEGORY_PADDING / 2)
+	            + layout.position.left;
+	        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_CATEGORY_PADDING / 2)
+	            - layout.position.top;
+	        var angleStepCount = axisDataMap.xAxis.labels.length;
+
+	        return makeRadialCategoryPositions({
+	            width: width,
+	            height: height,
+	            centerX: centerX,
+	            centerY: centerY,
+	            angleStepCount: angleStepCount
+	        });
+	    },
+
+	    /**
+	     * Make label data
+	     * @param {object} axisDataMap axisDataMap
+	     * @param {object} dimension dimension
+	     * @param {Array.<Array>} plotPositions plot positions
+	     * @returns {object}
+	     */
+	    _makeLabelData: function(axisDataMap, dimension, plotPositions) {
+	        var categories = axisDataMap.xAxis.labels;
+	        var stepLabels = axisDataMap.yAxis.labels;
+	        var categoryPositions = this._makeCategoryPositions(axisDataMap, dimension);
+	        var categoryLabelData = [];
+	        var stepLabelData = [];
+	        var i, j;
+
+	        for (i = 0; i < categories.length; i += 1) {
+	            categoryLabelData.push({
+	                text: categories[i],
+	                position: categoryPositions[i]
+	            });
+	        }
+
+	        // 마지막 스탭 라벨은 카테고리랑 겹칠수 있어 만들지 않음
+	        for (j = 0; j < (stepLabels.length - 1); j += 1) {
+	            stepLabelData.push({
+	                text: stepLabels[j],
+	                position: plotPositions[j][0]
+	            });
+	        }
+
+	        return {
+	            category: categoryLabelData,
+	            step: stepLabelData
+	        };
+	    },
+
+	    /**
+	     * Render plot component.
+	     * @param {object} data - bounds and scale data
+	     */
+	    render: function(data) {
+	        var plotPositions = this._makePositions(data.axisDataMap, data.layout);
+	        var labelData = this._makeLabelData(data.axisDataMap, data.layout, plotPositions);
+
+	        this.plotSet = this._renderPlotArea(data.paper, data.layout, plotPositions, labelData);
+	    },
+
+	    /**
+	     * Re render plot component
+	     * @param {object} data - bounds and scale data
+	     */
+	    rerender: function(data) {
+	        this.plotSet.remove();
+
+	        this.render(data);
+	    },
+
+	    /**
+	     * Resize plot component.
+	     * @param {object} data - bounds and scale data
+	     */
+	    resize: function(data) {
+	        this.rerender(data);
+	    }
+	});
+
+	/**
+	 * Make Spider web positions
+	 * @param {object} params parameters
+	 *     @param {number} params.width width
+	 *     @param {number} params.height height
+	 *     @param {number} params.centerX center x coordinate
+	 *     @param {number} params.centerY cneter y coordinate
+	 *     @param {number} params.angleStepCount angle step count
+	 *     @param {number} params.stepCount step count
+	 * @returns {Array<Array>} positions
+	 * @private
+	 */
+	function makeSpiderWebPositions(params) {
+	    var width = params.width;
+	    var height = params.height;
+	    var centerX = params.centerX;
+	    var centerY = params.centerY;
+	    var angleStepCount = params.angleStepCount;
+	    var stepCount = params.stepCount;
+	    var radius = Math.min(width, height) / 2;
+	    var angleStep = 360 / angleStepCount;
+	    var points = [];
+	    var stepPoints, pointY, point, stepPixel, i, j;
+
+	    stepPixel = radius / (stepCount - 1); // 0 스텝에는 크기가 없는 점이니 스텝한개는 제거
+
+	    for (i = 0; i < stepCount; i += 1) {
+	        stepPoints = [];
+	        // 회전할 첫번째 픽셀의 Y축 값
+	        pointY = centerY + (stepPixel * i);
+
+	        for (j = 0; j < angleStepCount; j += 1) {
+	            point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, angleStep * j);
+
+	            stepPoints.push({
+	                left: point.x,
+	                top: height - point.y // y좌표를 top좌표로 전환
+	            });
+	        }
+
+	        stepPoints.push(stepPoints[0]);
+
+	        points[i] = stepPoints;
+	    }
+
+	    return points;
+	}
+
+	/**
+	 * Make radial category positions
+	 * @param {object} params parameters
+	 *     @param {number} params.width width
+	 *     @param {number} params.height height
+	 *     @param {number} params.centerX center x coordinate
+	 *     @param {number} params.centerY cneter y coordinate
+	 *     @param {number} params.angleStepCount angle step count
+	 * @returns {Array<object>} category positions
+	 * @private
+	 */
+	function makeRadialCategoryPositions(params) {
+	    var width = params.width;
+	    var height = params.height;
+	    var centerX = params.centerX;
+	    var centerY = params.centerY;
+	    var angleStepCount = params.angleStepCount;
+	    var radius = Math.min(height, width) / 2;
+	    var angleStep = 360 / angleStepCount;
+	    var points = [];
+	    var anchor, point, i, pointY, reversedAngle;
+
+	    pointY = centerY + radius;
+
+	    for (i = 0; i < angleStepCount; i += 1) {
+	        reversedAngle = 360 - (angleStep * i);
+	        point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, reversedAngle);
+
+	        if (reversedAngle > 0 && reversedAngle < 180) {
+	            anchor = 'end';
+	        } else if (reversedAngle > 180 && reversedAngle < 360) {
+	            anchor = 'start';
+	        } else {
+	            anchor = 'middle';
+	        }
+
+	        points.push({
+	            left: point.x,
+	            top: height - point.y, // y좌표를 top좌표로 전환
+	            anchor: anchor
+	        });
+	    }
+
+	    return points;
+	}
+
+	function RadialPlotFactory(param) {
+	    return new RadialPlot(param);
+	}
+
+	RadialPlotFactory.componentType = 'plot';
+	RadialPlotFactory.RadialPlot = RadialPlot;
+
+	module.exports = RadialPlotFactory;
+
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview module for geometric operation
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(2);
+
+	/**
+	 * Rotate a point around the origin with an angle.
+	 * @param {number} centerX center point x
+	 * @param {number} centerY center point y
+	 * @param {number} pointX point x to rotate
+	 * @param {number} pointY point y to rotate
+	 * @param {number} angle angle
+	 * @returns {object} x, y
+	 */
+	function rotatePointAroundOrigin(centerX, centerY, pointX, pointY, angle) {
+	    var rad = angle * (Math.PI / 180);
+
+	    var newX = ((pointX - centerX) * Math.cos(rad)) - ((pointY - centerY) * Math.sin(rad));
+	    var newY = ((pointX - centerX) * Math.sin(rad)) + ((pointY - centerY) * Math.cos(rad));
+
+	    newX += centerX;
+	    newY += centerY;
+
+	    return {
+	        x: newX,
+	        y: newY
+	    };
+	}
+	/**
+	 * Calculate adjacent.
+	 * @param {number} degree degree
+	 * @param {number} hypotenuse hypotenuse
+	 * @returns {number} adjacent
+	 *
+	 *   H : Hypotenuse
+	 *   A : Adjacent
+	 *   O : Opposite
+	 *   D : Degree
+	 *
+	 *        /|
+	 *       / |
+	 *    H /  | O
+	 *     /   |
+	 *    /\ D |
+	 *    -----
+	 *       A
+	 */
+	function calculateAdjacent(degree, hypotenuse) {
+	    return Math.cos(degree * chartConst.RAD) * hypotenuse;
+	}
+
+	/**
+	 * Calculate opposite.
+	 * @param {number} degree degree
+	 * @param {number} hypotenuse hypotenuse
+	 * @returns {number} opposite
+	 */
+	function calculateOpposite(degree, hypotenuse) {
+	    return Math.sin(degree * chartConst.RAD) * hypotenuse;
+	}
+
+	/**
+	 * Calculate rotated width.
+	 * @param {number} degree - degree
+	 * @param {number} width - width
+	 * @param {number} height - height
+	 * @returns {number}
+	 */
+	function calculateRotatedWidth(degree, width, height) {
+	    var centerHalf = calculateAdjacent(degree, width / 2);
+	    var sideHalf = calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
+
+	    return (centerHalf + sideHalf) * 2;
+	}
+
+	/**
+	 * Calculate rotated height
+	 * @param {number} degree - degree
+	 * @param {number} width - width
+	 * @param {number} height - height
+	 * @returns {number}
+	 */
+	function calculateRotatedHeight(degree, width, height) {
+	    var centerHalf = calculateOpposite(degree, width / 2);
+	    var sideHalf = calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
+
+	    return (centerHalf + sideHalf) * 2;
+	}
+
+	module.exports = {
+	    rotatePointAroundOrigin: rotatePointAroundOrigin,
+	    calculateAdjacent: calculateAdjacent,
+	    calculateRotatedHeight: calculateRotatedHeight,
+	    calculateRotatedWidth: calculateRotatedWidth,
+	    calculateOpposite: calculateOpposite
+	};
+
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview chartExportMenu component.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(2);
+	var chartExporter = __webpack_require__(30);
+	var dom = __webpack_require__(14);
+	var eventListener = __webpack_require__(34);
+	var predicate = __webpack_require__(5);
+	var renderUtil = __webpack_require__(24);
+
+	var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
+	var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
+
+	var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype */ {
+	    /**
+	     * ChartExportMenu component.
+	     * @constructs ChartExportMenu
+	     * @private
+	     * @param {object} params parameters
+	     */
+	    init: function(params) {
+	        /**
+	         * ChartExportMenu view className
+	         * @type {string}
+	         */
+	        this.className = 'tui-chart-chartExportMenu-area';
+
+	        /**
+	         * Data processor
+	         * @type {DataProcessor}
+	         */
+	        this.dataProcessor = params.dataProcessor;
+
+	        /**
+	         * chart title
+	         * @type {string}
+	         */
+	        this.chartTitle = params.chartTitle || 'tui-chart';
+
+	        /**
+	         * chart type
+	         * @type {string}
+	         */
+	        this.chartType = params.chartType;
+
+	        /**
+	         * layout bounds information for this components
+	         * @type {null|{dimension:{width:number, height:number}, position:{right:number, top:number}}}
+	         */
+	        this.layout = null;
+
+	        /**
+	         * chartExportMenu container
+	         * @type {HTMLElement}
+	         */
+	        this.chartExportMenuContainer = null;
+
+	        /**
+	         * chartExportMenu element
+	         * @type {HTMLElement}
+	         */
+	        this.chartExportMenu = null;
+
+	        /**
+	         * chartExportMenu options
+	         */
+	        this.options = params.options;
+
+	        /**
+	         * Event bus
+	         * @type {EventBus}
+	         */
+	        this.eventBus = params.eventBus;
+
+	        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
+
+	        this.theme = params.theme || null;
+	    },
+
+	    /**
+	     * Create chartExportMenuButton
+	     * @returns {HTMLElement}
+	     * @private
+	     */
+	    _createChartExportMenuButton: function() {
+	        var menuButton = dom.create('div', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
+
+	        if (this.options.buttonClass) {
+	            dom.addClass(menuButton, this.options.buttonClass);
+	        }
+
+	        return menuButton;
+	    },
+	    /**
+	     * Render chartExportMenu area.
+	     * @param {HTMLElement} chartExportMenuContainer chartExportMenu area element
+	     * @private
+	     */
+	    _renderChartExportMenuArea: function(chartExportMenuContainer) {
+	        var menuButton = this._createChartExportMenuButton();
+	        var dimension = this.layout.dimension;
+
+	        chartExportMenuContainer.appendChild(menuButton);
+
+	        renderUtil.renderDimension(chartExportMenuContainer, dimension);
+	        renderUtil.renderPosition(chartExportMenuContainer, this.layout.position);
+	    },
+
+	    /**
+	     * Render chartExportMenu area.
+	     * @param {HTMLElement} chartExportMenuContainer chartExportMenu area element
+	     * @private
+	     */
+	    _renderChartExportMenu: function(chartExportMenuContainer) {
+	        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
+	        var isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
+	        var isDownloadSupported = chartExporter.isDownloadSupported;
+	        var isImageExtension = chartExporter.isImageExtension;
+	        var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
+	        var menuElement = dom.create('ul', chartConst.CLASS_NAME_CHART_EXPORT_MENU);
+	        var menuStyle = menuElement.style;
+	        var menuTheme = this.theme;
+	        var menuItems = [];
+
+	        if (isDownloadSupported && (isDataDownloadAvailable || isImageDownloadAvailable)) {
+	            menuItems = tui.util.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
+	                var itemElement;
+
+	                if ((!isImageExtension(exportItemType) && isDataDownloadAvailable)
+	                    || (isImageExtension(exportItemType) && isImageDownloadAvailable)
+	                ) {
+	                    itemElement = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
+	                    itemElement.id = exportItemType;
+	                    itemElement.innerHTML = 'Export to .' + exportItemType;
+	                }
+
+	                return itemElement;
+	            });
+	        } else {
+	            menuStyle.width = '200px';
+	            menuItems[0] = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
+	            menuItems[0].innerHTML = 'Browser does not support client-side download.';
+	        }
+
+	        if (menuTheme) {
+	            if (menuTheme.borderWidth) {
+	                menuStyle.borderWidth = menuTheme.borderWidth;
+	            }
+
+	            if (menuTheme.borderRadius) {
+	                menuStyle.borderRadius = menuTheme.borderRadius;
+	            }
+
+	            if (menuTheme.backgroundColor) {
+	                menuStyle.backgroundColor = menuTheme.backgroundColor;
+	            }
+
+	            if (menuTheme.color) {
+	                menuStyle.color = menuTheme.color;
+	            }
+	        }
+
+	        if (this.options.menuClass) {
+	            dom.addClass(menuElement, this.options.menuClass);
+	        }
+
+	        dom.append(menuElement, menuItems);
+
+	        this.chartExportMenu = menuElement;
+
+	        dom.append(chartExportMenuContainer, menuElement);
+	    },
+
+	    /**
+	     * Set data for rendering.
+	     * @param {{
+	     *      layout: {
+	     *          dimension: {width: number, height: number},
+	     *          position: {left: number, top: number}
+	     *      },
+	     *      axisDataMap: object
+	     * }} data - bounds and scale data
+	     * @private
+	     */
+	    _setDataForRendering: function(data) {
+	        if (data) {
+	            this.layout = data.layout;
+	            this.dimensionMap = data.dimensionMap;
+	            this.axisDataMap = data.axisDataMap;
+	        }
+	    },
+
+	    /**
+	     * Render chartExportMenu component.
+	     * @param {object} data - bounds and scale data
+	     * @returns {HTMLElement} chartExportMenu element
+	     */
+	    render: function(data) {
+	        var container = null;
+
+	        if (chartExporter.isDownloadSupported) {
+	            container = this.container = data.paper;
+
+	            dom.addClass(container, this.className);
+
+	            this._setDataForRendering(data);
+	            this._renderChartExportMenuArea(container);
+	            this._renderChartExportMenu(container);
+	            this.chartExportMenuContainer = container;
+	            this._attachEvent();
+	        }
+
+	        return container;
+	    },
+
+	    /**
+	     * Rerender.
+	     */
+	    rerender: function() {
+	        this._hideChartExportMenu();
+	    },
+
+	    /**
+	     * Resize.
+	     */
+	    resize: function() {
+	    },
+
+	    /**
+	     * Show chart export menu
+	     * @private
+	     */
+	    _showChartExportMenu: function() {
+	        dom.addClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
+	        this.chartExportMenu.style.display = 'block';
+	    },
+
+	    /**
+	     * Hide chart export menu
+	     * @private
+	     */
+	    _hideChartExportMenu: function() {
+	        if (this.chartExportMenuContainer) {
+	            dom.removeClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
+	            this.chartExportMenu.style.display = 'none';
+	        }
+	    },
+
+	    /**
+	     * onclick event handler
+	     * @param {MouseEvent} e mouse event
+	     * @private
+	     */
+	    _onClick: function(e) {
+	        var elTarget = e.target || e.srcElement;
+	        var svgElement = this.container.parentNode.getElementsByTagName('svg')[0];
+
+	        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
+	            if (elTarget.id) {
+	                this.eventBus.fire('beforeImageDownload');
+
+	                chartExporter.exportChart(this.chartTitle, elTarget.id,
+	                    this.dataProcessor.rawData, svgElement, this.options);
+
+	                this.eventBus.fire('afterImageDownload');
+	            }
+
+	            this._hideChartExportMenu();
+	        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
+	            && (this.chartExportMenuContainer === elTarget.parentNode)
+	        ) {
+	            if (dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
+	                this._hideChartExportMenu();
+	            } else {
+	                this._showChartExportMenu();
+	            }
+	        } else {
+	            this._hideChartExportMenu();
+	        }
+	    },
+
+	    /**
+	     * Return boolean value for chart data is able to export
+	     * @param {object} seriesDataModels series data model
+	     * @returns {boolean}
+	     */
+	    isDataDownloadAvailable: function(seriesDataModels) {
+	        var result = true;
+
+	        if (predicate.isTreemapChart(this.chartType)) {
+	            result = false;
+	        } else {
+	            tui.util.forEach(seriesDataModels, function(seriesDataModel) {
+	                if (seriesDataModel.isCoordinateType) {
+	                    result = false;
+	                }
+
+	                return false;
+	            });
+	        }
+
+	        return result;
+	    },
+
+	    /**
+	     * Attach browser event.
+	     * @private
+	     */
+	    _attachEvent: function() {
+	        eventListener.on(this.chartExportMenuContainer.parentNode, 'click', this._onClick, this);
+	    },
+
+	    /**
+	     * Detach browser event.
+	     * @private
+	     */
+	    _detachEvent: function() {
+	        eventListener.off(this.chartExportMenuContainer.parentNode, 'click', this._onClick);
+	    }
+	});
+
+	/**
+	 * Factory for ChartExportMenu
+	 * @param {object} params parameter
+	 * @returns {object|null}
+	 */
+	function chartExportMenuFactory(params) {
+	    var isVisible = params.options.visible;
+	    var chartExportMenu = null;
+	    var chartOption = params.chartOptions.chart || {};
+
+	    if (chartOption.title) {
+	        params.chartTitle = chartOption.title.text;
+	    }
+
+	    if (isVisible) {
+	        chartExportMenu = new ChartExportMenu(params);
+	    }
+
+	    return chartExportMenu;
+	}
+
+	chartExportMenuFactory.componentType = 'chartExportMenu';
+
+	module.exports = chartExportMenuFactory;
+
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview Chart exporter
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var arrayUtil = __webpack_require__(6);
+	var dataExporter = __webpack_require__(31);
+	var imageExporter = __webpack_require__(33);
+
+	var browser = tui.util.browser;
+
+	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
+	var isImageDownloadAvailable = !isIE10OrIE11
+	    || (isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg);
+	var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
+	var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+
+	/**
+	 * Return given extension type is image format
+	 * @param {string} extension extension
+	 * @returns {boolean}
+	 */
+	function isImageExtension(extension) {
+	    return arrayUtil.any(imageExporter.getExtensions(), function(imageExtension) {
+	        return extension === imageExtension;
+	    });
+	}
+	/**
+	 * Return given extension type is data format
+	 * @param {string} extension extension
+	 * @returns {boolean}
+	 */
+	function isDataExtension(extension) {
+	    return arrayUtil.any(dataExporter.getExtensions(), function(dataExtension) {
+	        return extension === dataExtension;
+	    });
+	}
+
+	/**
+	 * Download chart data with given export type
+	 * @param {string} fileName - file name = chart title
+	 * @param {string} extension - file extension
+	 * @param {object} rawData - chart raw data
+	 * @param {HTMLElement} svgElement - svg element
+	 * @param {object} [downloadOptions] download option
+	 */
+	function exportChart(fileName, extension, rawData, svgElement, downloadOptions) {
+	    var downloadOption = (downloadOptions && downloadOptions[extension] ? downloadOptions[extension] : {});
+
+	    if (isImageExtension(extension)) {
+	        imageExporter.downloadImage(fileName, extension, svgElement);
+	    } else if (isDataExtension(extension)) {
+	        dataExporter.downloadData(fileName, extension, rawData, downloadOption);
+	    }
+	}
+
+	module.exports = {
+	    exportChart: exportChart,
+	    isDownloadSupported: isDownloadAttributeSupported || isMsSaveOrOpenBlobSupported,
+	    isImageDownloadAvailable: isImageDownloadAvailable,
+	    isImageExtension: isImageExtension,
+
+	    /**
+	     * Add file extension to dataExtension
+	     * @param {string} type file extension type
+	     * @param {string} extension file extension
+	     */
+	    addExtension: function(type, extension) {
+	        var isValidExtension = extension && tui.util.isString(extension);
+	        var exporter, extensions;
+
+	        if (type === 'data') {
+	            exporter = dataExporter;
+	        } else if (type === 'image') {
+	            exporter = imageExporter;
+	        }
+
+	        if (exporter && isValidExtension) {
+	            extensions = exporter.getExtensions();
+	            extensions.push(extension);
+	        }
+	    }
+	};
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview Chart data exporter
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var downloader = __webpack_require__(32);
+	var chartConst = __webpack_require__(2);
+
+	var DATA_URI_HEADERS = {
+	    xls: 'data:application/vnd.ms-excel;base64,',
+	    csv: 'data:text/csv,'
+	};
+	var DATA_URI_BODY_MAKERS = {
+	    xls: _makeXlsBodyWithRawData,
+	    csv: _makeCsvBodyWithRawData
+	};
+	var dataExtensions = [].concat([], chartConst.DATA_EXTENSIONS);
+
+	var dataExporter = {
+	    /**
+	     * Download chart data
+	     * @param {string} fileName file name
+	     * @param {string} extension file extension
+	     * @param {object} rawData raw data of chart
+	     * @param {object} [downloadOption] download option
+	     */
+	    downloadData: function(fileName, extension, rawData, downloadOption) {
+	        var chartData2DArray = _get2DArrayFromRawData(rawData);
+	        var content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
+
+	        downloader.execDownload(fileName, extension, content);
+	    },
+
+	    /**
+	     * Returns data extensions
+	     * @returns {Array.<string>}
+	     */
+	    getExtensions: function() {
+	        return dataExtensions;
+	    }
+	};
+
+	/**
+	 * Get pivoted second dimension array from table to use element.innerText
+	 * @param {rawData} rawData - chart's raw data
+	 * @returns {Array.<Array>}
+	 * @private
+	 */
+	function _get2DArrayFromRawData(rawData) {
+	    var resultArray = [];
+	    var categories, seriesName, data;
+	    var isHeatMap = (rawData.categories && tui.util.isExisty(rawData.categories.x));
+
+	    if (rawData) {
+	        if (isHeatMap) {
+	            categories = rawData.categories.x;
+	        } else if (rawData.categories) {
+	            categories = rawData.categories;
+	        }
+
+	        resultArray.push([''].concat(categories));
+
+	        tui.util.forEach(rawData.series, function(seriesDatum) {
+	            tui.util.forEach(seriesDatum, function(seriesItem, index) {
+	                if (isHeatMap) {
+	                    seriesName = rawData.categories.y[index];
+	                    data = seriesItem;
+	                } else {
+	                    seriesName = seriesItem.name;
+	                    data = seriesItem.data;
+	                }
+
+	                resultArray.push([seriesName].concat(data));
+	            });
+	        });
+	    }
+
+	    return resultArray;
+	}
+
+	/**
+	 * Get table element from chart data 2D array for xls content
+	 * @param {Array.<Array<*>>} chartData2DArray - chart data 2D array
+	 * @returns {string}
+	 * @private
+	 */
+	function _getTableElementStringForXls(chartData2DArray) {
+	    var tableElementString = '<table>';
+	    tui.util.forEach(chartData2DArray, function(row, rowIndex) {
+	        var cellTagName = rowIndex === 0 ? 'th' : 'td';
+
+	        tableElementString += '<tr>';
+
+	        tui.util.forEach(row, function(cell, cellIndex) {
+	            var cellNumberClass = (rowIndex !== 0 || cellIndex === 0) ? ' class="number"' : '';
+	            var cellString = '<' + cellTagName + cellNumberClass + '>' + cell + '</' + cellTagName + '>';
+
+	            tableElementString += cellString;
+	        });
+
+	        tableElementString += '</tr>';
+	    });
+
+	    tableElementString += '</table>';
+
+	    return tableElementString;
+	}
+
+	/**
+	 * Make xls file with chart series data
+	 * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
+	 * @returns {string} base64 xls file content
+	 * @private
+	 */
+	function _makeXlsBodyWithRawData(chartData2DArray) {
+	    var xlsString = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+	        'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+	        'xmlns="http://www.w3.org/TR/REC-html40">' +
+	        '<head>' +
+	            '<!--[if gte mso 9]>' +
+	                '<xml>' +
+	                    '<x:ExcelWorkbook>' +
+	                        '<x:ExcelWorksheets>' +
+	                            '<x:ExcelWorksheet>' +
+	                                '<x:Name>Ark1</x:Name>' +
+	                                '<x:WorksheetOptions>' +
+	                                    '<x:DisplayGridlines/>' +
+	                                '</x:WorksheetOptions>' +
+	                            '</x:ExcelWorksheet>' +
+	                        '</x:ExcelWorksheets>' +
+	                        '</x:ExcelWorkbook>' +
+	                '</xml>' +
+	            '<![endif]-->' +
+	            '<meta name=ProgId content=Excel.Sheet>' +
+	            '<meta charset=UTF-8>' +
+	        '</head>' +
+	        '<body>' +
+	            _getTableElementStringForXls(chartData2DArray) +
+	        '</body>' +
+	        '</html>';
+
+	    return window.btoa(unescape(encodeURIComponent(xlsString)));
+	}
+
+	/**
+	 * Make csv text with chart series data
+	 * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
+	 * @param {object} [option] - download option
+	 * @param {object} [option.itemDelimiter = ','] - item delimiter
+	 * @param {object} [option.lineDelimiter = '\n'] - line delimiter
+	 * @returns {string} URI encoded csv text
+	 * @private
+	 */
+	function _makeCsvBodyWithRawData(chartData2DArray, option) {
+	    var csvText = '';
+	    var lineDelimiter = (option && option.lineDelimiter) || '\u000a';
+	    var itemDelimiter = (option && option.itemDelimiter) || ',';
+	    var lastRowIndex = chartData2DArray.length - 1;
+
+	    tui.util.forEachArray(chartData2DArray, function(row, rowIndex) {
+	        var lastCellIndex = row.length - 1;
+
+	        tui.util.forEachArray(row, function(cell, cellIndex) {
+	            var cellContent = (tui.util.isNumber(cell) ? cell : '"' + cell + '"');
+
+	            csvText += cellContent;
+
+	            if (cellIndex < lastCellIndex) {
+	                csvText += itemDelimiter;
+	            }
+	        });
+
+	        if (rowIndex < lastRowIndex) {
+	            csvText += lineDelimiter;
+	        }
+	    });
+
+	    return encodeURIComponent(csvText);
+	}
+
+	// export private methods for Test
+	dataExporter._makeCsvBodyWithRawData = _makeCsvBodyWithRawData;
+	dataExporter._makeXlsBodyWithRawData = _makeXlsBodyWithRawData;
+	dataExporter._get2DArrayFromRawData = _get2DArrayFromRawData;
+
+	module.exports = dataExporter;
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview File downloader for client-side download
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var arrayUtil = __webpack_require__(6);
+	var chartConst = __webpack_require__(2);
+
+	var DOWNLOAD_HANDLERS = {
+	    downloadAttribute: downloadWithAnchorElementDownloadAttribute,
+	    msSaveOrOpenBlob: downloadWithMsSaveOrOpenBlob
+	};
+
+	/**
+	 * Return download method name of current browser supports
+	 * @returns {string}
+	 */
+	function getDownloadMethod() {
+	    var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
+	    var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+	    var method;
+
+	    if (isMsSaveOrOpenBlobSupported) {
+	        method = 'msSaveOrOpenBlob';
+	    } else if (isDownloadAttributeSupported) {
+	        method = 'downloadAttribute';
+	    }
+
+	    return method;
+	}
+
+	/**
+	 * Base64 string to blob
+	 * original source ref: https://github.com/miguelmota/base64toblob/blob/master/base64toblob.js
+	 * Licence: MIT Licence
+	 * @param {string} base64String - base64 string
+	 * @returns {Blob}
+	 */
+	function base64toBlob(base64String) {
+	    var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
+	    var sliceSize = 1024;
+	    var byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
+	    var byteArrays = [];
+	    var offset, slice, byteNumbers, i, byteArray, resultBlob;
+
+	    for (offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+	        slice = byteCharacters.slice(offset, offset + sliceSize);
+
+	        byteNumbers = new Array(slice.length);
+
+	        for (i = 0; i < slice.length; i += 1) {
+	            byteNumbers[i] = slice.charCodeAt(i);
+	        }
+
+	        byteArray = new window.Uint8Array(byteNumbers);
+
+	        byteArrays.push(byteArray);
+	    }
+
+	    resultBlob = new Blob(byteArrays, {type: contentType});
+
+	    return resultBlob;
+	}
+
+	/**
+	 * Return given extension type is image format
+	 * @param {string} extension extension
+	 * @returns {boolean}
+	 */
+	function isImageExtension(extension) {
+	    return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, function(imageExtension) {
+	        return extension === imageExtension;
+	    });
+	}
+
+	/**
+	 * Download content to file with msSaveOrOpenBlob
+	 * @param {string} fileName - file name
+	 * @param {string} extension - file extension
+	 * @param {string} content - file content
+	 */
+	function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
+	    var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
+
+	    window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
+	}
+
+	/**
+	 * Download content to file with anchor element's download attribute
+	 * @param {string} fileName - file name
+	 * @param {string} extension - file extension
+	 * @param {string} content - file content
+	 */
+	function downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
+	    var anchorElement;
+
+	    if (content) {
+	        anchorElement = document.createElement('a');
+
+	        anchorElement.href = content;
+	        anchorElement.target = '_blank';
+	        anchorElement.download = fileName + '.' + extension;
+
+	        document.body.appendChild(anchorElement);
+
+	        anchorElement.click();
+	        anchorElement.remove();
+	    }
+	}
+
+	/**
+	 * Download content to file with given filename and extension
+	 * @param {string} fileName - file name
+	 * @param {string} extension - file extension
+	 * @param {string} content - file content
+	 */
+	function execDownload(fileName, extension, content) {
+	    var downloadMethod = getDownloadMethod();
+
+	    if (downloadMethod && tui.util.isString(content)) {
+	        DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content);
+	    }
+	}
+
+	module.exports = {
+	    execDownload: execDownload
+	};
+
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileOverview Chart image exporter
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var downloader = __webpack_require__(32);
+	var chartConst = __webpack_require__(2);
+
+	var browser = tui.util.browser;
+	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
+	var DOMURL = window.URL || window.webkitURL || window;
+	var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
+
+	/**
+	 * Return svg outerHTML string
+	 * @param {HTMLElement} svgElement svg element
+	 * @returns {string}
+	 */
+	function getSvgString(svgElement) {
+	    var svgParent = svgElement.parentNode;
+	    var tempWrapper = document.createElement('DIV');
+	    var svgString;
+
+	    tempWrapper.appendChild(svgElement);
+	    svgString = tempWrapper.innerHTML;
+	    svgParent.appendChild(svgElement);
+
+	    tempWrapper = null;
+	    svgParent = null;
+
+	    return svgString;
+	}
+
+	/**
+	 * Download with SVG string and canvg
+	 * @param {HTMLElement} canvas canvas element
+	 * @param {string} svgString svg HTML string
+	 * @param {string} fileName file name
+	 * @param {string} extension file extension
+	 */
+	function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
+	    var ctx = canvas.getContext('2d');
+
+	    // remove name space for IE
+	    if (isIE10OrIE11) {
+	        svgString = svgString.replace(/xmlns:NS1=""/, '');
+	        svgString = svgString.replace(/NS1:xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
+	        svgString = svgString.replace(/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, '');
+	        svgString = svgString.replace(/xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/, '');
+	    }
+
+	    ctx.drawSvg(svgString, 0, 0);
+
+	    downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+	}
+
+	/**
+	 * Download with SVG string and blob URL
+	 * @param {HTMLElement} canvas canvas element
+	 * @param {string} svgString svg HTML string
+	 * @param {string} fileName file name
+	 * @param {string} extension file extension
+	 */
+	function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
+	    var ctx = canvas.getContext('2d');
+	    var blob = new Blob([svgString], {type: 'image/svg+xml'});
+	    var url = DOMURL.createObjectURL(blob);
+	    var img = new Image();
+
+	    img.onload = function() {
+	        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+	        downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+
+	        DOMURL.revokeObjectURL(url);
+	    };
+
+	    img.src = url;
+	}
+
+	module.exports = {
+	    /**
+	     * Download image with png format
+	     * @param {string} fileName - file name to save
+	     * @param {string} extension - extension type
+	     * @param {HTMLElement} imageSourceElement - image source element
+	     */
+	    downloadImage: function(fileName, extension, imageSourceElement) {
+	        var svgString, parentNode, canvas;
+
+	        if (imageSourceElement.tagName === 'svg') {
+	            parentNode = imageSourceElement.parentNode;
+
+	            canvas = document.createElement('canvas');
+
+	            canvas.width = parentNode.offsetWidth;
+	            canvas.height = parentNode.offsetHeight;
+
+	            svgString = getSvgString(imageSourceElement);
+
+	            if (isIE10OrIE11) {
+	                downloadSvgWithCanvg(canvas, svgString, fileName, extension);
+	            } else {
+	                downloadSvgWithBlobURL(canvas, svgString, fileName, extension);
+	            }
+	        } else if (imageSourceElement.tagName === 'canvas') {
+	            canvas = imageSourceElement;
+
+	            downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+	        }
+	    },
+
+	    /**
+	     * Returns data extensions
+	     * @returns {Array.<string>}
+	     */
+	    getExtensions: function() {
+	        return imageExtensions;
+	    }
+	};
+
+
+/***/ },
+/* 34 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Event listener.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var bindHandlerMap = {};
+
+	/**
+	 * Event listener.
+	 * @module eventListener
+	 * @private */
+	var eventListener = {
+	    /**
+	     * Add event listener for IE.
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target target element
+	     * @param {string} type event type
+	     * @param {function} handler callback function
+	     * @param {?object} context context for callback
+	     * @private
+	     */
+	    _attachEvent: function(target, type, handler, context) {
+	        var bindHandler;
+
+	        if (context) {
+	            bindHandler = tui.util.bind(handler, context);
+	        } else {
+	            bindHandler = handler;
+	        }
+
+	        bindHandlerMap[type + handler] = bindHandler;
+	        target.attachEvent('on' + type, bindHandler);
+	    },
+
+	    /**
+	     * Add event listener for other browsers.
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target - target element
+	     * @param {string} type - event type
+	     * @param {function} handler - handler
+	     * @param {object} [context] - context for handler
+	     * @private
+	     */
+	    _addEventListener: function(target, type, handler, context) {
+	        var bindHandler;
+
+	        if (context) {
+	            bindHandler = tui.util.bind(handler, context);
+	        } else {
+	            bindHandler = handler;
+	        }
+
+	        bindHandlerMap[type + handler] = bindHandler;
+	        target.addEventListener(type, bindHandler);
+	    },
+
+	    /**
+	     * Bind DOM event.
+	     * @memberOf module:eventListener
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target target element
+	     * @param {string} type event type
+	     * @param {function} handler handler function
+	     * @param {object} [context] - context for handler
+	     * @private
+	     */
+	    _bindEvent: function(target, type, handler, context) {
+	        var bindEvent;
+
+	        if ('addEventListener' in target) {
+	            bindEvent = this._addEventListener;
+	        } else if ('attachEvent' in target) {
+	            bindEvent = this._attachEvent;
+	        }
+	        eventListener._bindEvent = bindEvent;
+
+	        bindEvent(target, type, handler, context);
+	    },
+
+	    /**
+	     * Bind DOM events.
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target - target element
+	     * @param {string | object} types - type or map of type and handler
+	     * @param {function | object} [handler] - handler or context
+	     * @param {object} [context] - context
+	     */
+	    on: function(target, types, handler, context) {
+	        var handlerMap = {};
+	        if (tui.util.isString(types)) {
+	            handlerMap[types] = handler;
+	        } else {
+	            handlerMap = types;
+	            context = handler;
+	        }
+
+	        tui.util.forEach(handlerMap, function(_handler, type) {
+	            eventListener._bindEvent(target, type, _handler, context);
+	        });
+	    },
+
+	    /**
+	     * Remove event listener for IE.
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target - target element
+	     * @param {string} type - event type
+	     * @param {function} handler - handler
+	     * @private
+	     */
+	    _detachEvent: function(target, type, handler) {
+	        if (bindHandlerMap[type + handler]) {
+	            target.detachEvent('on' + type, bindHandlerMap[type + handler]);
+	            delete bindHandlerMap[type + handler];
+	        }
+	    },
+
+	    /**
+	     * Add event listener for other browsers.
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target - target element
+	     * @param {string} type - event type
+	     * @param {function} handler - handler
+	     * @private
+	     */
+	    _removeEventListener: function(target, type, handler) {
+	        target.removeEventListener(type, bindHandlerMap[type + handler]);
+	        delete bindHandlerMap[type + handler];
+	    },
+
+	    /**
+	     * Unbind DOM event.
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target - target element
+	     * @param {string} type - event type
+	     * @param {function} handler - handler
+	     * @private
+	     */
+	    _unbindEvent: function(target, type, handler) {
+	        var unbindEvent;
+	        if ('removeEventListener' in target) {
+	            unbindEvent = eventListener._removeEventListener;
+	        } else if ('detachEvent' in target) {
+	            unbindEvent = eventListener._detachEvent;
+	        }
+	        eventListener._unbindEvent = unbindEvent;
+
+	        unbindEvent(target, type, handler);
+	    },
+
+	    /**
+	     * Unbind DOM events.
+	     * @memberOf module:eventListener
+	     * @param {HTMLElement} target - target element
+	     * @param {string | object} types - type or map of type and handler
+	     * @param {function} [handler] - handler
+	     */
+	    off: function(target, types, handler) {
+	        var handlerMap = {};
+	        if (tui.util.isString(types)) {
+	            handlerMap[types] = handler;
+	        } else {
+	            handlerMap = types;
+	        }
+
+	        tui.util.forEach(handlerMap, function(_handler, type) {
+	            eventListener._unbindEvent(target, type, _handler);
+	        });
+	    }
+	};
+
+	module.exports = eventListener;
 
 
 /***/ },
@@ -9135,30 +9177,27 @@
 	    _renderLegendArea: function(paper) {
 	        var legendData = this.legendModel.getData();
 	        var graphRenderer = this.graphRenderer;
-	        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
-	        var labelHeight = graphRenderer.getRenderedLabelHeight(legendData[0].label, legendData[0].theme) - 1;
 	        var isHorizontal = predicate.isHorizontalLegend(this.options.align);
+	        var basePosition = this.layout.position;
+	        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
+	        var labelTheme = legendData[0] ? legendData[0].theme : {};
+	        var labelHeight = graphRenderer.getRenderedLabelHeight('DEFAULT_TEXT', labelTheme) - 1;
 	        var labelCount = labelWidths.length;
-	        var height = (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount);
 	        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
 	        var iconWidth = 10;
-	        var width = arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
-	            + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
-	        var basePosition = this.layout.position;
-	        var position = {
-	            left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
-	            top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
-	        };
-	        var legendRenderingData = this._getLegendRenderingData(legendData, labelHeight, labelWidths);
 
 	        return graphRenderer.render({
 	            paper: paper,
-	            legendData: legendRenderingData,
+	            legendData: this._getLegendRenderingData(legendData, labelHeight, labelWidths),
 	            isHorizontal: isHorizontal,
-	            position: position,
+	            position: {
+	                left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
+	                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
+	            },
 	            dimension: {
-	                height: height,
-	                width: width
+	                height: (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount),
+	                width: arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
+	                + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2)
 	            },
 	            labelTheme: this.theme.label,
 	            labelWidths: labelWidths,
@@ -9956,7 +9995,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var pluginFactory = __webpack_require__(7);
 
 	var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
@@ -10243,7 +10282,7 @@
 	var singleTooltipMixer = __webpack_require__(42);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var tooltipTemplate = __webpack_require__(43);
 
 	/**
@@ -10471,7 +10510,7 @@
 	var chartConst = __webpack_require__(2),
 	    dom = __webpack_require__(14),
 	    predicate = __webpack_require__(5),
-	    renderUtil = __webpack_require__(34);
+	    renderUtil = __webpack_require__(24);
 
 	var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 	    /**
@@ -10939,7 +10978,7 @@
 	var chartConst = __webpack_require__(2),
 	    predicate = __webpack_require__(5),
 	    dom = __webpack_require__(14),
-	    renderUtil = __webpack_require__(34);
+	    renderUtil = __webpack_require__(24);
 
 	/**
 	 * singleTooltipMixer is single tooltip mixer of map chart.
@@ -11600,7 +11639,7 @@
 	var GroupTooltipPositionModel = __webpack_require__(46);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var defaultTheme = __webpack_require__(9);
 	var tooltipTemplate = __webpack_require__(43);
 
@@ -12637,9 +12676,9 @@
 
 	var MouseEventDetectorBase = __webpack_require__(49);
 	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(33);
+	var eventListener = __webpack_require__(34);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
 	    /**
@@ -12832,10 +12871,10 @@
 	var TickBaseCoordinateModel = __webpack_require__(50);
 	var BoundsBaseCoordinateModel = __webpack_require__(51);
 	var chartConst = __webpack_require__(2);
-	var eventListener = __webpack_require__(33);
+	var eventListener = __webpack_require__(34);
 	var predicate = __webpack_require__(5);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
 	    /**
@@ -13811,14 +13850,15 @@
 	    } else if (predicate.isMapChart(chartType)) {
 	        factory = mapChartEventDetectorFactory;
 	    } else if (predicate.isBarTypeChart(chartType)
-	               || predicate.isBoxplotChart(chartType)
-	               || predicate.isHeatmapChart(chartType)
-	               || predicate.isTreemapChart(chartType)
-	              ) {
+	        || predicate.isBoxplotChart(chartType)
+	        || predicate.isHeatmapChart(chartType)
+	        || predicate.isTreemapChart(chartType)
+	    ) {
 	        factory = boundsTypeEventDetectorFactory;
 	    } else if (predicate.isCoordinateTypeChart(chartType)
-	               || predicate.isPieChart(chartType)
-	               || predicate.isPieDonutComboChart(chartType, seriesTypes)) {
+	        || predicate.isPieChart(chartType)
+	        || predicate.isPieDonutComboChart(chartType, seriesTypes)
+	    ) {
 	        factory = simpleEventDetectorFactory;
 	    } else {
 	        factory = areaTypeEventDetectorFactory;
@@ -14041,8 +14081,8 @@
 	var MouseEventDetectorBase = __webpack_require__(49);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
-	var eventListener = __webpack_require__(33);
+	var renderUtil = __webpack_require__(24);
+	var eventListener = __webpack_require__(34);
 
 	/**
 	 * Mixer for zoom event of area type mouse event detector.
@@ -14615,7 +14655,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var MouseEventDetectorBase = __webpack_require__(49);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
 	    /**
@@ -15359,7 +15399,7 @@
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var pluginFactory = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(61);
 
@@ -16416,7 +16456,7 @@
 	var labelHelper = __webpack_require__(63);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var raphaelRenderUtil = __webpack_require__(61);
 
 	var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
@@ -16716,7 +16756,7 @@
 	            tui.util.forEach(groupPositions, function(positions, index) {
 	                var bounds = groupBounds[index];
 	                var lastBound = bounds[bounds.length - 1].end;
-	                var firstBound = bounds[parseInt(bounds.length / 2, 10) - 1].end;
+	                var firstBound = bounds[Math.max(parseInt(bounds.length / 2, 10), 1) - 1].end;
 	                var plusEnd = self._makeStackedLabelPosition(lastBound);
 	                var minusEnd = self._makeStackedLabelPosition(firstBound);
 	                var plusLabel = sumPlusValues[index];
@@ -16784,7 +16824,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * renderingLabelHelper is helper for rendering of series label.
@@ -16996,7 +17036,7 @@
 	var BarTypeSeriesBase = __webpack_require__(62);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
 	    /**
@@ -17273,7 +17313,7 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -17669,7 +17709,7 @@
 
 	var Series = __webpack_require__(60);
 	var chartConst = __webpack_require__(2);
-	var geom = __webpack_require__(27);
+	var geom = __webpack_require__(28);
 
 	var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSeries.prototype */ {
 	    /**
@@ -20376,7 +20416,7 @@
 	var BarTypeSeriesBase = __webpack_require__(62);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var BoxplotChartSeries = tui.util.defineClass(Series, /** @lends BoxplotChartSeries.prototype */ {
 	    /**
@@ -20560,8 +20600,8 @@
 	var seriesTemplate = __webpack_require__(79);
 	var chartConst = __webpack_require__(2);
 	var dom = __webpack_require__(14);
-	var renderUtil = __webpack_require__(34);
-	var eventListener = __webpack_require__(33);
+	var renderUtil = __webpack_require__(24);
+	var eventListener = __webpack_require__(34);
 
 	var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 	    /**
@@ -20790,11 +20830,13 @@
 	var SeriesGroup = __webpack_require__(83);
 	var rawDataHandler = __webpack_require__(4);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 	var objectUtil = __webpack_require__(11);
 
 	var concat = Array.prototype.concat;
+
+	var isUndefined = tui.util.isUndefined;
 
 	/*
 	 * Raw series datum.
@@ -20871,6 +20913,8 @@
 	         * @type {Array.<{category: string | number, values: Array.<number>}>}
 	         */
 	        this.dynamicData = [];
+
+	        this.defaultValues = [0, 500];
 
 	        this.initData(rawData);
 	        this.initZoomedRawData();
@@ -21625,22 +21669,109 @@
 	    },
 
 	    /**
+	     * Get fallback datetime values
+	     * @returns {[number, number]} milliseconds
+	     */
+	    getDefaultDatetimeValues: function() {
+	        var hour = 60 * 60 * 1000;
+	        var now = Date.now();
+
+	        return [now - hour, now];
+	    },
+
+	    /**
+	     * Return boolean value of whether seriesData empty or not
+	     * @param {string} chartType Type string of chart
+	     * @returns {boolean}
+	     */
+	    isSeriesDataEmpty: function(chartType) {
+	        var rawData = this.rawData;
+	        var seriesNotExist = rawData && !rawData.series;
+
+	        return (
+	            !rawData
+	            || seriesNotExist
+	            || (!(rawData.series[chartType])
+	                || (rawData.series[chartType] && !(rawData.series[chartType].length)))
+	        );
+	    },
+	    /**
+	     * Return boolean value of whether axis limit option empty or not
+	     * @param {string} axisType Type string of axis
+	     * @returns {boolean}
+	     */
+	    isLimitOptionsEmpty: function(axisType) {
+	        var axisOption = this.options[axisType] || {};
+	        var isEmptyLimitOption = isUndefined(axisOption.min) && isUndefined(axisOption.max);
+
+	        return isEmptyLimitOption;
+	    },
+
+	    /**
 	     * Create values that picked value from SeriesItems of specific SeriesDataModel.
 	     * @param {?string} chartType - type of chart
 	     * @param {?string} valueType - type of value like value, x, y, r.
+	     * @param {?string} axisName - name of axis value 'xAxis' 'yAxis'
 	     * @returns {Array.<number>}
 	     * @private
 	     */
-	    _createValues: function(chartType, valueType) {
-	        var values;
+	    _createValues: function(chartType, valueType, axisName) {
+	        var values, plotValues;
+	        var options = this.options;
+	        var plotOptions = options.plot;
+	        var axisOption = options[axisName] || {};
+	        var type = axisOption.type;
+	        var isEmptyRawData = this.isSeriesDataEmpty(chartType);
+	        var isEmptyLimitOptions = this.isLimitOptionsEmpty(axisName);
+	        var isLineOrAreaChart = (predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
+	            || predicate.isLineAreaComboChart(chartType, this.seriesTypes));
 
 	        if (predicate.isComboChart(chartType)) {
 	            values = [];
 	            this._eachByAllSeriesDataModel(function(seriesDataModel) {
 	                values = values.concat(seriesDataModel.getValues(valueType));
 	            });
+	        } else if (isEmptyRawData && isEmptyLimitOptions) {
+	            if (valueType === 'x' && type === 'datetime') {
+	                values = this.getDefaultDatetimeValues();
+
+	                if (isLineOrAreaChart && plotOptions) {
+	                    plotValues = this.getValuesFromPlotOptions(plotOptions, type);
+	                    values = values.concat(plotValues);
+	                }
+	            } else {
+	                values = this.defaultValues;
+	            }
 	        } else {
 	            values = this.getSeriesDataModel(chartType).getValues(valueType);
+	        }
+
+	        return values;
+	    },
+
+	    /**
+	     * Get values of plot lines, and bands if it exist
+	     * @param {{lines: Array.<object>, bands: Array.<object>}} plotOptions plot options
+	     * @param {string} [axisType] axis value type 'value' 'datetime'
+	     * @returns {Array.<number>}
+	     */
+	    getValuesFromPlotOptions: function(plotOptions, axisType) {
+	        var values = [];
+
+	        if (plotOptions.lines) {
+	            tui.util.forEach(plotOptions.lines, function(line) {
+	                values.push(axisType !== 'datetime' ? line.value : new Date(line.value));
+	            });
+	        }
+
+	        if (plotOptions.bands) {
+	            tui.util.forEach(plotOptions.bands, function(line) {
+	                var ranges = tui.util.map(line.range, function(range) {
+	                    return axisType !== 'datetime' ? range : new Date(range);
+	                });
+
+	                values = values.concat(ranges);
+	            });
 	        }
 
 	        return values;
@@ -21650,16 +21781,17 @@
 	     * Get values from valuesMap.
 	     * @param {?string} chartType - type of chart
 	     * @param {?string} valueType - type of value like value, x, y, r.
+	     * @param {?string} axisType - type of axis value 'value', 'datetime'
 	     * @returns {Array.<number>}
 	     */
-	    getValues: function(chartType, valueType) {
+	    getValues: function(chartType, valueType, axisType) {
 	        var mapKey;
 
 	        // chartType = chartType || chartConst.DUMMY_KEY;
 	        mapKey = chartType + valueType;
 
 	        if (!this.valuesMap[mapKey]) {
-	            this.valuesMap[mapKey] = this._createValues(chartType, valueType);
+	            this.valuesMap[mapKey] = this._createValues(chartType, valueType, axisType);
 	        }
 
 	        return this.valuesMap[mapKey];
@@ -21923,9 +22055,10 @@
 	     * @param {boolean} isSingleYAxis = whether single y axis or not
 	     * @param {string} stackType - stack type
 	     * @param {string} valueType - value type
+	     * @param {string} axisType - value type
 	     * @returns {Array.<number>}
 	     */
-	    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType) {
+	    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType, axisType) {
 	        var baseValues;
 
 	        if (predicate.isComboChart(this.chartType) && isSingleYAxis) {
@@ -21938,7 +22071,7 @@
 	        } else if (predicate.isNormalStackChart(chartType, stackType)) {
 	            baseValues = this._createBaseValuesForNormalStackedChart(chartType);
 	        } else {
-	            baseValues = this.getValues(chartType, valueType);
+	            baseValues = this.getValues(chartType, valueType, axisType);
 	        }
 
 	        return baseValues;
@@ -21980,7 +22113,7 @@
 	'use strict';
 
 	var arrayUtil = __webpack_require__(6);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 
 	/**
@@ -23125,7 +23258,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 
 	var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
@@ -23381,7 +23514,7 @@
 	'use strict';
 
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
 	    /**
@@ -23700,7 +23833,7 @@
 
 	'use strict';
 
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var calculator = __webpack_require__(23);
 
 	var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
@@ -24320,7 +24453,7 @@
 	'use strict';
 
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.prototype */{
 	    /**
@@ -24669,7 +24802,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var raphaelRenderUtil = __webpack_require__(61);
 	var circleLegendCalculator = __webpack_require__(92);
 	var axisCalculator = __webpack_require__(93);
@@ -24874,7 +25007,7 @@
 	        var hasTitleOption = tui.util.isExisty(chartOptions.title);
 	        var titleHeight =
 	            hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-	                    this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
+	                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
 	        var dimension = {
 	            height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
 	        };
@@ -25322,8 +25455,9 @@
 	        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
 	        var seriesPosition = {
 	            top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
-	            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
+	            left: (this.chartLeftPadding * 2) + leftLegendWidth + this.getDimension('yAxis').width
 	        };
+	        // Multiply chart left padding times two for series middle align
 
 	        this.positionMap.series = seriesPosition;
 
@@ -25420,7 +25554,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Calculator for circle legend.
@@ -25523,7 +25657,7 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Calculator for dimension of axis.
@@ -25556,6 +25690,8 @@
 	        var title = options.title || '';
 	        var titleAreaWidth = 0;
 	        var width = 0;
+
+	        labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
 
 	        if (options.isCenter) {
 	            width += chartConst.AXIS_LABEL_PADDING;
@@ -25594,7 +25730,7 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 	var arrayUtil = __webpack_require__(6);
 
 	/**
@@ -25825,12 +25961,12 @@
 	        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
 	            legendWidth = legendDimension ? legendDimension.width : 0;
 	        } else {
-	            legendWidth = 20;
+	            legendWidth = 0;
 	        }
 
 	        rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
 
-	        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisWidth - rightAreaWidth;
+	        return chartWidth - (chartConst.CHART_PADDING * 4) - yAxisWidth - rightAreaWidth;
 	    },
 
 	    /**
@@ -25877,7 +26013,7 @@
 	'use strict';
 
 	var chartConst = __webpack_require__(2);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Calculator for spectrum legend.
@@ -25932,6 +26068,7 @@
 	var scaleLabelFormatter = __webpack_require__(100);
 	var axisDataMaker = __webpack_require__(101);
 	var predicate = __webpack_require__(5);
+	var renderUtil = __webpack_require__(24);
 
 	var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */{
 	    /**
@@ -26007,8 +26144,7 @@
 	        var chartType = typeMap.chartType;
 	        var isVertical = typeMap.areaType !== 'xAxis';
 	        var baseValues = this.dataProcessor.createBaseValuesForLimit(
-	            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType
-	        );
+	            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType, typeMap.areaType);
 	        var baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
 	        var options = tui.util.extend(baseOptions, {
 	            isVertical: isVertical,
@@ -26052,7 +26188,7 @@
 	    /**
 	     * Create scale.
 	     * @param {object} axisOptions - axis options
-	     * @param {{chartType: string, areaType: string}} typeMap - type map
+	     * @param {{chartType: string, areaType: string, valueType: string}} typeMap - type map
 	     * @param {?object} additionalOptions - additional options
 	     * @returns {object}
 	     * @private
@@ -26264,6 +26400,8 @@
 	        if (addingDataMode) {
 	            labels = labels.slice(0, labels.length - 1);
 	        }
+
+	        labels = renderUtil.addPrefixSuffix(labels, this.options.xAxis.prefix, this.options.xAxis.suffix);
 
 	        validLabels = tui.util.filter(labels, function(label) {
 	            return !!label;
@@ -26772,7 +26910,8 @@
 	 * max = 155 and step = 10 ---> max = 160
 	 */
 	function getNormalizedLimit(min, max, step) {
-	    var placeNumber = (1 / Math.min(getDigits(max), getDigits(step)));
+	    var minNumber = Math.min(getDigits(max), getDigits(step));
+	    var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
 	    var fixedStep = (step * placeNumber);
 
 	    // max의 step 자릿수 이하 올림
@@ -26906,7 +27045,7 @@
 
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	var abs = Math.abs;
 
@@ -27000,8 +27139,8 @@
 
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var geomatric = __webpack_require__(27);
-	var renderUtil = __webpack_require__(34);
+	var geomatric = __webpack_require__(28);
+	var renderUtil = __webpack_require__(24);
 	var arrayUtil = __webpack_require__(6);
 
 	/**
@@ -30531,7 +30670,7 @@
 	'use strict';
 
 	var DataProcessorBase = __webpack_require__(81);
-	var renderUtil = __webpack_require__(34);
+	var renderUtil = __webpack_require__(24);
 
 	/**
 	 * Raw series data.
@@ -32482,7 +32621,9 @@
 	            self.groupLines[groupIndex].attr({path: path.join(' ')});
 
 	            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
-	                self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+	                if (item.endDot) {
+	                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+	                }
 	            });
 	        });
 	    },
@@ -33083,10 +33224,15 @@
 	     * @private
 	     */
 	    _hideDot: function(dot, opacity) {
+	        var prev = this.prevDotAttributes;
 	        var outDotStyle = this.outDotStyle;
 
 	        if (!tui.util.isUndefined(opacity)) {
-	            outDotStyle = tui.util.extend({}, this.prevDotAttributes, {
+	            outDotStyle = tui.util.extend({
+	                r: prev.r,
+	                'stroke-opacity': prev['stroke-opacity'],
+	                'stroke-width': prev['stroke-width']
+	            }, {
 	                'fill-opacity': opacity
 	            });
 	        }
@@ -33437,8 +33583,6 @@
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
-	var LEFT_BAR_WIDTH = 10;
-	var ADDING_DATA_ANIMATION_DURATION = 300;
 
 	var concat = Array.prototype.concat;
 
@@ -33747,7 +33891,9 @@
 	                var position = groupPositions[groupIndex][index];
 	                var startPositon;
 
-	                self._moveDot(item.endDot.dot, position);
+	                if (item.endDot) {
+	                    self._moveDot(item.endDot.dot, position);
+	                }
 	                if (item.startDot) {
 	                    startPositon = tui.util.extend({}, position);
 	                    startPositon.top = startPositon.startTop;
@@ -33798,23 +33944,18 @@
 	     */
 	    animateForAddingData: function(data, tickSize, groupPositions, shiftingOption, zeroTop) {
 	        var self = this;
+	        var groupPaths = this._getAreaChartPath(groupPositions, false);
 	        var additionalIndex = 0;
-	        var groupPaths;
 
 	        if (!groupPositions.length) {
 	            return;
 	        }
 
-	        this.zeroTop = zeroTop;
-
-	        groupPaths = this._getAreaChartPath(groupPositions, false);
-
 	        if (shiftingOption) {
-	            this.leftBar.animate({
-	                width: tickSize + LEFT_BAR_WIDTH
-	            }, ADDING_DATA_ANIMATION_DURATION);
 	            additionalIndex = 1;
 	        }
+
+	        this.zeroTop = zeroTop;
 
 	        tui.util.forEachArray(this.groupAreas, function(area, groupIndex) {
 	            var dots = self.groupDots[groupIndex];
@@ -33827,22 +33968,21 @@
 
 	            tui.util.forEachArray(dots, function(item, index) {
 	                var position = groupPosition[index + additionalIndex];
-
-	                self._animateByPosition(item.endDot.dot, position);
+	                self._animateByPosition(item.endDot.dot, position, tickSize);
 
 	                if (item.startDot) {
 	                    self._animateByPosition(item.startDot.dot, {
 	                        left: position.left,
 	                        top: position.startTop
-	                    });
+	                    }, tickSize);
 	                }
 	            });
 
-	            self._animateByPath(area.area, pathMap.area);
-	            self._animateByPath(area.line, pathMap.line);
+	            self._animateByPath(area.area, pathMap.area, tickSize);
+	            self._animateByPath(area.line, pathMap.line, tickSize);
 
 	            if (area.startLine) {
-	                self._animateByPath(area.startLine, pathMap.startLine);
+	                self._animateByPath(area.startLine, pathMap.startLine, tickSize);
 	            }
 	        });
 	    },
@@ -35306,7 +35446,7 @@
 	         * @type {Array.<Array.<{rect: Object, color: string}>>}
 	         */
 	        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot,
-	        seriesSet);
+	            seriesSet);
 
 	        return seriesSet;
 	    },
@@ -35920,8 +36060,7 @@
 
 	        tui.util.forEach(labelData, function(labelDatum) {
 	            var position = labelDatum.labelPosition;
-	            var label = raphaelRenderUtil.renderText(paper, position,
-	                    labelDatum.name || labelDatum.code, attributes);
+	            var label = raphaelRenderUtil.renderText(paper, position, labelDatum.name || labelDatum.code, attributes);
 
 	            set.push(label);
 
@@ -36103,7 +36242,7 @@
 
 	        this._renderLegendItems(legendData);
 
-	        if (!this.isHorizontal && legendData.length < data.legendData.length) {
+	        if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
 	            legendHeight = this.paper.height - (this.basePosition.top * 2);
 
 	            this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
@@ -36671,7 +36810,7 @@
 	        var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
 	        var pos = {
 	            left: paper.width / 2,
-	            top: (titleSize.height + chartConst.TITLE_PADDING) / 2    // for renderText's baseline
+	            top: (titleSize.height + chartConst.TITLE_PADDING) / 2 // for renderText's baseline
 	        };
 	        var titleSet = paper.set();
 

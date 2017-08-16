@@ -131,7 +131,7 @@ function onKeyupEnter() {
 
 function moveToPage(url) {
     if (url) {
-        location = url;
+        window.location = url;
     }
     clear();
 }
@@ -184,4 +184,17 @@ function removeWhiteSpace(value) {
     return value.replace(/\s/g, '');
 }
 
+/*************** TOOGLE SUB NAV ***************/
+function toggleSubNav(e) {
+    $(e.currentTarget).next().toggleClass('hidden');
+    $(e.currentTarget).find('.glyphicon').toggleClass('glyphicon-plus glyphicon-minus');
+}
 
+$lnb.find('.lnb-api').each(function() {
+    $(this).find('.toggle-subnav')
+        .filter(function() {
+            return $(this).next(':empty').length === 0;
+        }).each(function() {
+            $(this).removeClass('hidden').on('click', toggleSubNav);
+        });
+});
