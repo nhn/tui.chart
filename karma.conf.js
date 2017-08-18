@@ -1,77 +1,22 @@
+/* eslint no-process-env: 0 */
+
 'use strict';
 
 var path = require('path');
+var webdriverConfig = {
+    hostname: 'fe.nhnent.com',
+    port: 4444,
+    remoteHost: true
+};
 
 module.exports = function(config) {
-    config.set({
-        // base path that will be used to resolve all patterns (eg. files, exclude)
+    var defaultConfig = {
+        autoWatchBatchDelay: 100,
         basePath: '',
-
-        captureTimeout: 100000,
         browserDisconnectTimeout: 60000,
         browserNoActivityTimeout: 60000,
-
-        plugins: [
-            'karma-jasmine',
-            'karma-webpack',
-            'karma-sourcemap-loader',
-            'karma-phantomjs-launcher',
-            'karma-narrow-reporter'
-        ],
-
-        // frameworks to use
-        // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: [
-            'jasmine'
-        ],
-
-        // list of files / patterns to load in the browser
-        files: [
-            {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
-            {pattern: 'lib/raphael/raphael.js', watched: false},
-
-            'test/test.bundle.js'
-        ],
-
-        // list of files to exclude
-        exclude: [],
-
-        // preprocess matching files before serving them to the browser
-        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-            'test/test.bundle.js': ['webpack', 'sourcemap']
-        },
-
-        webpack: {
-            devtool: '#inline-source-map',
-            resolve: {
-                root: [path.resolve('./src/js')]
-            },
-            module: {
-                loaders: [{
-                    test: /\.less$/,
-                    loader: 'css-loader!less?paths=src/less/'
-                }]
-            }
-        },
-
-        webpackMiddleware: {
-            // webpack-dev-middleware configuration
-            // i. e.
-            noInfo: true,
-            stats: {
-                colors: true
-            }
-        },
-
-        // test results reporter to use
-        // possible values: 'dots', 'progress'
-        // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: [
-            'narrow'
-        ],
-
-        // optionally, configure the reporter
+        captureTimeout: 100000,
+        colors: true,
         coverageReporter: {
             dir: 'report/coverage/',
             reporters: [
@@ -90,35 +35,119 @@ module.exports = function(config) {
                 }
             ]
         },
+        exclude: [],
+        files: [
+            {
+                pattern: 'lib/tui-code-snippet/code-snippet.js',
+                watched: false
+            },
+            {
+                pattern: 'lib/raphael/raphael.js',
+                watched: false
+            },
 
+            'test/test.bundle.js'
+        ],
+        frameworks: ['jasmine'],
         junitReporter: {
             outputDir: 'report/junit',
             suite: ''
         },
-
-        // web server port
-        port: 9876,
-
-        // enable / disable colors in the output (reporters and logs)
-        colors: true,
-
-        // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN ||
-        // config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
+        port: 9876,
+        preprocessors: {
+            'test/test.bundle.js': ['webpack', 'sourcemap']
+        },
+        webpack: {
+            devtool: '#inline-source-map',
+            resolve: {
+                root: [path.resolve('./src/js')]
+            },
+            module: {
+                loaders: [{
+                    test: /\.less$/,
+                    loader: 'css-loader!less?paths=src/less/'
+                }]
+            }
+        },
+        webpackMiddleware: {
+            noInfo: true,
+            stats: {
+                colors: true
+            }
+        }
+    };
 
-        // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: true,
+    if (process.env.SERVER === 'ne') {
+        defaultConfig.plugins = [
+            'karma-jasmine',
+            'karma-webpack',
+            'karma-sourcemap-loader',
+            'karma-coverage',
+            'karma-junit-reporter',
+            'karma-webdriver-launcher'
+        ];
 
-        autoWatchBatchDelay: 100,
+        defaultConfig.customLaunchers = {
+            'IE8': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 8
+            },
+            'IE9': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 9
+            },
+            'IE10': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 10
+            },
+            'IE11': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 11
+            },
+            'Chrome-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'chrome'
+            }
+        };
 
-        // start these browsers
-        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: [
-            'PhantomJS'
-        ],
-        // Continuous Integration mode
-        // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
-    });
+        defaultConfig.browsers = [
+            'IE9',
+            'IE10',
+            'IE11',
+            'Chrome-WebDriver'
+        ];
+
+        defaultConfig.reporters = [
+            'dots',
+            'coverage',
+            'junit'
+        ];
+
+        defaultConfig.singleRun = true;
+        defaultConfig.autoWatch = false;
+    } else {
+        defaultConfig.plugins = [
+            'karma-jasmine',
+            'karma-webpack',
+            'karma-sourcemap-loader',
+            'karma-chrome-launcher',
+            'karma-narrow-reporter'
+        ];
+        defaultConfig.browsers = ['ChromeHeadless'];
+        defaultConfig.reporters = ['narrow'];
+        defaultConfig.singleRun = false;
+        defaultConfig.autoWatch = true;
+    }
+
+    config.set(defaultConfig);
 };
