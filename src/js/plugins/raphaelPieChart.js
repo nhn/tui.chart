@@ -493,7 +493,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     findSectorInfo: function(position) {
-        var sector = this.paper.getElementByPoint(position.left, position.top);
+        var sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
         var info = null;
 
         if (sector) {
@@ -548,7 +548,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {{left: number, top: number}} position mouse position
      */
     moveMouseOnSeries: function(position) {
-        var sector = this.paper.getElementByPoint(position.left, position.top);
+        var sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
 
         if (this._isValidSector(sector)) {
             if (this.prevHoverSector !== sector) {

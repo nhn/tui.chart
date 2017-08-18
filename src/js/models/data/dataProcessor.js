@@ -881,6 +881,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
                 || (rawData.series[chartType] && !(rawData.series[chartType].length)))
         );
     },
+
     /**
      * Return boolean value of whether axis limit option empty or not
      * @param {string} axisType Type string of axis
@@ -888,9 +889,19 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     isLimitOptionsEmpty: function(axisType) {
         var axisOption = this.options[axisType] || {};
-        var isEmptyLimitOption = isUndefined(axisOption.min) && isUndefined(axisOption.max);
 
-        return isEmptyLimitOption;
+        return isUndefined(axisOption.min) && isUndefined(axisOption.max);
+    },
+
+    /**
+     * Return boolean value of whether axis limit option empty or not
+     * @param {string} axisType Type string of axis
+     * @returns {boolean}
+     */
+    isLimitOptionsInsufficient: function(axisType) {
+        var axisOption = this.options[axisType] || {};
+
+        return isUndefined(axisOption.min) || isUndefined(axisOption.max);
     },
 
     /**
@@ -909,15 +920,22 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var type = axisOption.type;
         var isEmptyRawData = this.isSeriesDataEmpty(chartType);
         var isEmptyLimitOptions = this.isLimitOptionsEmpty(axisName);
+
+        var isInsufficientLimitOptions = this.isLimitOptionsInsufficient(axisName);
         var isLineOrAreaChart = (predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
             || predicate.isLineAreaComboChart(chartType, this.seriesTypes));
+        var valueCandidate = this.defaultValues;
 
         if (predicate.isComboChart(chartType)) {
             values = [];
             this._eachByAllSeriesDataModel(function(seriesDataModel) {
                 values = values.concat(seriesDataModel.getValues(valueType));
             });
-        } else if (isEmptyRawData && isEmptyLimitOptions) {
+        } else if (isEmptyRawData && isInsufficientLimitOptions) {
+            if (!isEmptyLimitOptions && isInsufficientLimitOptions) {
+                valueCandidate = valueCandidate.concat([(axisOption.min || axisOption.max)]);
+            }
+
             if (valueType === 'x' && type === 'datetime') {
                 values = this.getDefaultDatetimeValues();
 
@@ -926,7 +944,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
                     values = values.concat(plotValues);
                 }
             } else {
-                values = this.defaultValues;
+                values = valueCandidate;
             }
         } else {
             values = this.getSeriesDataModel(chartType).getValues(valueType);

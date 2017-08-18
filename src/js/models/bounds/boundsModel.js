@@ -519,7 +519,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         this.positionMap.yAxis = {
             top: seriesPosition.top,
-            left: this.chartLeftPadding + leftLegendWidth
+            left: (this.chartLeftPadding * 2) + leftLegendWidth
         };
 
         this.positionMap.xAxis = {

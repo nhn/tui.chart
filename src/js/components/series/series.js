@@ -602,7 +602,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {boolean} [isRerendering] - whether rerendering or not
      */
     animateComponent: function(isRerendering) {
-        if (this.graphRenderer.animate) {
+        if (this.graphRenderer.animate && this.seriesSet) {
             this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
         } else {
             this.animateSeriesLabelArea(isRerendering);

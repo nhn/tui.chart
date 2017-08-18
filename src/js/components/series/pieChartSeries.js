@@ -140,6 +140,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             centerR += centerR * holeRatio;
         }
 
+        if (!seriesGroup) {
+            return null;
+        }
         paths = seriesGroup.map(function(seriesItem) {
             var ratio = seriesItem ? seriesItem.ratio : 0;
             var currentAngle = angleForRendering * ratio;
