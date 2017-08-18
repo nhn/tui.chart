@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.9.3
+ * @version 2.9.4
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Aug 11 2017 18:31:50 GMT+0900 (KST)"
+ * bundle created at "Fri Aug 18 2017 18:10:22 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -15993,7 +15993,7 @@
 	     * @param {boolean} [isRerendering] - whether rerendering or not
 	     */
 	    animateComponent: function(isRerendering) {
-	        if (this.graphRenderer.animate) {
+	        if (this.graphRenderer.animate && this.seriesSet) {
 	            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
 	        } else {
 	            this.animateSeriesLabelArea(isRerendering);
@@ -19012,6 +19012,9 @@
 	            centerR += centerR * holeRatio;
 	        }
 
+	        if (!seriesGroup) {
+	            return null;
+	        }
 	        paths = seriesGroup.map(function(seriesItem) {
 	            var ratio = seriesItem ? seriesItem.ratio : 0;
 	            var currentAngle = angleForRendering * ratio;
@@ -21675,7 +21678,7 @@
 
 	    /**
 	     * Get fallback datetime values
-	     * @returns {[number, number]} milliseconds
+	     * @returns {number[]} milliseconds
 	     */
 	    getDefaultDatetimeValues: function() {
 	        var hour = 60 * 60 * 1000;
@@ -21700,6 +21703,7 @@
 	                || (rawData.series[chartType] && !(rawData.series[chartType].length)))
 	        );
 	    },
+
 	    /**
 	     * Return boolean value of whether axis limit option empty or not
 	     * @param {string} axisType Type string of axis
@@ -21707,9 +21711,19 @@
 	     */
 	    isLimitOptionsEmpty: function(axisType) {
 	        var axisOption = this.options[axisType] || {};
-	        var isEmptyLimitOption = isUndefined(axisOption.min) && isUndefined(axisOption.max);
 
-	        return isEmptyLimitOption;
+	        return isUndefined(axisOption.min) && isUndefined(axisOption.max);
+	    },
+
+	    /**
+	     * Return boolean value of whether axis limit option empty or not
+	     * @param {string} axisType Type string of axis
+	     * @returns {boolean}
+	     */
+	    isLimitOptionsInsufficient: function(axisType) {
+	        var axisOption = this.options[axisType] || {};
+
+	        return isUndefined(axisOption.min) || isUndefined(axisOption.max);
 	    },
 
 	    /**
@@ -21728,15 +21742,22 @@
 	        var type = axisOption.type;
 	        var isEmptyRawData = this.isSeriesDataEmpty(chartType);
 	        var isEmptyLimitOptions = this.isLimitOptionsEmpty(axisName);
+
+	        var isInsufficientLimitOptions = this.isLimitOptionsInsufficient(axisName);
 	        var isLineOrAreaChart = (predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
 	            || predicate.isLineAreaComboChart(chartType, this.seriesTypes));
+	        var valueCandidate = this.defaultValues;
 
 	        if (predicate.isComboChart(chartType)) {
 	            values = [];
 	            this._eachByAllSeriesDataModel(function(seriesDataModel) {
 	                values = values.concat(seriesDataModel.getValues(valueType));
 	            });
-	        } else if (isEmptyRawData && isEmptyLimitOptions) {
+	        } else if (isEmptyRawData && isInsufficientLimitOptions) {
+	            if (!isEmptyLimitOptions && isInsufficientLimitOptions) {
+	                valueCandidate = valueCandidate.concat([(axisOption.min || axisOption.max)]);
+	            }
+
 	            if (valueType === 'x' && type === 'datetime') {
 	                values = this.getDefaultDatetimeValues();
 
@@ -21745,7 +21766,7 @@
 	                    values = values.concat(plotValues);
 	                }
 	            } else {
-	                values = this.defaultValues;
+	                values = valueCandidate;
 	            }
 	        } else {
 	            values = this.getSeriesDataModel(chartType).getValues(valueType);
@@ -25318,7 +25339,7 @@
 
 	        this.positionMap.yAxis = {
 	            top: seriesPosition.top,
-	            left: this.chartLeftPadding + leftLegendWidth
+	            left: (this.chartLeftPadding * 2) + leftLegendWidth
 	        };
 
 	        this.positionMap.xAxis = {
@@ -34532,7 +34553,7 @@
 	    },
 
 	    findSectorInfo: function(position) {
-	        var sector = this.paper.getElementByPoint(position.left, position.top);
+	        var sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
 	        var info = null;
 
 	        if (sector) {
@@ -34587,7 +34608,7 @@
 	     * @param {{left: number, top: number}} position mouse position
 	     */
 	    moveMouseOnSeries: function(position) {
-	        var sector = this.paper.getElementByPoint(position.left, position.top);
+	        var sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
 
 	        if (this._isValidSector(sector)) {
 	            if (this.prevHoverSector !== sector) {
@@ -36533,7 +36554,7 @@
 	    render: function(paper, layout, colorSpectrum, isHorizontal, legendSet) {
 	        var gradientBar;
 
-	        layout.position.left += PADDING;
+	        layout.position.left += (PADDING * 2);
 	        layout.position.top += PADDING;
 
 	        gradientBar = this._renderGradientBar(paper, layout, colorSpectrum, isHorizontal);
