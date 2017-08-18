@@ -32,7 +32,7 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
     render: function(paper, layout, colorSpectrum, isHorizontal, legendSet) {
         var gradientBar;
 
-        layout.position.left += PADDING;
+        layout.position.left += (PADDING * 2);
         layout.position.top += PADDING;
 
         gradientBar = this._renderGradientBar(paper, layout, colorSpectrum, isHorizontal);

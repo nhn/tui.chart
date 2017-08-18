@@ -12,7 +12,7 @@ var renderUtil = require('../../../src/js/helpers/renderUtil');
 var raphaelRenderUtil = require('../../../src/js/plugins/raphaelRenderUtil');
 
 describe('Test for BoundsModel', function() {
-    var boundsModel, dataProcessor, scaleDataModel;
+    var boundsModel, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -22,7 +22,6 @@ describe('Test for BoundsModel', function() {
             ['getFormattedMaxValue', 'getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getLegendData', 'getCategories',
                 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
         dataProcessor.getFormatFunctions.and.returnValue([]);
-        scaleDataModel = jasmine.createSpyObj('scaleDataModel', ['getMultilineXAxisLabels', 'getAxisDataMap', 'getAxisData']);
     });
 
     beforeEach(function() {
@@ -377,7 +376,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.getPosition('plot').top).toBe(50);
             expect(boundsModel.getPosition('plot').left).toBe(50);
             expect(boundsModel.getPosition('yAxis').top).toBe(50);
-            expect(boundsModel.getPosition('yAxis').left).toBe(10);
+            expect(boundsModel.getPosition('yAxis').left).toBe(20);
             expect(boundsModel.getPosition('xAxis').top).toBe(250);
             expect(boundsModel.getPosition('xAxis').left).toBe(50);
             expect(boundsModel.getPosition('rightYAxis').top).toBe(50);
