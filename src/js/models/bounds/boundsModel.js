@@ -524,7 +524,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         this.positionMap.yAxis = {
             top: seriesPosition.top,
-            left: (this.chartLeftPadding * 2) + leftLegendWidth
+            left: this.chartLeftPadding + leftLegendWidth
         };
 
         this.positionMap.xAxis = {
@@ -664,6 +664,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var legendDimension = this.getDimension('legend');
         var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
+
         var seriesPosition = {
             top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
             left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
