@@ -62,26 +62,25 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             'font-size': data.theme.fontSize,
             'font-weight': data.theme.fontWeight,
             fill: data.theme.color,
-            'text-anchor': 'start'
+            'text-anchor': 'middle'
         };
+
         var positionTopAndLeft = {};
         var title;
-
-        attributes['text-anchor'] = 'middle';
 
         if (data.rotationInfo.isCenter) {
             positionTopAndLeft.top = paper.height - (textHeight / 2);
             positionTopAndLeft.left = data.layout.position.left + (data.layout.dimension.width / 2);
         } else if (data.rotationInfo.isPositionRight) {
             positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width - textHeight;
+            positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width;
             attributes.transform = 'r90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
         } else if (data.rotationInfo.isVertical) {
             positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = data.layout.position.left + textHeight;
+            positionTopAndLeft.left = data.layout.position.left;
 
             if (rotateTitle) {
-                attributes.transform = 'r-90,' + (positionTopAndLeft.left - textHeight) + ',' + positionTopAndLeft.top;
+                attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
             }
         } else {
             positionTopAndLeft.top = data.layout.position.top + data.layout.dimension.height;

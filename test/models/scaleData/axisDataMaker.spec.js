@@ -415,6 +415,9 @@ describe('Test for axisDataMaker', function() {
                 },
                 yAxis: {
                     width: 100
+                },
+                chart: {
+                    width: 500
                 }
             };
             var actual;
@@ -430,7 +433,8 @@ describe('Test for axisDataMaker', function() {
             expect(actual).toEqual({
                 degree: 25,
                 overflowHeight: 10,
-                overflowLeft: -40
+                overflowLeft: -40,
+                overflowRight: 20
             });
         });
 
@@ -445,6 +449,9 @@ describe('Test for axisDataMaker', function() {
                 },
                 yAxis: {
                     width: 100
+                },
+                chart: {
+                    width: 500
                 }
             };
             var actual;
@@ -456,7 +463,8 @@ describe('Test for axisDataMaker', function() {
             );
 
             expect(actual).toEqual({
-                overflowLeft: -40
+                overflowLeft: -40,
+                overflowRight: 130
             });
         });
     });

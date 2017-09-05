@@ -104,7 +104,7 @@ describe('Test user events for line chart', function() {
                 // unselect
                 mouseEventDetector._onClick({
                     clientX: 65,
-                    clientY: 180
+                    clientY: 200
                 });
             });
         });
