@@ -94,6 +94,7 @@ var boundsAndScaleBuilder = {
         if (scaleData) {
             limit = scaleData.limit;
         }
+
         boundsModel.registerYAxisDimension(limit, axisName, yAxis.options, yAxis.theme, isVertical);
     },
 
