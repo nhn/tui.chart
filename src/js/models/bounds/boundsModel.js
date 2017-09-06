@@ -312,8 +312,6 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
     calculateSeriesWidth: function() {
         var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
 
-
-
         return seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
     },
 

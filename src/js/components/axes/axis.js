@@ -176,7 +176,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         this._renderChildContainers(lSideWidth, halfTickCount, lCategories, 0);
         this._renderChildContainers(rSideWidth + 1, halfTickCount, rCategories,
-                                    secondXAxisAdditionalPosition);
+            secondXAxisAdditionalPosition);
     },
 
     /**
