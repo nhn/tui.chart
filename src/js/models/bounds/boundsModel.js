@@ -462,18 +462,19 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
     /**
      * Update width of dimensions.
-     * @param {number} overflowLeft overflow left
+     * @param {object} overflowInfo overflowLeft, overflowRight
      * @private
      */
     _updateDimensionsWidth: function(overflowInfo) {
         var overflowLeft = Math.max(overflowInfo.overflowLeft, 0);
         var overflowRight = Math.max(overflowInfo.overflowRight, 0);
+        var margin = overflowLeft + overflowRight;
 
         this.chartLeftPadding += overflowLeft;
-        this.dimensionMap.plot.width -= (overflowLeft + overflowRight);
-        this.dimensionMap.series.width -= (overflowLeft + overflowRight);
-        this.dimensionMap.mouseEventDetector.width -= (overflowLeft + overflowRight);
-        this.dimensionMap.xAxis.width -= (overflowLeft + overflowRight);
+        this.dimensionMap.plot.width -= margin;
+        this.dimensionMap.series.width -= margin;
+        this.dimensionMap.mouseEventDetector.width -= margin;
+        this.dimensionMap.xAxis.width -= margin;
     },
 
     /**

@@ -380,7 +380,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.getPosition('plot').top).toBe(50);
             expect(boundsModel.getPosition('plot').left).toBe(50);
             expect(boundsModel.getPosition('yAxis').top).toBe(50);
-            expect(boundsModel.getPosition('yAxis').left).toBe(20);
+            expect(boundsModel.getPosition('yAxis').left).toBe(10);
             expect(boundsModel.getPosition('xAxis').top).toBe(250);
             expect(boundsModel.getPosition('xAxis').left).toBe(50);
             expect(boundsModel.getPosition('rightYAxis').top).toBe(50);
