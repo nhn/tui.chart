@@ -45,10 +45,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.options = params.options || {};
 
         /**
-         * Theme
+         * Axis Theme
+         * Use chart background theme object for render yAxis background on dynamicDataShifting chart
          * @type {object}
          */
-        this.theme = params.theme;
+        this.theme = tui.util.extend({}, params.theme, {
+            background: params.chartTheme.chart.background
+        });
 
         /**
          * Whether label type axis or not.
@@ -130,7 +133,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             position.top = 0;
         }
 
-        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.chart);
+        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.background);
     },
     /**
      * Render child containers like title area, label area and tick area.
@@ -314,6 +317,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             isCenter: this.data.options.isCenter,
             isNotDividedXAxis: isNotDividedXAxis,
             isVertical: this.isYAxis,
+            tickColor: this.theme.tickColor,
             layout: this.layout,
             paper: this.paper,
             set: this.axisSet

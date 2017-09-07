@@ -7,6 +7,7 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var AXIS_BACKGROUND_RIGHT_PADDING = 4;
 
 var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
     init: function() {
@@ -27,9 +28,9 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var opacity = (background.opacity || 1);
 
         raphaelRenderUtil.renderRect(paper, {
-            left: position.left - 4,
+            left: 0,
             top: position.top,
-            width: dimension.width,
+            width: dimension.width + position.left - AXIS_BACKGROUND_RIGHT_PADDING,
             height: dimension.height
         }, {
             fill: fillColor,
@@ -254,6 +255,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var isPositionRight = data.isPositionRight;
         var isCenter = data.isCenter;
         var isVertical = data.isVertical;
+        var tickColor = data.tickColor;
         var pathString = 'M';
         var baseTop = layout.position.top;
         var baseLeft = layout.position.left;
@@ -294,7 +296,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
 
         data.set.push(paper.path(pathString).attr({
             'stroke-width': 1,
-            stroke: 'black'
+            stroke: tickColor
         }));
     },
 

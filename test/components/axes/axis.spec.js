@@ -1,10 +1,11 @@
+'use strict';
+
 /**
  * @fileoverview Test for Axis.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
 var raphael = window.Raphael;
 
 var axisFactory = require('../../../src/js/components/axes/axis');
@@ -39,6 +40,12 @@ describe('Test for Axis', function() {
                     text: 'Axis Title'
                 }
             },
+            chartTheme: {
+                chart: {
+                    background: '#fff',
+                    opacity: 1
+                }
+            },
             dataProcessor: dataProcessor
         });
     });
@@ -69,7 +76,6 @@ describe('Test for Axis', function() {
     describe('_renderAxisArea()', function() {
         it('divided이 true이면 _renderDividedAxis()를 수행하고 너비를 yAxis 너비만큼 늘려줍니다.', function() {
             var container = dom.create('DIV');
-
 
             spyOn(axis, '_renderNotDividedAxis');
             spyOn(axis, '_renderDividedAxis');
@@ -103,7 +109,6 @@ describe('Test for Axis', function() {
 
         it('divided이 true가 아니면 _renderNotDividedAxis()를 수행합니다.', function() {
             var container = dom.create('DIV');
-
 
             spyOn(axis, '_renderNotDividedAxis');
             spyOn(axis, '_renderDividedAxis');
