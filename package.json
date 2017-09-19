@@ -37,7 +37,7 @@
     "karma-narrow-reporter": "^2.0.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webdriver-launcher": "git+https://github.com/nhnent/karma-webdriver-launcher.git",
+    "karma-webdriver-launcher": "git+https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
     "karma-webpack": "^1.8.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",

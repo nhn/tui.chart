@@ -488,7 +488,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var prev = this.prevDotAttributes;
         var outDotStyle = this.outDotStyle;
 
-        if (!tui.util.isUndefined(opacity)) {
+        // prev 정보가 있다면 prev의 r을 적용해준다
+        // hideDot시 dot이 사라져버리는 이슈 있음
+        if (prev && !tui.util.isUndefined(opacity)) {
             outDotStyle = tui.util.extend({
                 r: prev.r,
                 'stroke-opacity': prev['stroke-opacity'],

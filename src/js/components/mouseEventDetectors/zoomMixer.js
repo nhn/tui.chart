@@ -279,7 +279,7 @@ var zoomMixer = {
 
         if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
             if (tui.util.isNull(this.dragStartIndexes)) {
-                this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : [];
+                this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
             } else {
                 this._showDragSelection(e.clientX);
             }
@@ -356,6 +356,11 @@ var zoomMixer = {
      * @private
      */
     _onMouseupAfterDrag: function(e) {
+        // @TODO: 데이터가 없는 경우의 zoomable 정책 정의 필요
+        // dragStartIndexes도 마찬가지지만 dragEnd 인덱스를 찾기 위해서는 차트에 data가 필요하다.
+        // 하지만 data가 없어도 차트는 그려질 수 있음.
+        // 그래서 이 부분에서 data가 없는경우 zoom을 실행하지 않도록 하기 위해 먼저 index를 확인한다.
+        var foundedDragEndData = this._findDataForZoomable(e.clientX, e.clientY);
         var target;
 
         this._unbindDragEvent();
@@ -369,8 +374,8 @@ var zoomMixer = {
             } else {
                 MouseEventDetectorBase.prototype._onClick.call(this, e);
             }
-        } else if (this.dragStartIndexes.length) {
-            this.dragEndIndexes = this._findDataForZoomable(e.clientX, e.clientY).indexes;
+        } else if (this.dragStartIndexes && foundedDragEndData) {
+            this.dragEndIndexes = foundedDragEndData.indexes;
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
             this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
