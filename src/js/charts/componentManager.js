@@ -87,8 +87,8 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      */
     init: function(params) {
         var chartOption = params.options.chart;
-        var width = chartOption ? chartOption.width : chartConst.CHART_DEFAULT_WIDTH;
-        var height = chartOption ? chartOption.height : chartConst.CHART_DEFAULT_HEIGHT;
+        var width = tui.util.pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
+        var height = tui.util.pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
 
         /**
          * Components
