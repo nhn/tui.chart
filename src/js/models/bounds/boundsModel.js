@@ -320,7 +320,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @returns {number} series height
      */
     calculateSeriesHeight: function() {
-        var dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis']);
+        var dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis', 'chartExportMenu']);
 
         return seriesCalculator.calculateHeight(dimensionMap, this.options.legend);
     },
@@ -659,8 +659,10 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var legendDimension = this.getDimension('legend');
         var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
+        var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
+
         var seriesPosition = {
-            top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
+            top: titleOrExportMenuHeight + chartConst.CHART_PADDING + topLegendHeight,
             left: (this.chartLeftPadding * 2) + leftLegendWidth + this.getDimension('yAxis').width
         };
         // Multiply chart left padding times two for series middle align

@@ -132,6 +132,9 @@ describe('Test for seriesCalculator', function() {
                 },
                 xAxis: {
                     height: 50
+                },
+                chartExportMenu: {
+                    height: 30
                 }
             };
             var legendOption = {
@@ -152,6 +155,9 @@ describe('Test for seriesCalculator', function() {
                 },
                 xAxis: {
                     height: 50
+                },
+                chartExportMenu: {
+                    height: 30
                 }
             };
             var legendOption = {
@@ -176,6 +182,9 @@ describe('Test for seriesCalculator', function() {
                 },
                 xAxis: {
                     height: 50
+                },
+                chartExportMenu: {
+                    height: 30
                 }
             };
             var legendOption = {
@@ -200,6 +209,9 @@ describe('Test for seriesCalculator', function() {
                 },
                 xAxis: {
                     height: 50
+                },
+                chartExportMenu: {
+                    height: 30
                 }
             };
             var legendOption = {
@@ -221,6 +233,9 @@ describe('Test for seriesCalculator', function() {
                 },
                 xAxis: {
                     height: 50
+                },
+                chartExportMenu: {
+                    height: 30
                 }
             };
             var legendOption = {

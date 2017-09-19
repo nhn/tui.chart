@@ -290,6 +290,9 @@ describe('Test for BoundsModel', function() {
                 },
                 rightYAxis: {
                     width: 0
+                },
+                chartExportMenu: {
+                    height: 0
                 }
             };
 
@@ -324,6 +327,9 @@ describe('Test for BoundsModel', function() {
                 },
                 rightYAxis: {
                     width: 0
+                },
+                chartExportMenu: {
+                    height: 0
                 }
             };
             boundsModel.options.legend.align = chartConst.LEGEND_ALIGN_TOP;

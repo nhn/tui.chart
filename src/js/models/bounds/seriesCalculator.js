@@ -55,7 +55,7 @@ var seriesCalculator = {
      */
     calculateHeight: function(dimensionMap, legendOptions) {
         var chartHeight = dimensionMap.chart.height;
-        var titleHeight = dimensionMap.title.height;
+        var titleOrExportMenuHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
         var legendHeight, bottomAreaWidth;
 
         if (predicate.isHorizontalLegend(legendOptions.align) && legendOptions.visible) {
@@ -66,7 +66,7 @@ var seriesCalculator = {
 
         bottomAreaWidth = legendHeight + dimensionMap.xAxis.height;
 
-        return chartHeight - (chartConst.CHART_PADDING * 2) - titleHeight - bottomAreaWidth;
+        return chartHeight - (chartConst.CHART_PADDING * 2) - titleOrExportMenuHeight - bottomAreaWidth;
     }
 };
 
