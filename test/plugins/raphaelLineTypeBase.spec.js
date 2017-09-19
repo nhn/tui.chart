@@ -64,6 +64,56 @@ describe('RaphaelLineTypeBase', function() {
 
             expect(actual).toEqual(expected);
         });
+
+        it('should be cut off left anchor that overflow chart canvas', function() {
+            var actual = lineTypeBase._makeSplineLinesPath([
+                    {
+                        left: 87,
+                        top: 318,
+                        startTop: 346
+                    },
+                    {
+                        left: 334.5,
+                        top: 44,
+                        startTop: 346
+                    },
+                    {
+                        left: 582,
+                        top: 54,
+                        startTop: 346
+                    }
+                ]),
+                expected = [['M', 87, 318, 'C', 87, 318],
+                    [220.41745061183047, 91.95033289869701, 334.5, 44, 448.5825493881695, 44],
+                    [582, 54, 582, 54]];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('should be cut off right anchor that overflow chart canvas', function() {
+            var actual = lineTypeBase._makeSplineLinesPath([
+                    {
+                        left: 87,
+                        top: 346,
+                        startTop: 346
+                    },
+                    {
+                        left: 334.5,
+                        top: 344.48,
+                        startTop: 346
+                    },
+                    {
+                        left: 582,
+                        top: 42,
+                        startTop: 346
+                    }
+                ]),
+                expected = [['M', 87, 346, 'C', 87, 346],
+                    [222.8332650202649, 344.48, 334.5, 344.48, 446.1667349797351, 291.14518211369244],
+                    [582, 42, 582, 42]];
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('makeBorderStyle()', function() {

@@ -127,10 +127,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     _getSplinePartialPaths: function(positionsGroups) {
         var self = this;
         var paths = [];
-        var firstPos, lastPos, positionsLen, fromPos, middlePositions, path;
+        var firstPos, lastPos, positionsLen, fromPos, middlePositions, path, prevPos;
 
         tui.util.forEach(positionsGroups, function(dataPositions) {
-            firstPos = dataPositions[0];
+            prevPos = firstPos = dataPositions[0];
             positionsLen = dataPositions.length;
             fromPos = firstPos;
             lastPos = dataPositions[positionsLen - 1];
@@ -141,6 +141,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 var anchor = self._getAnchor(fromPos, position, nextPos);
 
                 fromPos = position;
+
+                if (Math.abs(anchor.y1 - prevPos.top) > Math.abs(prevPos.top - position.top)) {
+                    anchor.y1 = position.top;
+                }
+
+                if (Math.abs(anchor.y2 - nextPos.top) > Math.abs(nextPos.top - position.top)) {
+                    anchor.y2 = position.top;
+                }
+
+                prevPos = position;
 
                 return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
             });
