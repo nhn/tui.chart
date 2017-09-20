@@ -515,6 +515,7 @@ var axisDataMaker = {
 
     /**
      * Make additional data for rotated labels.
+     * 라벨 크기가 지정된 영역보다 커서 경계를 넘어가는부분을 처리하기 위한 데이터를 만든다.
      * @param {Array.<string>} validLabels - valid labels
      * @param {Array.<string>} validLabelCount - valid label count
      * @param {object} labelTheme - theme for label
@@ -528,6 +529,7 @@ var axisDataMaker = {
         var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
         var additionalData = null;
         var degree, labelHeight, rotatedHeight, limitWidth, rotatedWidth;
+        var contentWidth = chartConst.CHART_PADDING + dimensionMap.yAxis.width + seriesWidth;
 
         if (labelAreaWidth < maxLabelWidth) {
             labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);
@@ -535,16 +537,21 @@ var axisDataMaker = {
             rotatedHeight = geomatric.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
             rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
             limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
+            contentWidth += rotatedWidth; // 라벨한개 더 표현할정도의 공간 확보
 
             additionalData = {
                 degree: degree,
                 overflowHeight: rotatedHeight - labelHeight,
-                overflowLeft: rotatedWidth - limitWidth
+                overflowLeft: rotatedWidth - limitWidth,
+                overflowRight: contentWidth - dimensionMap.chart.width
             };
         } else {
+            contentWidth += maxLabelWidth;
+
             labelAreaWidth = renderUtil.getRenderedLabelWidth(validLabels[0], labelTheme) / 2;
             additionalData = {
-                overflowLeft: labelAreaWidth - dimensionMap.yAxis.width
+                overflowLeft: labelAreaWidth - dimensionMap.yAxis.width,
+                overflowRight: contentWidth - dimensionMap.chart.width
             };
         }
 

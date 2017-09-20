@@ -328,7 +328,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
     updateXAxisDataForLabel: function(addingDataMode) {
         var axisData = this.axisDataMap.xAxis;
         var labels = axisData.labels;
-        var dimensionMap = this.boundsModel.getDimensionMap(['series', 'yAxis']);
+        var dimensionMap = this.boundsModel.getDimensionMap(['series', 'yAxis', 'chart']);
         var isLabelAxis = axisData.isLabelAxis;
         var theme = this.theme.xAxis.label;
         var validLabels, validLabelCount, additionalData;

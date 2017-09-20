@@ -460,15 +460,19 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
     /**
      * Update width of dimensions.
-     * @param {number} overflowLeft overflow left
+     * @param {object} overflowInfo overflowLeft, overflowRight
      * @private
      */
-    _updateDimensionsWidth: function(overflowLeft) {
+    _updateDimensionsWidth: function(overflowInfo) {
+        var overflowLeft = Math.max(overflowInfo.overflowLeft, 0);
+        var overflowRight = Math.max(overflowInfo.overflowRight, 0);
+        var margin = overflowLeft + overflowRight;
+
         this.chartLeftPadding += overflowLeft;
-        this.dimensionMap.plot.width -= overflowLeft;
-        this.dimensionMap.series.width -= overflowLeft;
-        this.dimensionMap.mouseEventDetector.width -= overflowLeft;
-        this.dimensionMap.xAxis.width -= overflowLeft;
+        this.dimensionMap.plot.width -= margin;
+        this.dimensionMap.series.width -= margin;
+        this.dimensionMap.mouseEventDetector.width -= margin;
+        this.dimensionMap.xAxis.width -= margin;
     },
 
     /**
@@ -492,8 +496,8 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @private
      */
     _updateDimensionsForXAxisLabel: function(xAxisData) {
-        if (xAxisData.overflowLeft > 0) {
-            this._updateDimensionsWidth(xAxisData.overflowLeft);
+        if (xAxisData.overflowRight > 0 || xAxisData.overflowLeft > 0) {
+            this._updateDimensionsWidth(xAxisData);
         }
 
         if (xAxisData.overflowHeight) {
@@ -519,7 +523,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         this.positionMap.yAxis = {
             top: seriesPosition.top,
-            left: (this.chartLeftPadding * 2) + leftLegendWidth
+            left: this.chartLeftPadding + leftLegendWidth
         };
 
         this.positionMap.xAxis = {
@@ -663,7 +667,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
 
         var seriesPosition = {
             top: titleOrExportMenuHeight + chartConst.CHART_PADDING + topLegendHeight,
-            left: (this.chartLeftPadding * 2) + leftLegendWidth + this.getDimension('yAxis').width
+            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
         };
         // Multiply chart left padding times two for series middle align
 

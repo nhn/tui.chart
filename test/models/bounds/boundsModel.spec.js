@@ -185,13 +185,17 @@ describe('Test for BoundsModel', function() {
             };
 
             boundsModel.chartLeftPadding = 10;
-            boundsModel._updateDimensionsWidth(50);
+
+            boundsModel._updateDimensionsWidth({
+                overflowLeft: 50,
+                overflowRight: 10
+            });
 
             expect(boundsModel.chartLeftPadding).toBe(60);
-            expect(boundsModel.getDimension('plot').width).toBe(150);
-            expect(boundsModel.getDimension('series').width).toBe(149);
-            expect(boundsModel.getDimension('mouseEventDetector').width).toBe(149);
-            expect(boundsModel.getDimension('xAxis').width).toBe(150);
+            expect(boundsModel.getDimension('plot').width).toBe(140);
+            expect(boundsModel.getDimension('series').width).toBe(139);
+            expect(boundsModel.getDimension('mouseEventDetector').width).toBe(139);
+            expect(boundsModel.getDimension('xAxis').width).toBe(140);
         });
     });
 
@@ -382,7 +386,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.getPosition('plot').top).toBe(50);
             expect(boundsModel.getPosition('plot').left).toBe(50);
             expect(boundsModel.getPosition('yAxis').top).toBe(50);
-            expect(boundsModel.getPosition('yAxis').left).toBe(20);
+            expect(boundsModel.getPosition('yAxis').left).toBe(10);
             expect(boundsModel.getPosition('xAxis').top).toBe(250);
             expect(boundsModel.getPosition('xAxis').left).toBe(50);
             expect(boundsModel.getPosition('rightYAxis').top).toBe(50);

@@ -205,6 +205,10 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         }
 
         params.theme = this.theme[optionKey];
+
+        if (!params.theme && optionKey === 'rightYAxis') {
+            params.theme = this.theme.yAxis;
+        }
         params.options = this.options[optionKey];
 
         if (optionKey === 'series') {

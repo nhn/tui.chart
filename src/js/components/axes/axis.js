@@ -554,7 +554,7 @@ function axisFactory(axisParam) {
     var chartType = axisParam.chartOptions.chartType;
     var name = axisParam.name;
 
-    axisParam.isYAxis = (name === 'yAxis');
+    axisParam.isYAxis = (name === 'yAxis' || name === 'rightYAxis');
     axisParam.shifting = axisParam.chartOptions.series.shifting;
 
     // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
