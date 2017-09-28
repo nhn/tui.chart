@@ -151,4 +151,32 @@ describe('RaphaelAreaChart', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('_renderAreas()', function() {
+        var container = document.createElement('DIV');
+        var dimension = {
+            width: 100,
+            height: 100};
+        var paper = window.Raphael(container, dimension.width, dimension.height); // eslint-disable-line new-cap
+        var groupPaths = [{
+            area: ['M', 10, 30, 10, 30],
+            line: ['M', 10, 30, 10, 30]
+        }];
+        var colors = ['#f4bf75'];
+        var lineWidth = 1;
+
+        it('opacity값을 설정하면 area영역의 opacity값이 설정된다.', function() {
+            var opacity = 0.5;
+            var renderedArea = areaChart._renderAreas(paper, groupPaths, colors, lineWidth, opacity);
+
+            expect(renderedArea[0].area.attrs.opacity).toBe(opacity);
+        });
+
+        it('opacity값을 설정하지 않으면 area영역의 opacity값은 0.3이다.', function() {
+            var opacity;
+            var renderedArea = areaChart._renderAreas(paper, groupPaths, colors, lineWidth, opacity);
+
+            expect(renderedArea[0].area.attrs.opacity).toBe(0.3);
+        });
+    });
 });
