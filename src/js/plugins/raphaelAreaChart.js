@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var RaphaelLineBase = require('./raphaelLineTypeBase');
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
@@ -54,7 +55,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var theme = data.theme;
         var colors = theme.colors;
         var options = data.options;
-        var areaOpacity = options.areaOpacity;
+        var areaOpacity = isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
         var dotOpacity = options.showDot ? 1 : 0;
         var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
@@ -130,7 +131,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         colors = colors.slice(0, groupPaths.length);
         colors.reverse();
         groupPaths.reverse();
-        opacity = opacity || 0.3;
 
         groupAreas = tui.util.map(groupPaths, function(path, groupIndex) {
             var areaColor = colors[groupIndex] || 'transparent',
@@ -455,5 +455,33 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         return set;
     }
 });
+
+var ERROR_NOT_VALID_AREAOPACITY = 'areaOpacity should be a number from 0 and 1.';
+
+/**
+ * Test areaOpacity is a number, and return the result.
+ * It is used to determine whether to set a default value, 0.5.
+ * If it is not a number, areaOpacity will be changed to the default value, 0.5.
+ * @param {*} areaOpacity - value of property `options.areaOpacity`
+ * @returns {boolean} - whether areaOpacity is a number.
+ */
+function isAreaOpacityNumber(areaOpacity) {
+    var validity = true;
+
+    if (!areaOpacity) { // when a user doesn't set a property
+        validity = false;
+    }
+
+    if (!snippet.isNumber(areaOpacity)) {
+        validity = false;
+        console.error(ERROR_NOT_VALID_AREAOPACITY);
+    }
+
+    if (areaOpacity < 0 || areaOpacity > 1) {
+        console.warn(ERROR_NOT_VALID_AREAOPACITY);
+    }
+
+    return validity;
+}
 
 module.exports = RaphaelAreaChart;
