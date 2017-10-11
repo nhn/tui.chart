@@ -101,8 +101,8 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
 
         this.componentManager.register('areaSeries', 'areaSeries');
 
-        this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');
+        this.componentManager.register('yAxis', 'axis');
 
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');

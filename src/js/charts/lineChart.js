@@ -108,8 +108,8 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
 
         this.componentManager.register('lineSeries', 'lineSeries');
 
-        this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');
+        this.componentManager.register('yAxis', 'axis');
 
         this.componentManager.register('legend', 'legend');
 

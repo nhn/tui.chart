@@ -97,13 +97,12 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
         this.componentManager.register('areaSeries', 'areaSeries');
         this.componentManager.register('lineSeries', 'lineSeries');
 
+        this.componentManager.register('xAxis', 'axis');
         this.componentManager.register('yAxis', 'axis');
 
         if (this.hasRightYAxis) {
             this.componentManager.register('rightYAxis', 'axis');
         }
-
-        this.componentManager.register('xAxis', 'axis');
 
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
