@@ -118,6 +118,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * @type {number}
          */
         this.paperAdditionalHeight = 0;
+
+        /**
+         * Raphael Element for axis background
+         * We should caching this for prevent making background multiply
+         * @type {Raphael.Element}
+         */
+        this._elBg = null;
     },
 
     /**
@@ -133,7 +140,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             position.top = 0;
         }
 
-        this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.background);
+        if (this._elBg) {
+            this._elBg.remove();
+        }
+
+        this._elBg = this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.background);
     },
     /**
      * Render child containers like title area, label area and tick area.

@@ -27,7 +27,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var fillColor = (background.color || '#fff');
         var opacity = (background.opacity || 1);
 
-        raphaelRenderUtil.renderRect(paper, {
+        return raphaelRenderUtil.renderRect(paper, {
             left: 0,
             top: position.top,
             width: dimension.width + position.left - AXIS_BACKGROUND_RIGHT_PADDING,
