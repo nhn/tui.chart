@@ -424,6 +424,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Remove user event.
+     * @param {string} eventName event name
+     * @param {function} func event callback
+     */
+    off: function(eventName, func) {
+        if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
+            this.eventBus.off(chartConst.PUBLIC_EVENT_PREFIX + eventName, func);
+        }
+    },
+
+    /**
      * Update dimension of chart.
      * @param {{width: number, height: number}} dimension dimension
      * @returns {boolean} whether updated or not

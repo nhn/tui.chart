@@ -26,6 +26,7 @@ describe('Test for addingDynamicDataMixer', function() {
                 series: {},
                 xAxis: {}
             },
+            on: function() {},
             readyForRender: jasmine.createSpy('readyForRender'),
             _renderComponents: jasmine.createSpy('_renderComponents)')
         });
@@ -166,6 +167,17 @@ describe('Test for addingDynamicDataMixer', function() {
             dataProcessor.addDataFromDynamicData.and.returnValue(true);
             spyOn(ddh, '_animateForAddingData');
 
+            ddh.isInitRenderCompleted = true;
+            ddh._checkForAddedData();
+
+            expect(ddh._animateForAddingData).toHaveBeenCalled();
+        });
+
+        it('we should not animate for added data if initial render have not completed', function() {
+            dataProcessor.addDataFromDynamicData.and.returnValue(true);
+            spyOn(ddh, '_animateForAddingData');
+
+            ddh.isInitRenderCompleted = false;
             ddh._checkForAddedData();
 
             expect(ddh._animateForAddingData).toHaveBeenCalled();
@@ -176,7 +188,6 @@ describe('Test for addingDynamicDataMixer', function() {
             spyOn(ddh, '_rerenderForAddingData');
 
             ddh._checkForAddedData();
-            
             setTimeout(function() {
                 expect(ddh._rerenderForAddingData).toHaveBeenCalled();
                 done();

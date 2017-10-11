@@ -181,6 +181,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _attachToEventBus: function() {
+        var firstRenderCheck = tui.util.bind(function() {
+            this.isInitRenderCompleted = true;
+            this.eventBus.off('load', firstRenderCheck);
+        }, this);
+
+        this.eventBus.on(chartConst.PUBLIC_EVENT_PREFIX + 'load', firstRenderCheck);
+
         this.eventBus.on({
             selectLegend: this.onSelectLegend,
             selectSeries: this.onSelectSeries,
@@ -434,7 +441,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 clearInterval(this.labelShowEffector.timerId);
             }
 
-            if (checkedLegends) {
+            // if rerender have excuted in the middle of animate,
+            // we should rerun animate
+            if (checkedLegends || !this.isInitRenderCompleted) {
                 this.animateComponent(true);
             }
 

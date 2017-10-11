@@ -5,11 +5,21 @@ var predicate = require('../helpers/predicate');
 
 var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.prototype */ {
     init: function(chart) {
+        var firstRenderCheck = tui.util.bind(function() {
+            this.isInitRenderCompleted = true;
+            this.chart.off(firstRenderCheck);
+        }, this);
+
         /**
          * chart instance
          * @type {ChartBase}
          */
         this.chart = chart;
+
+        this.isInitRenderCompleted = false;
+
+        this.chart.on('load', firstRenderCheck);
+
         this.reset();
     },
     reset: function() {
@@ -132,6 +142,7 @@ var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.protot
         }
 
         this._animateForAddingData();
+
         this.rerenderingDelayTimerId = setTimeout(function() {
             self.rerenderingDelayTimerId = null;
             self._rerenderForAddingData();
@@ -217,7 +228,13 @@ var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.protot
         }
 
         this.chart.dataProcessor.addDynamicData(category, values);
-        this._startLookup();
+
+        // we should not animate for added data if initial render have not completed
+        if (this.isInitRenderCompleted) {
+            this._startLookup();
+        } else if (values) {
+            this.addedDataCount += 1;
+        }
     }
 });
 
