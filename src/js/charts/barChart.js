@@ -85,6 +85,10 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         this.componentManager.register('yAxis', 'axis');
         this.componentManager.register('xAxis', 'axis');
 
+        if (this.hasRightYAxis) {
+            this.componentManager.register('rightYAxis', 'axis');
+        }
+
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
