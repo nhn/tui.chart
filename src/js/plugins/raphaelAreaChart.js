@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var RaphaelLineBase = require('./raphaelLineTypeBase');
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
@@ -54,9 +55,10 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var theme = data.theme;
         var colors = theme.colors;
         var options = data.options;
-        var opacity = options.showDot ? 1 : 0;
-        var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
-        var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
+        var areaOpacity = isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
+        var dotOpacity = options.showDot ? 1 : 0;
+        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
+        var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         var lineWidth = this.lineWidth = (tui.util.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
 
         this.paper = paper;
@@ -71,9 +73,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         paper.setStart();
 
         this.groupPaths = this._getAreaChartPath(groupPositions, null, options.connectNulls);
-        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors, lineWidth);
+        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors, lineWidth, areaOpacity);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
+        this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity);
 
         if (options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
@@ -86,7 +88,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
-        this.dotOpacity = opacity;
+        this.dotOpacity = dotOpacity;
 
         this.pivotGroupDots = null;
 
@@ -119,10 +121,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {Array.<object>} groupPaths group paths
      * @param {Array.<string>} colors colors
      * @param {number} lineWidth line width
+     * @param {number} opacity opacity
      * @returns {Array} raphael objects
      * @private
      */
-    _renderAreas: function(paper, groupPaths, colors, lineWidth) {
+    _renderAreas: function(paper, groupPaths, colors, lineWidth, opacity) {
         var groupAreas;
 
         colors = colors.slice(0, groupPaths.length);
@@ -135,7 +138,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 polygons = {
                     area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
                         fill: areaColor,
-                        opacity: 0.5,
+                        opacity: opacity,
                         stroke: areaColor
                     }),
                     line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth)
@@ -452,5 +455,33 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         return set;
     }
 });
+
+var ERROR_NOT_VALID_AREAOPACITY = 'areaOpacity should be a number from 0 and 1.';
+
+/**
+ * Test areaOpacity is a number, and return the result.
+ * It is used to determine whether to set a default value, 0.5.
+ * If it is not a number, areaOpacity will be changed to the default value, 0.5.
+ * @param {*} areaOpacity - value of property `options.areaOpacity`
+ * @returns {boolean} - whether areaOpacity is a number.
+ */
+function isAreaOpacityNumber(areaOpacity) {
+    var validity = true;
+
+    if (!areaOpacity) { // when a user doesn't set a property
+        validity = false;
+    }
+
+    if (!snippet.isNumber(areaOpacity)) {
+        validity = false;
+        console.error(ERROR_NOT_VALID_AREAOPACITY);
+    }
+
+    if (areaOpacity < 0 || areaOpacity > 1) {
+        console.warn(ERROR_NOT_VALID_AREAOPACITY);
+    }
+
+    return validity;
+}
 
 module.exports = RaphaelAreaChart;

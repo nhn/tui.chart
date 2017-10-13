@@ -151,4 +151,92 @@ describe('RaphaelAreaChart', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('render()', function() {
+        var container = document.createElement('DIV');
+        var dimension = {
+            width: 100,
+            height: 100
+        };
+        var groupPositions = [
+            {
+                left: 70,
+                top: 245.68,
+                startTop: 224.39999999999998
+            },
+            {
+                left: 116.36363636363637,
+                top: 231.08800000000002,
+                startTop: 224.39999999999998
+            },
+            {
+                left: 162.72727272727275,
+                top: 200.08,
+                startTop: 224.39999999999998
+            },
+            {
+                left: 209.0909090909091,
+                top: 155.696,
+                startTop: 224.39999999999998
+            },
+            {
+                left: 255.45454545454547,
+                top: 121.03999999999999,
+                startTop: 224.39999999999998
+            }
+        ];
+        var paper = window.Raphael(container, dimension.width, dimension.height); // eslint-disable-line new-cap
+        var data = {
+            theme: {
+                colors: ['#f4bf75']
+            },
+            dimension: dimension,
+            options: {},
+            groupPositions: groupPositions
+        };
+        it('should set the opacity of series area region by an areaOpacity property.', function() {
+            var opacity;
+
+            data.options.areaOpacity = 0.3;
+            areaChart.render(paper, data);
+            opacity = areaChart.groupAreas[0].area.attrs.opacity;
+
+            expect(opacity).toBe(0.3);
+        });
+
+        it('should set the opacity of series area region as a default value, when an areaOpacity is not set.', function() {
+            var opacity;
+
+            delete data.options.areaOpacity;
+            areaChart.render(paper, data);
+            opacity = areaChart.groupAreas[0].area.attrs.opacity;
+            expect(opacity).toBe(0.5);
+        });
+
+        it('should set the opacity of series area region as a default, when an areaOpacity is not a number.', function() {
+            var opacity;
+
+            data.options.areaOpacity = '10';
+            areaChart.render(paper, data);
+            opacity = areaChart.groupAreas[0].area.attrs.opacity;
+
+            expect(opacity).toBe(0.5);
+        });
+
+        it('should not change areaOpacity value, when an areaOpacity is less than 0 or bigger than 1.', function() {
+            var opacity;
+
+            data.options.areaOpacity = -0.1;
+            areaChart.render(paper, data);
+            opacity = areaChart.groupAreas[0].area.attrs.opacity;
+
+            expect(opacity).toBe(-0.1);
+
+            data.options.areaOpacity = 8;
+            areaChart.render(paper, data);
+            opacity = areaChart.groupAreas[0].area.attrs.opacity;
+
+            expect(opacity).toBe(8);
+        });
+    });
 });
