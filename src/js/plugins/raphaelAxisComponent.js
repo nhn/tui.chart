@@ -20,6 +20,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
      * @param {object} position axis position
      * @param {object} dimension axis dimension
      * @param {object} theme chart theme
+     * @returns {Element} - raphael <rect> element
      * @private
      */
     renderBackground: function(paper, position, dimension, theme) {

@@ -6,7 +6,6 @@
 
 'use strict';
 
-var snippet = require('tui-code-snippet');
 var RaphaelLineBase = require('./raphaelLineTypeBase');
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
@@ -472,7 +471,7 @@ function isAreaOpacityNumber(areaOpacity) {
         validity = false;
     }
 
-    if (!snippet.isNumber(areaOpacity)) {
+    if (!tui.util.isNumber(areaOpacity)) {
         validity = false;
         console.error(ERROR_NOT_VALID_AREAOPACITY);
     }
