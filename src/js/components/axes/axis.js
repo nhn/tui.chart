@@ -298,6 +298,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         if (title.text) {
             this.graphRenderer.renderTitle(this.paper, {
                 text: title.text,
+                offset: title.offset,
                 theme: this.theme.title,
                 rotationInfo: {
                     rotateTitle: this.options.rotateTitle,
