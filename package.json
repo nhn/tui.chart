@@ -6,7 +6,7 @@
   "description": "NHN Ent. Toast UI Chart",
   "scripts": {
     "dev": "webpack-dev-server",
-    "deploy": "webpack --production & webpack --production --minify",
+    "deploy": "webpack --production & webpack --production --minify && cp -R ./maps ./dist",
     "test": "karma start",
     "test:ne": "SERVER=ne karma start",
     "doc": "jsdoc -c ./jsdoc-conf.json && git checkout gh-pages && npm run update",
