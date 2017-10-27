@@ -8,13 +8,53 @@
 
 var chartConst = require('../const');
 var raphaelRenderUtil = require('../plugins/raphaelRenderUtil');
+var arrayUtil = require('../helpers/arrayUtil');
 
 var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
-var ICON_WIDTH = 10;
-var CHECKBOX_WIDTH = 10;
-var CHECKBOX_HEIGHT = 10;
+var RaphaelLegendComponent;
 
-var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+/**
+ * Get sum of icon and left padding width
+ * @returns {number} - icon and left padding width
+ */
+function getIconWidth() {
+    return chartConst.LEGEND_ICON_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING;
+}
+
+RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+
+    init: function() {
+        /**
+         * @type {number}
+         * @private
+         */
+        this._checkBoxWidth = 0;
+        /**
+         * @type {number}
+         * @private
+         */
+        this._checkBoxHeight = 0;
+        /**
+         * @type {number}
+         * @private
+         */
+        this._iconHeight = 0;
+        /**
+         * @type {number}
+         * @private
+         */
+        this._legendItemHeight = 0;
+        /**
+         * @type {number}
+         * @private
+         */
+        this._currentPageCount = 1;
+        /**
+         * @type {boolean}
+         * @private
+         */
+        this._showCheckbox = true;
+    },
 
     /**
      * @param {Array.<object>} legendData Array of legend item data
@@ -31,19 +71,22 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
             var isUnselected = legendDatum.isUnselected;
             var labelHeight = legendDatum.labelHeight;
             var checkboxData = legendDatum.checkbox;
-            var predicatedLegendLength = position.left + ICON_WIDTH + self.labelWidths[index]
-                + (labelPaddingLeft * 2) + (checkboxData ? CHECKBOX_WIDTH + labelPaddingLeft : 0);
-            var isNeedBreakLine = (predicatedLegendLength > self.paper.width);
+            var predicatedLegendWidth = position.left + self._calculateSingleLegendWidth(legendIndex);
+            var isNeedBreakLine = (predicatedLegendWidth >= self.paper.width);
 
             if (self.isHorizontal && isNeedBreakLine) {
-                position.top += (labelHeight + chartConst.LABEL_PADDING_TOP);
+                position.top += (self._legendItemHeight + chartConst.LABEL_PADDING_TOP);
                 position.left = self.basePosition.left;
             }
 
-            if (checkboxData) {
-                self._renderCheckbox(position, checkboxData, legendIndex, self.legendSet);
+            if (self._showCheckbox) {
+                self._renderCheckbox(position, {
+                    isChecked: checkboxData.checked,
+                    legendIndex: legendIndex,
+                    legendSet: self.legendSet
+                });
 
-                position.left += (CHECKBOX_WIDTH + labelPaddingLeft);
+                position.left += (self._checkBoxWidth + labelPaddingLeft);
             }
 
             self._renderIcon(position, {
@@ -55,7 +98,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
                 legendSet: self.legendSet
             });
 
-            position.left += ICON_WIDTH + labelPaddingLeft;
+            position.left += chartConst.LEGEND_ICON_WIDTH + labelPaddingLeft;
 
             self._renderLabel(position, {
                 labelText: legendDatum.label,
@@ -69,7 +112,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
                 position.left += self.labelWidths[index] + labelPaddingLeft;
             } else {
                 position.left = self.basePosition.left;
-                position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
+                position.top += self._legendItemHeight + chartConst.LINE_MARGIN_TOP;
             }
         });
     },
@@ -84,21 +127,17 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         var positionTop = this.basePosition.top;
         var totalHeight = this.dimension.height;
         var chartHeight = this.paper.height;
-        var resultLegendData, pageHeight, singleItemHeight, visibleItemCount;
-
-        if (!legendData.length) {
-            return null;
-        }
+        var resultLegendData = legendData;
+        var pageHeight, singleItemHeight, visibleItemCount;
 
         if (!this.isHorizontal && totalHeight + (positionTop * 2) > chartHeight) {
             pageHeight = chartHeight - (positionTop * 2);
-            singleItemHeight = (legendData[0].labelHeight + chartConst.LINE_MARGIN_TOP);
+            this._legendItemHeight = Math.max(legendData[0].labelHeight, chartConst.LEGEND_ICON_HEIGHT);
+            singleItemHeight = (this._legendItemHeight + chartConst.LINE_MARGIN_TOP);
 
             visibleItemCount = Math.floor(pageHeight / singleItemHeight);
 
             resultLegendData = legendData.slice((sliceIndex - 1) * visibleItemCount, sliceIndex * visibleItemCount);
-        } else {
-            resultLegendData = legendData;
         }
 
         return resultLegendData;
@@ -128,23 +167,26 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         this.basePosition = data.position;
         this.isHorizontal = data.isHorizontal;
         this.originalLegendData = data.legendData;
-        if (!tui.util.isNumber(this.currentPageCount)) {
-            this.currentPageCount = 1;
-        }
 
-        legendData = this._getLegendData(data.legendData, this.currentPageCount);
+        if (this.originalLegendData.length) {
+            this._showCheckbox = tui.util.isExisty(data.legendData[0].checkbox);
+            this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
+            data.dimension.width = this._calculateLegendWidth(data.legendData[0].labelHeight);
 
-        this._renderLegendItems(legendData);
+            legendData = this._getLegendData(data.legendData, this._currentPageCount);
 
-        if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
-            legendHeight = this.paper.height - (this.basePosition.top * 2);
+            this._renderLegendItems(legendData);
 
-            this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
+            if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
+                legendHeight = this.paper.height - (this.basePosition.top * 2);
 
-            this._renderPaginationArea(this.basePosition, {
-                width: data.dimension.width,
-                height: legendHeight
-            });
+                this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
+
+                this._renderPaginationArea(this.basePosition, {
+                    width: data.dimension.width,
+                    height: legendHeight
+                });
+            }
         }
 
         return this.legendSet;
@@ -155,7 +197,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
      * @private
      */
     _paginateLegendAreaTo: function(direction) {
-        var pageNumber = this.currentPageCount;
+        var pageNumber = this._currentPageCount;
 
         this._removeLegendItems();
 
@@ -203,16 +245,16 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         this.lowerButton = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 3);
 
         this.upperButton.click(function() {
-            if (self.currentPageCount > 1) {
+            if (self._currentPageCount > 1) {
                 self._paginateLegendAreaTo('previous');
-                self.currentPageCount -= 1;
+                self._currentPageCount -= 1;
             }
         });
 
         this.lowerButton.click(function() {
-            if (self.currentPageCount < self.availablePageCount) {
+            if (self._currentPageCount < self.availablePageCount) {
                 self._paginateLegendAreaTo('next');
-                self.currentPageCount += 1;
+                self._currentPageCount += 1;
             }
         });
     },
@@ -257,7 +299,7 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         var labelTheme = this.labelTheme;
         var pos = {
             left: position.left,
-            top: position.top + (data.labelHeight / 2)
+            top: position.top + (this._iconHeight / 2)
         };
         var attributes = {
             'font-size': labelTheme.fontSize,
@@ -283,38 +325,35 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
     /**
      * Render checkbox
      * @param {object} position left, top
-     * @param {{checked: boolean}} checkboxData checkbox data
-     * @param {number} legendIndex legend index
-     * @param {Array.<object>} legendSet legend set
+     * @param {object} data rendering data
      */
-    _renderCheckbox: function(position, checkboxData, legendIndex, legendSet) {
+    _renderCheckbox: function(position, data) {
         var self = this;
         var checkboxSet;
         var left = position.left;
-        var top = position.top;
-        var vPathString = 'M' + ((CHECKBOX_WIDTH * 0.3) + left) + ',' + ((CHECKBOX_HEIGHT * 0.5) + top)
-            + 'L' + ((CHECKBOX_WIDTH * 0.5) + left) + ',' + ((CHECKBOX_HEIGHT * 0.7) + top)
-            + 'L' + ((CHECKBOX_WIDTH * 0.8) + left) + ',' + ((CHECKBOX_HEIGHT * 0.2) + top);
+        var top = position.top + ((this._legendItemHeight - this._checkBoxHeight) / 2);
+        var vPathString = 'M' + ((this._checkBoxWidth * 0.3) + left) + ',' + ((this._checkBoxHeight * 0.5) + top)
+            + 'L' + ((this._checkBoxWidth * 0.5) + left) + ',' + ((this._checkBoxHeight * 0.7) + top)
+            + 'L' + ((this._checkBoxWidth * 0.8) + left) + ',' + ((this._checkBoxHeight * 0.2) + top);
 
-        if (checkboxData) {
-            checkboxSet = this.paper.set();
+        checkboxSet = this.paper.set();
 
-            checkboxSet.push(this.paper.rect(left, top, CHECKBOX_WIDTH, CHECKBOX_HEIGHT, 2).attr({
-                fill: '#fff'
-            }));
+        checkboxSet.push(this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 2).attr({
+            fill: '#fff'
+        }));
 
-            if (checkboxData.checked) {
-                checkboxSet.push(this.paper.path(vPathString));
-            }
-
-            checkboxSet.click(function() {
-                self.eventBus.fire('checkboxClicked', legendIndex);
-            });
-
-            checkboxSet.forEach(function(checkbox) {
-                legendSet.push(checkbox);
-            });
+        if (data.isChecked) {
+            checkboxSet.push(this.paper.path(vPathString));
         }
+
+        checkboxSet.data('index', data.legendIndex);
+        checkboxSet.click(function() {
+            self.eventBus.fire('checkboxClicked', data.legendIndex);
+        });
+
+        checkboxSet.forEach(function(checkbox) {
+            data.legendSet.push(checkbox);
+        });
     },
 
     /**
@@ -336,48 +375,104 @@ var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendCompon
         this.paper.setStart();
 
         if (data.iconType === 'line') {
-            pathString = 'M' + position.left + ',' + (position.top + (data.labelHeight / 2))
-                + 'H' + (position.left + 10);
+            pathString = 'M' + position.left + ',' + (position.top + (this._legendItemHeight / 2))
+                + 'H' + (position.left + chartConst.LEGEND_ICON_WIDTH);
 
             icon = raphaelRenderUtil.renderLine(this.paper, pathString, data.legendColor, 3);
+            icon.attr('stroke-opacity', data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1);
         } else {
             icon = raphaelRenderUtil.renderRect(this.paper, {
                 left: position.left,
                 top: position.top,
-                width: 10,
-                height: 10
+                width: chartConst.LEGEND_ICON_WIDTH,
+                height: this._iconHeight
             }, {
                 'stroke-width': 0,
-                fill: data.legendColor
+                fill: data.legendColor,
+                opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1
             });
         }
 
+        icon.data('icon', data.iconType);
+        icon.data('index', data.legendIndex);
         icon.click(function() {
             self.eventBus.fire('labelClicked', data.legendIndex);
         });
 
         data.legendSet.push(icon);
     },
+
     selectLegend: function(index, legendSet) {
         legendSet.forEach(function(element) {
             var indexData = element.data('index');
+            var attributeName = element.data('icon') === 'line' ? 'stroke-opacity' : 'opacity';
 
             if (tui.util.isNull(indexData) || tui.util.isUndefined(indexData)) {
-                element.attr({
-                    opacity: 1
-                });
+                element.attr(attributeName, 1);
             } else if (!tui.util.isUndefined(indexData)) {
                 if (tui.util.isNumber(index) && indexData !== index) {
-                    element.attr({
-                        opacity: UNSELECTED_LEGEND_LABEL_OPACITY
-                    });
+                    element.attr(attributeName, UNSELECTED_LEGEND_LABEL_OPACITY);
                 } else {
-                    element.attr({
-                        opacity: 1
-                    });
+                    element.attr(attributeName, 1);
                 }
             }
         });
+    },
+
+    /**
+     * get checkbox area's width depends on checkbox visibility
+     * @returns {number} - checkbox region's width
+     */
+    _getCheckboxWidth: function() {
+        return this._showCheckbox ? (this._checkBoxWidth + chartConst.LEGEND_LABEL_LEFT_PADDING) : 0;
+    },
+
+    /**
+     * Get width of a label when parameter is given.
+     * Otherwise, returns maximum width of labels
+     * @param {number} [index] - legend index
+     * @returns {number} - maximum label width  label width 
+     */
+    _getLabelWidth: function(index) {
+        var labelWidth;
+        if (index) {
+            labelWidth = this.labelWidths[index] || 0;
+        } else {
+            labelWidth = arrayUtil.max(this.labelWidths);
+        }
+
+        return labelWidth + chartConst.LEGEND_LABEL_LEFT_PADDING;
+    },
+
+    /**
+     * calulate a whole legend width before start rendering
+     * @returns {number} - calculate label 
+     */
+    _calculateLegendWidth: function() {
+        return this._calculateSingleLegendWidth();
+    },
+
+    /**
+     * calculate a single legend width of index `legendIndex`
+     * @param {number} legendIndex - index of legend label
+     * @returns {number} - calculate single legend width
+     */
+    _calculateSingleLegendWidth: function(legendIndex) {
+        return chartConst.LEGEND_AREA_PADDING
+            + this._getCheckboxWidth()
+            + getIconWidth()
+            + this._getLabelWidth(legendIndex)
+            + chartConst.LEGEND_AREA_PADDING;
+    },
+
+    /**
+     * set component dimension by comparaing label height and icon height
+     * @param {number} labelHeight - label height
+     */
+    _setComponentDimensionsBaseOnLabelHeight: function(labelHeight) {
+        this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_ICON_HEIGHT);
+        this._iconHeight = this._legendItemHeight;
+        this._checkBoxWidth = this._checkBoxHeight = labelHeight;
     }
 });
 

@@ -12,6 +12,12 @@ var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
 
+var LEGEND_CHECKBOX_WIDTH = chartConst.LEGEND_CHECKBOX_WIDTH;
+var LEGEND_ICON_WIDTH = chartConst.LEGEND_ICON_WIDTH;
+var LEGEND_ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
+var LEGEND_LABEL_LEFT_PADDING = chartConst.LEGEND_LABEL_LEFT_PADDING;
+var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
+
 /**
  * Calculator for dimension of legend.
  * @module legendCalculator
@@ -21,7 +27,7 @@ var legendCalculator = {
      * Legend margin.
      * @type {number}
      */
-    legendMargin: chartConst.LEGEND_RECT_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING + chartConst.LEGEND_AREA_PADDING,
+    legendMargin: LEGEND_LABEL_LEFT_PADDING + LEGEND_AREA_PADDING,
 
     /**
      * Calculate sum of legends width.
@@ -32,7 +38,8 @@ var legendCalculator = {
      * @private
      */
     _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
-        var restWidth = checkboxWidth + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
+        var restWidth = LEGEND_AREA_PADDING + checkboxWidth
+            + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
         var legendMargin = this.legendMargin;
 
         return calculator.sum(tui.util.map(labels, function(label) {
@@ -130,9 +137,13 @@ var legendCalculator = {
      * @private
      */
     _calculateHorizontalLegendHeight: function(dividedLabels, labelTheme) {
-        return calculator.sum(tui.util.map(dividedLabels, function(labels) {
+        var heightByLabel = Math.max.apply(null, tui.util.map(dividedLabels, function(labels) {
             return renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
         }));
+        var labelItemHeightWithPaddingTop = Math.max(LEGEND_ICON_HEIGHT, heightByLabel) + chartConst.LINE_MARGIN_TOP;
+        var legendHeight = (labelItemHeightWithPaddingTop * dividedLabels.length) - chartConst.LINE_MARGIN_TOP;
+
+        return legendHeight;
     },
 
     /**
@@ -147,7 +158,7 @@ var legendCalculator = {
     _makeHorizontalDimension: function(labelTheme, legendLabels, chartWidth, checkboxWidth) {
         var dividedInfo = this._makeDividedLabelsAndMaxLineWidth(legendLabels, chartWidth, labelTheme, checkboxWidth);
         var horizontalLegendHeight = this._calculateHorizontalLegendHeight(dividedInfo.labels, labelTheme);
-        var legendHeight = horizontalLegendHeight + (chartConst.LEGEND_AREA_PADDING * 2);
+        var legendHeight = horizontalLegendHeight + (LEGEND_AREA_PADDING * 2);
 
         return {
             width: Math.max(dividedInfo.maxLineWidth, chartConst.MIN_LEGEND_WIDTH),
@@ -164,8 +175,9 @@ var legendCalculator = {
      * @private
      */
     _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth) {
-        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme) + checkboxWidth
-            + chartConst.LEGEND_RECT_WIDTH + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
+        var labelWidth = LEGEND_AREA_PADDING + checkboxWidth +
+            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING +
+            renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
 
         return {
             width: labelWidth + this.legendMargin,
@@ -182,7 +194,7 @@ var legendCalculator = {
      * @returns {{width: number, height: number}}
      */
     calculate: function(options, labelTheme, legendLabels, chartWidth) {
-        var checkboxWidth = options.showCheckbox === false ? 0 : chartConst.LEGEND_CHECKBOX_WIDTH;
+        var checkboxWidth = options.showCheckbox === false ? 0 : LEGEND_CHECKBOX_WIDTH + LEGEND_LABEL_LEFT_PADDING;
         var dimension = {};
 
         if (!options.visible) {

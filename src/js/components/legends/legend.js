@@ -6,11 +6,12 @@
 
 'use strict';
 
-var arrayUtil = require('../../helpers/arrayUtil');
 var chartConst = require('../../const');
 var LegendModel = require('./legendModel');
 var pluginFactory = require('../../factories/pluginFactory');
 var predicate = require('../../helpers/predicate');
+
+var ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
@@ -199,8 +200,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         var labelTheme = legendData[0] ? legendData[0].theme : {};
         var labelHeight = graphRenderer.getRenderedLabelHeight('DEFAULT_TEXT', labelTheme) - 1;
         var labelCount = labelWidths.length;
-        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
-        var iconWidth = 10;
+        var legendItemHeight = Math.max(ICON_HEIGHT, labelHeight);
+        var dimensionHeight = (chartConst.LINE_MARGIN_TOP + legendItemHeight) * (isHorizontal ? 1 : labelCount);
 
         return graphRenderer.render({
             paper: paper,
@@ -211,9 +212,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
                 top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
             },
             dimension: {
-                height: (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount),
-                width: arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
-                + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2)
+                height: dimensionHeight,
+                width: 0
             },
             labelTheme: this.theme.label,
             labelWidths: labelWidths,

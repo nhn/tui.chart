@@ -41,9 +41,10 @@ describe('Test user events for combo chart', function() {
         }
     };
     var comboChart;
+    var container;
 
     beforeEach(function() {
-        var container = dom.create('DIV');
+        container = dom.create('DIV');
 
         dom.append(document.body, container);
 
@@ -57,17 +58,13 @@ describe('Test user events for combo chart', function() {
         });
     });
 
+    afterEach(function() {
+        document.body.removeChild(container);
+    });
+
     describe('selectSeries', function() {
         it('select series', function(done) {
             var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
-
-            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
-            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 40,
-                top: 30,
-                right: 460,
-                bottom: 390
-            });
 
             comboChart.on('selectSeries', function(info) {
                 expect(info.chartType).toBe('column');
@@ -78,9 +75,9 @@ describe('Test user events for combo chart', function() {
                 done();
             });
 
-            mouseEventDetector._onClick({
-                clientX: 125,
-                clientY: 330
+            mouseEventDetector._onClick({ // (May - Sydney)
+                clientX: 119, // Index2: 113 ~ 119
+                clientY: 376 // Index2: 209 ~ 376
             });
         });
     });
@@ -88,14 +85,6 @@ describe('Test user events for combo chart', function() {
     describe('unselectSeries', function() {
         it('unselect series', function(done) {
             var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
-
-            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
-            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 40,
-                top: 30,
-                right: 460,
-                bottom: 390
-            });
 
             comboChart.on('unselectSeries', function(info) {
                 expect(info.chartType).toBe('column');
@@ -108,14 +97,14 @@ describe('Test user events for combo chart', function() {
 
             // select
             mouseEventDetector._onClick({
-                clientX: 125,
+                clientX: 119,
                 clientY: 330
             });
 
             setTimeout(function() {
                 // unselect
                 mouseEventDetector._onClick({
-                    clientX: 125,
+                    clientX: 119,
                     clientY: 330
                 });
             });
@@ -127,14 +116,6 @@ describe('Test user events for combo chart', function() {
         it('before show tooltip', function(done) {
             var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
-            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 80,
-                right: 450,
-                bottom: 380
-            });
-
             comboChart.on('beforeShowTooltip', function(info) {
                 expect(info.chartType).toBe('combo');
                 expect(info.index).toBe(1);
@@ -145,7 +126,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 150,
+                clientX: 100, // index 1: 85 ~ 127
                 clientY: 100
             });
         });
@@ -154,14 +135,6 @@ describe('Test user events for combo chart', function() {
     describe('afterShowTooltip', function() {
         it('after show tooltip', function(done) {
             var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
-
-            mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
-            mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
-                left: 50,
-                top: 80,
-                right: 450,
-                bottom: 380
-            });
 
             comboChart.on('afterShowTooltip', function(info) {
                 expect(info.chartType).toBe('combo');
@@ -176,7 +149,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 150,
+                clientX: 100, // index 1: 85 ~ 127
                 clientY: 100
             });
         });

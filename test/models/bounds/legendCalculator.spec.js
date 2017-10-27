@@ -21,7 +21,7 @@ describe('Test for legendCalculator', function() {
             var actual = legendCalculator._calculateLegendsWidthSum(
                 ['legend1', 'legend2'], {}, chartConst.LEGEND_CHECKBOX_WIDTH
             );
-            var expected = 190;
+            var expected = 260;
 
             expect(actual).toBe(expected);
         });
@@ -52,12 +52,16 @@ describe('Test for legendCalculator', function() {
 
     describe('_makeDividedLabelsAndMaxLineWidth()', function() {
         it('make divided labels and max line width.', function() {
+            /**
+             * 251: chart length = max line width + 1
+             * devision loop ending condition: chart length > max line width 
+             */
             var actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
-                ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 250, {}, chartConst.LEGEND_CHECKBOX_WIDTH
+                ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 261, {}, chartConst.LEGEND_CHECKBOX_WIDTH
             );
             var expected = {
                 labels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
-                maxLineWidth: 190
+                maxLineWidth: 260 /* max line width */
             };
 
             expect(actual).toEqual(expected);
@@ -65,11 +69,11 @@ describe('Test for legendCalculator', function() {
 
         it('make divided labels and max line width, when chart width less than label width', function() {
             var actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
-                ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 100, {}, chartConst.LEGEND_CHECKBOX_WIDTH
+                ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 120, {}, chartConst.LEGEND_CHECKBOX_WIDTH
             );
             var expected = {
                 labels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
-                maxLineWidth: 95
+                maxLineWidth: 130 /* width of a legend item */
             };
 
             expect(actual).toEqual(expected);
@@ -81,7 +85,7 @@ describe('Test for legendCalculator', function() {
             var actual = legendCalculator._calculateHorizontalLegendHeight(
                 [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']]
             );
-            var expected = 60;
+            var expected = 70;
 
             expect(actual).toBe(expected);
         });
@@ -90,10 +94,10 @@ describe('Test for legendCalculator', function() {
     describe('_makeHorizontalDimension()', function() {
         it('calculate horizontal dimension', function() {
             var actual = legendCalculator._makeHorizontalDimension(
-                {}, ['label1', 'label12'], 250, chartConst.LEGEND_CHECKBOX_WIDTH
+                {}, ['label1', 'label12'], 300, chartConst.LEGEND_CHECKBOX_WIDTH
             );
             var expected = {
-                width: 190,
+                width: 260,
                 height: 40
             };
 
@@ -107,7 +111,7 @@ describe('Test for legendCalculator', function() {
 
             actual = legendCalculator._makeVerticalDimension(
                 {}, ['label1', 'label12'], chartConst.LEGEND_CHECKBOX_WIDTH);
-            expected = 105;
+            expected = 130;
 
             expect(actual.width).toBe(expected);
         });
@@ -137,7 +141,7 @@ describe('Test for legendCalculator', function() {
 
             actual = legendCalculator.calculate(options, labelTheme, legendLabels, chartWidth);
             expected = legendCalculator._makeHorizontalDimension(labelTheme, legendLabels,
-                                                            chartWidth, chartConst.LEGEND_CHECKBOX_WIDTH);
+                chartWidth, chartConst.LEGEND_CHECKBOX_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING);
 
             expect(actual).toEqual(expected);
         });
@@ -153,7 +157,7 @@ describe('Test for legendCalculator', function() {
 
             actual = legendCalculator.calculate(options, labelTheme, legendLabels);
             expected = legendCalculator._makeVerticalDimension(labelTheme, legendLabels,
-                                                                        chartConst.LEGEND_CHECKBOX_WIDTH);
+                chartConst.LEGEND_CHECKBOX_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING);
 
             expect(actual).toEqual(expected);
         });

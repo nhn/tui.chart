@@ -554,8 +554,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
-            left = ((this.getDimension('chart').width - this.getDimension('legend').width) / 2)
-                - chartConst.LEGEND_AREA_PADDING;
+            left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
         } else if (predicate.isLegendAlignLeft(legendOption.align)) {
             left = 0;
         } else {

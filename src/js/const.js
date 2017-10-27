@@ -277,8 +277,8 @@ var chartConst = {
     LEGEND_AREA_PADDING: 10,
     /** legend checkbox width */
     LEGEND_CHECKBOX_WIDTH: 10,
-    /** legend rect width */
-    LEGEND_RECT_WIDTH: 10,
+    LEGEND_ICON_WIDTH: 40,
+    LEGEND_ICON_HEIGHT: 15,
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 5,
     MIN_LEGEND_WIDTH: 100,
