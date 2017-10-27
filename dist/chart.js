@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.10.0
+ * @version 2.10.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Oct 27 2017 18:29:25 GMT+0900 (KST)"
+ * bundle created at "Fri Oct 27 2017 19:45:09 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -1750,8 +1750,8 @@
 	    LEGEND_AREA_PADDING: 10,
 	    /** legend checkbox width */
 	    LEGEND_CHECKBOX_WIDTH: 10,
-	    /** legend rect width */
-	    LEGEND_RECT_WIDTH: 10,
+	    LEGEND_ICON_WIDTH: 40,
+	    LEGEND_ICON_HEIGHT: 15,
 	    /** lgend label left padding */
 	    LEGEND_LABEL_LEFT_PADDING: 5,
 	    MIN_LEGEND_WIDTH: 100,
@@ -5426,6 +5426,7 @@
 	        if (title.text) {
 	            this.graphRenderer.renderTitle(this.paper, {
 	                text: title.text,
+	                offset: title.offset,
 	                theme: this.theme.title,
 	                rotationInfo: {
 	                    rotateTitle: this.options.rotateTitle,
@@ -9024,11 +9025,12 @@
 
 	'use strict';
 
-	var arrayUtil = __webpack_require__(6);
 	var chartConst = __webpack_require__(2);
 	var LegendModel = __webpack_require__(36);
 	var pluginFactory = __webpack_require__(7);
 	var predicate = __webpack_require__(5);
+
+	var ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
 
 	var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 	    /**
@@ -9217,8 +9219,8 @@
 	        var labelTheme = legendData[0] ? legendData[0].theme : {};
 	        var labelHeight = graphRenderer.getRenderedLabelHeight('DEFAULT_TEXT', labelTheme) - 1;
 	        var labelCount = labelWidths.length;
-	        var checkboxWidth = this.options.showCheckbox === false ? 0 : 10;
-	        var iconWidth = 10;
+	        var legendItemHeight = Math.max(ICON_HEIGHT, labelHeight);
+	        var dimensionHeight = (chartConst.LINE_MARGIN_TOP + legendItemHeight) * (isHorizontal ? 1 : labelCount);
 
 	        return graphRenderer.render({
 	            paper: paper,
@@ -9229,9 +9231,8 @@
 	                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
 	            },
 	            dimension: {
-	                height: (chartConst.LINE_MARGIN_TOP + labelHeight) * (isHorizontal ? 1 : labelCount),
-	                width: arrayUtil.max(labelWidths) + checkboxWidth + iconWidth
-	                + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2)
+	                height: dimensionHeight,
+	                width: 0
 	            },
 	            labelTheme: this.theme.label,
 	            labelWidths: labelWidths,
@@ -10316,7 +10317,6 @@
 	var singleTooltipMixer = __webpack_require__(42);
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
-	var renderUtil = __webpack_require__(24);
 	var tooltipTemplate = __webpack_require__(43);
 
 	/**
@@ -10389,6 +10389,7 @@
 	     * @private
 	     */
 	    _makeSingleTooltipHtml: function(chartType, indexes) {
+	        var groupIndex = indexes.groupIndex;
 	        var data = tui.util.extend({}, tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index));
 
 	        if (predicate.isBoxplotChart(this.chartType) && tui.util.isNumber(indexes.outlierIndex)) {
@@ -10400,7 +10401,7 @@
 	        }, data);
 	        data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
 
-	        return this.templateFunc(data.category, data);
+	        return this.templateFunc(data.category, data, this.getRawCategory(groupIndex));
 	    },
 
 	    /**
@@ -10466,10 +10467,6 @@
 
 	        if (labelFormatter) {
 	            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
-	        }
-
-	        if (category && predicate.isDatetimeType(this.xAxisType)) {
-	            category = renderUtil.formatDate(category, this.dateFormat);
 	        }
 
 	        tooltipDatum.category = category || '';
@@ -10991,6 +10988,28 @@
 	    resetOffset: function() {
 	        this.options.offset = this.orgPositionOptions.offset;
 	        this._updateOffsetOption(this.options.offset);
+	    },
+
+	    /**
+	     * Get category's raw data
+	     * @param {number} index - index of categories
+	     * @param {string} format - date format
+	     * @returns {string} - category's raw data
+	     */
+	    getRawCategory: function(index, format) {
+	        var axis = this.isVertical ? 'x' : 'y';
+	        var categories = this.dataProcessor.categoriesMap ? this.dataProcessor.categoriesMap[axis] : null;
+	        var rawCategory = '';
+
+	        if (categories) {
+	            rawCategory = categories[index];
+	        }
+
+	        if (format) {
+	            rawCategory = renderUtil.formatDate(rawCategory, format);
+	        }
+
+	        return rawCategory;
 	    }
 	});
 
@@ -11805,10 +11824,11 @@
 	     */
 	    makeTooltipData: function() {
 	        var self = this;
+	        var length = this.dataProcessor.getCategoryCount(this.isVertical);
 
 	        return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
 	            return {
-	                category: self.dataProcessor.getCategory(index),
+	                category: self.dataProcessor.makeTooltipCategory(index, length - index, self.isVertical),
 	                values: seriesGroup.pluck('label')
 	            };
 	        });
@@ -11881,7 +11901,7 @@
 
 	        if (data) {
 	            items = this._makeItemRenderingData(data.values);
-	            htmlString = this.templateFunc(data.category, items);
+	            htmlString = this.templateFunc(data.category, items, this.getRawCategory(groupIndex));
 	        }
 
 	        return htmlString;
@@ -11947,7 +11967,7 @@
 	            },
 	            position: {
 	                left: chartConst.SERIES_EXPAND_SIZE,
-	                top: range.start + chartConst.SERIES_EXPAND_SIZE
+	                top: range.start
 	            }
 	        };
 	    },
@@ -21156,11 +21176,24 @@
 	    /**
 	     * Map categories.
 	     * @param {Array.<string | number>} categories - categories
+	     * @param {string} [axisName] - axis name like 'x' or 'y'
 	     * @returns {Array.<string | number>}
 	     * @private
 	     */
-	    _mapCategories: function(categories) {
-	        if (predicate.isDatetimeType(this.options.xAxis.type)) {
+	    _mapCategories: function(categories, axisName) {
+	        var axisType = axisName + 'Axis';
+	        var options = this.options[axisType] || {};
+	        var isDateTime = false;
+
+	        if (tui.util.isArray(options)) {
+	            isDateTime = tui.util.filter(options, function(option) {
+	                return option.type && predicate.isDatetimeType(option.type);
+	            });
+	        } else {
+	            isDateTime = options.type && predicate.isDatetimeType(options.type);
+	        }
+
+	        if (isDateTime) {
 	            categories = tui.util.map(categories, function(value) {
 	                var date = new Date(value);
 
@@ -21184,14 +21217,14 @@
 	        var categoriesMap = {};
 
 	        if (tui.util.isArray(rawCategories)) {
-	            categoriesMap[type] = this._mapCategories(rawCategories);
+	            categoriesMap[type] = this._mapCategories(rawCategories, type);
 	        } else if (rawCategories) {
 	            if (rawCategories.x) {
-	                categoriesMap.x = this._mapCategories(rawCategories.x);
+	                categoriesMap.x = this._mapCategories(rawCategories.x, 'x');
 	            }
 
 	            if (rawCategories.y) {
-	                categoriesMap.y = this._mapCategories(rawCategories.y).reverse();
+	                categoriesMap.y = this._mapCategories(rawCategories.y, 'y').reverse();
 	            }
 	        }
 
@@ -21317,10 +21350,13 @@
 	    _getTooltipCategory: function(categoryIndex, isVertical) {
 	        var category = this.getCategory(categoryIndex, isVertical);
 	        var axisType = isVertical ? 'yAxis' : 'xAxis';
-	        var options = this.options[axisType] || {};
+	        var axisOption = this.options[axisType] || {};
+	        var tooltipOption = this.options.tooltip || {};
 
-	        if (predicate.isDatetimeType(options.type)) {
-	            category = renderUtil.formatDate(category, options.dateFormat);
+	        if (predicate.isDatetimeType(tooltipOption.type)) {
+	            category = renderUtil.formatDate(category, tooltipOption.dateFormat);
+	        } else if (predicate.isDatetimeType(axisOption.type)) {
+	            category = renderUtil.formatDate(category, axisOption.dateFormat);
 	        }
 
 	        return category;
@@ -25423,8 +25459,7 @@
 	        }
 
 	        if (predicate.isHorizontalLegend(legendOption.align)) {
-	            left = ((this.getDimension('chart').width - this.getDimension('legend').width) / 2)
-	                - chartConst.LEGEND_AREA_PADDING;
+	            left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
 	        } else if (predicate.isLegendAlignLeft(legendOption.align)) {
 	            left = 0;
 	        } else {
@@ -25814,6 +25849,12 @@
 	var renderUtil = __webpack_require__(24);
 	var arrayUtil = __webpack_require__(6);
 
+	var LEGEND_CHECKBOX_WIDTH = chartConst.LEGEND_CHECKBOX_WIDTH;
+	var LEGEND_ICON_WIDTH = chartConst.LEGEND_ICON_WIDTH;
+	var LEGEND_ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
+	var LEGEND_LABEL_LEFT_PADDING = chartConst.LEGEND_LABEL_LEFT_PADDING;
+	var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
+
 	/**
 	 * Calculator for dimension of legend.
 	 * @module legendCalculator
@@ -25823,7 +25864,7 @@
 	     * Legend margin.
 	     * @type {number}
 	     */
-	    legendMargin: chartConst.LEGEND_RECT_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING + chartConst.LEGEND_AREA_PADDING,
+	    legendMargin: LEGEND_LABEL_LEFT_PADDING + LEGEND_AREA_PADDING,
 
 	    /**
 	     * Calculate sum of legends width.
@@ -25834,7 +25875,8 @@
 	     * @private
 	     */
 	    _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
-	        var restWidth = checkboxWidth + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
+	        var restWidth = LEGEND_AREA_PADDING + checkboxWidth
+	            + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
 	        var legendMargin = this.legendMargin;
 
 	        return calculator.sum(tui.util.map(labels, function(label) {
@@ -25932,9 +25974,13 @@
 	     * @private
 	     */
 	    _calculateHorizontalLegendHeight: function(dividedLabels, labelTheme) {
-	        return calculator.sum(tui.util.map(dividedLabels, function(labels) {
+	        var heightByLabel = Math.max.apply(null, tui.util.map(dividedLabels, function(labels) {
 	            return renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
 	        }));
+	        var labelItemHeightWithPaddingTop = Math.max(LEGEND_ICON_HEIGHT, heightByLabel) + chartConst.LINE_MARGIN_TOP;
+	        var legendHeight = (labelItemHeightWithPaddingTop * dividedLabels.length) - chartConst.LINE_MARGIN_TOP;
+
+	        return legendHeight;
 	    },
 
 	    /**
@@ -25949,7 +25995,7 @@
 	    _makeHorizontalDimension: function(labelTheme, legendLabels, chartWidth, checkboxWidth) {
 	        var dividedInfo = this._makeDividedLabelsAndMaxLineWidth(legendLabels, chartWidth, labelTheme, checkboxWidth);
 	        var horizontalLegendHeight = this._calculateHorizontalLegendHeight(dividedInfo.labels, labelTheme);
-	        var legendHeight = horizontalLegendHeight + (chartConst.LEGEND_AREA_PADDING * 2);
+	        var legendHeight = horizontalLegendHeight + (LEGEND_AREA_PADDING * 2);
 
 	        return {
 	            width: Math.max(dividedInfo.maxLineWidth, chartConst.MIN_LEGEND_WIDTH),
@@ -25966,8 +26012,9 @@
 	     * @private
 	     */
 	    _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth) {
-	        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme) + checkboxWidth
-	            + chartConst.LEGEND_RECT_WIDTH + (chartConst.LEGEND_LABEL_LEFT_PADDING * 2);
+	        var labelWidth = LEGEND_AREA_PADDING + checkboxWidth +
+	            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING +
+	            renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
 
 	        return {
 	            width: labelWidth + this.legendMargin,
@@ -25984,7 +26031,7 @@
 	     * @returns {{width: number, height: number}}
 	     */
 	    calculate: function(options, labelTheme, legendLabels, chartWidth) {
-	        var checkboxWidth = options.showCheckbox === false ? 0 : chartConst.LEGEND_CHECKBOX_WIDTH;
+	        var checkboxWidth = options.showCheckbox === false ? 0 : LEGEND_CHECKBOX_WIDTH + LEGEND_LABEL_LEFT_PADDING;
 	        var dimension = {};
 
 	        if (!options.visible) {
@@ -34171,11 +34218,15 @@
 
 	    if (!tui.util.isNumber(areaOpacity)) {
 	        validity = false;
-	        console.error(ERROR_NOT_VALID_AREAOPACITY);
+	        if (window.console) {
+	            console.error(ERROR_NOT_VALID_AREAOPACITY);
+	        }
 	    }
 
 	    if (areaOpacity < 0 || areaOpacity > 1) {
-	        console.warn(ERROR_NOT_VALID_AREAOPACITY);
+	        if (window.console) {
+	            console.warn(ERROR_NOT_VALID_AREAOPACITY);
+	        }
 	    }
 
 	    return validity;
@@ -36270,13 +36321,53 @@
 
 	var chartConst = __webpack_require__(2);
 	var raphaelRenderUtil = __webpack_require__(61);
+	var arrayUtil = __webpack_require__(6);
 
 	var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
-	var ICON_WIDTH = 10;
-	var CHECKBOX_WIDTH = 10;
-	var CHECKBOX_HEIGHT = 10;
+	var RaphaelLegendComponent;
 
-	var RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+	/**
+	 * Get sum of icon and left padding width
+	 * @returns {number} - icon and left padding width
+	 */
+	function getIconWidth() {
+	    return chartConst.LEGEND_ICON_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING;
+	}
+
+	RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+
+	    init: function() {
+	        /**
+	         * @type {number}
+	         * @private
+	         */
+	        this._checkBoxWidth = 0;
+	        /**
+	         * @type {number}
+	         * @private
+	         */
+	        this._checkBoxHeight = 0;
+	        /**
+	         * @type {number}
+	         * @private
+	         */
+	        this._iconHeight = 0;
+	        /**
+	         * @type {number}
+	         * @private
+	         */
+	        this._legendItemHeight = 0;
+	        /**
+	         * @type {number}
+	         * @private
+	         */
+	        this._currentPageCount = 1;
+	        /**
+	         * @type {boolean}
+	         * @private
+	         */
+	        this._showCheckbox = true;
+	    },
 
 	    /**
 	     * @param {Array.<object>} legendData Array of legend item data
@@ -36293,19 +36384,22 @@
 	            var isUnselected = legendDatum.isUnselected;
 	            var labelHeight = legendDatum.labelHeight;
 	            var checkboxData = legendDatum.checkbox;
-	            var predicatedLegendLength = position.left + ICON_WIDTH + self.labelWidths[index]
-	                + (labelPaddingLeft * 2) + (checkboxData ? CHECKBOX_WIDTH + labelPaddingLeft : 0);
-	            var isNeedBreakLine = (predicatedLegendLength > self.paper.width);
+	            var predicatedLegendWidth = position.left + self._calculateSingleLegendWidth(legendIndex);
+	            var isNeedBreakLine = (predicatedLegendWidth >= self.paper.width);
 
 	            if (self.isHorizontal && isNeedBreakLine) {
-	                position.top += (labelHeight + chartConst.LABEL_PADDING_TOP);
+	                position.top += (self._legendItemHeight + chartConst.LABEL_PADDING_TOP);
 	                position.left = self.basePosition.left;
 	            }
 
-	            if (checkboxData) {
-	                self._renderCheckbox(position, checkboxData, legendIndex, self.legendSet);
+	            if (self._showCheckbox) {
+	                self._renderCheckbox(position, {
+	                    isChecked: checkboxData.checked,
+	                    legendIndex: legendIndex,
+	                    legendSet: self.legendSet
+	                });
 
-	                position.left += (CHECKBOX_WIDTH + labelPaddingLeft);
+	                position.left += (self._checkBoxWidth + labelPaddingLeft);
 	            }
 
 	            self._renderIcon(position, {
@@ -36317,7 +36411,7 @@
 	                legendSet: self.legendSet
 	            });
 
-	            position.left += ICON_WIDTH + labelPaddingLeft;
+	            position.left += chartConst.LEGEND_ICON_WIDTH + labelPaddingLeft;
 
 	            self._renderLabel(position, {
 	                labelText: legendDatum.label,
@@ -36331,7 +36425,7 @@
 	                position.left += self.labelWidths[index] + labelPaddingLeft;
 	            } else {
 	                position.left = self.basePosition.left;
-	                position.top += labelHeight + chartConst.LINE_MARGIN_TOP;
+	                position.top += self._legendItemHeight + chartConst.LINE_MARGIN_TOP;
 	            }
 	        });
 	    },
@@ -36346,21 +36440,17 @@
 	        var positionTop = this.basePosition.top;
 	        var totalHeight = this.dimension.height;
 	        var chartHeight = this.paper.height;
-	        var resultLegendData, pageHeight, singleItemHeight, visibleItemCount;
-
-	        if (!legendData.length) {
-	            return null;
-	        }
+	        var resultLegendData = legendData;
+	        var pageHeight, singleItemHeight, visibleItemCount;
 
 	        if (!this.isHorizontal && totalHeight + (positionTop * 2) > chartHeight) {
 	            pageHeight = chartHeight - (positionTop * 2);
-	            singleItemHeight = (legendData[0].labelHeight + chartConst.LINE_MARGIN_TOP);
+	            this._legendItemHeight = Math.max(legendData[0].labelHeight, chartConst.LEGEND_ICON_HEIGHT);
+	            singleItemHeight = (this._legendItemHeight + chartConst.LINE_MARGIN_TOP);
 
 	            visibleItemCount = Math.floor(pageHeight / singleItemHeight);
 
 	            resultLegendData = legendData.slice((sliceIndex - 1) * visibleItemCount, sliceIndex * visibleItemCount);
-	        } else {
-	            resultLegendData = legendData;
 	        }
 
 	        return resultLegendData;
@@ -36390,23 +36480,26 @@
 	        this.basePosition = data.position;
 	        this.isHorizontal = data.isHorizontal;
 	        this.originalLegendData = data.legendData;
-	        if (!tui.util.isNumber(this.currentPageCount)) {
-	            this.currentPageCount = 1;
-	        }
 
-	        legendData = this._getLegendData(data.legendData, this.currentPageCount);
+	        if (this.originalLegendData.length) {
+	            this._showCheckbox = tui.util.isExisty(data.legendData[0].checkbox);
+	            this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
+	            data.dimension.width = this._calculateLegendWidth(data.legendData[0].labelHeight);
 
-	        this._renderLegendItems(legendData);
+	            legendData = this._getLegendData(data.legendData, this._currentPageCount);
 
-	        if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
-	            legendHeight = this.paper.height - (this.basePosition.top * 2);
+	            this._renderLegendItems(legendData);
 
-	            this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
+	            if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
+	                legendHeight = this.paper.height - (this.basePosition.top * 2);
 
-	            this._renderPaginationArea(this.basePosition, {
-	                width: data.dimension.width,
-	                height: legendHeight
-	            });
+	                this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
+
+	                this._renderPaginationArea(this.basePosition, {
+	                    width: data.dimension.width,
+	                    height: legendHeight
+	                });
+	            }
 	        }
 
 	        return this.legendSet;
@@ -36417,7 +36510,7 @@
 	     * @private
 	     */
 	    _paginateLegendAreaTo: function(direction) {
-	        var pageNumber = this.currentPageCount;
+	        var pageNumber = this._currentPageCount;
 
 	        this._removeLegendItems();
 
@@ -36465,16 +36558,16 @@
 	        this.lowerButton = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 3);
 
 	        this.upperButton.click(function() {
-	            if (self.currentPageCount > 1) {
+	            if (self._currentPageCount > 1) {
 	                self._paginateLegendAreaTo('previous');
-	                self.currentPageCount -= 1;
+	                self._currentPageCount -= 1;
 	            }
 	        });
 
 	        this.lowerButton.click(function() {
-	            if (self.currentPageCount < self.availablePageCount) {
+	            if (self._currentPageCount < self.availablePageCount) {
 	                self._paginateLegendAreaTo('next');
-	                self.currentPageCount += 1;
+	                self._currentPageCount += 1;
 	            }
 	        });
 	    },
@@ -36519,7 +36612,7 @@
 	        var labelTheme = this.labelTheme;
 	        var pos = {
 	            left: position.left,
-	            top: position.top + (data.labelHeight / 2)
+	            top: position.top + (this._iconHeight / 2)
 	        };
 	        var attributes = {
 	            'font-size': labelTheme.fontSize,
@@ -36545,38 +36638,35 @@
 	    /**
 	     * Render checkbox
 	     * @param {object} position left, top
-	     * @param {{checked: boolean}} checkboxData checkbox data
-	     * @param {number} legendIndex legend index
-	     * @param {Array.<object>} legendSet legend set
+	     * @param {object} data rendering data
 	     */
-	    _renderCheckbox: function(position, checkboxData, legendIndex, legendSet) {
+	    _renderCheckbox: function(position, data) {
 	        var self = this;
 	        var checkboxSet;
 	        var left = position.left;
-	        var top = position.top;
-	        var vPathString = 'M' + ((CHECKBOX_WIDTH * 0.3) + left) + ',' + ((CHECKBOX_HEIGHT * 0.5) + top)
-	            + 'L' + ((CHECKBOX_WIDTH * 0.5) + left) + ',' + ((CHECKBOX_HEIGHT * 0.7) + top)
-	            + 'L' + ((CHECKBOX_WIDTH * 0.8) + left) + ',' + ((CHECKBOX_HEIGHT * 0.2) + top);
+	        var top = position.top + ((this._legendItemHeight - this._checkBoxHeight) / 2);
+	        var vPathString = 'M' + ((this._checkBoxWidth * 0.3) + left) + ',' + ((this._checkBoxHeight * 0.5) + top)
+	            + 'L' + ((this._checkBoxWidth * 0.5) + left) + ',' + ((this._checkBoxHeight * 0.7) + top)
+	            + 'L' + ((this._checkBoxWidth * 0.8) + left) + ',' + ((this._checkBoxHeight * 0.2) + top);
 
-	        if (checkboxData) {
-	            checkboxSet = this.paper.set();
+	        checkboxSet = this.paper.set();
 
-	            checkboxSet.push(this.paper.rect(left, top, CHECKBOX_WIDTH, CHECKBOX_HEIGHT, 2).attr({
-	                fill: '#fff'
-	            }));
+	        checkboxSet.push(this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 2).attr({
+	            fill: '#fff'
+	        }));
 
-	            if (checkboxData.checked) {
-	                checkboxSet.push(this.paper.path(vPathString));
-	            }
-
-	            checkboxSet.click(function() {
-	                self.eventBus.fire('checkboxClicked', legendIndex);
-	            });
-
-	            checkboxSet.forEach(function(checkbox) {
-	                legendSet.push(checkbox);
-	            });
+	        if (data.isChecked) {
+	            checkboxSet.push(this.paper.path(vPathString));
 	        }
+
+	        checkboxSet.data('index', data.legendIndex);
+	        checkboxSet.click(function() {
+	            self.eventBus.fire('checkboxClicked', data.legendIndex);
+	        });
+
+	        checkboxSet.forEach(function(checkbox) {
+	            data.legendSet.push(checkbox);
+	        });
 	    },
 
 	    /**
@@ -36598,48 +36688,104 @@
 	        this.paper.setStart();
 
 	        if (data.iconType === 'line') {
-	            pathString = 'M' + position.left + ',' + (position.top + (data.labelHeight / 2))
-	                + 'H' + (position.left + 10);
+	            pathString = 'M' + position.left + ',' + (position.top + (this._legendItemHeight / 2))
+	                + 'H' + (position.left + chartConst.LEGEND_ICON_WIDTH);
 
 	            icon = raphaelRenderUtil.renderLine(this.paper, pathString, data.legendColor, 3);
+	            icon.attr('stroke-opacity', data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1);
 	        } else {
 	            icon = raphaelRenderUtil.renderRect(this.paper, {
 	                left: position.left,
 	                top: position.top,
-	                width: 10,
-	                height: 10
+	                width: chartConst.LEGEND_ICON_WIDTH,
+	                height: this._iconHeight
 	            }, {
 	                'stroke-width': 0,
-	                fill: data.legendColor
+	                fill: data.legendColor,
+	                opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1
 	            });
 	        }
 
+	        icon.data('icon', data.iconType);
+	        icon.data('index', data.legendIndex);
 	        icon.click(function() {
 	            self.eventBus.fire('labelClicked', data.legendIndex);
 	        });
 
 	        data.legendSet.push(icon);
 	    },
+
 	    selectLegend: function(index, legendSet) {
 	        legendSet.forEach(function(element) {
 	            var indexData = element.data('index');
+	            var attributeName = element.data('icon') === 'line' ? 'stroke-opacity' : 'opacity';
 
 	            if (tui.util.isNull(indexData) || tui.util.isUndefined(indexData)) {
-	                element.attr({
-	                    opacity: 1
-	                });
+	                element.attr(attributeName, 1);
 	            } else if (!tui.util.isUndefined(indexData)) {
 	                if (tui.util.isNumber(index) && indexData !== index) {
-	                    element.attr({
-	                        opacity: UNSELECTED_LEGEND_LABEL_OPACITY
-	                    });
+	                    element.attr(attributeName, UNSELECTED_LEGEND_LABEL_OPACITY);
 	                } else {
-	                    element.attr({
-	                        opacity: 1
-	                    });
+	                    element.attr(attributeName, 1);
 	                }
 	            }
 	        });
+	    },
+
+	    /**
+	     * get checkbox area's width depends on checkbox visibility
+	     * @returns {number} - checkbox region's width
+	     */
+	    _getCheckboxWidth: function() {
+	        return this._showCheckbox ? (this._checkBoxWidth + chartConst.LEGEND_LABEL_LEFT_PADDING) : 0;
+	    },
+
+	    /**
+	     * Get width of a label when parameter is given.
+	     * Otherwise, returns maximum width of labels
+	     * @param {number} [index] - legend index
+	     * @returns {number} - maximum label width  label width 
+	     */
+	    _getLabelWidth: function(index) {
+	        var labelWidth;
+	        if (index) {
+	            labelWidth = this.labelWidths[index] || 0;
+	        } else {
+	            labelWidth = arrayUtil.max(this.labelWidths);
+	        }
+
+	        return labelWidth + chartConst.LEGEND_LABEL_LEFT_PADDING;
+	    },
+
+	    /**
+	     * calulate a whole legend width before start rendering
+	     * @returns {number} - calculate label 
+	     */
+	    _calculateLegendWidth: function() {
+	        return this._calculateSingleLegendWidth();
+	    },
+
+	    /**
+	     * calculate a single legend width of index `legendIndex`
+	     * @param {number} legendIndex - index of legend label
+	     * @returns {number} - calculate single legend width
+	     */
+	    _calculateSingleLegendWidth: function(legendIndex) {
+	        return chartConst.LEGEND_AREA_PADDING
+	            + this._getCheckboxWidth()
+	            + getIconWidth()
+	            + this._getLabelWidth(legendIndex)
+	            + chartConst.LEGEND_AREA_PADDING;
+	    },
+
+	    /**
+	     * set component dimension by comparaing label height and icon height
+	     * @param {number} labelHeight - label height
+	     */
+	    _setComponentDimensionsBaseOnLabelHeight: function(labelHeight) {
+	        this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_ICON_HEIGHT);
+	        this._iconHeight = this._legendItemHeight;
+	        this._checkBoxWidth = this._checkBoxHeight = labelHeight;
 	    }
 	});
 
@@ -37059,46 +37205,20 @@
 	     * @param {object} data.layout dimension and position
 	     */
 	    renderTitle: function(paper, data) {
-	        var fontSize = data.theme.fontSize;
-	        var fontFamily = data.theme.fontFamily;
-	        var titleSize = raphaelRenderUtil.getRenderedTextSize(data.text, fontSize, fontFamily);
-	        var size = data.rotationInfo.isVertical ? data.layout.dimension.height : data.layout.dimension.width;
-	        var position = data.rotationInfo.isVertical ? data.layout.position.top : data.layout.position.left;
-	        var centerPosition = (size / 2) + position;
-	        var textHeight = titleSize.height;
-	        var rotateTitle = !tui.util.isExisty(data.rotationInfo.rotateTitle) || data.rotationInfo.rotateTitle === true;
+	        var theme = data.theme;
 	        var attributes = {
 	            'dominant-baseline': 'auto',
-	            'font-family': data.theme.fontFamily,
-	            'font-size': data.theme.fontSize,
-	            'font-weight': data.theme.fontWeight,
-	            fill: data.theme.color,
+	            'font-family': theme.fontFamily,
+	            'font-size': theme.fontSize,
+	            'font-weight': theme.fontWeight,
+	            fill: theme.color,
 	            'text-anchor': 'middle'
 	        };
-
-	        var positionTopAndLeft = {};
+	        var position = this.calculatePosition(paper, data);
 	        var title;
 
-	        if (data.rotationInfo.isCenter) {
-	            positionTopAndLeft.top = paper.height - (textHeight / 2);
-	            positionTopAndLeft.left = data.layout.position.left + (data.layout.dimension.width / 2);
-	        } else if (data.rotationInfo.isPositionRight) {
-	            positionTopAndLeft.top = centerPosition;
-	            positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width;
-	            attributes.transform = 'r90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
-	        } else if (data.rotationInfo.isVertical) {
-	            positionTopAndLeft.top = centerPosition;
-	            positionTopAndLeft.left = data.layout.position.left;
-
-	            if (rotateTitle) {
-	                attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
-	            }
-	        } else {
-	            positionTopAndLeft.top = data.layout.position.top + data.layout.dimension.height;
-	            positionTopAndLeft.left = centerPosition;
-	        }
-
-	        title = raphaelRenderUtil.renderText(paper, positionTopAndLeft, data.text, attributes);
+	        attributes.transform = getCSSTransform(data.rotationInfo, position);
+	        title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
 
 	        title.node.style.userSelect = 'none';
 	        title.node.style.cursor = 'default';
@@ -37319,8 +37439,122 @@
 	                transform: 't-' + tickSize + ',0'
 	            }, 300);
 	        });
+	    },
+
+	    /**
+	     * Calculate axis title position, and transforma
+	     * @param {Raphael.paper} paper - paper
+	     * @param {object} data - options for calcultating title position
+	     *  @param {object} data.rotationInfo - isCenter, isVertical, isPositionRight
+	     *  @param {object} data.text - text
+	     *  @param {object} data.theme - theme
+	     *  @param {object} data.layout - layout
+	     * @returns {object} position - top, left
+	     */
+	    calculatePosition: function(paper, data) {
+	        var rotationInfo = data.rotationInfo;
+	        var textHeight = getTextHeight(data.text, data.theme);
+	        var layout = data.layout;
+	        var centerPosition = calculateCenterPosition(
+	            rotationInfo.isVertical, layout.dimension, layout.position
+	        );
+	        var position = {};
+
+	        if (rotationInfo.isCenter) {
+	            position.top = paper.height - (textHeight / 2);
+	            position.left = layout.position.left + (layout.dimension.width / 2);
+	        } else if (rotationInfo.isPositionRight) {
+	            position.top = centerPosition;
+	            position.left = layout.position.left + layout.dimension.width;
+	        } else if (rotationInfo.isVertical) {
+	            position.top = centerPosition;
+	            position.left = layout.position.left;
+	        } else {
+	            position.top = layout.position.top + layout.dimension.height;
+	            position.left = centerPosition;
+	        }
+
+	        if (!rotationInfo.isCenter) {
+	            addOffset(position, data.offset);
+	        }
+
+	        return position;
 	    }
 	});
+
+	/**
+	 * Get a text height by theme
+	 * @param {string} text - text
+	 * @param {object} theme - axis theme
+	 * @returns {number} text height
+	 */
+	function getTextHeight(text, theme) {
+	    var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
+
+	    return titleSize.height;
+	}
+
+	/**
+	 * Test axis title need to rotate
+	 * @param {object} rotationInfo - rotationInfo
+	 * @returns {boolean} - whether it needs to rotate
+	 */
+	function doesTitleRotate(rotationInfo) {
+	    if (tui.util.isExisty(rotationInfo.rotateTitle)) {
+	        return rotationInfo.rotateTitle === true;
+	    }
+
+	    return true;
+	}
+
+	/**
+	 * Calculate center position
+	 * @param {boolean} isVertical - is vertical axis
+	 * @param {object} dimension - width, height
+	 * @param {object} position - top, left
+	 * @returns {number} - center position
+	 */
+	function calculateCenterPosition(isVertical, dimension, position) {
+	    var size = isVertical ? dimension.height : dimension.width;
+	    var margin = isVertical ? position.top : position.left;
+
+	    return (size / 2) + margin;
+	}
+
+	/**
+	 * Add offset to position
+	 * @param {object} position - top, left
+	 * @param {object} offset - x, y
+	 */
+	function addOffset(position, offset) {
+	    if (!offset) {
+	        return;
+	    }
+
+	    if (offset.x) {
+	        position.left += offset.x;
+	    }
+	    if (offset.y) {
+	        position.top += offset.y;
+	    }
+	}
+
+	/**
+	 * Get transform by rotation info
+	 * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
+	 * @param {object} position - top, left
+	 * @returns {string} css transform
+	 */
+	function getCSSTransform(rotationInfo, position) {
+	    var transform = 'none';
+	    if (rotationInfo.isPositionRight) {
+	        transform = 'r90,' + position.left + ',' + position.top;
+	    } else if (rotationInfo.isVertical && doesTitleRotate(rotationInfo)) {
+	        transform = 'r-90,' + position.left + ',' + position.top;
+	    }
+
+	    return transform;
+	}
 
 	module.exports = RaphaelAxisComponent;
 
