@@ -473,11 +473,15 @@ function isAreaOpacityNumber(areaOpacity) {
 
     if (!tui.util.isNumber(areaOpacity)) {
         validity = false;
-        console.error(ERROR_NOT_VALID_AREAOPACITY);
+        if (window.console) {
+            console.error(ERROR_NOT_VALID_AREAOPACITY);
+        }
     }
 
     if (areaOpacity < 0 || areaOpacity > 1) {
-        console.warn(ERROR_NOT_VALID_AREAOPACITY);
+        if (window.console) {
+            console.warn(ERROR_NOT_VALID_AREAOPACITY);
+        }
     }
 
     return validity;

@@ -66,7 +66,7 @@ module.exports = function(config) {
             module: {
                 loaders: [{
                     test: /\.less$/,
-                    loader: 'css-loader!less?paths=src/less/'
+                    loader: 'style!css!less?paths=src/less/'
                 }]
             }
         },

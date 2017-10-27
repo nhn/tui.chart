@@ -286,11 +286,24 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     /**
      * Map categories.
      * @param {Array.<string | number>} categories - categories
+     * @param {string} [axisName] - axis name like 'x' or 'y'
      * @returns {Array.<string | number>}
      * @private
      */
-    _mapCategories: function(categories) {
-        if (predicate.isDatetimeType(this.options.xAxis.type)) {
+    _mapCategories: function(categories, axisName) {
+        var axisType = axisName + 'Axis';
+        var options = this.options[axisType] || {};
+        var isDateTime = false;
+
+        if (tui.util.isArray(options)) {
+            isDateTime = tui.util.filter(options, function(option) {
+                return option.type && predicate.isDatetimeType(option.type);
+            });
+        } else {
+            isDateTime = options.type && predicate.isDatetimeType(options.type);
+        }
+
+        if (isDateTime) {
             categories = tui.util.map(categories, function(value) {
                 var date = new Date(value);
 
@@ -314,14 +327,14 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var categoriesMap = {};
 
         if (tui.util.isArray(rawCategories)) {
-            categoriesMap[type] = this._mapCategories(rawCategories);
+            categoriesMap[type] = this._mapCategories(rawCategories, type);
         } else if (rawCategories) {
             if (rawCategories.x) {
-                categoriesMap.x = this._mapCategories(rawCategories.x);
+                categoriesMap.x = this._mapCategories(rawCategories.x, 'x');
             }
 
             if (rawCategories.y) {
-                categoriesMap.y = this._mapCategories(rawCategories.y).reverse();
+                categoriesMap.y = this._mapCategories(rawCategories.y, 'y').reverse();
             }
         }
 
@@ -447,10 +460,13 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     _getTooltipCategory: function(categoryIndex, isVertical) {
         var category = this.getCategory(categoryIndex, isVertical);
         var axisType = isVertical ? 'yAxis' : 'xAxis';
-        var options = this.options[axisType] || {};
+        var axisOption = this.options[axisType] || {};
+        var tooltipOption = this.options.tooltip || {};
 
-        if (predicate.isDatetimeType(options.type)) {
-            category = renderUtil.formatDate(category, options.dateFormat);
+        if (predicate.isDatetimeType(tooltipOption.type)) {
+            category = renderUtil.formatDate(category, tooltipOption.dateFormat);
+        } else if (predicate.isDatetimeType(axisOption.type)) {
+            category = renderUtil.formatDate(category, axisOption.dateFormat);
         }
 
         return category;

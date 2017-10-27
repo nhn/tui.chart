@@ -142,10 +142,11 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     makeTooltipData: function() {
         var self = this;
+        var length = this.dataProcessor.getCategoryCount(this.isVertical);
 
         return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
             return {
-                category: self.dataProcessor.getCategory(index),
+                category: self.dataProcessor.makeTooltipCategory(index, length - index, self.isVertical),
                 values: seriesGroup.pluck('label')
             };
         });
@@ -218,7 +219,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         if (data) {
             items = this._makeItemRenderingData(data.values);
-            htmlString = this.templateFunc(data.category, items);
+            htmlString = this.templateFunc(data.category, items, this.getRawCategory(groupIndex));
         }
 
         return htmlString;
@@ -284,7 +285,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             },
             position: {
                 left: chartConst.SERIES_EXPAND_SIZE,
-                top: range.start + chartConst.SERIES_EXPAND_SIZE
+                top: range.start
             }
         };
     },

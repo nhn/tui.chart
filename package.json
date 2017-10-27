@@ -1,7 +1,7 @@
 {
   "name": "tui.chart",
   "author": "NHN Ent. FE Development Lab <dl_javascript@nhnent.com>",
-  "version": "2.10.0",
+  "version": "2.10.1",
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
   "scripts": {
@@ -30,17 +30,18 @@
     "jasmine-core": "^2.5.2",
     "jsdoc": "^3.4.2",
     "karma": "1.5.0",
+    "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.0.2",
     "karma-junit-reporter": "^1.1.0",
     "karma-mocha-reporter": "^2.2.0",
     "karma-narrow-reporter": "^2.0.1",
-    "karma-chrome-launcher": "^2.2.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webdriver-launcher": "git+https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
     "karma-webpack": "^1.8.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
+    "style-loader": "^0.19.0",
     "tui-jsdoc-template": "^1.0.4",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.2"

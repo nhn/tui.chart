@@ -50,46 +50,20 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
      * @param {object} data.layout dimension and position
      */
     renderTitle: function(paper, data) {
-        var fontSize = data.theme.fontSize;
-        var fontFamily = data.theme.fontFamily;
-        var titleSize = raphaelRenderUtil.getRenderedTextSize(data.text, fontSize, fontFamily);
-        var size = data.rotationInfo.isVertical ? data.layout.dimension.height : data.layout.dimension.width;
-        var position = data.rotationInfo.isVertical ? data.layout.position.top : data.layout.position.left;
-        var centerPosition = (size / 2) + position;
-        var textHeight = titleSize.height;
-        var rotateTitle = !tui.util.isExisty(data.rotationInfo.rotateTitle) || data.rotationInfo.rotateTitle === true;
+        var theme = data.theme;
         var attributes = {
             'dominant-baseline': 'auto',
-            'font-family': data.theme.fontFamily,
-            'font-size': data.theme.fontSize,
-            'font-weight': data.theme.fontWeight,
-            fill: data.theme.color,
+            'font-family': theme.fontFamily,
+            'font-size': theme.fontSize,
+            'font-weight': theme.fontWeight,
+            fill: theme.color,
             'text-anchor': 'middle'
         };
-
-        var positionTopAndLeft = {};
+        var position = this.calculatePosition(paper, data);
         var title;
 
-        if (data.rotationInfo.isCenter) {
-            positionTopAndLeft.top = paper.height - (textHeight / 2);
-            positionTopAndLeft.left = data.layout.position.left + (data.layout.dimension.width / 2);
-        } else if (data.rotationInfo.isPositionRight) {
-            positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = data.layout.position.left + data.layout.dimension.width;
-            attributes.transform = 'r90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
-        } else if (data.rotationInfo.isVertical) {
-            positionTopAndLeft.top = centerPosition;
-            positionTopAndLeft.left = data.layout.position.left;
-
-            if (rotateTitle) {
-                attributes.transform = 'r-90,' + positionTopAndLeft.left + ',' + positionTopAndLeft.top;
-            }
-        } else {
-            positionTopAndLeft.top = data.layout.position.top + data.layout.dimension.height;
-            positionTopAndLeft.left = centerPosition;
-        }
-
-        title = raphaelRenderUtil.renderText(paper, positionTopAndLeft, data.text, attributes);
+        attributes.transform = getCSSTransform(data.rotationInfo, position);
+        title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
 
         title.node.style.userSelect = 'none';
         title.node.style.cursor = 'default';
@@ -310,7 +284,121 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
                 transform: 't-' + tickSize + ',0'
             }, 300);
         });
+    },
+
+    /**
+     * Calculate axis title position, and transforma
+     * @param {Raphael.paper} paper - paper
+     * @param {object} data - options for calcultating title position
+     *  @param {object} data.rotationInfo - isCenter, isVertical, isPositionRight
+     *  @param {object} data.text - text
+     *  @param {object} data.theme - theme
+     *  @param {object} data.layout - layout
+     * @returns {object} position - top, left
+     */
+    calculatePosition: function(paper, data) {
+        var rotationInfo = data.rotationInfo;
+        var textHeight = getTextHeight(data.text, data.theme);
+        var layout = data.layout;
+        var centerPosition = calculateCenterPosition(
+            rotationInfo.isVertical, layout.dimension, layout.position
+        );
+        var position = {};
+
+        if (rotationInfo.isCenter) {
+            position.top = paper.height - (textHeight / 2);
+            position.left = layout.position.left + (layout.dimension.width / 2);
+        } else if (rotationInfo.isPositionRight) {
+            position.top = centerPosition;
+            position.left = layout.position.left + layout.dimension.width;
+        } else if (rotationInfo.isVertical) {
+            position.top = centerPosition;
+            position.left = layout.position.left;
+        } else {
+            position.top = layout.position.top + layout.dimension.height;
+            position.left = centerPosition;
+        }
+
+        if (!rotationInfo.isCenter) {
+            addOffset(position, data.offset);
+        }
+
+        return position;
     }
 });
+
+/**
+ * Get a text height by theme
+ * @param {string} text - text
+ * @param {object} theme - axis theme
+ * @returns {number} text height
+ */
+function getTextHeight(text, theme) {
+    var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
+
+    return titleSize.height;
+}
+
+/**
+ * Test axis title need to rotate
+ * @param {object} rotationInfo - rotationInfo
+ * @returns {boolean} - whether it needs to rotate
+ */
+function doesTitleRotate(rotationInfo) {
+    if (tui.util.isExisty(rotationInfo.rotateTitle)) {
+        return rotationInfo.rotateTitle === true;
+    }
+
+    return true;
+}
+
+/**
+ * Calculate center position
+ * @param {boolean} isVertical - is vertical axis
+ * @param {object} dimension - width, height
+ * @param {object} position - top, left
+ * @returns {number} - center position
+ */
+function calculateCenterPosition(isVertical, dimension, position) {
+    var size = isVertical ? dimension.height : dimension.width;
+    var margin = isVertical ? position.top : position.left;
+
+    return (size / 2) + margin;
+}
+
+/**
+ * Add offset to position
+ * @param {object} position - top, left
+ * @param {object} offset - x, y
+ */
+function addOffset(position, offset) {
+    if (!offset) {
+        return;
+    }
+
+    if (offset.x) {
+        position.left += offset.x;
+    }
+    if (offset.y) {
+        position.top += offset.y;
+    }
+}
+
+/**
+ * Get transform by rotation info
+ * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
+ * @param {object} position - top, left
+ * @returns {string} css transform
+ */
+function getCSSTransform(rotationInfo, position) {
+    var transform = 'none';
+    if (rotationInfo.isPositionRight) {
+        transform = 'r90,' + position.left + ',' + position.top;
+    } else if (rotationInfo.isVertical && doesTitleRotate(rotationInfo)) {
+        transform = 'r-90,' + position.left + ',' + position.top;
+    }
+
+    return transform;
+}
 
 module.exports = RaphaelAxisComponent;
