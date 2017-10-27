@@ -10,7 +10,6 @@ var TooltipBase = require('./tooltipBase');
 var singleTooltipMixer = require('./singleTooltipMixer');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
 var tooltipTemplate = require('./tooltipTemplate');
 
 /**
@@ -83,6 +82,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
      * @private
      */
     _makeSingleTooltipHtml: function(chartType, indexes) {
+        var groupIndex = indexes.groupIndex;
         var data = tui.util.extend({}, tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index));
 
         if (predicate.isBoxplotChart(this.chartType) && tui.util.isNumber(indexes.outlierIndex)) {
@@ -94,7 +94,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
         }, data);
         data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
 
-        return this.templateFunc(data.category, data);
+        return this.templateFunc(data.category, data, this.getRawCategory(groupIndex));
     },
 
     /**
@@ -160,10 +160,6 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
 
         if (labelFormatter) {
             tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
-        }
-
-        if (category && predicate.isDatetimeType(this.xAxisType)) {
-            category = renderUtil.formatDate(category, this.dateFormat);
         }
 
         tooltipDatum.category = category || '';

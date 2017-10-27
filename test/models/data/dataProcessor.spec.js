@@ -129,7 +129,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_mapCategories()', function() {
-        it('if x axis is datetime type, return mapped categories by Date object', function() {
+        it('if x axis is datetime type, return excaped categories', function() {
             var actual;
 
             dataProcessor.options = {
@@ -142,12 +142,12 @@ describe('Test for DataProcessor', function() {
                 '01/02/2016',
                 '01/04/2016',
                 '01/07/2016'
-            ]);
+            ], 'x');
 
             expect(actual).toEqual([
-                (new Date('01/02/2016')).getTime(),
-                (new Date('01/04/2016')).getTime(),
-                (new Date('01/07/2016')).getTime()
+                new Date('01/02/2016').getTime(),
+                new Date('01/04/2016').getTime(),
+                new Date('01/07/2016').getTime()
             ]);
         });
 
@@ -359,6 +359,76 @@ describe('Test for DataProcessor', function() {
 
             expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual).toBe('cate1, 3');
+        });
+
+        describe('category type is datetime', function() {
+            it('should return categories formatted by xAxis.dateFormat, when xAxis.type is datetime and vertical chart type', function() {
+                var actual;
+
+                dataProcessor.rawData = {
+                    categories: ['12/01/2017', '01/01/2017', '02/01/2018']
+                };
+                dataProcessor.options = {
+                    xAxis: {},
+                    yAxis: {
+                        type: 'datetime',
+                        dateFormat: 'YYYY-MM'
+                    }
+                };
+                actual = dataProcessor.makeTooltipCategory(2, null, false);
+                expect(dataProcessor.categoriesMap.y).toEqual([
+                    new Date('12/01/2017').getTime(),
+                    new Date('01/01/2017').getTime(),
+                    new Date('02/01/2018').getTime()
+                ]);
+                expect(actual).toBe('2018-02');
+            });
+
+            it('should return categories formatted by xAxis.dateFormat, when yAxis.type is datetime and horizontal chart type', function() {
+                var actual;
+
+                dataProcessor.rawData = {
+                    categories: ['12/01/2017', '01/01/2017', '02/01/2018']
+                };
+                dataProcessor.options = {
+                    xAxis: {
+                        type: 'datetime',
+                        dateFormat: 'YYYY-MM'
+                    },
+                    yAxis: {}
+                };
+                actual = dataProcessor.makeTooltipCategory(2, null, true);
+
+                expect(dataProcessor.categoriesMap.x).toEqual([new Date('12/01/2017').getTime(), new Date('01/01/2017').getTime(), new Date('02/01/2018').getTime()]);
+                expect(actual).toBe('2018-02');
+            });
+
+            it('should return categories formatted by tooltip.dateFormat, when tooltip.type is datetime', function() {
+                var actual;
+
+                dataProcessor.rawData = {
+                    categories: ['12/01/2017', '01/01/2017', '02/01/2018']
+                };
+                dataProcessor.options = {
+                    xAxis: {},
+                    yAxis: {
+                        type: 'datetime',
+                        dateFormat: 'YYYY-MM'
+                    },
+                    tooltip: {
+                        type: 'datetime',
+                        dateFormat: 'MM'
+                    }
+                };
+                actual = dataProcessor.makeTooltipCategory(2, null, false);
+
+                expect(dataProcessor.categoriesMap.y).toEqual([
+                    new Date('12/01/2017').getTime(),
+                    new Date('01/01/2017').getTime(),
+                    new Date('02/01/2018').getTime()
+                ]);
+                expect(actual).toBe('02');
+            });
         });
     });
 

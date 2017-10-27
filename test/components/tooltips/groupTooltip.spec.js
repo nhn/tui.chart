@@ -15,7 +15,7 @@ describe('GroupTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesGroups', 'getCategory', 'getLegendData', 'getLegendItem']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesGroups', 'getCategory', 'getLegendData', 'getLegendItem', 'getCategoryCount', 'makeTooltipCategory']);
     });
 
     beforeEach(function() {
@@ -43,7 +43,8 @@ describe('GroupTooltip', function() {
                 }])
             ]);
 
-            dataProcessor.getCategory.and.callFake(function(index) {
+            dataProcessor.getCategoryCount.and.returnValue(2);
+            dataProcessor.makeTooltipCategory.and.callFake(function(index) {
                 var categories = [
                     'Silver',
                     'Gold'
@@ -135,6 +136,22 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeGroupTooltipHtml()', function() {
+        beforeEach(function() {
+            dataProcessor.getLegendItem.and.callFake(function(index) {
+                var legendData = [
+                    {
+                        chartType: 'column',
+                        label: 'legend1'
+                    },
+                    {
+                        chartType: 'line',
+                        label: 'legend2'
+                    }
+                ];
+                return legendData[index];
+            });
+        });
+
         it('return empty string when series data is empty.', function() {
             tooltip.data = [];
             expect(tooltip._makeGroupTooltipHtml(1)).toBe('');
@@ -258,7 +275,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 10,
-                        top: 10
+                        top: 0
                     }
                 };
             expect(actual).toEqual(expected);

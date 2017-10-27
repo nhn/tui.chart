@@ -456,6 +456,28 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     resetOffset: function() {
         this.options.offset = this.orgPositionOptions.offset;
         this._updateOffsetOption(this.options.offset);
+    },
+
+    /**
+     * Get category's raw data
+     * @param {number} index - index of categories
+     * @param {string} format - date format
+     * @returns {string} - category's raw data
+     */
+    getRawCategory: function(index, format) {
+        var axis = this.isVertical ? 'x' : 'y';
+        var categories = this.dataProcessor.categoriesMap ? this.dataProcessor.categoriesMap[axis] : null;
+        var rawCategory = '';
+
+        if (categories) {
+            rawCategory = categories[index];
+        }
+
+        if (format) {
+            rawCategory = renderUtil.formatDate(rawCategory, format);
+        }
+
+        return rawCategory;
     }
 });
 
