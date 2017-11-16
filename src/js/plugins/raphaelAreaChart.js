@@ -447,6 +447,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
+                    startLabel.node.setAttribute('filter', 'url(#glow)');
 
                     set.push(startLabel);
                 }

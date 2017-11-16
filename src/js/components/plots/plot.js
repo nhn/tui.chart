@@ -156,6 +156,14 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
+     * Zoom.
+     * @param {object} data - bounds and scale data
+     */
+    zoom: function(data) {
+        this.rerender(data);
+    },
+
+    /**
      * Make template params for vertical line.
      * @param {object} additionalParams - additional params
      * @returns {object}
@@ -218,7 +226,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var position = this.layout.position;
         var dimension = this.layout.dimension;
         var remainingWidth = dimension.width - offsetPosition + position.left;
-        var bandWidth = Math.min(plotWidth, remainingWidth);
+        var bandWidth = plotWidth < 0 ? remainingWidth : plotWidth;
         var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
 
         rect.attr({
