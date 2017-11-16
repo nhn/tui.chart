@@ -290,7 +290,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @param {boolean} isVertical - whether vertical or not
      */
     registerYAxisDimension: function(limit, componentName, options, theme, isVertical) {
-        var categories;
+        var categories, yAxisOptions;
 
         if (limit) {
             categories = [limit.min, limit.max];
@@ -300,8 +300,14 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
             return;
         }
 
+        if (tui.util.isArray(options)) {
+            yAxisOptions = (componentName === 'yAxis') ? options[0] : options[1];
+        } else {
+            yAxisOptions = options;
+        }
+
         this._registerDimension(componentName, {
-            width: axisCalculator.calculateYAxisWidth(categories, options, theme)
+            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme)
         });
     },
 
@@ -406,7 +412,16 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
             height: circleLegendWidth
         });
 
-        if (diffWidth) {
+        /**
+         * the reason why check diffWidth is positive:
+         * if circle legend area is narrower than text legend area, patial text legend area is not showing.
+         * because legend area width is set to circle legend area
+         */
+        if (diffWidth > 0) {
+            /**
+             * If circle legend area is wider than text legend area,
+             * recalculate legend and series width, base on circle legend width
+             */ 
             this._updateLegendAndSeriesWidth(circleLegendWidth, diffWidth);
         }
     },
@@ -514,7 +529,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var seriesPosition = this.getPosition('series'),
             seriesDimension = this.getDimension('series'),
             yAxisWidth = this.getDimension('yAxis').width,
-            leftAreaWidth = yAxisWidth + seriesDimension.width + leftLegendWidth;
+            leftAreaWidth = leftLegendWidth + yAxisWidth + seriesDimension.width;
 
         this.positionMap.plot = {
             top: seriesPosition.top,
@@ -556,10 +571,10 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         if (predicate.isHorizontalLegend(legendOption.align)) {
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
         } else if (predicate.isLegendAlignLeft(legendOption.align)) {
-            left = 0;
+            left = this.chartLeftPadding;
         } else {
             yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
-            left = seriesDimension.width + yAxisAreaWidth + this.chartLeftPadding;
+            left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
         }
 
         return {
@@ -663,12 +678,10 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
         var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
-
         var seriesPosition = {
             top: titleOrExportMenuHeight + chartConst.CHART_PADDING + topLegendHeight,
             left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
         };
-        // Multiply chart left padding times two for series middle align
 
         this.positionMap.series = seriesPosition;
 

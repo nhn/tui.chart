@@ -177,6 +177,10 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
 
             position += additionalSize;
 
+            if (position > layout.dimension.width) {
+                return;
+            }
+
             if (isVertical) {
                 if (isCenter) {
                     pathString += baseLeft + ',' + (baseTop + position);
@@ -313,7 +317,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
             position.left = layout.position.left + layout.dimension.width;
         } else if (rotationInfo.isVertical) {
             position.top = centerPosition;
-            position.left = layout.position.left;
+            position.left = layout.position.left + (textHeight / 2);
         } else {
             position.top = layout.position.top + layout.dimension.height;
             position.left = centerPosition;
