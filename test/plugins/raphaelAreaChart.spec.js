@@ -34,7 +34,7 @@ describe('RaphaelAreaChart', function() {
                     top: 40,
                     startTop: 50
                 }]),
-                expected = [ 'M', 10, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 10, 50 ];
+                expected = ['M', 10, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 10, 50];
             expect(actual).toEqual(expected);
         });
 
@@ -49,7 +49,7 @@ describe('RaphaelAreaChart', function() {
                     top: 40,
                     startTop: 50
                 }], hasExtraPath),
-                expected = [ 'M', 10, 30, 'L', 30, 40, 'L', 30, 50, 'L', 10, 50 ];
+                expected = ['M', 10, 30, 'L', 30, 40, 'L', 30, 50, 'L', 10, 50];
             expect(actual).toEqual(expected);
         });
     });
@@ -237,6 +237,23 @@ describe('RaphaelAreaChart', function() {
             opacity = areaChart.groupAreas[0].area.attrs.opacity;
 
             expect(opacity).toBe(8);
+        });
+    });
+
+    describe('isAreaOpacityNumber()', function() {
+        it('should return false when no parameter is passed', function() {
+            expect(areaChart._isAreaOpacityNumber()).toBe(false);
+        });
+
+        it('should return true when passing number', function() {
+            expect(areaChart._isAreaOpacityNumber(-0.1)).toBe(true);
+            expect(areaChart._isAreaOpacityNumber(0)).toBe(true);
+            expect(areaChart._isAreaOpacityNumber(1)).toBe(true);
+            expect(areaChart._isAreaOpacityNumber(1.1)).toBe(true);
+        });
+
+        it('should return false when passing parameter, not a number', function() {
+            expect(areaChart._isAreaOpacityNumber('01')).toBe(false);
         });
     });
 });

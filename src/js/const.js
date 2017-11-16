@@ -383,6 +383,8 @@ var chartConst = {
     COMPONENT_TYPE_RAPHAEL: 'Raphael',
 
     IMAGE_EXTENSIONS: ['png', 'jpeg'],
-    DATA_EXTENSIONS: ['xls', 'csv']
+    DATA_EXTENSIONS: ['xls', 'csv'],
+
+    GUIDE_AREACHART_AREAOPACITY_TYPE: 'areaOpacity should be a number between 0 and 1'
 };
 module.exports = chartConst;
