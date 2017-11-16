@@ -15,6 +15,7 @@ var concat = Array.prototype.concat;
 var browser = tui.util.browser,
     isIE7 = browser.msie && browser.version === 7,
     isOldBrowser = browser.msie && browser.version <= 8;
+var hasComputedStyle = window.getComputedStyle || false;
 
 /**
  * Util for rendering.
@@ -646,6 +647,23 @@ var renderUtil = {
         }
 
         return labels;
+    },
+
+    /**
+     * Returns element's style value defined at css file
+     * @param {HTMLElement} target - Current element
+     * @returns {Object} Style object of element
+     */
+    getStyle: function(target) {
+        var computedObj;
+
+        if (hasComputedStyle) {
+            computedObj = window.getComputedStyle(target, '');
+        } else {
+            computedObj = target.currentStyle;
+        }
+
+        return computedObj;
     }
 
 };

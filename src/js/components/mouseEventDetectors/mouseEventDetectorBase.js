@@ -193,6 +193,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         var container = data.paper;
         var tickCount;
         this.positionMap = data.positionMap;
+
         dom.addClass(container, 'tui-chart-series-custom-event-area');
 
         if (data.axisDataMap.xAxis) {
@@ -204,7 +205,26 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         this.attachEvent(container);
         this.mouseEventDetectorContainer = container;
 
+        dom.append(container, this._createTransparentChild());
+
         return container;
+    },
+
+    /**
+     * Create a transparent element
+     * @param {string} height - value of css heigth property
+     * @returns {HTMLElement} transparent element
+     * @private
+     */
+    _createTransparentChild: function() {
+        var child = document.createElement('DIV');
+        var style = child.style;
+
+        style.backgroundColor = '#fff';
+        style.height = renderUtil.getStyle(this.mouseEventDetectorContainer).height;
+        renderUtil.setOpacity(child, 0);
+
+        return child;
     },
 
     /**
