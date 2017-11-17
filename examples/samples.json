@@ -56,6 +56,9 @@
   "sample04-04-autotick-zoomable-area-chart": {
     "title": "[Area Chart] auto tick and zoomable"
   },
+  "sample04-05-area-chart-plotband-merge": {
+    "title": "[Area Chart] plotband and merge overlapping areas option"
+  },
   "sample05-01-bubble-chart": {
     "title": "[Bubble Chart] basic"
   },

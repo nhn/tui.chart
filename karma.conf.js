@@ -143,7 +143,7 @@ module.exports = function(config) {
             'karma-chrome-launcher',
             'karma-narrow-reporter'
         ];
-        defaultConfig.browsers = ['ChromeHeadless'];
+        defaultConfig.browsers = ['Chrome'];
         defaultConfig.reporters = ['narrow'];
         defaultConfig.singleRun = false;
         defaultConfig.autoWatch = true;

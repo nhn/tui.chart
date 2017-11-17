@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 var raphael = window.Raphael;
 
 var plotFactory = require('../../../src/js/components/plots/plot.js');
@@ -367,5 +368,84 @@ describe('Test for Plot', function() {
 
             data.paper.remove();
         });
+    });
+
+    describe('_makeRangeTo2DArray()', function() {
+        it('should not change optionalLineData.range, when optionalLineData is 2D array', function() {
+            var optionalLineData = {
+                range: [[110, 180], [170, 220]]
+            };
+            plot._makeRangeTo2DArray(optionalLineData);
+
+            expect(optionalLineData.range).toEqual([[110, 180], [170, 220]]);
+        });
+
+        it('should change optionalLineData.range to 2D array, when optionalLineData is 1D array', function() {
+            var optionalLineData = {
+                range: [110, 180]
+            };
+            plot._makeRangeTo2DArray(optionalLineData);
+
+            expect(optionalLineData.range).toEqual([[110, 180]]);
+        });
+
+        it('should not change optionalLineData.range, when optionalLineData is 1D array and empty', function() {
+            var optionalLineData = {};
+
+            plot._makeRangeTo2DArray(optionalLineData);
+
+            expect(optionalLineData.range).toBeUndefined();
+        });
+
+        it('should not change, when optionalLineData.range is not an array', function() {
+            var optionalLineData = {};
+
+            optionalLineData.range = 'string';
+            plot._makeRangeTo2DArray(optionalLineData);
+            expect(optionalLineData.range).toBe('string');
+
+            optionalLineData.range = 0.1;
+            plot._makeRangeTo2DArray(optionalLineData);
+            expect(optionalLineData.range).toBe(0.1);
+        });
+    });
+
+    describe('_mergeOverlappingPositionMaps()', function() {
+        /* eslint-disable object-property-newline */
+        it('should merge positionMap, when some areas are overlapped', function() {
+            var positionMaps = [
+                {start: 110, end: 140},
+                {start: 130, end: 150},
+                {start: 150, end: 160},
+                {start: 170, end: 190},
+                {start: 180, end: 200}
+            ];
+
+            var actual = plot._mergeOverlappingPositionMaps(positionMaps);
+
+            expect(actual).toEqual([
+                {start: 110, end: 160},
+                {start: 170, end: 200}
+            ]);
+        });
+
+        it('should not merge positionMap, when all areas are not overlapped', function() {
+            var positionMaps = [
+                {start: 110, end: 120},
+                {start: 130, end: 150},
+                {start: 170, end: 200},
+                {start: 210, end: 220}
+            ];
+
+            var actual = plot._mergeOverlappingPositionMaps(positionMaps);
+
+            expect(actual).toEqual([
+                {start: 110, end: 120},
+                {start: 130, end: 150},
+                {start: 170, end: 200},
+                {start: 210, end: 220}
+            ]);
+        });
+        /* eslint-enable object-property-newline */
     });
 });

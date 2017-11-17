@@ -59,17 +59,14 @@
                         color: 'green'
                     }],
                     bands: [{
-                        range: ['Apr', 'June'],
+                        range: [['Apr', 'June'], ['May', 'July']],
                         color: 'yellow',
                         opacity: 0.4
                     }, {
-                        range: ['July', 'Sep'],
-                        color: 'orange',
-                        opacity: 0.4
-                    }, {
-                        range: ['Oct', 'Dec'],
+                        range: [['Sep', 'Nov'], ['Oct', 'Dec']],
                         color: 'brown',
-                        opacity: 0.4
+                        opacity: 0.4,
+                        mergeOverlappingRanges: true
                     }, {
                         range: ['Jan', 'Mar'],
                         color: 'lightBlue',
