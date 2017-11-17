@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.10.1
+ * @version 2.11.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Oct 27 2017 19:45:09 GMT+0900 (KST)"
+ * bundle created at "Fri Nov 17 2017 19:27:02 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -1856,7 +1856,9 @@
 	    COMPONENT_TYPE_RAPHAEL: 'Raphael',
 
 	    IMAGE_EXTENSIONS: ['png', 'jpeg'],
-	    DATA_EXTENSIONS: ['xls', 'csv']
+	    DATA_EXTENSIONS: ['xls', 'csv'],
+
+	    GUIDE_AREACHART_AREAOPACITY_TYPE: 'areaOpacity should be a number between 0 and 1'
 	};
 	module.exports = chartConst;
 
@@ -5614,7 +5616,7 @@
 	                if (isPositionRight) {
 	                    labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING;
 	                } else {
-	                    labelLeftPosition = layout.position.left + layout.dimension.width - chartConst.CHART_PADDING;
+	                    labelLeftPosition = layout.position.left + layout.dimension.width - chartConst.AXIS_LABEL_PADDING;
 	                }
 	            } else {
 	                labelTopPosition = layout.position.top + chartConst.CHART_PADDING + chartConst.AXIS_LABEL_PADDING;
@@ -6026,6 +6028,7 @@
 	var browser = tui.util.browser,
 	    isIE7 = browser.msie && browser.version === 7,
 	    isOldBrowser = browser.msie && browser.version <= 8;
+	var hasComputedStyle = window.getComputedStyle || false;
 
 	/**
 	 * Util for rendering.
@@ -6657,6 +6660,23 @@
 	        }
 
 	        return labels;
+	    },
+
+	    /**
+	     * Returns element's style value defined at css file
+	     * @param {HTMLElement} target - Current element
+	     * @returns {Object} Style object of element
+	     */
+	    getStyle: function(target) {
+	        var computedObj;
+
+	        if (hasComputedStyle) {
+	            computedObj = window.getComputedStyle(target, '');
+	        } else {
+	            computedObj = target.currentStyle;
+	        }
+
+	        return computedObj;
 	    }
 
 	};
@@ -6756,8 +6776,10 @@
 	var chartConst = __webpack_require__(2);
 	var predicate = __webpack_require__(5);
 	var calculator = __webpack_require__(23);
+	var snippet = tui.util;
+	var map = snippet.map;
 
-	var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
+	var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
 	    /**
 	     * Plot component.
 	     * @constructs Plot
@@ -6785,7 +6807,7 @@
 	         * @type {object}
 	         */
 	        this.options = params.options || {};
-	        this.options.showLine = tui.util.isUndefined(this.options.showLine) ? true : this.options.showLine;
+	        this.options.showLine = snippet.isUndefined(this.options.showLine) ? true : this.options.showLine;
 	        this.options.lines = this.options.lines || [];
 	        this.options.bands = this.options.bands || [];
 
@@ -6903,13 +6925,21 @@
 	    },
 
 	    /**
+	     * Zoom.
+	     * @param {object} data - bounds and scale data
+	     */
+	    zoom: function(data) {
+	        this.rerender(data);
+	    },
+
+	    /**
 	     * Make template params for vertical line.
 	     * @param {object} additionalParams - additional params
 	     * @returns {object}
 	     * @private
 	     */
 	    _makeVerticalLineTemplateParams: function(additionalParams) {
-	        return tui.util.extend({
+	        return snippet.extend({
 	            className: 'vertical',
 	            positionType: 'left',
 	            width: '1px'
@@ -6923,7 +6953,7 @@
 	     * @private
 	     */
 	    _makeHorizontalLineTemplateParams: function(additionalParams) {
-	        return tui.util.extend({
+	        return snippet.extend({
 	            className: 'horizontal',
 	            positionType: 'bottom',
 	            height: '1px'
@@ -6965,7 +6995,7 @@
 	        var position = this.layout.position;
 	        var dimension = this.layout.dimension;
 	        var remainingWidth = dimension.width - offsetPosition + position.left;
-	        var bandWidth = Math.min(plotWidth, remainingWidth);
+	        var bandWidth = plotWidth < 0 ? remainingWidth : plotWidth;
 	        var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
 
 	        rect.attr({
@@ -6989,7 +7019,7 @@
 	        var range = optionalLineData.range || [optionalLineData.value];
 
 	        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-	            range = tui.util.map(range, function(value) {
+	            range = map(range, function(value) {
 	                var date = new Date(value);
 
 	                return date.getTime() || value;
@@ -7035,7 +7065,7 @@
 	        var position = null;
 	        var ratio;
 
-	        if (!tui.util.isNull(index)) {
+	        if (!snippet.isNull(index)) {
 	            ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
 	            position = ratio * width;
 	        }
@@ -7067,7 +7097,7 @@
 	            endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
 	        }
 
-	        if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
+	        if (snippet.isExisty(endPosition) && snippet.isNull(startPosition)) {
 	            startPosition = 0;
 	        }
 
@@ -7090,7 +7120,7 @@
 	        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
 	        var line;
 
-	        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+	        if (snippet.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
 	            attributes.width = 1;
 
 	            attributes.color = optionalLineData.color || 'transparent';
@@ -7112,17 +7142,36 @@
 	     * @private
 	     */
 	    _makeOptionalBand: function(xAxisData, width, attributes, optionalLineData) {
-	        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
-	        var bandWidth = positionMap.end - positionMap.start;
-	        var band;
+	        var range = optionalLineData.range;
+	        var positionMaps;
 
-	        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
-	            attributes.color = optionalLineData.color || 'transparent';
-	            attributes.opacity = optionalLineData.opacity;
-	            band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
+	        if (range && range.length) {
+	            this._makeRangeTo2DArray(optionalLineData);
 	        }
 
-	        return band;
+	        positionMaps = map(optionalLineData.range, function(rangeItem) {
+	            return this._createOptionalLinePositionMap({range: rangeItem}, xAxisData, width);
+	        }, this);
+
+	        if (optionalLineData.mergeOverlappingRanges) {
+	            positionMaps.sort(compareByStartPosition);
+	            positionMaps = this._mergeOverlappingPositionMaps(positionMaps);
+	        }
+
+	        return map(positionMaps, function(positionMap) {
+	            var bandWidth = positionMap.end - positionMap.start;
+	            var isStartPositionInsidePlotArea = snippet.isExisty(positionMap.start) &&
+	                (positionMap.start >= 0) && (positionMap.start <= width);
+	            var band;
+
+	            if (isStartPositionInsidePlotArea) {
+	                attributes.color = optionalLineData.color || 'transparent';
+	                attributes.opacity = optionalLineData.opacity;
+	                band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
+	            }
+
+	            return band;
+	        }, this);
 	    },
 
 	    /**
@@ -7138,9 +7187,9 @@
 	        var templateParams = this._makeVerticalLineTemplateParams({
 	            height: dimension.height + 'px'
 	        });
-	        var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
+	        var makeOptionalLineHtml = snippet.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
 
-	        return tui.util.map(lines, makeOptionalLineHtml);
+	        return map(lines, makeOptionalLineHtml);
 	    },
 
 	    /**
@@ -7156,9 +7205,9 @@
 	        var templateParams = this._makeVerticalLineTemplateParams({
 	            height: dimension.height + 'px'
 	        });
-	        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
+	        var makeOptionalLineHtml = snippet.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
 
-	        return tui.util.map(lines, makeOptionalLineHtml);
+	        return map(lines, makeOptionalLineHtml);
 	    },
 
 	    /**
@@ -7188,7 +7237,7 @@
 	        var left = layout.position.left;
 	        var top = layout.position.top;
 
-	        tui.util.forEach(positions, function(position) {
+	        snippet.forEach(positions, function(position) {
 	            var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
 
 	            var path = self.paper.path(pathString);
@@ -7216,7 +7265,7 @@
 	        var top = layout.position.top;
 	        var distance = positions[1] - positions[0];
 
-	        tui.util.forEach(positions, function(position, index) {
+	        snippet.forEach(positions, function(position, index) {
 	            var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
 	            var path = self.paper.path(pathString);
 
@@ -7329,7 +7378,7 @@
 	     * @param {string} id - line id
 	     */
 	    removePlotLine: function(id) {
-	        this.options.lines = tui.util.filter(this.options.lines, function(line) {
+	        this.options.lines = snippet.filter(this.options.lines, function(line) {
 	            return line.id !== id;
 	        });
 	        this.rerender();
@@ -7340,7 +7389,7 @@
 	     * @param {string} id - band id
 	     */
 	    removePlotBand: function(id) {
-	        this.options.bands = tui.util.filter(this.options.bands, function(band) {
+	        this.options.bands = snippet.filter(this.options.bands, function(band) {
 	            return band.id !== id;
 	        });
 	        this.rerender();
@@ -7355,7 +7404,7 @@
 
 	        if (!this.dataProcessor.isCoordinateType()) {
 	            if (data.shifting) {
-	                tui.util.forEach(this.optionalLines, function(line) {
+	                snippet.forEach(this.optionalLines, function(line) {
 	                    var bbox = line.getBBox();
 
 	                    if (bbox.x - data.tickSize < self.layout.position.left) {
@@ -7373,8 +7422,63 @@
 	                });
 	            }
 	        }
+	    },
+
+	    /**
+	     * Check if  optionalLineData has range property and range property is 2D array
+	     * @param {{range: ?Array.<number>}} optionalLineData - optional line data
+	     * @private
+	     */
+	    _makeRangeTo2DArray: function(optionalLineData) {
+	        var range = optionalLineData.range;
+	        var isOneDimensionArray = range && tui.util.isArray(range) &&
+	            (range.length === 0 || !snippet.isArray(range[0]));
+
+	        if (isOneDimensionArray) {
+	            optionalLineData.range = [range];
+	        }
+	    },
+
+	    /**
+	     * check if some areas are overlapped, and then merge overlapping area
+	     * @param {Array.<{start: number, end: number}>} positionMaps - original positionMaps
+	     * @returns {Array.<{start: number, end: number}>} - inspected positionMaps
+	     * @private
+	     */
+	    _mergeOverlappingPositionMaps: function(positionMaps) {
+	        var i = 1;
+	        var len = positionMaps.length;
+	        var processedMap, previous, current;
+
+	        if (len) {
+	            processedMap = [positionMaps[0]];
+	            previous = processedMap[0];
+	        }
+
+	        for (; i < len; i += 1) {
+	            current = positionMaps[i];
+
+	            if (current.start <= previous.end) {
+	                previous.end = current.end;
+	            } else {
+	                processedMap.push(current);
+	                previous = current;
+	            }
+	        }
+
+	        return processedMap;
 	    }
 	});
+
+	/**
+	 * Compare positionMap by it's start value
+	 * @param {{start: number, end: number}} previous - previouse plot band positionMap
+	 * @param {{start: number, end: number}} current - current plot band positionMap
+	 * @returns {number} - comparison of whether a is greater than b
+	 */
+	function compareByStartPosition(previous, current) {
+	    return previous.start - current.start;
+	}
 
 	/**
 	 * Factory for Plot
@@ -13109,6 +13213,7 @@
 	        var container = data.paper;
 	        var tickCount;
 	        this.positionMap = data.positionMap;
+
 	        dom.addClass(container, 'tui-chart-series-custom-event-area');
 
 	        if (data.axisDataMap.xAxis) {
@@ -13120,7 +13225,26 @@
 	        this.attachEvent(container);
 	        this.mouseEventDetectorContainer = container;
 
+	        dom.append(container, this._createTransparentChild());
+
 	        return container;
+	    },
+
+	    /**
+	     * Create a transparent element
+	     * @param {string} height - value of css heigth property
+	     * @returns {HTMLElement} transparent element
+	     * @private
+	     */
+	    _createTransparentChild: function() {
+	        var child = document.createElement('DIV');
+	        var style = child.style;
+
+	        style.backgroundColor = '#fff';
+	        style.height = renderUtil.getStyle(this.mouseEventDetectorContainer).height;
+	        renderUtil.setOpacity(child, 0);
+
+	        return child;
 	    },
 
 	    /**
@@ -14401,13 +14525,17 @@
 	    _onDrag: function(e) {
 	        var clientPos = this.startClientPosition;
 	        var target = e.target || e.srcElement;
-	        var dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
+	        var dataForZoomable;
 
-	        if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
-	            if (tui.util.isNull(this.dragStartIndexes)) {
-	                this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
-	            } else {
-	                this._showDragSelection(e.clientX);
+	        if (clientPos) {
+	            dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
+
+	            if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
+	                if (tui.util.isNull(this.dragStartIndexes)) {
+	                    this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
+	                } else {
+	                    this._showDragSelection(e.clientX);
+	                }
 	            }
 	        }
 	    },
@@ -17646,6 +17774,7 @@
 	        this._clearSeriesContainer(data.paper);
 	        this._setDataForRendering(data);
 	        this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
+	        this.animateComponent(true);
 
 	        if (!tui.util.isNull(this.selectedLegendIndex)) {
 	            this.graphRenderer.selectLegend(this.selectedLegendIndex);
@@ -21053,7 +21182,9 @@
 	            rawData.series[seriesType] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
 	        });
 
-	        rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+	        if (rawData.categories) {
+	            rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+	        }
 
 	        return rawData;
 	    },
@@ -25195,7 +25326,7 @@
 	     * @param {boolean} isVertical - whether vertical or not
 	     */
 	    registerYAxisDimension: function(limit, componentName, options, theme, isVertical) {
-	        var categories;
+	        var categories, yAxisOptions;
 
 	        if (limit) {
 	            categories = [limit.min, limit.max];
@@ -25205,8 +25336,14 @@
 	            return;
 	        }
 
+	        if (tui.util.isArray(options)) {
+	            yAxisOptions = (componentName === 'yAxis') ? options[0] : options[1];
+	        } else {
+	            yAxisOptions = options;
+	        }
+
 	        this._registerDimension(componentName, {
-	            width: axisCalculator.calculateYAxisWidth(categories, options, theme)
+	            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme)
 	        });
 	    },
 
@@ -25311,7 +25448,16 @@
 	            height: circleLegendWidth
 	        });
 
-	        if (diffWidth) {
+	        /**
+	         * the reason why check diffWidth is positive:
+	         * if circle legend area is narrower than text legend area, patial text legend area is not showing.
+	         * because legend area width is set to circle legend area
+	         */
+	        if (diffWidth > 0) {
+	            /**
+	             * If circle legend area is wider than text legend area,
+	             * recalculate legend and series width, base on circle legend width
+	             */ 
 	            this._updateLegendAndSeriesWidth(circleLegendWidth, diffWidth);
 	        }
 	    },
@@ -25419,7 +25565,7 @@
 	        var seriesPosition = this.getPosition('series'),
 	            seriesDimension = this.getDimension('series'),
 	            yAxisWidth = this.getDimension('yAxis').width,
-	            leftAreaWidth = yAxisWidth + seriesDimension.width + leftLegendWidth;
+	            leftAreaWidth = leftLegendWidth + yAxisWidth + seriesDimension.width;
 
 	        this.positionMap.plot = {
 	            top: seriesPosition.top,
@@ -25461,10 +25607,10 @@
 	        if (predicate.isHorizontalLegend(legendOption.align)) {
 	            left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
 	        } else if (predicate.isLegendAlignLeft(legendOption.align)) {
-	            left = 0;
+	            left = this.chartLeftPadding;
 	        } else {
 	            yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
-	            left = seriesDimension.width + yAxisAreaWidth + this.chartLeftPadding;
+	            left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
 	        }
 
 	        return {
@@ -25568,12 +25714,10 @@
 	        var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
 	        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
 	        var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
-
 	        var seriesPosition = {
 	            top: titleOrExportMenuHeight + chartConst.CHART_PADDING + topLegendHeight,
 	            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
 	        };
-	        // Multiply chart left padding times two for series middle align
 
 	        this.positionMap.series = seriesPosition;
 
@@ -26082,19 +26226,15 @@
 	     */
 	    calculateWidth: function(dimensionMap, legendOptions) {
 	        var chartWidth = dimensionMap.chart.width;
-	        var yAxisWidth = dimensionMap.yAxis.width;
+	        var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis.width;
 	        var legendDimension = dimensionMap.legend;
-	        var legendWidth, rightAreaWidth;
+	        var legendWidth = 0;
 
 	        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
 	            legendWidth = legendDimension ? legendDimension.width : 0;
-	        } else {
-	            legendWidth = 0;
 	        }
 
-	        rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
-
-	        return chartWidth - (chartConst.CHART_PADDING * 4) - yAxisWidth - rightAreaWidth;
+	        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisAreaWidth - legendWidth;
 	    },
 
 	    /**
@@ -31188,19 +31328,19 @@
 	var Boxplot = __webpack_require__(126);
 	var LineChart = __webpack_require__(127);
 	var AreaChart = __webpack_require__(129);
-	var PieChart = __webpack_require__(130);
-	var RadialLineSeries = __webpack_require__(131);
-	var CoordinateTypeChart = __webpack_require__(132);
-	var BoxTypeChart = __webpack_require__(133);
-	var MapChart = __webpack_require__(134);
+	var PieChart = __webpack_require__(131);
+	var RadialLineSeries = __webpack_require__(132);
+	var CoordinateTypeChart = __webpack_require__(133);
+	var BoxTypeChart = __webpack_require__(134);
+	var MapChart = __webpack_require__(135);
 
-	var legend = __webpack_require__(135);
-	var MapLegend = __webpack_require__(136);
-	var CircleLegend = __webpack_require__(137);
-	var title = __webpack_require__(138);
-	var axis = __webpack_require__(139);
+	var legend = __webpack_require__(136);
+	var MapLegend = __webpack_require__(137);
+	var CircleLegend = __webpack_require__(138);
+	var title = __webpack_require__(139);
+	var axis = __webpack_require__(140);
 
-	var RadialPlot = __webpack_require__(140);
+	var RadialPlot = __webpack_require__(141);
 
 	var pluginName = 'Raphael';
 	var pluginRaphael = {
@@ -33758,6 +33898,8 @@
 	var DE_EMPHASIS_OPACITY = 0.3;
 
 	var concat = Array.prototype.concat;
+	var GUIDE_AREACHART_AREAOPACITY_TYPE = __webpack_require__(2).GUIDE_AREACHART_AREAOPACITY_TYPE;
+	var consoleUtil = __webpack_require__(130);
 
 	var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
 	    /**
@@ -33799,7 +33941,7 @@
 	        var theme = data.theme;
 	        var colors = theme.colors;
 	        var options = data.options;
-	        var areaOpacity = isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
+	        var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
 	        var dotOpacity = options.showDot ? 1 : 0;
 	        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
 	        var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
@@ -34190,6 +34332,7 @@
 
 	                    startLabel.node.style.userSelect = 'none';
 	                    startLabel.node.style.cursor = 'default';
+	                    startLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                    set.push(startLabel);
 	                }
@@ -34197,46 +34340,64 @@
 	        });
 
 	        return set;
+	    },
+
+	    /**
+	     * Test areaOpacity is a number, and return the result.
+	     * It is used to determine whether to set a default value, 0.5.
+	     * If it is not a number, areaOpacity will be changed to the default value, 0.5.
+	     * @param {*} areaOpacity - value of property `options.areaOpacity`
+	     * @returns {boolean} - whether areaOpacity is a number.
+	     * @private
+	     */
+	    _isAreaOpacityNumber: function(areaOpacity) {
+	        var isNumber = tui.util.isNumber(areaOpacity);
+
+	        if (isNumber) {
+	            if (areaOpacity < 0 || areaOpacity > 1) {
+	                consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'warn');
+	            }
+	        } else if (!tui.util.isUndefined(areaOpacity)) {
+	            consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'error');
+	        }
+
+	        return isNumber;
 	    }
 	});
-
-	var ERROR_NOT_VALID_AREAOPACITY = 'areaOpacity should be a number from 0 and 1.';
-
-	/**
-	 * Test areaOpacity is a number, and return the result.
-	 * It is used to determine whether to set a default value, 0.5.
-	 * If it is not a number, areaOpacity will be changed to the default value, 0.5.
-	 * @param {*} areaOpacity - value of property `options.areaOpacity`
-	 * @returns {boolean} - whether areaOpacity is a number.
-	 */
-	function isAreaOpacityNumber(areaOpacity) {
-	    var validity = true;
-
-	    if (!areaOpacity) { // when a user doesn't set a property
-	        validity = false;
-	    }
-
-	    if (!tui.util.isNumber(areaOpacity)) {
-	        validity = false;
-	        if (window.console) {
-	            console.error(ERROR_NOT_VALID_AREAOPACITY);
-	        }
-	    }
-
-	    if (areaOpacity < 0 || areaOpacity > 1) {
-	        if (window.console) {
-	            console.warn(ERROR_NOT_VALID_AREAOPACITY);
-	        }
-	    }
-
-	    return validity;
-	}
 
 	module.exports = RaphaelAreaChart;
 
 
 /***/ },
 /* 130 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview util for console
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	module.exports = {
+	    /**
+	     * check if window.console exists
+	     * @param {string} message - message
+	     * @param {string} status - print function of window.console
+	     */
+	    print: function(message, status) {
+	        status = status || 'log';
+
+	        if (window.console) {
+	            window.console[status](message);
+	        }
+	    }
+	};
+
+
+/***/ },
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34931,7 +35092,7 @@
 
 
 /***/ },
-/* 131 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35139,7 +35300,7 @@
 
 
 /***/ },
-/* 132 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35560,7 +35721,7 @@
 
 
 /***/ },
-/* 133 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35995,7 +36156,7 @@
 
 
 /***/ },
-/* 134 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36308,7 +36469,7 @@
 
 
 /***/ },
-/* 135 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36793,7 +36954,7 @@
 
 
 /***/ },
-/* 136 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37020,7 +37181,7 @@
 
 
 /***/ },
-/* 137 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37083,7 +37244,7 @@
 
 
 /***/ },
-/* 138 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37150,7 +37311,7 @@
 
 
 /***/ },
-/* 139 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37332,6 +37493,10 @@
 
 	            position += additionalSize;
 
+	            if (position > layout.dimension.width) {
+	                return;
+	            }
+
 	            if (isVertical) {
 	                if (isCenter) {
 	                    pathString += baseLeft + ',' + (baseTop + position);
@@ -37468,7 +37633,7 @@
 	            position.left = layout.position.left + layout.dimension.width;
 	        } else if (rotationInfo.isVertical) {
 	            position.top = centerPosition;
-	            position.left = layout.position.left;
+	            position.left = layout.position.left + (textHeight / 2);
 	        } else {
 	            position.top = layout.position.top + layout.dimension.height;
 	            position.left = centerPosition;
@@ -37560,7 +37725,7 @@
 
 
 /***/ },
-/* 140 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**

@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.10.1
+ * @version 2.11.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Oct 27 2017 19:45:09 GMT+0900 (KST)"
+ * bundle created at "Fri Nov 17 2017 19:27:02 GMT+0900 (KST)"
  */
 .tui-chart {
   position: relative;
@@ -385,7 +385,6 @@
   position: absolute;
   left: 0;
   top: 0;
-  background-color: rgba(255, 255, 255, 0);
 }
 .tui-chart .tui-chart-series-custom-event-area.hide {
   display: none;
