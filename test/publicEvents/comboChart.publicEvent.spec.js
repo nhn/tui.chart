@@ -76,7 +76,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onClick({ // (May - Sydney)
-                clientX: 119, // Index2: 113 ~ 119
+                clientX: 123, // Index2: 123 ~ 129
                 clientY: 376 // Index2: 209 ~ 376
             });
         });
@@ -97,14 +97,14 @@ describe('Test user events for combo chart', function() {
 
             // select
             mouseEventDetector._onClick({
-                clientX: 119,
+                clientX: 123,
                 clientY: 330
             });
 
             setTimeout(function() {
                 // unselect
                 mouseEventDetector._onClick({
-                    clientX: 119,
+                    clientX: 123,
                     clientY: 330
                 });
             });
@@ -126,7 +126,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 100, // index 1: 85 ~ 127
+                clientX: 95, // index 1: 95 ~ 137
                 clientY: 100
             });
         });
@@ -149,7 +149,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 100, // index 1: 85 ~ 127
+                clientX: 95, // index 1: 95 ~ 137
                 clientY: 100
             });
         });

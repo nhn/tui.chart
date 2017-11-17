@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>[Pie Chart] basic</title>
+    <title>[Area Chart] range data</title>
     <link rel="stylesheet" type="text/css" href="../dist/chart.css" />
 
     <link rel='stylesheet' type='text/css' href='../lib/codemirror/lib/codemirror.css'/>
@@ -24,58 +24,69 @@
     </div>
     <div style='border: 0.2px solid #aaa;'>
         <textarea id='code'>
-var container = document.getElementById('chart-area');
-var data = {
-    categories: ['Browser'],
-    series: [
-        {
-            name: 'Chrome',
-            data: 46.02
-        },
-        {
-            name: 'IE',
-            data: 20.47
-        },
-        {
-            name: 'Firefox',
-            data: 17.71
-        },
-        {
-            name: 'Safari',
-            data: 5.45
-        },
-        {
-            name: 'Opera',
-            data: 3.10
-        },
-        {
-            name: 'Etc',
-            data: 7.25
-        }
-    ]
-};
-var options = {
-    chart: {
-        width: 500,
-        height: 400,
-        title: 'Usage share of web browsers'
-    },
-    tooltip: {
-        suffix: '%'
-    }
-};
-var theme = {
-    series: {
-        colors: ['#e6d3df', '#cfb4be', '#a9888d', '#8e6969', '#6d514b', '#55443c']
-    }
-};
-
-// For apply theme
-
-// tui.chart.registerTheme('myTheme', theme);
-// options.theme = 'myTheme';
-
-tui.chart.pieChart(container, data, options);
+            var container = document.getElementById('chart-area');
+            var data = {
+                categories: ['Jan', 'Feb', 'Mar','Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                series: [
+                    {
+                        name: 'Seoul',
+                        data: [[-8.3, 0.3], [-5.8, 3.1], [-0.6, 9.1], [5.8, 16.9], [11.5, 22.6], [16.6, 26.6], [21.2, 28.8], [21.8, 30.0], [15.8, 25.6], [8.3, 19.6], [1.4, 11.1], [-5.2, 3.2]]
+                    }
+                ]
+            };
+            var options = {
+                chart: {
+                    width: 700,
+                    height: 400,
+                    title: 'Temperature Range'
+                },
+                yAxis: {
+                    title: 'Month'
+                },
+                xAxis: {
+                    title: 'Temperature (Celsius)'
+                },
+                series: {
+                    showLabel: true,
+                    zoomable: true
+                },
+                plot: {
+                    lines: [{
+                        value: 'May',
+                        color: 'red'
+                    }, {
+                        value: 'Aug',
+                        color: 'green'
+                    }],
+                    bands: [{
+                        range: [['Apr', 'June'], ['May', 'July']],
+                        color: 'yellow',
+                        opacity: 0.4
+                    }, {
+                        range: [['Sep', 'Nov'], ['Oct', 'Dec']],
+                        color: 'brown',
+                        opacity: 0.4,
+                        mergeOverlappingRanges: true
+                    }, {
+                        range: ['Jan', 'Mar'],
+                        color: 'lightBlue',
+                        opacity: 0.4
+                    }]
+                }
+            };
+            
+            var theme = {
+                series: {
+                    colors: ['#63A69F', '#F2E1AC', '#F2836B', '#F2594B']
+                }
+            };
+            
+            // For apply theme
+            
+            // tui.chart.registerTheme('myTheme', theme);
+            // options.theme = 'myTheme';
+            
+            var chart = tui.chart.areaChart(container, data, options);
         </textarea>
     </div>
 

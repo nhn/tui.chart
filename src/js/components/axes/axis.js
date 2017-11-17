@@ -486,7 +486,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 if (isPositionRight) {
                     labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING;
                 } else {
-                    labelLeftPosition = layout.position.left + layout.dimension.width - chartConst.CHART_PADDING;
+                    labelLeftPosition = layout.position.left + layout.dimension.width - chartConst.AXIS_LABEL_PADDING;
                 }
             } else {
                 labelTopPosition = layout.position.top + chartConst.CHART_PADDING + chartConst.AXIS_LABEL_PADDING;

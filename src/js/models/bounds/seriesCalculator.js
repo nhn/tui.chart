@@ -27,19 +27,15 @@ var seriesCalculator = {
      */
     calculateWidth: function(dimensionMap, legendOptions) {
         var chartWidth = dimensionMap.chart.width;
-        var yAxisWidth = dimensionMap.yAxis.width;
+        var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis.width;
         var legendDimension = dimensionMap.legend;
-        var legendWidth, rightAreaWidth;
+        var legendWidth = 0;
 
         if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             legendWidth = legendDimension ? legendDimension.width : 0;
-        } else {
-            legendWidth = 0;
         }
 
-        rightAreaWidth = legendWidth + dimensionMap.rightYAxis.width;
-
-        return chartWidth - (chartConst.CHART_PADDING * 4) - yAxisWidth - rightAreaWidth;
+        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisAreaWidth - legendWidth;
     },
 
     /**

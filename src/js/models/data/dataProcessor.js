@@ -163,7 +163,9 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             rawData.series[seriesType] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 
-        rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+        if (rawData.categories) {
+            rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+        }
 
         return rawData;
     },

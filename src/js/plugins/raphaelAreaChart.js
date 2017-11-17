@@ -13,6 +13,8 @@ var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
+var GUIDE_AREACHART_AREAOPACITY_TYPE = require('../const.js').GUIDE_AREACHART_AREAOPACITY_TYPE;
+var consoleUtil = require('../helpers/consoleUtil');
 
 var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
     /**
@@ -54,7 +56,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var theme = data.theme;
         var colors = theme.colors;
         var options = data.options;
-        var areaOpacity = isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
+        var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
         var dotOpacity = options.showDot ? 1 : 0;
         var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
@@ -445,6 +447,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
+                    startLabel.node.setAttribute('filter', 'url(#glow)');
 
                     set.push(startLabel);
                 }
@@ -452,39 +455,29 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         });
 
         return set;
+    },
+
+    /**
+     * Test areaOpacity is a number, and return the result.
+     * It is used to determine whether to set a default value, 0.5.
+     * If it is not a number, areaOpacity will be changed to the default value, 0.5.
+     * @param {*} areaOpacity - value of property `options.areaOpacity`
+     * @returns {boolean} - whether areaOpacity is a number.
+     * @private
+     */
+    _isAreaOpacityNumber: function(areaOpacity) {
+        var isNumber = tui.util.isNumber(areaOpacity);
+
+        if (isNumber) {
+            if (areaOpacity < 0 || areaOpacity > 1) {
+                consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'warn');
+            }
+        } else if (!tui.util.isUndefined(areaOpacity)) {
+            consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'error');
+        }
+
+        return isNumber;
     }
 });
-
-var ERROR_NOT_VALID_AREAOPACITY = 'areaOpacity should be a number from 0 and 1.';
-
-/**
- * Test areaOpacity is a number, and return the result.
- * It is used to determine whether to set a default value, 0.5.
- * If it is not a number, areaOpacity will be changed to the default value, 0.5.
- * @param {*} areaOpacity - value of property `options.areaOpacity`
- * @returns {boolean} - whether areaOpacity is a number.
- */
-function isAreaOpacityNumber(areaOpacity) {
-    var validity = true;
-
-    if (!areaOpacity) { // when a user doesn't set a property
-        validity = false;
-    }
-
-    if (!tui.util.isNumber(areaOpacity)) {
-        validity = false;
-        if (window.console) {
-            console.error(ERROR_NOT_VALID_AREAOPACITY);
-        }
-    }
-
-    if (areaOpacity < 0 || areaOpacity > 1) {
-        if (window.console) {
-            console.warn(ERROR_NOT_VALID_AREAOPACITY);
-        }
-    }
-
-    return validity;
-}
 
 module.exports = RaphaelAreaChart;

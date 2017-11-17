@@ -275,13 +275,17 @@ var zoomMixer = {
     _onDrag: function(e) {
         var clientPos = this.startClientPosition;
         var target = e.target || e.srcElement;
-        var dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
+        var dataForZoomable;
 
-        if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
-            if (tui.util.isNull(this.dragStartIndexes)) {
-                this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
-            } else {
-                this._showDragSelection(e.clientX);
+        if (clientPos) {
+            dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
+
+            if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
+                if (tui.util.isNull(this.dragStartIndexes)) {
+                    this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
+                } else {
+                    this._showDragSelection(e.clientX);
+                }
             }
         }
     },

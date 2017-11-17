@@ -270,6 +270,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         this._clearSeriesContainer(data.paper);
         this._setDataForRendering(data);
         this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
+        this.animateComponent(true);
 
         if (!tui.util.isNull(this.selectedLegendIndex)) {
             this.graphRenderer.selectLegend(this.selectedLegendIndex);

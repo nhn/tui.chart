@@ -9,8 +9,10 @@
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
+var snippet = tui.util;
+var map = snippet.map;
 
-var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
+var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
     /**
      * Plot component.
      * @constructs Plot
@@ -38,7 +40,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * @type {object}
          */
         this.options = params.options || {};
-        this.options.showLine = tui.util.isUndefined(this.options.showLine) ? true : this.options.showLine;
+        this.options.showLine = snippet.isUndefined(this.options.showLine) ? true : this.options.showLine;
         this.options.lines = this.options.lines || [];
         this.options.bands = this.options.bands || [];
 
@@ -156,13 +158,21 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
+     * Zoom.
+     * @param {object} data - bounds and scale data
+     */
+    zoom: function(data) {
+        this.rerender(data);
+    },
+
+    /**
      * Make template params for vertical line.
      * @param {object} additionalParams - additional params
      * @returns {object}
      * @private
      */
     _makeVerticalLineTemplateParams: function(additionalParams) {
-        return tui.util.extend({
+        return snippet.extend({
             className: 'vertical',
             positionType: 'left',
             width: '1px'
@@ -176,7 +186,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeHorizontalLineTemplateParams: function(additionalParams) {
-        return tui.util.extend({
+        return snippet.extend({
             className: 'horizontal',
             positionType: 'bottom',
             height: '1px'
@@ -218,7 +228,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var position = this.layout.position;
         var dimension = this.layout.dimension;
         var remainingWidth = dimension.width - offsetPosition + position.left;
-        var bandWidth = Math.min(plotWidth, remainingWidth);
+        var bandWidth = plotWidth < 0 ? remainingWidth : plotWidth;
         var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
 
         rect.attr({
@@ -242,7 +252,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var range = optionalLineData.range || [optionalLineData.value];
 
         if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-            range = tui.util.map(range, function(value) {
+            range = map(range, function(value) {
                 var date = new Date(value);
 
                 return date.getTime() || value;
@@ -288,7 +298,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var position = null;
         var ratio;
 
-        if (!tui.util.isNull(index)) {
+        if (!snippet.isNull(index)) {
             ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
             position = ratio * width;
         }
@@ -320,7 +330,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
         }
 
-        if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
+        if (snippet.isExisty(endPosition) && snippet.isNull(startPosition)) {
             startPosition = 0;
         }
 
@@ -343,7 +353,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
         var line;
 
-        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+        if (snippet.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
             attributes.width = 1;
 
             attributes.color = optionalLineData.color || 'transparent';
@@ -365,17 +375,36 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeOptionalBand: function(xAxisData, width, attributes, optionalLineData) {
-        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
-        var bandWidth = positionMap.end - positionMap.start;
-        var band;
+        var range = optionalLineData.range;
+        var positionMaps;
 
-        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
-            attributes.color = optionalLineData.color || 'transparent';
-            attributes.opacity = optionalLineData.opacity;
-            band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
+        if (range && range.length) {
+            this._makeRangeTo2DArray(optionalLineData);
         }
 
-        return band;
+        positionMaps = map(optionalLineData.range, function(rangeItem) {
+            return this._createOptionalLinePositionMap({range: rangeItem}, xAxisData, width);
+        }, this);
+
+        if (optionalLineData.mergeOverlappingRanges) {
+            positionMaps.sort(compareByStartPosition);
+            positionMaps = this._mergeOverlappingPositionMaps(positionMaps);
+        }
+
+        return map(positionMaps, function(positionMap) {
+            var bandWidth = positionMap.end - positionMap.start;
+            var isStartPositionInsidePlotArea = snippet.isExisty(positionMap.start) &&
+                (positionMap.start >= 0) && (positionMap.start <= width);
+            var band;
+
+            if (isStartPositionInsidePlotArea) {
+                attributes.color = optionalLineData.color || 'transparent';
+                attributes.opacity = optionalLineData.opacity;
+                band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
+            }
+
+            return band;
+        }, this);
     },
 
     /**
@@ -391,9 +420,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var templateParams = this._makeVerticalLineTemplateParams({
             height: dimension.height + 'px'
         });
-        var makeOptionalLineHtml = tui.util.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
+        var makeOptionalLineHtml = snippet.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
 
-        return tui.util.map(lines, makeOptionalLineHtml);
+        return map(lines, makeOptionalLineHtml);
     },
 
     /**
@@ -409,9 +438,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var templateParams = this._makeVerticalLineTemplateParams({
             height: dimension.height + 'px'
         });
-        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
+        var makeOptionalLineHtml = snippet.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
 
-        return tui.util.map(lines, makeOptionalLineHtml);
+        return map(lines, makeOptionalLineHtml);
     },
 
     /**
@@ -441,7 +470,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var left = layout.position.left;
         var top = layout.position.top;
 
-        tui.util.forEach(positions, function(position) {
+        snippet.forEach(positions, function(position) {
             var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
 
             var path = self.paper.path(pathString);
@@ -469,7 +498,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var top = layout.position.top;
         var distance = positions[1] - positions[0];
 
-        tui.util.forEach(positions, function(position, index) {
+        snippet.forEach(positions, function(position, index) {
             var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
             var path = self.paper.path(pathString);
 
@@ -582,7 +611,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {string} id - line id
      */
     removePlotLine: function(id) {
-        this.options.lines = tui.util.filter(this.options.lines, function(line) {
+        this.options.lines = snippet.filter(this.options.lines, function(line) {
             return line.id !== id;
         });
         this.rerender();
@@ -593,7 +622,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {string} id - band id
      */
     removePlotBand: function(id) {
-        this.options.bands = tui.util.filter(this.options.bands, function(band) {
+        this.options.bands = snippet.filter(this.options.bands, function(band) {
             return band.id !== id;
         });
         this.rerender();
@@ -608,7 +637,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
         if (!this.dataProcessor.isCoordinateType()) {
             if (data.shifting) {
-                tui.util.forEach(this.optionalLines, function(line) {
+                snippet.forEach(this.optionalLines, function(line) {
                     var bbox = line.getBBox();
 
                     if (bbox.x - data.tickSize < self.layout.position.left) {
@@ -626,8 +655,63 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
                 });
             }
         }
+    },
+
+    /**
+     * Check if  optionalLineData has range property and range property is 2D array
+     * @param {{range: ?Array.<number>}} optionalLineData - optional line data
+     * @private
+     */
+    _makeRangeTo2DArray: function(optionalLineData) {
+        var range = optionalLineData.range;
+        var isOneDimensionArray = range && tui.util.isArray(range) &&
+            (range.length === 0 || !snippet.isArray(range[0]));
+
+        if (isOneDimensionArray) {
+            optionalLineData.range = [range];
+        }
+    },
+
+    /**
+     * check if some areas are overlapped, and then merge overlapping area
+     * @param {Array.<{start: number, end: number}>} positionMaps - original positionMaps
+     * @returns {Array.<{start: number, end: number}>} - inspected positionMaps
+     * @private
+     */
+    _mergeOverlappingPositionMaps: function(positionMaps) {
+        var i = 1;
+        var len = positionMaps.length;
+        var processedMap, previous, current;
+
+        if (len) {
+            processedMap = [positionMaps[0]];
+            previous = processedMap[0];
+        }
+
+        for (; i < len; i += 1) {
+            current = positionMaps[i];
+
+            if (current.start <= previous.end) {
+                previous.end = current.end;
+            } else {
+                processedMap.push(current);
+                previous = current;
+            }
+        }
+
+        return processedMap;
     }
 });
+
+/**
+ * Compare positionMap by it's start value
+ * @param {{start: number, end: number}} previous - previouse plot band positionMap
+ * @param {{start: number, end: number}} current - current plot band positionMap
+ * @returns {number} - comparison of whether a is greater than b
+ */
+function compareByStartPosition(previous, current) {
+    return previous.start - current.start;
+}
 
 /**
  * Factory for Plot
