@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.11.0
+ * @version 2.11.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Nov 17 2017 19:27:02 GMT+0900 (KST)"
+ * bundle created at "Wed Nov 29 2017 14:56:40 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -7087,6 +7087,7 @@
 	     */
 	    _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
 	        var range = this._createOptionalLineValueRange(optionalLineData);
+	        var isContainAll = false;
 	        var startPosition, endPosition;
 
 	        if (xAxisData.isLabelAxis) {
@@ -7097,7 +7098,15 @@
 	            endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
 	        }
 
-	        if (snippet.isExisty(endPosition) && snippet.isNull(startPosition)) {
+	        if (snippet.isNull(startPosition)) {
+	            isContainAll = this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
+
+	            if (isContainAll) {
+	                endPosition = width;
+	            } else {
+	                endPosition = endPosition || 0;
+	            }
+
 	            startPosition = 0;
 	        }
 
@@ -7459,7 +7468,7 @@
 	            current = positionMaps[i];
 
 	            if (current.start <= previous.end) {
-	                previous.end = current.end;
+	                previous.end = Math.max(current.end, previous.end);
 	            } else {
 	                processedMap.push(current);
 	                previous = current;
@@ -21469,6 +21478,55 @@
 	        });
 
 	        return foundIndex;
+	    },
+
+	    /**
+	     * test current visible category is contained by two point
+	     * @param {string} startValue - first category value
+	     * @param {string} endValue - last category value
+	     * @returns {boolean} when it covered by two points or not
+	     */
+	    containedAllVisibleCategory: function(startValue, endValue) {
+	        var visibleCategories = this.getCategories();
+	        var firstVisibleCategory, lastVisibleCategory;
+	        var firstVisibleCategoryIndex, lastVisibleCategoryIndex;
+	        var startValueIndex, endValueIndex;
+
+	        if (!visibleCategories.length) {
+	            return false;
+	        }
+
+	        if (!this.originalRawData || !this.originalRawData.categories) {
+	            return false;
+	        }
+
+	        firstVisibleCategory = visibleCategories[0];
+	        lastVisibleCategory = visibleCategories[visibleCategories.length - 1];
+
+	        tui.util.forEachArray(this.originalRawData.categories, function(category, index) {
+	            var isFirstCategoryBeforeStartValueOrEndValue;
+	            var isEndValueBeforeLastCategory;
+
+	            if (category === startValue) {
+	                startValueIndex = index;
+	            } else if (category === endValue) {
+	                endValueIndex = index;
+	            } else if (category === firstVisibleCategory) {
+	                firstVisibleCategoryIndex = index;
+	            } else if (category === lastVisibleCategory) {
+	                lastVisibleCategoryIndex = index;
+	            }
+
+	            isFirstCategoryBeforeStartValueOrEndValue = firstVisibleCategoryIndex &&
+	                (tui.util.isUndefined(startValueIndex) || endValueIndex);
+	            isEndValueBeforeLastCategory = endValueIndex &&
+	                 tui.util.isUndefined(lastVisibleCategoryIndex);
+
+	            return !(isFirstCategoryBeforeStartValueOrEndValue || isEndValueBeforeLastCategory);
+	        });
+
+	        return (startValueIndex < firstVisibleCategoryIndex &&
+	            lastVisibleCategoryIndex < endValueIndex);
 	    },
 
 	    /**
