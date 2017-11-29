@@ -332,7 +332,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         if (snippet.isNull(startPosition)) {
-            isContainAll = this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
+            isContainAll = this._testPlotBandCoversSeriesArea(range);
 
             if (isContainAll) {
                 endPosition = width;
@@ -347,6 +347,25 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
             start: startPosition,
             end: endPosition
         };
+    },
+
+    /**
+     * test plot band covers series area
+     * @param {Array.<number>} range - range of plot band
+     * @returns {boolean} - whether it contains all a series area or not
+     */
+    _testPlotBandCoversSeriesArea: function(range) {
+        var categories, lastCategoryIndex, firstDateTime, lastDateTime;
+        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
+            categories = this.dataProcessor.getCategories();
+            lastCategoryIndex = categories.length > 0 ? categories.length - 1 : 0;
+            firstDateTime = categories[0];
+            lastDateTime = categories[lastCategoryIndex];
+
+            return (range[0] <= firstDateTime && range[1] >= lastDateTime);
+        }
+
+        return this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
     },
 
     /**
