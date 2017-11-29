@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.11.1
+ * @version 2.11.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Nov 29 2017 14:56:40 GMT+0900 (KST)"
+ * bundle created at "Wed Nov 29 2017 17:22:38 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -7099,7 +7099,7 @@
 	        }
 
 	        if (snippet.isNull(startPosition)) {
-	            isContainAll = this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
+	            isContainAll = this._testPlotBandCoversSeriesArea(range);
 
 	            if (isContainAll) {
 	                endPosition = width;
@@ -7114,6 +7114,25 @@
 	            start: startPosition,
 	            end: endPosition
 	        };
+	    },
+
+	    /**
+	     * test plot band covers series area
+	     * @param {Array.<number>} range - range of plot band
+	     * @returns {boolean} - whether it contains all a series area or not
+	     */
+	    _testPlotBandCoversSeriesArea: function(range) {
+	        var categories, lastCategoryIndex, firstDateTime, lastDateTime;
+	        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
+	            categories = this.dataProcessor.getCategories();
+	            lastCategoryIndex = categories.length > 0 ? categories.length - 1 : 0;
+	            firstDateTime = categories[0];
+	            lastDateTime = categories[lastCategoryIndex];
+
+	            return (range[0] <= firstDateTime && range[1] >= lastDateTime);
+	        }
+
+	        return this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
 	    },
 
 	    /**
