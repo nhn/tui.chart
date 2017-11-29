@@ -320,6 +320,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      */
     _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
         var range = this._createOptionalLineValueRange(optionalLineData);
+        var isContainAll = false;
         var startPosition, endPosition;
 
         if (xAxisData.isLabelAxis) {
@@ -330,7 +331,15 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
             endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
         }
 
-        if (snippet.isExisty(endPosition) && snippet.isNull(startPosition)) {
+        if (snippet.isNull(startPosition)) {
+            isContainAll = this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
+
+            if (isContainAll) {
+                endPosition = width;
+            } else {
+                endPosition = endPosition || 0;
+            }
+
             startPosition = 0;
         }
 
@@ -692,7 +701,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
             current = positionMaps[i];
 
             if (current.start <= previous.end) {
-                previous.end = current.end;
+                previous.end = Math.max(current.end, previous.end);
             } else {
                 processedMap.push(current);
                 previous = current;

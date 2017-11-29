@@ -429,6 +429,19 @@ describe('Test for Plot', function() {
             ]);
         });
 
+        it('should merge positionMap, when startPosition is all same, but end position is different', function() {
+            var positionMaps = [
+                {start: 110, end: 140},
+                {start: 110, end: 110}
+            ];
+
+            var actual = plot._mergeOverlappingPositionMaps(positionMaps);
+
+            expect(actual).toEqual([
+                {start: 110, end: 140}
+            ]);
+        });
+
         it('should not merge positionMap, when all areas are not overlapped', function() {
             var positionMaps = [
                 {start: 110, end: 120},

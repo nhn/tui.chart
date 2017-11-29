@@ -453,6 +453,55 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     },
 
     /**
+     * test current visible category is contained by two point
+     * @param {string} startValue - first category value
+     * @param {string} endValue - last category value
+     * @returns {boolean} when it covered by two points or not
+     */
+    containedAllVisibleCategory: function(startValue, endValue) {
+        var visibleCategories = this.getCategories();
+        var firstVisibleCategory, lastVisibleCategory;
+        var firstVisibleCategoryIndex, lastVisibleCategoryIndex;
+        var startValueIndex, endValueIndex;
+
+        if (!visibleCategories.length) {
+            return false;
+        }
+
+        if (!this.originalRawData || !this.originalRawData.categories) {
+            return false;
+        }
+
+        firstVisibleCategory = visibleCategories[0];
+        lastVisibleCategory = visibleCategories[visibleCategories.length - 1];
+
+        tui.util.forEachArray(this.originalRawData.categories, function(category, index) {
+            var isFirstCategoryBeforeStartValueOrEndValue;
+            var isEndValueBeforeLastCategory;
+
+            if (category === startValue) {
+                startValueIndex = index;
+            } else if (category === endValue) {
+                endValueIndex = index;
+            } else if (category === firstVisibleCategory) {
+                firstVisibleCategoryIndex = index;
+            } else if (category === lastVisibleCategory) {
+                lastVisibleCategoryIndex = index;
+            }
+
+            isFirstCategoryBeforeStartValueOrEndValue = firstVisibleCategoryIndex &&
+                (tui.util.isUndefined(startValueIndex) || endValueIndex);
+            isEndValueBeforeLastCategory = endValueIndex &&
+                 tui.util.isUndefined(lastVisibleCategoryIndex);
+
+            return !(isFirstCategoryBeforeStartValueOrEndValue || isEndValueBeforeLastCategory);
+        });
+
+        return (startValueIndex < firstVisibleCategoryIndex &&
+            lastVisibleCategoryIndex < endValueIndex);
+    },
+
+    /**
      * Get tooltip category.
      * @param {number} categoryIndex - category index
      * @param {boolean} isVertical - whether vertical category or not
