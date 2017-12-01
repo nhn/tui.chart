@@ -1,0 +1,85 @@
+body {
+    min-width: 700px;
+    min-height: 850px;
+}
+
+body > div {
+    float: left;
+}
+.custom-area {
+    margin-top: 5px;
+    width: 650px;
+    position:relative;
+}
+
+.apply-btn-area {
+    width: 100%;
+    height: 35px;
+    position: relative;
+}
+
+.apply-btn-area .btn {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 5px 0 0 0;
+}
+
+.custom-area > div {
+    float: left;
+    margin-left: 10px;
+}
+
+textarea {
+    width: 200px;
+    height: 350px;
+}
+
+.btn-area {
+    width: 100%;
+    height: 25px;
+    text-align: right;
+}
+
+#hidden-options, #theme-area {
+    display:none;
+}
+
+#theme-area.show {
+    display:block;
+}
+
+div#error-dim {
+    padding: 30px 10px 10px 10px;
+    margin-bottom: 20px;
+    display: none;
+    width: 580px;
+    height: 300px;
+    background-color: rgba(242,13,0,0.41);
+}
+
+span#error-text {
+    color: #9f120d;
+    font-weight: bold;
+    font-size: 2em;
+}
+
+div#error-stack {
+    margin-top: 20px;
+    color: #9f120d;
+    font-size: 1em;
+}
+
+span#go-to-dev-tool {
+    display: block;
+    padding-top: 50px;
+    color: #fff;
+    font-size: 1em;
+}
+
+div#error-dim.show {
+    display: block;
+}
+
+div#go-to-dev-tool {
+
+}
