@@ -292,6 +292,49 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
         }
 
         return result;
+    },
+
+    /**
+     * Find data by indexes.
+     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+     * @param {number} [indexes.outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+     * @returns {object} tooltip data
+     */
+    findDataByIndexes: function(indexes) {
+        var foundData = this.data[indexes.index][indexes.seriesIndex].sendData;
+
+        if (tui.util.isNumber(indexes.outlierIndex)) {
+            return this._findOutlierDataByIndexes(indexes);
+        }
+
+        return foundData;
+    },
+
+    /**
+     * find plot chart data by indexes
+     * @param {{
+     *  index: {number},
+     *  seriesIndex: {number},
+     *  outlierIndex: {number}
+     * }} indexes - indexe of series item displaying a tooltip
+     * @returns {object} - outlier tooltip data
+     */
+    _findOutlierDataByIndexes: function(indexes) {
+        var foundData = null;
+
+        tui.util.forEachArray(this.data[indexes.index], function(datum) {
+            var datumIndexes = datum.sendData.indexes;
+            var found = (datumIndexes.index === indexes.seriesIndex) &&
+                (datumIndexes.outlierIndex === indexes.outlierIndex);
+
+            if (found) {
+                foundData = datum.sendData;
+            }
+
+            return !found;
+        });
+
+        return foundData;
     }
 });
 

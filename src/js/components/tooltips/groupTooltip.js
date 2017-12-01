@@ -371,7 +371,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
 
-        this._fireBeforeShowTooltipPublicEvent(params.index, params.range);
+        this._fireBeforeShowTooltipPublicEvent(params.index, params.range, params.silent);
 
         dom.addClass(elTooltip, 'show');
 
@@ -385,7 +385,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         this._fireAfterShowTooltipPublicEvent(params.index, params.range, {
             element: elTooltip,
             position: position
-        });
+        }, params.silent);
 
         this.prevIndex = params.index;
     },
@@ -394,9 +394,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * To call beforeShowTooltip callback of public event.
      * @param {number} index index
      * @param {{start: number, end: number}} range range
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireBeforeShowTooltipPublicEvent: function(index, range) {
+    _fireBeforeShowTooltipPublicEvent: function(index, range, silent) {
+        if (silent) {
+            return;
+        }
+
         this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', {
             chartType: this.chartType,
             index: index,
@@ -409,9 +414,13 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @param {number} index index
      * @param {{start: number, end: number}} range range
      * @param {object} additionParams addition parameters
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireAfterShowTooltipPublicEvent: function(index, range, additionParams) {
+    _fireAfterShowTooltipPublicEvent: function(index, range, additionParams, silent) {
+        if (silent) {
+            return;
+        }
         this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', tui.util.extend({
             chartType: this.chartType,
             index: index,
@@ -423,13 +432,33 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * Hide tooltip.
      * @param {HTMLElement} elTooltip tooltip element
      * @param {number} index index
+     * @param {object} options - options for hiding tooltip
      * @private
      */
-    _hideTooltip: function(elTooltip, index) {
+    _hideTooltip: function(elTooltip, index, options) {
+        var silent = options.silent;
         this.prevIndex = null;
+        this._fireBeforeHideTooltipPublicEvent(index, silent);
         this._hideTooltipSector(index);
         dom.removeClass(elTooltip, 'show');
         elTooltip.style.cssText = '';
+    },
+
+    /**
+     * To call beforeHideTooltip callback of public event.
+     * @param {number} index index
+     * @param {boolean} [silent] - options for hiding tooltip
+     * @private
+     */
+    _fireBeforeHideTooltipPublicEvent: function(index, silent) {
+        if (silent) {
+            return;
+        }
+
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeHideTooltip', {
+            chartType: this.chartType,
+            index: index
+        });
     }
 });
 

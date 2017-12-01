@@ -484,6 +484,30 @@ var predicate = {
      */
     isDatetimeType: function(type) {
         return type === chartConst.AXIS_TYPE_DATETIME;
+    },
+
+    /**
+     * @param {string} chartType - type of chart
+     * @returns {boolean} - whether it support ChartBase#showTooltip API
+     */
+    isSupportPublicShowTooptipAPI: function(chartType) {
+        return this.isBarChart(chartType) ||
+            this.isColumnChart(chartType) ||
+            this.isLineChart(chartType) ||
+            this.isAreaChart(chartType) ||
+            this.isBoxplotChart(chartType);
+    },
+
+    /**
+     * @param {string} chartType - type of chart
+     * @returns {boolean} - whether it support ChartBase#hideTooltip API
+     */
+    isSupportPublicHideTooptipAPI: function(chartType) {
+        return this.isBarChart(chartType) ||
+            this.isColumnChart(chartType) ||
+            this.isLineChart(chartType) ||
+            this.isAreaChart(chartType) ||
+            this.isBoxplotChart(chartType);
     }
 };
 

@@ -108,16 +108,14 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
 
     /**
      * Find data by indexes.
-     * @param {number} groupIndex - group index
-     * @param {number} index - index
+     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
      * @returns {object}
-     * @private
      */
-    _findDataByIndexes: function(groupIndex, index) {
+    findDataByIndexes: function(indexes) {
         var foundData = null;
 
         tui.util.forEachArray(this.data, function(datum) {
-            if (datum.indexes.groupIndex === groupIndex && datum.indexes.index === index) {
+            if (datum.indexes.groupIndex === indexes.index && datum.indexes.index === indexes.seriesIndex) {
                 foundData = datum;
             }
 
@@ -133,7 +131,12 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * @returns {object}
      */
     getFirstData: function(index) {
-        return this._findDataByIndexes(0, index);
+        var indexes = {
+            index: 0,
+            seriesIndex: index
+        };
+
+        return this.findDataByIndexes(indexes);
     },
 
     /**
@@ -142,7 +145,12 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * @returns {object}
      */
     getLastData: function(index) {
-        return this._findDataByIndexes(this.lastGroupIndex, index);
+        var indexes = {
+            index: this.lastGroupIndex,
+            seriesIndex: index
+        };
+
+        return this._findDataByIndexes(indexes);
     }
 });
 

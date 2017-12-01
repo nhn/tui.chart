@@ -8,6 +8,7 @@
 'use strict';
 
 var concat = Array.prototype.concat;
+var forEachArray = tui.util.forEachArray;
 
 var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     /**
@@ -85,7 +86,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     _initCheckedIndexes: function() {
         var self = this;
         var checkedIndexes = [];
-        tui.util.forEachArray(this.legendData, function(legendDatum, index) {
+        forEachArray(this.legendData, function(legendDatum, index) {
             if (legendDatum.visible) {
                 checkedIndexes.push(index);
             }
@@ -108,7 +109,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     _setThemeToLegendData: function(legendData, colorTheme, checkedIndexes) {
         var seriesIndex = 0;
 
-        tui.util.forEachArray(legendData, function(datum, index) {
+        forEachArray(legendData, function(datum, index) {
             var itemTheme = {
                 color: colorTheme.colors[index]
             };
@@ -179,6 +180,24 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      */
     getDatum: function(index) {
         return this.data[index];
+    },
+
+    /**
+     * Get legend datum by label
+     * @param {string} label - legend label
+     * @returns {{chartType: string, label: string, theme: object}} legend datum
+     */
+    getDatumByLabel: function(label) {
+        var foundDatum = null;
+        forEachArray(this.data, function(datum) {
+            if (datum.label === label) {
+                foundDatum = datum;
+            }
+
+            return !foundDatum;
+        });
+
+        return foundDatum;
     },
 
     /**
@@ -310,7 +329,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
         var self = this;
 
         this._resetCheckedData();
-        tui.util.forEachArray(indexes, function(index) {
+        forEachArray(indexes, function(index) {
             self._updateCheckedIndex(index);
             self._addSendingDatum(index);
         });
