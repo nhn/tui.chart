@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.11.2
+ * @version 2.12.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Nov 29 2017 17:22:38 GMT+0900 (KST)"
+ * bundle created at "Fri Dec 01 2017 18:56:23 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -1845,6 +1845,7 @@
 	        unselectSeries: true,
 	        beforeShowTooltip: true,
 	        afterShowTooltip: true,
+	        beforeHideTooltip: true,
 	        zoom: true
 	    },
 	    /** for radial */
@@ -2711,6 +2712,30 @@
 	     */
 	    isDatetimeType: function(type) {
 	        return type === chartConst.AXIS_TYPE_DATETIME;
+	    },
+
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#showTooltip API
+	     */
+	    isSupportPublicShowTooptipAPI: function(chartType) {
+	        return this.isBarChart(chartType) ||
+	            this.isColumnChart(chartType) ||
+	            this.isLineChart(chartType) ||
+	            this.isAreaChart(chartType) ||
+	            this.isBoxplotChart(chartType);
+	    },
+
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#hideTooltip API
+	     */
+	    isSupportPublicHideTooptipAPI: function(chartType) {
+	        return this.isBarChart(chartType) ||
+	            this.isColumnChart(chartType) ||
+	            this.isLineChart(chartType) ||
+	            this.isAreaChart(chartType) ||
+	            this.isBoxplotChart(chartType);
 	    }
 	};
 
@@ -4142,6 +4167,7 @@
 	var dom = __webpack_require__(14);
 	var renderUtil = __webpack_require__(24);
 	var boundsAndScaleBuilder = __webpack_require__(90);
+	var predicate = __webpack_require__(5);
 
 	var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 	    /**
@@ -4726,7 +4752,101 @@
 	     * Remove plot band.
 	     * @abstract
 	     */
-	    removePlotBand: function() {}
+	    removePlotBand: function() {},
+
+	    /**
+	     * Get series item bound by indexes
+	     * @param {string} name - series name
+	     * @param {number} index - category index
+	     * @param {number} [outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+	     * @returns {?object} - series item bound
+	     * @private
+	     */
+	    _getSeriesData: function(name, index, outlierIndex) {
+	        var legendModel = this.componentManager.get('legend').legendModel;
+	        var foundSeries = legendModel.getDatumByLabel(name);
+	        var seriesIndex = foundSeries.seriesIndex;
+	        var indexes, foundData;
+
+	        if (seriesIndex < 0) {
+	            return null;
+	        }
+
+	        indexes = {
+	            index: index,
+	            seriesIndex: seriesIndex,
+	            outlierIndex: outlierIndex
+	        };
+
+	        foundData = this.componentManager.get('mouseEventDetector').findDataByIndexes(indexes);
+
+	        if (tui.util.isNumber(outlierIndex)) {
+	            foundData.indexes.outlierIndex = outlierIndex;
+	        }
+
+	        return foundData;
+	    },
+
+	    /**
+	     * @param {number} index - category index
+	     * @param {number} seriesIndex - series index
+	     * @returns {object} 
+	     */
+	    _findDataByIndexes: function(index, seriesIndex) {
+	        return this.componentManager.get('mouseEventDetector').findDataByIndexes(index, seriesIndex);
+	    },
+
+	    /**
+	     * show tooltip by index of series item
+	     * @param {object} params - data needed for making a tooltip
+	     * @ignore
+	     */
+	    showTooltip: function(params) {
+	        var isGroupTooltip, mouseEventDetector, foundData;
+
+	        if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
+	            return;
+	        }
+
+	        isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
+	        mouseEventDetector = this.componentManager.get('mouseEventDetector');
+
+	        if (isGroupTooltip) {
+	            foundData = {indexes: {groupIndex: params.index}};
+	        } else {
+	            foundData = this._getSeriesData(params.legend, params.index, params.outlierIndex);
+	        }
+
+	        if (foundData) {
+	            foundData.silent = true;
+	            if (!isGroupTooltip) {
+	                mouseEventDetector.prevFoundData = foundData;
+	            }
+	            mouseEventDetector._showTooltip(foundData);
+	        } else {
+	            this.hideTooltip();
+	        }
+	    },
+
+	    /**
+	     * hide tooltip
+	     * @ignore
+	     */
+	    hideTooltip: function() {
+	        var isGroupTooltip, mouseEventDetector, prevData;
+
+	        if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
+	            return;
+	        }
+
+	        isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
+	        mouseEventDetector = this.componentManager.get('mouseEventDetector');
+	        prevData = isGroupTooltip ? mouseEventDetector.prevIndex : mouseEventDetector.prevFoundData;
+
+	        if (prevData) {
+	            mouseEventDetector._hideTooltip({silent: true});
+	        }
+	    }
 	});
 
 	module.exports = ChartBase;
@@ -9544,6 +9664,7 @@
 	'use strict';
 
 	var concat = Array.prototype.concat;
+	var forEachArray = tui.util.forEachArray;
 
 	var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 	    /**
@@ -9621,7 +9742,7 @@
 	    _initCheckedIndexes: function() {
 	        var self = this;
 	        var checkedIndexes = [];
-	        tui.util.forEachArray(this.legendData, function(legendDatum, index) {
+	        forEachArray(this.legendData, function(legendDatum, index) {
 	            if (legendDatum.visible) {
 	                checkedIndexes.push(index);
 	            }
@@ -9644,7 +9765,7 @@
 	    _setThemeToLegendData: function(legendData, colorTheme, checkedIndexes) {
 	        var seriesIndex = 0;
 
-	        tui.util.forEachArray(legendData, function(datum, index) {
+	        forEachArray(legendData, function(datum, index) {
 	            var itemTheme = {
 	                color: colorTheme.colors[index]
 	            };
@@ -9715,6 +9836,24 @@
 	     */
 	    getDatum: function(index) {
 	        return this.data[index];
+	    },
+
+	    /**
+	     * Get legend datum by label
+	     * @param {string} label - legend label
+	     * @returns {{chartType: string, label: string, theme: object}} legend datum
+	     */
+	    getDatumByLabel: function(label) {
+	        var foundDatum = null;
+	        forEachArray(this.data, function(datum) {
+	            if (datum.label === label) {
+	                foundDatum = datum;
+	            }
+
+	            return !foundDatum;
+	        });
+
+	        return foundDatum;
 	    },
 
 	    /**
@@ -9846,7 +9985,7 @@
 	        var self = this;
 
 	        this._resetCheckedData();
-	        tui.util.forEachArray(indexes, function(index) {
+	        forEachArray(indexes, function(index) {
 	            self._updateCheckedIndex(index);
 	            self._addSendingDatum(index);
 	        });
@@ -10563,6 +10702,8 @@
 	    _makeShowTooltipParams: function(indexes, additionParams) {
 	        var legendIndex = indexes.index;
 	        var legendData = this.dataProcessor.getLegendItem(legendIndex);
+	        var chartType = legendData.chartType;
+
 	        var params;
 
 	        if (!legendData) {
@@ -10570,11 +10711,16 @@
 	        }
 
 	        params = tui.util.extend({
-	            chartType: legendData.chartType,
+	            chartType: chartType,
 	            legend: legendData.label,
 	            legendIndex: legendIndex,
 	            index: indexes.groupIndex
 	        }, additionParams);
+
+	        if (predicate.isBoxplotChart(chartType) &&
+	            tui.util.isNumber(indexes.outlierIndex)) {
+	            params.outlierIndex = indexes.outlierIndex;
+	        }
 
 	        return params;
 	    },
@@ -11033,11 +11179,12 @@
 	    /**
 	     * onHideTooltip is callback of mouse event detector hideTooltip for SeriesView
 	     * @param {number} index index
+	     * @param {{silent: {boolean}}} options - hide tooltip options
 	     */
-	    onHideTooltip: function(index) {
+	    onHideTooltip: function(index, options) {
 	        var tooltipElement = this._getTooltipElement();
 
-	        this._hideTooltip(tooltipElement, index);
+	        this._hideTooltip(tooltipElement, index, options);
 	    },
 
 	    /**
@@ -11548,7 +11695,7 @@
 	        this._setIndexesCustomAttribute(elTooltip, indexes);
 	        this._setShowedCustomAttribute(elTooltip, true);
 
-	        this._fireBeforeShowTooltipPublicEvent(indexes);
+	        this._fireBeforeShowTooltipPublicEvent(indexes, params.silent);
 
 	        dom.addClass(elTooltip, 'show');
 
@@ -11566,17 +11713,24 @@
 	        this._fireAfterShowTooltipPublicEvent(indexes, {
 	            element: elTooltip,
 	            position: position
-	        });
+	        }, params.silent);
+	        delete params.silent;
 	    },
 
 	    /**
 	     * To call beforeShowTooltip callback of public event.
 	     * @param {{groupIndex: number, index: number}} indexes indexes
+	     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
 	     * @private
 	     */
-	    _fireBeforeShowTooltipPublicEvent: function(indexes) {
-	        var params = this._makeShowTooltipParams(indexes);
+	    _fireBeforeShowTooltipPublicEvent: function(indexes, silent) {
+	        var params;
 
+	        if (silent) {
+	            return;
+	        }
+
+	        params = this._makeShowTooltipParams(indexes);
 	        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', params);
 	    },
 
@@ -11584,11 +11738,17 @@
 	     * To call afterShowTooltip callback of public event.
 	     * @param {{groupIndex: number, index: number}} indexes indexes
 	     * @param {object} additionParams addition parameters
+	     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
 	     * @private
 	     */
-	    _fireAfterShowTooltipPublicEvent: function(indexes, additionParams) {
-	        var params = this._makeShowTooltipParams(indexes, additionParams);
+	    _fireAfterShowTooltipPublicEvent: function(indexes, additionParams, silent) {
+	        var params;
 
+	        if (silent) {
+	            return;
+	        }
+
+	        params = this._makeShowTooltipParams(indexes, additionParams);
 	        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', params);
 	    },
 
@@ -11606,16 +11766,20 @@
 
 	    /**
 	     * Hide tooltip.
-	     * @param {HTMLElement} tooltipElement tooltip element
+	     * @param {HTMLElement} tooltipElement - tooltip element
+	     * @param {object} prevFoundData - data represented by tooltip elements
+	     * @param {{silent: {boolean}}} options - options for hiding a tooltip element
 	     * @private
 	     */
-	    _hideTooltip: function(tooltipElement) {
+	    _hideTooltip: function(tooltipElement, prevFoundData, options) {
 	        var self = this;
 	        var indexes = this._getIndexesCustomAttribute(tooltipElement);
 	        var chartType = tooltipElement.getAttribute('data-chart-type');
+	        var silent = options.silent;
 
 	        if (predicate.isChartToDetectMouseEventOnSeries(chartType)) {
 	            this.eventBus.fire('hoverOffSeries', indexes, chartType);
+	            this._fireBeforeHideTooltipPublicEvent(indexes, silent);
 	            this._executeHidingTooltip(tooltipElement);
 	        } else if (chartType) {
 	            this._setShowedCustomAttribute(tooltipElement, false);
@@ -11629,10 +11793,25 @@
 	                if (self._isShowedTooltip(tooltipElement)) {
 	                    return;
 	                }
-
+	                self._fireBeforeHideTooltipPublicEvent(indexes, silent);
 	                self._executeHidingTooltip(tooltipElement);
 	            }, chartConst.HIDE_DELAY);
 	        }
+	    },
+
+	    /**
+	     * To call afterShowTooltip callback of public event.
+	     * @param {{groupIndex: number, index: number}} indexes indexes=
+	     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
+	     * @private
+	     */
+	    _fireBeforeHideTooltipPublicEvent: function(indexes, silent) {
+	        var params;
+	        if (silent) {
+	            return;
+	        }
+
+	        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeHideTooltip', params);
 	    },
 
 	    /**
@@ -12185,7 +12364,7 @@
 
 	        elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
 
-	        this._fireBeforeShowTooltipPublicEvent(params.index, params.range);
+	        this._fireBeforeShowTooltipPublicEvent(params.index, params.range, params.silent);
 
 	        dom.addClass(elTooltip, 'show');
 
@@ -12199,7 +12378,7 @@
 	        this._fireAfterShowTooltipPublicEvent(params.index, params.range, {
 	            element: elTooltip,
 	            position: position
-	        });
+	        }, params.silent);
 
 	        this.prevIndex = params.index;
 	    },
@@ -12208,9 +12387,14 @@
 	     * To call beforeShowTooltip callback of public event.
 	     * @param {number} index index
 	     * @param {{start: number, end: number}} range range
+	     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
 	     * @private
 	     */
-	    _fireBeforeShowTooltipPublicEvent: function(index, range) {
+	    _fireBeforeShowTooltipPublicEvent: function(index, range, silent) {
+	        if (silent) {
+	            return;
+	        }
+
 	        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', {
 	            chartType: this.chartType,
 	            index: index,
@@ -12223,9 +12407,13 @@
 	     * @param {number} index index
 	     * @param {{start: number, end: number}} range range
 	     * @param {object} additionParams addition parameters
+	     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
 	     * @private
 	     */
-	    _fireAfterShowTooltipPublicEvent: function(index, range, additionParams) {
+	    _fireAfterShowTooltipPublicEvent: function(index, range, additionParams, silent) {
+	        if (silent) {
+	            return;
+	        }
 	        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', tui.util.extend({
 	            chartType: this.chartType,
 	            index: index,
@@ -12237,13 +12425,33 @@
 	     * Hide tooltip.
 	     * @param {HTMLElement} elTooltip tooltip element
 	     * @param {number} index index
+	     * @param {object} options - options for hiding tooltip
 	     * @private
 	     */
-	    _hideTooltip: function(elTooltip, index) {
+	    _hideTooltip: function(elTooltip, index, options) {
+	        var silent = options.silent;
 	        this.prevIndex = null;
+	        this._fireBeforeHideTooltipPublicEvent(index, silent);
 	        this._hideTooltipSector(index);
 	        dom.removeClass(elTooltip, 'show');
 	        elTooltip.style.cssText = '';
+	    },
+
+	    /**
+	     * To call beforeHideTooltip callback of public event.
+	     * @param {number} index index
+	     * @param {boolean} [silent] - options for hiding tooltip
+	     * @private
+	     */
+	    _fireBeforeHideTooltipPublicEvent: function(index, silent) {
+	        if (silent) {
+	            return;
+	        }
+
+	        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeHideTooltip', {
+	            chartType: this.chartType,
+	            index: index
+	        });
 	    }
 	});
 
@@ -13518,7 +13726,13 @@
 	            mousemove: this._onMousemove,
 	            mouseout: this._onMouseout
 	        }, this);
-	    }
+	    },
+
+	    /**
+	     * find data by indexes
+	     * @abstract
+	     */
+	    findDataByIndexes: function() {}
 	});
 
 	tui.util.CustomEvents.mixin(MouseEventDetectorBase);
@@ -14015,6 +14229,49 @@
 	        }
 
 	        return result;
+	    },
+
+	    /**
+	     * Find data by indexes.
+	     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+	     * @param {number} [indexes.outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+	     * @returns {object} tooltip data
+	     */
+	    findDataByIndexes: function(indexes) {
+	        var foundData = this.data[indexes.index][indexes.seriesIndex].sendData;
+
+	        if (tui.util.isNumber(indexes.outlierIndex)) {
+	            return this._findOutlierDataByIndexes(indexes);
+	        }
+
+	        return foundData;
+	    },
+
+	    /**
+	     * find plot chart data by indexes
+	     * @param {{
+	     *  index: {number},
+	     *  seriesIndex: {number},
+	     *  outlierIndex: {number}
+	     * }} indexes - indexe of series item displaying a tooltip
+	     * @returns {object} - outlier tooltip data
+	     */
+	    _findOutlierDataByIndexes: function(indexes) {
+	        var foundData = null;
+
+	        tui.util.forEachArray(this.data[indexes.index], function(datum) {
+	            var datumIndexes = datum.sendData.indexes;
+	            var found = (datumIndexes.index === indexes.seriesIndex) &&
+	                (datumIndexes.outlierIndex === indexes.outlierIndex);
+
+	            if (found) {
+	                foundData = datum.sendData;
+	            }
+
+	            return !found;
+	        });
+
+	        return foundData;
 	    }
 	});
 
@@ -14213,10 +14470,12 @@
 
 	    /**
 	     * Hide tooltip.
+	     * @param {{silent: {boolean}}} options - options for hiding tooltip
 	     * @private
 	     */
-	    _hideTooltip: function() {
-	        this.eventBus.fire('hideTooltip', this.prevFoundData);
+	    _hideTooltip: function(options) {
+	        options = options || {};
+	        this.eventBus.fire('hideTooltip', this.prevFoundData, options);
 	    },
 
 	    /**
@@ -14260,6 +14519,15 @@
 	        }
 
 	        MouseEventDetectorBase.prototype._onMouseout.call(this);
+	    },
+
+	    /**
+	     * find data by indexes
+	     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+	     * @returns {object} - series item data
+	     */
+	    findDataByIndexes: function(indexes) {
+	        return this.dataModel.findDataByIndexes(indexes);
 	    }
 	});
 
@@ -14820,16 +15088,14 @@
 
 	    /**
 	     * Find data by indexes.
-	     * @param {number} groupIndex - group index
-	     * @param {number} index - index
+	     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
 	     * @returns {object}
-	     * @private
 	     */
-	    _findDataByIndexes: function(groupIndex, index) {
+	    findDataByIndexes: function(indexes) {
 	        var foundData = null;
 
 	        tui.util.forEachArray(this.data, function(datum) {
-	            if (datum.indexes.groupIndex === groupIndex && datum.indexes.index === index) {
+	            if (datum.indexes.groupIndex === indexes.index && datum.indexes.index === indexes.seriesIndex) {
 	                foundData = datum;
 	            }
 
@@ -14845,7 +15111,12 @@
 	     * @returns {object}
 	     */
 	    getFirstData: function(index) {
-	        return this._findDataByIndexes(0, index);
+	        var indexes = {
+	            index: 0,
+	            seriesIndex: index
+	        };
+
+	        return this.findDataByIndexes(indexes);
 	    },
 
 	    /**
@@ -14854,7 +15125,12 @@
 	     * @returns {object}
 	     */
 	    getLastData: function(index) {
-	        return this._findDataByIndexes(this.lastGroupIndex, index);
+	        var indexes = {
+	            index: this.lastGroupIndex,
+	            seriesIndex: index
+	        };
+
+	        return this._findDataByIndexes(indexes);
 	    }
 	});
 
@@ -15113,16 +15389,19 @@
 	            range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
 	            size: this.dimension[this.sizeType],
 	            isVertical: this.isVertical,
-	            isMoving: isMoving
+	            isMoving: isMoving,
+	            silent: foundData.silent
 	        });
 	    },
 
 	    /**
 	     * Hide tooltip
+	     * @param {{silent: {boolean}}} options - options for hiding tooltip
 	     * @private
 	     */
-	    _hideTooltip: function() {
-	        this.eventBus.fire('hideTooltip', this.prevIndex);
+	    _hideTooltip: function(options) {
+	        options = options || {};
+	        this.eventBus.fire('hideTooltip', this.prevIndex, options);
 	        this.prevIndex = null;
 	    },
 
@@ -15238,11 +15517,22 @@
 	    },
 
 	    /**
-	     * Hide tooltip.
+	     * Show tooltip.
+	     * @param {object} foundData - model data
 	     * @private
 	     */
-	    _hideTooltip: function() {
-	        this.eventBus.fire('hideTooltip', this.prevFoundData);
+	    _showTooltip: function(foundData) {
+	        this.eventBus.fire('showTooltip', foundData);
+	    },
+
+	    /**
+	     * Hide tooltip.
+	     * @param {{silent: {boolean}}} options - options for hiding a tooltip
+	     * @private
+	     */
+	    _hideTooltip: function(options) {
+	        options = options || {};
+	        this.eventBus.fire('hideTooltip', this.prevFoundData, options);
 	        this.prevFoundData = null;
 	        this.styleCursor(false);
 	    },
@@ -15290,7 +15580,7 @@
 	            this.styleCursor(seriesItem.hasChild);
 	        }
 
-	        this.eventBus.fire('showTooltip', foundData);
+	        this._showTooltip(foundData);
 	    },
 
 	    /**
@@ -15395,6 +15685,16 @@
 	        if (this.zoomHistory[this.zoomHistory.length - 1] !== index) {
 	            this.zoomHistory.push(index);
 	        }
+	    },
+
+	    /**
+	     * Find data by indexes.
+	     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+	     * @param {number} [indexes.outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+	     * @returns {object} - series item data
+	     */
+	    findDataByIndexes: function(indexes) {
+	        return this.boundsBaseCoordinateModel.findDataByIndexes(indexes);
 	    }
 	});
 
