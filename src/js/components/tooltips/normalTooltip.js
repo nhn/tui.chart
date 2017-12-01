@@ -124,6 +124,8 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
     _makeShowTooltipParams: function(indexes, additionParams) {
         var legendIndex = indexes.index;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
+        var chartType = legendData.chartType;
+
         var params;
 
         if (!legendData) {
@@ -131,11 +133,16 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
         }
 
         params = tui.util.extend({
-            chartType: legendData.chartType,
+            chartType: chartType,
             legend: legendData.label,
             legendIndex: legendIndex,
             index: indexes.groupIndex
         }, additionParams);
+
+        if (predicate.isBoxplotChart(chartType) &&
+            tui.util.isNumber(indexes.outlierIndex)) {
+            params.outlierIndex = indexes.outlierIndex;
+        }
 
         return params;
     },

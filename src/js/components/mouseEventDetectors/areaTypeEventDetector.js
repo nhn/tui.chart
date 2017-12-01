@@ -123,10 +123,12 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
 
     /**
      * Hide tooltip.
+     * @param {{silent: {boolean}}} options - options for hiding tooltip
      * @private
      */
-    _hideTooltip: function() {
-        this.eventBus.fire('hideTooltip', this.prevFoundData);
+    _hideTooltip: function(options) {
+        options = options || {};
+        this.eventBus.fire('hideTooltip', this.prevFoundData, options);
     },
 
     /**
@@ -170,6 +172,15 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
         }
 
         MouseEventDetectorBase.prototype._onMouseout.call(this);
+    },
+
+    /**
+     * find data by indexes
+     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+     * @returns {object} - series item data
+     */
+    findDataByIndexes: function(indexes) {
+        return this.dataModel.findDataByIndexes(indexes);
     }
 });
 

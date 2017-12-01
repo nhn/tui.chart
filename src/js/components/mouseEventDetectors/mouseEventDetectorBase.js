@@ -470,7 +470,13 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
             mousemove: this._onMousemove,
             mouseout: this._onMouseout
         }, this);
-    }
+    },
+
+    /**
+     * find data by indexes
+     * @abstract
+     */
+    findDataByIndexes: function() {}
 });
 
 tui.util.CustomEvents.mixin(MouseEventDetectorBase);

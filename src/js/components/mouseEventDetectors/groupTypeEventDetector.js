@@ -149,16 +149,19 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
             range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
             size: this.dimension[this.sizeType],
             isVertical: this.isVertical,
-            isMoving: isMoving
+            isMoving: isMoving,
+            silent: foundData.silent
         });
     },
 
     /**
      * Hide tooltip
+     * @param {{silent: {boolean}}} options - options for hiding tooltip
      * @private
      */
-    _hideTooltip: function() {
-        this.eventBus.fire('hideTooltip', this.prevIndex);
+    _hideTooltip: function(options) {
+        options = options || {};
+        this.eventBus.fire('hideTooltip', this.prevIndex, options);
         this.prevIndex = null;
     },
 

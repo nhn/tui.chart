@@ -13,6 +13,7 @@ var rawDataHandler = require('../models/data/rawDataHandler');
 var dom = require('../helpers/domHandler');
 var renderUtil = require('../helpers/renderUtil');
 var boundsAndScaleBuilder = require('../models/boundsAndScaleBuilder.js');
+var predicate = require('../helpers/predicate');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -597,7 +598,101 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Remove plot band.
      * @abstract
      */
-    removePlotBand: function() {}
+    removePlotBand: function() {},
+
+    /**
+     * Get series item bound by indexes
+     * @param {string} name - series name
+     * @param {number} index - category index
+     * @param {number} [outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+     * @returns {?object} - series item bound
+     * @private
+     */
+    _getSeriesData: function(name, index, outlierIndex) {
+        var legendModel = this.componentManager.get('legend').legendModel;
+        var foundSeries = legendModel.getDatumByLabel(name);
+        var seriesIndex = foundSeries.seriesIndex;
+        var indexes, foundData;
+
+        if (seriesIndex < 0) {
+            return null;
+        }
+
+        indexes = {
+            index: index,
+            seriesIndex: seriesIndex,
+            outlierIndex: outlierIndex
+        };
+
+        foundData = this.componentManager.get('mouseEventDetector').findDataByIndexes(indexes);
+
+        if (tui.util.isNumber(outlierIndex)) {
+            foundData.indexes.outlierIndex = outlierIndex;
+        }
+
+        return foundData;
+    },
+
+    /**
+     * @param {number} index - category index
+     * @param {number} seriesIndex - series index
+     * @returns {object} 
+     */
+    _findDataByIndexes: function(index, seriesIndex) {
+        return this.componentManager.get('mouseEventDetector').findDataByIndexes(index, seriesIndex);
+    },
+
+    /**
+     * show tooltip by index of series item
+     * @param {object} params - data needed for making a tooltip
+     * @ignore
+     */
+    showTooltip: function(params) {
+        var isGroupTooltip, mouseEventDetector, foundData;
+
+        if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
+            return;
+        }
+
+        isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
+        mouseEventDetector = this.componentManager.get('mouseEventDetector');
+
+        if (isGroupTooltip) {
+            foundData = {indexes: {groupIndex: params.index}};
+        } else {
+            foundData = this._getSeriesData(params.legend, params.index, params.outlierIndex);
+        }
+
+        if (foundData) {
+            foundData.silent = true;
+            if (!isGroupTooltip) {
+                mouseEventDetector.prevFoundData = foundData;
+            }
+            mouseEventDetector._showTooltip(foundData);
+        } else {
+            this.hideTooltip();
+        }
+    },
+
+    /**
+     * hide tooltip
+     * @ignore
+     */
+    hideTooltip: function() {
+        var isGroupTooltip, mouseEventDetector, prevData;
+
+        if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
+            return;
+        }
+
+        isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
+        mouseEventDetector = this.componentManager.get('mouseEventDetector');
+        prevData = isGroupTooltip ? mouseEventDetector.prevIndex : mouseEventDetector.prevFoundData;
+
+        if (prevData) {
+            mouseEventDetector._hideTooltip({silent: true});
+        }
+    }
 });
 
 module.exports = ChartBase;

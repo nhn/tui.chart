@@ -369,11 +369,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
      * onHideTooltip is callback of mouse event detector hideTooltip for SeriesView
      * @param {number} index index
+     * @param {{silent: {boolean}}} options - hide tooltip options
      */
-    onHideTooltip: function(index) {
+    onHideTooltip: function(index, options) {
         var tooltipElement = this._getTooltipElement();
 
-        this._hideTooltip(tooltipElement, index);
+        this._hideTooltip(tooltipElement, index, options);
     },
 
     /**

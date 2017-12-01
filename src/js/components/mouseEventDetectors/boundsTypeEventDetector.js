@@ -53,11 +53,22 @@ var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends
     },
 
     /**
-     * Hide tooltip.
+     * Show tooltip.
+     * @param {object} foundData - model data
      * @private
      */
-    _hideTooltip: function() {
-        this.eventBus.fire('hideTooltip', this.prevFoundData);
+    _showTooltip: function(foundData) {
+        this.eventBus.fire('showTooltip', foundData);
+    },
+
+    /**
+     * Hide tooltip.
+     * @param {{silent: {boolean}}} options - options for hiding a tooltip
+     * @private
+     */
+    _hideTooltip: function(options) {
+        options = options || {};
+        this.eventBus.fire('hideTooltip', this.prevFoundData, options);
         this.prevFoundData = null;
         this.styleCursor(false);
     },
@@ -105,7 +116,7 @@ var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends
             this.styleCursor(seriesItem.hasChild);
         }
 
-        this.eventBus.fire('showTooltip', foundData);
+        this._showTooltip(foundData);
     },
 
     /**
@@ -210,6 +221,16 @@ var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends
         if (this.zoomHistory[this.zoomHistory.length - 1] !== index) {
             this.zoomHistory.push(index);
         }
+    },
+
+    /**
+     * Find data by indexes.
+     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+     * @param {number} [indexes.outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+     * @returns {object} - series item data
+     */
+    findDataByIndexes: function(indexes) {
+        return this.boundsBaseCoordinateModel.findDataByIndexes(indexes);
     }
 });
 

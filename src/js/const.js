@@ -372,6 +372,7 @@ var chartConst = {
         unselectSeries: true,
         beforeShowTooltip: true,
         afterShowTooltip: true,
+        beforeHideTooltip: true,
         zoom: true
     },
     /** for radial */

@@ -394,7 +394,7 @@ var singleTooltipMixer = {
         this._setIndexesCustomAttribute(elTooltip, indexes);
         this._setShowedCustomAttribute(elTooltip, true);
 
-        this._fireBeforeShowTooltipPublicEvent(indexes);
+        this._fireBeforeShowTooltipPublicEvent(indexes, params.silent);
 
         dom.addClass(elTooltip, 'show');
 
@@ -412,17 +412,24 @@ var singleTooltipMixer = {
         this._fireAfterShowTooltipPublicEvent(indexes, {
             element: elTooltip,
             position: position
-        });
+        }, params.silent);
+        delete params.silent;
     },
 
     /**
      * To call beforeShowTooltip callback of public event.
      * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireBeforeShowTooltipPublicEvent: function(indexes) {
-        var params = this._makeShowTooltipParams(indexes);
+    _fireBeforeShowTooltipPublicEvent: function(indexes, silent) {
+        var params;
 
+        if (silent) {
+            return;
+        }
+
+        params = this._makeShowTooltipParams(indexes);
         this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', params);
     },
 
@@ -430,11 +437,17 @@ var singleTooltipMixer = {
      * To call afterShowTooltip callback of public event.
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @param {object} additionParams addition parameters
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireAfterShowTooltipPublicEvent: function(indexes, additionParams) {
-        var params = this._makeShowTooltipParams(indexes, additionParams);
+    _fireAfterShowTooltipPublicEvent: function(indexes, additionParams, silent) {
+        var params;
 
+        if (silent) {
+            return;
+        }
+
+        params = this._makeShowTooltipParams(indexes, additionParams);
         this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', params);
     },
 
@@ -452,16 +465,20 @@ var singleTooltipMixer = {
 
     /**
      * Hide tooltip.
-     * @param {HTMLElement} tooltipElement tooltip element
+     * @param {HTMLElement} tooltipElement - tooltip element
+     * @param {object} prevFoundData - data represented by tooltip elements
+     * @param {{silent: {boolean}}} options - options for hiding a tooltip element
      * @private
      */
-    _hideTooltip: function(tooltipElement) {
+    _hideTooltip: function(tooltipElement, prevFoundData, options) {
         var self = this;
         var indexes = this._getIndexesCustomAttribute(tooltipElement);
         var chartType = tooltipElement.getAttribute('data-chart-type');
+        var silent = options.silent;
 
         if (predicate.isChartToDetectMouseEventOnSeries(chartType)) {
             this.eventBus.fire('hoverOffSeries', indexes, chartType);
+            this._fireBeforeHideTooltipPublicEvent(indexes, silent);
             this._executeHidingTooltip(tooltipElement);
         } else if (chartType) {
             this._setShowedCustomAttribute(tooltipElement, false);
@@ -475,10 +492,25 @@ var singleTooltipMixer = {
                 if (self._isShowedTooltip(tooltipElement)) {
                     return;
                 }
-
+                self._fireBeforeHideTooltipPublicEvent(indexes, silent);
                 self._executeHidingTooltip(tooltipElement);
             }, chartConst.HIDE_DELAY);
         }
+    },
+
+    /**
+     * To call afterShowTooltip callback of public event.
+     * @param {{groupIndex: number, index: number}} indexes indexes=
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
+     * @private
+     */
+    _fireBeforeHideTooltipPublicEvent: function(indexes, silent) {
+        var params;
+        if (silent) {
+            return;
+        }
+
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeHideTooltip', params);
     },
 
     /**
