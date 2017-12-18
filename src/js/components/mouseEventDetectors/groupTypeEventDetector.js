@@ -128,8 +128,14 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
      */
     _isOuterPosition: function(layerX, layerY) {
         var dimension = this.dimension;
+        var width = dimension.width;
+        var height = dimension.height;
+        var position = this.layout.position;
+        var top = position.top;
+        var left = position.left;
 
-        return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
+        return layerX < left || layerX > left + width ||
+            layerY < top || layerY > top + height;
     },
 
     /**
@@ -143,15 +149,21 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
         var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top)
             - chartConst.CHART_PADDING;
 
-        this.prevIndex = index;
-        this.eventBus.fire('showTooltip', {
-            index: index,
-            range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
-            size: this.dimension[this.sizeType],
-            isVertical: this.isVertical,
-            isMoving: isMoving,
-            silent: foundData.silent
-        });
+        /**
+         * Can be called with showTooltip function
+         * At this time, the index may be larger than the data size.
+         */
+        if (this.tickBaseCoordinateModel.data.length > index) {
+            this.prevIndex = index;
+            this.eventBus.fire('showTooltip', {
+                index: index,
+                range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
+                size: this.dimension[this.sizeType],
+                isVertical: this.isVertical,
+                isMoving: isMoving,
+                silent: foundData.silent
+            });
+        }
     },
 
     /**

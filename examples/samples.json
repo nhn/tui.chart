@@ -44,6 +44,9 @@
   "sample03-04-line-chart-without-data": {
     "title": "[Line Chart] without series data"
   },
+  "sample03-05-synchronized-line-chart": {
+    "title": "[Line Chart] synchronized chart"
+  },
   "sample04-01-area-chart": {
     "title": "[Area Chart] basic"
   },

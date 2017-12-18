@@ -8,12 +8,19 @@
     var evaluationCode = function(codeMirror) {
         var currentCode = codeMirror.doc.getValue();
         var errorDimContainer = document.getElementById('error-dim');
-
-        var chartArea = document.getElementById('chart-area');
+        var codeHtml = document.getElementById('code-html');
+        var chartAreas = codeHtml.childNodes;
+        var i = 0;
+        var len = chartAreas.length;
 
         try {
             errorDimContainer.className = '';
-            chartArea.innerHTML = '';
+
+            for (; i < len; i += 1) {
+                if (chartAreas[i].nodeType === 1) {
+                    chartAreas[i].innerHTML = '';
+                }
+            }
             eval(currentCode);
         } catch (e) {
             errorDimContainer.className = 'show';
