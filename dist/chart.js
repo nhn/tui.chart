@@ -1,10 +1,10 @@
 /*!
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.12.0
+ * @version 2.12.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Dec 01 2017 18:56:23 GMT+0900 (KST)"
+ * bundle created at "Mon Dec 18 2017 17:18:42 GMT+0900 (KST)"
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -4756,35 +4756,48 @@
 
 	    /**
 	     * Get series item bound by indexes
-	     * @param {string} name - series name
-	     * @param {number} index - category index
-	     * @param {number} [outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+	     * @param {number} index - tooltip data's category index
+	     * @param {number} seriesIndex - tooltip data's series index
+	     * @param {number} [outlierIndex] - outlier index of tooltip, exists only hovered on boxplot chart's outlier point
+	     * 
 	     * @returns {?object} - series item bound
 	     * @private
 	     */
-	    _getSeriesData: function(name, index, outlierIndex) {
-	        var legendModel = this.componentManager.get('legend').legendModel;
-	        var foundSeries = legendModel.getDatumByLabel(name);
-	        var seriesIndex = foundSeries.seriesIndex;
-	        var indexes, foundData;
-
-	        if (seriesIndex < 0) {
-	            return null;
-	        }
-
-	        indexes = {
+	    _getSeriesData: function(index, seriesIndex, outlierIndex) {
+	        var indexes = {
 	            index: index,
 	            seriesIndex: seriesIndex,
 	            outlierIndex: outlierIndex
 	        };
 
-	        foundData = this.componentManager.get('mouseEventDetector').findDataByIndexes(indexes);
-
-	        if (tui.util.isNumber(outlierIndex)) {
-	            foundData.indexes.outlierIndex = outlierIndex;
+	        if (seriesIndex < 0) {
+	            return null;
 	        }
 
-	        return foundData;
+	        return this.componentManager.get('mouseEventDetector').findDataByIndexes(indexes);
+	    },
+
+	    /**
+	     * find series index by legend label
+	     * @param {string} chartType - chart tyoe
+	     * @param {string} legendLabel - legend label
+	     * @returns {number} - if not found return -1, else return found series index
+	     * @private
+	     */
+	    _findSeriesIndexByLabel: function(chartType, legendLabel) {
+	        var labels = this.dataProcessor.getLegendLabels(chartType);
+	        var seriesIndex = -1;
+	        var i = 0;
+	        var len = labels ? labels.length : 0;
+
+	        for (; i < len; i += 1) {
+	            if (labels[i] === legendLabel) {
+	                seriesIndex = i;
+	                break;
+	            }
+	        }
+
+	        return seriesIndex;
 	    },
 
 	    /**
@@ -4802,7 +4815,7 @@
 	     * @ignore
 	     */
 	    showTooltip: function(params) {
-	        var isGroupTooltip, mouseEventDetector, foundData;
+	        var isGroupTooltip, mouseEventDetector, foundSeriesIndex, foundData;
 
 	        if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
 	            return;
@@ -4814,7 +4827,8 @@
 	        if (isGroupTooltip) {
 	            foundData = {indexes: {groupIndex: params.index}};
 	        } else {
-	            foundData = this._getSeriesData(params.legend, params.index, params.outlierIndex);
+	            foundSeriesIndex = this._findSeriesIndexByLabel(params.chartType, params.legend);
+	            foundData = this._getSeriesData(params.index, foundSeriesIndex, params.outlierIndex);
 	        }
 
 	        if (foundData) {
@@ -4833,7 +4847,7 @@
 	     * @ignore
 	     */
 	    hideTooltip: function() {
-	        var isGroupTooltip, mouseEventDetector, prevData;
+	        var isGroupTooltip, mouseEventDetector;
 
 	        if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
 	            return;
@@ -4841,9 +4855,9 @@
 
 	        isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
 	        mouseEventDetector = this.componentManager.get('mouseEventDetector');
-	        prevData = isGroupTooltip ? mouseEventDetector.prevIndex : mouseEventDetector.prevFoundData;
 
-	        if (prevData) {
+	        if ((isGroupTooltip && mouseEventDetector.prevIndex >= 0) ||
+	            (!isGroupTooltip && mouseEventDetector.prevFoundData)) {
 	            mouseEventDetector._hideTooltip({silent: true});
 	        }
 	    }
@@ -10702,7 +10716,7 @@
 	    _makeShowTooltipParams: function(indexes, additionParams) {
 	        var legendIndex = indexes.index;
 	        var legendData = this.dataProcessor.getLegendItem(legendIndex);
-	        var chartType = legendData.chartType;
+	        var chartType;
 
 	        var params;
 
@@ -10710,6 +10724,7 @@
 	            return null;
 	        }
 
+	        chartType = legendData.chartType;
 	        params = tui.util.extend({
 	            chartType: chartType,
 	            legend: legendData.label,
@@ -11775,7 +11790,7 @@
 	        var self = this;
 	        var indexes = this._getIndexesCustomAttribute(tooltipElement);
 	        var chartType = tooltipElement.getAttribute('data-chart-type');
-	        var silent = options.silent;
+	        var silent = !!(options && options.silent);
 
 	        if (predicate.isChartToDetectMouseEventOnSeries(chartType)) {
 	            this.eventBus.fire('hoverOffSeries', indexes, chartType);
@@ -12036,6 +12051,10 @@
 	            cssTextTemplate = tooltipTemplate.tplGroupCssText,
 	            colors = this._makeColors(this.theme),
 	            itemsHtml = tui.util.map(items, function(item, index) {
+	                if (!item.value) {
+	                    return null;
+	                }
+
 	                return template(tui.util.extend({
 	                    cssText: cssTextTemplate({color: colors[index]})
 	                }, item));
@@ -12341,7 +12360,11 @@
 	    _hideTooltipSector: function(index) {
 	        var groupTooltipSector = this._getTooltipSectorElement();
 
-	        dom.removeClass(groupTooltipSector, 'show');
+	        if (!dom.hasClass(groupTooltipSector, 'show')) {
+	            this.eventBus.fire('hideGroupTooltipLine');
+	        } else {
+	            dom.removeClass(groupTooltipSector, 'show');
+	        }
 	        this.eventBus.fire('hideGroupAnimation', index);
 	        this.eventBus.fire('hideGroupTooltipLine');
 	    },
@@ -13461,7 +13484,8 @@
 	        this.attachEvent(container);
 	        this.mouseEventDetectorContainer = container;
 
-	        dom.append(container, this._createTransparentChild());
+	        this.transparentChild = this._createTransparentChild();
+	        dom.append(container, this.transparentChild);
 
 	        return container;
 	    },
@@ -13548,6 +13572,8 @@
 	        this.selectedData = null;
 	        this._setDataForRendering(data);
 	        this._renderMouseEventDetectorArea(this.mouseEventDetectorContainer, tickCount);
+
+	        this.transparentChild.style.height = renderUtil.getStyle(this.mouseEventDetectorContainer).height;
 	    },
 
 	    /**
@@ -15130,7 +15156,7 @@
 	            seriesIndex: index
 	        };
 
-	        return this._findDataByIndexes(indexes);
+	        return this.findDataByIndexes(indexes);
 	    }
 	});
 
@@ -15368,8 +15394,14 @@
 	     */
 	    _isOuterPosition: function(layerX, layerY) {
 	        var dimension = this.dimension;
+	        var width = dimension.width;
+	        var height = dimension.height;
+	        var position = this.layout.position;
+	        var top = position.top;
+	        var left = position.left;
 
-	        return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
+	        return layerX < left || layerX > left + width ||
+	            layerY < top || layerY > top + height;
 	    },
 
 	    /**
@@ -15383,15 +15415,21 @@
 	        var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top)
 	            - chartConst.CHART_PADDING;
 
-	        this.prevIndex = index;
-	        this.eventBus.fire('showTooltip', {
-	            index: index,
-	            range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
-	            size: this.dimension[this.sizeType],
-	            isVertical: this.isVertical,
-	            isMoving: isMoving,
-	            silent: foundData.silent
-	        });
+	        /**
+	         * Can be called with showTooltip function
+	         * At this time, the index may be larger than the data size.
+	         */
+	        if (this.tickBaseCoordinateModel.data.length > index) {
+	            this.prevIndex = index;
+	            this.eventBus.fire('showTooltip', {
+	                index: index,
+	                range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
+	                size: this.dimension[this.sizeType],
+	                isVertical: this.isVertical,
+	                isMoving: isMoving,
+	                silent: foundData.silent
+	            });
+	        }
 	    },
 
 	    /**
@@ -18084,7 +18122,7 @@
 	     * To call hideGroupTooltipLine function of graphRenderer.
 	     */
 	    onHideGroupTooltipLine: function() {
-	        if (!this.seriesData.length
+	        if (!this.seriesData
 	            || !this.seriesData.isAvailable()
 	            || !this.graphRenderer.hideGroupTooltipLine
 	        ) {
