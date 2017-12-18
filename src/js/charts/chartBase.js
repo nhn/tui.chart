@@ -602,35 +602,48 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Get series item bound by indexes
-     * @param {string} name - series name
-     * @param {number} index - category index
-     * @param {number} [outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
+     * @param {number} index - tooltip data's category index
+     * @param {number} seriesIndex - tooltip data's series index
+     * @param {number} [outlierIndex] - outlier index of tooltip, exists only hovered on boxplot chart's outlier point
+     * 
      * @returns {?object} - series item bound
      * @private
      */
-    _getSeriesData: function(name, index, outlierIndex) {
-        var legendModel = this.componentManager.get('legend').legendModel;
-        var foundSeries = legendModel.getDatumByLabel(name);
-        var seriesIndex = foundSeries.seriesIndex;
-        var indexes, foundData;
-
-        if (seriesIndex < 0) {
-            return null;
-        }
-
-        indexes = {
+    _getSeriesData: function(index, seriesIndex, outlierIndex) {
+        var indexes = {
             index: index,
             seriesIndex: seriesIndex,
             outlierIndex: outlierIndex
         };
 
-        foundData = this.componentManager.get('mouseEventDetector').findDataByIndexes(indexes);
-
-        if (tui.util.isNumber(outlierIndex)) {
-            foundData.indexes.outlierIndex = outlierIndex;
+        if (seriesIndex < 0) {
+            return null;
         }
 
-        return foundData;
+        return this.componentManager.get('mouseEventDetector').findDataByIndexes(indexes);
+    },
+
+    /**
+     * find series index by legend label
+     * @param {string} chartType - chart tyoe
+     * @param {string} legendLabel - legend label
+     * @returns {number} - if not found return -1, else return found series index
+     * @private
+     */
+    _findSeriesIndexByLabel: function(chartType, legendLabel) {
+        var labels = this.dataProcessor.getLegendLabels(chartType);
+        var seriesIndex = -1;
+        var i = 0;
+        var len = labels ? labels.length : 0;
+
+        for (; i < len; i += 1) {
+            if (labels[i] === legendLabel) {
+                seriesIndex = i;
+                break;
+            }
+        }
+
+        return seriesIndex;
     },
 
     /**
@@ -648,7 +661,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @ignore
      */
     showTooltip: function(params) {
-        var isGroupTooltip, mouseEventDetector, foundData;
+        var isGroupTooltip, mouseEventDetector, foundSeriesIndex, foundData;
 
         if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
             return;
@@ -660,7 +673,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         if (isGroupTooltip) {
             foundData = {indexes: {groupIndex: params.index}};
         } else {
-            foundData = this._getSeriesData(params.legend, params.index, params.outlierIndex);
+            foundSeriesIndex = this._findSeriesIndexByLabel(params.chartType, params.legend);
+            foundData = this._getSeriesData(params.index, foundSeriesIndex, params.outlierIndex);
         }
 
         if (foundData) {
@@ -679,7 +693,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @ignore
      */
     hideTooltip: function() {
-        var isGroupTooltip, mouseEventDetector, prevData;
+        var isGroupTooltip, mouseEventDetector;
 
         if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
             return;
@@ -687,9 +701,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
         mouseEventDetector = this.componentManager.get('mouseEventDetector');
-        prevData = isGroupTooltip ? mouseEventDetector.prevIndex : mouseEventDetector.prevFoundData;
 
-        if (prevData) {
+        if ((isGroupTooltip && mouseEventDetector.prevIndex >= 0) ||
+            (!isGroupTooltip && mouseEventDetector.prevFoundData)) {
             mouseEventDetector._hideTooltip({silent: true});
         }
     }

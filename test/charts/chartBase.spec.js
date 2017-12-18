@@ -7,7 +7,6 @@
 'use strict';
 
 var ChartBase = require('../../src/js/charts/chartBase'),
-    renderUtil = require('../../src/js/helpers/renderUtil'),
     DataProcessor = require('../../src/js/models/data/dataProcessor');
 
 describe('Test for ChartBase', function() {
@@ -20,26 +19,29 @@ describe('Test for ChartBase', function() {
 
     beforeEach(function() {
         chartBase = new ChartBase({
+            chartType: 'chartType',
             rawData: {
                 categories: ['cate1', 'cate2', 'cate3'],
-                series: [
-                    {
-                        name: 'Legend1',
-                        data: [20, 30, 50]
-                    },
-                    {
-                        name: 'Legend2',
-                        data: [40, 40, 60]
-                    },
-                    {
-                        name: 'Legend3',
-                        data: [60, 50, 10]
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70]
-                    }
-                ]
+                series: {
+                    'chartType': [
+                        {
+                            name: 'Legend1',
+                            data: [20, 30, 50]
+                        },
+                        {
+                            name: 'Legend2',
+                            data: [40, 40, 60]
+                        },
+                        {
+                            name: 'Legend3',
+                            data: [60, 50, 10]
+                        },
+                        {
+                            name: 'Legend4',
+                            data: [80, 10, 70]
+                        }
+                    ]
+                }
             },
             theme: {
                 title: {
@@ -323,6 +325,20 @@ describe('Test for ChartBase', function() {
             });
 
             expect(chartBase.readyForRender).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('_findSeriesIndexByLabel()', function() {
+        it('should return index, if found same label', function() {
+            var actual = chartBase._findSeriesIndexByLabel('chartType', 'Legend2');
+
+            expect(actual).toBe(1);
+        });
+
+        it('should return -1, if not found', function() {
+            var actual = chartBase._findSeriesIndexByLabel('chartType', 'legend2');
+
+            expect(actual).toBe(-1);
         });
     });
 });

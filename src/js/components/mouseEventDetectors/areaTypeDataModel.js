@@ -150,7 +150,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
             seriesIndex: index
         };
 
-        return this._findDataByIndexes(indexes);
+        return this.findDataByIndexes(indexes);
     }
 });
 

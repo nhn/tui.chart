@@ -205,7 +205,8 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         this.attachEvent(container);
         this.mouseEventDetectorContainer = container;
 
-        dom.append(container, this._createTransparentChild());
+        this.transparentChild = this._createTransparentChild();
+        dom.append(container, this.transparentChild);
 
         return container;
     },
@@ -292,6 +293,8 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         this.selectedData = null;
         this._setDataForRendering(data);
         this._renderMouseEventDetectorArea(this.mouseEventDetectorContainer, tickCount);
+
+        this.transparentChild.style.height = renderUtil.getStyle(this.mouseEventDetectorContainer).height;
     },
 
     /**

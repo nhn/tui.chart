@@ -124,7 +124,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
     _makeShowTooltipParams: function(indexes, additionParams) {
         var legendIndex = indexes.index;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
-        var chartType = legendData.chartType;
+        var chartType;
 
         var params;
 
@@ -132,6 +132,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
             return null;
         }
 
+        chartType = legendData.chartType;
         params = tui.util.extend({
             chartType: chartType,
             legend: legendData.label,

@@ -43,6 +43,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             cssTextTemplate = tooltipTemplate.tplGroupCssText,
             colors = this._makeColors(this.theme),
             itemsHtml = tui.util.map(items, function(item, index) {
+                if (!item.value) {
+                    return null;
+                }
+
                 return template(tui.util.extend({
                     cssText: cssTextTemplate({color: colors[index]})
                 }, item));
@@ -348,7 +352,11 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _hideTooltipSector: function(index) {
         var groupTooltipSector = this._getTooltipSectorElement();
 
-        dom.removeClass(groupTooltipSector, 'show');
+        if (!dom.hasClass(groupTooltipSector, 'show')) {
+            this.eventBus.fire('hideGroupTooltipLine');
+        } else {
+            dom.removeClass(groupTooltipSector, 'show');
+        }
         this.eventBus.fire('hideGroupAnimation', index);
         this.eventBus.fire('hideGroupTooltipLine');
     },
