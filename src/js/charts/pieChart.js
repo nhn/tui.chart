@@ -8,8 +8,9 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
 
-var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
+var PieChart = snippet.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
      * className
      * @type {string}

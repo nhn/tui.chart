@@ -35,10 +35,11 @@
 
 var SeriesItemForBoxplot = require('./seriesItemForBoxplot');
 var SeriesDataModel = require('./seriesDataModel');
+var snippet = require('tui-code-snippet');
 
 var concat = Array.prototype.concat;
 
-var SeriesDataModelForBoxplot = tui.util.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBoxplot.prototype */{
+var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBoxplot.prototype */{
     /**
      * SeriesDataModelForBoxplot is series model for boxplot chart
      * SeriesDataModel.groups has SeriesGroups.
@@ -106,9 +107,9 @@ var SeriesDataModelForBoxplot = tui.util.defineClass(SeriesDataModel, /** @lends
         var chartType = this.chartType;
         var formatFunctions = this.formatFunctions;
 
-        return tui.util.map(this.rawSeriesData, function(rawDatum) {
-            var data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
-            var items = tui.util.map(data, function(datum, index) {
+        return snippet.map(this.rawSeriesData, function(rawDatum) {
+            var data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+            var items = snippet.map(data, function(datum, index) {
                 return new SeriesItemForBoxplot({
                     datum: datum,
                     chartType: chartType,
@@ -130,7 +131,7 @@ var SeriesDataModelForBoxplot = tui.util.defineClass(SeriesDataModel, /** @lends
     _createValues: function() {
         var values = [];
         this.map(function(seriesGroup) {
-            tui.util.forEach(seriesGroup.items, function(group) {
+            snippet.forEach(seriesGroup.items, function(group) {
                 values.push(group.min);
                 values.push(group.max);
                 values.push(group.uq);
@@ -141,7 +142,7 @@ var SeriesDataModelForBoxplot = tui.util.defineClass(SeriesDataModel, /** @lends
 
         values = concat.apply([], values);
 
-        return tui.util.filter(values, function(value) {
+        return snippet.filter(values, function(value) {
             return !isNaN(value);
         });
     }

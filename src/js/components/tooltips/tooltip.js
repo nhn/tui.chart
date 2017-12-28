@@ -10,6 +10,7 @@ var normalTooltipFactory = require('./normalTooltip');
 var groupTooltipFactory = require('./groupTooltip');
 var mapChartTooltipFactory = require('./mapChartTooltip');
 var predicate = require('../../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
 /**
  * Label formatter function for pie chart
@@ -17,6 +18,7 @@ var predicate = require('../../helpers/predicate');
  * @param {object} tooltipDatum tooltip datum object
  * @param {string} labelPrefix label prefix
  * @returns {object}
+ * @ignore
  */
 function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
     var ratioLabel;
@@ -37,6 +39,7 @@ function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
  * Factory for Tooltip
  * @param {object} params parameter
  * @returns {object|null}
+ * @ignore
  */
 function tooltipFactory(params) {
     var chartType = params.chartOptions.chartType;
@@ -45,8 +48,8 @@ function tooltipFactory(params) {
     var colors = [];
     var factory;
 
-    tui.util.forEach(tui.util.filter(params.chartTheme.legend, function(item) {
-        return tui.util.isArray(item.colors);
+    snippet.forEach(snippet.filter(params.chartTheme.legend, function(item) {
+        return snippet.isArray(item.colors);
     }), function(series) {
         colors = colors.concat(series.colors);
     });

@@ -6,8 +6,10 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 var LABEL_FADE_IN_DURATION = 600;
-var browser = tui.util.browser;
+var browser = snippet.browser;
 var IS_IE7 = browser.msie && browser.version === 7;
 
 var chartConst = require('../../const');
@@ -17,7 +19,7 @@ var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
 var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 
-var Series = tui.util.defineClass(/** @lends Series.prototype */ {
+var Series = snippet.defineClass(/** @lends Series.prototype */ {
     /**
      * Series component className
      * @type {string}
@@ -181,7 +183,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _attachToEventBus: function() {
-        var firstRenderCheck = tui.util.bind(function() {
+        var firstRenderCheck = snippet.bind(function() {
             this.isInitRenderCompleted = true;
             this.eventBus.off('load', firstRenderCheck);
         }, this);
@@ -304,7 +306,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makeParamsForGraphRendering: function(dimension, seriesData) {
-        return tui.util.extend({
+        return snippet.extend({
             dimension: dimension,
             position: this.layout.position,
             chartType: this.seriesType,
@@ -375,7 +377,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             }
         }
 
-        this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
+        this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
 
         if (this.paper.pushDownBackgroundToBottom) {
             this.paper.pushDownBackgroundToBottom();
@@ -397,7 +399,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         cloneTheme = JSON.parse(JSON.stringify(theme));
-        cloneTheme.colors = tui.util.filter(cloneTheme.colors, function(color, index) {
+        cloneTheme.colors = snippet.filter(cloneTheme.colors, function(color, index) {
             return checkedLegends[index];
         });
 
@@ -435,7 +437,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             }
 
             this._setDataForRendering(data);
-            this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
+            this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
 
             if (this.labelShowEffector) {
                 clearInterval(this.labelShowEffector.timerId);
@@ -447,7 +449,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 this.animateComponent(true);
             }
 
-            if (!tui.util.isNull(this.selectedLegendIndex)) {
+            if (!snippet.isNull(this.selectedLegendIndex)) {
                 this.graphRenderer.selectLegend(this.selectedLegendIndex);
             }
         }
@@ -470,7 +472,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _resizeGraph: function(dimension, seriesData) {
-        this.graphRenderer.resize(tui.util.extend({
+        this.graphRenderer.resize(snippet.extend({
             dimension: this.dimensionMap.chart
         }, seriesData));
 
@@ -487,7 +489,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (this.labelSet && this.labelSet.remove) {
             this.labelSet.remove();
         }
-        this._renderSeriesArea(data.paper, tui.util.bind(this._resizeGraph, this));
+        this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
     },
 
     /**
@@ -612,7 +614,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate && this.seriesSet) {
-            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
+            this.graphRenderer.animate(snippet.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
         } else {
             this.animateSeriesLabelArea(isRerendering);
         }
@@ -658,13 +660,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeExportationSeriesData: function(seriesData) {
         var indexes = seriesData.indexes;
-        var legendIndex = tui.util.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
+        var legendIndex = snippet.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
-        var index = tui.util.isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
+        var index = snippet.isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
         var seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
         var result;
 
-        if (tui.util.isExisty(seriesItem)) {
+        if (snippet.isExisty(seriesItem)) {
             result = {
                 chartType: legendData.chartType,
                 legend: legendData.label,
@@ -719,7 +721,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         eventName = chartConst.PUBLIC_EVENT_PREFIX + 'selectSeries';
 
         this.eventBus.fire(eventName, this._makeExportationSeriesData(seriesData));
-        shouldSelect = tui.util.isEmpty(shouldSelect) ? true : shouldSelect;
+        shouldSelect = snippet.isEmpty(shouldSelect) ? true : shouldSelect;
 
         if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
             this.graphRenderer.selectSeries(seriesData.indexes);
@@ -751,7 +753,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {?number} legendIndex - legend index
      */
     onSelectLegend: function(seriesType, legendIndex) {
-        if ((this.seriesType !== seriesType) && !tui.util.isNull(legendIndex)) {
+        if ((this.seriesType !== seriesType) && !snippet.isNull(legendIndex)) {
             legendIndex = -1;
         }
 

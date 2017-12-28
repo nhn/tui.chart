@@ -113,7 +113,7 @@ describe('Test for renderUtil', function() {
                     function(value) {
                         return '00' + value;
                     }, function(value) {
-                        return value + '%'
+                        return value + '%';
                     }
                 ],
                 actual = renderUtil.formatValues([10, 20, 30, 40], formatFunctions),
@@ -169,6 +169,22 @@ describe('Test for renderUtil', function() {
         it('소수점이 포함된 경우 소수점을 고려하여 포맷팅합니다', function() {
             var result = renderUtil.formatToComma(1000.123);
             expect(result).toBe('1,000.123');
+        });
+    });
+
+    describe('generateClipRectId()', function() {
+        var id;
+
+        beforeEach(function() {
+            id = renderUtil.generateClipRectId();
+            id = Number(id.slice(20)); // 'clipRectForAnimation'.length
+        });
+
+        it('should create unique clipRectId, by increase suffix id', function() {
+            var result = renderUtil.generateClipRectId();
+            var expected = 'clipRectForAnimation' + (id + 1);
+
+            expect(result).toBe(expected);
         });
     });
 });

@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var mapSeriesFactory = require('../../../src/js/components/series/mapChartSeries.js');
 
 describe('MapChartSeries', function() {
@@ -23,7 +24,7 @@ describe('MapChartSeries', function() {
             theme: {
                 heatmap: {}
             },
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
         series.mapModel = mapModel;
         series.mapDimension = {

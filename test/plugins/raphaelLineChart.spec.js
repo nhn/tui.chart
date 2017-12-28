@@ -15,7 +15,6 @@ describe('RaphaelLineChart', function() {
         lineChart = new RaphaelLineChart();
     });
 
-
     describe('_getLinesPath()', function() {
         it('라인 차트를 그리기 위한 path정보를 반환합니다.', function() {
             var actual = lineChart._getLinesPath([[{

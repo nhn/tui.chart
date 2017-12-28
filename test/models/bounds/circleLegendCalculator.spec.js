@@ -87,7 +87,9 @@ describe('Test for circleLegendCalculator', function() {
             var fontFamily = 'Verdana';
             var actual;
 
-            actual = circleLegendCalculator.calculateCircleLegendWidth(seriesDimension, axisDataMap, maxLabel, fontFamily);
+            actual = circleLegendCalculator.calculateCircleLegendWidth(
+                seriesDimension, axisDataMap, maxLabel, fontFamily
+            );
 
             expect(actual).toBe(90);
         });

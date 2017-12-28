@@ -8,8 +8,9 @@
 
 var Series = require('./series');
 var labelHelper = require('./renderingLabelHelper');
+var snippet = require('tui-code-snippet');
 
-var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
+var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
     /**
      * Series component for rendering graph of heatmap chart.
      * @constructs HeatmapChartSeries

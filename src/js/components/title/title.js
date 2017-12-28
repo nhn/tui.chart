@@ -8,8 +8,9 @@
 
 var chartConst = require('../../const');
 var pluginFactory = require('../../factories/pluginFactory');
+var snippet = require('tui-code-snippet');
 
-var Title = tui.util.defineClass(/** @lends Title.prototype */ {
+var Title = snippet.defineClass(/** @lends Title.prototype */ {
     /**
      * Title component.
      * @constructs Title
@@ -95,6 +96,7 @@ var Title = tui.util.defineClass(/** @lends Title.prototype */ {
  * Factory for Title
  * @param {object} param parameter
  * @returns {object|null}
+ * @ignore
  */
 function titleFactory(param) {
     var options = param.chartOptions.chart || {title: {}};

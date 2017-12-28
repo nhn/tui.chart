@@ -6,6 +6,8 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 /**
  * Deep copy.
  * @memberOf module:objectUtil
@@ -15,16 +17,16 @@
 var deepCopy = function(origin) {
     var clone;
 
-    if (tui.util.isArray(origin)) {
+    if (snippet.isArray(origin)) {
         clone = [];
-        tui.util.forEachArray(origin, function(value, index) {
+        snippet.forEachArray(origin, function(value, index) {
             clone[index] = deepCopy(value);
         });
-    } else if (tui.util.isFunction(origin) || tui.util.isDate(origin)) {
+    } else if (snippet.isFunction(origin) || snippet.isDate(origin)) {
         clone = origin;
-    } else if (tui.util.isObject(origin)) {
+    } else if (snippet.isObject(origin)) {
         clone = {};
-        tui.util.forEach(origin, function(value, key) {
+        snippet.forEach(origin, function(value, key) {
             clone[key] = deepCopy(value);
         });
     } else {

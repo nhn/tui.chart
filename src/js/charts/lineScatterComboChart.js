@@ -7,7 +7,9 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
+var snippet = require('tui-code-snippet');
+
+var LineScatterComboChart = snippet.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
     /**
      * Line and Scatter Combo chart.
      * @constructs LineScatterComboChart
@@ -71,7 +73,7 @@ var LineScatterComboChart = tui.util.defineClass(ChartBase, /** @lends LineScatt
             self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
         };
 
-        tui.util.forEachArray(chartTypes, addDataRatio);
+        snippet.forEachArray(chartTypes, addDataRatio);
     },
 
     /**

@@ -8,30 +8,21 @@
 var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
+
+var SafeUmdPlugin = require('safe-umd-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-var ENTRY_PATH = './src/js/chart.js';
 var BUNDLE_PATH = path.join(__dirname, 'dist/');
-var BUNDLE_FILENAME = 'chart';
 
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
 
-var eslintLoader = {
-    test: /\.js$/,
-    exclude: /(node_modules|bower_components)/,
-    configFile: './.eslintrc',
-    loader: 'eslint'
-};
-
-var lessLoader = {
-    test: /\.less$/,
-    loader: ExtractTextPlugin.extract('css-loader!less?paths=src/less/')
-};
+var FILENAME = pkg.name + (isProduction && isMinified ? '.min' : '');
 
 module.exports = (function() {
     var readableTimestamp = (new Date()).toString();
-    var bannerText = '@fileoverview ' + pkg.name + '\n' +
+    var BANNER = FILENAME + '\n' +
+        '@fileoverview ' + pkg.name + '\n' +
         '@author ' + pkg.author + '\n' +
         '@version ' + pkg.version + '\n' +
         '@license ' + pkg.license + '\n' +
@@ -40,32 +31,54 @@ module.exports = (function() {
 
     // Basic setting
     var config = {
-        entry: ENTRY_PATH,
+        eslint: {
+            failOnError: isProduction
+        },
+        entry: './src/js/index.js',
         debug: false,
         output: {
+            library: ['tui', 'chart'],
+            libraryTarget: 'umd',
             path: BUNDLE_PATH,
             publicPath: '/dist/',
             // We make minify file only in production build
             // 개발 테스트시에 서비스 코드의 수정없이 미니파이된 파일도 테스트 할수 있게 하기위해 미니 파일 파일은 프로덕션 빌드에서만 만든다
-            filename: BUNDLE_FILENAME + (isProduction && isMinified ? '.min' : '') + '.js'
+            filename: FILENAME + '.js'
+        },
+        externals: {
+            'tui-code-snippet': {
+                'commonjs': 'tui-code-snippet',
+                'commonjs2': 'tui-code-snippet',
+                'amd': 'tui-code-snippet',
+                'root': ['tui', 'util']
+            },
+            'raphael': {
+                'commonjs': 'raphael',
+                'commonjs2': 'raphael',
+                'amd': 'raphael',
+                'root': 'Raphael'
+            }
         },
         module: {
-            preLoaders: [],
-            loaders: [lessLoader]
+            preLoaders: [{
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'eslint'
+            }],
+            loaders: [{
+                test: /\.less$/,
+                loader: ExtractTextPlugin.extract('css-loader!less?paths=src/less/')
+            }]
         },
         plugins: [
-            new ExtractTextPlugin(BUNDLE_FILENAME + (isProduction && isMinified ? '.min' : '') + '.css')
+            new SafeUmdPlugin(),
+            new webpack.BannerPlugin(BANNER, {entryOnly: true}),
+            new ExtractTextPlugin(FILENAME + '.css')
         ],
         cache: false
     };
 
-    if (isProduction) {
-        // Production setting
-        config.module.preLoaders = [eslintLoader];
-        config.eslint = {
-            failOnError: true
-        };
-    } else {
+    if (!isProduction) {
         // Dev server setting
         Object.assign(config, {
             devtool: '#inline-source-map',
@@ -84,13 +97,20 @@ module.exports = (function() {
     }
 
     if (isMinified) {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-            compress: {warnings: false},
-            output: {comments: false}
+        config.plugins.unshift(new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false,
+                'screw_ie8': false
+            },
+            output: {
+                comments: false,
+                'screw_ie8': false
+            },
+            mangle: {
+                'screw_ie8': false
+            }
         }));
     }
-
-    config.plugins.push(new webpack.BannerPlugin(bannerText, {entryOnly: true}));
 
     return config;
 })();

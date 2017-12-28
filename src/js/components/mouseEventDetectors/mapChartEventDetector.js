@@ -11,8 +11,9 @@ var chartConst = require('../../const');
 var eventListener = require('../../helpers/eventListener');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
+var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
     /**
      * MapChartEventDetector is mouse event detector for map chart.
      * @param {object} params parameters
@@ -171,7 +172,7 @@ var MapChartEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
     attachEvent: function(target) {
         MouseEventDetectorBase.prototype.attachEvent.call(this, target);
 
-        if (tui.util.browser.firefox) {
+        if (snippet.browser.firefox) {
             eventListener.on(target, 'DOMMouseScroll', this._onMousewheel, this);
         } else {
             eventListener.on(target, 'mousewheel', this._onMousewheel, this);

@@ -7,6 +7,7 @@
 'use strict';
 
 var ComponentManager = require('../../src/js/charts/componentManager');
+var snippet = require('tui-code-snippet');
 
 describe('Test for ComponentManager', function() {
     var componentManager;
@@ -22,13 +23,13 @@ describe('Test for ComponentManager', function() {
             var plot;
             componentManager.options = {
                 xAxis: {}
-            }
+            };
             componentManager.register('plot', 'plot');
 
             plot = componentManager.componentMap.plot;
             expect(plot).toBeTruthy();
             expect(plot.componentType).toEqual('plot');
-            expect(tui.util.inArray('plot', tui.util.pluck(componentManager.components, 'componentName'))).toBe(0);
+            expect(snippet.inArray('plot', snippet.pluck(componentManager.components, 'componentName'))).toBe(0);
         });
 
         it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function() {
@@ -54,13 +55,13 @@ describe('Test for ComponentManager', function() {
 
             actual = componentManager.where({componentType: 'series'});
             expected = [{
-                    name: 'columnSeries',
-                    componentType: 'series'
-                },
-                {
-                    name: 'lineSeries',
-                    componentType: 'series'
-                }
+                name: 'columnSeries',
+                componentType: 'series'
+            },
+            {
+                name: 'lineSeries',
+                componentType: 'series'
+            }
             ];
 
             expect(actual).toEqual(expected);

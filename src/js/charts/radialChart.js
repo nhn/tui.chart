@@ -7,9 +7,10 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var snippet = require('tui-code-snippet');
 var Series = require('../components/series/lineChartSeries');
 
-var RadialChart = tui.util.defineClass(ChartBase, /** @lends RadialChart.prototype */ {
+var RadialChart = snippet.defineClass(ChartBase, /** @lends RadialChart.prototype */ {
     /**
      * className
      * @type {string}

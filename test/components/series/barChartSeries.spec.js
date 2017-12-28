@@ -8,8 +8,9 @@
 
 var barSeriesFactory = require('../../../src/js/components/series/barChartSeries');
 var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
-var seriesGroup = require('../../../src/js/models/data/seriesGroup');
+var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 describe('BarChartSeries', function() {
     var series, dataProcessor;
@@ -36,7 +37,7 @@ describe('BarChartSeries', function() {
             },
             options: {},
             dataProcessor: dataProcessor,
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
         series.layout = {
             position: {
@@ -158,7 +159,7 @@ describe('BarChartSeries', function() {
             seriesDataModel = new SeriesDataModel();
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 40,
                     startRatio: 0,
                     ratioDistance: 0.4

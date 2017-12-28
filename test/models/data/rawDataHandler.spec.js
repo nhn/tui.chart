@@ -370,7 +370,7 @@ describe('Test for rawDataHandler', function() {
                 series: {
                     line: ['a', 'b', 'c', 'd']
                 }
-            }, { line: [null, true, true]});
+            }, {line: [null, true, true]});
             var expected = {
                 line: ['b', 'c']
             };

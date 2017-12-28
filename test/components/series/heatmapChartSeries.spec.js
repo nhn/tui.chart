@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var heatmapSeriesFactory = require('../../../src/js/components/series/heatmapChartSeries.js');
 
 describe('HeatmapChartSeries', function() {
@@ -16,7 +17,7 @@ describe('HeatmapChartSeries', function() {
             chartType: 'heatmap',
             theme: {
             },
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
     });
 

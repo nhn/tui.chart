@@ -12,10 +12,11 @@ var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
 
 var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
 
-var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
+var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
      * Make series data.
      * @returns {object} add data
@@ -158,7 +159,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                     end: seriesDatum.endLabel
                 };
 
-                if (tui.util.isExisty(seriesDatum.start)) {
+                if (snippet.isExisty(seriesDatum.start)) {
                     label.start = seriesDatum.startLabel;
                 }
 
@@ -288,7 +289,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var direction = isBarChart ? 1 : -1;
 
         if (isNormalStack) {
-            tui.util.forEach(groupLabels, function(labels, index) {
+            snippet.forEach(groupLabels, function(labels, index) {
                 var plusSumValue = sumPlusValues[index];
                 var minusSumValue = sumMinusValues[index];
 
@@ -307,7 +308,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 }
             });
 
-            tui.util.forEach(groupPositions, function(positions, index) {
+            snippet.forEach(groupPositions, function(positions, index) {
                 var bounds = groupBounds[index];
                 var lastBound = bounds[bounds.length - 1].end;
                 var firstBound = bounds[Math.max(parseInt(bounds.length / 2, 10), 1) - 1].end;
@@ -359,7 +360,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 });
 
 BarTypeSeriesBase.mixin = function(func) {
-    tui.util.extend(func.prototype, BarTypeSeriesBase.prototype);
+    snippet.extend(func.prototype, BarTypeSeriesBase.prototype);
 };
 
 module.exports = BarTypeSeriesBase;

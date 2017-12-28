@@ -9,13 +9,17 @@
 var chartConst = require('./../const');
 var dom = require('./domHandler');
 var arrayUtil = require('./arrayUtil');
+var snippet = require('tui-code-snippet');
 
 var concat = Array.prototype.concat;
 
-var browser = tui.util.browser,
+var browser = snippet.browser,
     isIE7 = browser.msie && browser.version === 7,
     isOldBrowser = browser.msie && browser.version <= 8;
 var hasComputedStyle = window.getComputedStyle || false;
+
+var lineBaseChartCount = 0;
+var CLIP_RECT_ID = 'clipRectForAnimation';
 
 /**
  * Util for rendering.
@@ -24,9 +28,9 @@ var hasComputedStyle = window.getComputedStyle || false;
 var renderUtil = {
     /**
      * Concat string.
-     * @memberOf module:renderUtil
      * @params {...string} target strings
      * @returns {string} concat string
+     * @memberof module:renderUtil
      */
     concatStr: function() {
         return String.prototype.concat.apply('', arguments);
@@ -34,9 +38,9 @@ var renderUtil = {
 
     /**
      * Make cssText for font.
-     * @memberOf module:renderUtil
      * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
      * @returns {string} cssText
+     * @memberof module:renderUtil
      */
     makeFontCssText: function(theme) {
         var cssTexts = [];
@@ -67,7 +71,7 @@ var renderUtil = {
     checkEl: null,
     /**
      * Create element for size check.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @returns {HTMLElement} element
      * @private
      */
@@ -96,7 +100,7 @@ var renderUtil = {
     _makeCachingKey: function(label, theme, offsetType) {
         var keys = [label, offsetType];
 
-        tui.util.forEach(theme, function(key, value) {
+        snippet.forEach(theme, function(key, value) {
             keys.push(key + value);
         });
 
@@ -128,6 +132,7 @@ var renderUtil = {
     /**
      * Size cache.
      * @type {object}
+     * @private
      */
     sizeCache: {},
 
@@ -145,7 +150,7 @@ var renderUtil = {
 
         theme = theme || {};
 
-        label = tui.util.isExisty(label) ? String(label) : '';
+        label = snippet.isExisty(label) ? String(label) : '';
 
         if (!label) {
             return 0;
@@ -174,7 +179,7 @@ var renderUtil = {
 
     /**
      * Get rendered label width.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {string} label label
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} width
@@ -187,7 +192,7 @@ var renderUtil = {
 
     /**
      * Get rendered label height.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {string} label label
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} height
@@ -200,7 +205,7 @@ var renderUtil = {
 
     /**
      * Get Rendered Labels Max Size(width or height).
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @param {function} iteratee iteratee
@@ -212,7 +217,7 @@ var renderUtil = {
             sizes;
 
         if (labels && labels.length) {
-            sizes = tui.util.map(labels, function(label) {
+            sizes = snippet.map(labels, function(label) {
                 return iteratee(label, theme);
             });
             maxSize = arrayUtil.max(sizes);
@@ -223,14 +228,14 @@ var renderUtil = {
 
     /**
      * Get rendered labels max width.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max width
      * @private
      */
     getRenderedLabelsMaxWidth: function(labels, theme) {
-        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this);
+        var iteratee = snippet.bind(this.getRenderedLabelWidth, this);
         var maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
         return maxWidth;
@@ -238,13 +243,13 @@ var renderUtil = {
 
     /**
      * Get rendered labels max height.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max height
      */
     getRenderedLabelsMaxHeight: function(labels, theme) {
-        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this);
+        var iteratee = snippet.bind(this.getRenderedLabelHeight, this);
         var maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
         return maxHeight;
@@ -252,7 +257,7 @@ var renderUtil = {
 
     /**
      * Render dimension.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {HTMLElement} el target element
      * @param {{width: number, height: number}} dimension dimension
      */
@@ -265,19 +270,19 @@ var renderUtil = {
 
     /**
      * Render position(top, right).
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {HTMLElement} el target element
      * @param {{top: number, left: number, right: number}} position position
      */
     renderPosition: function(el, position) {
-        if (tui.util.isUndefined(position)) {
+        if (snippet.isUndefined(position)) {
             return;
         }
 
-        tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
+        snippet.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
             var value = position[key];
 
-            if (tui.util.isNumber(value)) {
+            if (snippet.isNumber(value)) {
                 el.style[key] = position[key] + 'px';
             }
         });
@@ -285,7 +290,7 @@ var renderUtil = {
 
     /**
      * Render background.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {HTMLElement} el target element
      * @param {string} background background option
      */
@@ -299,7 +304,7 @@ var renderUtil = {
 
     /**
      * Render font family.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {HTMLElement} el target element
      * @param {string} fontFamily font family option
      */
@@ -313,7 +318,7 @@ var renderUtil = {
 
     /**
      * Render title.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @param {string} title title
      * @param {{fontSize: number, color: string, background: string}} theme title theme
      * @param {string} className css class name
@@ -350,6 +355,7 @@ var renderUtil = {
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
      * }} expended bound
+     * @memberof module:renderUtil
      */
     expandBound: function(bound) {
         var dimension = bound.dimension;
@@ -382,6 +388,7 @@ var renderUtil = {
      * @param {string} value value
      * @param {string} suffix suffix
      * @returns {string} mouse event detector name
+     * @memberof module:renderUtil
      */
     makeMouseEventDetectorName: function(prefix, value, suffix) {
         return prefix + this._properCase(value) + this._properCase(suffix);
@@ -395,13 +402,14 @@ var renderUtil = {
      * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
      * @param {string} [valueType] - type of value
      * @returns {string} formatted value
+     * @memberof module:renderUtil
      */
     formatValue: function(value, formatFunctions, chartType, areaType, valueType) {
         var fns = [String(value)].concat(formatFunctions || []);
 
         valueType = valueType || 'value';
 
-        return tui.util.reduce(fns, function(stored, fn) {
+        return snippet.reduce(fns, function(stored, fn) {
             return fn(stored, chartType, areaType, valueType);
         });
     },
@@ -414,6 +422,7 @@ var renderUtil = {
      * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
      * @param {string} valueType - type of value
      * @returns {Array.<string>}
+     * @memberof module:renderUtil
      */
     formatValues: function(values, formatFunctions, chartType, areaType, valueType) {
         var formatedValues;
@@ -422,7 +431,7 @@ var renderUtil = {
             return values;
         }
 
-        formatedValues = tui.util.map(values, function(label) {
+        formatedValues = snippet.map(values, function(label) {
             return renderUtil.formatValue(label, formatFunctions, chartType, areaType, valueType);
         });
 
@@ -434,12 +443,13 @@ var renderUtil = {
      * @param {string | number | date} value - value
      * @param {string} format - date format
      * @returns {string}
+     * @memberof module:renderUtil
      */
     formatDate: function(value, format) {
-        var date = tui.util.isDate(value) ? value : (new Date(value));
+        var date = snippet.isDate(value) ? value : (new Date(value));
         format = format || chartConst.DEFAULT_DATE_FORMAT;
 
-        return tui.util.formatDate(format, date) || value;
+        return snippet.formatDate(format, date) || value;
     },
 
     /**
@@ -447,13 +457,14 @@ var renderUtil = {
      * @param {Array.<string | number | date>} values - values
      * @param {string} format - date format
      * @returns {Array}
+     * @memberof module:renderUtil
      */
     formatDates: function(values, format) {
         var formatDate = this.formatDate;
 
         format = format || chartConst.DEFAULT_DATE_FORMAT;
 
-        return tui.util.map(values, function(value) {
+        return snippet.map(values, function(value) {
             return formatDate(value, format);
         });
     },
@@ -461,6 +472,7 @@ var renderUtil = {
     /**
      * Cancel animation
      * @param {{id: number}} animation animaion object
+     * @memberof module:renderUtil
      */
     cancelAnimation: function(animation) {
         if (animation && animation.id) {
@@ -475,6 +487,7 @@ var renderUtil = {
      * @param {function} onAnimation - animation callback function
      * @param {function} onCompleted - completed callback function
      * @returns {{id: number}} requestAnimationFrame id
+     * @memberof module:renderUtil
      */
     startAnimation: function(animationTime, onAnimation, onCompleted) {
         var animation = {},
@@ -515,7 +528,7 @@ var renderUtil = {
 
     /**
      * Whether oldBrowser or not.
-     * @memberOf module:renderUtil
+     * @memberof module:renderUtil
      * @returns {boolean} result boolean
      */
     isOldBrowser: function() {
@@ -550,6 +563,7 @@ var renderUtil = {
      * @param {string} value target value
      * @param {number} len length of under decimal point
      * @returns {string} formatted value
+     * @memberof module:renderUtil
      */
     formatToDecimal: function(value, len) {
         var DECIMAL = 10;
@@ -595,7 +609,7 @@ var renderUtil = {
         } else {
             values = (value).split('').reverse();
             lastIndex = values.length - 1;
-            values = tui.util.map(values, function(char, index) {
+            values = snippet.map(values, function(char, index) {
                 var result = [char];
                 if (index < lastIndex && (index + 1) % betweenLen === 0) {
                     result.push(comma);
@@ -613,9 +627,10 @@ var renderUtil = {
      * Make cssText from map.
      * @param {object} cssMap - css map
      * @returns {string}
+     * @memberof module:renderUtil
      */
     makeCssTextFromMap: function(cssMap) {
-        return tui.util.map(cssMap, function(value, name) {
+        return snippet.map(cssMap, function(value, name) {
             return renderUtil.concatStr(name, ':', value);
         }).join(';');
     },
@@ -635,13 +650,14 @@ var renderUtil = {
      * @param {string} prefix - string
      * @param {string} suffix - string
      * @returns {array}
+     * @memberof module:renderUtil
      */
     addPrefixSuffix: function(labels, prefix, suffix) {
         prefix = this._perseString(prefix);
         suffix = this._perseString(suffix);
 
         if (!(prefix === '' && suffix === '')) {
-            return tui.util.map(labels, function(label) {
+            return snippet.map(labels, function(label) {
                 return prefix + label + suffix;
             });
         }
@@ -653,6 +669,7 @@ var renderUtil = {
      * Returns element's style value defined at css file
      * @param {HTMLElement} target - Current element
      * @returns {Object} Style object of element
+     * @memberof module:renderUtil
      */
     getStyle: function(target) {
         var computedObj;
@@ -664,6 +681,17 @@ var renderUtil = {
         }
 
         return computedObj;
+    },
+
+    /**
+     * Get clip rect id
+     * @returns {string} create unique id by line base chart count
+     */
+    generateClipRectId: function() {
+        var id = CLIP_RECT_ID + lineBaseChartCount;
+        lineBaseChartCount += 1;
+
+        return id;
     }
 
 };
@@ -672,16 +700,18 @@ var renderUtil = {
  * Set css opacity.
  * @param {HTMLElement | Array.<HTMLElement>} elements - elements
  * @param {function} iteratee - iteratee
+ * @ignore
  */
 function setOpacity(elements, iteratee) {
-    elements = tui.util.isArray(elements) ? elements : [elements];
-    tui.util.forEachArray(elements, iteratee);
+    elements = snippet.isArray(elements) ? elements : [elements];
+    snippet.forEachArray(elements, iteratee);
 }
 
 /**
  * Make filter opacity css string.
  * @param {number} opacity - opacity
  * @returns {string}
+ * @ignore
  */
 function makeCssFilterOpacityString(opacity) {
     return 'alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
@@ -696,7 +726,7 @@ if (isOldBrowser) {
     renderUtil.makeOpacityCssText = function(opacity) {
         var cssText = '';
 
-        if (tui.util.isExisty(opacity)) {
+        if (snippet.isExisty(opacity)) {
             cssText = ';filter:' + makeCssFilterOpacityString(opacity);
         }
 
@@ -723,7 +753,7 @@ if (isOldBrowser) {
     renderUtil.makeOpacityCssText = function(opacity) {
         var cssText = '';
 
-        if (tui.util.isExisty(opacity)) {
+        if (snippet.isExisty(opacity)) {
             cssText = ';opacity:' + opacity;
         }
 
@@ -741,8 +771,5 @@ if (isOldBrowser) {
         });
     };
 }
-
-tui.util.defineNamespace('tui.chart');
-tui.chart.renderUtil = renderUtil;
 
 module.exports = renderUtil;

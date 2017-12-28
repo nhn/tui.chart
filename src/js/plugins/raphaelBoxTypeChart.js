@@ -7,6 +7,7 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
 
 var ANIMATION_DURATION = 100;
 var MIN_BORDER_WIDTH = 1;
@@ -17,7 +18,7 @@ var MAX_BORDER_WIDTH = 3;
  * @class RaphaelBarChart
  * @private
  */
-var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.prototype */ {
+var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.prototype */ {
     /**
      * Render function of bar chart
      * @param {object} paper Raphael paper
@@ -206,7 +207,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
 
         if (this.borderWidth) {
             strokeWidth = this.borderWidth;
-        } else if (tui.util.isExisty(depth)) {
+        } else if (snippet.isExisty(depth)) {
             strokeWidth = Math.max(MIN_BORDER_WIDTH, MAX_BORDER_WIDTH - (depth - startDepth));
         } else {
             strokeWidth = MIN_BORDER_WIDTH;
@@ -274,7 +275,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      */
     _animateChangingColor: function(rect, color, opacity) {
         var properties = {
-            'fill-opacity': tui.util.isExisty(opacity) ? opacity : 1
+            'fill-opacity': snippet.isExisty(opacity) ? opacity : 1
         };
 
         if (color) {
@@ -298,7 +299,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
             return;
         }
 
-        useSpectrum = tui.util.isUndefined(useSpectrum) ? true : useSpectrum;
+        useSpectrum = snippet.isUndefined(useSpectrum) ? true : useSpectrum;
         color = useSpectrum ? this.theme.overColor : box.color;
 
         if (box.seriesItem.hasChild) {
@@ -386,8 +387,8 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
             opacity: 0
         };
 
-        tui.util.forEach(labels, function(categoryLabel, categoryIndex) {
-            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+        snippet.forEach(labels, function(categoryLabel, categoryIndex) {
+            snippet.forEach(categoryLabel, function(label, seriesIndex) {
                 var seriesLabel = raphaelRenderUtil.renderText(paper, positionSet[categoryIndex][seriesIndex].end,
                     label, attributes);
 
@@ -412,7 +413,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
             opacity: 0
         };
 
-        tui.util.forEach(labels, function(label, index) {
+        snippet.forEach(labels, function(label, index) {
             var seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
 
             seriesLabel.node.style.userSelect = 'none';

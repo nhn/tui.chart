@@ -11,8 +11,9 @@ var EventDetectorBase = require('./mouseEventDetectorBase');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var dom = require('../../helpers/domHandler');
+var snippet = require('tui-code-snippet');
 
-var BoundsTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends BoundsTypeEventDetector.prototype */ {
+var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends BoundsTypeEventDetector.prototype */ {
     /**
      * BoundsTypeEventDetector is mouse event detector for bounds type charts like bar, column, heatmap, treemap.
      * @constructs BoundsTypeEventDetector

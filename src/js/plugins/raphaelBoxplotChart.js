@@ -7,8 +7,8 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
-
-var raphael = window.Raphael;
+var snippet = require('tui-code-snippet');
+var raphael = require('raphael');
 
 var ANIMATION_DURATION = 700;
 var EMPHASIS_OPACITY = 1;
@@ -24,7 +24,7 @@ var WHISKER_LINE_WIDTH = 1;
  * @class RaphaelBoxplotChart
  * @private
  */
-var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.prototype */ {
+var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.prototype */ {
     /**
      * Render function of bar chart
      * @param {object} paper paper object
@@ -74,7 +74,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
             'fill-opacity': 0
         };
 
-        return raphaelRenderUtil.renderRect(this.paper, bound, tui.util.extend({
+        return raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
             'stroke-width': 0
         }, attributes));
     },
@@ -93,7 +93,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
             'fill-opacity': 0
         };
 
-        return raphaelRenderUtil.renderCircle(this.paper, position, 0, tui.util.extend({
+        return raphaelRenderUtil.renderCircle(this.paper, position, 0, snippet.extend({
             'stroke-width': 0
         }, attributes));
     },
@@ -113,7 +113,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
             return null;
         }
 
-        rect = raphaelRenderUtil.renderRect(this.paper, bound, tui.util.extend({
+        rect = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
             fill: '#fff',
             stroke: color,
             'stroke-width': BOX_STROKE_WIDTH
@@ -133,8 +133,8 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         var colors = this.theme.colors;
         var colorByPoint = this.options.colorByPoint;
 
-        return tui.util.map(groupBounds, function(bounds, groupIndex) {
-            return tui.util.map(bounds, function(bound, index) {
+        return snippet.map(groupBounds, function(bounds, groupIndex) {
+            return snippet.map(bounds, function(bound, index) {
                 var color, rect, item;
 
                 if (!bound) {
@@ -209,10 +209,10 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         var colorByPoint = this.options.colorByPoint;
         var groupWhiskers = [];
 
-        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
+        snippet.forEach(groupBounds, function(bounds, groupIndex) {
             var whiskers = [];
 
-            tui.util.forEach(bounds, function(bound, index) {
+            snippet.forEach(bounds, function(bound, index) {
                 var color = colorByPoint ? colors[groupIndex] : colors[index];
 
                 if (!bound) {
@@ -247,10 +247,10 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         var colorByPoint = this.options.colorByPoint;
         var groupMedians = [];
 
-        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
+        snippet.forEach(groupBounds, function(bounds, groupIndex) {
             var medians = [];
 
-            tui.util.forEach(bounds, function(bound, index) {
+            snippet.forEach(bounds, function(bound, index) {
                 var color = colorByPoint ? colors[groupIndex] : colors[index];
 
                 if (!bound) {
@@ -286,9 +286,9 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         var colorByPoint = this.options.colorByPoint;
         var groupOutliers = [];
 
-        tui.util.forEach(groupBounds, function(bounds, groupIndex) {
+        snippet.forEach(groupBounds, function(bounds, groupIndex) {
             var outliers = [];
-            tui.util.forEach(bounds, function(bound, index) {
+            snippet.forEach(bounds, function(bound, index) {
                 var color = colorByPoint ? colors[groupIndex] : colors[index];
                 var seriesOutliers = [];
 
@@ -297,7 +297,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
                 }
 
                 if (bound.outliers.length) {
-                    tui.util.forEach(bound.outliers, function(outlier) {
+                    snippet.forEach(bound.outliers, function(outlier) {
                         seriesOutliers.push(self._renderOutlier(outlier, color));
                     });
                 }
@@ -355,7 +355,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         var borderLinePaths = this._makeBorderLinesPaths(bound, chartType, item);
         var lines = {};
 
-        tui.util.forEach(borderLinePaths, function(path, name) {
+        snippet.forEach(borderLinePaths, function(path, name) {
             lines[name] = raphaelRenderUtil.renderLine(self.paper, path, borderColor, 1);
         });
 
@@ -377,8 +377,8 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
             return null;
         }
 
-        groupBorders = tui.util.map(groupBounds, function(bounds, groupIndex) {
-            return tui.util.map(bounds, function(bound, index) {
+        groupBorders = snippet.map(groupBounds, function(bounds, groupIndex) {
+            return snippet.map(bounds, function(bound, index) {
                 var seriesItem;
 
                 if (!bound) {
@@ -435,7 +435,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         });
 
         raphaelRenderUtil.forEach2dArray(self.groupOutliers, function(outliers) {
-            tui.util.forEach(outliers, function(outlier) {
+            snippet.forEach(outliers, function(outlier) {
                 outlier.animate(animation.delay(ANIMATION_DURATION));
             });
         });
@@ -453,7 +453,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation: function(data) {
-        if (tui.util.isNumber(data.outlierIndex)) {
+        if (snippet.isNumber(data.outlierIndex)) {
             this.showOutlierAnimation(data);
         } else {
             this.showRectAnimation(data);
@@ -567,7 +567,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
      * @private
      */
     _changeBordersColor: function(lines, borderColor) {
-        tui.util.forEach(lines, function(line) {
+        snippet.forEach(lines, function(line) {
             line.attr({stroke: borderColor});
         });
     },
@@ -628,7 +628,7 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var noneSelected = tui.util.isNull(legendIndex);
+        var noneSelected = snippet.isNull(legendIndex);
 
         raphaelRenderUtil.forEach2dArray(this.groupBoxes, function(box, groupIndex, index) {
             var opacity;
@@ -664,8 +664,8 @@ var RaphaelBoxplotChart = tui.util.defineClass(/** @lends RaphaelBoxplotChart.pr
         };
         var labelSet = paper.set();
 
-        tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
-            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+        snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
+            snippet.forEach(categoryLabel, function(label, seriesIndex) {
                 var position = groupPositions[categoryIndex][seriesIndex];
                 var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
                 var startLabel;

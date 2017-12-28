@@ -6,6 +6,8 @@
 
 'use strict';
 
+var raphael = require('raphael');
+var snippet = require('tui-code-snippet');
 var pieSeriesFactory = require('../../../src/js/components/series/pieChartSeries.js');
 var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
 var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
@@ -39,7 +41,7 @@ describe('PieChartSeries', function() {
             },
             options: {},
             dataProcessor: dataProcessor,
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
         series.layout = {
             position: {
@@ -606,7 +608,7 @@ describe('PieChartSeries', function() {
     describe('_renderSeriesLabel()', function() {
         it('labelAlign 옵션이 outer면 _renderOuterLegend()가 수행됩니다.', function() {
             var container = dom.create('div');
-            var paper = window.Raphael(container, 100, 100);
+            var paper = raphael(container, 100, 100);
 
             spyOn(series, '_renderOuterLegend');
 
@@ -654,7 +656,7 @@ describe('PieChartSeries', function() {
 
         it('labelAlign 옵션이 outer가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
             var container = dom.create('div');
-            var paper = window.Raphael(container, 100, 100);
+            var paper = raphael(container, 100, 100);
 
             spyOn(series, '_renderCenterLegend');
             series.seriesData = {

@@ -7,13 +7,14 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
 
 /**
  * @classdesc RaphaelCircleLegend is graph renderer for circleLegend.
  * @class RaphaelCircleLegend
  * @private
  */
-var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.prototype */ {
+var RaphaelCircleLegend = snippet.defineClass(/** @lends RaphaelCircleLegend.prototype */ {
 
     /**
      * Render circle and label.
@@ -29,7 +30,7 @@ var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.pr
         var left = layout.position.left + (layout.dimension.width / 2);
         var circleLegendSet = paper.set();
 
-        tui.util.forEachArray(radiusRatios, function(ratio, index) {
+        snippet.forEachArray(radiusRatios, function(ratio, index) {
             var radius = maxRadius * ratio;
             var top = layout.position.top + layout.dimension.height - radius;
             var circle = raphaelRenderUtil.renderCircle(paper, {

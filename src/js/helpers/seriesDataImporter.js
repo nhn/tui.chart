@@ -7,6 +7,7 @@
 'use strict';
 
 var arrayUtil = require('./arrayUtil');
+var snippet = require('tui-code-snippet');
 
 /**
  * Get series data from 2D array
@@ -26,7 +27,7 @@ function getChartDataFrom2DArray(table2DArray) {
         chartData.series = [];
 
         chartData.categories = table2DArray.shift().slice(1);
-        tui.util.forEach(table2DArray, function(tr) {
+        snippet.forEach(table2DArray, function(tr) {
             var seriesDatum = {};
 
             seriesDatum.name = tr[0];
@@ -51,12 +52,12 @@ function get2DArray(tableElement) {
     var resultArray = [];
 
     if (tableElement) {
-        trs = tui.util.toArray(tableElement.getElementsByTagName('TR'));
+        trs = snippet.toArray(tableElement.getElementsByTagName('TR'));
 
-        tui.util.forEach(trs, function(tr, index) {
+        snippet.forEach(trs, function(tr, index) {
             var tagName = index === 0 ? 'TH' : 'TD';
-            var cells = tui.util.toArray(tr.getElementsByTagName(tagName));
-            var rows = tui.util.pluck(cells, 'innerText');
+            var cells = snippet.toArray(tr.getElementsByTagName(tagName));
+            var rows = snippet.pluck(cells, 'innerText');
 
             secondDimensionArray.push(rows);
         });
@@ -79,6 +80,7 @@ function get2DArray(tableElement) {
  *     element:HTMLElement
  * })} table - object for table data import
  * @returns {rawData}
+ * @ignore
  * @api
  */
 function makeDataWithTable(table) {

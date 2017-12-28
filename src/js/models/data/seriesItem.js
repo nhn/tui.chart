@@ -10,8 +10,9 @@
 var chartConst = require('../../const');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
+var snippet = require('tui-code-snippet');
 
-var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
+var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
     /**
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
@@ -138,7 +139,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             value = Math.abs(value);
         }
 
-        if (tui.util.isNull(value)) {
+        if (snippet.isNull(value)) {
             this.label = '';
         } else {
             this.label = renderUtil.formatValue(value, this.formatFunctions, this.chartType, areaType);
@@ -160,8 +161,8 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _createValues: function(value) {
-        var values = tui.util.map([].concat(value), function(newValue) {
-            return tui.util.isNull(newValue) ? null : parseFloat(newValue);
+        var values = snippet.map([].concat(value), function(newValue) {
+            return snippet.isNull(newValue) ? null : parseFloat(newValue);
         });
 
         values = values.sort(function(a, b) {
@@ -181,7 +182,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     addStart: function(value) {
-        if (!tui.util.isNull(this.start)) {
+        if (!snippet.isNull(this.start)) {
             return;
         }
 
@@ -210,7 +211,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
 
         this.ratio = this.endRatio = calculator.calculateRatio(this.value, divNumber, subNumber, baseRatio);
 
-        if (tui.util.isExisty(this.start)) {
+        if (snippet.isExisty(this.start)) {
             this.startRatio = calculator.calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
@@ -236,7 +237,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             ratio: this.ratio
         };
 
-        if (tui.util.isExisty(this.start)) {
+        if (snippet.isExisty(this.start)) {
             valueMap.start = this._getFormattedValueForTooltip('start');
             valueMap.end = this._getFormattedValueForTooltip('end');
             valueMap.startRatio = this.startRatio;

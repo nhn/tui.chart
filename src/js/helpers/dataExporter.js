@@ -8,6 +8,7 @@
 
 var downloader = require('./downloader');
 var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
 
 var DATA_URI_HEADERS = {
     xls: 'data:application/vnd.ms-excel;base64,',
@@ -52,7 +53,7 @@ var dataExporter = {
 function _get2DArrayFromRawData(rawData) {
     var resultArray = [];
     var categories, seriesName, data;
-    var isHeatMap = (rawData.categories && tui.util.isExisty(rawData.categories.x));
+    var isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
 
     if (rawData) {
         if (isHeatMap) {
@@ -63,8 +64,8 @@ function _get2DArrayFromRawData(rawData) {
 
         resultArray.push([''].concat(categories));
 
-        tui.util.forEach(rawData.series, function(seriesDatum) {
-            tui.util.forEach(seriesDatum, function(seriesItem, index) {
+        snippet.forEach(rawData.series, function(seriesDatum) {
+            snippet.forEach(seriesDatum, function(seriesItem, index) {
                 if (isHeatMap) {
                     seriesName = rawData.categories.y[index];
                     data = seriesItem;
@@ -89,12 +90,12 @@ function _get2DArrayFromRawData(rawData) {
  */
 function _getTableElementStringForXls(chartData2DArray) {
     var tableElementString = '<table>';
-    tui.util.forEach(chartData2DArray, function(row, rowIndex) {
+    snippet.forEach(chartData2DArray, function(row, rowIndex) {
         var cellTagName = rowIndex === 0 ? 'th' : 'td';
 
         tableElementString += '<tr>';
 
-        tui.util.forEach(row, function(cell, cellIndex) {
+        snippet.forEach(row, function(cell, cellIndex) {
             var cellNumberClass = (rowIndex !== 0 || cellIndex === 0) ? ' class="number"' : '';
             var cellString = '<' + cellTagName + cellNumberClass + '>' + cell + '</' + cellTagName + '>';
 
@@ -160,11 +161,11 @@ function _makeCsvBodyWithRawData(chartData2DArray, option) {
     var itemDelimiter = (option && option.itemDelimiter) || ',';
     var lastRowIndex = chartData2DArray.length - 1;
 
-    tui.util.forEachArray(chartData2DArray, function(row, rowIndex) {
+    snippet.forEachArray(chartData2DArray, function(row, rowIndex) {
         var lastCellIndex = row.length - 1;
 
-        tui.util.forEachArray(row, function(cell, cellIndex) {
-            var cellContent = (tui.util.isNumber(cell) ? cell : '"' + cell + '"');
+        snippet.forEachArray(row, function(cell, cellIndex) {
+            var cellContent = (snippet.isNumber(cell) ? cell : '"' + cell + '"');
 
             csvText += cellContent;
 

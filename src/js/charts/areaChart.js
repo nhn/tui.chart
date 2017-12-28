@@ -10,8 +10,9 @@ var ChartBase = require('./chartBase');
 var DynamicDataHelper = require('./dynamicDataHelper');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var Series = require('../components/series/areaChartSeries');
+var snippet = require('tui-code-snippet');
 
-var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
+var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
     /**
      * className
      * @type {string}
@@ -87,7 +88,7 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
             };
         }
 
-        tui.util.forEachArray(chartTypes, addDataRatio);
+        snippet.forEachArray(chartTypes, addDataRatio);
     },
 
     /**
@@ -210,7 +211,7 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends AreaChart.prototype *
 
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();
-        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
+        this.dataProcessor.addDataFromRemainDynamicData(snippet.pick(this.options.series, 'shifting'));
         this._renderForZoom(true);
         this._dynamicDataHelper.restartAnimation();
     }

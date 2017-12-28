@@ -7,8 +7,9 @@
 'use strict';
 
 var colorutil = require('../helpers/colorutil');
+var snippet = require('tui-code-snippet');
 
-var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
+var ColorSpectrum = snippet.defineClass(/** @lends ColorSpectrum.prototype */ {
     /**
      * ColorSpectrum create a color spectrum and provide color value.
      * @constructs ColorSpectrum
@@ -36,7 +37,7 @@ var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
      * @private
      */
     _makeDistances: function(startRGB, endRGB) {
-        return tui.util.map(startRGB, function(value, index) {
+        return snippet.map(startRGB, function(value, index) {
             return endRGB[index] - value;
         });
     },
@@ -52,7 +53,7 @@ var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
 
         if (!hexColor) {
             distances = this.distances;
-            rgbColor = tui.util.map(this.startRGB, function(start, index) {
+            rgbColor = snippet.map(this.startRGB, function(start, index) {
                 return start + parseInt(distances[index] * ratio, 10);
             });
             hexColor = colorutil.rgbToHEX.apply(null, rgbColor);

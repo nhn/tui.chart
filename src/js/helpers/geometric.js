@@ -16,6 +16,7 @@ var chartConst = require('../const');
  * @param {number} pointY point y to rotate
  * @param {number} angle angle
  * @returns {object} x, y
+ * @ignore
  */
 function rotatePointAroundOrigin(centerX, centerY, pointX, pointY, angle) {
     var rad = angle * (Math.PI / 180);
@@ -36,6 +37,7 @@ function rotatePointAroundOrigin(centerX, centerY, pointX, pointY, angle) {
  * @param {number} degree degree
  * @param {number} hypotenuse hypotenuse
  * @returns {number} adjacent
+ * @ignore
  *
  *   H : Hypotenuse
  *   A : Adjacent
@@ -59,6 +61,7 @@ function calculateAdjacent(degree, hypotenuse) {
  * @param {number} degree degree
  * @param {number} hypotenuse hypotenuse
  * @returns {number} opposite
+ * @ignore
  */
 function calculateOpposite(degree, hypotenuse) {
     return Math.sin(degree * chartConst.RAD) * hypotenuse;
@@ -70,6 +73,7 @@ function calculateOpposite(degree, hypotenuse) {
  * @param {number} width - width
  * @param {number} height - height
  * @returns {number}
+ * @ignore
  */
 function calculateRotatedWidth(degree, width, height) {
     var centerHalf = calculateAdjacent(degree, width / 2);
@@ -84,6 +88,7 @@ function calculateRotatedWidth(degree, width, height) {
  * @param {number} width - width
  * @param {number} height - height
  * @returns {number}
+ * @ignore
  */
 function calculateRotatedHeight(degree, width, height) {
     var centerHalf = calculateOpposite(degree, width / 2);

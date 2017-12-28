@@ -15,23 +15,27 @@ var axisCalculator = require('./axisCalculator');
 var legendCalculator = require('./legendCalculator');
 var seriesCalculator = require('./seriesCalculator');
 var spectrumLegendCalculator = require('./spectrumLegendCalculator');
+var snippet = require('tui-code-snippet');
 
 /**
  * Dimension.
  * @typedef {{width: number, height:number}} dimension
+ * @private
  */
 
 /**
  * Position.
  * @typedef {{left: number, top:number}} position
+ * @private
  */
 
 /**
  * Bound.
  * @typedef {{dimension: dimension, position:position}} bound
+ * @private
  */
 
-var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
+var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     /**
      * Bounds maker.
      * @constructs BoundsModel
@@ -126,7 +130,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * @private
      */
     _registerDimension: function(name, dimension) {
-        this.dimensionMap[name] = tui.util.extend(this.dimensionMap[name] || {}, dimension);
+        this.dimensionMap[name] = snippet.extend(this.dimensionMap[name] || {}, dimension);
     },
 
     /**
@@ -171,7 +175,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var dimensionMap = {};
 
         if (types && types.length) {
-            tui.util.forEachArray(types, function(type) {
+            snippet.forEachArray(types, function(type) {
                 dimensionMap[type] = self.dimensionMap[type];
             });
         } else {
@@ -210,7 +214,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      */
     _registerTitleDimension: function() {
         var chartOptions = this.options.chart || {};
-        var hasTitleOption = tui.util.isExisty(chartOptions.title);
+        var hasTitleOption = snippet.isExisty(chartOptions.title);
         var titleHeight =
             hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
                 this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
@@ -255,7 +259,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
      * Register dimension for legend component.
      */
     registerLegendDimension: function() {
-        var legendLabels = tui.util.pluck(this.dataProcessor.getOriginalLegendData(), 'label');
+        var legendLabels = snippet.pluck(this.dataProcessor.getOriginalLegendData(), 'label');
         var legendOptions = this.options.legend;
         var labelTheme = this.theme.legend.label;
         var chartWidth = this.getDimension('chart').width;
@@ -300,7 +304,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
             return;
         }
 
-        if (tui.util.isArray(options)) {
+        if (snippet.isArray(options)) {
             yAxisOptions = (componentName === 'yAxis') ? options[0] : options[1];
         } else {
             yAxisOptions = options;
@@ -421,7 +425,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
             /**
              * If circle legend area is wider than text legend area,
              * recalculate legend and series width, base on circle legend width
-             */ 
+             */
             this._updateLegendAndSeriesWidth(circleLegendWidth, diffWidth);
         }
     },
@@ -647,7 +651,7 @@ var BoundsModel = tui.util.defineClass(/** @lends BoundsModel.prototype */{
         var seriesPosition = this.getPosition('series');
         var tooltipPosition;
 
-        this.positionMap.mouseEventDetector = tui.util.extend({}, seriesPosition);
+        this.positionMap.mouseEventDetector = snippet.extend({}, seriesPosition);
         this.positionMap.legend = this._makeLegendPosition();
         this.positionMap.chartExportMenu = this._makeChartExportMenuPosition();
 

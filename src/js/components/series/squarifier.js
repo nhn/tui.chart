@@ -8,6 +8,7 @@
 
 var calculator = require('../../helpers/calculator');
 var arrayUtil = require('../../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
 var squarifier = {
     /**
@@ -23,7 +24,7 @@ var squarifier = {
      * @private
      */
     _makeBaseBound: function(layout) {
-        return tui.util.extend({}, layout);
+        return snippet.extend({}, layout);
     },
 
     /**
@@ -47,8 +48,8 @@ var squarifier = {
      * @private
      */
     _makeBaseData: function(seriesItems, width, height) {
-        var scale = this._calculateScale(tui.util.pluck(seriesItems, 'value'), width, height);
-        var data = tui.util.map(seriesItems, function(seriesItem) {
+        var scale = this._calculateScale(snippet.pluck(seriesItems, 'value'), width, height);
+        var data = snippet.map(seriesItems, function(seriesItem) {
             return {
                 id: seriesItem.id,
                 weight: seriesItem.value * scale
@@ -127,7 +128,7 @@ var squarifier = {
         var weights;
 
         if (!sum) {
-            weights = tui.util.pluck(row, 'weight');
+            weights = snippet.pluck(row, 'weight');
             sum = calculator.sum(weights);
         }
 
@@ -143,7 +144,7 @@ var squarifier = {
      * @private
      */
     _addBounds: function(startPosition, row, fixedSize, callback) {
-        tui.util.reduce([startPosition].concat(row), function(storedPosition, rowDatum) {
+        snippet.reduce([startPosition].concat(row), function(storedPosition, rowDatum) {
             var dynamicSize = rowDatum.weight / fixedSize;
 
             callback(dynamicSize, storedPosition, rowDatum.id);
@@ -220,9 +221,9 @@ var squarifier = {
         var addBound;
 
         if (this._isVerticalStack(baseBound)) {
-            addBound = tui.util.bind(this._addBoundsForVerticalStack, this);
+            addBound = snippet.bind(this._addBoundsForVerticalStack, this);
         } else {
-            addBound = tui.util.bind(this._addBoundsForHorizontalStack, this);
+            addBound = snippet.bind(this._addBoundsForHorizontalStack, this);
         }
 
         return addBound;
@@ -243,8 +244,8 @@ var squarifier = {
 
         this.boundMap = {};
 
-        tui.util.forEachArray(baseData, function(datum) {
-            var weights = tui.util.pluck(row, 'weight');
+        snippet.forEachArray(baseData, function(datum) {
+            var weights = snippet.pluck(row, 'weight');
             var sum = calculator.sum(weights);
 
             if (row.length && self._changedStackDirection(sum, weights, baseSize, datum.weight)) {

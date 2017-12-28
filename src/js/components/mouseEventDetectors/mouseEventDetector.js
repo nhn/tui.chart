@@ -16,6 +16,7 @@ var mapChartEventDetectorFactory = require('./mapChartEventDetector');
  * Factory for MouseEventDetector
  * @param {object} params parameter
  * @returns {object}
+ * @ignore
  */
 function mouseEventDetectorFactory(params) {
     var chartType = params.chartOptions.chartType;
@@ -44,7 +45,7 @@ function mouseEventDetectorFactory(params) {
     }
 
     params.chartType = chartType;
-    // TODO chartType이나 chartTypes없이 모두 seriesTypes만 보도록 변경해야한다.컴포넌트 전체의 문제임
+    // @todo chartType이나 chartTypes없이 모두 seriesTypes만 보도록 변경해야한다.컴포넌트 전체의 문제임
     params.chartTypes = seriesTypes;
     params.zoomable = zoomable;
     params.allowSelect = seriesAllowSelect;

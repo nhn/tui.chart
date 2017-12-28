@@ -8,6 +8,7 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
 
 var PADDING = chartConst.LEGEND_AREA_PADDING;
 var DEGREE_HORIZONTAL_BAR = 360;
@@ -20,7 +21,7 @@ var TICK_BAR_LENGTH = 15;
  * @class RaphaelMapLegend
  * @private
  */
-var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototype */ {
+var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype */ {
     /**
      * Render function of map chart legend.
      * @param {object} paper raphael paper
@@ -54,9 +55,9 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @param {Array.<object>} legendSet legend set
      */
     renderTicksAndLabels: function(paper, baseData, labels, isHorizontal, legendSet) {
-        tui.util.forEach(labels, function(label, labelIndex) {
+        snippet.forEach(labels, function(label, labelIndex) {
             var offsetValue = baseData.step * labelIndex;
-            var pos = tui.util.extend({}, baseData.position);
+            var pos = snippet.extend({}, baseData.position);
             var path = 'M';
 
             if (isHorizontal) {

@@ -6,7 +6,9 @@
 
 'use strict';
 
-var raphael = window.Raphael;
+var snippet = require('tui-code-snippet');
+var renderUtil = require('../helpers/renderUtil');
+var raphael = require('raphael');
 
 /**
  * Util for raphael rendering.
@@ -30,7 +32,7 @@ var raphaelRenderUtil = {
         width = width || 1;
         additionalPoint = (width % 2 / 2);
 
-        tui.util.forEachArray(fromPoint, function(from, index) {
+        snippet.forEachArray(fromPoint, function(from, index) {
             if (from === toPoint[index]) {
                 fromPoint[index] = toPoint[index] = Math.round(from) - additionalPoint;
             }
@@ -102,7 +104,7 @@ var raphaelRenderUtil = {
     renderArea: function(paper, path, fillStyle) {
         var area = paper.path(path);
 
-        fillStyle = tui.util.extend({
+        fillStyle = snippet.extend({
             'stroke-opacity': 0
         }, fillStyle);
         area.attr(fillStyle);
@@ -166,8 +168,8 @@ var raphaelRenderUtil = {
      */
     forEach2dArray: function(groupItems, funcRenderItem) {
         if (groupItems) {
-            tui.util.forEachArray(groupItems, function(items, groupIndex) {
-                tui.util.forEachArray(items, function(item, index) {
+            snippet.forEachArray(groupItems, function(items, groupIndex) {
+                snippet.forEachArray(items, function(item, index) {
                     funcRenderItem(item, groupIndex, index);
                 });
             });
@@ -186,13 +188,13 @@ var raphaelRenderUtil = {
         hex = hex.replace('#', '');
         lum = lum || 0;
 
-        changedHex = tui.util.map(tui.util.range(3), function(index) {
+        changedHex = snippet.map(snippet.range(3), function(index) {
             var hd = parseInt(hex.substr(index * 2, 2), 16);
             var newHd = hd + (hd * lum);
 
             newHd = Math.round(Math.min(Math.max(0, newHd), 255)).toString(16);
 
-            return tui.chart.renderUtil.formatToZeroFill(newHd, 2);
+            return renderUtil.formatToZeroFill(newHd, 2);
         }).join('');
 
         return '#' + changedHex;
@@ -254,7 +256,7 @@ var raphaelRenderUtil = {
  * @returns {boolean}
  */
 function isNumber(numberSuspect) {
-    return tui.util.isExisty(numberSuspect) && typeof numberSuspect === 'number';
+    return snippet.isExisty(numberSuspect) && typeof numberSuspect === 'number';
 }
 
 module.exports = raphaelRenderUtil;

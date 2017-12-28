@@ -241,7 +241,4 @@ var colorutil = {
     }
 };
 
-tui.util.defineNamespace('tui.chart');
-tui.chart.colorutil = colorutil;
-
 module.exports = colorutil;

@@ -101,7 +101,7 @@ describe('Test for dataExporter', function() {
                     y: ['john', 'jane']
                 },
                 series: {
-                    heatMap: [[10, 20], [30,25]]
+                    heatMap: [[10, 20], [30, 25]]
                 }
             })).toEqual(result);
         });

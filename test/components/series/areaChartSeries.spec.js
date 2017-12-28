@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var areaSeriesFactory = require('../../../src/js/components/series/areaChartSeries'),
     chartConst = require('../../../src/js/const');
 
@@ -17,7 +18,7 @@ describe('AreaChartSeries', function() {
             chartType: 'area',
             theme: {},
             options: {},
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
         series.layout = {
             position: {
@@ -61,7 +62,7 @@ describe('AreaChartSeries', function() {
             var actual, expected;
 
             series.layout.dimension = {
-                    height: height
+                height: height
             };
             series.axisDataMap = {
                 yAxis: {
@@ -123,8 +124,16 @@ describe('AreaChartSeries', function() {
 
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
-            actual = series._makeStackedPositions([[{top: 150}, {top: 100}], [null, {top: 150}], [{top: 180}, {top: 150}]]);
-            expected = [[{top: 150, startTop: 200}, {top: 100, startTop: 200}], [null, {top: 50, startTop: 100}], [{top: 130, startTop: 150}, {top: 0, startTop: 50}]];
+            actual = series._makeStackedPositions([
+                [{top: 150}, {top: 100}],
+                [null, {top: 150}],
+                [{top: 180}, {top: 150}]
+            ]);
+            expected = [
+                [{top: 150, startTop: 200}, {top: 100, startTop: 200}],
+                [null, {top: 50, startTop: 100}],
+                [{top: 130, startTop: 150}, {top: 0, startTop: 50}]
+            ];
 
             expect(actual).toEqual(expected);
         });

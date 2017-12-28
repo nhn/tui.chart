@@ -56,7 +56,6 @@ describe('Test for LegendModel', function() {
         });
     });
 
-
     describe('_initCheckedIndexes()', function() {
         it('범례 checkbox 기능에 사용되는 checkedIndexes를 초기화 합니다.', function() {
             spyOn(legendModel, 'updateCheckedLegendsWith');

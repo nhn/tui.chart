@@ -10,6 +10,7 @@ var Series = require('../../../src/js/components/series/series');
 var chartConst = require('../../../src/js/const');
 var dom = require('../../../src/js/helpers/domHandler');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 describe('Series', function() {
     var series;
@@ -27,7 +28,7 @@ describe('Series', function() {
                 colors: ['blue']
             },
             options: {},
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
     });
 

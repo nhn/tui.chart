@@ -9,8 +9,9 @@
 var geom = require('../../helpers/geometric');
 var chartConst = require('../../const');
 var pluginFactory = require('../../factories/pluginFactory');
+var snippet = require('tui-code-snippet');
 
-var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
+var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
     /**
      * plot component className
      * @type {string}
@@ -30,7 +31,7 @@ var RadialPlot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * Options
          * @type {object}
          */
-        this.options = tui.util.extend({
+        this.options = snippet.extend({
             type: 'spiderweb'
         }, params.options);
 

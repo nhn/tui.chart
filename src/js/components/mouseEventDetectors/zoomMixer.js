@@ -11,6 +11,7 @@ var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var eventListener = require('../../helpers/eventListener');
+var snippet = require('tui-code-snippet');
 
 /**
  * Mixer for zoom event of area type mouse event detector.
@@ -281,7 +282,7 @@ var zoomMixer = {
             dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
 
             if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
-                if (tui.util.isNull(this.dragStartIndexes)) {
+                if (snippet.isNull(this.dragStartIndexes)) {
                     this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
                 } else {
                     this._showDragSelection(e.clientX);
@@ -369,7 +370,7 @@ var zoomMixer = {
 
         this._unbindDragEvent();
 
-        if (tui.util.isNull(this.dragStartIndexes)) {
+        if (snippet.isNull(this.dragStartIndexes)) {
             target = e.target || e.srcElement;
             if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
                 this._hideTooltip();

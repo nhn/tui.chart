@@ -1,6 +1,7 @@
 'use strict';
 
 var RaphaelAxisComponent = require('../../src/js/plugins/raphaelAxisComponent');
+var raphael = require('raphael');
 
 describe('RaphaelAxisComponent', function() {
     var raphaelAxisComponent = new RaphaelAxisComponent();
@@ -10,7 +11,7 @@ describe('RaphaelAxisComponent', function() {
     beforeEach(function() {
         container = document.createElement('DIV');
         document.body.appendChild(container);
-        paper = Raphael(container, 1500, 1500);
+        paper = raphael(container, 1500, 1500);
         data = {
             text: 'title',
             theme: {
@@ -68,7 +69,7 @@ describe('RaphaelAxisComponent', function() {
 
             data.offset = {x: 100, y: 100};
             positionWithOffset = raphaelAxisComponent.calculatePosition(paper, data);
-            
+
             positionDiff.x = positionWithOffset.left - positionWithoutOffset.left;
             positionDiff.y = positionWithOffset.top - positionWithoutOffset.top;
 

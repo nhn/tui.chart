@@ -8,6 +8,7 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var arrayUtil = require('../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
 var STEP_TOP_ADJUSTMENT = 8;
 var STEP_LEFT_ADJUSTMENT = 3;
@@ -17,7 +18,7 @@ var STEP_LEFT_ADJUSTMENT = 3;
  * @class RaphaelRadialPlot
  * @private
  */
-var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.prototype */ {
+var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototype */ {
     /**
      * Render function of map chart legend.
      * @param {object} params parameters
@@ -122,8 +123,8 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
             'dominant-baseline': 'middle'
         };
 
-        tui.util.forEachArray(labelData.category, function(item) {
-            var categoryAttributes = tui.util.extend({}, attributes, {
+        snippet.forEachArray(labelData.category, function(item) {
+            var categoryAttributes = snippet.extend({}, attributes, {
                 'text-anchor': item.position.anchor
             });
             var label = raphaelRenderUtil.renderText(paper, item.position, item.text, categoryAttributes);
@@ -134,7 +135,7 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
             plotSet.push(label);
         });
 
-        tui.util.forEachArray(labelData.step, function(item) {
+        snippet.forEachArray(labelData.step, function(item) {
             var stepLabel = raphaelRenderUtil.renderText(paper, item.position, item.text, attributes);
 
             item.position.top -= STEP_TOP_ADJUSTMENT;
@@ -158,7 +159,7 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
     _renderLines: function(groupPaths, lineColor, plotSet) {
         var paper = this.paper;
 
-        return tui.util.map(groupPaths, function(path) {
+        return snippet.map(groupPaths, function(path) {
             var line = raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
 
             plotSet.push(line);
@@ -177,7 +178,7 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
     _getLinesPath: function(groupPositions) {
         var self = this;
 
-        return tui.util.map(groupPositions, function(positions) {
+        return snippet.map(groupPositions, function(positions) {
             return self._makeLinesPath(positions);
         });
     },
@@ -197,7 +198,7 @@ var RaphaelRadialPlot = tui.util.defineClass(/** @lends RaphaelRadialPlot.protot
 
         posTopType = posTopType || 'top';
 
-        tui.util.map(positions, function(position) {
+        snippet.map(positions, function(position) {
             var pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
 
             if (position) {

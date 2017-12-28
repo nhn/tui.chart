@@ -13,8 +13,9 @@ var eventListener = require('../../helpers/eventListener');
 var predicate = require('../../helpers/predicate');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
+var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
     /**
      * MouseEventDetectorBase is base class for mouse event detector components.
      * @constructs MouseEventDetectorBase
@@ -243,7 +244,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
         var layerPosition = {};
         var maxLeft, minLeft;
 
-        checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
+        checkLimit = snippet.isUndefined(checkLimit) ? true : checkLimit;
 
         if (checkLimit) {
             maxLeft = bound.right - expandSize;
@@ -253,7 +254,7 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
 
         layerPosition.x = clientX - bound.left + seriesPosition.left + expandSize - chartConst.CHART_PADDING;
 
-        if (!tui.util.isUndefined(clientY)) {
+        if (!snippet.isUndefined(clientY)) {
             layerPosition.y = clientY - bound.top + seriesPosition.top + expandSize - chartConst.CHART_PADDING;
         }
 
@@ -482,6 +483,6 @@ var MouseEventDetectorBase = tui.util.defineClass(/** @lends MouseEventDetectorB
     findDataByIndexes: function() {}
 });
 
-tui.util.CustomEvents.mixin(MouseEventDetectorBase);
+snippet.CustomEvents.mixin(MouseEventDetectorBase);
 
 module.exports = MouseEventDetectorBase;

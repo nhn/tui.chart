@@ -6,17 +6,18 @@
 
 'use strict';
 
-var chartConst = require('../../const'),
-    TooltipBase = require('./tooltipBase'),
-    singleTooltipMixer = require('./singleTooltipMixer'),
-    tooltipTemplate = require('./tooltipTemplate');
+var chartConst = require('../../const');
+var TooltipBase = require('./tooltipBase');
+var singleTooltipMixer = require('./singleTooltipMixer');
+var tooltipTemplate = require('./tooltipTemplate');
+var snippet = require('tui-code-snippet');
 
 /**
  * @classdesc MapChartTooltip component.
  * @class MapChartTooltip
  * @private
  */
-var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartTooltip.prototype */ {
+var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartTooltip.prototype */ {
     /**
      * Map chart tooltip component.
      * @constructs MapChartTooltip
@@ -72,7 +73,7 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
         var datum = this.mapModel.getDatum(indexes.index),
             params;
 
-        params = tui.util.extend({
+        params = snippet.extend({
             chartType: this.chartType,
             code: datum.code,
             name: datum.name,

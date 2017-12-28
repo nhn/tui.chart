@@ -10,8 +10,9 @@ var Series = require('./series');
 var BarTypeSeriesBase = require('./barTypeSeriesBase');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
-var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
+var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.prototype */ {
     /**
      * Bar chart series component.
      * @constructs BarChartSeries
@@ -149,7 +150,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 minusLeft: 0,
                 prevStack: null
             };
-            var iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
+            var iteratee = snippet.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
 
             return seriesGroup.map(iteratee);
         });
@@ -180,7 +181,7 @@ function barSeriesFactory(params) {
     return new BarChartSeries(params);
 }
 
-// TODO 더나은 방법 찾아보자
+// @todo 더나은 방법 찾아보자
 barSeriesFactory.componentType = 'series';
 barSeriesFactory.BarChartSeries = BarChartSeries;
 

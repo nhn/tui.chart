@@ -7,10 +7,12 @@
 
 'use strict';
 
-var concat = Array.prototype.concat;
-var forEachArray = tui.util.forEachArray;
+var snippet = require('tui-code-snippet');
 
-var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
+var concat = Array.prototype.concat;
+var forEachArray = snippet.forEachArray;
+
+var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
     /**
      * LegendModel is legend model.
      * @constructs LegendModel
@@ -121,7 +123,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             datum.theme = itemTheme;
             datum.index = index;
 
-            if (!checkedIndexes || !tui.util.isUndefined(checkedIndexes[index])) {
+            if (!checkedIndexes || !snippet.isUndefined(checkedIndexes[index])) {
                 datum.seriesIndex = seriesIndex;
                 seriesIndex += 1;
             } else {
@@ -148,7 +150,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             data = legendData;
         } else {
             startIndex = 0;
-            data = concat.apply([], tui.util.map(seriesTypes, function(seriesType) {
+            data = concat.apply([], snippet.map(seriesTypes, function(seriesType) {
                 var labelLen = self.labels[seriesType].length;
                 var endIndex = startIndex + labelLen;
                 var slicedLegendData, checkedIndexes;
@@ -246,7 +248,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @returns {boolean} true if selected
      */
     isUnselectedIndex: function(index) {
-        return !tui.util.isNull(this.selectedIndex) && (this.selectedIndex !== index);
+        return !snippet.isNull(this.selectedIndex) && (this.selectedIndex !== index);
     },
 
     /**

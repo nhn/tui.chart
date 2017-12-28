@@ -6,6 +6,8 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 /**
  * Make valid types on yAxisOptions
  * @param {object} params parameters
@@ -18,6 +20,7 @@
  *     hasRightYAxis: boolean,
  *     yAxisOptionsMap: object
  * }
+ * @ignore
  */
 function validTypeMakerForYAxisOptions(params) {
     var rawSeriesData = params.rawSeriesData;
@@ -38,10 +41,10 @@ function validTypeMakerForYAxisOptions(params) {
  * @private
  */
 function makeChartTypesMap(rawSeriesData, yAxisOption) {
-    var seriesTypes = tui.util.keys(rawSeriesData).sort();
+    var seriesTypes = snippet.keys(rawSeriesData).sort();
     var optionChartTypes = getYAxisOptionChartTypes(seriesTypes, yAxisOption);
     var chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
-    var validChartTypes = tui.util.filter(optionChartTypes, function(_chartType) {
+    var validChartTypes = snippet.filter(optionChartTypes, function(_chartType) {
         return rawSeriesData[_chartType].length;
     });
     var chartTypesMap;
@@ -77,11 +80,11 @@ function getYAxisOptionChartTypes(chartTypes, yAxisOption) {
     if (!yAxisOptions.length || (yAxisOptions.length === 1 && !yAxisOptions[0].chartType)) {
         resultChartTypes = [];
     } else if (yAxisOptions.length) {
-        optionChartTypes = tui.util.map(yAxisOptions, function(option) {
+        optionChartTypes = snippet.map(yAxisOptions, function(option) {
             return option.chartType;
         });
 
-        tui.util.forEachArray(optionChartTypes, function(chartType, index) {
+        snippet.forEachArray(optionChartTypes, function(chartType, index) {
             isReverse = isReverse || ((chartType && resultChartTypes[index] !== chartType) || false);
         });
 

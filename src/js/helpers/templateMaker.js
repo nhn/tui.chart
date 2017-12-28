@@ -6,6 +6,8 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 module.exports = {
     /**
      * This is template maker.
@@ -21,7 +23,7 @@ module.exports = {
     template: function(html) {
         return function(data) {
             var result = html;
-            tui.util.forEach(data, function(value, key) {
+            snippet.forEach(data, function(value, key) {
                 var regExp = new RegExp('{{\\s*' + key + '\\s*}}', 'g');
                 result = result.replace(regExp, String(value).replace('$', '＄'));
             });

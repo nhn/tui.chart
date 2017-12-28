@@ -6,13 +6,14 @@
 
 'use strict';
 
-var RaphaelLineBase = require('./raphaelLineTypeBase'),
-    raphaelRenderUtil = require('./raphaelRenderUtil');
+var RaphaelLineBase = require('./raphaelLineTypeBase');
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 
-var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
+var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelLineChart
@@ -54,7 +55,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var options = data.options;
         var opacity = options.showDot ? 1 : 0;
         var isSpline = options.spline;
-        var lineWidth = this.lineWidth = (tui.util.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
+        var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
         var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
         var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
         var groupPaths;
@@ -102,7 +103,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     _getLinesPath: function(groupPositions, connectNulls) {
         var self = this;
 
-        return tui.util.map(groupPositions, function(positions) {
+        return snippet.map(groupPositions, function(positions) {
             return self._makeLinesPath(positions, null, connectNulls);
         });
     },
@@ -117,7 +118,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     _getSplineLinesPath: function(groupPositions, connectNulls) {
         var self = this;
 
-        return tui.util.map(groupPositions, function(positions) {
+        return snippet.map(groupPositions, function(positions) {
             return self._makeSplineLinesPath(positions, connectNulls);
         });
     },
@@ -132,7 +133,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
-        return tui.util.map(groupPaths, function(path, groupIndex) {
+        return snippet.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
 
             return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
@@ -157,10 +158,10 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+        snippet.forEachArray(this.groupPaths, function(path, groupIndex) {
             self.groupLines[groupIndex].attr({path: path.join(' ')});
 
-            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
+            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
                 if (item.endDot) {
                     self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
                 }
@@ -174,16 +175,16 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      */
     selectLegend: function(legendIndex) {
         var self = this,
-            noneSelected = tui.util.isNull(legendIndex);
+            noneSelected = snippet.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
-        tui.util.forEachArray(this.groupLines, function(line, groupIndex) {
+        snippet.forEachArray(this.groupLines, function(line, groupIndex) {
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             line.attr({'stroke-opacity': opacity});
 
-            tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
+            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
                 item.opacity = opacity;
 
                 if (self.dotOpacity) {
@@ -214,7 +215,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             additionalIndex = 1;
         }
 
-        tui.util.forEachArray(this.groupLines, function(line, groupIndex) {
+        snippet.forEachArray(this.groupLines, function(line, groupIndex) {
             var dots = self.groupDots[groupIndex];
             var groupPosition = groupPositions[groupIndex];
 
@@ -222,7 +223,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
                 self._removeFirstDot(dots);
             }
 
-            tui.util.forEachArray(dots, function(item, index) {
+            snippet.forEachArray(dots, function(item, index) {
                 var position = groupPosition[index + additionalIndex];
                 self._animateByPosition(item.endDot.dot, position, tickSize);
             });
@@ -242,8 +243,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         };
         var set = paper.set();
 
-        tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
-            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+        snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
+            snippet.forEach(categoryLabel, function(label, seriesIndex) {
                 var position = groupPositions[categoryIndex][seriesIndex];
                 var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
                 var startLabel;

@@ -9,6 +9,7 @@
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var arrayUtil = require('../../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
 /**
  * Raw data Handler.
@@ -24,7 +25,7 @@ var rawDataHandler = {
     pickStacks: function(seriesData, divergingOption) {
         var stacks, uniqStacks, filteredStack;
 
-        stacks = tui.util.map(seriesData, function(seriesDatum) {
+        stacks = snippet.map(seriesData, function(seriesDatum) {
             return seriesDatum.stack;
         });
 
@@ -34,7 +35,7 @@ var rawDataHandler = {
             uniqStacks = uniqStacks.slice(0, 2);
         }
 
-        filteredStack = tui.util.filter(uniqStacks, function(stack) {
+        filteredStack = snippet.filter(uniqStacks, function(stack) {
             return !!stack;
         });
 
@@ -59,8 +60,8 @@ var rawDataHandler = {
             stacks = this.pickStacks(seriesData);
         }
 
-        tui.util.forEachArray(stacks, function(stack) {
-            var filtered = tui.util.filter(seriesData, function(datum) {
+        snippet.forEachArray(stacks, function(stack) {
+            var filtered = snippet.filter(seriesData, function(datum) {
                 return (datum.stack || chartConst.DEFAULT_STACK) === stack;
             });
             newSeriesData = newSeriesData.concat(filtered);
@@ -74,7 +75,7 @@ var rawDataHandler = {
      * @param {Array.<{stack: ?string}>} seriesData series data
      */
     removeSeriesStack: function(seriesData) {
-        tui.util.forEachArray(seriesData, function(datum) {
+        snippet.forEachArray(seriesData, function(datum) {
             delete datum.stack;
         });
     },
@@ -104,8 +105,8 @@ var rawDataHandler = {
         var self = this;
         var chartTypeMap = {};
 
-        if (tui.util.isObject(rawData.series)) {
-            tui.util.forEach(rawData.series, function(data, seriesType) {
+        if (snippet.isObject(rawData.series)) {
+            snippet.forEach(rawData.series, function(data, seriesType) {
                 chartTypeMap[self.findChartType(rawData.seriesAlias, seriesType)] = true;
             });
         }
@@ -120,7 +121,7 @@ var rawDataHandler = {
      * @private
      */
     _createMinusValues: function(data) {
-        return tui.util.map(data, function(value) {
+        return snippet.map(data, function(value) {
             return value < 0 ? 0 : -value;
         });
     },
@@ -132,7 +133,7 @@ var rawDataHandler = {
      * @private
      */
     _createPlusValues: function(data) {
-        return tui.util.map(data, function(value) {
+        return snippet.map(data, function(value) {
             return value < 0 ? 0 : value;
         });
     },
@@ -170,7 +171,7 @@ var rawDataHandler = {
 
         rawSeriesData = this._sortSeriesData(rawSeriesData, stacks);
 
-        tui.util.forEachArray(rawSeriesData, function(seriesDatum) {
+        snippet.forEachArray(rawSeriesData, function(seriesDatum) {
             var stack = seriesDatum.stack || chartConst.DEFAULT_STACK;
             if (stack === leftStack) {
                 seriesDatum.data = self._createMinusValues(seriesDatum.data);
@@ -212,13 +213,13 @@ var rawDataHandler = {
         seriesOptions = seriesOptions || {};
 
         if (predicate.isValidStackOption(seriesOptions.stackType)) {
-            tui.util.forEach(rawData.series, function(seriesDatum, seriesType) {
+            snippet.forEach(rawData.series, function(seriesDatum, seriesType) {
                 rawData.series[seriesType] = self._sortSeriesData(rawData.series[seriesType]);
             });
         }
 
         if (seriesOptions.diverging) {
-            tui.util.forEach(rawData.series, function(seriesDatum, seriesType) {
+            snippet.forEach(rawData.series, function(seriesDatum, seriesType) {
                 rawData.series[seriesType] = self._makeRawSeriesDataForDiverging(seriesDatum, seriesOptions.stackType);
             });
         }
@@ -230,11 +231,11 @@ var rawDataHandler = {
      */
     appendOutliersToSeriesData: function(rawData) {
         var boxplot = rawData.series.boxplot;
-        tui.util.forEach(boxplot, function(seriesItem) {
+        snippet.forEach(boxplot, function(seriesItem) {
             var outliers = seriesItem.outliers;
 
             if (outliers && outliers.length) {
-                tui.util.forEach(outliers, function(outlier) {
+                snippet.forEach(outliers, function(outlier) {
                     seriesItem.data[outlier[0]].push(outlier[1]);
                 });
             }
@@ -250,11 +251,11 @@ var rawDataHandler = {
     filterCheckedRawData: function(rawData, checkedLegends) {
         var cloneData = JSON.parse(JSON.stringify(rawData));
         if (checkedLegends) {
-            tui.util.forEach(cloneData.series, function(serieses, chartType) {
+            snippet.forEach(cloneData.series, function(serieses, chartType) {
                 if (!checkedLegends[chartType]) {
                     cloneData.series[chartType] = [];
                 } else if (checkedLegends[chartType].length) {
-                    cloneData.series[chartType] = tui.util.filter(serieses, function(series, index) {
+                    cloneData.series[chartType] = snippet.filter(serieses, function(series, index) {
                         return checkedLegends[chartType][index];
                     });
                 }

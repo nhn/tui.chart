@@ -8,7 +8,8 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var dom = require('../helpers/domHandler');
-var browser = tui.util.browser;
+var snippet = require('tui-code-snippet');
+var browser = snippet.browser;
 
 var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 var STROKE_COLOR = 'gray';
@@ -20,7 +21,7 @@ var G_ID = 'tui-chart-series-group';
  * @class RaphaelMapChart
  * @private
  */
-var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype */ {
+var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype */ {
     /**
      * Render function of map chart.
      * @param {object} paper paper object
@@ -73,7 +74,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         var paper = this.paper;
         var colorSpectrum = data.colorSpectrum;
 
-        return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
+        return snippet.map(data.mapModel.getMapData(), function(datum, index) {
             var ratio = datum.ratio || 0;
             var color = colorSpectrum.getColor(ratio);
             var sector = raphaelRenderUtil.renderArea(paper, datum.path, {
@@ -105,9 +106,9 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     findSectorIndex: function(position) {
         var sector = this.paper.getElementByPoint(position.left, position.top),
             foundIndex = sector && sector.data('index'),
-            data = !tui.util.isUndefined(foundIndex) && this.sectors[foundIndex];
+            data = !snippet.isUndefined(foundIndex) && this.sectors[foundIndex];
 
-        return data && !tui.util.isUndefined(data.ratio) ? foundIndex : null;
+        return data && !snippet.isUndefined(data.ratio) ? foundIndex : null;
     },
 
     /**
@@ -265,7 +266,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         var set = paper.set();
         var self = this;
 
-        tui.util.forEach(labelData, function(labelDatum) {
+        snippet.forEach(labelData, function(labelDatum) {
             var position = labelDatum.labelPosition;
             var label = raphaelRenderUtil.renderText(paper, position, labelDatum.name || labelDatum.code, attributes);
 
@@ -290,6 +291,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
  * @param {Array.<object>} sectorSet sectorSet
  * @param {string} id ID string
  * @returns {object}
+ * @ignore
  */
 function createGElement(paper, sectorSet, id) {
     var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');

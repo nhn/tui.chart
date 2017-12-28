@@ -10,7 +10,7 @@ var axisCalculator = require('../../../src/js/models/bounds/axisCalculator');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('Test for axisCalculator', function() {
-    beforeAll(function () {
+    beforeAll(function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });

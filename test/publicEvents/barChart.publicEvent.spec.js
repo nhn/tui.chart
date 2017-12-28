@@ -7,6 +7,7 @@
 'use strict';
 
 var dom = require('../../src/js/helpers/domHandler');
+var barChartFactory = require('../../src/js/index').barChart;
 
 describe('Test user events for bar chart', function() {
     var rawData = {
@@ -36,7 +37,7 @@ describe('Test user events for bar chart', function() {
     beforeEach(function() {
         var container = dom.create('DIV');
 
-        barChart = tui.chart.barChart(container, rawData, {
+        barChart = barChartFactory(container, rawData, {
             series: {
                 allowSelect: true
             }

@@ -9,8 +9,9 @@
 var chartConst = require('../../const');
 var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var SimpleEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
+var SimpleEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
     /**
      * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
      * @constructs SimpleEventDetector

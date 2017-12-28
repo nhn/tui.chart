@@ -1,8 +1,11 @@
 /* eslint no-process-env: 0 */
+/**
+ * Config file for testing
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 
 'use strict';
 
-var path = require('path');
 var webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
@@ -11,65 +14,42 @@ var webdriverConfig = {
 
 module.exports = function(config) {
     var defaultConfig = {
-        autoWatchBatchDelay: 100,
-        basePath: '',
-        browserDisconnectTimeout: 60000,
-        browserNoActivityTimeout: 60000,
-        captureTimeout: 100000,
-        colors: true,
-        coverageReporter: {
-            dir: 'report/coverage/',
-            reporters: [
-                {
-                    type: 'html',
-                    subdir: function(browser) {
-                        return 'report-html/' + browser;
-                    }
-                },
-                {
-                    type: 'cobertura',
-                    subdir: function(browser) {
-                        return 'report-cobertura/' + browser;
-                    },
-                    file: 'cobertura.txt'
-                }
-            ]
-        },
-        exclude: [],
-        files: [
-            {
-                pattern: 'lib/tui-code-snippet/code-snippet.js',
-                watched: false
-            },
-            {
-                pattern: 'lib/raphael/raphael.js',
-                watched: false
-            },
-
-            'test/test.bundle.js'
+        basePath: './',
+        frameworks: [
+            'jasmine'
         ],
-        frameworks: ['jasmine'],
-        junitReporter: {
-            outputDir: 'report/junit',
-            suite: ''
-        },
-        logLevel: config.LOG_INFO,
-        port: 9876,
+        files: [
+            'test/index.js'
+        ],
         preprocessors: {
-            'test/test.bundle.js': ['webpack', 'sourcemap']
+            'test/index.js': ['webpack', 'sourcemap']
         },
         webpack: {
             devtool: '#inline-source-map',
-            resolve: {
-                root: [path.resolve('./src/js')]
-            },
             module: {
+                preLoaders: [{
+                    test: /\.js$/,
+                    exclude: /(test|bower_components|node_modules)/,
+                    loader: 'istanbul-instrumenter'
+                },
+                {
+                    test: /\.js$/,
+                    exclude: /(bower_components|node_modules)/,
+                    loader: 'eslint-loader'
+                }],
                 loaders: [{
                     test: /\.less$/,
-                    loader: 'style!css!less?paths=src/less/'
+                    loader: 'style-loader!css-loader!less-loader?paths=src/less/'
                 }]
             }
         },
+        port: 9876,
+        colors: true,
+        logLevel: config.LOG_INFO,
+        autoWatchBatchDelay: 100,
+        browserDisconnectTimeout: 60000,
+        browserNoActivityTimeout: 60000,
+        captureTimeout: 100000,
         webpackMiddleware: {
             noInfo: true,
             stats: {
@@ -78,16 +58,7 @@ module.exports = function(config) {
         }
     };
 
-    if (process.env.SERVER === 'ne') {
-        defaultConfig.plugins = [
-            'karma-jasmine',
-            'karma-webpack',
-            'karma-sourcemap-loader',
-            'karma-coverage',
-            'karma-junit-reporter',
-            'karma-webdriver-launcher'
-        ];
-
+    if (process.env.KARMA_SERVER === 'ne') {
         defaultConfig.customLaunchers = {
             'IE8': {
                 base: 'WebDriver',
@@ -113,18 +84,37 @@ module.exports = function(config) {
                 browserName: 'internet explorer',
                 version: '11'
             },
+            'Edge': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
+            },
             'Chrome-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'chrome'
+            },
+            'Firefox-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'firefox'
+            },
+            'Safari-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'safari'
             }
         };
 
         defaultConfig.browsers = [
+            'IE8',
             'IE9',
             'IE10',
             'IE11',
-            'Chrome-WebDriver'
+            'Edge',
+            'Chrome-WebDriver',
+            'Firefox-WebDriver',
+            'Safari-WebDriver'
         ];
 
         defaultConfig.reporters = [
@@ -132,6 +122,30 @@ module.exports = function(config) {
             'coverage',
             'junit'
         ];
+
+        defaultConfig.coverageReporter = {
+            dir: 'report/coverage/',
+            reporters: [
+                {
+                    type: 'html',
+                    subdir: function(browser) {
+                        return 'report-html/' + browser;
+                    }
+                },
+                {
+                    type: 'cobertura',
+                    subdir: function(browser) {
+                        return 'report-cobertura/' + browser;
+                    },
+                    file: 'cobertura.txt'
+                }
+            ]
+        };
+
+        defaultConfig.junitReporter = {
+            outputDir: 'report/junit',
+            suite: ''
+        };
 
         defaultConfig.singleRun = true;
         defaultConfig.autoWatch = false;
@@ -141,6 +155,7 @@ module.exports = function(config) {
             'karma-webpack',
             'karma-sourcemap-loader',
             'karma-chrome-launcher',
+            'karma-firefox-launcher',
             'karma-narrow-reporter'
         ];
         defaultConfig.browsers = ['ChromeHeadless'];

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var raphael = window.Raphael;
+var raphael = require('raphael');
 
 var BarChart = require('./raphaelBarChart');
 var Boxplot = require('./raphaelBoxplotChart');
@@ -26,7 +26,6 @@ var axis = require('./raphaelAxisComponent');
 
 var RadialPlot = require('./raphaelRadialPlot');
 
-var pluginName = 'Raphael';
 var pluginRaphael = {
     bar: BarChart,
     boxplot: Boxplot,
@@ -89,6 +88,7 @@ var callback = function(container, dimension) {
 /**
  * Append glow filter for series label
  * @param {object} paper Raphael paper object
+ * @ignore
  */
 function appendGlowFilterToDefs(paper) {
     var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
@@ -136,4 +136,9 @@ function appendGlowFilterToDefs(paper) {
     paper.defs.appendChild(filter);
 }
 
-tui.chart.registerPlugin(pluginName, pluginRaphael, callback);
+module.exports = {
+    name: 'Raphael',
+    plugins: pluginRaphael,
+    callback: callback
+};
+

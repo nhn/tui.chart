@@ -9,8 +9,9 @@
 var Series = require('./series');
 var LineTypeSeriesBase = require('./lineTypeSeriesBase');
 var predicate = require('../../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
-var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
+var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
      * Area chart series component.
      * @constructs AreaChartSeries
@@ -58,8 +59,8 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         var firstStartTop = this._makePositionTopOfZeroPoint();
         var prevPositionTops = [];
 
-        return tui.util.map(groupPositions, function(positions) {
-            return tui.util.map(positions, function(position, index) {
+        return snippet.map(groupPositions, function(positions) {
+            return snippet.map(positions, function(position, index) {
                 var prevTop = prevPositionTops[index] || firstStartTop;
                 var positionTop = position ? position.top : 0;
                 var stackedHeight = height - positionTop + baseTop;

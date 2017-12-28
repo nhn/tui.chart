@@ -9,16 +9,15 @@
 var BubbleChart = require('../../src/js/charts/bubbleChart');
 
 describe('Test for BubbleChart', function() {
-    var bubbleChart, componentManager, dataProcessor, boundsModel, scaleDataModel, sereisDataModel;
+    var bubbleChart, componentManager, dataProcessor, boundsModel, scaleDataModel;
 
     beforeEach(function() {
         bubbleChart = BubbleChart.prototype;
         componentManager = jasmine.createSpyObj('componentManager', ['register']);
-        dataProcessor = jasmine.createSpyObj('dataProcessor',['addDataRatiosForCoordinateType', 'isCoordinateType']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['addDataRatiosForCoordinateType', 'isCoordinateType']);
         boundsModel = jasmine.createSpyObj('boundsModel', ['getDimension', 'getMinimumPixelStepForAxis',
-                'registerBaseDimension', 'registerAxesData']);
+            'registerBaseDimension', 'registerAxesData']);
         scaleDataModel = jasmine.createSpyObj('seriesDataModel', ['getScaleMap']);
-        sereisDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
 
         bubbleChart.componentManager = componentManager;
         bubbleChart.dataProcessor = dataProcessor;

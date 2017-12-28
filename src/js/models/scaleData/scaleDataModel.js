@@ -5,8 +5,9 @@ var scaleLabelFormatter = require('./scaleLabelFormatter');
 var axisDataMaker = require('./axisDataMaker');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */{
+var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
     /**
      * ScaleDataModel is scale model for scale data and axis data.
      * @param {object} params - parameters
@@ -82,7 +83,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         var baseValues = this.dataProcessor.createBaseValuesForLimit(
             chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType, typeMap.areaType);
         var baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
-        var options = tui.util.extend(baseOptions, {
+        var options = snippet.extend(baseOptions, {
             isVertical: isVertical,
             limitOption: this._pickLimitOption(axisOptions),
             tickCounts: additionalOptions.tickCounts
@@ -114,7 +115,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
      */
     _createScaleLabels: function(baseScaleData, typeMap, baseOptions, dateFormat) {
         var formatFunctions = this.dataProcessor.getFormatFunctions();
-        var options = tui.util.extend(baseOptions, {
+        var options = snippet.extend(baseOptions, {
             dateFormat: dateFormat
         });
 
@@ -143,7 +144,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         };
         baseScaleData = this._createBaseScaleData(typeMap, baseOptions, axisOptions, additionalOptions);
 
-        return tui.util.extend(baseScaleData, {
+        return snippet.extend(baseScaleData, {
             labels: this._createScaleLabels(baseScaleData, typeMap, baseOptions, axisOptions.dateFormat),
             axisOptions: axisOptions
         });
@@ -190,7 +191,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         if (isCoordinateLineType) {
             values = this.dataProcessor.getValues(this.chartType, 'x');
             additional = axisDataMaker.makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
-            tui.util.extend(axisData, additional);
+            snippet.extend(axisData, additional);
         }
 
         return axisData;
@@ -259,7 +260,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
         var scaleDataMap = this.scaleDataMap;
         var options = this.options;
         var theme = this.theme;
-        var yAxisOptions = tui.util.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
+        var yAxisOptions = snippet.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
         var dataMap = {};
 
         dataMap.xAxis = this._createAxisData(scaleDataMap.xAxis, options.xAxis, theme.xAxis.label);
@@ -339,11 +340,11 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
 
         labels = renderUtil.addPrefixSuffix(labels, this.options.xAxis.prefix, this.options.xAxis.suffix);
 
-        validLabels = tui.util.filter(labels, function(label) {
+        validLabels = snippet.filter(labels, function(label) {
             return !!label;
         });
 
-        if (!tui.util.isNull(this.prevValidLabelCount)) {
+        if (!snippet.isNull(this.prevValidLabelCount)) {
             validLabelCount = this.prevValidLabelCount;
         } else {
             validLabelCount = validLabels.length;
@@ -366,7 +367,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
 
         this.prevValidLabelCount = validLabelCount;
 
-        tui.util.extend(axisData, additionalData);
+        snippet.extend(axisData, additionalData);
     },
 
     /**
@@ -423,7 +424,7 @@ var ScaleDataModel = tui.util.defineClass(/** @lends ScaleDataModel.prototype */
             limitMap.legend = scaleDataMap.legend.limit;
         }
 
-        tui.util.forEachArray(seriesTypes, function(seriesType, index) {
+        snippet.forEachArray(seriesTypes, function(seriesType, index) {
             limitMap[seriesType] = self._findLimit(limitMap, index, isVertical);
         });
 

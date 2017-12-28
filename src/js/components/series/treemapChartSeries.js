@@ -11,8 +11,9 @@ var squarifier = require('./squarifier');
 var labelHelper = require('./renderingLabelHelper');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
-var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
+var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
     /**
      * Series component for rendering graph of treemap chart.
      * @constructs TreemapChartSeries
@@ -65,11 +66,11 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     _initOptions: function() {
         this.options.useColorValue = !!this.options.useColorValue;
 
-        if (tui.util.isUndefined(this.options.zoomable)) {
+        if (snippet.isUndefined(this.options.zoomable)) {
             this.options.zoomable = !this.options.useColorValue;
         }
 
-        if (tui.util.isUndefined(this.options.useLeafLabel)) {
+        if (snippet.isUndefined(this.options.useLeafLabel)) {
             this.options.useLeafLabel = !this.options.zoomable;
         }
     },
@@ -113,14 +114,14 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     _makeBoundMap: function(parent, boundMap, layout) {
         var self = this;
         var seriesDataModel = this._getSeriesDataModel();
-        var defaultLayout = tui.util.extend({}, this.layout.dimension, this.layout.position);
+        var defaultLayout = snippet.extend({}, this.layout.dimension, this.layout.position);
         var seriesItems;
 
         layout = layout || defaultLayout;
         seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
-        boundMap = tui.util.extend(boundMap || {}, squarifier.squarify(layout, seriesItems));
+        boundMap = snippet.extend(boundMap || {}, squarifier.squarify(layout, seriesItems));
 
-        tui.util.forEachArray(seriesItems, function(seriesItem) {
+        snippet.forEachArray(seriesItems, function(seriesItem) {
             boundMap = self._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
         });
 
@@ -219,7 +220,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
             seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
         }
 
-        labels = tui.util.map(seriesItems, function(seriesItem) {
+        labels = snippet.map(seriesItems, function(seriesItem) {
             var labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
 
             return labelText;
@@ -253,7 +254,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         this.rootId = rootId;
         this.startDepth = startDepth;
         this.selectedGroup = group;
-        this._renderSeriesArea(this.paper, tui.util.bind(this._renderGraph, this));
+        this._renderSeriesArea(this.paper, snippet.bind(this._renderGraph, this));
     },
 
     /**
@@ -293,7 +294,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var indexes = seriesData.indexes;
         var seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
 
-        return tui.util.extend({
+        return snippet.extend({
             chartType: this.chartType,
             indexes: seriesItem.indexes
         });

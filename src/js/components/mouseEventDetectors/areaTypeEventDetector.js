@@ -9,10 +9,11 @@
 var MouseEventDetectorBase = require('./mouseEventDetectorBase');
 var zoomMixer = require('./zoomMixer');
 var AreaTypeDataModel = require('./areaTypeDataModel');
+var snippet = require('tui-code-snippet');
 
 var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
 
-var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @lends AreaTypeEventDetector.prototype */ {
+var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends AreaTypeEventDetector.prototype */ {
     /**
      * AreaTypeEventDetector is mouse event detector for line type chart.
      * @param {object} params parameters
@@ -36,7 +37,7 @@ var AreaTypeEventDetector = tui.util.defineClass(MouseEventDetectorBase, /** @le
         this.zoomable = params.zoomable;
 
         if (this.zoomable) {
-            tui.util.extend(this, zoomMixer);
+            snippet.extend(this, zoomMixer);
             this._initForZoom(params.zoomable);
         }
     },

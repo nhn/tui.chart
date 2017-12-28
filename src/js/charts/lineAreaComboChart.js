@@ -11,8 +11,9 @@ var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
 var validTypeMakerForYAxisOptions = require('./validTypeMakerForYAxisOptions');
 var DynamicDataHelper = require('./dynamicDataHelper');
+var snippet = require('tui-code-snippet');
 
-var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComboChart.prototype */ {
+var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaComboChart.prototype */ {
     /**
      * className
      * @type {string}
@@ -54,7 +55,7 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
          * whether has right y axis or not
          * @type {boolean}
          */
-        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+        this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
 
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = true;
@@ -164,7 +165,7 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
     _makeYAxisOptions: function(chartTypes, yAxisOptions) {
         var options = {};
         yAxisOptions = yAxisOptions || {};
-        tui.util.forEachArray(chartTypes, function(chartType, index) {
+        snippet.forEachArray(chartTypes, function(chartType, index) {
             options[chartType] = yAxisOptions[index] || yAxisOptions;
         });
 
@@ -187,7 +188,7 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
     _setAdditionalOptions: function(additionalOptions) {
         var dataProcessor = this.dataProcessor;
 
-        tui.util.forEach(this.options.series, function(seriesOption, seriesType) {
+        snippet.forEach(this.options.series, function(seriesOption, seriesType) {
             var chartType;
 
             if (!seriesOption.stackType) {
@@ -226,7 +227,7 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
             };
         }
 
-        tui.util.forEachArray(chartTypes, addDataRatio);
+        snippet.forEachArray(chartTypes, addDataRatio);
     },
     /**
      * Render for zoom.
@@ -268,7 +269,7 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
 
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();
-        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
+        this.dataProcessor.addDataFromRemainDynamicData(snippet.pick(this.options.series, 'shifting'));
         this._renderForZoom(true);
         this._dynamicDataHelper.restartAnimation();
     }

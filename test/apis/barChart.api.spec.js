@@ -7,6 +7,7 @@
 'use strict';
 
 var dom = require('../../src/js/helpers/domHandler');
+var barChartFactory = require('../../src/js/index').barChart;
 
 describe('Test public APIs for bar chart', function() {
     var rawData = {
@@ -36,7 +37,7 @@ describe('Test public APIs for bar chart', function() {
     beforeEach(function() {
         var container = dom.create('DIV');
 
-        barChart = tui.chart.barChart(container, rawData, {});
+        barChart = barChartFactory(container, rawData, {});
     });
 
     describe('resize()', function() {
@@ -141,7 +142,7 @@ describe('Test public APIs for bar chart', function() {
         it('reset align option for tooltip', function() {
             var container = dom.create('DIV');
 
-            barChart = tui.chart.barChart(container, rawData, {
+            barChart = barChartFactory(container, rawData, {
                 tooltip: {
                     align: 'left bottom'
                 }
@@ -163,7 +164,7 @@ describe('Test public APIs for bar chart', function() {
         it('reset offset option for tooltip', function() {
             var container = dom.create('DIV');
 
-            barChart = tui.chart.barChart(container, rawData, {
+            barChart = barChartFactory(container, rawData, {
                 tooltip: {
                     offsetX: 10,
                     offsetY: 20

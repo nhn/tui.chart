@@ -9,8 +9,9 @@
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
 var rawDataHandler = require('../models/data/rawDataHandler');
+var snippet = require('tui-code-snippet');
 
-var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
+var ColumnChart = snippet.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
     /**
      * className
      * @type {string}

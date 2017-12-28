@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var arrayUtil = require('../helpers/arrayUtil');
 var chartConst = require('../const');
 
@@ -17,9 +18,10 @@ var DOWNLOAD_HANDLERS = {
 /**
  * Return download method name of current browser supports
  * @returns {string}
+ * @ignore
  */
 function getDownloadMethod() {
-    var isDownloadAttributeSupported = tui.util.isExisty(document.createElement('a').download);
+    var isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
     var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
     var method;
 
@@ -38,6 +40,7 @@ function getDownloadMethod() {
  * Licence: MIT Licence
  * @param {string} base64String - base64 string
  * @returns {Blob}
+ * @ignore
  */
 function base64toBlob(base64String) {
     var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
@@ -69,6 +72,7 @@ function base64toBlob(base64String) {
  * Return given extension type is image format
  * @param {string} extension extension
  * @returns {boolean}
+ * @ignore
  */
 function isImageExtension(extension) {
     return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, function(imageExtension) {
@@ -81,6 +85,7 @@ function isImageExtension(extension) {
  * @param {string} fileName - file name
  * @param {string} extension - file extension
  * @param {string} content - file content
+ * @ignore
  */
 function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
     var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
@@ -93,6 +98,7 @@ function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
  * @param {string} fileName - file name
  * @param {string} extension - file extension
  * @param {string} content - file content
+ * @ignore
  */
 function downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
     var anchorElement;
@@ -116,11 +122,12 @@ function downloadWithAnchorElementDownloadAttribute(fileName, extension, content
  * @param {string} fileName - file name
  * @param {string} extension - file extension
  * @param {string} content - file content
+ * @ignore
  */
 function execDownload(fileName, extension, content) {
     var downloadMethod = getDownloadMethod();
 
-    if (downloadMethod && tui.util.isString(content)) {
+    if (downloadMethod && snippet.isString(content)) {
         DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content);
     }
 }

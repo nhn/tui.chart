@@ -14,8 +14,9 @@ var dom = require('../helpers/domHandler');
 var renderUtil = require('../helpers/renderUtil');
 var boundsAndScaleBuilder = require('../models/boundsAndScaleBuilder.js');
 var predicate = require('../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
-var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
+var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Chart base.
      * @constructs ChartBase
@@ -64,7 +65,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * event bus for transmitting message
          * @type {object}
          */
-        this.eventBus = new tui.util.CustomEvents();
+        this.eventBus = new snippet.CustomEvents();
 
         /**
          * previous xAxis data
@@ -106,7 +107,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _setOffsetProperty: function(options, fromProperty, toProperty) {
-        if (!tui.util.isExisty(options[fromProperty])) {
+        if (!snippet.isExisty(options[fromProperty])) {
             return;
         }
 
@@ -145,11 +146,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        optionsSet = tui.util.isArray(targetOptions) ? targetOptions : [targetOptions];
-        tui.util.forEachArray(optionsSet, function(options) {
+        optionsSet = snippet.isArray(targetOptions) ? targetOptions : [targetOptions];
+        snippet.forEachArray(optionsSet, function(options) {
             var title = options.title;
 
-            if (tui.util.isString(title)) {
+            if (snippet.isString(title)) {
                 options.title = {
                     text: title
                 };
@@ -197,11 +198,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._initializeTitleOptions(options.xAxis);
         this._initializeTitleOptions(options.yAxis);
 
-        if (tui.util.isUndefined(options.legend.visible)) {
+        if (snippet.isUndefined(options.legend.visible)) {
             options.legend.visible = true;
         }
 
-        if (tui.util.isUndefined(options.chartExportMenu.visible)) {
+        if (snippet.isUndefined(options.chartExportMenu.visible)) {
             options.chartExportMenu.visible = true;
         }
 
@@ -553,7 +554,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     showSeriesLabel: function() {
         var seriesSet = this.componentManager.where({componentType: 'series'});
 
-        tui.util.forEachArray(seriesSet, function(series) {
+        snippet.forEachArray(seriesSet, function(series) {
             series.showLabel();
         });
     },
@@ -565,7 +566,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     hideSeriesLabel: function() {
         var seriesSet = this.componentManager.where({componentType: 'series'});
 
-        tui.util.forEachArray(seriesSet, function(series) {
+        snippet.forEachArray(seriesSet, function(series) {
             series.hideLabel();
         });
     },
@@ -605,7 +606,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {number} index - tooltip data's category index
      * @param {number} seriesIndex - tooltip data's series index
      * @param {number} [outlierIndex] - outlier index of tooltip, exists only hovered on boxplot chart's outlier point
-     * 
+     *
      * @returns {?object} - series item bound
      * @private
      */
@@ -649,7 +650,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * @param {number} index - category index
      * @param {number} seriesIndex - series index
-     * @returns {object} 
+     * @returns {object}
      */
     _findDataByIndexes: function(index, seriesIndex) {
         return this.componentManager.get('mouseEventDetector').findDataByIndexes(index, seriesIndex);

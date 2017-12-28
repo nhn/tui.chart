@@ -11,10 +11,11 @@ var SeriesDataModel = require('./seriesDataModel');
 var SeriesItem = require('./seriesItemForTreemap');
 var chartConst = require('../../const');
 var calculator = require('../../helpers/calculator');
+var snippet = require('tui-code-snippet');
 
 var aps = Array.prototype.slice;
 
-var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends SeriesDataModelForTreeMap.prototype */{
+var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForTreeMap.prototype */{
     /**
      * SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
      * @constructs SeriesDataModelForTreemap
@@ -58,14 +59,14 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
 
         ancestorIndexes = ancestorIndexes || [];
 
-        tui.util.forEachArray(rawSeriesData, function(datum, index) {
+        snippet.forEachArray(rawSeriesData, function(datum, index) {
             var id = idPrefix + index;
             var children = datum.children;
             var indexes = ancestorIndexes.concat(index);
 
             datum.indexes = indexes;
 
-            if (!tui.util.isNull(datum.value)) {
+            if (!snippet.isNull(datum.value)) {
                 flatData.push(datum);
             }
 
@@ -97,7 +98,7 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
         var filtered = [];
         var rejected = [];
 
-        tui.util.forEachArray(rawSeriesData, function(datum) {
+        snippet.forEachArray(rawSeriesData, function(datum) {
             if (datum.parent === parent) {
                 filtered.push(datum);
             } else {
@@ -124,19 +125,19 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
         var rejected = parted[1];
         var childDepth = depth + 1;
 
-        tui.util.forEachArray(filtered, function(datum, index) {
+        snippet.forEachArray(filtered, function(datum, index) {
             var descendants, children;
 
             datum.depth = depth;
-            datum.group = tui.util.isUndefined(group) ? index : group;
+            datum.group = snippet.isUndefined(group) ? index : group;
 
             descendants = self._setTreeProperties(rejected, childDepth, datum.id, datum.group);
-            children = tui.util.filter(descendants, function(descendant) {
+            children = snippet.filter(descendants, function(descendant) {
                 return descendant.depth === childDepth;
             });
 
             if (children.length) {
-                datum.value = calculator.sum(tui.util.pluck(children, 'value'));
+                datum.value = calculator.sum(snippet.pluck(children, 'value'));
                 datum.hasChild = true;
             } else {
                 datum.hasChild = false;
@@ -159,10 +160,10 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
         var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
         var filtered = parted[0];
         var rejected = parted[1];
-        var total = calculator.sum(tui.util.pluck(filtered, 'value'));
+        var total = calculator.sum(snippet.pluck(filtered, 'value'));
 
-        tui.util.forEachArray(filtered, function(datum) {
-            var value = tui.util.isNull(datum.value) ? 0 : datum.value;
+        snippet.forEachArray(filtered, function(datum) {
+            var value = snippet.isNull(datum.value) ? 0 : datum.value;
 
             datum.ratio = value / total;
 
@@ -186,7 +187,7 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
         flatSeriesData = this._setTreeProperties(flatSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
         this._setRatio(flatSeriesData, chartConst.TREEMAP_ROOT_ID);
 
-        return [tui.util.map(flatSeriesData, function(rawDatum) {
+        return [snippet.map(flatSeriesData, function(rawDatum) {
             var seriesItem = new SeriesItem(rawDatum, formatFunctions, chartType);
 
             seriesItemMap[seriesItem.id] = seriesItem;
@@ -235,7 +236,7 @@ var SeriesDataModelForTreeMap = tui.util.defineClass(SeriesDataModel, /** @lends
      * @private
      */
     _isValidGroup: function(group, comparingGroup) {
-        return !tui.util.isExisty(comparingGroup) || (group === comparingGroup);
+        return !snippet.isExisty(comparingGroup) || (group === comparingGroup);
     },
 
     /**

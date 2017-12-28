@@ -9,6 +9,7 @@
 var chartConst = require('../const');
 var raphaelRenderUtil = require('../plugins/raphaelRenderUtil');
 var arrayUtil = require('../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
 var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
 var RaphaelLegendComponent;
@@ -16,12 +17,13 @@ var RaphaelLegendComponent;
 /**
  * Get sum of icon and left padding width
  * @returns {number} - icon and left padding width
+ * @ignore
  */
 function getIconWidth() {
     return chartConst.LEGEND_ICON_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING;
 }
 
-RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
 
     init: function() {
         /**
@@ -63,9 +65,9 @@ RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.
     _renderLegendItems: function(legendData) {
         var self = this;
         var labelPaddingLeft = chartConst.LEGEND_LABEL_LEFT_PADDING;
-        var position = tui.util.extend({}, this.basePosition);
+        var position = snippet.extend({}, this.basePosition);
 
-        tui.util.forEach(legendData, function(legendDatum, index) {
+        snippet.forEach(legendData, function(legendDatum, index) {
             var legendIndex = legendDatum.index;
             var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
             var isUnselected = legendDatum.isUnselected;
@@ -169,7 +171,7 @@ RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.
         this.originalLegendData = data.legendData;
 
         if (this.originalLegendData.length) {
-            this._showCheckbox = tui.util.isExisty(data.legendData[0].checkbox);
+            this._showCheckbox = snippet.isExisty(data.legendData[0].checkbox);
             this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
             data.dimension.width = this._calculateLegendWidth(data.legendData[0].labelHeight);
 
@@ -212,7 +214,7 @@ RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.
 
     _removeLegendItems: function() {
         this.legendSet.forEach(function(legendItem) {
-            tui.util.forEach(legendItem.events, function(event) {
+            snippet.forEach(legendItem.events, function(event) {
                 event.unbind();
             });
             legendItem.remove();
@@ -266,7 +268,7 @@ RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.
      * @returns {Array.<number>} label widths
      */
     makeLabelWidths: function(legendData, theme) {
-        return tui.util.map(legendData, function(item) {
+        return snippet.map(legendData, function(item) {
             var labelWidth = raphaelRenderUtil.getRenderedTextSize(item.label, theme.fontSize, theme.fontFamily).width;
 
             return labelWidth + chartConst.LEGEND_AREA_PADDING;
@@ -407,10 +409,10 @@ RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.
             var indexData = element.data('index');
             var attributeName = element.data('icon') === 'line' ? 'stroke-opacity' : 'opacity';
 
-            if (tui.util.isNull(indexData) || tui.util.isUndefined(indexData)) {
+            if (snippet.isNull(indexData) || snippet.isUndefined(indexData)) {
                 element.attr(attributeName, 1);
-            } else if (!tui.util.isUndefined(indexData)) {
-                if (tui.util.isNumber(index) && indexData !== index) {
+            } else if (!snippet.isUndefined(indexData)) {
+                if (snippet.isNumber(index) && indexData !== index) {
                     element.attr(attributeName, UNSELECTED_LEGEND_LABEL_OPACITY);
                 } else {
                     element.attr(attributeName, 1);
@@ -431,7 +433,7 @@ RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.
      * Get width of a label when parameter is given.
      * Otherwise, returns maximum width of labels
      * @param {number} [index] - legend index
-     * @returns {number} - maximum label width  label width 
+     * @returns {number} - maximum label width  label width
      */
     _getLabelWidth: function(index) {
         var labelWidth;
@@ -446,7 +448,7 @@ RaphaelLegendComponent = tui.util.defineClass(/** @lends RaphaelLegendComponent.
 
     /**
      * calulate a whole legend width before start rendering
-     * @returns {number} - calculate label 
+     * @returns {number} - calculate label
      */
     _calculateLegendWidth: function() {
         return this._calculateSingleLegendWidth();

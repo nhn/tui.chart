@@ -8,8 +8,9 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var AXIS_BACKGROUND_RIGHT_PADDING = 4;
+var snippet = require('tui-code-snippet');
 
-var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
+var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
     init: function() {
         this.ticks = [];
     },
@@ -172,7 +173,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
         var baseLeft = layout.position.left;
         var tick;
 
-        tui.util.forEach(positions, function(position) {
+        snippet.forEach(positions, function(position) {
             var pathString = 'M';
 
             position += additionalSize;
@@ -283,7 +284,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
      * @param {number} tickSize tick size of moving
      */
     animateForAddingData: function(tickSize) {
-        tui.util.forEach(this.ticks, function(tick) {
+        snippet.forEach(this.ticks, function(tick) {
             tick.animate({
                 transform: 't-' + tickSize + ',0'
             }, 300);
@@ -336,6 +337,7 @@ var RaphaelAxisComponent = tui.util.defineClass(/** @lends RaphaelAxisComponent.
  * @param {string} text - text
  * @param {object} theme - axis theme
  * @returns {number} text height
+ * @ignore
  */
 function getTextHeight(text, theme) {
     var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
@@ -347,9 +349,10 @@ function getTextHeight(text, theme) {
  * Test axis title need to rotate
  * @param {object} rotationInfo - rotationInfo
  * @returns {boolean} - whether it needs to rotate
+ * @ignore
  */
 function doesTitleRotate(rotationInfo) {
-    if (tui.util.isExisty(rotationInfo.rotateTitle)) {
+    if (snippet.isExisty(rotationInfo.rotateTitle)) {
         return rotationInfo.rotateTitle === true;
     }
 
@@ -362,6 +365,7 @@ function doesTitleRotate(rotationInfo) {
  * @param {object} dimension - width, height
  * @param {object} position - top, left
  * @returns {number} - center position
+ * @ignore
  */
 function calculateCenterPosition(isVertical, dimension, position) {
     var size = isVertical ? dimension.height : dimension.width;
@@ -374,6 +378,7 @@ function calculateCenterPosition(isVertical, dimension, position) {
  * Add offset to position
  * @param {object} position - top, left
  * @param {object} offset - x, y
+ * @ignore
  */
 function addOffset(position, offset) {
     if (!offset) {
@@ -393,6 +398,7 @@ function addOffset(position, offset) {
  * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
  * @param {object} position - top, left
  * @returns {string} css transform
+ * @ignore
  */
 function getCSSTransform(rotationInfo, position) {
     var transform = 'none';

@@ -9,8 +9,9 @@
 
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
+var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
     /**
      * SeriesItemForCoordinateType is a element of SeriesGroup.items.
      * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
@@ -65,7 +66,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
     _initData: function(rawSeriesDatum, index) {
         var date;
 
-        if (tui.util.isArray(rawSeriesDatum)) {
+        if (snippet.isArray(rawSeriesDatum)) {
             this.x = rawSeriesDatum[0] || 0;
             this.y = rawSeriesDatum[1] || 0;
             if (predicate.isBubbleChart(this.chartType)) {
@@ -82,7 +83,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         }
 
         if (predicate.isDatetimeType(this.xAxisType)) {
-            date = tui.util.isDate(this.x) ? this.x : (new Date(this.x));
+            date = snippet.isDate(this.x) ? this.x : (new Date(this.x));
             this.x = date.getTime() || 0;
         }
 
@@ -115,7 +116,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * @param {?number} subNumber - number for subtraction
      */
     addRatio: function(valueType, divNumber, subNumber) {
-        if (!tui.util.isExisty(this.ratioMap[valueType]) && divNumber) {
+        if (!snippet.isExisty(this.ratioMap[valueType]) && divNumber) {
             this.ratioMap[valueType] = (this[valueType] - subNumber) / divNumber;
         }
     },
@@ -131,7 +132,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         var value = this[valueType];
         var formattedValue = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType);
 
-        return tui.util.isNumber(ratio) ? formattedValue : value;
+        return snippet.isNumber(ratio) ? formattedValue : value;
     },
 
     /**
@@ -146,7 +147,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
             yRatio: this.ratioMap.y
         };
 
-        if (tui.util.isExisty(this.r)) {
+        if (snippet.isExisty(this.r)) {
             valueMap.r = this._getFormattedValueForTooltip('r');
             valueMap.rRatio = this.ratioMap.r;
         }

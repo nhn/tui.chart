@@ -6,7 +6,8 @@
 
 'use strict';
 
-var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSeriesBase.prototype */ {
+var snippet = require('tui-code-snippet');
+var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeriesBase.prototype */ {
     /**
      * Make series data.
      * @returns {{
@@ -38,7 +39,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      * @param {{left: number, top: number}} mousePosition mouse position
      */
     showTooltip: function(params, bound, groupIndex, index, mousePosition) {
-        this.eventBus.fire('showTooltip', tui.util.extend({
+        this.eventBus.fire('showTooltip', snippet.extend({
             indexes: {
                 groupIndex: groupIndex,
                 index: index
@@ -63,12 +64,12 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      * @override
      */
     _renderGraph: function(dimension, seriesData, paper) {
-        var showTooltip = tui.util.bind(this.showTooltip, this, {
+        var showTooltip = snippet.bind(this.showTooltip, this, {
             chartType: this.chartType
         });
         var callbacks = {
             showTooltip: showTooltip,
-            hideTooltip: tui.util.bind(this.hideTooltip, this)
+            hideTooltip: snippet.bind(this.hideTooltip, this)
         };
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
@@ -123,7 +124,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
 });
 
 CoordinateTypeSeriesBase.mixin = function(func) {
-    tui.util.extend(func.prototype, CoordinateTypeSeriesBase.prototype);
+    snippet.extend(func.prototype, CoordinateTypeSeriesBase.prototype);
 };
 
 module.exports = CoordinateTypeSeriesBase;

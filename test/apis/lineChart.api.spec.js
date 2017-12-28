@@ -6,7 +6,9 @@
 
 'use strict';
 
+var raphael = require('raphael');
 var dom = require('../../src/js/helpers/domHandler');
+var lineChartFactory = require('../../src/js/index').lineChart;
 
 describe('Test public APIs for line chart', function() {
     var rawData = {
@@ -40,9 +42,9 @@ describe('Test public APIs for line chart', function() {
         var container = dom.create('DIV');
         var plotContainer = dom.create('DIV');
 
-        lineChart = tui.chart.lineChart(container, rawData);
+        lineChart = lineChartFactory(container, rawData);
         plot = lineChart.componentManager.get('plot');
-        plot.paper = Raphael(plotContainer, 100, 100);
+        plot.paper = raphael(plotContainer, 100, 100);
         plot.paper.pushDownBackgroundToBottom = function() {};
     });
 

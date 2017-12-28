@@ -8,8 +8,9 @@
 
 var predicate = require('../../helpers/predicate');
 var arrayUtil = require('../../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
-var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.prototype */ {
+var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototype */ {
     /**
      * TickBaseDataModel is tick base data model.
      * @param {{
@@ -50,7 +51,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
         var prev = firstPosition;
         var halfInterval = tickInterval / 2;
 
-        return tui.util.map(tui.util.range(0, tickCount), function() {
+        return snippet.map(snippet.range(0, tickCount), function() {
             var limit = {
                 min: prev - halfInterval,
                 max: prev + halfInterval
@@ -92,7 +93,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
         var tickInterval = size / len;
         var prev = (firstPosition || 0);
 
-        return tui.util.map(tui.util.range(0, len), function() {
+        return snippet.map(snippet.range(0, len), function() {
             var max = arrayUtil.min([size + prev, tickInterval + prev]);
             var limit = {
                 min: prev,
@@ -134,7 +135,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     findIndex: function(pointValue) {
         var foundIndex = -1;
 
-        tui.util.forEachArray(this.data, function(limit, index) {
+        snippet.forEachArray(this.data, function(limit, index) {
             if (limit.min < pointValue && limit.max >= pointValue) {
                 foundIndex = index;
 

@@ -11,8 +11,9 @@ var BarTypeSeriesBase = require('./barTypeSeriesBase');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
+var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**
      * Column chart series component.
      * @constructs ColumnChartSeries
@@ -133,7 +134,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 minusTop: 0,
                 prevStack: null
             };
-            var iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStackType);
+            var iteratee = snippet.bind(self._makeColumnChartBound, self, baseData, iterationData, isStackType);
 
             return seriesGroup.map(iteratee);
         });
