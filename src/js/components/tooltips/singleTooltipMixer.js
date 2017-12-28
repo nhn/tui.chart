@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var chartConst = require('../../const'),
     predicate = require('../../helpers/predicate'),
     dom = require('../../helpers/domHandler'),
@@ -38,7 +39,7 @@ var singleTooltipMixer = {
         var index = elTooltip.getAttribute('data-index');
         var indexes = null;
 
-        if (!tui.util.isNull(groupIndex) && !tui.util.isNull(index)) {
+        if (!snippet.isNull(groupIndex) && !snippet.isNull(index)) {
             indexes = {
                 groupIndex: parseInt(groupIndex, 10),
                 index: parseInt(index, 10)
@@ -155,7 +156,7 @@ var singleTooltipMixer = {
     _makeTooltipPositionToMousePosition: function(params) {
         if (!params.bound) {
             params.bound = params.bound || {};
-            tui.util.extend(params.bound, params.mousePosition);
+            snippet.extend(params.bound, params.mousePosition);
         }
 
         return this._makeTooltipPositionForNotBarChart(params);
@@ -401,7 +402,7 @@ var singleTooltipMixer = {
         positionOption.left = offset.x || 0;
         positionOption.top = offset.y || 0;
 
-        position = this._makeTooltipPosition(tui.util.extend({
+        position = this._makeTooltipPosition(snippet.extend({
             dimension: this.getTooltipDimension(elTooltip),
             positionOption: positionOption,
             alignOption: this.options.align || ''
@@ -533,7 +534,7 @@ var singleTooltipMixer = {
      * @ignore
      */
     mixin: function(func) {
-        tui.util.extend(func.prototype, this);
+        snippet.extend(func.prototype, this);
     }
 };
 

@@ -7,6 +7,7 @@
 'use strict';
 
 var dom = require('../../src/js/helpers/domHandler');
+var lineChartFactory = require('../../src/js/index').lineChart;
 
 describe('Test user events for line chart', function() {
     var rawData = {
@@ -39,7 +40,7 @@ describe('Test user events for line chart', function() {
     beforeEach(function() {
         var container = dom.create('DIV');
 
-        lineChart = tui.chart.lineChart(container, rawData, {
+        lineChart = lineChartFactory(container, rawData, {
             series: {
                 allowSelect: true
             }

@@ -11,6 +11,7 @@ var predicate = require('../../helpers/predicate');
 var geomatric = require('../../helpers/geometric');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
 /**
  * Axis data maker.
@@ -27,7 +28,7 @@ var axisDataMaker = {
      */
     _makeLabelsByIntervalOption: function(labels, labelInterval, addedDataCount) {
         addedDataCount = addedDataCount || 0;
-        labels = tui.util.map(labels, function(label, index) {
+        labels = snippet.map(labels, function(label, index) {
             if (((index + addedDataCount) % labelInterval) !== 0) {
                 label = chartConst.EMPTY_AXIS_LABEL;
             }
@@ -223,12 +224,12 @@ var axisDataMaker = {
      */
     _makeCandidatesForAdjustingInterval: function(beforeBlockCount, seriesWidth) {
         var self = this;
-        var blockSizeRange = tui.util.range(90, 121, 5); // [90, 95, 100, 105, 110, 115, 120]
-        var candidates = tui.util.map(blockSizeRange, function(blockSize) {
+        var blockSizeRange = snippet.range(90, 121, 5); // [90, 95, 100, 105, 110, 115, 120]
+        var candidates = snippet.map(blockSizeRange, function(blockSize) {
             return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
         });
 
-        return tui.util.filter(candidates, function(info) {
+        return snippet.filter(candidates, function(info) {
             return !!info;
         });
     },
@@ -262,7 +263,7 @@ var axisDataMaker = {
      * @private
      */
     _makeFilteredLabelsByInterval: function(labels, startIndex, interval) {
-        return tui.util.filter(labels.slice(startIndex), function(label, index) {
+        return snippet.filter(labels.slice(startIndex), function(label, index) {
             return index % interval === 0;
         });
     },
@@ -308,7 +309,7 @@ var axisDataMaker = {
 
         axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
 
-        tui.util.extend(axisData, {
+        snippet.extend(axisData, {
             startIndex: startIndex,
             tickCount: adjustingBlockCount + 1,
             positionRatio: (startIndex / beforeBlockCount),
@@ -340,7 +341,7 @@ var axisDataMaker = {
         newBlockCount = axisData.labels.length - 1;
         beforeRemainBlockCount = beforeBlockCount - (interval * newBlockCount);
 
-        tui.util.extend(axisData, {
+        snippet.extend(axisData, {
             startIndex: startIndex,
             eventTickCount: axisData.tickCount,
             tickCount: axisData.labels.length,
@@ -379,7 +380,7 @@ var axisDataMaker = {
         var lineWords = words[0];
         var lines = [];
 
-        tui.util.forEachArray(words.slice(1), function(word) {
+        snippet.forEachArray(words.slice(1), function(word) {
             var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
 
             if (width > limitWidth) {
@@ -408,7 +409,7 @@ var axisDataMaker = {
     _createMultilineLabels: function(labels, labelTheme, labelAreaWidth) {
         var _createMultilineLabel = this._createMultilineLabel;
 
-        return tui.util.map(labels, function(label) {
+        return snippet.map(labels, function(label) {
             return _createMultilineLabel(label, labelAreaWidth, labelTheme);
         });
     },
@@ -422,7 +423,7 @@ var axisDataMaker = {
      * @private
      */
     _calculateMultilineHeight: function(multilineLabels, labelTheme, labelAreaWidth) {
-        return renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
+        return renderUtil.getRenderedLabelsMaxHeight(multilineLabels, snippet.extend({
             cssText: 'line-height:1.2;width:' + labelAreaWidth + 'px'
         }, labelTheme));
     },
@@ -461,7 +462,7 @@ var axisDataMaker = {
     _findRotationDegree: function(labelAreaWidth, labelWidth, labelHeight) {
         var foundDegree = null;
 
-        tui.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
+        snippet.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
             var compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
 
             foundDegree = degree;

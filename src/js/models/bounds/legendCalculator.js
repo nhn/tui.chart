@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
@@ -42,7 +43,7 @@ var legendCalculator = {
             + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
         var legendMargin = this.legendMargin;
 
-        return calculator.sum(tui.util.map(labels, function(label) {
+        return calculator.sum(snippet.map(labels, function(label) {
             var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + restWidth;
 
             return labelWidth + legendMargin;
@@ -61,7 +62,7 @@ var legendCalculator = {
         var results = [];
         var temp = [];
 
-        tui.util.forEachArray(labels, function(label) {
+        snippet.forEachArray(labels, function(label) {
             if (temp.length < limitCount) {
                 temp.push(label);
             } else {
@@ -87,7 +88,7 @@ var legendCalculator = {
      */
     _getMaxLineWidth: function(dividedLabels, labelTheme, checkboxWidth) {
         var self = this;
-        var lineWidths = tui.util.map(dividedLabels, function(labels) {
+        var lineWidths = snippet.map(dividedLabels, function(labels) {
             return self._calculateLegendsWidthSum(labels, labelTheme, checkboxWidth);
         });
 
@@ -137,7 +138,7 @@ var legendCalculator = {
      * @private
      */
     _calculateHorizontalLegendHeight: function(dividedLabels, labelTheme) {
-        var heightByLabel = Math.max.apply(null, tui.util.map(dividedLabels, function(labels) {
+        var heightByLabel = Math.max.apply(null, snippet.map(dividedLabels, function(labels) {
             return renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
         }));
         var labelItemHeightWithPaddingTop = Math.max(LEGEND_ICON_HEIGHT, heightByLabel) + chartConst.LINE_MARGIN_TOP;

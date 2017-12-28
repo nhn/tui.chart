@@ -29,7 +29,7 @@ describe('Test for zoomMixer', function() {
                 left: 50,
                 top: 50
             }
-        }
+        };
     });
 
     describe('_showDragSelection()', function() {

@@ -8,18 +8,21 @@
 
 var DataProcessorBase = require('./dataProcessorBase');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 /**
  * Raw series data.
  * @typedef {Array.<{code: string, name: ?string, data: number}>} rawSeriesData
+ * @private
  */
 
 /**
  * Value map.
  * @typedef {{value: number, label: string, name: ?string}} valueMap
+ * @private
  */
 
-var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends MapChartDataProcessor.prototype */{
+var MapChartDataProcessor = snippet.defineClass(DataProcessorBase, /** @lends MapChartDataProcessor.prototype */{
     /**
      * Data processor for map chart.
      * @param {rawData} rawData raw data
@@ -67,7 +70,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends M
         var valueMap = {};
         var formatFunctions = this._findFormatFunctions();
 
-        tui.util.forEachArray(rawSeriesData, function(datum) {
+        snippet.forEachArray(rawSeriesData, function(datum) {
             var result = {
                 value: datum.data,
                 label: renderUtil.formatValue(datum.data, formatFunctions, 'map', 'series')
@@ -104,7 +107,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends M
      * @returns {Array.<number>} picked values.
      */
     getValues: function() {
-        return tui.util.pluck(this.getValueMap(), 'value');
+        return snippet.pluck(this.getValueMap(), 'value');
     },
 
     /**
@@ -124,7 +127,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends M
     addDataRatios: function(limit) {
         var min = limit.min,
             max = limit.max - min;
-        tui.util.forEach(this.getValueMap(), function(map) {
+        snippet.forEach(this.getValueMap(), function(map) {
             map.ratio = (map.value - min) / max;
         });
     },

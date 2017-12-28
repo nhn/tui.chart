@@ -10,6 +10,7 @@ var treemapSeriesFactory = require('../../../src/js/components/series/treemapCha
 var SeriesDataModel = require('../../../src/js/models/data/seriesDataModelForTreemap');
 var chartConst = require('../../../src/js/const');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 describe('TreemapChartSeries', function() {
     var rootId = chartConst.TREEMAP_ROOT_ID;
@@ -30,7 +31,7 @@ describe('TreemapChartSeries', function() {
                     fontWeight: 'normal'
                 }
             },
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
         series.layout = {
             position: {

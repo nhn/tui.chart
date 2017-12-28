@@ -6,7 +6,8 @@
 
 'use strict';
 
-var IS_MSIE_VERSION_LTE_THAN_8 = tui.util.browser.msie && tui.util.browser.version <= 8;
+var snippet = require('tui-code-snippet');
+var IS_MSIE_VERSION_LTE_THAN_8 = snippet.browser.msie && snippet.browser.version <= 8;
 
 var seriesTemplate = require('./seriesTemplate');
 var chartConst = require('../../const');
@@ -14,7 +15,7 @@ var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var eventListener = require('../../helpers/eventListener');
 
-var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
+var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
     /**
      * zoom component className
      * @type {string}

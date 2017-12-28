@@ -9,8 +9,9 @@
 var Series = require('./series');
 var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
 var chartConst = require('../../const');
+var snippet = require('tui-code-snippet');
 
-var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
+var ScatterChartSeries = snippet.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
     /**
      * Scatter chart series component.
      * @constructs ScatterChartSeries

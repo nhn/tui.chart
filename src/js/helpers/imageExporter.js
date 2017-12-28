@@ -8,8 +8,9 @@
 
 var downloader = require('./downloader');
 var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
 
-var browser = tui.util.browser;
+var browser = snippet.browser;
 var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
 var DOMURL = window.URL || window.webkitURL || window;
 var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
@@ -18,6 +19,7 @@ var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
  * Return svg outerHTML string
  * @param {HTMLElement} svgElement svg element
  * @returns {string}
+ * @ignore
  */
 function getSvgString(svgElement) {
     var svgParent = svgElement.parentNode;
@@ -40,6 +42,7 @@ function getSvgString(svgElement) {
  * @param {string} svgString svg HTML string
  * @param {string} fileName file name
  * @param {string} extension file extension
+ * @ignore
  */
 function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
     var ctx = canvas.getContext('2d');
@@ -63,6 +66,7 @@ function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
  * @param {string} svgString svg HTML string
  * @param {string} fileName file name
  * @param {string} extension file extension
+ * @ignore
  */
 function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
     var ctx = canvas.getContext('2d');

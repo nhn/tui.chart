@@ -1,6 +1,7 @@
 'use strict';
 
 var dom = require('../helpers/domHandler');
+var snippet = require('tui-code-snippet');
 
 /**
  * Get raphael paper
@@ -13,6 +14,7 @@ var dom = require('../helpers/domHandler');
 /**
  * Renderers
  * @type {object}
+ * @ignore
  */
 var renderers = {
     DOM: function(container) {
@@ -23,10 +25,11 @@ var renderers = {
     }
 };
 
-var DrawingToolPicker = tui.util.defineClass({
+var DrawingToolPicker = snippet.defineClass({
     /**
      * DrawingToolPicker initializer
      * @param {{width:number, height:number}} dimension dimension
+     * @ignore
      */
     initDimension: function(dimension) {
         this.dimension = dimension;
@@ -37,10 +40,11 @@ var DrawingToolPicker = tui.util.defineClass({
      * @param {HTMLElement} container container element
      * @param {string} rendererType component renderer type
      * @returns {HTMLElement|object}
+     * @ignore
      */
     getPaper: function(container, rendererType) {
         var paper = this[rendererType + 'Paper'];
-        var isNeedCreateNewPaper = tui.util.isExisty(container)
+        var isNeedCreateNewPaper = snippet.isExisty(container)
             && paper && dom.findParentByClass(paper.canvas, 'tui-chart') !== container;
 
         if (!paper || isNeedCreateNewPaper) {

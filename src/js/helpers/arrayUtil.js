@@ -6,6 +6,8 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 /**
  * Pick minimum value from value array.
  * @memberOf module:arrayUtil
@@ -23,7 +25,7 @@ var min = function(arr, condition, context) {
         result = arr[0];
         minValue = condition.call(context, result, 0);
         rest = arr.slice(1);
-        tui.util.forEachArray(rest, function(item, index) {
+        snippet.forEachArray(rest, function(item, index) {
             var compareValue = condition.call(context, item, index + 1);
             if (compareValue < minValue) {
                 minValue = compareValue;
@@ -52,7 +54,7 @@ var max = function(arr, condition, context) {
         result = arr[0];
         maxValue = condition.call(context, result, 0);
         rest = arr.slice(1);
-        tui.util.forEachArray(rest, function(item, index) {
+        snippet.forEachArray(rest, function(item, index) {
             var compareValue = condition.call(context, item, index + 1);
             if (compareValue > maxValue) {
                 maxValue = compareValue;
@@ -74,7 +76,7 @@ var max = function(arr, condition, context) {
  */
 var any = function(collection, condition, context) {
     var result = false;
-    tui.util.forEach(collection, function(item, key) {
+    snippet.forEach(collection, function(item, key) {
         if (condition.call(context, item, key, collection)) {
             result = true;
         }
@@ -95,7 +97,7 @@ var any = function(collection, condition, context) {
  */
 var all = function(collection, condition, context) {
     var result = !!(collection || []).length;
-    tui.util.forEach(collection, function(item, key) {
+    snippet.forEach(collection, function(item, key) {
         if (!condition.call(context, item, key, collection)) {
             result = false;
         }
@@ -119,7 +121,7 @@ var unique = function(arr, sorted, iteratee, context) {
     var result = [],
         prevValue;
 
-    if (!tui.util.isBoolean(sorted)) {
+    if (!snippet.isBoolean(sorted)) {
         context = iteratee;
         iteratee = sorted;
         sorted = false;
@@ -130,7 +132,7 @@ var unique = function(arr, sorted, iteratee, context) {
     };
 
     if (sorted) {
-        tui.util.forEachArray(arr, function(value, index) {
+        snippet.forEachArray(arr, function(value, index) {
             value = iteratee.call(context, value, index, arr);
             if (!index || prevValue !== value) {
                 result.push(value);
@@ -138,9 +140,9 @@ var unique = function(arr, sorted, iteratee, context) {
             prevValue = value;
         });
     } else {
-        tui.util.forEachArray(arr, function(value, index) {
+        snippet.forEachArray(arr, function(value, index) {
             value = iteratee.call(context, value, index, arr);
-            if (tui.util.inArray(value, result) === -1) {
+            if (snippet.inArray(value, result) === -1) {
                 result.push(value);
             }
         });
@@ -157,12 +159,12 @@ var unique = function(arr, sorted, iteratee, context) {
  */
 var pivot = function(arr2d) {
     var result = [];
-    var len = max(tui.util.map(arr2d, function(arr) {
+    var len = max(snippet.map(arr2d, function(arr) {
         return arr.length;
     }));
     var index;
 
-    tui.util.forEachArray(arr2d, function(arr) {
+    snippet.forEachArray(arr2d, function(arr) {
         for (index = 0; index < len; index += 1) {
             if (!result[index]) {
                 result[index] = [];
@@ -174,11 +176,6 @@ var pivot = function(arr2d) {
     return result;
 };
 
-/**
- * Util for array.
- * @module arrayUtil
- * @private
- */
 var arrayUtil = {
     min: min,
     max: max,
@@ -187,8 +184,5 @@ var arrayUtil = {
     unique: unique,
     pivot: pivot
 };
-
-tui.util.defineNamespace('tui.chart');
-tui.chart.arrayUtil = arrayUtil;
 
 module.exports = arrayUtil;

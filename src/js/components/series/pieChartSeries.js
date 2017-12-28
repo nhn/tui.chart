@@ -9,8 +9,9 @@
 var Series = require('./series');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
-var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
+var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs PieChartSeries
@@ -53,7 +54,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _makeValidAngle: function(angle, defaultAngle) {
-        if (tui.util.isUndefined(angle)) {
+        if (snippet.isUndefined(angle)) {
             angle = defaultAngle;
         } else if (angle < 0) {
             angle = chartConst.ANGLE_360 - (Math.abs(angle) % chartConst.ANGLE_360);
@@ -73,7 +74,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _transformRadiusRange: function(radiusRange) {
         radiusRange = radiusRange || ['0%', '100%'];
 
-        return tui.util.map(radiusRange, function(percent) {
+        return snippet.map(radiusRange, function(percent) {
             var ratio = parseInt(percent, 10) * 0.01;
 
             return Math.max(Math.min(ratio, 1), 0);
@@ -169,14 +170,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return {
                 ratio: ratio,
                 angles: angles,
-                centerPosition: self._getArcPosition(tui.util.extend({
+                centerPosition: self._getArcPosition(snippet.extend({
                     r: centerR
                 }, positionData)),
                 outerPosition: {
-                    start: self._getArcPosition(tui.util.extend({
+                    start: self._getArcPosition(snippet.extend({
                         r: r
                     }, positionData)),
-                    middle: self._getArcPosition(tui.util.extend({
+                    middle: self._getArcPosition(snippet.extend({
                         r: r + delta
                     }, positionData))
                 }
@@ -346,7 +347,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var radius = this._calculateRadius();
         var centerXY = this._calculateCenterXY(radius);
 
-        return tui.util.extend({
+        return snippet.extend({
             r: radius
         }, centerXY);
     },
@@ -377,14 +378,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _renderGraph: function(dimension, seriesData, paper) {
-        var showTootltip = tui.util.bind(this.showTooltip, this, {
+        var showTootltip = snippet.bind(this.showTooltip, this, {
             allowNegativeTooltip: !!this.allowNegativeTooltip,
             seriesType: this.seriesType,
             chartType: this.chartType
         });
         var callbacks = {
             showTooltip: showTootltip,
-            hideTooltip: tui.util.bind(this.hideTooltip, this)
+            hideTooltip: snippet.bind(this.hideTooltip, this)
         };
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
         var currentSeriesName = this.seriesType;
@@ -392,7 +393,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var pastSeriesNames = [];
         var pastIndex = 0;
 
-        tui.util.forEach(this.dataProcessor.seriesTypes, function(seriesType) {
+        snippet.forEach(this.dataProcessor.seriesTypes, function(seriesType) {
             var needNext = true;
 
             if (seriesType !== currentSeriesName) {
@@ -404,7 +405,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return needNext;
         });
 
-        tui.util.forEach(pastSeriesNames, function(seriesType) {
+        snippet.forEach(pastSeriesNames, function(seriesType) {
             pastIndex += seriesDataModelMap[seriesType].baseGroups.length;
         });
 
@@ -432,7 +433,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {{left: number, top: number}} mousePosition mouse position
      */
     showTooltip: function(params, bound, groupIndex, index, mousePosition) {
-        this.eventBus.fire('showTooltip', tui.util.extend({
+        this.eventBus.fire('showTooltip', snippet.extend({
             indexes: {
                 groupIndex: groupIndex,
                 index: index
@@ -480,7 +481,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var positions;
 
         if (params.funcMoveToPosition) {
-            positions = tui.util.map(params.positions, function(position, index) {
+            positions = snippet.map(params.positions, function(position, index) {
                 var outerPosition = null;
 
                 if (position) {
@@ -503,7 +504,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _pickPositionsFromSectorData: function(positionType) {
-        return tui.util.map(this.seriesData.sectorData, function(datum) {
+        return snippet.map(this.seriesData.sectorData, function(datum) {
             return datum.ratio ? datum[positionType] : null;
         });
     },
@@ -527,14 +528,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _addEndPosition: function(centerLeft, positions) {
-        tui.util.forEachArray(positions, function(position) {
+        snippet.forEachArray(positions, function(position) {
             var end;
 
             if (!position) {
                 return;
             }
 
-            end = tui.util.extend({}, position.middle);
+            end = snippet.extend({}, position.middle);
             if (end.left < centerLeft) {
                 end.left -= chartConst.SERIES_OUTER_LABEL_PADDING;
             } else {
@@ -580,7 +581,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderOuterLegend: function(paper) {
         var centerLeft = this.getSeriesData().circleBound.cx;
         var outerPositions = this._pickPositionsFromSectorData('outerPosition');
-        var filteredPositions = tui.util.filter(outerPositions, function(position) {
+        var filteredPositions = snippet.filter(outerPositions, function(position) {
             return position;
         });
 
@@ -590,7 +591,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
         return this._renderLegendLabel(paper, {
             positions: outerPositions,
-            funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
+            funcMoveToPosition: snippet.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
         });
     },
@@ -630,7 +631,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _moveLegendLines: function() {
         var centerLeft = this.dimensionMap.chart.width / 2,
             outerPositions = this._pickPositionsFromSectorData('outerPosition'),
-            filteredPositions = tui.util.filter(outerPositions, function(position) {
+            filteredPositions = snippet.filter(outerPositions, function(position) {
                 return position;
             });
 
@@ -647,7 +648,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _isDetectedLabel: function(position) {
         var labelElement = document.elementFromPoint(position.left, position.top);
 
-        return tui.util.isString(labelElement.className);
+        return snippet.isString(labelElement.className);
     },
 
     /**
@@ -660,7 +661,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var allowSelect = this.options.allowSelect;
         var foundIndex, shouldSelect;
 
-        if ((sectorInfo || this._isDetectedLabel(position)) && tui.util.isExisty(prevIndex) && allowSelect) {
+        if ((sectorInfo || this._isDetectedLabel(position)) && snippet.isExisty(prevIndex) && allowSelect) {
             this.onUnselectSeries({
                 indexes: {
                     index: prevIndex

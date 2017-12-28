@@ -4,22 +4,28 @@
     "NHN Ent. FE Development Lab <dl_javascript@nhnent.com>"
   ],
   "license": "MIT",
-  "description": "NHN Ent. Toast UI Chart",
+  "main": [
+    "dist/tui-chart.js",
+    "dist/tui-chart.css"
+  ],
   "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
     "maps",
     "!dist/maps",
-    "samples",
+    "examples",
     "src",
     "test",
-    "gulpfile.js",
     "index.html",
-    "jsdoc-conf.json",
+    "jsdoc.conf.json",
     "karma.conf.js",
+    "webpack.config.js",
     "package.json"
   ],
   "dependencies": {
     "raphael": "https://github.com/nhnent/raphael.git#2.2.0b",
-    "tui-code-snippet": "1.0.8"
+    "tui-code-snippet": "^1.2.5"
   },
   "devDependencies": {
     "codemirror": "5.24.0"

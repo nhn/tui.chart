@@ -8,8 +8,9 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
 
-var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
+var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
     /**
      * className
      * @type {string}
@@ -32,7 +33,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
 
-        if (tui.util.isUndefined(options.circleLegend.visible)) {
+        if (snippet.isUndefined(options.circleLegend.visible)) {
             options.circleLegend.visible = true;
         }
 
@@ -76,7 +77,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
         ChartBase.prototype._setDefaultOptions.call(this, options);
         this.options.circleLegend = this.options.circleLegend || {};
 
-        if (tui.util.isUndefined(this.options.circleLegend.visible)) {
+        if (snippet.isUndefined(this.options.circleLegend.visible)) {
             this.options.circleLegend.visible = true;
         }
     },

@@ -8,6 +8,7 @@
 
 var labelHelper = require('../../../src/js/components/series/renderingLabelHelper');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 describe('Test for renderingLabelHelper', function() {
     beforeAll(function() {
@@ -65,7 +66,7 @@ describe('Test for renderingLabelHelper', function() {
                 width: 40,
                 height: 50
             };
-            var makePosition = tui.util.bind(labelHelper._makePositionForBoundType, labelHelper);
+            var makePosition = snippet.bind(labelHelper._makePositionForBoundType, labelHelper);
             var actual = labelHelper._makePositionMap(seriesItem, bound, 20, {}, makePosition);
 
             expect(actual.end).toEqual({
@@ -86,7 +87,7 @@ describe('Test for renderingLabelHelper', function() {
                 width: 40,
                 height: 50
             };
-            var makePosition = tui.util.bind(labelHelper._makePositionForBarChart, labelHelper);
+            var makePosition = snippet.bind(labelHelper._makePositionForBarChart, labelHelper);
             var actual = labelHelper._makePositionMap(seriesItem, bound, 20, {}, makePosition);
 
             expect(actual.end).toEqual({

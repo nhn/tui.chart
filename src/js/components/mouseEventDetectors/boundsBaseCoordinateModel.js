@@ -9,6 +9,7 @@
 /**
  * position
  * @typedef {{left: number, top: number}} position
+ * @private
  */
 
 /**
@@ -17,16 +18,19 @@
  *      dimension: {width: number, height: number},
  *      position: position
  *}} bound
+ * @private
  */
 
 /**
  * group bound
  *  @typedef {Array.<Array.<bound>>} groupBound
+ * @private
  */
 
 /**
  * group position
  *  @typedef {Array.<Array.<position>>} groupPosition
+ * @private
  */
 
 /**
@@ -39,13 +43,15 @@
  *          groupPositions: ?groupPosition
  *      }
  *}} seriesInfo
+ * @private
  */
 
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var arrayUtil = require('../../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
-var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
+var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
     /**
      * BoundsBaseCoordinateModel is data mode for mouse event detector of bounds type.
      * @constructs BoundsBaseCoordinateModel
@@ -66,8 +72,8 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     _makeRectTypePositionData: function(groupBounds, chartType) {
         var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
 
-        return tui.util.map(groupBounds, function(bounds, groupIndex) {
-            return tui.util.map(bounds, function(_bound, index) {
+        return snippet.map(groupBounds, function(bounds, groupIndex) {
+            return snippet.map(bounds, function(_bound, index) {
                 var bound;
                 if (!_bound) {
                     return null;
@@ -107,12 +113,12 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
         var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
         var _groupBounds = [].concat(groupBounds);
 
-        tui.util.forEach(_groupBounds, function(bounds, groupIndex) {
-            tui.util.forEach(bounds, function(_bound, index) {
+        snippet.forEach(_groupBounds, function(bounds, groupIndex) {
+            snippet.forEach(bounds, function(_bound, index) {
                 var outliers;
 
                 if (_bound.outliers && _bound.outliers.length) {
-                    outliers = tui.util.map(_bound.outliers, function(outlier, outlierIndex) {
+                    outliers = snippet.map(_bound.outliers, function(outlier, outlierIndex) {
                         var bound = {
                             top: outlier.top - 3,
                             left: outlier.left - 3,
@@ -158,8 +164,8 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
             return [];
         }
 
-        return tui.util.map(arrayUtil.pivot(groupPositions), function(positions, groupIndex) {
-            return tui.util.map(positions, function(position, index) {
+        return snippet.map(arrayUtil.pivot(groupPositions), function(positions, groupIndex) {
+            return snippet.map(positions, function(position, index) {
                 if (!position) {
                     return null;
                 }
@@ -192,15 +198,15 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
      */
     _joinData: function(dataGroupSet) {
         var results = [];
-        tui.util.forEachArray(dataGroupSet, function(dataGroup) {
-            tui.util.forEachArray(dataGroup, function(data, index) {
+        snippet.forEachArray(dataGroupSet, function(dataGroup) {
+            snippet.forEachArray(dataGroup, function(data, index) {
                 var additionalIndex;
 
                 if (!results[index]) {
                     results[index] = data;
                 } else {
                     additionalIndex = results[index].length;
-                    tui.util.forEachArray(data, function(datum) {
+                    snippet.forEachArray(data, function(datum) {
                         if (datum) {
                             datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + additionalIndex;
                         }
@@ -221,7 +227,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
      */
     _makeData: function(seriesItemBoundsData) {
         var self = this;
-        var data = tui.util.map(seriesItemBoundsData, function(info) {
+        var data = snippet.map(seriesItemBoundsData, function(info) {
             var result;
 
             if (predicate.isLineTypeChart(info.chartType)) {
@@ -249,7 +255,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
      * @private
      */
     _findCandidates: function(data, layerX, layerY) {
-        return tui.util.filter(data, function(datum) {
+        return snippet.filter(data, function(datum) {
             var bound = datum && datum.bound,
                 included = false,
                 includedX, includedY;
@@ -281,7 +287,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
             candidates = this._findCandidates(this.data[groupIndex], layerX, layerY);
 
             // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
-            tui.util.forEachArray(candidates, function(data) {
+            snippet.forEachArray(candidates, function(data) {
                 var diff = Math.abs(layerY - data.bound.top);
 
                 if (min > diff) {
@@ -303,7 +309,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     findDataByIndexes: function(indexes) {
         var foundData = this.data[indexes.index][indexes.seriesIndex].sendData;
 
-        if (tui.util.isNumber(indexes.outlierIndex)) {
+        if (snippet.isNumber(indexes.outlierIndex)) {
             return this._findOutlierDataByIndexes(indexes);
         }
 
@@ -322,7 +328,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
     _findOutlierDataByIndexes: function(indexes) {
         var foundData = null;
 
-        tui.util.forEachArray(this.data[indexes.index], function(datum) {
+        snippet.forEachArray(this.data[indexes.index], function(datum) {
             var datumIndexes = datum.sendData.indexes;
             var found = (datumIndexes.index === indexes.seriesIndex) &&
                 (datumIndexes.outlierIndex === indexes.outlierIndex);

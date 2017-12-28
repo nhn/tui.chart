@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var maker = require('../../../src/js/models/scaleData/axisDataMaker');
 var chartConst = require('../../../src/js/const');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
@@ -255,7 +256,7 @@ describe('Test for axisDataMaker', function() {
         it('보기좋은 tick inertval을 계산하여 axisData 정보의 tick interval관련 부분을 추가 갱신 합니다.', function() {
             var axisData = {
                 tickCount: 20,
-                labels: tui.util.range(10, 201, 10)
+                labels: snippet.range(10, 201, 10)
             };
             maker.updateLabelAxisDataForAutoTickInterval(axisData, 400, 0);
 
@@ -273,7 +274,7 @@ describe('Test for axisDataMaker', function() {
         it('이전에 갱신된 prevUpdatedData 정보와 새로 생성된 axisData를 이용하여 axisData의 tick interval관련 부분을 갱신합니다.', function() {
             var axisData = {
                 tickCount: 21,
-                labels: tui.util.range(10, 211, 10)
+                labels: snippet.range(10, 211, 10)
             };
             var prevUpdatedData = {
                 interval: 6,
@@ -328,7 +329,7 @@ describe('Test for axisDataMaker', function() {
                 fontSize: 12,
                 fontFamily: 'Verdana'
             };
-            var labelWidth = 50
+            var labelWidth = 50;
             var actual = maker._createMultilineLabels(labels, labelTheme, labelWidth);
 
             expect(actual).toEqual(['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']);
@@ -340,9 +341,9 @@ describe('Test for axisDataMaker', function() {
             spyOn(renderUtil, 'getRenderedLabelHeight').and.callFake(function(value) {
                 if (value.indexOf('</br>') > -1) {
                     return 40;
-                } else {
-                    return 20;
                 }
+
+                return 20;
             });
         });
         it('calculate multiple line height', function() {
@@ -369,7 +370,6 @@ describe('Test for axisDataMaker', function() {
             expect(actual).toBe(20);
         });
     });
-
 
     describe('_findRotationDegree()', function() {
         it('find rotation degree', function() {

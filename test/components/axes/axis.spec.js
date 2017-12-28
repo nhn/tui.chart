@@ -6,8 +6,7 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-var raphael = window.Raphael;
-
+var raphael = require('raphael');
 var axisFactory = require('../../../src/js/components/axes/axis');
 var dom = require('../../../src/js/helpers/domHandler');
 var renderUtil = require('../../../src/js/helpers/renderUtil');

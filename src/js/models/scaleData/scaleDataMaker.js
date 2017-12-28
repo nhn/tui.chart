@@ -11,6 +11,7 @@ var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var arrayUtil = require('../../helpers/arrayUtil');
 var coordinateScaleCalculator = require('./coordinateScaleCalculator.js');
+var snippet = require('tui-code-snippet');
 
 var abs = Math.abs;
 
@@ -95,7 +96,7 @@ var scaleDataMaker = {
         var foundType;
 
         if (diff) {
-            tui.util.forEachArray(millisecondTypes, function(type, index) {
+            snippet.forEachArray(millisecondTypes, function(type, index) {
                 var millisecond = millisecondMap[type];
                 var dividedCount = Math.floor(diff / millisecond);
                 var foundIndex;
@@ -105,7 +106,7 @@ var scaleDataMaker = {
                     foundType = millisecondTypes[foundIndex];
                 }
 
-                return !tui.util.isExisty(foundIndex);
+                return !snippet.isExisty(foundIndex);
             });
         } else {
             foundType = chartConst.DATE_TYPE_SECOND;
@@ -261,8 +262,8 @@ var scaleDataMaker = {
 
         if (limitOption && (limitOption.min || limitOption.max)) {
             stepCount = null;
-            min = tui.util.isExisty(limitOption.min) ? limitOption.min : min;
-            max = tui.util.isExisty(limitOption.max) ? limitOption.max : max;
+            min = snippet.isExisty(limitOption.min) ? limitOption.min : min;
+            max = snippet.isExisty(limitOption.max) ? limitOption.max : max;
         }
 
         scaleData = coordinateScaleCalculator({

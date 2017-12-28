@@ -12,12 +12,11 @@ var LineTypeSeriesBase = require('../../../src/js/components/series/lineTypeSeri
     renderUtil = require('../../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
-    var series, makeSeriesLabelHtml, dataProcessor;
+    var series, dataProcessor;
 
     beforeAll(function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
-        makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
     });
 
     beforeEach(function() {

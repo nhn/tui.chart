@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var bubbleSeriesFactory = require('../../../src/js/components/series/bubbleChartSeries');
 
 describe('BubbleChartSeries', function() {
@@ -28,7 +29,7 @@ describe('BubbleChartSeries', function() {
             },
             options: {},
             dataProcessor: dataProcessor,
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
         series.layout = {
             position: {

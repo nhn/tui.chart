@@ -8,8 +8,9 @@
 
 var chartConst = require('../const');
 var arrayUtil = require('../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
-var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototype */ {
+var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype */ {
     /**
      * MapChartMapModel is map model of map chart.
      * @constructs MapChartMapModel
@@ -27,14 +28,14 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
          * }}
          */
         this.commandFuncMap = {
-            M: tui.util.bind(this._makeCoordinate, this),
-            m: tui.util.bind(this._makeCoordinateFromRelativeCoordinate, this),
-            L: tui.util.bind(this._makeCoordinate, this),
-            l: tui.util.bind(this._makeCoordinateFromRelativeCoordinate, this),
-            H: tui.util.bind(this._makeXCoordinate, this),
-            h: tui.util.bind(this._makeXCoordinateFroRelativeCoordinate, this),
-            V: tui.util.bind(this._makeYCoordinate, this),
-            v: tui.util.bind(this._makeYCoordinateFromRelativeCoordinate, this)
+            M: snippet.bind(this._makeCoordinate, this),
+            m: snippet.bind(this._makeCoordinateFromRelativeCoordinate, this),
+            L: snippet.bind(this._makeCoordinate, this),
+            l: snippet.bind(this._makeCoordinateFromRelativeCoordinate, this),
+            H: snippet.bind(this._makeXCoordinate, this),
+            h: snippet.bind(this._makeXCoordinateFroRelativeCoordinate, this),
+            V: snippet.bind(this._makeYCoordinate, this),
+            v: snippet.bind(this._makeYCoordinateFromRelativeCoordinate, this)
         };
 
         /**
@@ -227,11 +228,11 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
                 y: 0
             };
 
-        return tui.util.map(pathData, function(datum) {
+        return snippet.map(pathData, function(datum) {
             var commandFunc = self.commandFuncMap[datum.type],
                 coordinate = commandFunc(datum.coordinate, prevCoordinate);
 
-            tui.util.extend(prevCoordinate, coordinate);
+            snippet.extend(prevCoordinate, coordinate);
 
             return coordinate;
         });
@@ -244,11 +245,11 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _findBoundFromCoordinates: function(coordinates) {
-        var xs = tui.util.filter(tui.util.pluck(coordinates, 'x'), function(x) {
-                return !tui.util.isUndefined(x);
+        var xs = snippet.filter(snippet.pluck(coordinates, 'x'), function(x) {
+                return !snippet.isUndefined(x);
             }),
-            ys = tui.util.filter(tui.util.pluck(coordinates, 'y'), function(y) {
-                return !tui.util.isUndefined(y);
+            ys = snippet.filter(snippet.pluck(coordinates, 'y'), function(y) {
+                return !snippet.isUndefined(y);
             }),
             maxLeft = arrayUtil.max(xs),
             minLeft = arrayUtil.min(xs),
@@ -292,7 +293,7 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
     _createMapData: function(rawMapData) {
         var self = this;
 
-        return tui.util.map(rawMapData, function(datum) {
+        return snippet.map(rawMapData, function(datum) {
             var coordinate = self._makeCoordinatesFromPath(datum.path),
                 bound = self._findBoundFromCoordinates(coordinate),
                 userData = self.dataProcessor.getValueMapDatum(datum.code),
@@ -355,11 +356,11 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
     getLabelData: function(ratio) {
         var self = this;
         var mapData = this.getMapData();
-        var labelData = tui.util.filter(mapData, function(datum) {
+        var labelData = snippet.filter(mapData, function(datum) {
             return self.dataProcessor.getValueMapDatum(datum.code);
         });
 
-        return tui.util.map(labelData, function(datum) {
+        return snippet.map(labelData, function(datum) {
             return {
                 name: datum.name,
                 labelPosition: {
@@ -377,16 +378,16 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      */
     _makeMapDimension: function() {
         var mapData = this.getMapData();
-        var lefts = tui.util.map(mapData, function(datum) {
+        var lefts = snippet.map(mapData, function(datum) {
             return datum.bound.position.left;
         });
-        var rights = tui.util.map(mapData, function(datum) {
+        var rights = snippet.map(mapData, function(datum) {
             return datum.bound.position.left + datum.bound.dimension.width;
         });
-        var tops = tui.util.map(mapData, function(datum) {
+        var tops = snippet.map(mapData, function(datum) {
             return datum.bound.position.top;
         });
-        var bottoms = tui.util.map(mapData, function(datum) {
+        var bottoms = snippet.map(mapData, function(datum) {
             return datum.bound.position.top + datum.bound.dimension.height;
         });
 

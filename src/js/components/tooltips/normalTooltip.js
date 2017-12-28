@@ -11,13 +11,14 @@ var singleTooltipMixer = require('./singleTooltipMixer');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var tooltipTemplate = require('./tooltipTemplate');
+var snippet = require('tui-code-snippet');
 
 /**
  * @classdesc NormalTooltip component.
  * @class NormalTooltip
  * @private
  */
-var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.prototype */ {
+var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.prototype */ {
     /**
      * NormalTooltip component.
      * @constructs NormalTooltip
@@ -41,7 +42,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
         var template;
 
         if (predicate.isBoxplotChart(this.chartType)) {
-            if (tui.util.isNumber(item.outlierIndex)) {
+            if (snippet.isNumber(item.outlierIndex)) {
                 template = tooltipTemplate.tplBoxplotChartOutlier;
                 item.label = item.outliers[item.outlierIndex].label;
             } else {
@@ -55,7 +56,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
             template = tooltipTemplate.tplDefault;
         }
 
-        return template(tui.util.extend({
+        return template(snippet.extend({
             categoryVisible: category ? 'show' : 'hide',
             category: category
         }, item));
@@ -69,7 +70,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
      * @private
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
-        return tui.util.map(valueTypes, function(type) {
+        return snippet.map(valueTypes, function(type) {
             return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
         }).join('');
     },
@@ -83,13 +84,13 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
      */
     _makeSingleTooltipHtml: function(chartType, indexes) {
         var groupIndex = indexes.groupIndex;
-        var data = tui.util.extend({}, tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index));
+        var data = snippet.extend({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
 
-        if (predicate.isBoxplotChart(this.chartType) && tui.util.isNumber(indexes.outlierIndex)) {
+        if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;
         }
 
-        data = tui.util.extend({
+        data = snippet.extend({
             suffix: this.suffix
         }, data);
         data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
@@ -133,7 +134,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
         }
 
         chartType = legendData.chartType;
-        params = tui.util.extend({
+        params = snippet.extend({
             chartType: chartType,
             legend: legendData.label,
             legendIndex: legendIndex,
@@ -141,7 +142,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
         }, additionParams);
 
         if (predicate.isBoxplotChart(chartType) &&
-            tui.util.isNumber(indexes.outlierIndex)) {
+            snippet.isNumber(indexes.outlierIndex)) {
             params.outlierIndex = indexes.outlierIndex;
         }
 
@@ -172,7 +173,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
 
         tooltipDatum.category = category || '';
 
-        return tui.util.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
+        return snippet.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
     },
 
     /**
@@ -187,7 +188,7 @@ var NormalTooltip = tui.util.defineClass(TooltipBase, /** @lends NormalTooltip.p
         var legendLabels = {};
         var tooltipData = {};
 
-        if (tui.util.isArray(orgLegendLabels)) {
+        if (snippet.isArray(orgLegendLabels)) {
             legendLabels[this.chartType] = orgLegendLabels;
         } else {
             legendLabels = orgLegendLabels;

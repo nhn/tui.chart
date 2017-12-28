@@ -11,8 +11,9 @@ var predicate = require('../helpers/predicate');
 var DynamicDataHelper = require('./dynamicDataHelper');
 var Series = require('../components/series/lineChartSeries');
 var rawDataHandler = require('../models/data/rawDataHandler');
+var snippet = require('tui-code-snippet');
 
-var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
+var LineChart = snippet.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
      * className
      * @type {string}
@@ -96,7 +97,7 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
             };
         }
 
-        tui.util.forEachArray(chartTypes, addDataRatio);
+        snippet.forEachArray(chartTypes, addDataRatio);
     },
     /**
      * Add components
@@ -131,7 +132,7 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
 
         if (this.dataProcessor.isCoordinateType()) {
             isDateTimeTypeXAxis = xAxisOption && xAxisOption.type === 'datetime';
-            hasDateFormat = isDateTimeTypeXAxis && tui.util.isExisty(xAxisOption.dateFormat);
+            hasDateFormat = isDateTimeTypeXAxis && snippet.isExisty(xAxisOption.dateFormat);
 
             scaleOption.xAxis = {
                 valueType: 'x'
@@ -234,7 +235,7 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
 
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();
-        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
+        this.dataProcessor.addDataFromRemainDynamicData(snippet.pick(this.options.series, 'shifting'));
         this._renderForZoom(true);
         this._dynamicDataHelper.restartAnimation();
     }

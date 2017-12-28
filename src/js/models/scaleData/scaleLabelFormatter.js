@@ -9,6 +9,7 @@
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 var abs = Math.abs;
 
@@ -47,7 +48,7 @@ var scaleLabelFormatter = {
     _createScaleValues: function(scale, chartType, diverging) {
         var values = calculator.makeLabelsFromLimit(scale.limit, scale.step);
 
-        return predicate.isDivergingChart(chartType, diverging) ? tui.util.map(values, abs) : values;
+        return predicate.isDivergingChart(chartType, diverging) ? snippet.map(values, abs) : values;
     },
 
     /**

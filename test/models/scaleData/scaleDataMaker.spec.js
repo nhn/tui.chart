@@ -13,13 +13,13 @@ describe('Test for ScaleDataMaker', function() {
     describe('_makeLimitForDivergingOption()', function() {
         it('Make diverging chart centered by adjust min, max value', function() {
             var actual = scaleDataMaker._makeLimitForDivergingOption({
-                min: -20,
-                max: 10
-            }),
-            expected = {
-                min: -20,
-                max: 20
-            };
+                    min: -20,
+                    max: 10
+                }),
+                expected = {
+                    min: -20,
+                    max: 20
+                };
 
             expect(actual).toEqual(expected);
         });
@@ -326,8 +326,6 @@ describe('Test for ScaleDataMaker', function() {
 
         it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 있을 경우에는 chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var baseValues = [-10, 20, -30, 40];
-            var chartType = chartConst.CHART_TYPE_BAR;
-            var diverging = true;
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, true);
             var expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
 
@@ -336,7 +334,6 @@ describe('Test for ScaleDataMaker', function() {
 
         it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE 반환합니다.', function() {
             var baseValues = [-10, 20, -30, 40];
-            var chartType = chartConst.CHART_TYPE_BAR;
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, false);
             var expected = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;
 

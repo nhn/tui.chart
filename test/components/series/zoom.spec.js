@@ -7,13 +7,14 @@
 'use strict';
 
 var Zoom = require('../../../src/js/components/series/zoom');
+var snippet = require('tui-code-snippet');
 
 describe('Zoom', function() {
     var zoom;
 
     beforeEach(function() {
         zoom = new Zoom({
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
 
         spyOn(zoom.eventBus, 'fire');

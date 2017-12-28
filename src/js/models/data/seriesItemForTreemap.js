@@ -8,8 +8,9 @@
 
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.prototype */{
+var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.prototype */{
     /**
      * SeriesItem for treemap.
      * @constructs SeriesItemForTreemap
@@ -70,7 +71,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
             ratio: this.ratio
         };
 
-        if (tui.util.isExisty(colorValue)) {
+        if (snippet.isExisty(colorValue)) {
             valueMap.colorValue = renderUtil.formatValue(colorValue, formatFunctions, chartType, 'tooltipColorValue');
             valueMap.colorRatio = this.colorRatio;
         }
@@ -90,7 +91,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
             label: this.label
         };
 
-        if (tui.util.isExisty(this.colorValue)) {
+        if (snippet.isExisty(this.colorValue)) {
             templateData.colorValue = this.colorValue;
             templateData.colorValueRatio = this.ratio;
         }

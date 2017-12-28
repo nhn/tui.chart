@@ -11,8 +11,9 @@ var mapManager = require('../factories/mapManager');
 var MapChartMapModel = require('./mapChartMapModel');
 var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
 var ColorSpectrum = require('./colorSpectrum');
+var snippet = require('tui-code-snippet');
 
-var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
+var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
      * Map chart.
      * @constructs MapChart

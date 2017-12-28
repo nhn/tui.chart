@@ -6,10 +6,11 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var normalTooltipFactory = require('../../../src/js/components/tooltips/normalTooltip'),
     DataProcessor = require('../../../src/js/models/data/dataProcessor'),
     SeriesDataModel = require('../../../src/js/models/data/seriesDataModel'),
-    seriesGroup = require('../../../src/js/models/data/seriesGroup');
+    SeriesGroup = require('../../../src/js/models/data/seriesGroup');
 
 describe('NormalTooltip', function() {
     var tooltip, dataProcessor;
@@ -22,7 +23,7 @@ describe('NormalTooltip', function() {
         tooltip = new normalTooltipFactory.NormalTooltip({
             chartType: 'column',
             dataProcessor: dataProcessor,
-            eventBus: new tui.util.CustomEvents(),
+            eventBus: new snippet.CustomEvents(),
             options: {}
         });
     });
@@ -53,7 +54,7 @@ describe('NormalTooltip', function() {
             tooltip = new normalTooltipFactory.NormalTooltip({
                 chartType: 'pie',
                 dataProcessor: dataProcessor,
-                eventBus: new tui.util.CustomEvents(),
+                eventBus: new snippet.CustomEvents(),
                 options: {},
                 labelFormatter: function(seriesDatum, tooltipDatum) {
                     tooltipDatum.label = seriesDatum.label;
@@ -129,7 +130,7 @@ describe('NormalTooltip', function() {
             spyOn(dataProcessor, 'makeTooltipCategory').and.returnValue('Silver');
             spyOn(dataProcessor, 'getLegendLabels').and.returnValue(['Density1', 'Density2']);
             seriesDataModel.groups = [
-                new seriesGroup([
+                new SeriesGroup([
                     {
                         label: '10',
                         pickValueMapForTooltip: pickValueMapForTooltip

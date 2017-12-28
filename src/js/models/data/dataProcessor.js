@@ -19,10 +19,11 @@ var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
 var objectUtil = require('../../helpers/objectUtil');
+var snippet = require('tui-code-snippet');
 
 var concat = Array.prototype.concat;
 
-var isUndefined = tui.util.isUndefined;
+var isUndefined = snippet.isUndefined;
 
 /*
  * Raw series datum.
@@ -53,7 +54,7 @@ var isUndefined = tui.util.isUndefined;
  * SeriesGroup.items has SeriesItem.
  */
 
-var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProcessor.prototype */{
+var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProcessor.prototype */{
     /**
      * Data processor.
      * @constructs DataProcessor
@@ -140,7 +141,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @private
      */
     _filterSeriesDataByIndexRange: function(seriesData, startIndex, endIndex) {
-        tui.util.forEachArray(seriesData, function(seriesDatum) {
+        snippet.forEachArray(seriesData, function(seriesDatum) {
             seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
         });
 
@@ -159,7 +160,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var startIndex = indexRange[0];
         var endIndex = indexRange[1];
 
-        tui.util.forEach(rawData.series, function(seriesDataSet, seriesType) {
+        snippet.forEach(rawData.series, function(seriesDataSet, seriesType) {
             rawData.series[seriesType] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 
@@ -280,8 +281,8 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @private
      */
     _escapeCategories: function(categories) {
-        return tui.util.map(categories, function(category) {
-            return tui.util.encodeHTMLEntity(String(category));
+        return snippet.map(categories, function(category) {
+            return snippet.encodeHTMLEntity(String(category));
         });
     },
 
@@ -297,8 +298,8 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var options = this.options[axisType] || {};
         var isDateTime = false;
 
-        if (tui.util.isArray(options)) {
-            isDateTime = tui.util.filter(options, function(option) {
+        if (snippet.isArray(options)) {
+            isDateTime = snippet.filter(options, function(option) {
                 return option.type && predicate.isDatetimeType(option.type);
             });
         } else {
@@ -306,7 +307,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         }
 
         if (isDateTime) {
-            categories = tui.util.map(categories, function(value) {
+            categories = snippet.map(categories, function(value) {
                 var date = new Date(value);
 
                 return date.getTime() || value;
@@ -328,7 +329,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var rawCategories = this.rawData.categories;
         var categoriesMap = {};
 
-        if (tui.util.isArray(rawCategories)) {
+        if (snippet.isArray(rawCategories)) {
             categoriesMap[type] = this._mapCategories(rawCategories, type);
         } else if (rawCategories) {
             if (rawCategories.x) {
@@ -356,10 +357,10 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             this.categoriesMap = this._processCategories(type);
         }
 
-        if (tui.util.isExisty(isVertical)) {
+        if (snippet.isExisty(isVertical)) {
             foundCategories = this.categoriesMap[type] || [];
         } else {
-            tui.util.forEach(this.categoriesMap, function(categories) {
+            snippet.forEach(this.categoriesMap, function(categories) {
                 foundCategories = categories;
 
                 return false;
@@ -441,12 +442,12 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var categories = this.getCategories();
         var foundIndex = null;
 
-        tui.util.forEachArray(categories, function(category, index) {
+        snippet.forEachArray(categories, function(category, index) {
             if (category === value) {
                 foundIndex = index;
             }
 
-            return tui.util.isNull(foundIndex);
+            return snippet.isNull(foundIndex);
         });
 
         return foundIndex;
@@ -475,7 +476,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         firstVisibleCategory = visibleCategories[0];
         lastVisibleCategory = visibleCategories[visibleCategories.length - 1];
 
-        tui.util.forEachArray(this.originalRawData.categories, function(category, index) {
+        snippet.forEachArray(this.originalRawData.categories, function(category, index) {
             var isFirstCategoryBeforeStartValueOrEndValue;
             var isEndValueBeforeLastCategory;
 
@@ -490,9 +491,9 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             }
 
             isFirstCategoryBeforeStartValueOrEndValue = firstVisibleCategoryIndex &&
-                (tui.util.isUndefined(startValueIndex) || endValueIndex);
+                (snippet.isUndefined(startValueIndex) || endValueIndex);
             isEndValueBeforeLastCategory = endValueIndex &&
-                 tui.util.isUndefined(lastVisibleCategoryIndex);
+                 snippet.isUndefined(lastVisibleCategoryIndex);
 
             return !(isFirstCategoryBeforeStartValueOrEndValue || isEndValueBeforeLastCategory);
         });
@@ -570,7 +571,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @returns {number}
      */
     findStackIndex: function(stack) {
-        return tui.util.inArray(stack, this.getStacks());
+        return snippet.inArray(stack, this.getStacks());
     },
 
     /**
@@ -581,7 +582,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var chartType = this.chartType;
         var coordinateType = this.coordinateType;
 
-        if (!tui.util.isExisty(coordinateType)) {
+        if (!snippet.isExisty(coordinateType)) {
             coordinateType = predicate.isCoordinateTypeChart(chartType);
             coordinateType = coordinateType || predicate.isLineScatterComboChart(chartType, this.seriesTypes);
             coordinateType = coordinateType || (predicate.isLineTypeChart(chartType) && !this.hasCategories());
@@ -661,7 +662,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var foundSeriesDatum = null;
         var seriesData = this.rawData.series[seriesType];
 
-        tui.util.forEachArray(seriesData, function(seriesDatum) {
+        snippet.forEachArray(seriesData, function(seriesDatum) {
             var isEqual = seriesDatum.name === name;
 
             if (isEqual) {
@@ -701,7 +702,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     _pushValues: function(seriesData, values, seriesType) {
         var self = this;
 
-        tui.util.forEachArray(seriesData, function(seriesDatum, index) {
+        snippet.forEachArray(seriesData, function(seriesDatum, index) {
             self._pushValue(seriesDatum, values[index], seriesType);
         });
     },
@@ -715,13 +716,13 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var self = this;
         var temp;
 
-        if (this.chartType !== 'combo' && tui.util.isArray(values)) {
+        if (this.chartType !== 'combo' && snippet.isArray(values)) {
             temp = values;
             values = {};
             values[this.chartType] = temp;
         }
 
-        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesType) {
+        snippet.forEach(this.originalRawData.series, function(seriesData, seriesType) {
             self._pushValues(seriesData, values[seriesType], seriesType);
         });
     },
@@ -735,7 +736,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     _shiftValues: function(seriesData, seriesType) {
         var self = this;
 
-        tui.util.forEachArray(seriesData, function(seriesDatum) {
+        snippet.forEachArray(seriesData, function(seriesDatum) {
             var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesType);
 
             seriesDatum.data.shift();
@@ -752,7 +753,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
     _shiftSeriesData: function() {
         var self = this;
 
-        tui.util.forEach(this.originalRawData.series, function(seriesData, seriesType) {
+        snippet.forEach(this.originalRawData.series, function(seriesData, seriesType) {
             self._shiftValues(seriesData, seriesType);
         });
     },
@@ -786,7 +787,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     _pushDynamicDataForCoordinateType: function(data) {
         var self = this;
-        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
+        snippet.forEachArray(this.originalRawData.series, function(seriesDatum) {
             self._pushValue(seriesDatum, data[seriesDatum.name]);
         });
     },
@@ -831,7 +832,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
 
         this.dynamicData = [];
 
-        tui.util.forEach(dynamicData, function(datum) {
+        snippet.forEach(dynamicData, function(datum) {
             self._pushCategory(datum.category);
             self._pushSeriesData(datum.values);
             if (shiftingOption) {
@@ -852,7 +853,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var self = this,
             seriesTypes = this.seriesTypes || [this.chartType];
 
-        tui.util.forEachArray(seriesTypes, function(chartType) {
+        snippet.forEachArray(seriesTypes, function(chartType) {
             return iteratee(self.getSeriesDataModel(chartType), chartType);
         });
     },
@@ -891,7 +892,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             });
         });
 
-        seriesGroups = tui.util.map(joinedGroups, function(items) {
+        seriesGroups = snippet.map(joinedGroups, function(items) {
             return new SeriesGroup(items);
         });
 
@@ -1030,14 +1031,14 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var values = [];
 
         if (plotOptions.lines) {
-            tui.util.forEach(plotOptions.lines, function(line) {
+            snippet.forEach(plotOptions.lines, function(line) {
                 values.push(axisType !== 'datetime' ? line.value : new Date(line.value));
             });
         }
 
         if (plotOptions.bands) {
-            tui.util.forEach(plotOptions.bands, function(line) {
-                var ranges = tui.util.map(line.range, function(range) {
+            snippet.forEach(plotOptions.bands, function(line) {
+                var ranges = snippet.map(line.range, function(range) {
                     return axisType !== 'datetime' ? range : new Date(range);
                 });
 
@@ -1088,7 +1089,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      * @private
      */
     _pickLegendLabel: function(item) {
-        return item.name ? tui.util.encodeHTMLEntity(item.name) : null;
+        return item.name ? snippet.encodeHTMLEntity(item.name) : null;
     },
 
     /**
@@ -1099,7 +1100,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
      */
     _isVisibleLegend: function(item) {
         var visibility = true;
-        if (tui.util.isExisty(item.visible) && item.visible === false) {
+        if (snippet.isExisty(item.visible) && item.visible === false) {
             visibility = false;
         }
 
@@ -1124,11 +1125,11 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         }
 
         if (pickerMethod) {
-            tui.util.forEach(seriesData, function(seriesDatum, seriesType) {
-                result[seriesType] = tui.util.map(seriesDatum, pickerMethod);
+            snippet.forEach(seriesData, function(seriesDatum, seriesType) {
+                result[seriesType] = snippet.map(seriesDatum, pickerMethod);
             });
 
-            result = tui.util.filter(result, tui.util.isExisty);
+            result = snippet.filter(result, snippet.isExisty);
         }
 
         return result;
@@ -1171,7 +1172,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         var legendLabelsMap, legendData;
         var legendVisibilities = this.getLegendVisibility();
 
-        if (tui.util.isArray(legendLabels)) {
+        if (snippet.isArray(legendLabels)) {
             legendLabelsMap = [this.chartType];
             legendLabelsMap[this.chartType] = legendLabels;
         } else {
@@ -1179,9 +1180,9 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
             legendLabelsMap = legendLabels;
         }
 
-        legendData = tui.util.map(seriesTypes, function(chartType) {
-            return tui.util.map(legendLabelsMap[chartType], function(label, index) {
-                var is2DArray = tui.util.isArray(legendVisibilities[chartType]);
+        legendData = snippet.map(seriesTypes, function(chartType) {
+            return snippet.map(legendLabelsMap[chartType], function(label, index) {
+                var is2DArray = snippet.isArray(legendVisibilities[chartType]);
 
                 return {
                     chartType: chartType,
@@ -1310,7 +1311,7 @@ var DataProcessor = tui.util.defineClass(DataProcessorBase, /** @lends DataProce
         seriesDataModel.each(function(seriesGroup) {
             var valuesMap = seriesGroup._makeValuesMapPerStack();
 
-            tui.util.forEach(valuesMap, function(values) {
+            snippet.forEach(valuesMap, function(values) {
                 var plusSum = calculator.sumPlusValues(values);
                 var minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);

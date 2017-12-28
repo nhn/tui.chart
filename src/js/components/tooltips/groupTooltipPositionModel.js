@@ -7,8 +7,9 @@
 'use strict';
 
 var chartConst = require('../../const');
+var snippet = require('tui-code-snippet');
 
-var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPositionModel.prototype */ {
+var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPositionModel.prototype */ {
     /**
      * GroupTooltipPositionModel is position model for group tooltip.
      * @constructs GroupTooltipPositionModel

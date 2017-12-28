@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var arrayUtil = require('./arrayUtil');
 var PERCENT_DIVISOR = 100;
 
@@ -59,7 +60,7 @@ var calculator = {
         additionalPosition = additionalPosition || 0;
 
         if (count > 0) {
-            positions = tui.util.map(tui.util.range(0, count), function(index) {
+            positions = snippet.map(snippet.range(0, count), function(index) {
                 var ratio = index === 0 ? 0 : (index / (count - 1));
 
                 return (ratio * size) + additionalPosition;
@@ -82,9 +83,9 @@ var calculator = {
         var multipleNum = calculator.findMultipleNum(step);
         var min = Math.round(limit.min * multipleNum);
         var max = Math.round(limit.max * multipleNum);
-        var labels = tui.util.range(min, max + 1, step * multipleNum);
+        var labels = snippet.range(min, max + 1, step * multipleNum);
 
-        return tui.util.map(labels, function(label) {
+        return snippet.map(labels, function(label) {
             return label / multipleNum;
         });
     },
@@ -106,7 +107,7 @@ var calculator = {
      * @returns {number} sum
      */
     sumPlusValues: function(values) {
-        var plusValues = tui.util.filter(values, function(value) {
+        var plusValues = snippet.filter(values, function(value) {
             return value > 0;
         });
 
@@ -119,7 +120,7 @@ var calculator = {
      * @returns {number} sum
      */
     sumMinusValues: function(values) {
-        var minusValues = tui.util.filter(values, function(value) {
+        var minusValues = snippet.filter(values, function(value) {
             return value < 0;
         });
 
@@ -169,7 +170,7 @@ var getDecimalLength = function(value) {
  */
 var findMultipleNum = function() {
     var args = [].slice.call(arguments);
-    var underPointLens = tui.util.map(args, function(value) {
+    var underPointLens = snippet.map(args, function(value) {
         return calculator.getDecimalLength(value);
     });
     var underPointLen = arrayUtil.max(underPointLens);
@@ -258,7 +259,7 @@ var sum = function(values) {
     var copyArr = values.slice();
     copyArr.unshift(0);
 
-    return tui.util.reduce(copyArr, function(base, value) {
+    return snippet.reduce(copyArr, function(base, value) {
         return calculator.add(parseFloat(base), parseFloat(value));
     });
 };

@@ -6,6 +6,7 @@
 
 'use strict';
 
+var raphael = require('raphael');
 var BarTypeSeriesBase = require('../../../src/js/components/series/barTypeSeriesBase.js'),
     SeriesDataModel = require('../../../src/js/models/data/seriesDataModel'),
     SeriesGroup = require('../../../src/js/models/data/seriesGroup'),
@@ -177,7 +178,7 @@ describe('BarTypeSeriesBase', function() {
     describe('_renderSeriesLabel()', function() {
         it('stackType 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div');
-            var paper = window.Raphael(elLabelArea, 100, 100);
+            var paper = raphael(elLabelArea, 100, 100);
             var seriesDataModel = new SeriesDataModel();
 
             spyOn(series, '_renderNormalSeriesLabel');
@@ -214,7 +215,7 @@ describe('BarTypeSeriesBase', function() {
 
         it('stackType 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div');
-            var paper = window.Raphael(elLabelArea, 100, 100);
+            var paper = raphael(elLabelArea, 100, 100);
             var seriesDataModel = new SeriesDataModel();
 
             spyOn(series, '_renderStackedSeriesLabel');

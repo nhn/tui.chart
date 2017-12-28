@@ -9,8 +9,9 @@
 var Series = require('./series');
 var chartConst = require('../../const');
 var geom = require('../../helpers/geometric');
+var snippet = require('tui-code-snippet');
 
-var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSeries.prototype */ {
+var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs RadialChartSeries
@@ -24,7 +25,7 @@ var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSerie
     init: function() {
         Series.apply(this, arguments);
 
-        this.options = tui.util.extend({
+        this.options = snippet.extend({
             showDot: true,
             showArea: true
         }, this.options);
@@ -60,11 +61,11 @@ var RadialChartSeries = tui.util.defineClass(Series, /** @lends RadialChartSerie
 
         radius = Math.min(width, height) / 2;
 
-        return tui.util.map(seriesGroups, function(seriesGroup) {
-            var positions = tui.util.map(seriesGroup, function(seriesItem, index) {
+        return snippet.map(seriesGroups, function(seriesGroup) {
+            var positions = snippet.map(seriesGroup, function(seriesItem, index) {
                 var position, y, angle, point, valueSize;
 
-                if (!tui.util.isNull(seriesItem.end)) {
+                if (!snippet.isNull(seriesItem.end)) {
                     valueSize = seriesItem.ratio * radius;
 
                     // centerY에 데이터의 값에 해당하는 높이만큼 더 해서 실제 좌표Y를 만든다.

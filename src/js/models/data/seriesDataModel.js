@@ -39,10 +39,11 @@ var SeriesItemForCoordinateType = require('./seriesItemForCoordinateType');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var arrayUtil = require('../../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
 var concat = Array.prototype.concat;
 
-var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype */{
+var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype */{
     /**
      * SeriesDataModel is base model for drawing graph of chart series area,
      *      and create from rawSeriesData by user.
@@ -121,7 +122,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _removeRangeValue: function() {
-        var seriesOption = tui.util.pick(this.options, 'series') || {};
+        var seriesOption = snippet.pick(this.options, 'series') || {};
         var allowRange = predicate.isAllowRangeData(this.chartType) &&
                 !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline;
 
@@ -129,12 +130,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             return;
         }
 
-        tui.util.forEachArray(this.rawSeriesData, function(rawItem) {
-            if (!tui.util.isArray(rawItem.data)) {
+        snippet.forEachArray(this.rawSeriesData, function(rawItem) {
+            if (!snippet.isArray(rawItem.data)) {
                 return;
             }
-            tui.util.forEachArray(rawItem.data, function(value, index) {
-                if (tui.util.isExisty(value)) {
+            snippet.forEachArray(rawItem.data, function(value, index) {
+                if (snippet.isExisty(value)) {
                     rawItem.data[index] = concat.apply(value)[0];
                 }
             });
@@ -169,21 +170,21 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             sortValues = function() {};
         }
 
-        return tui.util.map(this.rawSeriesData, function(rawDatum) {
+        return snippet.map(this.rawSeriesData, function(rawDatum) {
             var stack, data;
             var items;
 
-            data = tui.util.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+            data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
 
             if (!hasRawDatumAsArray) {
                 stack = rawDatum.stack;
             }
 
             if (isCoordinateType || isPieChart) {
-                data = tui.util.filter(data, tui.util.isExisty);
+                data = snippet.filter(data, snippet.isExisty);
             }
 
-            items = tui.util.map(data, function(datum, index) {
+            items = snippet.map(data, function(datum, index) {
                 return new SeriesItemClass({
                     datum: datum,
                     chartType: chartType,
@@ -227,7 +228,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             baseGroups = arrayUtil.pivot(baseGroups);
         }
 
-        return tui.util.map(baseGroups, function(items) {
+        return snippet.map(baseGroups, function(items) {
             return new SeriesGroup(items);
         });
     },
@@ -412,7 +413,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         values = concat.apply([], values);
 
-        return tui.util.filter(values, function(value) {
+        return snippet.filter(values, function(value) {
             return !isNaN(value);
         });
     },
@@ -590,7 +591,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 item.addRatio('y', yDistance, ySubValue);
                 item.addRatio('r', maxRadius, 0);
 
-                if (tui.util.isExisty(item.start)) {
+                if (snippet.isExisty(item.start)) {
                     item.addRatio('start', yDistance, ySubValue);
                 }
             });
@@ -631,7 +632,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     each: function(iteratee, isPivot) {
         var groups = isPivot ? this._getPivotGroups() : this._getSeriesGroups();
 
-        tui.util.forEachArray(groups, function(seriesGroup, index) {
+        snippet.forEachArray(groups, function(seriesGroup, index) {
             return iteratee(seriesGroup, index);
         });
     },

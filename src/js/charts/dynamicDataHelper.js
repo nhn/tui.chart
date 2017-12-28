@@ -2,10 +2,11 @@
 
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
-var DynamicDataHelper = tui.util.defineClass(/** @lends DynamicDataHelper.prototype */ {
+var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototype */ {
     init: function(chart) {
-        var firstRenderCheck = tui.util.bind(function() {
+        var firstRenderCheck = snippet.bind(function() {
             this.isInitRenderCompleted = true;
             this.chart.off(firstRenderCheck);
         }, this);

@@ -9,13 +9,14 @@
 var arrayUtil = require('../../helpers/arrayUtil');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
+var snippet = require('tui-code-snippet');
 
 /**
  * @classdesc data processor base.
  * @class DataProcessorBase
  * @private
  */
-var DataProcessorBase = tui.util.defineClass(/** @lends DataProcessorBase.prototype */{
+var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototype */{
     /**
      * Initialize.
      */
@@ -67,7 +68,7 @@ var DataProcessorBase = tui.util.defineClass(/** @lends DataProcessorBase.protot
     _pickMaxLenUnderPoint: function(values) {
         var max = 0;
 
-        tui.util.forEachArray(values, function(value) {
+        snippet.forEachArray(values, function(value) {
             var len = calculator.getDecimalLength(value);
             if (len > max) {
                 max = len;
@@ -146,10 +147,10 @@ var DataProcessorBase = tui.util.defineClass(/** @lends DataProcessorBase.protot
 
         if (this._isDecimal(format)) {
             len = this._pickMaxLenUnderPoint([format]);
-            funcs = [tui.util.bind(this._formatToDecimal, this, len)];
+            funcs = [snippet.bind(this._formatToDecimal, this, len)];
         } else if (this._isZeroFill(format)) {
             len = format.length;
-            funcs = [tui.util.bind(this._formatToZeroFill, this, len)];
+            funcs = [snippet.bind(this._formatToZeroFill, this, len)];
 
             return funcs;
         }
@@ -166,12 +167,12 @@ var DataProcessorBase = tui.util.defineClass(/** @lends DataProcessorBase.protot
      * @returns {function[]} functions
      */
     _findFormatFunctions: function() {
-        var format = tui.util.pick(this.options, 'chart', 'format');
+        var format = snippet.pick(this.options, 'chart', 'format');
         var funcs = [];
 
-        if (tui.util.isFunction(format)) {
+        if (snippet.isFunction(format)) {
             funcs = [format];
-        } else if (tui.util.isString(format)) {
+        } else if (snippet.isString(format)) {
             funcs = this._findSimpleTypeFormatFunctions(format);
         }
 

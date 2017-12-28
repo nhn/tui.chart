@@ -7,6 +7,7 @@
 'use strict';
 
 var radialSeriesFactory = require('../../../src/js/components/series/radialSeries');
+var snippet = require('tui-code-snippet');
 
 describe('Test for RadialSeries', function() {
     var series;
@@ -24,9 +25,8 @@ describe('Test for RadialSeries', function() {
                     colors: ['blue']
                 }
             },
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
-
     });
 
     it('_makePositions should make point positions', function() {

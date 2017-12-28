@@ -7,6 +7,7 @@
 'use strict';
 
 var dom = require('../../src/js/helpers/domHandler');
+var comboChartFactory = require('../../src/js/index').comboChart;
 
 describe('Test user events for combo chart', function() {
     var rawData = {
@@ -48,7 +49,7 @@ describe('Test user events for combo chart', function() {
 
         dom.append(document.body, container);
 
-        comboChart = tui.chart.comboChart(container, rawData, {
+        comboChart = comboChartFactory(container, rawData, {
             series: {
                 allowSelect: true
             },
@@ -126,7 +127,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 95, // index 1: 95 ~ 137
+                clientX: 96, // index 1: 95 ~ 137
                 clientY: 100
             });
         });
@@ -149,7 +150,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 95, // index 1: 95 ~ 137
+                clientX: 96, // index 1: 95 ~ 137
                 clientY: 100
             });
         });

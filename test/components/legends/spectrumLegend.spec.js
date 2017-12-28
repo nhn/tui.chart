@@ -6,6 +6,8 @@
 
 'use strict';
 
+var raphael = require('raphael');
+var snippet = require('tui-code-snippet');
 var spectrumLegendFactory = require('../../../src/js/components/legends/spectrumLegend');
 var renderUtil = require('../../../src/js/helpers/renderUtil');
 
@@ -14,7 +16,7 @@ describe('Test for SpectrumLegend', function() {
 
     beforeEach(function() {
         legend = new spectrumLegendFactory.SpectrumLegend({
-            eventBus: new tui.util.CustomEvents(),
+            eventBus: new snippet.CustomEvents(),
             theme: {}
         });
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
@@ -22,7 +24,7 @@ describe('Test for SpectrumLegend', function() {
 
     describe('_renderTickArea()', function() {
         it('주어진 라벨 수 대로 tick을 렌더링 합니다.', function(done) {
-            var paper = Raphael(document.createElement('div'), 100, 100);
+            var paper = raphael(document.createElement('div'), 100, 100);
             var legendSet = paper.set();
 
             legend.layout = {

@@ -10,8 +10,9 @@
 var ChartBase = require('./chartBase');
 var ColorSpectrum = require('./colorSpectrum');
 var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
 
-var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
+var HeatmapChart = snippet.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
     /**
      *
      * className

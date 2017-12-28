@@ -15,7 +15,6 @@ var objectUtil = require('./helpers/objectUtil');
 var seriesDataImporter = require('./helpers/seriesDataImporter');
 var drawingToolPicker = require('./helpers/drawingToolPicker');
 
-require('../less/style.less');
 require('./polyfill');
 require('./charts/chartsRegistration');
 require('./themes/defaultThemesRegistration');
@@ -23,11 +22,13 @@ require('./themes/defaultThemesRegistration');
 /**
  * Raw series datum.
  * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
+ * @private
  */
 
 /**
  * Raw series data.
  * @typedef {Array.<rawSeriesDatum>} rawSeriesData
+ * @private
  */
 
 /**
@@ -36,13 +37,8 @@ require('./themes/defaultThemesRegistration');
  *      categories: ?Array.<string>,
  *      series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})
  * }} rawData
+ * @private
  */
-
-/**
- * NHN Entertainment Toast UI Chart.
- * @namespace tui.chart
- */
-tui.util.defineNamespace('tui.chart');
 
 /**
  * Create chart.
@@ -84,7 +80,7 @@ tui.util.defineNamespace('tui.chart');
  * @ignore
  */
 function _createChart(container, rawData, options, chartType) {
-    var themeName, theme, chart, temp;
+    var theme, chart, temp;
 
     if (!rawData) {
         rawData = {};
@@ -108,8 +104,8 @@ function _createChart(container, rawData, options, chartType) {
 
     options = options ? objectUtil.deepCopy(options) : {};
     options.chartType = chartType;
-    themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
-    theme = themeManager.get(themeName, chartType, rawData.series);
+    options.theme = options.theme || chartConst.DEFAULT_THEME_NAME;
+    theme = themeManager.get(options.theme, chartType, rawData.series);
 
     chart = chartFactory.get(options.chartType, rawData, theme, options);
 
@@ -121,7 +117,8 @@ function _createChart(container, rawData, options, chartType) {
 
 /**
  * Bar chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<string>} rawData.categories - categories
@@ -178,6 +175,7 @@ function _createChart(container, rawData, options, chartType) {
  * @returns {object} bar chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
@@ -211,15 +209,16 @@ function _createChart(container, rawData, options, chartType) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.barChart(container, rawData, options);
+ * chart.barChart(container, rawData, options);
  */
-tui.chart.barChart = function(container, rawData, options) {
+function barChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_BAR);
-};
+}
 
 /**
  * Column chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<string>} rawData.categories - categories
@@ -277,6 +276,7 @@ tui.chart.barChart = function(container, rawData, options) {
  * @returns {object} column chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
@@ -310,15 +310,16 @@ tui.chart.barChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.columnChart(container, rawData, options);
+ * chart.columnChart(container, rawData, options);
  */
-tui.chart.columnChart = function(container, rawData, options) {
+function columnChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_COLUMN);
-};
+}
 
 /**
  * Line chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {?Array.<string>} rawData.categories - categories
@@ -388,6 +389,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  * @returns {object} bar chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
@@ -424,15 +426,16 @@ tui.chart.columnChart = function(container, rawData, options) {
  *         showDot: true
  *       }
  *     };
- * tui.chart.lineChart(container, rawData, options);
+ * chart.lineChart(container, rawData, options);
  */
-tui.chart.lineChart = function(container, rawData, options) {
+function lineChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_LINE);
-};
+}
 
 /**
  * Area chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {?Array.<string>} rawData.categories - categories
@@ -500,6 +503,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  * @returns {object} bar chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
@@ -533,15 +537,16 @@ tui.chart.lineChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.areaChart(container, rawData, options);
+ * chart.areaChart(container, rawData, options);
  */
-tui.chart.areaChart = function(container, rawData, options) {
+function areaChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_AREA);
-};
+}
 
 /**
  * Bubble chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<string>} rawData.categories - categories
@@ -597,6 +602,7 @@ tui.chart.areaChart = function(container, rawData, options) {
  * @returns {object} bubble chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       series: [
@@ -641,15 +647,16 @@ tui.chart.areaChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.bubbleChart(container, rawData, options);
+ * chart.bubbleChart(container, rawData, options);
  */
-tui.chart.bubbleChart = function(container, rawData, options) {
+function bubbleChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_BUBBLE);
-};
+}
 
 /**
  * Scatter chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<string>} rawData.categories - categories
@@ -701,6 +708,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  * @returns {object} scatter chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       series: [
@@ -737,15 +745,16 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.scatterChart(container, rawData, options);
+ * chart.scatterChart(container, rawData, options);
  */
-tui.chart.scatterChart = function(container, rawData, options) {
+function scatterChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_SCATTER);
-};
+}
 
 /**
  * Heatmap chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {{x: Array.<string | number>, y: Array.<string | number>}} rawData.categories - categories
@@ -789,6 +798,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
  * @returns {object} scatter chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       categories: {
@@ -815,15 +825,16 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.heatmapChart(container, rawData, options);
+ * chart.heatmapChart(container, rawData, options);
  */
-tui.chart.heatmapChart = function(container, rawData, options) {
+function heatmapChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_HEATMAP);
-};
+}
 
 /**
  * Treemap chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<Array.<object>>} rawData.series - series data
@@ -857,6 +868,7 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  * @returns {object} scatter chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       series: [
@@ -894,15 +906,16 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *         title: 'Treemap Chart'
  *       }
  *     };
- * tui.chart.treemapChart(container, rawData, options);
+ * chart.treemapChart(container, rawData, options);
  */
-tui.chart.treemapChart = function(container, rawData, options) {
+function treemapChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_TREEMAP);
-};
+}
 
 /**
  * Combo chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<string>} rawData.categories - categories
@@ -985,6 +998,7 @@ tui.chart.treemapChart = function(container, rawData, options) {
  * @returns {object} bar chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
@@ -1035,15 +1049,16 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *         showDot: true
  *       }
  *     };
- * tui.chart.comboChart(container, rawData, options);
+ * chart.comboChart(container, rawData, options);
  */
-tui.chart.comboChart = function(container, rawData, options) {
+function comboChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_COMBO);
-};
+}
 
 /**
  * Pie chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<Array>} rawData.series - series data
@@ -1081,6 +1096,7 @@ tui.chart.comboChart = function(container, rawData, options) {
  * @returns {object} bar chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       series: [
@@ -1107,15 +1123,16 @@ tui.chart.comboChart = function(container, rawData, options) {
  *         title: 'Pie Chart'
  *       }
  *     };
- * tui.chart.pieChart(container, rawData, options);
+ * chart.pieChart(container, rawData, options);
  */
-tui.chart.pieChart = function(container, rawData, options) {
+function pieChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_PIE);
-};
+}
 
 /**
  * Map chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData chart data
  *      @param {Array.<Array>} rawData.series - series data
@@ -1148,6 +1165,7 @@ tui.chart.pieChart = function(container, rawData, options) {
  * @returns {object} bar chart
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var container = document.getElementById('container-id'),
  *     rawData = {
  *       series: [
@@ -1171,15 +1189,16 @@ tui.chart.pieChart = function(container, rawData, options) {
  *       },
  *       map: 'world'
  *     };
- * tui.chart.mapChart(container, rawData, options);
+ * chart.mapChart(container, rawData, options);
  */
-tui.chart.mapChart = function(container, rawData, options) {
+function mapChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_MAP);
-};
+}
 
 /**
  * radial chart creator.
- * @memberOf tui.chart
+ * @memberof module:chart
+ * @memberof tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
  *      @param {Array.<Array>} rawData.series - series data
@@ -1219,29 +1238,88 @@ tui.chart.mapChart = function(container, rawData, options) {
  * @returns {object} bar chart
  * @api
  * @example
- *  var container = document.getElementById('chart-area'),
- *  data = {
- *      categories: ["June", "July", "Aug", "Sep", "Oct", "Nov"],
- *      series: [
- *          {
- *              name: 'Budget',
- *              data: [5000, 3000, 5000, 7000, 6000, 4000]
- *          },
- *          {
- *              name: 'Income',
- *              data: [8000, 8000, 7000, 2000, 5000, 3000]
- *            },
- *          {
- *              name: 'Expenses',
- *              data: [4000, 4000, 6000, 3000, 4000, 5000]
- *          },
- *          {
- *              name: 'Debt',
- *              data: [6000, 3000, 3000, 1000, 2000, 4000]
- *          }
+ * var chart = tui.chart; // or require('tui-chart');
+ * var container = document.getElementById('chart-area'),
+ *     rawData = {
+ *         categories: ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+ *         series: [
+ *             {
+ *                 name: 'Budget',
+ *                 data: [5000, 3000, 5000, 7000, 6000, 4000]
+ *             },
+ *             {
+ *                 name: 'Income',
+ *                 data: [8000, 8000, 7000, 2000, 5000, 3000]
+ *             },
+ *             {
+ *                 name: 'Expenses',
+ *                 data: [4000, 4000, 6000, 3000, 4000, 5000]
+ *             },
+ *             {
+ *                 name: 'Debt',
+ *                 data: [6000, 3000, 3000, 1000, 2000, 4000]
+ *             }
+ *         ]
+ *     },
+ *     options = {
+ *         chart: {
+ *             width: 600,
+ *             height: 400
+ *         },
+ *         series: {
+ *             showDot: true,
+ *             showArea: true
+ *         },
+ *         plot: {
+ *             type: 'circle'
+ *         },
+ *         yAxis: {
+ *             min: 0,
+ *             max: 9000
+ *         }
+ *     };
+ * chart.radialChart(container, rawData, options);
+ *
+ */
+function radialChart(container, rawData, options) {
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_RADIAL);
+}
+
+/**
+ * Boxplot chart creator.
+ * @memberof module:chart
+ * @memberof tui.chart
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData chart data
+ * @param {object} options - chart options
+ * @returns {object} box plot chart
+ * @api
+ * @example
+ * var chart = tui.chart; // or require('tui-chart');
+ * var container = document.getElementById('container-id'),
+ * var rawData = {
+ *  categories: ['Budget', 'Income', 'Expenses', 'Debt'],
+ *  series: [{
+ *      name: '2015',
+ *      data: [
+ *          [1000, 2500, 3714, 5500, 7000],
+ *          [1000, 2250, 3142, 4750, 6000]
+ *      ],
+ *      outliers: [
+ *          [0, 14000]
  *      ]
- *  },
- *  options = {
+ *  }, {
+ *      name: '2016',
+ *      data: [
+ *          [2000, 4500, 6714, 11500, 13000],
+ *          [7000, 9250, 10142, 11750, 12000]
+ *      ],
+ *      outliers: [
+ *          [1, 14000]
+ *      ]
+ *  }];
+ * };
+ * var options = {
  *      chart: {
  *          width: 600,
  *          height: 400
@@ -1258,20 +1336,15 @@ tui.chart.mapChart = function(container, rawData, options) {
  *          max: 9000
  *      }
  *  };
- *  tui.chart.radialChart(container, data, options);
- *
+ * chart.boxplotChart(container, rawData, options);
  */
-tui.chart.radialChart = function(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_RADIAL);
-};
-
-tui.chart.boxplotChart = function(container, rawData, options) {
+function boxplotChart(container, rawData, options) {
     return _createChart(container, rawData, options, chartConst.CHART_TYPE_BOXPLOT);
-};
+}
 
 /**
  * Register theme.
- * @memberOf tui.chart
+ * @memberof tui.chart
  * @param {string} themeName - theme name
  * @param {object} theme - application chart theme
  *      @param {object} theme.chart - chart theme
@@ -1325,6 +1398,7 @@ tui.chart.boxplotChart = function(container, rawData, options) {
  *              @param {string} theme.legend.label.color - font color
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var theme = {
  *   yAxis: {
  *     tickColor: '#ccbd9a',
@@ -1362,18 +1436,20 @@ tui.chart.boxplotChart = function(container, rawData, options) {
  *       }
  *     }
  *   };
- * tui.chart.registerTheme('newTheme', theme);
+ * chart.registerTheme('newTheme', theme);
  */
-tui.chart.registerTheme = function(themeName, theme) {
+function registerTheme(themeName, theme) {
     themeManager.register(themeName, theme);
-};
+}
 
 /**
  * Register map.
+ * @memberof tui.chart
  * @param {string} mapName map name
  * @param {Array.<{code: string, name: string, path: string}>} data map data
  * @api
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var data = [
  *   {
  *     code: 'KR',
@@ -1386,27 +1462,45 @@ tui.chart.registerTheme = function(themeName, theme) {
  *   },
  *   //...
  * ];
- * tui.chart.registerMap('newMap', data);
+ * chart.registerMap('newMap', data);
  */
-tui.chart.registerMap = function(mapName, data) {
+function registerMap(mapName, data) {
     mapManager.register(mapName, data);
-};
+}
 
 /**
  * Register graph plugin.
- * @memberOf tui.chart
+ * @memberof tui.chart
  * @param {string} libType type of graph library
  * @param {object} plugin plugin to control library
  * @param {function} getPaperCallback callback function for getting paper
  * @example
+ * var chart = tui.chart; // or require('tui-chart');
  * var pluginRaphael = {
  *   bar: function() {} // Render class
  * };
  * tui.chart.registerPlugin('raphael', pluginRaphael);
  */
-tui.chart.registerPlugin = function(libType, plugin, getPaperCallback) {
+function registerPlugin(libType, plugin, getPaperCallback) {
     pluginFactory.register(libType, plugin);
     drawingToolPicker.addRendererType(libType, getPaperCallback);
-};
+}
 
-require('./plugins/pluginRaphael');
+module.exports = {
+    barChart: barChart,
+    columnChart: columnChart,
+    lineChart: lineChart,
+    areaChart: areaChart,
+    bubbleChart: bubbleChart,
+    scatterChart: scatterChart,
+    heatmapChart: heatmapChart,
+    treemapChart: treemapChart,
+    comboChart: comboChart,
+    pieChart: pieChart,
+    mapChart: mapChart,
+    radialChart: radialChart,
+    boxplotChart: boxplotChart,
+    registerTheme: registerTheme,
+    registerMap: registerMap,
+    registerPlugin: registerPlugin
+};

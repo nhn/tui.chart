@@ -9,8 +9,9 @@
 
 var ChartBase = require('./chartBase');
 var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
 
-var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
+var ScatterChart = snippet.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
     /**
      * className
      * @type {string}

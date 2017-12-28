@@ -6,10 +6,11 @@
 
 'use strict';
 
-var Series = require('./series'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase');
+var Series = require('./series');
+var LineTypeSeriesBase = require('./lineTypeSeriesBase');
+var snippet = require('tui-code-snippet');
 
-var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
+var LineChartSeries = snippet.defineClass(Series, /** @lends LineChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs LineChartSeries

@@ -8,8 +8,9 @@
 
 var ChartBase = require('./chartBase');
 var rawDataHandler = require('../models/data/rawDataHandler');
+var snippet = require('tui-code-snippet');
 
-var BoxplotChart = tui.util.defineClass(ChartBase, /** @lends BoxplotChart.prototype */ {
+var BoxplotChart = snippet.defineClass(ChartBase, /** @lends BoxplotChart.prototype */ {
     /**
      * className
      * @type {string}

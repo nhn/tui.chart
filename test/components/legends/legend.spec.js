@@ -6,6 +6,8 @@
 
 'use strict';
 
+var raphael = require('raphael');
+var snippet = require('tui-code-snippet');
 var legendFactory = require('../../../src/js/components/legends/legend'),
     chartConst = require('../../../src/js/const'),
     renderUtil = require('../../../src/js/helpers/renderUtil');
@@ -42,7 +44,7 @@ describe('Test for Legend', function() {
                 }
             },
             chartType: 'column',
-            eventBus: new tui.util.CustomEvents(),
+            eventBus: new snippet.CustomEvents(),
             options: {}
         });
         spyOn(legend.eventBus, 'fire');
@@ -60,7 +62,7 @@ describe('Test for Legend', function() {
             };
 
             legend.render({
-                paper: Raphael(document.createElement('DIV'), 100, 100),
+                paper: raphael(document.createElement('DIV'), 100, 100),
                 layout: {
                     position: {
                         top: 0,
@@ -88,7 +90,7 @@ describe('Test for Legend', function() {
 
             legend._fireSelectLegendEvent(data, true);
 
-            expect(legend.eventBus.fire).toHaveBeenCalledWith('selectLegend', 'column', 0)
+            expect(legend.eventBus.fire).toHaveBeenCalledWith('selectLegend', 'column', 0);
         });
     });
 

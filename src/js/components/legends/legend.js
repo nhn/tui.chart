@@ -10,10 +10,11 @@ var chartConst = require('../../const');
 var LegendModel = require('./legendModel');
 var pluginFactory = require('../../factories/pluginFactory');
 var predicate = require('../../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
 var ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
 
-var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
+var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
     /**
      * Legend component.
      * @constructs Legend
@@ -166,7 +167,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
             && this.dataProcessor.options.series.colorByPoint;
 
-        return tui.util.map(legendData, function(legendDatum, index) {
+        return snippet.map(legendData, function(legendDatum, index) {
             var checkbox = self.options.showCheckbox === false ? null : {
                 checked: self.legendModel.isCheckedIndex(index)
             };
@@ -236,7 +237,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _fireSelectLegendEvent: function(data) {
         var index = this.legendModel.getSelectedIndex();
-        var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
+        var legendIndex = !snippet.isNull(index) ? data.seriesIndex : index;
 
         this.eventBus.fire('selectLegend', data.chartType, legendIndex);
     },
@@ -264,7 +265,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.legendModel.toggleSelectedIndex(index);
 
-        if (!tui.util.isNull(this.legendModel.getSelectedIndex()) && !this.legendModel.isCheckedSelectedIndex()) {
+        if (!snippet.isNull(this.legendModel.getSelectedIndex()) && !this.legendModel.isCheckedSelectedIndex()) {
             this.legendModel.checkSelectedIndex();
             this._fireChangeCheckedLegendsEvent();
         }
@@ -283,7 +284,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _getCheckedIndexes: function() {
         var checkedIndexes = [];
 
-        tui.util.forEachArray(this.legendModel.checkedWholeIndexes, function(checkbox, index) {
+        snippet.forEachArray(this.legendModel.checkedWholeIndexes, function(checkbox, index) {
             if (checkbox) {
                 checkedIndexes.push(index);
             }
@@ -349,15 +350,16 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     }
 });
 
-tui.util.CustomEvents.mixin(Legend);
+snippet.CustomEvents.mixin(Legend);
 
 /**
  * Factory for Legend
  * @param {object} params parameter
  * @returns {object|null}
+ * @ignore
  */
 function legendFactory(params) {
-    var isLegendVisible = tui.util.isUndefined(params.options.visible) ? true : params.options.visible;
+    var isLegendVisible = snippet.isUndefined(params.options.visible) ? true : params.options.visible;
     var seriesTypes = params.dataProcessor.seriesTypes;
     var chartType = params.chartOptions.chartType;
     var legend = null;
@@ -366,7 +368,7 @@ function legendFactory(params) {
         params.seriesTypes = seriesTypes;
         params.chartType = chartType;
 
-        // TODO axisTypeMixer에서 addComponents에서 추가된 additionalParams가 extends되야됨 우선 생략 그내용이 뭔지 파악해서 여기서 그옵션을 넣어야함
+        // @todo axisTypeMixer에서 addComponents에서 추가된 additionalParams가 extends되야됨 우선 생략 그내용이 뭔지 파악해서 여기서 그옵션을 넣어야함
         legend = new Legend(params);
     }
 

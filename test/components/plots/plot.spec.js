@@ -6,8 +6,7 @@
 
 'use strict';
 
-var raphael = window.Raphael;
-
+var raphael = require('raphael');
 var plotFactory = require('../../../src/js/components/plots/plot.js');
 var DataProcessor = require('../../../src/js/models/data/dataProcessor');
 var chartConst = require('../../../src/js/const');

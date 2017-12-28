@@ -8,6 +8,7 @@
 
 var scatterSeriesFactory = require('../../../src/js/components/series/scatterChartSeries');
 var chartConst = require('../../../src/js/const');
+var snippet = require('tui-code-snippet');
 
 describe('ScatterChartSeries', function() {
     var series;
@@ -22,7 +23,7 @@ describe('ScatterChartSeries', function() {
                 }
             },
             options: {},
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
 
         series.layout = {

@@ -478,6 +478,7 @@ describe('MapChartMapModel', function() {
                         }
                     };
                 }
+
                 return result;
             });
 

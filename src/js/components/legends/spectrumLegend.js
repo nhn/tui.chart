@@ -9,8 +9,9 @@
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var pluginFactory = require('../../factories/pluginFactory');
+var snippet = require('tui-code-snippet');
 
-var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */ {
+var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ {
     /**
      * Spectrum Legend component.
      * @constructs SpectrumLegend
@@ -91,8 +92,8 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             showWedge: this.onShowWedge,
             hideTooltip: this.onHideWedge
         }, this);
-        this.eventBus.on('beforeImageDownload', tui.util.bind(this._removeLocationURLFromFillAttribute, this));
-        this.eventBus.on('afterImageDownload', tui.util.bind(this._restoreLocationURLToFillAttribute, this));
+        this.eventBus.on('beforeImageDownload', snippet.bind(this._removeLocationURLFromFillAttribute, this));
+        this.eventBus.on('afterImageDownload', snippet.bind(this._restoreLocationURLToFillAttribute, this));
     },
 
     /**
@@ -263,9 +264,10 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
  * Factory for SpectrumLegend
  * @param {object} params parameter
  * @returns {object|null}
+ * @ignore
  */
 function spectrumLegendFactory(params) {
-    var isLegendVisible = tui.util.isUndefined(params.options.visible) ? true : params.options.visible;
+    var isLegendVisible = snippet.isUndefined(params.options.visible) ? true : params.options.visible;
     var chartType = params.chartOptions.chartType;
     var spectrumLegend = null;
 

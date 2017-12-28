@@ -31,7 +31,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                         height: 50
                     }
                 }
-                ]], 'column');
+            ]], 'column');
 
             expect(actual[0][0].sendData.chartType).toBe('column');
             expect(actual[0][0].sendData.indexes.groupIndex).toBe(0);
@@ -383,7 +383,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                 }];
 
             expect(actual).toEqual(expected);
-        })
+        });
     });
 
     describe('findData()', function() {

@@ -7,8 +7,10 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
+var arrayUtil = require('../helpers/arrayUtil');
 
-var browser = tui.util.browser;
+var browser = snippet.browser;
 var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
 var DEFAULT_DOT_RADIUS = 3;
@@ -24,7 +26,7 @@ var concat = Array.prototype.concat;
  * @class RaphaelLineTypeBase
  * @private
  */
-var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
+var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
@@ -38,7 +40,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var prevMissing = false;
 
         posTopType = posTopType || 'top';
-        tui.util.map(positions, function(position) {
+        snippet.map(positions, function(position) {
             var pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
 
             if (position) {
@@ -102,7 +104,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     _getSplinePositionsGroups: function(positions, connectNulls) {
         var positionsGroups = [];
         var positionsGroup = [];
-        tui.util.forEach(positions, function(position, index) {
+        snippet.forEach(positions, function(position, index) {
             var isLastIndex = index === positions.length - 1;
 
             if (position) {
@@ -129,14 +131,14 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var paths = [];
         var firstPos, lastPos, positionsLen, fromPos, middlePositions, path, prevPos;
 
-        tui.util.forEach(positionsGroups, function(dataPositions) {
+        snippet.forEach(positionsGroups, function(dataPositions) {
             prevPos = firstPos = dataPositions[0];
             positionsLen = dataPositions.length;
             fromPos = firstPos;
             lastPos = dataPositions[positionsLen - 1];
             middlePositions = dataPositions.slice(1).slice(0, positionsLen - 2);
 
-            path = tui.util.map(middlePositions, function(position, index) {
+            path = snippet.map(middlePositions, function(position, index) {
                 var nextPos = dataPositions[index + 2];
                 var anchor = self._getAnchor(fromPos, position, nextPos);
 
@@ -175,7 +177,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var positionsGroups = this._getSplinePositionsGroups(positions, connectNulls);
         var partialPaths = this._getSplinePartialPaths(positionsGroups);
 
-        tui.util.forEach(partialPaths, function(partialPath) {
+        snippet.forEach(partialPaths, function(partialPath) {
             path = path.concat(partialPath);
         });
 
@@ -235,7 +237,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         };
 
         if (borderStyle) {
-            tui.util.extend(outDotStyle, borderStyle);
+            snippet.extend(outDotStyle, borderStyle);
         }
 
         return outDotStyle;
@@ -257,9 +259,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
             dotStyle = {
                 fill: dotTheme.fillColor || color,
-                'fill-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
+                'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
                 stroke: dotTheme.strokeColor || color,
-                'stroke-opacity': tui.util.isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
+                'stroke-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
                 'stroke-width': dotTheme.strokeWidth
             };
 
@@ -302,17 +304,17 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var self = this;
         var dots;
 
-        dots = tui.util.map(groupPositions, function(positions, groupIndex) {
+        dots = snippet.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
 
-            return tui.util.map(positions, function(position) {
+            return snippet.map(positions, function(position) {
                 var dotMap = {
                     endDot: self.renderDot(paper, position, color, opacity)
                 };
                 var startPosition;
 
                 if (self.hasRangeData) {
-                    startPosition = tui.util.extend({}, position);
+                    startPosition = snippet.extend({}, position);
                     startPosition.top = startPosition.startTop;
                     dotMap.startDot = self.renderDot(paper, startPosition, color, opacity);
                 }
@@ -423,7 +425,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _getPivotGroupDots: function() {
         if (!this.pivotGroupDots && this.groupDots) {
-            this.pivotGroupDots = tui.chart.arrayUtil.pivot(this.groupDots);
+            this.pivotGroupDots = arrayUtil.pivot(this.groupDots);
         }
 
         return this.pivotGroupDots;
@@ -442,7 +444,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             return;
         }
 
-        tui.util.forEachArray(groupDots[index], function(item) {
+        snippet.forEachArray(groupDots[index], function(item) {
             if (item.endDot) {
                 self._showDot(item.endDot);
             }
@@ -500,8 +502,8 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         // prev 정보가 있다면 prev의 r을 적용해준다
         // hideDot시 dot이 사라져버리는 이슈 있음
-        if (prev && !tui.util.isUndefined(opacity)) {
-            outDotStyle = tui.util.extend({
+        if (prev && !snippet.isUndefined(opacity)) {
+            outDotStyle = snippet.extend({
                 r: prev.r,
                 'stroke-opacity': prev['stroke-opacity'],
                 'stroke-width': prev['stroke-width']
@@ -539,7 +541,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             strokeWidth = this.lineWidth;
         }
 
-        if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
+        if (opacity && !snippet.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
             opacity = DE_EMPHASIS_OPACITY;
         }
 
@@ -567,7 +569,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _hideGroupDots: function(index) {
         var self = this;
-        var hasSelectedIndex = !tui.util.isNull(this.selectedLegendIndex);
+        var hasSelectedIndex = !snippet.isNull(this.selectedLegendIndex);
         var baseOpacity = this.dotOpacity;
         var groupDots = this._getPivotGroupDots();
 
@@ -575,7 +577,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             return;
         }
 
-        tui.util.forEachArray(groupDots[index], function(item, groupIndex) {
+        snippet.forEachArray(groupDots[index], function(item, groupIndex) {
             var opacity = baseOpacity;
 
             if (opacity && hasSelectedIndex && self.selectedLegendIndex !== groupIndex) {
@@ -622,7 +624,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         };
 
         if (this.dotOpacity) {
-            dotAttrs = tui.util.extend({'fill-opacity': this.dotOpacity}, dotAttrs, this.borderStyle);
+            dotAttrs = snippet.extend({'fill-opacity': this.dotOpacity}, dotAttrs, this.borderStyle);
         }
 
         dot.attr(dotAttrs);
@@ -752,7 +754,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             cy: position.top
         };
 
-        if (tui.util.isExisty(tickSize)) {
+        if (snippet.isExisty(tickSize)) {
             attr.transform = 't-' + tickSize + ',0';
         }
 
@@ -771,7 +773,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             path: paths.join(' ')
         };
 
-        if (tui.util.isExisty(tickSize)) {
+        if (snippet.isExisty(tickSize)) {
             attr.transform = 't-' + tickSize + ',0';
         }
 
@@ -822,6 +824,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
  * @param {object} dimension dimension
  * @param {string} id ID string
  * @returns {object}
+ * @ignore
  */
 function createClipPathRectWithLayout(paper, position, dimension, id) {
     var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');

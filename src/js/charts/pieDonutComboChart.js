@@ -8,8 +8,9 @@
 
 var ChartBase = require('./chartBase');
 var rawDataHandler = require('../models/data/rawDataHandler');
+var snippet = require('tui-code-snippet');
 
-var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
+var PieDonutComboChart = snippet.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
     /**
      * className
      * @type {string}
@@ -29,7 +30,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
          * chart types.
          * @type {Array.<string>}
          */
-        this.seriesTypes = tui.util.keys(rawData.series).sort();
+        this.seriesTypes = snippet.keys(rawData.series).sort();
 
         /**
          * chart types
@@ -68,7 +69,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         var self = this;
         var seriesTypes = this.seriesTypes || [this.chartType];
 
-        tui.util.forEachArray(seriesTypes, function(chartType) {
+        snippet.forEachArray(seriesTypes, function(chartType) {
             self.dataProcessor.addDataRatiosOfPieChart(chartType);
         });
     },

@@ -9,8 +9,9 @@
 var chartConst = require('../../const');
 var EventDetectorBase = require('./mouseEventDetectorBase');
 var zoomMixer = require('./zoomMixer');
+var snippet = require('tui-code-snippet');
 
-var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
+var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
     /**
      * GroupTypeEventDetector is mouse event detector for grouped tooltip.
      * @param {object} params parameters
@@ -40,7 +41,7 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
         this.sizeType = this.isVertical ? 'height' : 'width';
 
         if (this.zoomable) {
-            tui.util.extend(this, zoomMixer);
+            snippet.extend(this, zoomMixer);
             this._initForZoom(params.zoomable);
         }
     },
@@ -213,7 +214,7 @@ var GroupTypeEventDetector = tui.util.defineClass(EventDetectorBase, /** @lends 
 
         layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
 
-        if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
+        if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !snippet.isNull(this.prevIndex)) {
             this._hideTooltip();
         }
 

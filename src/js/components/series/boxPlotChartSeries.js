@@ -11,8 +11,9 @@ var BarTypeSeriesBase = require('./barTypeSeriesBase');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var BoxplotChartSeries = tui.util.defineClass(Series, /** @lends BoxplotChartSeries.prototype */ {
+var BoxplotChartSeries = snippet.defineClass(Series, /** @lends BoxplotChartSeries.prototype */ {
     /**
      * Boxplot chart series component.
      * @constructs BoxplotChartSeries
@@ -75,7 +76,7 @@ var BoxplotChartSeries = tui.util.defineClass(Series, /** @lends BoxplotChartSer
 
         boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
 
-        outliers = tui.util.map(seriesItem.outliers, function(outlier) {
+        outliers = snippet.map(seriesItem.outliers, function(outlier) {
             return {
                 top: (baseData.baseBarSize * (1 - outlier.ratio)) + baseTopPosition,
                 left: boundLeft + (baseData.barSize / 2)
@@ -138,7 +139,7 @@ var BoxplotChartSeries = tui.util.defineClass(Series, /** @lends BoxplotChartSer
                 minusTop: 0,
                 prevStack: null
             };
-            var iteratee = tui.util.bind(self._makeBoxplotChartBound, self, baseData, iterationData, isStackType);
+            var iteratee = snippet.bind(self._makeBoxplotChartBound, self, baseData, iterationData, isStackType);
 
             return seriesGroup.map(iteratee);
         });

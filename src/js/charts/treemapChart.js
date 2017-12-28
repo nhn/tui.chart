@@ -8,8 +8,9 @@
 
 var ChartBase = require('./chartBase');
 var ColorSpectrum = require('./colorSpectrum');
+var snippet = require('tui-code-snippet');
 
-var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
+var TreemapChart = snippet.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
     /**
      * className
      * @type {string}
@@ -56,8 +57,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             });
         }
 
-        this.componentManager.register('tooltip', 'tooltip', tui.util.extend({
-            labelTheme: tui.util.pick(this.theme, 'series', 'label')
+        this.componentManager.register('tooltip', 'tooltip', snippet.extend({
+            labelTheme: snippet.pick(this.theme, 'series', 'label')
         }));
 
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');

@@ -113,7 +113,7 @@ describe('Test for renderUtil', function() {
                     function(value) {
                         return '00' + value;
                     }, function(value) {
-                        return value + '%'
+                        return value + '%';
                     }
                 ],
                 actual = renderUtil.formatValues([10, 20, 30, 40], formatFunctions),

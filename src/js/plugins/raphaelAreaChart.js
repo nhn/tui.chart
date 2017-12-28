@@ -8,6 +8,7 @@
 
 var RaphaelLineBase = require('./raphaelLineTypeBase');
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
@@ -16,7 +17,7 @@ var concat = Array.prototype.concat;
 var GUIDE_AREACHART_AREAOPACITY_TYPE = require('../const.js').GUIDE_AREACHART_AREAOPACITY_TYPE;
 var consoleUtil = require('../helpers/consoleUtil');
 
-var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
+var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
     /**
      * RaphaelAreaChart is graph renderer for area chart.
      * @constructs RaphaelAreaChart
@@ -60,7 +61,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var dotOpacity = options.showDot ? 1 : 0;
         var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
-        var lineWidth = this.lineWidth = (tui.util.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
+        var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
 
         this.paper = paper;
         this.theme = data.theme;
@@ -133,7 +134,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         colors.reverse();
         groupPaths.reverse();
 
-        groupAreas = tui.util.map(groupPaths, function(path, groupIndex) {
+        groupAreas = snippet.map(groupPaths, function(path, groupIndex) {
             var areaColor = colors[groupIndex] || 'transparent',
                 lineColor = areaColor,
                 polygons = {
@@ -182,7 +183,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var formerPath = [];
         var latterPath = [];
 
-        tui.util.forEachArray(positions, function(position, index) {
+        snippet.forEachArray(positions, function(position, index) {
             var moveOrLine;
             if (position) {
                 if (prevNull) {
@@ -206,7 +207,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             }
         });
 
-        tui.util.forEachArray(paths, function(partialPath) {
+        snippet.forEachArray(paths, function(partialPath) {
             path = path.concat(partialPath);
         });
 
@@ -232,7 +233,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     _makeAreaChartPath: function(groupPositions, hasExtraPath, connectNulls) {
         var self = this;
 
-        return tui.util.map(groupPositions, function(positions) {
+        return snippet.map(groupPositions, function(positions) {
             var paths;
 
             paths = {
@@ -257,7 +258,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     _makeSplineAreaBottomPath: function(positions) {
         var self = this;
 
-        return tui.util.map(positions, function(position) {
+        return snippet.map(positions, function(position) {
             return ['L', position.left, self.zeroTop];
         }).reverse();
     },
@@ -272,7 +273,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     _makeSplineAreaChartPath: function(groupPositions, hasExtraPath) {
         var self = this;
 
-        return tui.util.map(groupPositions, function(positions) {
+        return snippet.map(groupPositions, function(positions) {
             var linesPath = self._makeSplineLinesPath(positions);
             var areaPath = JSON.parse(JSON.stringify(linesPath));
             var areasBottomPath = self._makeSplineAreaBottomPath(positions);
@@ -310,7 +311,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+        snippet.forEachArray(this.groupPaths, function(path, groupIndex) {
             var area = self.groupAreas[groupIndex];
             area.area.attr({path: path.area.join(' ')});
             area.line.attr({path: path.line.join(' ')});
@@ -319,7 +320,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 area.startLine.attr({path: path.startLine.join(' ')});
             }
 
-            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
+            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
                 var position = groupPositions[groupIndex][index];
                 var startPositon;
 
@@ -327,7 +328,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                     self._moveDot(item.endDot.dot, position);
                 }
                 if (item.startDot) {
-                    startPositon = tui.util.extend({}, position);
+                    startPositon = snippet.extend({}, position);
                     startPositon.top = startPositon.startTop;
                     self._moveDot(item.startDot.dot, startPositon);
                 }
@@ -341,11 +342,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     selectLegend: function(legendIndex) {
         var self = this,
-            noneSelected = tui.util.isNull(legendIndex);
+            noneSelected = snippet.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
-        tui.util.forEachArray(this.groupAreas, function(area, groupIndex) {
+        snippet.forEachArray(this.groupAreas, function(area, groupIndex) {
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             area.area.attr({'fill-opacity': opacity});
@@ -355,7 +356,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 area.startLine.attr({'stroke-opacity': opacity});
             }
 
-            tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
+            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
                 if (self.dotOpacity) {
                     item.endDot.dot.attr({'fill-opacity': opacity});
                     if (item.startDot) {
@@ -389,7 +390,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.zeroTop = zeroTop;
 
-        tui.util.forEachArray(this.groupAreas, function(area, groupIndex) {
+        snippet.forEachArray(this.groupAreas, function(area, groupIndex) {
             var dots = self.groupDots[groupIndex];
             var groupPosition = groupPositions[groupIndex];
             var pathMap = groupPaths[groupIndex];
@@ -398,7 +399,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 self._removeFirstDot(dots);
             }
 
-            tui.util.forEachArray(dots, function(item, index) {
+            snippet.forEachArray(dots, function(item, index) {
                 var position = groupPosition[index + additionalIndex];
                 self._animateByPosition(item.endDot.dot, position, tickSize);
 
@@ -430,8 +431,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         };
         var set = paper.set();
 
-        tui.util.forEach(groupLabels, function(categoryLabel, categoryIndex) {
-            tui.util.forEach(categoryLabel, function(label, seriesIndex) {
+        snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
+            snippet.forEach(categoryLabel, function(label, seriesIndex) {
                 var position = groupPositions[categoryIndex][seriesIndex];
                 var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
                 var startLabel;
@@ -466,13 +467,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _isAreaOpacityNumber: function(areaOpacity) {
-        var isNumber = tui.util.isNumber(areaOpacity);
+        var isNumber = snippet.isNumber(areaOpacity);
 
         if (isNumber) {
             if (areaOpacity < 0 || areaOpacity > 1) {
                 consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'warn');
             }
-        } else if (!tui.util.isUndefined(areaOpacity)) {
+        } else if (!snippet.isUndefined(areaOpacity)) {
             consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'error');
         }
 

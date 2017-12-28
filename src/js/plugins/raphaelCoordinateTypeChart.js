@@ -7,8 +7,8 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
-
-var raphael = window.Raphael;
+var snippet = require('tui-code-snippet');
+var raphael = require('raphael');
 
 var ANIMATION_DURATION = 700;
 var CIRCLE_OPACITY = 0.5;
@@ -22,11 +22,13 @@ var TOOLTIP_OFFSET_VALUE = 20;
 /**
  * bound for circle
  * @typedef {{left: number, top: number, radius: number}} bound
+ * @private
  */
 
 /**
  * Information for rendered circle
  * @typedef {{circle: object, color: string, bound: bound}} circleInfo
+ * @private
  */
 
 /**
@@ -34,7 +36,7 @@ var TOOLTIP_OFFSET_VALUE = 20;
  * @class RaphaelBubbleChart
  * @private
  */
-var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prototype */ {
+var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.prototype */ {
     /**
      * Render function of bubble chart
      * @param {object} paper - Raphael paper
@@ -140,8 +142,8 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         var self = this;
         var colors = this.theme.colors;
 
-        return tui.util.map(this.groupBounds, function(bounds, groupIndex) {
-            return tui.util.map(bounds, function(bound, index) {
+        return snippet.map(this.groupBounds, function(bounds, groupIndex) {
+            return snippet.map(bounds, function(bound, index) {
                 var circleInfo = null;
                 var color, circle;
 
@@ -307,7 +309,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         var paper = this.paper;
         var foundCircle, circle;
 
-        while (tui.util.isUndefined(foundCircle)) {
+        while (snippet.isUndefined(foundCircle)) {
             circle = paper.getElementByPoint(position.left, position.top);
 
             if (circle) {
@@ -326,7 +328,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
             foundCircle = circles[0];
         }
 
-        tui.util.forEachArray(circles, function(_circle) {
+        snippet.forEachArray(circles, function(_circle) {
             _circle.show();
         });
 
@@ -341,7 +343,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         var circle = this._findCircle(position);
         var groupIndex, index, args;
 
-        if (circle && tui.util.isExisty(circle.data('groupIndex'))) {
+        if (circle && snippet.isExisty(circle.data('groupIndex'))) {
             groupIndex = circle.data('groupIndex');
             index = circle.data('index');
             args = [{}, groupIndex, index, {
@@ -396,7 +398,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      * @param {?number} legendIndex - index of legend
      */
     selectLegend: function(legendIndex) {
-        var noneSelected = tui.util.isNull(legendIndex);
+        var noneSelected = snippet.isNull(legendIndex);
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
             var opacity;

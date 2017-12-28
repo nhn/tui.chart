@@ -9,8 +9,9 @@
 
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
+var snippet = require('tui-code-snippet');
 
-var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
+var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
     /**
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
@@ -183,7 +184,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
 
             outliers = this.outliers;
 
-            tui.util.forEach(values.slice(5), function(outlier) {
+            snippet.forEach(values.slice(5), function(outlier) {
                 outliers.push({
                     value: outlier,
                     label: renderUtil.formatValue(outlier, self.formatFunctions, self.chartType, areaType)
@@ -206,8 +207,8 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _createValues: function(value) {
-        var values = tui.util.map([].concat(value), function(newValue) {
-            return tui.util.isNull(newValue) ? null : parseFloat(newValue);
+        var values = snippet.map([].concat(value), function(newValue) {
+            return snippet.isNull(newValue) ? null : parseFloat(newValue);
         });
 
         return values;
@@ -219,7 +220,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     addStart: function(value) {
-        if (!tui.util.isNull(this.min)) {
+        if (!snippet.isNull(this.min)) {
             return;
         }
 
@@ -254,7 +255,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         this.lqRatio = calculateRatio(this.lq, divNumber, subNumber, baseRatio);
         this.minRatio = calculateRatio(this.min, divNumber, subNumber, baseRatio);
 
-        tui.util.forEach(this.outliers, function(outlier) {
+        snippet.forEach(this.outliers, function(outlier) {
             outlier.ratio = calculateRatio(outlier.value, divNumber, subNumber, baseRatio);
         });
 
@@ -281,7 +282,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             ratio: this.ratio
         };
 
-        if (tui.util.isExisty(this.min)) {
+        if (snippet.isExisty(this.min)) {
             valueMap.min = this._getFormattedValueForTooltip('min');
             valueMap.max = this._getFormattedValueForTooltip('max');
             valueMap.minRatio = this.minRatio;

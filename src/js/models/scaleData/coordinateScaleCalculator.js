@@ -5,6 +5,8 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 /**
  * The reference values to normailze value
  * @private
@@ -108,6 +110,7 @@ function getNormalizedLimit(min, max, step) {
  * @param {number} limitSize limit size of chart min max distance
  * @param {number} step step distance
  * @returns {number}
+ * @ignore
  */
 function getNormalizedStepCount(limitSize, step) {
     var multiplier = 1 / Math.min(getDigits(limitSize), getDigits(step));
@@ -120,6 +123,7 @@ function getNormalizedStepCount(limitSize, step) {
  * @param {object} scale scale
  * @private
  * @returns {object}
+ * @ignore
  */
 function getNormalizedScale(scale) {
     var step = getNormalizedStep(scale.step);
@@ -160,7 +164,7 @@ function getRoughScale(min, max, offsetSize, stepCount, minimumStepSize) {
 
     step = valuePerPixel * pixelsPerStep;
 
-    if (tui.util.isNumber(minimumStepSize) && step < minimumStepSize) {
+    if (snippet.isNumber(minimumStepSize) && step < minimumStepSize) {
         step = minimumStepSize;
         stepCount = limitSize / step;
     }
@@ -177,13 +181,14 @@ function getRoughScale(min, max, offsetSize, stepCount, minimumStepSize) {
 
 /**
  * Calculate coordinate scale
- * @param {object} options options
+ * @param {object} options optionsPP
  * @param {object} options.min min value
  * @param {object} options.max max value
  * @param {object} options.offsetSize offset pixel size of screen that needs scale
  * @param {object} [options.stepCount] if need fixed step count
  * @param {object} [options.minimumStepSize] for ensure minimum step size
  * @returns {object}
+ * @ignore
  */
 function coordinateScaleCalculator(options) {
     var min = options.min;

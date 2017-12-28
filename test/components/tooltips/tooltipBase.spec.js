@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var TooltipBase = require('../../../src/js/components/tooltips/tooltipBase'),
     dom = require('../../../src/js/helpers/domHandler');
 
@@ -14,7 +15,7 @@ describe('TooltipBase', function() {
 
     beforeEach(function() {
         tooltip = new TooltipBase({
-            eventBus: new tui.util.CustomEvents(),
+            eventBus: new snippet.CustomEvents(),
             options: {}
         });
     });

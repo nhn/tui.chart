@@ -8,8 +8,9 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var chartConst = require('./../const');
+var snippet = require('tui-code-snippet');
 
-var RaphaelTitleComponent = tui.util.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
+var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
     /**
      * Render title
      * @param {object} paper - paper

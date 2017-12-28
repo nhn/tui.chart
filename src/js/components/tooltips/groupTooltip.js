@@ -13,13 +13,14 @@ var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var defaultTheme = require('../../themes/defaultTheme');
 var tooltipTemplate = require('./tooltipTemplate');
+var snippet = require('tui-code-snippet');
 
 /**
  * @classdesc GroupTooltip component.
  * @class GroupTooltip
  * @private
  */
-var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
+var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
@@ -42,12 +43,12 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var template = tooltipTemplate.tplGroupItem,
             cssTextTemplate = tooltipTemplate.tplGroupCssText,
             colors = this._makeColors(this.theme),
-            itemsHtml = tui.util.map(items, function(item, index) {
+            itemsHtml = snippet.map(items, function(item, index) {
                 if (!item.value) {
                     return null;
                 }
 
-                return template(tui.util.extend({
+                return template(snippet.extend({
                     cssText: cssTextTemplate({color: colors[index]})
                 }, item));
             }).join('');
@@ -127,7 +128,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _updateLegendTheme: function(checkedLegends) {
         var colors = [];
 
-        tui.util.forEachArray(this.dataProcessor.getOriginalLegendData(), function(item) {
+        snippet.forEachArray(this.dataProcessor.getOriginalLegendData(), function(item) {
             var _checkedLegends = checkedLegends[item.chartType] || checkedLegends;
             if (_checkedLegends[item.index]) {
                 colors.push(item.theme.color);
@@ -148,7 +149,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var self = this;
         var length = this.dataProcessor.getCategoryCount(this.isVertical);
 
-        return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
+        return snippet.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
             return {
                 category: self.dataProcessor.makeTooltipCategory(index, length - index, self.isVertical),
                 values: seriesGroup.pluck('label')
@@ -173,7 +174,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         defaultColors = defaultTheme.series.colors.slice(0, legendLabels.length);
 
-        return tui.util.map(tui.util.pluck(legendLabels, 'chartType'), function(chartType) {
+        return snippet.map(snippet.pluck(legendLabels, 'chartType'), function(chartType) {
             var color;
 
             if (prevChartType !== chartType) {
@@ -199,7 +200,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var dataProcessor = this.dataProcessor,
             suffix = this.suffix;
 
-        return tui.util.map(values, function(value, index) {
+        return snippet.map(values, function(value, index) {
             var legendLabel = dataProcessor.getLegendItem(index);
 
             return {
@@ -373,7 +374,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _showTooltip: function(elTooltip, params, prevPosition) {
         var dimension, position;
 
-        if (!tui.util.isNull(this.prevIndex)) {
+        if (!snippet.isNull(this.prevIndex)) {
             this.eventBus.fire('hideGroupAnimation', this.prevIndex);
         }
 
@@ -429,7 +430,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         if (silent) {
             return;
         }
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', tui.util.extend({
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', snippet.extend({
             chartType: this.chartType,
             index: index,
             range: range

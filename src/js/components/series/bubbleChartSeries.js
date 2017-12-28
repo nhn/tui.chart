@@ -9,8 +9,9 @@
 var chartConst = require('../../const');
 var Series = require('./series');
 var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
+var snippet = require('tui-code-snippet');
 
-var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
+var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
     /**
      * Bubble chart series component.
      * @constructs BubbleChartSeries
@@ -72,8 +73,8 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     _makeBound: function(ratioMap, positionByStep, maxRadius) {
         var dimension = this.layout.dimension;
         var position = this.layout.position;
-        var left = tui.util.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
-        var top = tui.util.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
+        var left = snippet.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
+        var top = snippet.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
 
         return {
             left: position.left + left,

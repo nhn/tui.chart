@@ -8,6 +8,7 @@
 
 var chartConst = require('../../const');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 /**
  * renderingLabelHelper is helper for rendering of series label.
@@ -86,7 +87,7 @@ var renderingLabelHelper = {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
 
-        makePosition = makePosition || tui.util.bind(this._makePositionForBoundType, this);
+        makePosition = makePosition || snippet.bind(this._makePositionForBoundType, this);
         isPivot = !!isPivot;
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
@@ -134,7 +135,7 @@ var renderingLabelHelper = {
      * @returns {*|Array.<Object>|Array}
      */
     boundsToLabelPositionsForBarChart: function(seriesDataModel, boundsSet, theme) {
-        var makePositionFunction = tui.util.bind(this._makePositionForBarChart, this);
+        var makePositionFunction = snippet.bind(this._makePositionForBarChart, this);
 
         return this.boundsToLabelPositions(seriesDataModel, boundsSet, theme, makePositionFunction);
     },
@@ -172,7 +173,7 @@ var renderingLabelHelper = {
      * @returns {*|Array.<Object>|Array}
      */
     boundsToLabelPositionsForColumnChart: function(seriesDataModel, boundsSet, theme) {
-        var makePositionFunction = tui.util.bind(this._makePositionForColumnChart, this);
+        var makePositionFunction = snippet.bind(this._makePositionForColumnChart, this);
 
         return this.boundsToLabelPositions(seriesDataModel, boundsSet, theme, makePositionFunction);
     },
@@ -185,7 +186,7 @@ var renderingLabelHelper = {
      */
     boundsToLabelPostionsForTreemap: function(seriesItems, boundMap) {
         var self = this;
-        var positions = tui.util.map(seriesItems, function(seriesItem) {
+        var positions = snippet.map(seriesItems, function(seriesItem) {
             var bound = boundMap[seriesItem.id];
             var position;
 

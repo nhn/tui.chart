@@ -12,11 +12,12 @@ var dom = require('../../helpers/domHandler');
 var eventListener = require('../../helpers/eventListener');
 var predicate = require('../../helpers/predicate');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
 var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
 
-var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype */ {
+var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype */ {
     /**
      * ChartExportMenu component.
      * @constructs ChartExportMenu
@@ -128,7 +129,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         var menuItems = [];
 
         if (isDownloadSupported && (isDataDownloadAvailable || isImageDownloadAvailable)) {
-            menuItems = tui.util.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
+            menuItems = snippet.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
                 var itemElement;
 
                 if ((!isImageExtension(exportItemType) && isDataDownloadAvailable)
@@ -295,7 +296,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
         if (predicate.isTreemapChart(this.chartType)) {
             result = false;
         } else {
-            tui.util.forEach(seriesDataModels, function(seriesDataModel) {
+            snippet.forEach(seriesDataModels, function(seriesDataModel) {
                 if (seriesDataModel.isCoordinateType) {
                     result = false;
                 }
@@ -328,6 +329,7 @@ var ChartExportMenu = tui.util.defineClass(/** @lends ChartExportMenu.prototype 
  * Factory for ChartExportMenu
  * @param {object} params parameter
  * @returns {object|null}
+ * @ignore
  */
 function chartExportMenuFactory(params) {
     var isVisible = params.options.visible;

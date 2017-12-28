@@ -45,6 +45,8 @@ var BoxplotSeries = require('../components/series/boxPlotChartSeries');
 
 var Zoom = require('../components/series/zoom');
 
+var snippet = require('tui-code-snippet');
+
 var COMPONENT_FACTORY_MAP = {
     axis: Axis,
     plot: Plot,
@@ -74,7 +76,7 @@ var COMPONENT_FACTORY_MAP = {
     title: title
 };
 
-var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototype */ {
+var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype */ {
     /**
      * ComponentManager manages components of chart.
      * @param {object} params parameters
@@ -87,8 +89,8 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      */
     init: function(params) {
         var chartOption = params.options.chart;
-        var width = tui.util.pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
-        var height = tui.util.pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
+        var width = snippet.pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
+        var height = snippet.pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
 
         /**
          * Components
@@ -167,7 +169,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      */
     _makeComponentOptions: function(options, optionKey, componentName, index) {
         options = options || this.options[optionKey];
-        options = tui.util.isArray(options) ? options[index] : options || {};
+        options = snippet.isArray(options) ? options[index] : options || {};
 
         return options;
     },
@@ -214,12 +216,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         if (optionKey === 'series') {
             // 시리즈는 옵션과 테마가 시리즈 이름으로 뎊스가 한번더 들어간다.
             // 테마는 항상 뎊스가 더들어가고 옵션은 콤보인경우에만 더들어간다.
-            tui.util.forEach(this.seriesTypes, function(seriesType) {
+            snippet.forEach(this.seriesTypes, function(seriesType) {
                 if (name.indexOf(seriesType) === 0) {
                     params.options = params.options[seriesType] || params.options;
                     params.theme = params.theme[seriesType];
 
-                    if (tui.util.isArray(params.options)) {
+                    if (snippet.isArray(params.options)) {
                         params.options = params.options[index] || {};
                     }
 
@@ -269,12 +271,12 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @private
      */
     _makeDataForRendering: function(name, type, paper, boundsAndScale, additionalData) {
-        var data = tui.util.extend({
+        var data = snippet.extend({
             paper: paper
         }, additionalData);
 
         if (boundsAndScale) {
-            tui.util.extend(data, boundsAndScale);
+            snippet.extend(data, boundsAndScale);
 
             data.layout = {
                 dimension: data.dimensionMap[name] || data.dimensionMap[type],
@@ -304,7 +306,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         var self = this;
         var name, type;
 
-        var elements = tui.util.map(this.components, function(component) {
+        var elements = snippet.map(this.components, function(component) {
             var element = null;
             var data, result, paper;
 
@@ -335,10 +337,10 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @returns {Array.<object>} filtered components
      */
     where: function(conditionMap) {
-        return tui.util.filter(this.components, function(component) {
+        return snippet.filter(this.components, function(component) {
             var contained = true;
 
-            tui.util.forEach(conditionMap, function(value, key) {
+            snippet.forEach(conditionMap, function(value, key) {
                 if (component[key] !== value) {
                     contained = false;
                 }
@@ -357,7 +359,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     execute: function(funcName) {
         var args = Array.prototype.slice.call(arguments, 1);
 
-        tui.util.forEachArray(this.components, function(component) {
+        snippet.forEachArray(this.components, function(component) {
             if (component[funcName]) {
                 component[funcName].apply(component, args);
             }

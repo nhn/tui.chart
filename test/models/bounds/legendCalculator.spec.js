@@ -54,7 +54,7 @@ describe('Test for legendCalculator', function() {
         it('make divided labels and max line width.', function() {
             /**
              * 251: chart length = max line width + 1
-             * devision loop ending condition: chart length > max line width 
+             * devision loop ending condition: chart length > max line width
              */
             var actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
                 ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 261, {}, chartConst.LEGEND_CHECKBOX_WIDTH

@@ -6,9 +6,10 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var columnSeriesFactory = require('../../../src/js/components/series/columnChartSeries.js');
 var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
-var seriesGroup = require('../../../src/js/models/data/seriesGroup');
+var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
 var renderUtil = require('../../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
@@ -36,7 +37,7 @@ describe('ColumnChartSeries', function() {
             },
             options: {},
             dataProcessor: dataProcessor,
-            eventBus: new tui.util.CustomEvents()
+            eventBus: new snippet.CustomEvents()
         });
     });
 
@@ -113,7 +114,7 @@ describe('ColumnChartSeries', function() {
 
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 40,
                     startRatio: 0,
                     ratioDistance: 0.4

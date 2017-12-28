@@ -9,6 +9,7 @@
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 var defaultTheme = require('./defaultTheme');
+var snippet = require('tui-code-snippet');
 
 var themes = {};
 
@@ -33,7 +34,7 @@ module.exports = {
     _pickSeriesNames: function(chartType, rawSeriesData) {
         var seriesTypes = [];
         if (predicate.isComboChart(chartType)) {
-            tui.util.forEach(rawSeriesData, function(data, seriesType) {
+            snippet.forEach(rawSeriesData, function(data, seriesType) {
                 seriesTypes.push(seriesType);
             });
         } else {
@@ -52,15 +53,15 @@ module.exports = {
     _overwriteTheme: function(fromTheme, toTheme) {
         var self = this;
 
-        tui.util.forEach(toTheme, function(item, key) {
+        snippet.forEach(toTheme, function(item, key) {
             var fromItem = fromTheme[key];
             if (!fromItem && fromItem !== 0) {
                 return;
             }
 
-            if (tui.util.isArray(fromItem)) {
+            if (snippet.isArray(fromItem)) {
                 toTheme[key] = fromItem.slice();
-            } else if (tui.util.isObject(fromItem)) {
+            } else if (snippet.isObject(fromItem)) {
                 self._overwriteTheme(fromItem, item);
             } else {
                 toTheme[key] = fromItem;
@@ -78,8 +79,8 @@ module.exports = {
     _pickValidTheme: function(theme, componentType) {
         var validTheme = {};
 
-        tui.util.forEachArray(chartConst.THEME_PROPS_MAP[componentType], function(propName) {
-            if (tui.util.isExisty(theme[propName])) {
+        snippet.forEachArray(chartConst.THEME_PROPS_MAP[componentType], function(propName) {
+            if (snippet.isExisty(theme[propName])) {
                 validTheme[propName] = theme[propName];
             }
         });
@@ -102,10 +103,10 @@ module.exports = {
 
         fromTheme = fromTheme || {};
 
-        tui.util.forEachArray(seriesTypes, function(seriesType) {
+        snippet.forEachArray(seriesTypes, function(seriesType) {
             var theme = fromTheme[seriesType] || self._pickValidTheme(fromTheme, componentType);
 
-            if (tui.util.keys(theme).length) {
+            if (snippet.keys(theme).length) {
                 newTheme[seriesType] = JSON.parse(JSON.stringify(defaultTheme[componentType]));
                 self._overwriteTheme(theme, newTheme[seriesType]);
             } else {
@@ -158,7 +159,7 @@ module.exports = {
 
         rawSeriesThemes = rawSeriesThemes || {}; // 분기문 간소화를위해
 
-        tui.util.forEachArray(seriesTypes, function(seriesType) {
+        snippet.forEachArray(seriesTypes, function(seriesType) {
             if (rawSeriesThemes[seriesType]) {
                 seriesColors = rawSeriesThemes[seriesType].colors;
                 hasOwnColors = true;
@@ -233,11 +234,11 @@ module.exports = {
             theme.plot.label
         ];
 
-        tui.util.forEach(theme.yAxis, function(_theme) {
+        snippet.forEach(theme.yAxis, function(_theme) {
             items.push(_theme.title, _theme.label);
         });
 
-        tui.util.forEach(theme.series, function(_theme) {
+        snippet.forEach(theme.series, function(_theme) {
             items.push(_theme.label);
         });
 
@@ -253,7 +254,7 @@ module.exports = {
         var targetThemes = this._createTargetThemesForFontInherit(theme);
         var baseFont = theme.chart.fontFamily;
 
-        tui.util.forEachArray(targetThemes, function(item) {
+        snippet.forEachArray(targetThemes, function(item) {
             if (!item.fontFamily) {
                 item.fontFamily = baseFont;
             }
@@ -284,7 +285,7 @@ module.exports = {
     _copySeriesColorThemeToOther: function(theme) {
         var self = this;
 
-        tui.util.forEach(theme.series, function(seriesTheme, seriesType) {
+        snippet.forEach(theme.series, function(seriesTheme, seriesType) {
             self._copySeriesColorTheme(seriesTheme, theme.legend, seriesType);
             self._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesType);
         });

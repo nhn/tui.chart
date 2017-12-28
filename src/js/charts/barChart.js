@@ -10,8 +10,9 @@ var ChartBase = require('./chartBase');
 var chartConst = require('../const');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
+var snippet = require('tui-code-snippet');
 
-var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
+var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
     /**
      * className
      * @type {string}
@@ -60,7 +61,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             options.plot = options.plot || {};
 
             options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
-            this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+            this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
 
             isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
 

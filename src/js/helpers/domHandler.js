@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var aps = Array.prototype.slice;
 
 /**
@@ -44,7 +45,7 @@ var domHandler = {
             classNames = aps.call(el.classList);
         } else {
             className = el.className || '';
-            classNames = className && tui.util.isString(className) ? className.split(' ') : [];
+            classNames = className && snippet.isString(className) ? className.split(' ') : [];
         }
 
         return classNames;
@@ -64,7 +65,7 @@ var domHandler = {
         }
 
         classNames = this._getClassNames(el);
-        index = tui.util.inArray(newClass, classNames);
+        index = snippet.inArray(newClass, classNames);
 
         if (index > -1) {
             return;
@@ -82,7 +83,7 @@ var domHandler = {
      */
     removeClass: function(el, rmClass) {
         var classNames = this._getClassNames(el),
-            index = tui.util.inArray(rmClass, classNames);
+            index = snippet.inArray(rmClass, classNames);
 
         if (index === -1) {
             return;
@@ -101,7 +102,7 @@ var domHandler = {
      */
     hasClass: function(el, findClass) {
         var classNames = this._getClassNames(el);
-        var index = tui.util.inArray(findClass, classNames);
+        var index = snippet.inArray(findClass, classNames);
 
         return index > -1;
     },
@@ -141,9 +142,9 @@ var domHandler = {
         if (!container || !children) {
             return;
         }
-        children = tui.util.isArray(children) ? children : [children];
+        children = snippet.isArray(children) ? children : [children];
 
-        tui.util.forEachArray(children, function(child) {
+        snippet.forEachArray(children, function(child) {
             if (!child) {
                 return;
             }

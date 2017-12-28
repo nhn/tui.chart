@@ -8,11 +8,12 @@
 
 var RaphaelLineTypeBase = require('./raphaelLineTypeBase');
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 
-var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
+var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelRadialLineSeries
@@ -94,7 +95,7 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
     _getLinesPath: function(groupPositions) {
         var self = this;
 
-        return tui.util.map(groupPositions, function(positions) {
+        return snippet.map(groupPositions, function(positions) {
             return self._makeLinesPath(positions);
         });
     },
@@ -110,7 +111,7 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth, radialSeriesSet) {
-        return tui.util.map(groupPaths, function(path, groupIndex) {
+        return snippet.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
             var line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
 
@@ -130,7 +131,7 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
      * @private
      */
     _renderArea: function(paper, groupPaths, colors, radialSeriesSet) {
-        return tui.util.map(groupPaths, function(path, groupIndex) {
+        return snippet.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
             var area = raphaelRenderUtil.renderArea(paper, path, {
                 fill: color,
@@ -162,11 +163,11 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
         this.groupPaths = this._getLinesPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
 
-        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+        snippet.forEachArray(this.groupPaths, function(path, groupIndex) {
             self.groupLines[groupIndex].attr({path: path.join(' ')});
             self.groupAreas[groupIndex].attr({path: path.join(' ')});
 
-            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
+            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
                 self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
             });
         });
@@ -179,16 +180,16 @@ var RaphaelRadialLineSeries = tui.util.defineClass(RaphaelLineTypeBase, /** @len
      */
     selectLegend: function(legendIndex) {
         var self = this,
-            noneSelected = tui.util.isNull(legendIndex);
+            noneSelected = snippet.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
-        tui.util.forEachArray(this.groupLines, function(line, groupIndex) {
+        snippet.forEachArray(this.groupLines, function(line, groupIndex) {
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             line.attr({'stroke-opacity': opacity});
 
-            tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
+            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
                 item.opacity = opacity;
 
                 if (self.dotOpacity) {

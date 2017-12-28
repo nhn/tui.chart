@@ -7,8 +7,8 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
-
-var raphael = window.Raphael;
+var snippet = require('tui-code-snippet');
+var raphael = require('raphael');
 
 var DEGREE_180 = 180;
 var DEGREE_360 = 360;
@@ -27,7 +27,7 @@ var TOOLTIP_OFFSET_VALUE = 20;
  * @class RaphaelPieChart
  * @private
  */
-var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
+var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
      * Render function of pie chart.
      * @param {object} paper Raphael paper
@@ -203,7 +203,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             makeSectorPath = this._makeSectorPath;
         }
 
-        this.paper.customAttributes[this.sectorName] = tui.util.bind(makeSectorPath, this);
+        this.paper.customAttributes[this.sectorName] = snippet.bind(makeSectorPath, this);
     },
 
     /**
@@ -277,7 +277,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var chartBackground = this.chartBackground;
         var sectorInfos = [];
 
-        tui.util.forEachArray(sectorData, function(sectorDatum, index) {
+        snippet.forEachArray(sectorData, function(sectorDatum, index) {
             var ratio = sectorDatum.ratio;
             var color = colors[index];
             var sector = self._renderSector({
@@ -317,7 +317,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         if (!this.legendLines) {
             paths = this._makeLinePaths(outerPositions);
-            this.legendLines = tui.util.map(paths, function(path) {
+            this.legendLines = snippet.map(paths, function(path) {
                 return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
             });
         }
@@ -330,7 +330,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _makeLinePaths: function(outerPositions) {
-        return tui.util.map(outerPositions, function(positions) {
+        return snippet.map(outerPositions, function(positions) {
             return [
                 raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
                 raphaelRenderUtil.makeLinePath(positions.middle, positions.end),
@@ -393,7 +393,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var circleBound = this.circleBound;
         var sectorArgs = [circleBound.cx, circleBound.cy, circleBound.r];
 
-        tui.util.forEachArray(this.sectorInfos, function(sectorInfo) {
+        snippet.forEachArray(this.sectorInfos, function(sectorInfo) {
             var angles = sectorInfo.angles;
             var attrMap = {
                 fill: sectorInfo.color
@@ -427,9 +427,9 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             return;
         }
 
-        isNull = tui.util.isNull(legendIndex);
+        isNull = snippet.isNull(legendIndex);
 
-        tui.util.forEachArray(this.legendLines, function(line, index) {
+        snippet.forEachArray(this.legendLines, function(line, index) {
             var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             line.animate({
@@ -454,7 +454,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         this.circleBound = circleBound;
         this.paper.setSize(dimension.width, dimension.height);
 
-        tui.util.forEachArray(this.sectorInfos, function(sectorInfo, index) {
+        snippet.forEachArray(this.sectorInfos, function(sectorInfo, index) {
             var angles = sectorInfo.angles;
             var attrs = {};
             var bBox;
@@ -485,7 +485,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         }
 
         paths = this._makeLinePaths(outerPositions);
-        tui.util.forEachArray(this.legendLines, function(line, index) {
+        snippet.forEachArray(this.legendLines, function(line, index) {
             line.attr({path: paths[index]});
 
             return line;
@@ -498,8 +498,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         if (sector) {
             info = {
-                legendIndex: tui.util.isExisty(sector.data('legendIndex')) ? sector.data('legendIndex') : -1,
-                index: tui.util.isExisty(sector.data('index')) ? sector.data('index') : -1,
+                legendIndex: snippet.isExisty(sector.data('legendIndex')) ? sector.data('legendIndex') : -1,
+                index: snippet.isExisty(sector.data('index')) ? sector.data('index') : -1,
                 chartType: sector.data('chartType')
             };
         }
@@ -611,10 +611,10 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var isNull = tui.util.isNull(legendIndex);
+        var isNull = snippet.isNull(legendIndex);
         var legendLines = this.legendLines;
 
-        tui.util.forEachArray(this.sectorInfos, function(sectorInfo, index) {
+        snippet.forEachArray(this.sectorInfos, function(sectorInfo, index) {
             var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             sectorInfo.sector.attr({
@@ -667,7 +667,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             opacity: 0
         };
 
-        tui.util.forEach(positions, function(position, index) {
+        snippet.forEach(positions, function(position, index) {
             var label;
 
             if (position) {

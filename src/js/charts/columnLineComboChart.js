@@ -10,8 +10,9 @@ var ChartBase = require('./chartBase');
 var rawDataHandler = require('../models/data/rawDataHandler');
 var predicate = require('../helpers/predicate');
 var validTypeMakerForYAxisOptions = require('./validTypeMakerForYAxisOptions');
+var snippet = require('tui-code-snippet');
 
-var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
+var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
     /**
      * Column and Line Combo chart.
      * @constructs ColumnLineComboChart
@@ -48,7 +49,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
          * whether has right y axis or not
          * @type {boolean}
          */
-        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+        this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
 
         options.tooltip = options.tooltip || {};
         options.tooltip.grouped = true;
@@ -73,7 +74,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
     _makeYAxisOptions: function(chartTypes, yAxisOptions) {
         var options = {};
         yAxisOptions = yAxisOptions || {};
-        tui.util.forEachArray(chartTypes, function(chartType, index) {
+        snippet.forEachArray(chartTypes, function(chartType, index) {
             options[chartType] = yAxisOptions[index] || yAxisOptions;
         });
 
@@ -177,7 +178,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
     _setAdditionalOptions: function(additionalOptions) {
         var dataProcessor = this.dataProcessor;
 
-        tui.util.forEach(this.options.series, function(seriesOption, seriesType) {
+        snippet.forEach(this.options.series, function(seriesOption, seriesType) {
             var chartType;
 
             if (!seriesOption.stackType) {
@@ -211,7 +212,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
             self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
         };
 
-        tui.util.forEachArray(chartTypes, addDataRatio);
+        snippet.forEachArray(chartTypes, addDataRatio);
     }
 });
 

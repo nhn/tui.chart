@@ -11,6 +11,7 @@ var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -18,7 +19,7 @@ var renderUtil = require('../../helpers/renderUtil');
  * @private
  * @mixin
  * @private */
-var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
+var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
      * Make positions for default data type.
      * @param {number} [seriesWidth] - width of series area
@@ -46,13 +47,13 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             return seriesGroup.map(function(seriesItem, index) {
                 var position;
 
-                if (!tui.util.isNull(seriesItem.end)) {
+                if (!snippet.isNull(seriesItem.end)) {
                     position = {
                         left: baseLeft + (step * index),
                         top: baseTop + height - (seriesItem.ratio * height)
                     };
 
-                    if (tui.util.isExisty(seriesItem.startRatio)) {
+                    if (snippet.isExisty(seriesItem.startRatio)) {
                         position.startTop = baseTop + height - (seriesItem.startRatio * height);
                     }
                 }
@@ -87,13 +88,13 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             return seriesGroup.map(function(seriesItem) {
                 var position;
 
-                if (!tui.util.isNull(seriesItem.end)) {
+                if (!snippet.isNull(seriesItem.end)) {
                     position = {
                         left: baseLeft + (seriesItem.ratioMap.x * width) + additionalLeft,
                         top: baseTop + height - (seriesItem.ratioMap.y * height)
                     };
 
-                    if (tui.util.isExisty(seriesItem.ratioMap.start)) {
+                    if (snippet.isExisty(seriesItem.ratioMap.start)) {
                         position.startTop =
                             height - (seriesItem.ratioMap.start * height) + chartConst.SERIES_EXPAND_SIZE;
                     }
@@ -269,10 +270,10 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         this._cancelMovingAnimation();
         this._clearSeriesContainer(data.paper);
         this._setDataForRendering(data);
-        this._renderSeriesArea(data.paper, tui.util.bind(this._renderGraph, this));
+        this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
         this.animateComponent(true);
 
-        if (!tui.util.isNull(this.selectedLegendIndex)) {
+        if (!snippet.isNull(this.selectedLegendIndex)) {
             this.graphRenderer.selectLegend(this.selectedLegendIndex);
         }
     },
@@ -387,7 +388,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 });
 
 LineTypeSeriesBase.mixin = function(func) {
-    tui.util.extend(func.prototype, LineTypeSeriesBase.prototype);
+    snippet.extend(func.prototype, LineTypeSeriesBase.prototype);
 };
 
 module.exports = LineTypeSeriesBase;

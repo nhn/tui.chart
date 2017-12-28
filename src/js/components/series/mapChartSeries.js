@@ -8,11 +8,12 @@
 
 var Series = require('./series');
 var chartConst = require('../../const');
+var snippet = require('tui-code-snippet');
 
-var browser = tui.util.browser;
+var browser = snippet.browser;
 var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
 
-var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prototype */ {
+var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.prototype */ {
     /**
      * Map chart series component.
      * @constructs MapChartSeries
@@ -277,7 +278,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     onClickSeries: function(position) {
         var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 
-        if (!tui.util.isNull(foundIndex)) {
+        if (!snippet.isNull(foundIndex)) {
             this.eventBus.fire('selectSeries', {
                 chartType: this.chartType,
                 index: foundIndex,
@@ -305,7 +306,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     _showWedge: function(index) {
         var datum = this.mapModel.getDatum(index);
 
-        if (!tui.util.isUndefined(datum.ratio)) {
+        if (!snippet.isUndefined(datum.ratio)) {
             this.eventBus.fire('showWedge', datum.ratio);
         }
     },
@@ -337,9 +338,9 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex'),
             containerBound;
 
-        if (!tui.util.isNull(foundIndex)) {
+        if (!snippet.isNull(foundIndex)) {
             if (this.prevMovedIndex !== foundIndex) {
-                if (!tui.util.isNull(this.prevMovedIndex)) {
+                if (!snippet.isNull(this.prevMovedIndex)) {
                     this.graphRenderer.restoreColor(this.prevMovedIndex);
                     this.eventBus.fire('hideTooltip');
                 }
@@ -358,7 +359,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             }
 
             this._showWedge(foundIndex);
-        } else if (!tui.util.isNull(this.prevMovedIndex)) {
+        } else if (!snippet.isNull(this.prevMovedIndex)) {
             this.graphRenderer.restoreColor(this.prevMovedIndex);
             this.eventBus.fire('hideTooltip');
             this.prevMovedIndex = null;

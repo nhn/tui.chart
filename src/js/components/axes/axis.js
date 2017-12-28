@@ -11,8 +11,9 @@ var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
 var pluginFactory = require('../../factories/pluginFactory');
 var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
 
-var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
+var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     /**
      * Axis component.
      * @constructs Axis
@@ -49,7 +50,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Use chart background theme object for render yAxis background on dynamicDataShifting chart
          * @type {object}
          */
-        this.theme = tui.util.extend({}, params.theme, {
+        this.theme = snippet.extend({}, params.theme, {
             background: params.chartTheme.chart.background
         });
 
@@ -132,8 +133,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderBackground: function() {
-        var dimension = tui.util.extend({}, this.layout.dimension);
-        var position = tui.util.extend({}, this.layout.position);
+        var dimension = snippet.extend({}, this.layout.dimension);
+        var position = snippet.extend({}, this.layout.position);
 
         if (this.isYAxis) {
             dimension.height = this.dimensionMap.chart.height;
@@ -421,7 +422,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var horizontalTop = this.layout.position.top + chartConst.AXIS_LABEL_PADDING;
         var baseLeft = this.layout.position.left;
 
-        tui.util.forEach(positions, function(position, index) {
+        snippet.forEach(positions, function(position, index) {
             var labelPosition = position + (additionalSize || 0);
             var positionTopAndLeft = {};
 
@@ -468,7 +469,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var isPointOnColumn = isLineTypeChart && this.options.pointOnColumn;
         var layout = this.layout;
 
-        tui.util.forEach(positions, function(position, index) {
+        snippet.forEach(positions, function(position, index) {
             var labelPosition = position + additionalSize;
             var halfLabelDistance = labelSize / 2;
             var positionTopAndLeft = {};
@@ -561,6 +562,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
  * Factory for Axis
  * @param {object} axisParam parameter
  * @returns {object}
+ * @ignore
  */
 function axisFactory(axisParam) {
     var chartType = axisParam.chartOptions.chartType;

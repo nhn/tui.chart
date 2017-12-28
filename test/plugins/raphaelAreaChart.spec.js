@@ -6,6 +6,7 @@
 
 'use strict';
 
+var raphael = require('raphael');
 var RaphaelAreaChart = require('../../src/js/plugins/raphaelAreaChart');
 
 describe('RaphaelAreaChart', function() {
@@ -185,7 +186,7 @@ describe('RaphaelAreaChart', function() {
                 startTop: 224.39999999999998
             }
         ];
-        var paper = window.Raphael(container, dimension.width, dimension.height); // eslint-disable-line new-cap
+        var paper = raphael(container, dimension.width, dimension.height); // eslint-disable-line new-cap
         var data = {
             theme: {
                 colors: ['#f4bf75']

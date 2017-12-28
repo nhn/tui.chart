@@ -8,8 +8,9 @@
 'use strict';
 
 var calculator = require('../../helpers/calculator');
+var snippet = require('tui-code-snippet');
 
-var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
+var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
     /**
      * SeriesGroup is a element of SeriesDataModel.groups.
      * SeriesGroup.items has SeriesItem.
@@ -72,10 +73,10 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
                 return;
             }
 
-            if (tui.util.isExisty(item[valueType])) {
+            if (snippet.isExisty(item[valueType])) {
                 values.push(item[valueType]);
             }
-            if (tui.util.isExisty(item.start)) {
+            if (snippet.isExisty(item.start)) {
                 values.push(item.start);
             }
         });
@@ -137,8 +138,8 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         var valuesMap = this.getValuesMapPerStack(),
             sumMap = {};
 
-        tui.util.forEach(valuesMap, function(values, key) {
-            sumMap[key] = calculator.sum(tui.util.map(values, function(value) {
+        snippet.forEach(valuesMap, function(values, key) {
+            sumMap[key] = calculator.sum(snippet.map(values, function(value) {
                 return Math.abs(value);
             }));
         });
@@ -221,7 +222,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      * @param {function} iteratee - iteratee function
      */
     each: function(iteratee) {
-        tui.util.forEachArray(this.items, iteratee);
+        snippet.forEachArray(this.items, iteratee);
     },
 
     /**
@@ -230,7 +231,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      * @returns {Array}
      */
     map: function(iteratee) {
-        return tui.util.map(this.items, iteratee);
+        return snippet.map(this.items, iteratee);
     },
 
     /**
@@ -239,9 +240,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      * @returns {Array}
      */
     pluck: function(key) {
-        var items = tui.util.filter(this.items, tui.util.isExisty);
+        var items = snippet.filter(this.items, snippet.isExisty);
 
-        return tui.util.pluck(items, key);
+        return snippet.pluck(items, key);
     },
 
     /**
@@ -269,7 +270,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      * @returns {Array}
      */
     filter: function(condition) {
-        return tui.util.filter(this.items, condition);
+        return snippet.filter(this.items, condition);
     }
 });
 

@@ -6,12 +6,13 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var chartConst = require('../../const'),
     dom = require('../../helpers/domHandler'),
     predicate = require('../../helpers/predicate'),
     renderUtil = require('../../helpers/renderUtil');
 
-var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
+var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
     /**
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
@@ -23,7 +24,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      *      @param {object} params.options - tooltip options
      *      @param {object} params.theme - tooltip theme
      *      @param {boolean} params.isVertical - whether vertical or not
-     *      @param {object} params.eventBus - tui.util.CustomEvents instance
+     *      @param {object} params.eventBus - snippet.CustomEvents instance
      *      @param {object} params.labelTheme - theme for label
      *      @param {string} params.xAxisType - xAxis type
      *      @param {string} params.dateFormat - date format
@@ -121,7 +122,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * Tooltip template function.
          * @type {function}
          */
-        this.templateFunc = this.options.template || tui.util.bind(this._makeTooltipHtml, this);
+        this.templateFunc = this.options.template || snippet.bind(this._makeTooltipHtml, this);
 
         /**
          * Tooltip animation time.
@@ -406,17 +407,17 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {{x: number, y: number}} offset - offset
      */
     setOffset: function(offset) {
-        var offsetOption = tui.util.extend({}, this.options.offset);
+        var offsetOption = snippet.extend({}, this.options.offset);
 
-        if (tui.util.isExisty(offset.x)) {
+        if (snippet.isExisty(offset.x)) {
             offsetOption.x = offset.x;
         }
 
-        if (tui.util.isExisty(offset.y)) {
+        if (snippet.isExisty(offset.y)) {
             offsetOption.y = offset.y;
         }
 
-        this._updateOffsetOption(tui.util.extend({}, this.options.offset, offsetOption));
+        this._updateOffsetOption(snippet.extend({}, this.options.offset, offsetOption));
     },
 
     /**
@@ -425,13 +426,13 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @deprecated
      */
     setPosition: function(position) {
-        var offsetOption = tui.util.extend({}, this.options.offset);
+        var offsetOption = snippet.extend({}, this.options.offset);
 
-        if (tui.util.isExisty(position.left)) {
+        if (snippet.isExisty(position.left)) {
             offsetOption.x = position.left;
         }
 
-        if (tui.util.isExisty(position.top)) {
+        if (snippet.isExisty(position.top)) {
             offsetOption.y = position.y;
         }
 

@@ -9,7 +9,7 @@
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var calculator = require('../../helpers/calculator');
-var snippet = tui.util;
+var snippet = require('tui-code-snippet');
 var map = snippet.map;
 
 var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
@@ -692,7 +692,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      */
     _makeRangeTo2DArray: function(optionalLineData) {
         var range = optionalLineData.range;
-        var isOneDimensionArray = range && tui.util.isArray(range) &&
+        var isOneDimensionArray = range && snippet.isArray(range) &&
             (range.length === 0 || !snippet.isArray(range[0]));
 
         if (isOneDimensionArray) {
@@ -736,6 +736,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
  * @param {{start: number, end: number}} previous - previouse plot band positionMap
  * @param {{start: number, end: number}} current - current plot band positionMap
  * @returns {number} - comparison of whether a is greater than b
+ * @ignore
  */
 function compareByStartPosition(previous, current) {
     return previous.start - current.start;
@@ -745,6 +746,7 @@ function compareByStartPosition(previous, current) {
  * Factory for Plot
  * @param {object} param parameter
  * @returns {object}
+ * @ignore
  */
 function plotFactory(param) {
     var chartType = param.chartOptions.chartType;

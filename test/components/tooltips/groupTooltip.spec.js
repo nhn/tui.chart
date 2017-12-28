@@ -6,8 +6,9 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var groupTooltipFactory = require('../../../src/js/components/tooltips/groupTooltip'),
-    seriesGroup = require('../../../src/js/models/data/seriesGroup'),
+    SeriesGroup = require('../../../src/js/models/data/seriesGroup'),
     defaultTheme = require('../../../src/js/themes/defaultTheme'),
     dom = require('../../../src/js/helpers/domHandler');
 
@@ -21,7 +22,7 @@ describe('GroupTooltip', function() {
     beforeEach(function() {
         tooltip = new groupTooltipFactory.GroupTooltip({
             dataProcessor: dataProcessor,
-            eventBus: new tui.util.CustomEvents(),
+            eventBus: new snippet.CustomEvents(),
             options: {}
         });
     });
@@ -31,12 +32,12 @@ describe('GroupTooltip', function() {
             var actual, expected;
 
             dataProcessor.getSeriesGroups.and.returnValue([
-                new seriesGroup([{
+                new SeriesGroup([{
                     label: '10'
                 }, {
                     label: '20'
                 }]),
-                new seriesGroup([{
+                new SeriesGroup([{
                     label: '30'
                 }, {
                     label: '40'
@@ -49,6 +50,7 @@ describe('GroupTooltip', function() {
                     'Silver',
                     'Gold'
                 ];
+
                 return categories[index];
             });
 
@@ -110,6 +112,7 @@ describe('GroupTooltip', function() {
                         label: 'legend2'
                     }
                 ];
+
                 return legendData[index];
             });
 
@@ -148,6 +151,7 @@ describe('GroupTooltip', function() {
                         label: 'legend2'
                     }
                 ];
+
                 return legendData[index];
             });
         });
@@ -180,11 +184,12 @@ describe('GroupTooltip', function() {
             var actual, expected;
 
             tooltip.templateFunc = function(category, items) {
-               var head = '<div>' + category + '</div>',
-                   body = tui.util.map(items, function(item) {
-                       return '<div>' + item.legend + ': ' + item.value + '</div>';
-                   }).join('');
-               return head + body;
+                var head = '<div>' + category + '</div>',
+                    body = snippet.map(items, function(item) {
+                        return '<div>' + item.legend + ': ' + item.value + '</div>';
+                    }).join('');
+
+                return head + body;
             };
 
             tooltip.data = [

@@ -8,10 +8,11 @@
 
 var predicate = require('../../helpers/predicate');
 var arrayUtil = require('../../helpers/arrayUtil');
+var snippet = require('tui-code-snippet');
 
 var concat = Array.prototype.concat;
 
-var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.prototype */ {
+var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototype */ {
     /**
      * AreaTypeDataModel is data mode for mouse event detector of area type.
      * @constructs AreaTypeDataModel
@@ -37,7 +38,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     _makeData: function(seriesItemBoundsData) {
         var lastGroupIndex = 0;
         var seriesItemBoundsLength = seriesItemBoundsData.length;
-        var data = tui.util.map(seriesItemBoundsData, function(seriesDatum, seriesIndex) {
+        var data = snippet.map(seriesItemBoundsData, function(seriesDatum, seriesIndex) {
             var groupPositions = seriesDatum.data.groupPositions || seriesDatum.data.groupBounds;
             var chartType = seriesDatum.chartType;
 
@@ -47,8 +48,8 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
 
             lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
 
-            return tui.util.map(groupPositions, function(positions, groupIndex) {
-                return tui.util.map(positions, function(position, index) {
+            return snippet.map(groupPositions, function(positions, groupIndex) {
+                return snippet.map(positions, function(position, index) {
                     var datum = null;
 
                     if (position) {
@@ -75,7 +76,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
         data = concat.apply([], data);
         this.lastGroupIndex = lastGroupIndex;
 
-        return tui.util.filter(concat.apply([], data), function(datum) {
+        return snippet.filter(concat.apply([], data), function(datum) {
             return !!datum;
         });
     },
@@ -92,7 +93,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
 
         distanceLimit = distanceLimit || Number.MAX_VALUE;
 
-        tui.util.forEach(this.data, function(datum) {
+        snippet.forEach(this.data, function(datum) {
             var xDiff = layerPosition.x - datum.bound.left;
             var yDiff = layerPosition.y - datum.bound.top;
             var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
@@ -114,7 +115,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     findDataByIndexes: function(indexes) {
         var foundData = null;
 
-        tui.util.forEachArray(this.data, function(datum) {
+        snippet.forEachArray(this.data, function(datum) {
             if (datum.indexes.groupIndex === indexes.index && datum.indexes.index === indexes.seriesIndex) {
                 foundData = datum;
             }

@@ -11,8 +11,9 @@ var chartConst = require('../../const');
 var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var pluginFactory = require('../../factories/pluginFactory');
+var snippet = require('tui-code-snippet');
 
-var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
+var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
     /**
      * ratios for rendering circle
      * @type {Array.<number>}
@@ -103,7 +104,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
         var decimalLength = calculator.getDecimalLength(maxValueRadius);
 
-        return tui.util.map(this.circleRatios, function(ratio) {
+        return snippet.map(this.circleRatios, function(ratio) {
             return self._formatLabel(maxValueRadius * ratio, decimalLength);
         });
     },
@@ -167,15 +168,16 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
  * Factory for CircleLegend
  * @param {object} params parameter
  * @returns {object|null}
+ * @ignore
  */
 function circleLegendFactory(params) {
     var chartType = params.chartOptions.chartType;
     var chartTheme = params.chartTheme;
-    var visibleOption = tui.util.pick(params.chartOptions, 'circleLegend', 'visible');
+    var visibleOption = snippet.pick(params.chartOptions, 'circleLegend', 'visible');
     var circleLegend = null;
     var isLegendVisible;
 
-    if (tui.util.isUndefined(visibleOption)) {
+    if (snippet.isUndefined(visibleOption)) {
         isLegendVisible = true;
     } else {
         isLegendVisible = visibleOption;

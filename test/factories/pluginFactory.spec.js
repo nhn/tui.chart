@@ -28,7 +28,6 @@ describe('pluginFactory', function() {
             }).toThrowError('Not exist d3 plugin.');
         });
 
-
         it('등록되지 않은 차트 렌더러를 요청했을 경우에는 예외를 발생시킵니다.', function() {
             expect(function() {
                 pluginFactory.get('testRaphael', 'line');
