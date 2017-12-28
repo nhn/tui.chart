@@ -171,4 +171,20 @@ describe('Test for renderUtil', function() {
             expect(result).toBe('1,000.123');
         });
     });
+
+    describe('generateClipRectId()', function() {
+        var id;
+
+        beforeEach(function() {
+            id = renderUtil.generateClipRectId();
+            id = Number(id.slice(20)); // 'clipRectForAnimation'.length
+        });
+
+        it('should create unique clipRectId, by increase suffix id', function() {
+            var result = renderUtil.generateClipRectId();
+            var expected = 'clipRectForAnimation' + (id + 1);
+
+            expect(result).toBe(expected);
+        });
+    });
 });

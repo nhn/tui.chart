@@ -155,4 +155,20 @@ describe('RaphaelLineTypeBase', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('_getClipRectId()', function() {
+        it('should create and return clipRectId, if clipRectId is not exist', function() {
+            var actual = lineTypeBase._getClipRectId();
+
+            expect(actual).not.toBeNull();
+            expect(actual.indexOf('clipRectForAnimation')).toBe(0);
+        });
+
+        it('should not update clipRectId, if clipRectId exists', function() {
+            var expected = lineTypeBase._getClipRectId();
+            var actual = lineTypeBase._getClipRectId();
+
+            expect(actual).toBe(expected);
+        });
+    });
 });

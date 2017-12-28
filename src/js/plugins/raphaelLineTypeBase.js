@@ -7,6 +7,7 @@
 'use strict';
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
+var renderUtil = require('../helpers/renderUtil');
 var snippet = require('tui-code-snippet');
 var arrayUtil = require('../helpers/arrayUtil');
 
@@ -17,7 +18,6 @@ var DEFAULT_DOT_RADIUS = 3;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
-var CLIP_RECT_ID = 'clipRectForAnimation';
 
 var concat = Array.prototype.concat;
 
@@ -640,10 +640,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var dimension = this.dimension;
         var position = this.position;
         var clipRect = this.clipRect;
+        var clipRectId = this._getClipRectId();
 
         if (!IS_LTE_THAN_IE8 && dimension) {
             if (!clipRect) {
-                clipRect = createClipPathRectWithLayout(paper, position, dimension, CLIP_RECT_ID);
+                clipRect = createClipPathRectWithLayout(paper, position, dimension, clipRectId);
                 this.clipRect = clipRect;
             } else {
                 clipRect.attr({
@@ -652,7 +653,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             }
 
             seriesSet.forEach(function(seriesElement) {
-                seriesElement.node.setAttribute('clip-path', 'url(#' + CLIP_RECT_ID + ')');
+                seriesElement.node.setAttribute('clip-path', 'url(#' + clipRectId + ')');
             });
 
             clipRect.animate({
@@ -808,12 +809,25 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {object} dimension series dimension
      */
     resizeClipRect: function(dimension) {
-        var clipRect = this.paper.getById(CLIP_RECT_ID + '_rect');
+        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
 
         clipRect.attr({
             width: dimension.width,
             height: dimension.height
         });
+    },
+
+    /**
+     * Set clip rect id
+     * @returns {string} id - clip rect id
+     * @private
+     */
+    _getClipRectId: function() {
+        if (!this.clipRectId) {
+            this.clipRectId = renderUtil.generateClipRectId();
+        }
+
+        return this.clipRectId;
     }
 });
 

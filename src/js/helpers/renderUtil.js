@@ -18,6 +18,13 @@ var browser = snippet.browser,
     isOldBrowser = browser.msie && browser.version <= 8;
 var hasComputedStyle = window.getComputedStyle || false;
 
+var lineBaseChartCount = 0;
+var CLIP_RECT_ID = 'clipRectForAnimation';
+
+/**
+ * Util for rendering.
+ * @module renderUtil
+ * @private */
 var renderUtil = {
     /**
      * Concat string.
@@ -674,6 +681,17 @@ var renderUtil = {
         }
 
         return computedObj;
+    },
+
+    /**
+     * Get clip rect id
+     * @returns {string} create unique id by line base chart count
+     */
+    generateClipRectId: function() {
+        var id = CLIP_RECT_ID + lineBaseChartCount;
+        lineBaseChartCount += 1;
+
+        return id;
     }
 
 };
