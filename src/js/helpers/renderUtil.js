@@ -10,6 +10,7 @@ var chartConst = require('./../const');
 var dom = require('./domHandler');
 var arrayUtil = require('./arrayUtil');
 var snippet = require('tui-code-snippet');
+var predicate = require('./predicate');
 
 var concat = Array.prototype.concat;
 
@@ -692,8 +693,27 @@ var renderUtil = {
         lineBaseChartCount += 1;
 
         return id;
-    }
+    },
 
+    /**
+     * get default height of series top area
+     * @param {string} chartType - chart type
+     * @param {object} theme - series theme
+     * @returns {number} - default series top height
+     */
+    getDefaultSeriesTopAreaHeight: function(chartType, theme) {
+        var labelHeight;
+
+        if (!predicate.isBarTypeChart(chartType) &&
+            !predicate.isLineTypeChart(chartType) &&
+            !predicate.isComboChart(chartType)) {
+            return 0;
+        }
+
+        labelHeight = this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+
+        return labelHeight + chartConst.SERIES_LABEL_PADDING;
+    }
 };
 
 /**

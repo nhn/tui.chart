@@ -8,6 +8,7 @@
 
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
 
 /**
  * Calculator for series.
@@ -47,22 +48,23 @@ var seriesCalculator = {
      *      xAxis: {height: number}
      * }} dimensionMap - dimension map
      * @param {{align: ?string, visible: boolean}} legendOptions - legend options
+     * @param {string} chartType - chart type
+     * @param {object} seriesTheme - series theme;
      * @returns {number} series height
      */
-    calculateHeight: function(dimensionMap, legendOptions) {
+    calculateHeight: function(dimensionMap, legendOptions, chartType, seriesTheme) {
         var chartHeight = dimensionMap.chart.height;
-        var titleOrExportMenuHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
-        var legendHeight, bottomAreaWidth;
+        var defaultTopAreaHeight = renderUtil.getDefaultSeriesTopAreaHeight(chartType, seriesTheme);
+        var topAreaHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
+        var bottomAreaHeight = dimensionMap.xAxis.height;
+        var legendHeight = legendOptions.visible ? dimensionMap.legend.height : 0;
+        var legendAlignment = legendOptions.align;
 
-        if (predicate.isHorizontalLegend(legendOptions.align) && legendOptions.visible) {
-            legendHeight = dimensionMap.legend.height;
-        } else {
-            legendHeight = 0;
-        }
+        bottomAreaHeight += (predicate.isLegendAlignBottom(legendAlignment) ? legendHeight : 0);
+        topAreaHeight += (predicate.isLegendAlignTop(legendAlignment) ? legendHeight : 0);
+        topAreaHeight = topAreaHeight || defaultTopAreaHeight;
 
-        bottomAreaWidth = legendHeight + dimensionMap.xAxis.height;
-
-        return chartHeight - (chartConst.CHART_PADDING * 2) - titleOrExportMenuHeight - bottomAreaWidth;
+        return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight;
     }
 };
 

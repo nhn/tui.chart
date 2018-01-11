@@ -554,13 +554,14 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
     },
 
     renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme, isStacked) {
+        var textAnchor = (isStacked || this.chartType === 'column') ? 'middle' : 'start';
         var attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
             fill: labelTheme.color,
             opacity: 0,
-            'text-anchor': isStacked ? 'middle' : 'start'
+            'text-anchor': textAnchor
         };
         var labelSet = paper.set();
 
