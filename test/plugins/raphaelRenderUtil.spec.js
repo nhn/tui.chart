@@ -7,8 +7,17 @@
 'use strict';
 
 var raphaelRenderUtil = require('../../src/js/plugins/raphaelRenderUtil');
+var raphael = require('raphael');
 
 describe('RaphaelLineTypeBase', function() {
+    describe('renderText()', function() {
+        it('result of decoding the HTML entity must be applied.', function() {
+            var paper = raphael(document.createElement('div'), 100, 100);
+            var pos = {left: 10, top: 10};
+            var actual = raphaelRenderUtil.renderText(paper, pos, '&lt;TESTMESSAGE&gt;').attrs.text;
+            expect(actual).toBe('<TESTMESSAGE>');
+        });
+    });
     describe('makeLinePath()', function() {
         it('from position, to position을 이용하여 line graph를 그리기 위한 line path를 생성합니다.', function() {
             var actual = raphaelRenderUtil.makeLinePath(
