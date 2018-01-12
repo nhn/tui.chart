@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plugins/raphaelMapLegend.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plugins/raphaelMapLegend.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview RaphaelMapLegend is graph renderer for map chart legend.
+ * @author NHN Ent.
+ *         FE Development Lab &lt;dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+var chartConst = require('../const');
+var snippet = require('tui-code-snippet');
+
+var PADDING = chartConst.LEGEND_AREA_PADDING;
+var DEGREE_HORIZONTAL_BAR = 360;
+var DEGREE_VERTICAL_BAR = 270;
+var GAP_BETWEEN_LABEL_AND_LEGEND_BAR = 35;
+var TICK_BAR_LENGTH = 15;
+
+/**
+ * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
+ * @class RaphaelMapLegend
+ * @private
+ */
+var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype */ {
+    /**
+     * Render function of map chart legend.
+     * @param {object} paper raphael paper
+     * @param {object} layout legend layout
+     * @param {ColorSpectrum} colorSpectrum map chart color model
+     * @param {boolean} isHorizontal whether horizontal legend or not
+     * @param {Array.&lt;object>} legendSet legend set
+     */
+    render: function(paper, layout, colorSpectrum, isHorizontal, legendSet) {
+        var gradientBar;
+
+        layout.position.left += (PADDING * 2);
+        layout.position.top += PADDING;
+
+        gradientBar = this._renderGradientBar(paper, layout, colorSpectrum, isHorizontal);
+
+        legendSet.push(gradientBar);
+
+        this.wedge = this._renderWedge(paper, layout.position);
+        legendSet.push(this.wedge);
+
+        this.gradientBar = gradientBar;
+    },
+
+    /**
+     * Render gradient bar inner tick &amp; tick label
+     * @param {object} paper Raphael paper
+     * @param {object} baseData base data for render ticks
+     * @param {Array.&lt;string>} labels labels
+     * @param {boolean} isHorizontal boolean value for is horizontal or not
+     * @param {Array.&lt;object>} legendSet legend set
+     */
+    renderTicksAndLabels: function(paper, baseData, labels, isHorizontal, legendSet) {
+        snippet.forEach(labels, function(label, labelIndex) {
+            var offsetValue = baseData.step * labelIndex;
+            var pos = snippet.extend({}, baseData.position);
+            var path = 'M';
+
+            if (isHorizontal) {
+                pos.left += offsetValue;
+                path += pos.left + ',' + (pos.top - GAP_BETWEEN_LABEL_AND_LEGEND_BAR)
+                    + 'V' + (pos.top - GAP_BETWEEN_LABEL_AND_LEGEND_BAR + TICK_BAR_LENGTH);
+            } else {
+                pos.top += offsetValue;
+                path += (pos.left - GAP_BETWEEN_LABEL_AND_LEGEND_BAR) + ',' + pos.top
+                    + 'H' + (pos.left - GAP_BETWEEN_LABEL_AND_LEGEND_BAR + TICK_BAR_LENGTH);
+            }
+
+            legendSet.push(raphaelRenderUtil.renderLine(paper, path, '#ccc', 1));
+
+            legendSet.push(raphaelRenderUtil.renderText(paper, pos, label));
+        });
+    },
+
+    /**
+     * Render gradient bar.
+     * @param {object} paper raphael object
+     * @param {object} layout legend layout
+     * @param {ColorSpectrum} colorSpectrum map chart color model
+     * @param {boolean} isHorizontal whether horizontal legend or not
+     * @returns {object}
+     * @private
+     */
+    _renderGradientBar: function(paper, layout, colorSpectrum, isHorizontal) {
+        var rectHeight = layout.dimension.height;
+        var left = layout.position.left;
+        var degree, bound;
+
+        if (isHorizontal) {
+            rectHeight -= PADDING;
+            degree = DEGREE_HORIZONTAL_BAR;
+            this._makeWedghPath = this._makeHorizontalWedgePath;
+        } else {
+            degree = DEGREE_VERTICAL_BAR;
+            this._makeWedghPath = this._makeVerticalWedgePath;
+        }
+
+        bound = {
+            left: left,
+            top: layout.position.top,
+            width: layout.dimension.width - PADDING,
+            height: rectHeight
+        };
+
+        return raphaelRenderUtil.renderRect(paper, bound, {
+            fill: degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end,
+            stroke: 'none'
+        });
+    },
+
+    /**
+     * Render wedge.
+     * @param {object} paper raphael object
+     * @param {{top: number, left: number}} position base position of legend
+     * @returns {object} raphael object
+     * @private
+     */
+    _renderWedge: function(paper, position) {
+        return paper.path(this.verticalBasePath).attr({
+            'fill': 'gray',
+            stroke: 'none',
+            opacity: 0,
+            transform: 't' + position.left + ',' + position.top
+        });
+    },
+
+    /**
+     * Vertical base path
+     * @type {Array}
+     */
+    verticalBasePath: ['M', 16, 6, 'L', 24, 3, 'L', 24, 9],
+
+    /**
+     * Make vertical wedge path.
+     * @param {number} top top
+     * @returns {Array} path
+     * @private
+     */
+    _makeVerticalWedgePath: function(top) {
+        var path = this.verticalBasePath;
+
+        path[2] = top;
+        path[5] = top - 3;
+        path[8] = top + 3;
+
+        return path;
+    },
+
+    /**
+     * Horizontal base path
+     * @type {Array}
+     */
+    horizontalBasePath: ['M', 5, 16, 'L', 8, 24, 'L', 2, 24],
+
+    /**
+     * Make horizontal wedge path.
+     * @param {number} left left
+     * @returns {Array} path
+     * @private
+     */
+    _makeHorizontalWedgePath: function(left) {
+        var path = this.horizontalBasePath;
+        var positionLeft = left + (PADDING / 2);
+
+        path[1] = positionLeft;
+        path[4] = positionLeft + 3;
+        path[7] = positionLeft - 3;
+
+        return path;
+    },
+
+    /**
+     * Show wedge.
+     * @param {number} positionValue top
+     */
+    showWedge: function(positionValue) {
+        var path = this._makeWedghPath(positionValue);
+
+        this.wedge.attr({
+            path: path,
+            opacity: 1
+        });
+    },
+
+    /**
+     * Hide wedge
+     */
+    hideWedge: function() {
+        this.wedge.attr({
+            opacity: 0
+        });
+    },
+
+    /**
+     * Remove location URL from fill attribute
+     * @private
+     */
+    removeLocationURLFromFillAttribute: function() {
+        var gradientBar = this.gradientBar;
+        var fillURL = gradientBar.node.getAttribute('fill');
+        this.locationURL = /url\('?([^#]+)#[^#]+'?\)/.exec(fillURL)[1];
+
+        gradientBar.node.setAttribute('fill', fillURL.replace(this.locationURL, ''));
+    },
+
+    /**
+     * Restore location URL to fill attribute
+     * @private
+     */
+    restoreLocationURLToFillAttribute: function() {
+        var gradientBar = this.gradientBar;
+        var fillURL = gradientBar.node.getAttribute('fill');
+
+        gradientBar.node.setAttribute('fill', fillURL.replace('#', this.locationURL + '#'));
+    }
+});
+
+module.exports = RaphaelMapLegend;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a></li><li><a href="BarChart.html">BarChart</a></li><li><a href="BoxplotChart.html">BoxplotChart</a></li><li><a href="BubbleChart.html">BubbleChart</a></li><li><a href="ChartBase.html">ChartBase</a></li><li><a href="ColumnChart.html">ColumnChart</a></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a></li><li><a href="HeatmapChart.html">HeatmapChart</a></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a></li><li><a href="LineChart.html">LineChart</a></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a></li><li><a href="MapChart.html">MapChart</a></li><li><a href="MapChartMapModel.html">MapChartMapModel</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a></li><li><a href="Plot.html">Plot</a></li><li><a href="RadialChart.html">RadialChart</a></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a></li><li><a href="ScatterChart.html">ScatterChart</a></li><li><a href="SeriesDataModel.html">SeriesDataModel</a></li><li><a href="Title.html">Title</a></li><li><a href="TreemapChart.html">TreemapChart</a></li></ul><h3>Namespaces</h3><ul><li><a href="tui.chart.html">chart</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jan 04 2018 11:13:14 GMT+0900 (KST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

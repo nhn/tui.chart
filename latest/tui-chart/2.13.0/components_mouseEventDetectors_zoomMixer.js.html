@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/mouseEventDetectors/zoomMixer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/mouseEventDetectors/zoomMixer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview  Mixer for zoom event of area type mouse event detector.
+ * @author NHN Ent.
+ *         FE Development Lab &lt;dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var MouseEventDetectorBase = require('./mouseEventDetectorBase');
+var chartConst = require('../../const');
+var dom = require('../../helpers/domHandler');
+var renderUtil = require('../../helpers/renderUtil');
+var eventListener = require('../../helpers/eventListener');
+var snippet = require('tui-code-snippet');
+
+/**
+ * Mixer for zoom event of area type mouse event detector.
+ * @mixin
+ * @private */
+var zoomMixer = {
+    /**
+     * Initialize for zoom.
+     * @param {boolean} zoomable - whether zoomable or not
+     * @private
+     */
+    _initForZoom: function(zoomable) {
+        /**
+         * whether zoomable or not
+         * @type {boolean}
+         */
+        this.zoomable = zoomable;
+
+        /**
+         * drag start index.
+         * @type {null | object}
+         */
+        this.dragStartIndexes = null;
+
+        /**
+         * start client position(clientX, clientY) of mouse event.
+         * @type {null | {x: number, y: number}}
+         */
+        this.startClientPosition = null;
+
+        /**
+         * start layerX position
+         * @type {null | number}
+         */
+        this.startLayerX = null;
+
+        /**
+         * drag selection element
+         * @type {null | HTMLElement}
+         */
+        this.dragSelectionElement = null;
+
+        /**
+         * container bound
+         * @type {null | {left: number, right: number, top: number}}
+         */
+        this.containerBound = null;
+
+        /**
+         * whether show tooltip after zoom or not.
+         * @type {boolean}
+         */
+        this.isShowTooltipAfterZoom = false;
+
+        /**
+         * whether after mouseup or not.
+         * @type {boolean}
+         */
+        this.afterMouseup = false;
+
+        /**
+         * previouse distance of range
+         * @type {null | number}
+         */
+        this.prevDistanceOfRange = null;
+
+        /**
+         * whether reverse move or not.
+         * @type {null | number}
+         */
+        this.reverseMove = null;
+
+        /**
+         * reset zoom button element.
+         * @type {null | HTMLElement}
+         */
+        this.resetZoomBtn = null;
+    },
+
+    /**
+     * Show tooltip after zoom.
+     * @private
+     */
+    _showTooltipAfterZoom: function() {
+        var isShowTooltipAfterZoom = this.isShowTooltipAfterZoom;
+        var lastDataBeforeZoom;
+
+        this.isShowTooltipAfterZoom = false;
+
+        if (!isShowTooltipAfterZoom || !this.dragStartIndexes) {
+            return;
+        }
+
+        if (this.reverseMove) {
+            lastDataBeforeZoom = this._getFirstData(this.dragStartIndexes.index);
+        } else {
+            lastDataBeforeZoom = this._getLastData(this.dragEndIndexes.index);
+        }
+
+        if (lastDataBeforeZoom) {
+            this._showTooltip(lastDataBeforeZoom);
+        }
+    },
+
+    /**
+     * Update dimension for drag selection element.
+     * @param {HTMLElement} selectionElement - drag selection element
+     * @private
+     */
+    _updateDimensionForDragSelection: function(selectionElement) {
+        renderUtil.renderDimension(selectionElement, {
+            height: this.layout.dimension.height
+        });
+    },
+
+    /**
+     * Render drag selection.
+     * @returns {HTMLElement}
+     * @private
+     */
+    _renderDragSelection: function() {
+        var selectionElement = dom.create('DIV', 'tui-chart-drag-selection');
+
+        this._updateDimensionForDragSelection(selectionElement);
+
+        return selectionElement;
+    },
+
+    /**
+     * Render.
+     * @param {object} data - data for rendering
+     * @returns {HTMLElement}
+     * @override
+     */
+    render: function(data) {
+        var container = MouseEventDetectorBase.prototype.render.call(this, data);
+        var selectionElement = this._renderDragSelection();
+
+        dom.append(container, selectionElement);
+        this.dragSelectionElement = selectionElement;
+
+        return container;
+    },
+
+    /**
+     * Resize.
+     * @param {{tickCount: number}} data - data for resizing
+     * @override
+     */
+    resize: function(data) {
+        this.containerBound = null;
+        MouseEventDetectorBase.prototype.resize.call(this, data);
+        this._updateDimensionForDragSelection(this.dragSelectionElement);
+    },
+
+    /**
+     * On click
+     * @private
+     * @override
+     */
+    _onClick: function() {},
+
+    /**
+     * Whether after drag mouseup or not.
+     * @returns {boolean}
+     * @private
+     */
+    _isAfterDragMouseup: function() {
+        var afterMouseup = this.afterMouseup;
+
+        if (afterMouseup) {
+            this.afterMouseup = false;
+        }
+
+        return afterMouseup;
+    },
+
+    /**
+     * Bind drag event for zoom.
+     * @param {HTMLElement} target - target element
+     * @private
+     */
+    _bindDragEvent: function(target) {
+        if (target.setCapture) {
+            target.setCapture();
+        }
+
+        eventListener.on(document, 'mousemove', this._onDrag, this);
+        eventListener.off(this.mouseEventDetectorContainer, 'mouseup', this._onMouseup, this);
+        eventListener.on(document, 'mouseup', this._onMouseupAfterDrag, this);
+    },
+
+    /**
+     * Unbind drag event for zoom.
+     * @private
+     */
+    _unbindDragEvent: function() {
+        if (this.downTarget &amp;&amp; this.downTarget.releaseCapture) {
+            this.downTarget.releaseCapture();
+        }
+
+        eventListener.off(document, 'mousemove', this._onDrag, this);
+        eventListener.off(document, 'mouseup', this._onMouseupAfterDrag, this);
+        eventListener.on(this.mouseEventDetectorContainer, 'mouseup', this._onMouseup, this);
+    },
+
+    /**
+     * On mouse down.
+     * @param {MouseEvent} e - mouse event
+     * @private
+     * @override
+     */
+    _onMousedown: function(e) {
+        var target;
+
+        if (!this.zoomable) {
+            return;
+        }
+
+        target = e.target || e.srcElement;
+
+        this.startClientPosition = {
+            x: e.clientX,
+            y: e.clientY
+        };
+        this.startLayerX = this._calculateLayerPosition(e.clientX).x;
+        this.downTarget = target;
+
+        this._bindDragEvent(target);
+    },
+
+    /**
+     * Show drag selection.
+     * @param {number} clientX - clientX
+     * @private
+     */
+    _showDragSelection: function(clientX) {
+        var layerX = this._calculateLayerPosition(clientX).x;
+        var left = Math.min(layerX, this.startLayerX) - this.layout.position.left;
+        var width = Math.abs(layerX - this.startLayerX);
+        var element = this.dragSelectionElement;
+
+        element.style.left = left + 'px';
+        element.style.width = width + 'px';
+
+        dom.addClass(element, 'show');
+    },
+
+    /**
+     * Hide drag selection.
+     * @private
+     */
+    _hideDragSelection: function() {
+        dom.removeClass(this.dragSelectionElement, 'show');
+    },
+
+    /**
+     * On mouse drag.
+     * @param {MouseEvent} e - mouse event
+     * @private
+     */
+    _onDrag: function(e) {
+        var clientPos = this.startClientPosition;
+        var target = e.target || e.srcElement;
+        var dataForZoomable;
+
+        if (clientPos) {
+            dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
+
+            if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
+                if (snippet.isNull(this.dragStartIndexes)) {
+                    this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
+                } else {
+                    this._showDragSelection(e.clientX);
+                }
+            }
+        }
+    },
+
+    /**
+     * Adjust index range for ensure three indexes.
+     * @param {number} startIndex - start index
+     * @param {number} endIndex - end index
+     * @returns {Array.&lt;number>}
+     * @private
+     */
+    _adjustIndexRange: function(startIndex, endIndex) {
+        var indexRange = [startIndex, endIndex].sort(function(a, b) {
+            return a - b;
+        });
+        var distanceOfRange = indexRange[1] - indexRange[0];
+
+        if (distanceOfRange === 0) {
+            if (indexRange[0] === 0) {
+                indexRange[1] += 2;
+            } else {
+                indexRange[0] -= 1;
+                indexRange[1] += 1;
+            }
+        } else if (distanceOfRange === 1) {
+            if (indexRange[0] === 0) {
+                indexRange[1] += 1;
+            } else {
+                indexRange[0] -= 1;
+            }
+        }
+
+        return indexRange;
+    },
+
+    /**
+     * Fire zoom mouse event detector.
+     * @param {number} startIndex - start index
+     * @param {number} endIndex - end index
+     * @private
+     */
+    _fireZoom: function(startIndex, endIndex) {
+        var reverseMove = startIndex > endIndex;
+        var indexRange = this._adjustIndexRange(startIndex, endIndex);
+        var distanceOfRange = indexRange[1] - indexRange[0];
+
+        if (this.prevDistanceOfRange === distanceOfRange) {
+            return;
+        }
+
+        this.prevDistanceOfRange = distanceOfRange;
+        this.reverseMove = reverseMove;
+        this.eventBus.fire('zoom', indexRange);
+    },
+
+    /**
+     * Set flag about whether show tooltip after zoom or not.
+     * @param {number} clientX - clientX of mouse event
+     * @param {number} clientY - clientY of mouse event
+     * @private
+     */
+    _setIsShowTooltipAfterZoomFlag: function(clientX, clientY) {
+        var layerX = this._calculateLayerPosition(clientX, clientY, false).x;
+        var limitLayerX = this._calculateLayerPosition(clientX, clientY).x;
+
+        this.isShowTooltipAfterZoom = (layerX === limitLayerX);
+    },
+
+    /**
+     * On mouseup after drag event.
+     * @param {MouseEvent} e - mouse event
+     * @private
+     */
+    _onMouseupAfterDrag: function(e) {
+        // @TODO: 데이터가 없는 경우의 zoomable 정책 정의 필요
+        // dragStartIndexes도 마찬가지지만 dragEnd 인덱스를 찾기 위해서는 차트에 data가 필요하다.
+        // 하지만 data가 없어도 차트는 그려질 수 있음.
+        // 그래서 이 부분에서 data가 없는경우 zoom을 실행하지 않도록 하기 위해 먼저 index를 확인한다.
+        var foundedDragEndData = this._findDataForZoomable(e.clientX, e.clientY);
+        var target;
+
+        this._unbindDragEvent();
+
+        if (snippet.isNull(this.dragStartIndexes)) {
+            target = e.target || e.srcElement;
+            if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
+                this._hideTooltip();
+                this.prevDistanceOfRange = null;
+                this.eventBus.fire('resetZoom');
+            } else {
+                MouseEventDetectorBase.prototype._onClick.call(this, e);
+            }
+        } else if (this.dragStartIndexes &amp;&amp; foundedDragEndData) {
+            this.dragEndIndexes = foundedDragEndData.indexes;
+            this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
+            this._hideDragSelection();
+            this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
+        } else {
+            this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
+            this._hideDragSelection();
+        }
+
+        this.startClientPosition = null;
+        this.dragStartIndexes = null;
+        this.startLayerX = null;
+        this.afterMouseup = true;
+    },
+
+    /**
+     * Render reset zoom button element.
+     * @returns {HTMLElement}
+     * @private
+     */
+    _renderResetZoomBtn: function() {
+        var resetBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
+        resetBtn.innerHTML = 'Reset Zoom';
+
+        return resetBtn;
+    },
+
+    /**
+     * Zoom.
+     * @param {object} data - data for rendering
+     */
+    zoom: function(data) {
+        this.prevFoundData = null;
+        this.rerender(data);
+        this._updateDimensionForDragSelection(this.dragSelectionElement);
+
+        if (!this.resetZoomBtn) {
+            this.resetZoomBtn = this._renderResetZoomBtn();
+            dom.append(this.mouseEventDetectorContainer, this.resetZoomBtn);
+        } else if (data.isResetZoom) {
+            this.mouseEventDetectorContainer.removeChild(this.resetZoomBtn);
+            this.resetZoomBtn = null;
+        }
+    }
+};
+
+module.exports = zoomMixer;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a></li><li><a href="BarChart.html">BarChart</a></li><li><a href="BoxplotChart.html">BoxplotChart</a></li><li><a href="BubbleChart.html">BubbleChart</a></li><li><a href="ChartBase.html">ChartBase</a></li><li><a href="ColumnChart.html">ColumnChart</a></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a></li><li><a href="HeatmapChart.html">HeatmapChart</a></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a></li><li><a href="LineChart.html">LineChart</a></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a></li><li><a href="MapChart.html">MapChart</a></li><li><a href="MapChartMapModel.html">MapChartMapModel</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a></li><li><a href="Plot.html">Plot</a></li><li><a href="RadialChart.html">RadialChart</a></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a></li><li><a href="ScatterChart.html">ScatterChart</a></li><li><a href="SeriesDataModel.html">SeriesDataModel</a></li><li><a href="Title.html">Title</a></li><li><a href="TreemapChart.html">TreemapChart</a></li></ul><h3>Namespaces</h3><ul><li><a href="tui.chart.html">chart</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jan 04 2018 11:13:13 GMT+0900 (KST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Tutorial: 5.1 [Bubble Chart] basic</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Tutorial: 5.1 [Bubble Chart] basic</h1>
+
+    <section>
+
+<header>
+    
+
+    <h2>5.1 [Bubble Chart] basic</h2>
+</header>
+
+<article>
+    <!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>5.1 [Bubble Chart] basic</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/sample.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'>
+var container = document.getElementById('chart-area');
+var data = {
+    series: [
+        {
+            name: 'Africa',
+            data: [
+                {x: 4200, y: 70.35, r: 32209101, label: 'Morocco'},
+                {x: 4200, y: 70.71, r: 76117421, label: 'Egypt'},
+                {x: 5900, y: 56.46, r: 1355246, label: 'Gabon'},
+                {x: 6600, y: 72.74, r: 32129324, label: 'Algeria'},
+                {x: 6700, y: 76.28, r: 5631585, label: 'Libya'},
+                {x: 7100, y: 74.66, r: 9974722, label: 'Tunisia'},
+                {x: 10500, y: 69.28, r: 1096585, label: 'Trinidad and Tobago'},
+                {x: 12800, y: 72.09, r: 1220481, label: 'Mauritius'},
+                {x: 18200, y: 78.68, r: 396851, label: 'Malta'}
+            ]
+        },
+        {
+            name: 'America',
+            data: [
+                {x: 4800, y: 74.64, r: 6191368, label: 'Paraguay'},
+                {x: 4900, y: 70.92, r: 6587541, label: 'El Salvador'},
+                {x: 5600, y: 69.22, r: 2754430, label: 'Peru'},
+                {x: 5800, y: 74.06, r: 2501738, label: 'Venezuela'},
+                {x: 6300, y: 67.63, r: 8833634, label: 'Dominican Republic'},
+                {x: 6500, y: 67.43, r: 272945, label: 'Belize'},
+                {x: 6600, y: 71.43, r: 4231077, label: 'Colombia'},
+                {x: 6900, y: 72.14, r: 3000463, label: 'Panama'},
+                {x: 8100, y: 71.41, r: 78410118, label: 'Brazil'},
+                {x: 9600, y: 76.63, r: 3956507, label: 'Costa Rica'},
+                {x: 9600, y: 74.94, r: 4495959, label: 'Mexico'},
+                {x: 12400, y: 75.7, r: 6914475, label: 'Argentina'},
+                {x: 14500, y: 75.92, r: 3399237, label: 'Uruguay'},
+                {x: 16400, y: 71.64, r: 278289, label: 'Barbados'},
+                {x: 17700, y: 65.63, r: 299697, label: 'Bahamas, The'},
+                {x: 17700, y: 77.49, r: 3897960, label: 'Puerto Rico'},
+                {x: 31500, y: 79.96, r: 32507874, label: 'Canada'},
+                {x: 32100, y: 77.43, r: 89302754, label: 'United States'}
+            ]
+        },
+        {
+            name: 'Asia',
+            data: [
+                {x: 5600, y: 71.96, r: 92988000, label: 'China'},
+                {x: 5700, y: 61.29, r: 4863169, label: 'Turkmenistan'},
+                {x: 7700, y: 69.66, r: 19018924, label: 'Iran'},
+                {x: 7800, y: 66.07, r: 1514370, label: 'Kazakhstan'},
+                {x: 8100, y: 71.41, r: 14865523, label: 'Thailand'},
+                {x: 9700, y: 71.95, r: 23522482, label: 'Malaysia'},
+                {x: 12000, y: 75.23, r: 25795938, label: 'Saudi Arabia'},
+                {x: 13100, y: 72.85, r: 2903165, label: 'Oman'},
+                {x: 19200, y: 75.58, r: 48598170, label: 'Korea, South'},
+                {x: 19200, y: 73.98, r: 677886, label: 'Bahrain'},
+                {x: 20800, y: 79.17, r: 6199008, label: 'Israel'},
+                {x: 21300, y: 76.84, r: 2257549, label: 'Kuwait'},
+                {x: 23200, y: 73.4, r: 840290, label: 'Qatar'},
+                {x: 25200, y: 74.99, r: 2523915, label: 'United Arab Emirates'},
+                {x: 25300, y: 77.06, r: 22749838, label: 'Taiwan'},
+                {x: 27800, y: 81.53, r: 4353893, label: 'Singapore'},
+                {x: 29400, y: 81.04, r: 52733300, label: 'Japan'},
+                {x: 34200, y: 81.39, r: 6855125, label: 'Hong Kong'}
+            ]                    },
+        {
+            name: 'Europe',
+            data: [
+                {x: 7700, y: 71.12, r: 2235555, label: 'Romania'},
+                {x: 8200, y: 71.75, r: 7517973, label: 'Bulgaria'},
+                {x: 9800, y: 66.39, r: 54378233, label: 'Russia'},
+                {x: 10700, y: 76.38, r: 1582395, label: 'Chile'},
+                {x: 11200, y: 74.14, r: 4496869, label: 'Croatia'},
+                {x: 11500, y: 70.86, r: 2306306, label: 'Latvia'},
+                {x: 12000, y: 74.16, r: 38626349, label: 'Poland'},
+                {x: 12500, y: 73.46, r: 3607899, label: 'Lithuania'},
+                {x: 14300, y: 71.38, r: 1341664, label: 'Estonia'},
+                {x: 14500, y: 74.19, r: 5423567, label: 'Slovakia'},
+                {x: 14900, y: 72.25, r: 1003237, label: 'Hungary'},
+                {x: 16800, y: 75.78, r: 1024617, label: 'Czech Republic'},
+                {x: 17900, y: 77.35, r: 1052414, label: 'Portugal'},
+                {x: 19600, y: 75.93, r: 2011473, label: 'Slovenia'},
+                {x: 21300, y: 78.94, r: 10647529, label: 'Greece'},
+                {x: 23300, y: 79.37, r: 40280780, label: 'Spain'},
+                {x: 27700, y: 79.54, r: 58057477, label: 'Italy'},
+                {x: 28400, y: 80.3, r: 898640, label: 'Sweden'},
+                {x: 28700, y: 78.54, r: 22424609, label: 'Germany'},
+                {x: 28700, y: 79.44, r: 30424213, label: 'France'},
+                {x: 29000, y: 78.24, r: 5214512, label: 'Finland'},
+                {x: 29500, y: 78.68, r: 16318199, label: 'Netherlands'},
+                {x: 29600, y: 78.27, r: 60270708, label: 'United Kingdom'},
+                {x: 30600, y: 78.44, r: 10348276, label: 'Belgium'},
+                {x: 31300, y: 78.87, r: 8174762, label: 'Austria'},
+                {x: 31900, y: 77.36, r: 3969558, label: 'Ireland'},
+                {x: 31900, y: 80.18, r: 293966, label: 'Iceland'},
+                {x: 32200, y: 77.44, r: 5413392, label: 'Denmark'},
+                {x: 33800, y: 80.31, r: 7450867, label: 'Switzerland'}
+            ]
+        },
+        {
+            name: 'Oceania',
+            data: [
+                {x: 2200, y: 64.56, r: 5420280, label: 'Papua New Guinea'},
+                {x: 2700, y: 61.32, r: 100798, label: 'Kiribati'},
+                {x: 5900, y: 69.2, r: 880874, label: 'Fiji'},
+                {x: 14500, y: 78.75, r: 108775, label: 'Virgin Islands'},
+                {x: 23200, y: 78.49, r: 1993817, label: 'New Zealand'},
+                {x: 30700, y: 80.26, r: 5991314, label: 'Australia'}
+            ]
+        }
+    ]
+};
+var options = {
+    chart: {
+        width: 700,
+        height: 400,
+        title: 'Life Expectancy per GDP',
+        format: function(value, chartType, areaType, valueType) {
+            if (valueType === 'r' || valueType === 'x') {
+                value = tui.chart.renderUtil.formatToComma(value);
+                if (valueType === 'x') {
+                    value = '$' + value;
+                }
+            }
+            return value;
+        }
+    },
+    yAxis: {
+        title: 'Life Expectancy (years)'
+    },
+    xAxis: {
+        title: 'GDP'
+    },
+    tooltip: {
+        template: function(category, items) {
+            return '<div class="tui-chart-default-tooltip">' +
+                '<div>' + items.legend + items.label + '</div>' +
+                '<div>GDP: ' + items.x + '</div>'+
+                '<div>Life Expectancy: ' + items.y + '</div>'+
+                '<div>Population: ' + items.r + '</div>'+
+            '</div>';
+        }
+    }
+};
+var theme = {
+    series: {
+        colors: ['#37474F', '#BA68C8', '#00C853', '#039BE5', '#FFC400']
+    }
+};
+
+// For apply theme
+
+// tui.chart.registerTheme('myTheme', theme);
+// options.theme = 'myTheme';
+
+tui.chart.bubbleChart(container, data, options);
+        </textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/sample.js'></script>
+<script class='code-js'>
+    window.chartCM = CodeMirror.fromTextArea(document.getElementById('code'), {
+        mode: 'javascript',
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        gutters: ["CodeMirror-lint-markers"],
+        lint: true
+    });
+    chartCM.setSize(600, 500);
+    window.codeString = chartCM.doc.getValue();
+
+    window.evaluationCode(chartCM, codeString);
+</script>
+</body>
+</html>
+
+
+</article>
+
+</section>
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a></li><li><a href="BarChart.html">BarChart</a></li><li><a href="BoxplotChart.html">BoxplotChart</a></li><li><a href="BubbleChart.html">BubbleChart</a></li><li><a href="ChartBase.html">ChartBase</a></li><li><a href="ColumnChart.html">ColumnChart</a></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a></li><li><a href="HeatmapChart.html">HeatmapChart</a></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a></li><li><a href="LineChart.html">LineChart</a></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a></li><li><a href="MapChart.html">MapChart</a></li><li><a href="MapChartMapModel.html">MapChartMapModel</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a></li><li><a href="Plot.html">Plot</a></li><li><a href="RadialChart.html">RadialChart</a></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a></li><li><a href="ScatterChart.html">ScatterChart</a></li><li><a href="SeriesDataModel.html">SeriesDataModel</a></li><li><a href="Title.html">Title</a></li><li><a href="TreemapChart.html">TreemapChart</a></li></ul><h3>Namespaces</h3><ul><li><a href="tui.chart.html">chart</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jan 04 2018 11:13:16 GMT+0900 (KST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plugins/raphaelRenderUtil.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plugins/raphaelRenderUtil.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Util for raphael rendering.
+ * @author NHN Ent.
+ *         FE Development Lab &lt;dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var snippet = require('tui-code-snippet');
+var renderUtil = require('../helpers/renderUtil');
+var raphael = require('raphael');
+
+/**
+ * Util for raphael rendering.
+ * @module raphaelRenderUtil
+ * @private
+ */
+var raphaelRenderUtil = {
+    /**
+     * Make line path.
+     * @memberOf module:raphaelRenderUtil
+     * @param {{top: number, left: number}} fromPos from position
+     * @param {{top: number, left: number}} toPos to position
+     * @param {number} width width
+     * @returns {string} path
+     */
+    makeLinePath: function(fromPos, toPos, width) {
+        var fromPoint = [fromPos.left, fromPos.top];
+        var toPoint = [toPos.left, toPos.top];
+        var additionalPoint;
+
+        width = width || 1;
+        additionalPoint = (width % 2 / 2);
+
+        snippet.forEachArray(fromPoint, function(from, index) {
+            if (from === toPoint[index]) {
+                fromPoint[index] = toPoint[index] = Math.round(from) - additionalPoint;
+            }
+        });
+
+        return ['M'].concat(fromPoint).concat('L').concat(toPoint);
+    },
+
+    /**
+     * Render line.
+     * @memberOf module:raphaelRenderUtil
+     * @param {object} paper raphael paper
+     * @param {string} path line path
+     * @param {string} color line color
+     * @param {number} strokeWidth stroke width
+     * @returns {object} raphael line
+     */
+    renderLine: function(paper, path, color, strokeWidth) {
+        var line = paper.path([path]),
+            strokeStyle = {
+                stroke: color,
+                'stroke-width': strokeWidth || 2
+            };
+
+        if (color === 'transparent') {
+            strokeStyle.stroke = '#fff';
+            strokeStyle['stroke-opacity'] = 0;
+        }
+        line.attr(strokeStyle);
+
+        return line;
+    },
+
+    /**
+     * Render text
+     * @param {object} paper - Raphael paper object
+     * @param {{left: number, top: number}} pos - text object position
+     * @param {string} text - text content
+     * @param {object} [attributes] - text object's attributes
+     * @returns {object}
+     */
+    renderText: function(paper, pos, text, attributes) {
+        var textObj = paper.text(pos.left, pos.top, text);
+
+        if (attributes) {
+            if (attributes['dominant-baseline']) {
+                textObj.node.setAttribute('dominant-baseline', attributes['dominant-baseline']);
+            } else {
+                textObj.node.setAttribute('dominant-baseline', 'central');
+            }
+
+            textObj.attr(attributes);
+        }
+
+        return textObj;
+    },
+
+    /**
+     * Render area graph.
+     * @param {object} paper raphael paper
+     * @param {string} path path
+     * @param {object} fillStyle fill style
+     *      @param {string} fillStyle.fill fill color
+     *      @param {?number} fillStyle.opacity fill opacity
+     *      @param {string} fillStyle.stroke stroke color
+     *      @param {?number} fillStyle.stroke-opacity stroke opacity
+     * @returns {Array.&lt;object>} raphael object
+     */
+    renderArea: function(paper, path, fillStyle) {
+        var area = paper.path(path);
+
+        fillStyle = snippet.extend({
+            'stroke-opacity': 0
+        }, fillStyle);
+        area.attr(fillStyle);
+
+        return area;
+    },
+
+    /**
+     * Render circle.
+     * @param {object} paper - raphael object
+     * @param {{left: number, top: number}} position - position
+     * @param {number} radius - radius
+     * @param {object} attributes - attributes
+     * @returns {object}
+     */
+    renderCircle: function(paper, position, radius, attributes) {
+        var circle = paper.circle(position.left, position.top, radius);
+
+        if (attributes) {
+            circle.attr(attributes);
+        }
+
+        return circle;
+    },
+
+    /**
+     * Render rect.
+     * @param {object} paper - raphael object
+     * @param {{left: number, top: number, width: number, height, number}} bound - bound
+     * @param {object} attributes - attributes
+     * @returns {*}
+     */
+    renderRect: function(paper, bound, attributes) {
+        var rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
+
+        if (attributes) {
+            rect.attr(attributes);
+        }
+
+        return rect;
+    },
+
+    /**
+     * Update rect bound
+     * @param {object} rect raphael object
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     */
+    updateRectBound: function(rect, bound) {
+        rect.attr({
+            x: bound.left,
+            y: bound.top,
+            width: bound.width,
+            height: bound.height
+        });
+    },
+
+    /**
+     * Render items of line type chart.
+     * @param {Array.&lt;Array.&lt;object>>} groupItems group items
+     * @param {function} funcRenderItem function
+     */
+    forEach2dArray: function(groupItems, funcRenderItem) {
+        if (groupItems) {
+            snippet.forEachArray(groupItems, function(items, groupIndex) {
+                snippet.forEachArray(items, function(item, index) {
+                    funcRenderItem(item, groupIndex, index);
+                });
+            });
+        }
+    },
+
+    /**
+     * Make changed luminance color.
+     * @param {string} hex hax color
+     * @param {number} lum luminance
+     * @returns {string} changed color
+     */
+    makeChangedLuminanceColor: function(hex, lum) {
+        var changedHex;
+
+        hex = hex.replace('#', '');
+        lum = lum || 0;
+
+        changedHex = snippet.map(snippet.range(3), function(index) {
+            var hd = parseInt(hex.substr(index * 2, 2), 16);
+            var newHd = hd + (hd * lum);
+
+            newHd = Math.round(Math.min(Math.max(0, newHd), 255)).toString(16);
+
+            return renderUtil.formatToZeroFill(newHd, 2);
+        }).join('');
+
+        return '#' + changedHex;
+    },
+
+    /**
+     * Get rendered text element size
+     * @param {string} text text content
+     * @param {number} fontSize font-size attribute
+     * @param {string} fontFamily font-family attribute
+     * @returns {{
+     *     width: number,
+     *     height: number
+     * }}
+     */
+    getRenderedTextSize: function(text, fontSize, fontFamily) {
+        var paper = raphael(document.body, 100, 100);
+        var textElement = paper.text(0, 0, text).attr({
+            'font-size': fontSize,
+            'font-family': fontFamily
+        });
+        var bBox = textElement.getBBox();
+
+        textElement.remove();
+        paper.remove();
+
+        return {
+            width: bBox.width,
+            height: bBox.height
+        };
+    },
+
+    /**
+     * Animate given element's opacity
+     * @param {object} element element
+     * @param {number} startOpacity endOpacity default is '0'
+     * @param {number} endOpacity endOpacity default is '1'
+     * @param {number} duration endOpacity default is '600'
+     */
+    animateOpacity: function(element, startOpacity, endOpacity, duration) {
+        var animationDuration = isNumber(duration) ? duration : 600;
+        var animationStartOpacity = isNumber(startOpacity) ? startOpacity : 0;
+        var animationEndOpacity = isNumber(endOpacity) ? endOpacity : 1;
+        var animation = raphael.animation({
+            opacity: animationEndOpacity
+        }, animationDuration);
+
+        element.attr({
+            opacity: animationStartOpacity
+        });
+
+        element.animate(animation);
+    }
+};
+
+/**
+ * Return boolean value for given parameter is number or not
+ * @param {*} numberSuspect number suspect
+ * @returns {boolean}
+ */
+function isNumber(numberSuspect) {
+    return snippet.isExisty(numberSuspect) &amp;&amp; typeof numberSuspect === 'number';
+}
+
+module.exports = raphaelRenderUtil;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a></li><li><a href="BarChart.html">BarChart</a></li><li><a href="BoxplotChart.html">BoxplotChart</a></li><li><a href="BubbleChart.html">BubbleChart</a></li><li><a href="ChartBase.html">ChartBase</a></li><li><a href="ColumnChart.html">ColumnChart</a></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a></li><li><a href="HeatmapChart.html">HeatmapChart</a></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a></li><li><a href="LineChart.html">LineChart</a></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a></li><li><a href="MapChart.html">MapChart</a></li><li><a href="MapChartMapModel.html">MapChartMapModel</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a></li><li><a href="Plot.html">Plot</a></li><li><a href="RadialChart.html">RadialChart</a></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a></li><li><a href="ScatterChart.html">ScatterChart</a></li><li><a href="SeriesDataModel.html">SeriesDataModel</a></li><li><a href="Title.html">Title</a></li><li><a href="TreemapChart.html">TreemapChart</a></li></ul><h3>Namespaces</h3><ul><li><a href="tui.chart.html">chart</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jan 04 2018 11:13:14 GMT+0900 (KST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

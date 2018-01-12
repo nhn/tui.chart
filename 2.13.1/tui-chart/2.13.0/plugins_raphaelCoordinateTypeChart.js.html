@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plugins/raphaelCoordinateTypeChart.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plugins/raphaelCoordinateTypeChart.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Raphael bubble chart renderer.
+ * @author NHN Ent.
+ *         FE Development Lab &lt;dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+var snippet = require('tui-code-snippet');
+var raphael = require('raphael');
+
+var ANIMATION_DURATION = 700;
+var CIRCLE_OPACITY = 0.5;
+var STROKE_OPACITY = 0.3;
+var EMPHASIS_OPACITY = 0.5;
+var DE_EMPHASIS_OPACITY = 0.3;
+var DEFAULT_LUMINANC = 0.2;
+var OVERLAY_BORDER_WIDTH = 2;
+var TOOLTIP_OFFSET_VALUE = 20;
+
+/**
+ * bound for circle
+ * @typedef {{left: number, top: number, radius: number}} bound
+ * @private
+ */
+
+/**
+ * Information for rendered circle
+ * @typedef {{circle: object, color: string, bound: bound}} circleInfo
+ * @private
+ */
+
+/**
+ * @classdesc RaphaelBubbleChart is graph renderer for bubble chart.
+ * @class RaphaelBubbleChart
+ * @private
+ */
+var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.prototype */ {
+    /**
+     * Render function of bubble chart
+     * @param {object} paper - Raphael paper
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      seriesDataModel: SeriesDataModel,
+     *      groupBounds: Array.&lt;Array.&lt;bound>>,
+     *      theme: object
+     * }} data - data for rendering
+     * @param {{showTooltip: function, hideTooltip: function}} callbacks - callbacks for toggle of tooltip.
+     * @returns {object}
+     */
+    render: function(paper, data, callbacks) {
+        var circleSet = paper.set();
+
+        this.paper = paper;
+
+        /**
+         * theme
+         * @type {object}
+         */
+        this.theme = data.theme;
+
+        /**
+         * seriesDataModel
+         * @type {SeriesDataModel}
+         */
+        this.seriesDataModel = data.seriesDataModel;
+
+        /**
+         * group bounds
+         * @type {Array.&lt;Array.&lt;bound>>}
+         */
+        this.groupBounds = data.groupBounds;
+
+        /**
+         * callbacks for toggle of tooltip.
+         * @type {{showTooltip: Function, hideTooltip: Function}}
+         */
+        this.callbacks = callbacks;
+
+        /**
+         * overlay is circle object of raphael, that using for mouseover.
+         * @type {object}
+         */
+        this.overlay = this._renderOverlay();
+
+        /**
+         * two-dimensional array by circleInfo
+         * @type {Array.&lt;Array.&lt;circleInfo>>}
+         */
+        this.groupCircleInfos = this._renderCircles(circleSet);
+
+        /**
+         * previous selected circle
+         * @type {?object}
+         */
+        this.prevCircle = null;
+
+        /**
+         * previous over circle
+         * @type {?object}
+         */
+        this.prevOverCircle = null;
+
+        /**
+         * animation timeout id
+         * @type {?number}
+         */
+        this.animationTimeoutId = null;
+
+        return circleSet;
+    },
+
+    /**
+     * Render overlay.
+     * @returns {object}
+     * @private
+     */
+    _renderOverlay: function() {
+        var position = {
+            left: 0,
+            top: 0
+        };
+        var attribute = {
+            fill: 'none',
+            stroke: '#fff',
+            'stroke-opacity': STROKE_OPACITY,
+            'stroke-width': 2
+        };
+        var circle = raphaelRenderUtil.renderCircle(this.paper, position, 0, attribute);
+
+        return circle;
+    },
+
+    /**
+     * Render circles.
+     * @param {object} circleSet - circle set
+     * @returns {Array.&lt;Array.&lt;circleInfo>>}
+     * @private
+     */
+    _renderCircles: function(circleSet) {
+        var self = this;
+        var colors = this.theme.colors;
+
+        return snippet.map(this.groupBounds, function(bounds, groupIndex) {
+            return snippet.map(bounds, function(bound, index) {
+                var circleInfo = null;
+                var color, circle;
+
+                if (bound) {
+                    color = colors[index];
+                    circle = raphaelRenderUtil.renderCircle(self.paper, bound, 0, {
+                        fill: color,
+                        opacity: 0,
+                        stroke: 'none'
+                    });
+
+                    circleSet.push(circle);
+
+                    circle.data('groupIndex', groupIndex);
+                    circle.data('index', index);
+
+                    circleInfo = {
+                        circle: circle,
+                        color: color,
+                        bound: bound
+                    };
+                }
+
+                return circleInfo;
+            });
+        });
+    },
+
+    /**
+     * Animate circle
+     * @param {object} circle - raphael object
+     * @param {number} radius - radius of circle
+     * @private
+     */
+    _animateCircle: function(circle, radius) {
+        circle.animate({
+            r: radius,
+            opacity: CIRCLE_OPACITY
+        }, ANIMATION_DURATION, '>');
+    },
+
+    /**
+     * Animate.
+     */
+    animate: function() {
+        var self = this;
+
+        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo) {
+            if (!circleInfo) {
+                return;
+            }
+            self._animateCircle(circleInfo.circle, circleInfo.bound.radius);
+        });
+    },
+
+    /**
+     * Update circle bound
+     * @param {object} circle - raphael object
+     * @param {{left: number, top: number}} bound - bound
+     * @private
+     */
+    _updatePosition: function(circle, bound) {
+        circle.attr({
+            cx: bound.left,
+            cy: bound.top,
+            r: bound.radius
+        });
+    },
+
+    /**
+     * Resize graph of bubble type chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension - dimension
+     *      @param {Array.&lt;Array.&lt;bound>>} params.groupBounds - group bounds
+     */
+    resize: function(params) {
+        var self = this;
+        var dimension = params.dimension;
+        var groupBounds = params.groupBounds;
+
+        this.groupBounds = groupBounds;
+        this.paper.setSize(dimension.width, dimension.height);
+
+        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
+            var bound = groupBounds[groupIndex][index];
+            if (circleInfo) {
+                circleInfo.bound = bound;
+                self._updatePosition(circleInfo.circle, bound);
+            }
+        });
+    },
+
+    /**
+     * Find data indexes of rendered circle by position.
+     * @param {{left: number, top: number}} position - mouse position
+     * @returns {{index: number, groupIndex: number}}
+     */
+    findIndexes: function(position) {
+        var circle = this.paper.getElementByPoint(position.left, position.top);
+        var foundIndexes = null;
+
+        if (circle) {
+            foundIndexes = {
+                index: circle.data('index'),
+                groupIndex: circle.data('groupIndex')
+            };
+        }
+
+        return foundIndexes;
+    },
+
+    /**
+     * Whether changed or not.
+     * @param {{left: number, top: number}} prevPosition - previous position
+     * @param {{left: number, top: number}} position - position
+     * @returns {boolean} result boolean
+     * @private
+     */
+    _isChangedPosition: function(prevPosition, position) {
+        return !prevPosition || prevPosition.left !== position.left || prevPosition.top !== position.top;
+    },
+
+    /**
+     * Show overlay with animation.
+     * @param {object} indexes - indexes
+     *      @param {number} indexes.groupIndex - index of circles group
+     *      @param {number} indexes.index - index of circles
+     */
+    showAnimation: function(indexes) {
+        var circleInfo = this.groupCircleInfos[indexes.groupIndex][indexes.index];
+        var bound = circleInfo.bound;
+
+        this.overlay.attr({
+            cx: bound.left,
+            cy: bound.top,
+            r: bound.radius + OVERLAY_BORDER_WIDTH,
+            stroke: circleInfo.color,
+            opacity: 1
+        });
+    },
+
+    /**
+     * Hide overlay with animation.
+     * @private
+     */
+    hideAnimation: function() {
+        this.overlay.attr({
+            cx: 0,
+            cy: 0,
+            r: 0,
+            opacity: 0
+        });
+    },
+
+    /**
+     * Find circle.
+     * @param {{left: number, top: number}} position - position
+     * @returns {?object}
+     * @private
+     */
+    _findCircle: function(position) {
+        var circles = [];
+        var paper = this.paper;
+        var foundCircle, circle;
+
+        while (snippet.isUndefined(foundCircle)) {
+            circle = paper.getElementByPoint(position.left, position.top);
+
+            if (circle) {
+                if (circle.attrs.opacity > DE_EMPHASIS_OPACITY) {
+                    foundCircle = circle;
+                } else {
+                    circles.push(circle);
+                    circle.hide();
+                }
+            } else {
+                foundCircle = null;
+            }
+        }
+
+        if (!foundCircle) {
+            foundCircle = circles[0];
+        }
+
+        snippet.forEachArray(circles, function(_circle) {
+            _circle.show();
+        });
+
+        return foundCircle;
+    },
+
+    /**
+     * Move mouse on series.
+     * @param {{left: number, top: number}} position - mouse position
+     */
+    moveMouseOnSeries: function(position) {
+        var circle = this._findCircle(position);
+        var groupIndex, index, args;
+
+        if (circle &amp;&amp; snippet.isExisty(circle.data('groupIndex'))) {
+            groupIndex = circle.data('groupIndex');
+            index = circle.data('index');
+            args = [{}, groupIndex, index, {
+                left: position.left - TOOLTIP_OFFSET_VALUE,
+                top: position.top - TOOLTIP_OFFSET_VALUE
+            }];
+
+            if (this._isChangedPosition(this.prevPosition, position)) {
+                this.callbacks.showTooltip.apply(null, args);
+                this.prevOverCircle = circle;
+            }
+        } else if (this.prevOverCircle) {
+            this.callbacks.hideTooltip();
+            this.prevOverCircle = null;
+        }
+        this.prevPosition = position;
+    },
+
+    /**
+     * Select series.
+     * @param {{index: number, groupIndex: number}} indexes - index map
+     */
+    selectSeries: function(indexes) {
+        var groupIndex = indexes.groupIndex;
+        var index = indexes.index;
+        var circleInfo = this.groupCircleInfos[groupIndex][index];
+        var objColor = raphael.color(circleInfo.color);
+        var themeColor = this.theme.selectionColor;
+        var color = themeColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC);
+
+        circleInfo.circle.attr({
+            fill: color
+        });
+    },
+
+    /**
+     * Unselect series.
+     * @param {{index: number, groupIndex: number}} indexes - index map
+     */
+    unselectSeries: function(indexes) {
+        var groupIndex = indexes.groupIndex;
+        var index = indexes.index;
+        var circleInfo = this.groupCircleInfos[groupIndex][index];
+
+        circleInfo.circle.attr({
+            fill: circleInfo.color
+        });
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex - index of legend
+     */
+    selectLegend: function(legendIndex) {
+        var noneSelected = snippet.isNull(legendIndex);
+
+        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
+            var opacity;
+
+            if (!circleInfo) {
+                return;
+            }
+
+            opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+            circleInfo.circle.attr({opacity: opacity});
+        });
+    }
+});
+
+module.exports = RaphaelBubbleChart;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a></li><li><a href="BarChart.html">BarChart</a></li><li><a href="BoxplotChart.html">BoxplotChart</a></li><li><a href="BubbleChart.html">BubbleChart</a></li><li><a href="ChartBase.html">ChartBase</a></li><li><a href="ColumnChart.html">ColumnChart</a></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a></li><li><a href="HeatmapChart.html">HeatmapChart</a></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a></li><li><a href="LineChart.html">LineChart</a></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a></li><li><a href="MapChart.html">MapChart</a></li><li><a href="MapChartMapModel.html">MapChartMapModel</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a></li><li><a href="Plot.html">Plot</a></li><li><a href="RadialChart.html">RadialChart</a></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a></li><li><a href="ScatterChart.html">ScatterChart</a></li><li><a href="SeriesDataModel.html">SeriesDataModel</a></li><li><a href="Title.html">Title</a></li><li><a href="TreemapChart.html">TreemapChart</a></li></ul><h3>Namespaces</h3><ul><li><a href="tui.chart.html">chart</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jan 04 2018 11:13:14 GMT+0900 (KST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/scaleData/scaleDataModel.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/scaleData/scaleDataModel.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+var scaleDataMaker = require('./scaleDataMaker');
+var scaleLabelFormatter = require('./scaleLabelFormatter');
+var axisDataMaker = require('./axisDataMaker');
+var predicate = require('../../helpers/predicate');
+var renderUtil = require('../../helpers/renderUtil');
+var snippet = require('tui-code-snippet');
+
+var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
+    /**
+     * ScaleDataModel is scale model for scale data and axis data.
+     * @param {object} params - parameters
+     * @constructs ScaleDataModel
+     * @private
+     */
+    init: function(params) {
+        this.chartType = params.chartType;
+        this.seriesTypes = params.seriesTypes;
+        this.dataProcessor = params.dataProcessor;
+        this.boundsModel = params.boundsModel;
+        this.options = params.options;
+        this.theme = params.theme;
+        this.hasRightYAxis = !!params.hasRightYAxis;
+        this.prevValidLabelCount = null;
+
+        this.initScaleData(params.addedDataCount);
+        this.initForAutoTickInterval();
+    },
+
+    /**
+     * Initialize scale data.
+     * @param {?number} addedDataCount - increased added count by dynamic adding data
+     */
+    initScaleData: function(addedDataCount) {
+        this.scaleDataMap = {};
+        this.axisDataMap = {};
+        this.addedDataCount = addedDataCount;
+    },
+
+    /**
+     * Initialize for auto tick interval.
+     */
+    initForAutoTickInterval: function() {
+        this.firstTickCount = null;
+    },
+
+    /**
+     * Pick limit option.
+     * @param {{min: ?number, max: ?number}} axisOptions - axis options
+     * @returns {{min: ?number, max: ?number}}
+     * @private
+     */
+    _pickLimitOption: function(axisOptions) {
+        axisOptions = axisOptions || {};
+
+        return {
+            min: axisOptions.min,
+            max: axisOptions.max
+        };
+    },
+
+    /**
+     * Create base scale data.
+     * @param {{
+     *      chartType: string,
+     *      areaType: string,
+     *      valueType: string
+     * }} typeMap - type map
+     * @param {{
+     *      type: string,
+     *      stackType: string,
+     *      diverging: boolean
+     * }} baseOptions - base options
+     * @param {object} axisOptions - axis options
+     * @param {object} additionalOptions - additional options
+     * @returns {{limit: {min: number, max: number}, step: number}}
+     * @private
+     */
+    _createBaseScaleData: function(typeMap, baseOptions, axisOptions, additionalOptions) {
+        var chartType = typeMap.chartType;
+        var isVertical = typeMap.areaType !== 'xAxis';
+        var baseValues = this.dataProcessor.createBaseValuesForLimit(
+            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType, typeMap.areaType);
+        var baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
+        var options = snippet.extend(baseOptions, {
+            isVertical: isVertical,
+            limitOption: this._pickLimitOption(axisOptions),
+            tickCounts: additionalOptions.tickCounts
+        });
+
+        if (predicate.isBubbleChart(chartType)) {
+            options.overflowItem = this.dataProcessor.findOverflowItem(chartType, typeMap.valueType);
+        }
+
+        return scaleDataMaker.makeScaleData(baseValues, baseSize, chartType, options);
+    },
+
+    /**
+     * Create scale labels.
+     * @param {{limit: {min: number, max: number}, step: number}} baseScaleData - base scale data
+     * @param {{
+     *      chartType: string,
+     *      areaType: string,
+     *      valueType: string
+     * }} typeMap - type map
+     * @param {{
+     *      type: string,
+     *      stackType: string,
+     *      diverging: boolean
+     * }} baseOptions - base options
+     * @param {string} dateFormat - date format
+     * @returns {Array.&lt;string>}
+     * @private
+     */
+    _createScaleLabels: function(baseScaleData, typeMap, baseOptions, dateFormat) {
+        var formatFunctions = this.dataProcessor.getFormatFunctions();
+        var options = snippet.extend(baseOptions, {
+            dateFormat: dateFormat
+        });
+
+        return scaleLabelFormatter.createFormattedLabels(baseScaleData, typeMap, options, formatFunctions);
+    },
+
+    /**
+     * Create scale.
+     * @param {object} axisOptions - axis options
+     * @param {{chartType: string, areaType: string, valueType: string}} typeMap - type map
+     * @param {?object} additionalOptions - additional options
+     * @returns {object}
+     * @private
+     */
+    _createScaleData: function(axisOptions, typeMap, additionalOptions) {
+        var seriesOptions = this.options.series;
+        var chartType = typeMap.chartType || this.chartType;
+        var baseOptions, baseScaleData;
+
+        typeMap.chartType = chartType;
+        seriesOptions = seriesOptions[chartType] || seriesOptions;
+        baseOptions = {
+            stackType: additionalOptions.stackType || seriesOptions.stackType,
+            diverging: seriesOptions.diverging,
+            type: axisOptions.type
+        };
+        baseScaleData = this._createBaseScaleData(typeMap, baseOptions, axisOptions, additionalOptions);
+
+        return snippet.extend(baseScaleData, {
+            labels: this._createScaleLabels(baseScaleData, typeMap, baseOptions, axisOptions.dateFormat),
+            axisOptions: axisOptions
+        });
+    },
+
+    /**
+     * Create value type axis data.
+     * @param {{labels: Array.&lt;string>, limit: {min: number, max: number}, step: number}} scaleData - scale data
+     * @param {object} labelTheme - label theme
+     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isVertical - whether vertical or not
+     * @param {boolean} isPositionRight - whether right position or not
+     * @returns {{
+     *      labels: Array.&lt;string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      isLabelAxis: boolean,
+     *      limit: {min: number, max: number},
+     *      isVertical: boolean
+     * }}
+     * @private
+     */
+    _createValueAxisData: function(scaleData, labelTheme, aligned, isVertical, isPositionRight) {
+        var hasCategories = this.dataProcessor.hasCategories();
+        var isCoordinateLineType = !isVertical &amp;&amp; !hasCategories &amp;&amp; aligned;
+        var labels = scaleData.labels;
+        var limit = scaleData.limit;
+        var step = scaleData.step;
+        var tickCount = labels.length;
+        var values, additional;
+
+        var axisData = axisDataMaker.makeValueAxisData({
+            labels: labels,
+            tickCount: labels.length,
+            limit: limit,
+            step: step,
+            options: scaleData.axisOptions,
+            labelTheme: labelTheme,
+            isVertical: !!isVertical,
+            isPositionRight: !!isPositionRight,
+            aligned: aligned
+        });
+
+        if (isCoordinateLineType) {
+            values = this.dataProcessor.getValues(this.chartType, 'x');
+            additional = axisDataMaker.makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            snippet.extend(axisData, additional);
+        }
+
+        return axisData;
+    },
+
+    /**
+     * Create label type axis data.
+     * @param {object} axisOptions - options for axis
+     * @param {object} labelTheme - label theme
+     * @param {boolean} aligned - aligned tick and label
+     * @param {boolean} isVertical - whether vertical or not
+     * @param {boolean} isPositionRight - whether right position or not
+     * @returns {{
+     *      labels: Array.&lt;string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      isLabelAxis: boolean,
+     *      options: object,
+     *      isVertical: boolean,
+     *      isPositionRight: boolean,
+     *      aligned: boolean
+     * }}
+     * @private
+     */
+    _createLabelAxisData: function(axisOptions, labelTheme, aligned, isVertical, isPositionRight) {
+        return axisDataMaker.makeLabelAxisData({
+            labels: this.dataProcessor.getCategories(isVertical),
+            options: axisOptions,
+            labelTheme: labelTheme,
+            isVertical: !!isVertical,
+            isPositionRight: !!isPositionRight,
+            aligned: aligned,
+            addedDataCount: this.options.series.shifting ? this.addedDataCount : 0
+        });
+    },
+
+    /**
+     * Create axis data.
+     * @param {object} scaleData - scale data
+     * @param {object} axisOptions - axis options
+     * @param {object} labelTheme - them for label
+     * @param {boolean} isVertical - whether vertical or not
+     * @param {boolean} isPositionRight - whether right position or not
+     * @returns {object}
+     * @private
+     */
+    _createAxisData: function(scaleData, axisOptions, labelTheme, isVertical, isPositionRight) {
+        var aligned = predicate.isLineTypeChart(this.chartType, this.seriesTypes) &amp;&amp; !axisOptions.pointOnColumn;
+        var axisData;
+
+        if (scaleData) {
+            axisData = this._createValueAxisData(scaleData, labelTheme, aligned, isVertical, isPositionRight);
+        } else {
+            axisData = this._createLabelAxisData(axisOptions, labelTheme, aligned, isVertical, isPositionRight);
+        }
+
+        return axisData;
+    },
+
+    /**
+     * Create axes data.
+     * @returns {object.&lt;string, object>}
+     * @private
+     */
+    _createAxesData: function() {
+        var scaleDataMap = this.scaleDataMap;
+        var options = this.options;
+        var theme = this.theme;
+        var yAxisOptions = snippet.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
+        var dataMap = {};
+
+        dataMap.xAxis = this._createAxisData(scaleDataMap.xAxis, options.xAxis, theme.xAxis.label);
+        dataMap.yAxis = this._createAxisData(scaleDataMap.yAxis, yAxisOptions[0], theme.yAxis.label, true);
+
+        if (this.hasRightYAxis) {
+            dataMap.rightYAxis = this._createAxisData(
+                scaleDataMap.rightYAxis, yAxisOptions[1], theme.yAxis.label, true, true
+            );
+            dataMap.rightYAxis.aligned = dataMap.xAxis.aligned;
+        }
+
+        return dataMap;
+    },
+
+    /**
+     * Add scale.
+     * @param {string} axisName - axis name
+     * @param {options} axisOptions - axis options
+     * @param {{chartType: string, areaType: string}} typeMap - type map
+     * @param {object} additionalOptions - additional parameters
+     */
+    addScale: function(axisName, axisOptions, typeMap, additionalOptions) {
+        typeMap = typeMap || {};
+        additionalOptions = additionalOptions || {};
+        typeMap.areaType = typeMap.areaType || axisName;
+        typeMap.chartType = additionalOptions.chartType || typeMap.chartType;
+
+        this.scaleDataMap[axisName] = this._createScaleData(axisOptions, typeMap, additionalOptions);
+    },
+
+    /**
+     * Set axis data map.
+     */
+    setAxisDataMap: function() {
+        this.axisDataMap = this._createAxesData();
+    },
+
+    /**
+     * Update x axis data for auto tick interval.
+     * @param {object} prevXAxisData - previous xAxis data
+     * @param {?boolean} addingDataMode - whether adding data mode or not
+     */
+    updateXAxisDataForAutoTickInterval: function(prevXAxisData, addingDataMode) {
+        var shiftingOption = this.options.series.shifting;
+        var zoomableOption = this.options.series.zoomable;
+        var xAxisData = this.axisDataMap.xAxis;
+        var seriesWidth = this.boundsModel.getDimension('series').width;
+        var addedCount = this.addedDataCount;
+
+        if (shiftingOption || !prevXAxisData || zoomableOption) {
+            axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, addedCount, addingDataMode);
+        } else {
+            axisDataMaker.updateLabelAxisDataForStackingDynamicData(xAxisData, prevXAxisData, this.firstTickCount);
+        }
+
+        if (!this.firstTickCount) {
+            this.firstTickCount = xAxisData.tickCount;
+        }
+    },
+
+    /**
+     * Update x axis data for label.
+     * @param {?boolean} addingDataMode - whether adding data mode or not
+     */
+    updateXAxisDataForLabel: function(addingDataMode) {
+        var axisData = this.axisDataMap.xAxis;
+        var labels = axisData.labels;
+        var dimensionMap = this.boundsModel.getDimensionMap(['series', 'yAxis', 'chart']);
+        var isLabelAxis = axisData.isLabelAxis;
+        var theme = this.theme.xAxis.label;
+        var validLabels, validLabelCount, additionalData;
+
+        if (addingDataMode) {
+            labels = labels.slice(0, labels.length - 1);
+        }
+
+        labels = renderUtil.addPrefixSuffix(labels, this.options.xAxis.prefix, this.options.xAxis.suffix);
+
+        validLabels = snippet.filter(labels, function(label) {
+            return !!label;
+        });
+
+        if (!snippet.isNull(this.prevValidLabelCount)) {
+            validLabelCount = this.prevValidLabelCount;
+        } else {
+            validLabelCount = validLabels.length;
+        }
+
+        if (this.options.yAxis.isCenter) {
+            validLabelCount += 1;
+            dimensionMap.yAxis.width = 0;
+        }
+
+        if (axisData.options.rotateLabel === false) {
+            additionalData = axisDataMaker.makeAdditionalDataForMultilineLabels(
+                labels, validLabelCount, theme, isLabelAxis, dimensionMap
+            );
+        } else {
+            additionalData = axisDataMaker.makeAdditionalDataForRotatedLabels(
+                validLabels, validLabelCount, theme, isLabelAxis, dimensionMap
+            );
+        }
+
+        this.prevValidLabelCount = validLabelCount;
+
+        snippet.extend(axisData, additionalData);
+    },
+
+    /**
+     * Find limit from limitMap by seriesIndex
+     * @param {object} limitMap - limit map
+     * @param {number} seriesIndex - series index
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {boolean}
+     * @private
+     */
+    _findLimit: function(limitMap, seriesIndex, isVertical) {
+        var limit;
+
+        if (seriesIndex === 0) {
+            limit = isVertical ? limitMap.yAxis : limitMap.xAxis;
+        } else {
+            limit = limitMap.rightYAxis ? limitMap.rightYAxis : limitMap.yAxis;
+        }
+
+        return limit;
+    },
+
+    /**
+     * Make limit map.
+     * @param {Array.&lt;string>} seriesTypes - series types like bar, column, line, area
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {{
+     *      xAxis: ?{min: number, max: number},
+     *      yAxis: ?{min: number, max: number},
+     *      rightYAxis: ?{min: number, max: number},
+     *      legend: ?{min: number, max: number},
+     *      bar: ?{min: number, max: number}
+     * }}
+     * @private
+     */
+    makeLimitMap: function(seriesTypes, isVertical) {
+        var self = this;
+        var scaleDataMap = this.scaleDataMap;
+        var limitMap = {};
+
+        if (scaleDataMap.xAxis) {
+            limitMap.xAxis = scaleDataMap.xAxis.limit;
+        }
+
+        if (scaleDataMap.yAxis) {
+            limitMap.yAxis = scaleDataMap.yAxis.limit;
+        }
+
+        if (scaleDataMap.rightYAxis) {
+            limitMap.rightYAxis = scaleDataMap.rightYAxis.limit;
+        }
+
+        if (scaleDataMap.legend) {
+            limitMap.legend = scaleDataMap.legend.limit;
+        }
+
+        snippet.forEachArray(seriesTypes, function(seriesType, index) {
+            limitMap[seriesType] = self._findLimit(limitMap, index, isVertical);
+        });
+
+        return limitMap;
+    }
+});
+
+module.exports = ScaleDataModel;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a></li><li><a href="BarChart.html">BarChart</a></li><li><a href="BoxplotChart.html">BoxplotChart</a></li><li><a href="BubbleChart.html">BubbleChart</a></li><li><a href="ChartBase.html">ChartBase</a></li><li><a href="ColumnChart.html">ColumnChart</a></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a></li><li><a href="HeatmapChart.html">HeatmapChart</a></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a></li><li><a href="LineChart.html">LineChart</a></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a></li><li><a href="MapChart.html">MapChart</a></li><li><a href="MapChartMapModel.html">MapChartMapModel</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a></li><li><a href="Plot.html">Plot</a></li><li><a href="RadialChart.html">RadialChart</a></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a></li><li><a href="ScatterChart.html">ScatterChart</a></li><li><a href="SeriesDataModel.html">SeriesDataModel</a></li><li><a href="Title.html">Title</a></li><li><a href="TreemapChart.html">TreemapChart</a></li></ul><h3>Namespaces</h3><ul><li><a href="tui.chart.html">chart</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jan 04 2018 11:13:14 GMT+0900 (KST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

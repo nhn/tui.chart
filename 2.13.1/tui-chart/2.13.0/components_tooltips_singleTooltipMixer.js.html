@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/tooltips/singleTooltipMixer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/tooltips/singleTooltipMixer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview singleTooltipMixer is single tooltip mixer of map chart.
+ * @author NHN Ent.
+ *         FE Development Lab &lt;dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var snippet = require('tui-code-snippet');
+var chartConst = require('../../const'),
+    predicate = require('../../helpers/predicate'),
+    dom = require('../../helpers/domHandler'),
+    renderUtil = require('../../helpers/renderUtil');
+
+/**
+ * singleTooltipMixer is single tooltip mixer of map chart.
+ * @mixin
+ * @private */
+var singleTooltipMixer = {
+    /**
+     * Set data indexes.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @param {{groupIndex: number, index:number}} indexes indexes
+     * @private
+     */
+    _setIndexesCustomAttribute: function(elTooltip, indexes) {
+        elTooltip.setAttribute('data-groupIndex', indexes.groupIndex);
+        elTooltip.setAttribute('data-index', indexes.index);
+    },
+
+    /**
+     * Get data indexes
+     * @param {HTMLElement} elTooltip tooltip element
+     * @returns {{groupIndex: number, index: number}} indexes
+     * @private
+     */
+    _getIndexesCustomAttribute: function(elTooltip) {
+        var groupIndex = elTooltip.getAttribute('data-groupIndex');
+        var index = elTooltip.getAttribute('data-index');
+        var indexes = null;
+
+        if (!snippet.isNull(groupIndex) &amp;&amp; !snippet.isNull(index)) {
+            indexes = {
+                groupIndex: parseInt(groupIndex, 10),
+                index: parseInt(index, 10)
+            };
+        }
+
+        return indexes;
+    },
+
+    /**
+     * Set showed custom attribute.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @param {boolean} status whether showed or not
+     * @private
+     */
+    _setShowedCustomAttribute: function(elTooltip, status) {
+        elTooltip.setAttribute('data-showed', status);
+    },
+
+    /**
+     * Whether showed tooltip or not.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @returns {boolean} whether showed tooltip or not
+     * @private
+     */
+    _isShowedTooltip: function(elTooltip) {
+        var isShowed = elTooltip.getAttribute('data-showed');
+
+        return isShowed === 'true' || isShowed === true; // ie7에서는 boolean형태의 true를 반환함
+    },
+
+    /**
+     * Make left position of not bar chart.
+     * @param {number} baseLeft base left
+     * @param {string} alignOption align option
+     * @param {number} minusWidth minus width
+     * @param {number} lineGap line gap
+     * @returns {number} left position value
+     * @private
+     */
+    _makeLeftPositionOfNotBarChart: function(baseLeft, alignOption, minusWidth, lineGap) {
+        var left = baseLeft;
+        var offsetNegative = minusWidth || 0;
+        var lineGapOffset = lineGap || chartConst.TOOLTIP_GAP;
+
+        if (alignOption.indexOf('left') > -1) {
+            left -= offsetNegative + lineGapOffset;
+        } else if (alignOption.indexOf('center') > -1 &amp;&amp; offsetNegative) {
+            left -= offsetNegative / 2;
+        } else {
+            left += lineGapOffset;
+        }
+
+        return left;
+    },
+
+    /**
+     * Make top position of not bar chart.
+     * @param {number} baseTop base top
+     * @param {string} alignOption align option
+     * @param {number} tooltipHeight tooltip height
+     * @param {number} lineGap line gap
+     * @returns {number} top position value
+     * @private
+     */
+    _makeTopPositionOfNotBarChart: function(baseTop, alignOption, tooltipHeight, lineGap) {
+        var top = baseTop;
+        var offsetNegative = tooltipHeight || 0;
+
+        if (alignOption.indexOf('bottom') > -1) {
+            top += offsetNegative + lineGap;
+        } else if (alignOption.indexOf('middle') > -1 &amp;&amp; offsetNegative) {
+            top += offsetNegative / 2;
+        } else {
+            top -= offsetNegative + chartConst.TOOLTIP_GAP;
+        }
+
+        return top;
+    },
+
+    /**
+     * Make tooltip position for not bar chart.
+     * @param {object} params parameters
+     *      @param {{bound: object}} params.data graph information
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.alignOption position option (ex: 'left top')
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _makeTooltipPositionForNotBarChart: function(params) {
+        var bound = params.bound,
+            positionOption = params.positionOption,
+            minusWidth = params.dimension.width - (bound.width || 0),
+            lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
+            alignOption = params.alignOption || '',
+            tooltipHeight = params.dimension.height,
+            baseLeft = bound.left - this.layout.position.left + positionOption.left,
+            baseTop = bound.top - this.layout.position.top + positionOption.top - chartConst.TOOLTIP_GAP;
+
+        return {
+            left: this._makeLeftPositionOfNotBarChart(baseLeft, alignOption, minusWidth, lineGap),
+            top: this._makeTopPositionOfNotBarChart(baseTop, alignOption, tooltipHeight, lineGap)
+        };
+    },
+
+    /**
+     * Make tooltip position to event position.
+     * @param {object} params parameters
+     *      @param {{left: number, top: number}} params.bound bound
+     *      @param {{left: number, top: number}} params.mousePosition mouse position
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _makeTooltipPositionToMousePosition: function(params) {
+        if (!params.bound) {
+            params.bound = params.bound || {};
+            snippet.extend(params.bound, params.mousePosition);
+        }
+
+        return this._makeTooltipPositionForNotBarChart(params);
+    },
+
+    /**
+     * Make left position for bar chart.
+     * @param {number} baseLeft base left
+     * @param {string} alignOption align option
+     * @param {number} tooltipWidth tooltip width
+     * @returns {number} left position value
+     * @private
+     */
+    _makeLeftPositionForBarChart: function(baseLeft, alignOption, tooltipWidth) {
+        var left = baseLeft;
+
+        if (alignOption.indexOf('left') > -1) {
+            left -= tooltipWidth;
+        } else if (alignOption.indexOf('center') > -1) {
+            left -= tooltipWidth / 2;
+        } else {
+            left += chartConst.TOOLTIP_GAP;
+        }
+
+        return left;
+    },
+
+    /**
+     * Make top position for bar chart.
+     * @param {number} baseTop base top
+     * @param {string} alignOption align option
+     * @param {number} minusHeight minus width
+     * @returns {number} top position value
+     * @private
+     */
+    _makeTopPositionForBarChart: function(baseTop, alignOption, minusHeight) {
+        var top = baseTop;
+
+        if (alignOption.indexOf('top') > -1) {
+            top -= minusHeight;
+        } else if (alignOption.indexOf('middle') > -1) {
+            top -= minusHeight / 2;
+        }
+
+        return top;
+    },
+
+    /**
+     * Make tooltip position for bar chart.
+     * @param {object} params parameters
+     *      @param {{bound: object}} params.data graph information
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.alignOption position option (ex: 'left top')
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _makeTooltipPositionForBarChart: function(params) {
+        var position = this.layout.position;
+        var bound = params.bound,
+            positionOption = params.positionOption,
+            minusHeight = params.dimension.height - (bound.height || 0),
+            alignOption = params.alignOption || '',
+            tooltipWidth = params.dimension.width,
+            baseLeft = bound.left + bound.width + positionOption.left - position.left,
+            baseTop = bound.top + positionOption.top - position.top;
+
+        return {
+            left: this._makeLeftPositionForBarChart(baseLeft, alignOption, tooltipWidth),
+            top: this._makeTopPositionForBarChart(baseTop, alignOption, minusHeight)
+        };
+    },
+
+    /**
+     * Make tooltip position for treemap chart.
+     * @param {object} params parameters
+     *      @param {{bound: object}} params.data - graph information
+     *      @param {{width: number, height: number}} params.dimension - tooltip dimension
+     * @returns {{left: number, top: number}}
+     * @private
+     */
+    _makeTooltipPositionForTreemapChart: function(params) {
+        var position = this.layout.position;
+        var bound = params.bound;
+        var positionOption = params.positionOption;
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.labelTheme);
+
+        return {
+            left: bound.left + ((bound.width - params.dimension.width) / 2) + positionOption.left - position.left,
+            top: bound.top + (bound.height / 2) - labelHeight + positionOption.top - position.top
+        };
+    },
+
+    /**
+     * Adjust position.
+     * @param {{width: number, height: number}} tooltipDimension tooltip dimension
+     * @param {{left: number, top: number}} position position
+     * @returns {{left: number, top: number}} adjusted position
+     * @private
+     */
+    _adjustPosition: function(tooltipDimension, position) {
+        var chartDimension = this.dimensionMap.chart;
+        var areaPosition = this.layout.position;
+
+        position.left = Math.max(position.left, -areaPosition.left);
+        position.left = Math.min(position.left, chartDimension.width - areaPosition.left - tooltipDimension.width);
+        position.top = Math.max(position.top, -areaPosition.top);
+        position.top = Math.min(position.top, chartDimension.height - areaPosition.top - tooltipDimension.height);
+
+        return position;
+    },
+
+    /**
+     * Make tooltip position.
+     * @param {object} params parameters
+     *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
+     *      @param {string} params.chartType chart type
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.alignOption position option (ex: 'left top')
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _makeTooltipPosition: function(params) {
+        var position = {},
+            sizeType, positionType, addPadding;
+
+        if (params.mousePosition) {
+            position = this._makeTooltipPositionToMousePosition(params);
+        } else {
+            if (predicate.isBarChart(params.chartType)) {
+                position = this._makeTooltipPositionForBarChart(params);
+                sizeType = 'width';
+                positionType = 'left';
+                addPadding = 1;
+            } else if (predicate.isTreemapChart(params.chartType)) {
+                position = this._makeTooltipPositionForTreemapChart(params);
+            } else {
+                position = this._makeTooltipPositionForNotBarChart(params);
+                sizeType = 'height';
+                positionType = 'top';
+                addPadding = -1;
+            }
+
+            if (params.allowNegativeTooltip) {
+                position = this._moveToSymmetry(position, {
+                    bound: params.bound,
+                    indexes: params.indexes,
+                    dimension: params.dimension,
+                    chartType: params.chartType,
+                    sizeType: sizeType,
+                    positionType: positionType,
+                    addPadding: addPadding
+                });
+            }
+
+            position = this._adjustPosition(params.dimension, position);
+        }
+
+        return position;
+    },
+
+    /**
+     * Move to symmetry.
+     * @param {{left: number, top: number}} position tooltip position
+     * @param {object} params parameters
+     *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
+     *      @param {string} params.id tooltip id
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.sizeType size type (width or height)
+     *      @param {string} params.positionType position type (left or top)
+     *      @param {number} params.addPadding add padding
+     * @returns {{left: number, top: number}} moved position
+     * @private
+     */
+    _moveToSymmetry: function(position, params) {
+        var bound = params.bound;
+        var sizeType = params.sizeType;
+        var positionType = params.positionType;
+        var seriesType = params.seriesType || params.chartType;
+        var value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, seriesType);
+        var direction = predicate.isBarChart(this.chartType) ? -1 : 1;
+        var tooltipSize, barSize, movedPositionValue;
+
+        if (value &lt; 0) {
+            tooltipSize = params.dimension[sizeType];
+            barSize = bound[sizeType];
+            movedPositionValue = position[positionType]
+                + ((barSize + tooltipSize) * direction);
+            position[positionType] = movedPositionValue;
+        }
+
+        return position;
+    },
+
+    /**
+     * Whether changed indexes or not.
+     * @param {{groupIndex: number, index: number}} prevIndexes prev indexes
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @returns {boolean} whether changed or not
+     * @private
+     */
+    _isChangedIndexes: function(prevIndexes, indexes) {
+        return !!prevIndexes &amp;&amp; (prevIndexes.groupIndex !== indexes.groupIndex || prevIndexes.index !== indexes.index);
+    },
+
+    /**
+     * Show tooltip.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @param {{indexes: {groupIndex: number, index: number}, bound: object}} params tooltip data
+     * @param {{left: number, top: number}} prevPosition prev position
+     * @private
+     */
+    _showTooltip: function(elTooltip, params, prevPosition) {
+        var boundingClientRect = this.tooltipContainer.parentNode.getBoundingClientRect();
+        var indexes = params.indexes;
+        var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
+        var offset = this.options.offset || {};
+        var positionOption = {};
+        var prevChartType = elTooltip &amp;&amp; elTooltip.getAttribute('data-chart-type');
+        var position;
+
+        if (!params.bound &amp;&amp; params.mousePosition) {
+            params.bound = {
+                left: params.mousePosition.left - boundingClientRect.left + chartConst.CHART_PADDING,
+                top: params.mousePosition.top - boundingClientRect.top + chartConst.CHART_PADDING
+            };
+        }
+
+        if (this._isChangedIndexes(prevIndexes, indexes) || prevChartType !== params.chartType) {
+            this.eventBus.fire('hoverOffSeries', prevIndexes, prevChartType);
+        }
+
+        elTooltip.innerHTML = this._makeSingleTooltipHtml(params.seriesType || params.chartType, indexes);
+
+        elTooltip.setAttribute('data-chart-type', params.chartType);
+        this._setIndexesCustomAttribute(elTooltip, indexes);
+        this._setShowedCustomAttribute(elTooltip, true);
+
+        this._fireBeforeShowTooltipPublicEvent(indexes, params.silent);
+
+        dom.addClass(elTooltip, 'show');
+
+        positionOption.left = offset.x || 0;
+        positionOption.top = offset.y || 0;
+
+        position = this._makeTooltipPosition(snippet.extend({
+            dimension: this.getTooltipDimension(elTooltip),
+            positionOption: positionOption,
+            alignOption: this.options.align || ''
+        }, params));
+
+        this._moveToPosition(elTooltip, position, prevPosition);
+        this.eventBus.fire('hoverSeries', indexes, params.chartType);
+        this._fireAfterShowTooltipPublicEvent(indexes, {
+            element: elTooltip,
+            position: position
+        }, params.silent);
+        delete params.silent;
+    },
+
+    /**
+     * To call beforeShowTooltip callback of public event.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
+     * @private
+     */
+    _fireBeforeShowTooltipPublicEvent: function(indexes, silent) {
+        var params;
+
+        if (silent) {
+            return;
+        }
+
+        params = this._makeShowTooltipParams(indexes);
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', params);
+    },
+
+    /**
+     * To call afterShowTooltip callback of public event.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {object} additionParams addition parameters
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
+     * @private
+     */
+    _fireAfterShowTooltipPublicEvent: function(indexes, additionParams, silent) {
+        var params;
+
+        if (silent) {
+            return;
+        }
+
+        params = this._makeShowTooltipParams(indexes, additionParams);
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', params);
+    },
+
+    /**
+     * Execute hiding tooltip.
+     * @param {HTMLElement} tooltipElement tooltip element
+     * @private
+     */
+    _executeHidingTooltip: function(tooltipElement) {
+        dom.removeClass(tooltipElement, 'show');
+        tooltipElement.removeAttribute('data-groupIndex');
+        tooltipElement.removeAttribute('data-index');
+        tooltipElement.style.cssText = '';
+    },
+
+    /**
+     * Hide tooltip.
+     * @param {HTMLElement} tooltipElement - tooltip element
+     * @param {object} prevFoundData - data represented by tooltip elements
+     * @param {{silent: {boolean}}} options - options for hiding a tooltip element
+     * @private
+     */
+    _hideTooltip: function(tooltipElement, prevFoundData, options) {
+        var self = this;
+        var indexes = this._getIndexesCustomAttribute(tooltipElement);
+        var chartType = tooltipElement.getAttribute('data-chart-type');
+        var silent = !!(options &amp;&amp; options.silent);
+
+        if (predicate.isChartToDetectMouseEventOnSeries(chartType)) {
+            this.eventBus.fire('hoverOffSeries', indexes, chartType);
+            this._fireBeforeHideTooltipPublicEvent(indexes, silent);
+            this._executeHidingTooltip(tooltipElement);
+        } else if (chartType) {
+            this._setShowedCustomAttribute(tooltipElement, false);
+            this.eventBus.fire('hoverOffSeries', indexes, chartType);
+
+            if (this._isChangedIndexes(this.prevIndexes, indexes)) {
+                delete this.prevIndexes;
+            }
+
+            setTimeout(function() {
+                if (self._isShowedTooltip(tooltipElement)) {
+                    return;
+                }
+                self._fireBeforeHideTooltipPublicEvent(indexes, silent);
+                self._executeHidingTooltip(tooltipElement);
+            }, chartConst.HIDE_DELAY);
+        }
+    },
+
+    /**
+     * To call afterShowTooltip callback of public event.
+     * @param {{groupIndex: number, index: number}} indexes indexes=
+     * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
+     * @private
+     */
+    _fireBeforeHideTooltipPublicEvent: function(indexes, silent) {
+        var params;
+        if (silent) {
+            return;
+        }
+
+        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeHideTooltip', params);
+    },
+
+    /**
+     * On show tooltip container.
+     */
+    onShowTooltipContainer: function() {
+        this.tooltipContainer.style.zIndex = chartConst.TOOLTIP_ZINDEX;
+    },
+
+    /**
+     * On hide tooltip container.
+     */
+    onHideTooltipContainer: function() {
+        this.tooltipContainer.style.zIndex = 0;
+    },
+
+    /**
+     * Mix in.
+     * @param {function} func target function
+     * @ignore
+     */
+    mixin: function(func) {
+        snippet.extend(func.prototype, this);
+    }
+};
+
+module.exports = singleTooltipMixer;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a></li><li><a href="BarChart.html">BarChart</a></li><li><a href="BoxplotChart.html">BoxplotChart</a></li><li><a href="BubbleChart.html">BubbleChart</a></li><li><a href="ChartBase.html">ChartBase</a></li><li><a href="ColumnChart.html">ColumnChart</a></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a></li><li><a href="HeatmapChart.html">HeatmapChart</a></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a></li><li><a href="LineChart.html">LineChart</a></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a></li><li><a href="MapChart.html">MapChart</a></li><li><a href="MapChartMapModel.html">MapChartMapModel</a></li><li><a href="PieChart.html">PieChart</a></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a></li><li><a href="Plot.html">Plot</a></li><li><a href="RadialChart.html">RadialChart</a></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a></li><li><a href="ScatterChart.html">ScatterChart</a></li><li><a href="SeriesDataModel.html">SeriesDataModel</a></li><li><a href="Title.html">Title</a></li><li><a href="TreemapChart.html">TreemapChart</a></li></ul><h3>Namespaces</h3><ul><li><a href="tui.chart.html">chart</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jan 04 2018 11:13:13 GMT+0900 (KST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
