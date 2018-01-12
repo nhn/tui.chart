@@ -332,7 +332,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     calculateSeriesHeight: function() {
         var dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis', 'chartExportMenu']);
 
-        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend);
+        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend, this.chartType, this.theme.series);
     },
 
     getBaseSizeForLimit: function(isVertical) {
@@ -682,8 +682,10 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
         var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
+        var seriesTop = titleOrExportMenuHeight + topLegendHeight;
+        var defaultSeriesTop = renderUtil.getDefaultSeriesTopAreaHeight(this.chartType, this.theme.series);
         var seriesPosition = {
-            top: titleOrExportMenuHeight + chartConst.CHART_PADDING + topLegendHeight,
+            top: (!seriesTop ? defaultSeriesTop : seriesTop) + chartConst.CHART_PADDING,
             left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
         };
 

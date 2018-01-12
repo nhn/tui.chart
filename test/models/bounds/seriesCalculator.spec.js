@@ -135,6 +135,9 @@ describe('Test for seriesCalculator', function() {
                 },
                 chartExportMenu: {
                     height: 30
+                },
+                legend: {
+                    height: 10
                 }
             };
             var legendOption = {
@@ -158,6 +161,9 @@ describe('Test for seriesCalculator', function() {
                 },
                 chartExportMenu: {
                     height: 30
+                },
+                legend: {
+                    height: 50
                 }
             };
             var legendOption = {

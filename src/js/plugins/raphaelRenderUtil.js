@@ -75,7 +75,7 @@ var raphaelRenderUtil = {
      * @returns {object}
      */
     renderText: function(paper, pos, text, attributes) {
-        var textObj = paper.text(pos.left, pos.top, text);
+        var textObj = paper.text(pos.left, pos.top, snippet.decodeHTMLEntity(String(text)));
 
         if (attributes) {
             if (attributes['dominant-baseline']) {

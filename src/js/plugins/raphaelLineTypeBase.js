@@ -648,7 +648,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
                 this.clipRect = clipRect;
             } else {
                 clipRect.attr({
-                    width: 0
+                    width: 0,
+                    height: dimension.height
                 });
             }
 

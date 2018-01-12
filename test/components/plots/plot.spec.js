@@ -217,7 +217,7 @@ describe('Test for Plot', function() {
             actual = plot._createOptionalLinePositionMap(optionalLineData, xAxisData, 300);
 
             expect(actual).toEqual({
-                start: 0,
+                start: -1,
                 end: 200
             });
         });
@@ -459,5 +459,87 @@ describe('Test for Plot', function() {
             ]);
         });
         /* eslint-enable object-property-newline */
+    });
+
+    describe('_isBeforeVisibleCategories()', function() {
+        var originalCategories = [1398870000000, 1401548400000, 1404140400000, 1406818800000, 1409497200000];
+        var result;
+
+        beforeEach(function() {
+            plot.xAxisTypeOption = '';
+            plot.dataProcessor.originalRawData = {
+                categories: originalCategories
+            };
+        });
+
+        it('should return true, when type is datetime and value is smaller than first visible categories', function() {
+            plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
+            result = plot._isBeforeVisibleCategories(1388502000000, 1404140400000);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return false, when type is datetime and value is same or bigger than first visible categories', function() {
+            plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
+            result = plot._isBeforeVisibleCategories(1409497200000, 1404140400000);
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false, when type is datetime and value is empty', function() {
+            plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
+            result = plot._isBeforeVisibleCategories(null, 1404140400000);
+
+            expect(result).toBe(false);
+        });
+
+        it('should return true, when category index is smaller than first visible', function() {
+            result = plot._isBeforeVisibleCategories(1398870000000, 1404140400000);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return false, when category index is same or bigger than first visible', function() {
+            result = plot._isBeforeVisibleCategories(1409497200000, 1404140400000);
+
+            expect(result).toBe(false);
+        });
+    });
+
+    describe('_isAfterVisibleCatgories()', function() {
+        var result;
+
+        beforeEach(function() {
+            plot.xAxisTypeOption = '';
+            plot.dataProcessor.originalRawData = {
+                categories: [1398870000000, 1401548400000, 1404140400000, 1406818800000, 1409497200000]
+            };
+        });
+
+        it('should return true, when type is datetime and value is bigger than last visible categories', function() {
+            plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
+            result = plot._isAfterVisibleCatgories(1427814000000, 1404140400000);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return false, when type is datetime and value is smaller than last visible categories', function() {
+            plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
+            result = plot._isAfterVisibleCatgories(1388502000000, 1404140400000);
+
+            expect(result).toBe(false);
+        });
+
+        it('should return true, when category index is bigger than last visible', function() {
+            result = plot._isAfterVisibleCatgories(1409497200000, 1404140400000);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return false, when category index is same or less than last visible', function() {
+            result = plot._isAfterVisibleCatgories(1398870000000, 1404140400000);
+
+            expect(result).toBe(false);
+        });
     });
 });
