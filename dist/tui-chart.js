@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.13.0
+ * @version 2.13.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Dec 28 2017 12:38:31 GMT+0900 (KST)"
+ * bundle created at "Fri Jan 12 2018 14:34:45 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -61,12 +61,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var pluginRaphael = __webpack_require__(2);
-	var chart = __webpack_require__(27);
+	var chart = __webpack_require__(28);
 	__webpack_require__(143);
 
 	chart.registerPlugin(pluginRaphael.name, pluginRaphael.plugins, pluginRaphael.callback);
@@ -81,10 +81,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = chart;
 
 
-/***/ },
+/***/ }),
 /* 1 */,
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael render plugin.
@@ -97,22 +97,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	var raphael = __webpack_require__(3);
 
 	var BarChart = __webpack_require__(4);
-	var Boxplot = __webpack_require__(11);
-	var LineChart = __webpack_require__(12);
-	var AreaChart = __webpack_require__(14);
-	var PieChart = __webpack_require__(16);
-	var RadialLineSeries = __webpack_require__(17);
-	var CoordinateTypeChart = __webpack_require__(18);
-	var BoxTypeChart = __webpack_require__(19);
-	var MapChart = __webpack_require__(20);
+	var Boxplot = __webpack_require__(12);
+	var LineChart = __webpack_require__(13);
+	var AreaChart = __webpack_require__(15);
+	var PieChart = __webpack_require__(17);
+	var RadialLineSeries = __webpack_require__(18);
+	var CoordinateTypeChart = __webpack_require__(19);
+	var BoxTypeChart = __webpack_require__(20);
+	var MapChart = __webpack_require__(21);
 
-	var legend = __webpack_require__(21);
-	var MapLegend = __webpack_require__(22);
-	var CircleLegend = __webpack_require__(23);
-	var title = __webpack_require__(24);
-	var axis = __webpack_require__(25);
+	var legend = __webpack_require__(22);
+	var MapLegend = __webpack_require__(23);
+	var CircleLegend = __webpack_require__(24);
+	var title = __webpack_require__(25);
+	var axis = __webpack_require__(26);
 
-	var RadialPlot = __webpack_require__(26);
+	var RadialPlot = __webpack_require__(27);
 
 	var pluginRaphael = {
 	    bar: BarChart,
@@ -232,15 +232,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael bar chart renderer.
@@ -798,13 +798,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme, isStacked) {
+	        var textAnchor = (isStacked || this.chartType === 'column') ? 'middle' : 'start';
 	        var attributes = {
 	            'font-size': labelTheme.fontSize,
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
 	            fill: labelTheme.color,
 	            opacity: 0,
-	            'text-anchor': isStacked ? 'middle' : 'start'
+	            'text-anchor': textAnchor
 	        };
 	        var labelSet = paper.set();
 
@@ -838,9 +839,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelBarChart;
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Util for raphael rendering.
@@ -919,7 +920,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {object}
 	     */
 	    renderText: function(paper, pos, text, attributes) {
-	        var textObj = paper.text(pos.left, pos.top, text);
+	        var textObj = paper.text(pos.left, pos.top, snippet.decodeHTMLEntity(String(text)));
 
 	        if (attributes) {
 	            if (attributes['dominant-baseline']) {
@@ -1106,15 +1107,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = raphaelRenderUtil;
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Util for rendering.
@@ -1128,6 +1129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dom = __webpack_require__(9);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
+	var predicate = __webpack_require__(11);
 
 	var concat = Array.prototype.concat;
 
@@ -1810,8 +1812,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        lineBaseChartCount += 1;
 
 	        return id;
-	    }
+	    },
 
+	    /**
+	     * get default height of series top area
+	     * @param {string} chartType - chart type
+	     * @param {object} theme - series theme
+	     * @returns {number} - default series top height
+	     */
+	    getDefaultSeriesTopAreaHeight: function(chartType, theme) {
+	        var labelHeight;
+
+	        if (!predicate.isBarTypeChart(chartType) &&
+	            !predicate.isLineTypeChart(chartType) &&
+	            !predicate.isComboChart(chartType)) {
+	            return 0;
+	        }
+
+	        labelHeight = this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+
+	        return labelHeight + chartConst.SERIES_LABEL_PADDING;
+	    }
 	};
 
 	/**
@@ -1893,9 +1914,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = renderUtil;
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Chart const
@@ -2290,9 +2311,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = chartConst;
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview DOM Handler.
@@ -2452,9 +2473,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = domHandler;
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Util for array.
@@ -2646,9 +2667,529 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = arrayUtil;
 
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Predicate.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(8);
+	var arrayUtil = __webpack_require__(10);
+
+	/**
+	 * predicate.
+	 * @module predicate
+	 * @private */
+	var predicate = {
+	    /**
+	     * Whether bar chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBarChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BAR;
+	    },
+
+	    /**
+	     * Whether column chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isColumnChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_COLUMN;
+	    },
+
+	    /**
+	     * Whether bar type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBarTypeChart: function(chartType) {
+	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
+	    },
+
+	    /**
+	     * Whether boxplot chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBoxplotChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BOXPLOT;
+	    },
+
+	    /**
+	     * Whether radial type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isRadialChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_RADIAL;
+	    },
+
+	    /**
+	     * Whether diverging chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {boolean} diverging - whether has diverging or not
+	     * @returns {*|boolean}
+	     */
+	    isDivergingChart: function(chartType, diverging) {
+	        return this.isBarTypeChart(chartType) && diverging;
+	    },
+
+	    /**
+	     * Whether normal stack chart or not.
+	     * @param {string} chartType - type of chart
+	     * @param {string} stackType - type of stack
+	     * @returns {boolean}
+	     * @private
+	     */
+	    isNormalStackChart: function(chartType, stackType) {
+	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+	        var isNormalStack = predicate.isNormalStack(stackType);
+
+	        return isAllowedStackOption && isNormalStack;
+	    },
+
+	    /**
+	     * Whether percent stack chart or not.
+	     * @param {string} chartType - type of chart
+	     * @param {string} stackType - type of stack
+	     * @returns {boolean}
+	     * @private
+	     */
+	    isPercentStackChart: function(chartType, stackType) {
+	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+	        var isPercentStack = predicate.isPercentStack(stackType);
+
+	        return isAllowedStackOption && isPercentStack;
+	    },
+
+	    /**
+	     * Whether combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isComboChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_COMBO;
+	    },
+
+	    /**
+	     * Whether pie and donut combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isPieDonutComboChart: function(chartType, subChartTypes) {
+	        var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
+	            return predicate.isPieChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && isAllPieType;
+	    },
+
+	    /**
+	     * Whether line chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isLineChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_LINE;
+	    },
+
+	    /**
+	     * Whether area chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isAreaChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_AREA;
+	    },
+
+	    /**
+	     * Whether line and area combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineAreaComboChart: function(chartType, subChartTypes) {
+	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && isAllLineType;
+	    },
+
+	    /**
+	     * Whether line and area combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    hasLineChart: function(chartType, subChartTypes) {
+	        var hasLineType = arrayUtil.any(subChartTypes || [], function(subChartType) {
+	            return predicate.isLineChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && hasLineType;
+	    },
+
+	    /**
+	     * Whether line and scatter combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineScatterComboChart: function(chartType, subChartTypes) {
+	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && isAllLineType;
+	    },
+
+	    /**
+	     * Whether line type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} [subChartTypes] - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineTypeChart: function(chartType, subChartTypes) {
+	        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
+	            || predicate.isLineAreaComboChart(chartType, subChartTypes);
+	    },
+
+	    /**
+	     * Whether bubble chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBubbleChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BUBBLE;
+	    },
+
+	    /**
+	     * Whether scatter chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isScatterChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_SCATTER;
+	    },
+
+	    /**
+	     * Whether heatmap chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isHeatmapChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_HEATMAP;
+	    },
+
+	    /**
+	     * Whether treemap chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isTreemapChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_TREEMAP;
+	    },
+
+	    /**
+	     * Whether box type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isBoxTypeChart: function(chartType) {
+	        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
+	    },
+
+	    /**
+	     * Whether pie chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isPieChart: function(chartType) {
+	        // alias 때문에 indexOf로 변경
+	        return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
+	    },
+
+	    /**
+	     * Whether map chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isMapChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_MAP;
+	    },
+
+	    /**
+	     * Whether coordinate type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isCoordinateTypeChart: function(chartType) {
+	        return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
+	    },
+
+	    /**
+	     * Whether allow rendering for minus point in area of series.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    allowMinusPointRender: function(chartType) {
+	        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
+	            predicate.isBoxTypeChart(chartType);
+	    },
+
+	    /**
+	     * Whether chart to detect mouse events on series or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isChartToDetectMouseEventOnSeries: function(chartType) {
+	        return predicate.isPieChart(chartType) || predicate.isMapChart(chartType)
+	            || predicate.isCoordinateTypeChart(chartType);
+	    },
+
+	    /**
+	     * Whether align of label is outer or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLabelAlignOuter: function(align) {
+	        return align === chartConst.LABEL_ALIGN_OUTER;
+	    },
+
+	    /**
+	     * Whether show label or not.
+	     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
+	     * @returns {boolean}
+	     */
+	    isShowLabel: function(options) {
+	        return options.showLabel || options.showLegend;
+	    },
+
+	    /**
+	     * Whether show outer label or not.
+	     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
+	     * @returns {*|boolean}
+	     */
+	    isShowOuterLabel: function(options) {
+	        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
+	    },
+
+	    /**
+	     * Whether align of legend is left or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignLeft: function(align) {
+	        return align === chartConst.LEGEND_ALIGN_LEFT;
+	    },
+
+	    /**
+	     * Whether align of legend is top or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignTop: function(align) {
+	        return align === chartConst.LEGEND_ALIGN_TOP;
+	    },
+
+	    /**
+	     * Whether align of legend is bottom or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignBottom: function(align) {
+	        return align === chartConst.LEGEND_ALIGN_BOTTOM;
+	    },
+
+	    /**
+	     * Whether horizontal legend or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align option for legend
+	     * @returns {boolean}
+	     */
+	    isHorizontalLegend: function(align) {
+	        return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
+	    },
+
+	    /**
+	     * Whether vertical legend or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align option for legend
+	     * @returns {boolean}
+	     */
+	    isVerticalLegend: function(align) {
+	        return !predicate.isHorizontalLegend(align);
+	    },
+
+	    /**
+	     * Whether allowed stackType option or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isAllowedStackOption: function(chartType) {
+	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType)
+	            || predicate.isAreaChart(chartType);
+	    },
+
+	    /**
+	     * Whether normal stack type or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isNormalStack: function(stackType) {
+	        return stackType === chartConst.NORMAL_STACK_TYPE;
+	    },
+
+	    /**
+	     * Whether percent stack type or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isPercentStack: function(stackType) {
+	        return stackType === chartConst.PERCENT_STACK_TYPE;
+	    },
+
+	    /**
+	     * Whether valid stackType option or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isValidStackOption: function(stackType) {
+	        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
+	    },
+
+	    /**
+	     * Whether allow range data or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isAllowRangeData: function(chartType) {
+	        return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
+	    },
+
+	    /**
+	     * Whether align of yAxis is center or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} hasRightYAxis - whether has right yAxis.
+	     * @param {string} alignOption - align option of yAxis.
+	     * @returns {boolean} whether - align center or not.
+	     */
+	    isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
+	        return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
+	    },
+
+	    /**
+	     * Whether minus limit or not.
+	     * @memberOf module:predicate
+	     * @param {{min: number, max: number}} limit - limit
+	     * @returns {boolean}
+	     */
+	    isMinusLimit: function(limit) {
+	        return limit.min <= 0 && limit.max <= 0;
+	    },
+
+	    /**
+	     * Whether auto tick interval or not.
+	     * @param {string} [tickInterval] - tick interval option
+	     * @returns {boolean}
+	     */
+	    isAutoTickInterval: function(tickInterval) {
+	        return tickInterval === chartConst.TICK_INTERVAL_AUTO;
+	    },
+
+	    /**
+	     * Whether valid label interval or not.
+	     * @param {number} [labelInterval] - label interval option
+	     * @param {string} [tickInterval] - tick interval option
+	     * @returns {*|boolean}
+	     */
+	    isValidLabelInterval: function(labelInterval, tickInterval) {
+	        return labelInterval && labelInterval > 1 && !tickInterval;
+	    },
+
+	    /**
+	     * Whether datetime type or not.
+	     * @param {string} type - type
+	     * @returns {boolean}
+	     */
+	    isDatetimeType: function(type) {
+	        return type === chartConst.AXIS_TYPE_DATETIME;
+	    },
+
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#showTooltip API
+	     */
+	    isSupportPublicShowTooptipAPI: function(chartType) {
+	        return this.isBarChart(chartType) ||
+	            this.isColumnChart(chartType) ||
+	            this.isLineChart(chartType) ||
+	            this.isAreaChart(chartType) ||
+	            this.isBoxplotChart(chartType);
+	    },
+
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#hideTooltip API
+	     */
+	    isSupportPublicHideTooptipAPI: function(chartType) {
+	        return this.isBarChart(chartType) ||
+	            this.isColumnChart(chartType) ||
+	            this.isLineChart(chartType) ||
+	            this.isAreaChart(chartType) ||
+	            this.isBoxplotChart(chartType);
+	    }
+	};
+
+	module.exports = predicate;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael boxplot chart renderer.
@@ -3346,9 +3887,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelBoxplotChart;
 
 
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael line chart renderer.
@@ -3358,7 +3899,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(13);
+	var RaphaelLineBase = __webpack_require__(14);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -3626,9 +4167,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelLineChart;
 
 
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RaphaelLineTypeBase is base class for line type renderer.
@@ -4280,7 +4821,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.clipRect = clipRect;
 	            } else {
 	                clipRect.attr({
-	                    width: 0
+	                    width: 0,
+	                    height: dimension.height
 	                });
 	            }
 
@@ -4488,9 +5030,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelLineTypeBase;
 
 
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael area chart renderer.
@@ -4500,7 +5042,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(13);
+	var RaphaelLineBase = __webpack_require__(14);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -4509,7 +5051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var concat = Array.prototype.concat;
 	var GUIDE_AREACHART_AREAOPACITY_TYPE = __webpack_require__(8).GUIDE_AREACHART_AREAOPACITY_TYPE;
-	var consoleUtil = __webpack_require__(15);
+	var consoleUtil = __webpack_require__(16);
 
 	var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
 	    /**
@@ -4978,9 +5520,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelAreaChart;
 
 
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview util for console
@@ -5006,9 +5548,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RaphaelPieCharts is graph renderer for pie chart.
@@ -5701,9 +6243,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelPieChart;
 
 
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael radial line series renderer.
@@ -5713,7 +6255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineTypeBase = __webpack_require__(13);
+	var RaphaelLineTypeBase = __webpack_require__(14);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -5910,9 +6452,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelRadialLineSeries;
 
 
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael bubble chart renderer.
@@ -6333,9 +6875,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelBubbleChart;
 
 
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
@@ -6769,9 +7311,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelBoxTypeChart;
 
 
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RaphaelPieCharts is graph renderer for map chart.
@@ -7084,9 +7626,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelMapChart;
 
 
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael title renderer.
@@ -7571,9 +8113,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelLegendComponent;
 
 
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RaphaelMapLegend is graph renderer for map chart legend.
@@ -7799,9 +8341,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelMapLegend;
 
 
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RaphaelCircleLegend is graph renderer for circleLegend.
@@ -7863,9 +8405,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelCircleLegend;
 
 
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael title renderer.
@@ -7931,9 +8473,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelTitleComponent;
 
 
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raphael title renderer.
@@ -8351,9 +8893,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelAxisComponent;
 
 
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RaphaelRadialPlot is graph renderer for radial plot.
@@ -8578,9 +9120,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RaphaelRadialPlot;
 
 
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview chart.js is entry point of Toast UI Chart.
@@ -8591,7 +9133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var chartFactory = __webpack_require__(28);
+	var chartFactory = __webpack_require__(29);
 	var pluginFactory = __webpack_require__(31);
 	var themeManager = __webpack_require__(32);
 	var mapManager = __webpack_require__(34);
@@ -10090,9 +10632,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Chart factory play role register chart.
@@ -10104,8 +10646,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var rawDataHandler = __webpack_require__(29);
-	var predicate = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 
 	var charts = {};
 	var factory = {
@@ -10174,9 +10716,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = factory;
 
 
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Raw data handler.
@@ -10187,7 +10729,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -10449,529 +10991,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = rawDataHandler;
 
 
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Predicate.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(8);
-	var arrayUtil = __webpack_require__(10);
-
-	/**
-	 * predicate.
-	 * @module predicate
-	 * @private */
-	var predicate = {
-	    /**
-	     * Whether bar chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBarChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_BAR;
-	    },
-
-	    /**
-	     * Whether column chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isColumnChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_COLUMN;
-	    },
-
-	    /**
-	     * Whether bar type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBarTypeChart: function(chartType) {
-	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
-	    },
-
-	    /**
-	     * Whether boxplot chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBoxplotChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_BOXPLOT;
-	    },
-
-	    /**
-	     * Whether radial type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isRadialChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_RADIAL;
-	    },
-
-	    /**
-	     * Whether diverging chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {boolean} diverging - whether has diverging or not
-	     * @returns {*|boolean}
-	     */
-	    isDivergingChart: function(chartType, diverging) {
-	        return this.isBarTypeChart(chartType) && diverging;
-	    },
-
-	    /**
-	     * Whether normal stack chart or not.
-	     * @param {string} chartType - type of chart
-	     * @param {string} stackType - type of stack
-	     * @returns {boolean}
-	     * @private
-	     */
-	    isNormalStackChart: function(chartType, stackType) {
-	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-	        var isNormalStack = predicate.isNormalStack(stackType);
-
-	        return isAllowedStackOption && isNormalStack;
-	    },
-
-	    /**
-	     * Whether percent stack chart or not.
-	     * @param {string} chartType - type of chart
-	     * @param {string} stackType - type of stack
-	     * @returns {boolean}
-	     * @private
-	     */
-	    isPercentStackChart: function(chartType, stackType) {
-	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-	        var isPercentStack = predicate.isPercentStack(stackType);
-
-	        return isAllowedStackOption && isPercentStack;
-	    },
-
-	    /**
-	     * Whether combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isComboChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_COMBO;
-	    },
-
-	    /**
-	     * Whether pie and donut combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isPieDonutComboChart: function(chartType, subChartTypes) {
-	        var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
-	            return predicate.isPieChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && isAllPieType;
-	    },
-
-	    /**
-	     * Whether line chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isLineChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_LINE;
-	    },
-
-	    /**
-	     * Whether area chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isAreaChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_AREA;
-	    },
-
-	    /**
-	     * Whether line and area combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineAreaComboChart: function(chartType, subChartTypes) {
-	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
-	            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && isAllLineType;
-	    },
-
-	    /**
-	     * Whether line and area combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    hasLineChart: function(chartType, subChartTypes) {
-	        var hasLineType = arrayUtil.any(subChartTypes || [], function(subChartType) {
-	            return predicate.isLineChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && hasLineType;
-	    },
-
-	    /**
-	     * Whether line and scatter combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineScatterComboChart: function(chartType, subChartTypes) {
-	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
-	            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && isAllLineType;
-	    },
-
-	    /**
-	     * Whether line type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} [subChartTypes] - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineTypeChart: function(chartType, subChartTypes) {
-	        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
-	            || predicate.isLineAreaComboChart(chartType, subChartTypes);
-	    },
-
-	    /**
-	     * Whether bubble chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBubbleChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_BUBBLE;
-	    },
-
-	    /**
-	     * Whether scatter chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isScatterChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_SCATTER;
-	    },
-
-	    /**
-	     * Whether heatmap chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isHeatmapChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_HEATMAP;
-	    },
-
-	    /**
-	     * Whether treemap chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isTreemapChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_TREEMAP;
-	    },
-
-	    /**
-	     * Whether box type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isBoxTypeChart: function(chartType) {
-	        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
-	    },
-
-	    /**
-	     * Whether pie chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isPieChart: function(chartType) {
-	        // alias 때문에 indexOf로 변경
-	        return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
-	    },
-
-	    /**
-	     * Whether map chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isMapChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_MAP;
-	    },
-
-	    /**
-	     * Whether coordinate type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isCoordinateTypeChart: function(chartType) {
-	        return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
-	    },
-
-	    /**
-	     * Whether allow rendering for minus point in area of series.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    allowMinusPointRender: function(chartType) {
-	        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
-	            predicate.isBoxTypeChart(chartType);
-	    },
-
-	    /**
-	     * Whether chart to detect mouse events on series or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isChartToDetectMouseEventOnSeries: function(chartType) {
-	        return predicate.isPieChart(chartType) || predicate.isMapChart(chartType)
-	            || predicate.isCoordinateTypeChart(chartType);
-	    },
-
-	    /**
-	     * Whether align of label is outer or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLabelAlignOuter: function(align) {
-	        return align === chartConst.LABEL_ALIGN_OUTER;
-	    },
-
-	    /**
-	     * Whether show label or not.
-	     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
-	     * @returns {boolean}
-	     */
-	    isShowLabel: function(options) {
-	        return options.showLabel || options.showLegend;
-	    },
-
-	    /**
-	     * Whether show outer label or not.
-	     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
-	     * @returns {*|boolean}
-	     */
-	    isShowOuterLabel: function(options) {
-	        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
-	    },
-
-	    /**
-	     * Whether align of legend is left or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignLeft: function(align) {
-	        return align === chartConst.LEGEND_ALIGN_LEFT;
-	    },
-
-	    /**
-	     * Whether align of legend is top or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignTop: function(align) {
-	        return align === chartConst.LEGEND_ALIGN_TOP;
-	    },
-
-	    /**
-	     * Whether align of legend is bottom or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignBottom: function(align) {
-	        return align === chartConst.LEGEND_ALIGN_BOTTOM;
-	    },
-
-	    /**
-	     * Whether horizontal legend or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align option for legend
-	     * @returns {boolean}
-	     */
-	    isHorizontalLegend: function(align) {
-	        return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
-	    },
-
-	    /**
-	     * Whether vertical legend or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align option for legend
-	     * @returns {boolean}
-	     */
-	    isVerticalLegend: function(align) {
-	        return !predicate.isHorizontalLegend(align);
-	    },
-
-	    /**
-	     * Whether allowed stackType option or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isAllowedStackOption: function(chartType) {
-	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType)
-	            || predicate.isAreaChart(chartType);
-	    },
-
-	    /**
-	     * Whether normal stack type or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isNormalStack: function(stackType) {
-	        return stackType === chartConst.NORMAL_STACK_TYPE;
-	    },
-
-	    /**
-	     * Whether percent stack type or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isPercentStack: function(stackType) {
-	        return stackType === chartConst.PERCENT_STACK_TYPE;
-	    },
-
-	    /**
-	     * Whether valid stackType option or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isValidStackOption: function(stackType) {
-	        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
-	    },
-
-	    /**
-	     * Whether allow range data or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isAllowRangeData: function(chartType) {
-	        return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
-	    },
-
-	    /**
-	     * Whether align of yAxis is center or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} hasRightYAxis - whether has right yAxis.
-	     * @param {string} alignOption - align option of yAxis.
-	     * @returns {boolean} whether - align center or not.
-	     */
-	    isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
-	        return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
-	    },
-
-	    /**
-	     * Whether minus limit or not.
-	     * @memberOf module:predicate
-	     * @param {{min: number, max: number}} limit - limit
-	     * @returns {boolean}
-	     */
-	    isMinusLimit: function(limit) {
-	        return limit.min <= 0 && limit.max <= 0;
-	    },
-
-	    /**
-	     * Whether auto tick interval or not.
-	     * @param {string} [tickInterval] - tick interval option
-	     * @returns {boolean}
-	     */
-	    isAutoTickInterval: function(tickInterval) {
-	        return tickInterval === chartConst.TICK_INTERVAL_AUTO;
-	    },
-
-	    /**
-	     * Whether valid label interval or not.
-	     * @param {number} [labelInterval] - label interval option
-	     * @param {string} [tickInterval] - tick interval option
-	     * @returns {*|boolean}
-	     */
-	    isValidLabelInterval: function(labelInterval, tickInterval) {
-	        return labelInterval && labelInterval > 1 && !tickInterval;
-	    },
-
-	    /**
-	     * Whether datetime type or not.
-	     * @param {string} type - type
-	     * @returns {boolean}
-	     */
-	    isDatetimeType: function(type) {
-	        return type === chartConst.AXIS_TYPE_DATETIME;
-	    },
-
-	    /**
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean} - whether it support ChartBase#showTooltip API
-	     */
-	    isSupportPublicShowTooptipAPI: function(chartType) {
-	        return this.isBarChart(chartType) ||
-	            this.isColumnChart(chartType) ||
-	            this.isLineChart(chartType) ||
-	            this.isAreaChart(chartType) ||
-	            this.isBoxplotChart(chartType);
-	    },
-
-	    /**
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean} - whether it support ChartBase#hideTooltip API
-	     */
-	    isSupportPublicHideTooptipAPI: function(chartType) {
-	        return this.isBarChart(chartType) ||
-	            this.isColumnChart(chartType) ||
-	            this.isLineChart(chartType) ||
-	            this.isAreaChart(chartType) ||
-	            this.isBoxplotChart(chartType);
-	    }
-	};
-
-	module.exports = predicate;
-
-
-/***/ },
+/***/ }),
 /* 31 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Plugin factory play role register rendering plugin.
@@ -11022,9 +11044,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = factory;
 
 
-/***/ },
+/***/ }),
 /* 32 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @Fileoverview  Theme manager.
@@ -11035,7 +11057,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var defaultTheme = __webpack_require__(33);
 	var snippet = __webpack_require__(6);
 
@@ -11346,9 +11368,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 33 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -11448,9 +11470,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = defaultTheme;
 
 
-/***/ },
+/***/ }),
 /* 34 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview  Map Manager.
@@ -11489,9 +11511,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 35 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview util for object
@@ -11542,9 +11564,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = objectUtil;
 
 
-/***/ },
+/***/ }),
 /* 36 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileOverview Series data importer
@@ -11650,9 +11672,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 37 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -11727,9 +11749,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = DrawingToolPicker;
 
 
-/***/ },
+/***/ }),
 /* 38 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
 	// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
@@ -11831,14 +11853,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}());
 
 
-/***/ },
+/***/ }),
 /* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var chartFactory = __webpack_require__(28);
+	var chartFactory = __webpack_require__(29);
 	var BarChart = __webpack_require__(40);
 	var ColumnChart = __webpack_require__(121);
 	var LineChart = __webpack_require__(122);
@@ -11874,9 +11896,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	chartFactory.register(chartConst.CHART_TYPE_BOXPLOT, BoxplotChart);
 
 
-/***/ },
+/***/ }),
 /* 40 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Bar chart.
@@ -11888,8 +11910,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ChartBase = __webpack_require__(41);
 	var chartConst = __webpack_require__(8);
-	var rawDataHandler = __webpack_require__(29);
-	var predicate = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
@@ -12017,9 +12039,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = BarChart;
 
 
-/***/ },
+/***/ }),
 /* 41 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview ChartBase
@@ -12032,11 +12054,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartConst = __webpack_require__(8);
 	var ComponentManager = __webpack_require__(42);
 	var DefaultDataProcessor = __webpack_require__(99);
-	var rawDataHandler = __webpack_require__(29);
+	var rawDataHandler = __webpack_require__(30);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
 	var boundsAndScaleBuilder = __webpack_require__(109);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
@@ -12736,9 +12758,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ChartBase;
 
 
-/***/ },
+/***/ }),
 /* 42 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview ComponentManager manages components of chart.
@@ -13130,9 +13152,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ComponentManager;
 
 
-/***/ },
+/***/ }),
 /* 43 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Axis component.
@@ -13143,7 +13165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var pluginFactory = __webpack_require__(31);
 	var renderUtil = __webpack_require__(7);
@@ -13734,9 +13756,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = axisFactory;
 
 
-/***/ },
+/***/ }),
 /* 44 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview calculator.
@@ -14016,9 +14038,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = calculator;
 
 
-/***/ },
+/***/ }),
 /* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Plot component.
@@ -14029,7 +14051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var snippet = __webpack_require__(6);
 	var map = snippet.map;
@@ -14341,8 +14363,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
+	        var categories = this.dataProcessor.getCategories();
 	        var range = this._createOptionalLineValueRange(optionalLineData);
-	        var isContainAll = false;
 	        var startPosition, endPosition;
 
 	        if (xAxisData.isLabelAxis) {
@@ -14354,15 +14376,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (snippet.isNull(startPosition)) {
-	            isContainAll = this._testPlotBandCoversSeriesArea(range);
+	            startPosition = this._isBeforeVisibleCategories(range[0], categories[0]) ? 0 : -1;
+	        }
 
-	            if (isContainAll) {
-	                endPosition = width;
-	            } else {
-	                endPosition = endPosition || 0;
-	            }
-
-	            startPosition = 0;
+	        if (snippet.isNull(endPosition)) {
+	            endPosition = this._isAfterVisibleCatgories(range[1], categories[categories.length - 1]) ? width : -1;
 	        }
 
 	        return {
@@ -14372,22 +14390,51 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * test plot band covers series area
-	     * @param {Array.<number>} range - range of plot band
-	     * @returns {boolean} - whether it contains all a series area or not
+	     * @param {string} value - value of starting point
+	     * @param {string} firstCategory - first visible category data
+	     * @returns {boolean} - whether starting point value is at before first visible category data or not
+	     * @private
 	     */
-	    _testPlotBandCoversSeriesArea: function(range) {
-	        var categories, lastCategoryIndex, firstDateTime, lastDateTime;
-	        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-	            categories = this.dataProcessor.getCategories();
-	            lastCategoryIndex = categories.length > 0 ? categories.length - 1 : 0;
-	            firstDateTime = categories[0];
-	            lastDateTime = categories[lastCategoryIndex];
+	    _isBeforeVisibleCategories: function(value, firstCategory) {
+	        var dataProcessor = this.dataProcessor;
+	        var valueIndex, firstCategoryIndex;
 
-	            return (range[0] <= firstDateTime && range[1] >= lastDateTime);
+	        if (!snippet.isExisty(value)) {
+	            return false;
 	        }
 
-	        return this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
+	        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
+	            return value < firstCategory;
+	        }
+
+	        valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
+	        firstCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(firstCategory);
+
+	        return (valueIndex >= 0) && (valueIndex < firstCategoryIndex);
+	    },
+
+	    /**
+	     * @param {string} value - value of end point
+	     * @param {string} lastCategory - last visible category data
+	     * @returns {boolean} - whether end point value is at after last visible category data or not
+	     * @private
+	     */
+	    _isAfterVisibleCatgories: function(value, lastCategory) {
+	        var dataProcessor = this.dataProcessor;
+	        var valueIndex, lastCategoryIndex;
+
+	        if (!snippet.isExisty(value)) {
+	            return false;
+	        }
+
+	        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
+	            return value > lastCategory;
+	        }
+
+	        valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
+	        lastCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(lastCategory);
+
+	        return (valueIndex >= 0) && (valueIndex > lastCategoryIndex);
 	    },
 
 	    /**
@@ -14403,7 +14450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
 	        var line;
 
-	        if (snippet.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+	        if (positionMap.start >= 0 && positionMap.start <= width) {
 	            attributes.width = 1;
 
 	            attributes.color = optionalLineData.color || 'transparent';
@@ -14442,14 +14489,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return map(positionMaps, function(positionMap) {
-	            var bandWidth = positionMap.end - positionMap.start;
-	            var isStartPositionInsidePlotArea = snippet.isExisty(positionMap.start) &&
-	                (positionMap.start >= 0) && (positionMap.start <= width);
-	            var band;
+	            var isStartPositionInsidePlotArea = (positionMap.start) >= 0 && (positionMap.start <= width);
+	            var bandWidth, band;
 
-	            if (isStartPositionInsidePlotArea) {
+	            if (isStartPositionInsidePlotArea && positionMap.end >= 0) {
 	                attributes.color = optionalLineData.color || 'transparent';
 	                attributes.opacity = optionalLineData.opacity;
+	                bandWidth = positionMap.end - positionMap.start;
 	                band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
 	            }
 
@@ -14789,9 +14835,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = plotFactory;
 
 
-/***/ },
+/***/ }),
 /* 46 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Title component.
@@ -14913,9 +14959,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = titleFactory;
 
 
-/***/ },
+/***/ }),
 /* 47 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Radial plot component.
@@ -15210,9 +15256,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RadialPlotFactory;
 
 
-/***/ },
+/***/ }),
 /* 48 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview module for geometric operation
@@ -15322,9 +15368,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 49 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview chartExportMenu component.
@@ -15338,7 +15384,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartExporter = __webpack_require__(50);
 	var dom = __webpack_require__(9);
 	var eventListener = __webpack_require__(54);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -15680,9 +15726,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = chartExportMenuFactory;
 
 
-/***/ },
+/***/ }),
 /* 50 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileOverview Chart exporter
@@ -15776,9 +15822,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 51 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileOverview Chart data exporter
@@ -15972,9 +16018,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = dataExporter;
 
 
-/***/ },
+/***/ }),
 /* 52 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileOverview File downloader for client-side download
@@ -16115,9 +16161,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileOverview Chart image exporter
@@ -16248,9 +16294,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 54 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Event listener.
@@ -16430,9 +16476,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = eventListener;
 
 
-/***/ },
+/***/ }),
 /* 55 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Legend component.
@@ -16445,7 +16491,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartConst = __webpack_require__(8);
 	var LegendModel = __webpack_require__(56);
 	var pluginFactory = __webpack_require__(31);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
@@ -16817,9 +16863,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = legendFactory;
 
 
-/***/ },
+/***/ }),
 /* 56 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview LegendModel is legend model.
@@ -17165,9 +17211,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LegendModel;
 
 
-/***/ },
+/***/ }),
 /* 57 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Spectrum Legend component.
@@ -17178,7 +17224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var pluginFactory = __webpack_require__(31);
 	var snippet = __webpack_require__(6);
 
@@ -17457,9 +17503,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = spectrumLegendFactory;
 
 
-/***/ },
+/***/ }),
 /* 58 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Circle legend component render a legend in the form of overlapping circles
@@ -17662,9 +17708,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = circleLegendFactory;
 
 
-/***/ },
+/***/ }),
 /* 59 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview NormalTooltip component.
@@ -17677,7 +17723,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var normalTooltipFactory = __webpack_require__(60);
 	var groupTooltipFactory = __webpack_require__(65);
 	var mapChartTooltipFactory = __webpack_require__(67);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	/**
@@ -17748,9 +17794,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = tooltipFactory;
 
 
-/***/ },
+/***/ }),
 /* 60 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview NormalTooltip component.
@@ -17763,7 +17809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var TooltipBase = __webpack_require__(61);
 	var singleTooltipMixer = __webpack_require__(62);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var tooltipTemplate = __webpack_require__(63);
 	var snippet = __webpack_require__(6);
 
@@ -17982,9 +18028,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = normalTooltipFactory;
 
 
-/***/ },
+/***/ }),
 /* 61 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview TooltipBase is base class of tooltip components.
@@ -17997,7 +18043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(6);
 	var chartConst = __webpack_require__(8),
 	    dom = __webpack_require__(9),
-	    predicate = __webpack_require__(30),
+	    predicate = __webpack_require__(11),
 	    renderUtil = __webpack_require__(7);
 
 	var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
@@ -18474,9 +18520,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = TooltipBase;
 
 
-/***/ },
+/***/ }),
 /* 62 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview singleTooltipMixer is single tooltip mixer of map chart.
@@ -18488,7 +18534,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var snippet = __webpack_require__(6);
 	var chartConst = __webpack_require__(8),
-	    predicate = __webpack_require__(30),
+	    predicate = __webpack_require__(11),
 	    dom = __webpack_require__(9),
 	    renderUtil = __webpack_require__(7);
 
@@ -19021,9 +19067,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = singleTooltipMixer;
 
 
-/***/ },
+/***/ }),
 /* 63 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview This is templates of tooltip.
@@ -19129,9 +19175,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 64 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview This is template maker.
@@ -19169,9 +19215,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 65 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Group tooltip component.
@@ -19656,9 +19702,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = groupTooltipFactory;
 
 
-/***/ },
+/***/ }),
 /* 66 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview GroupTooltipPositionModel is position model for group tooltip..
@@ -20136,9 +20182,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = GroupTooltipPositionModel;
 
 
-/***/ },
+/***/ }),
 /* 67 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Tooltip component for map chart.
@@ -20249,9 +20295,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = mapChartTooltipFactory;
 
 
-/***/ },
+/***/ }),
 /* 68 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview MapChartEventDetector is mouse event detector for map chart.
@@ -20444,9 +20490,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = mapChartEventDetectorFactory;
 
 
-/***/ },
+/***/ }),
 /* 69 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview MouseEventDetectorBase is base class for mouse event detector components.
@@ -20460,7 +20506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var BoundsBaseCoordinateModel = __webpack_require__(71);
 	var chartConst = __webpack_require__(8);
 	var eventListener = __webpack_require__(54);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -20938,9 +20984,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MouseEventDetectorBase;
 
 
-/***/ },
+/***/ }),
 /* 70 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview TickBaseDataModel is tick base data model.
@@ -20950,7 +20996,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -21130,9 +21176,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = TickBaseDataModel;
 
 
-/***/ },
+/***/ }),
 /* 71 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview BoundsBaseCoordinateModel is data model for mouse event detector of bounds type.
@@ -21183,7 +21229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -21483,9 +21529,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = BoundsBaseCoordinateModel;
 
 
-/***/ },
+/***/ }),
 /* 72 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @author NHN Ent.
@@ -21494,7 +21540,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var areaTypeEventDetectorFactory = __webpack_require__(73);
 	var simpleEventDetectorFactory = __webpack_require__(76);
 	var groupTypeEventDetectorFactory = __webpack_require__(77);
@@ -21547,9 +21593,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = mouseEventDetectorFactory;
 
 
-/***/ },
+/***/ }),
 /* 73 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview AreaTypeEventDetector is mouse event detector for line type chart.
@@ -21747,9 +21793,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = areaTypeEventDetectorFactory;
 
 
-/***/ },
+/***/ }),
 /* 74 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  Mixer for zoom event of area type mouse event detector.
@@ -22182,9 +22228,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = zoomMixer;
 
 
-/***/ },
+/***/ }),
 /* 75 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview AreaTypeDataModel is data model for mouse event detector of area type.
@@ -22194,7 +22240,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -22346,9 +22392,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AreaTypeDataModel;
 
 
-/***/ },
+/***/ }),
 /* 76 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SimpleEventDetector is event handle layer for simply sending clientX, clientY.
@@ -22444,9 +22490,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = simpleTypeEventDetectorFactory;
 
 
-/***/ },
+/***/ }),
 /* 77 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview GroupTypeEventDetector is mouse event detector for grouped tooltip.
@@ -22681,9 +22727,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = groupTypeEventDetectorFactory;
 
 
-/***/ },
+/***/ }),
 /* 78 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview BoundsTypeEventDetector is mouse event detector for bounds type charts
@@ -22696,7 +22742,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var EventDetectorBase = __webpack_require__(69);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var dom = __webpack_require__(9);
 	var snippet = __webpack_require__(6);
 
@@ -22931,9 +22977,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = boundsTypeEventDetectorFactory;
 
 
-/***/ },
+/***/ }),
 /* 79 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Bar chart series component.
@@ -22946,7 +22992,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Series = __webpack_require__(80);
 	var BarTypeSeriesBase = __webpack_require__(81);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.prototype */ {
@@ -23125,9 +23171,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = barSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 80 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Series base component.
@@ -23145,7 +23191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var dom = __webpack_require__(9);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var pluginFactory = __webpack_require__(31);
 	var raphaelRenderUtil = __webpack_require__(5);
@@ -23930,9 +23976,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Series;
 
 
-/***/ },
+/***/ }),
 /* 81 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview BarTypeSeriesBase is base class for bar type series.
@@ -23944,7 +23990,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var labelHelper = __webpack_require__(82);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var renderUtil = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(5);
@@ -24302,9 +24348,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = BarTypeSeriesBase;
 
 
-/***/ },
+/***/ }),
 /* 82 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview  renderingLabelHelper is helper for rendering of series label.
@@ -24512,9 +24558,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = renderingLabelHelper;
 
 
-/***/ },
+/***/ }),
 /* 83 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Column chart series component.
@@ -24527,7 +24573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Series = __webpack_require__(80);
 	var BarTypeSeriesBase = __webpack_require__(81);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -24691,9 +24737,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = columnSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 84 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Line chart series component.
@@ -24791,9 +24837,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = lineSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 85 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview LineTypeSeriesBase is base class for line type series.
@@ -24805,7 +24851,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var arrayUtil = __webpack_require__(10);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -24972,8 +25018,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _getLabelPositions: function(seriesDataModel, theme) {
 	        var self = this;
 	        var basePositions = arrayUtil.pivot(this.seriesData.groupPositions);
-	        var firstLabel = seriesDataModel.getFirstItemLabel();
-	        var labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, theme);
+	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
 
 	        return seriesDataModel.map(function(seriesGroup, groupIndex) {
 	            return seriesGroup.map(function(seriesItem, index) {
@@ -25191,9 +25236,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LineTypeSeriesBase;
 
 
-/***/ },
+/***/ }),
 /* 86 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Radial chart series component.
@@ -25350,9 +25395,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = radialSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 87 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Area chart series component.
@@ -25364,7 +25409,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Series = __webpack_require__(80);
 	var LineTypeSeriesBase = __webpack_require__(85);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
@@ -25508,9 +25553,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = areaSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 88 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Bubble chart series component.
@@ -25665,9 +25710,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = bubbleSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 89 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview CoordinateTypeSeriesBase is base class for coordinate type series.
@@ -25801,9 +25846,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = CoordinateTypeSeriesBase;
 
 
-/***/ },
+/***/ }),
 /* 90 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Scatter chart series component.
@@ -25889,9 +25934,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = scatterSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 91 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Map chart series component.
@@ -26363,9 +26408,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = mapSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 92 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Pie chart series component.
@@ -26377,7 +26422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Series = __webpack_require__(80);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {
@@ -27099,9 +27144,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = pieSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 93 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Series component for rendering graph of heatmap chart.
@@ -27269,9 +27314,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = heatmapChartSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 94 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Series component for rendering graph of treemap chart.
@@ -27285,7 +27330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var squarifier = __webpack_require__(95);
 	var labelHelper = __webpack_require__(82);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
@@ -27631,9 +27676,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = treemapChartSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 95 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview squarifier create squarified bounds for rendering graph of treemap chart.
@@ -27909,9 +27954,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = squarifier;
 
 
-/***/ },
+/***/ }),
 /* 96 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Boxplot chart series component.
@@ -27924,7 +27969,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Series = __webpack_require__(80);
 	var BarTypeSeriesBase = __webpack_require__(81);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -28093,9 +28138,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = boxplotSeriesFactory;
 
 
-/***/ },
+/***/ }),
 /* 97 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Zoom component.
@@ -28283,9 +28328,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = zoomFactory;
 
 
-/***/ },
+/***/ }),
 /* 98 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview This is templates of series.
@@ -28319,9 +28364,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 99 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview DataProcessor process rawData.
@@ -28339,8 +28384,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var SeriesDataModelForBoxplot = __webpack_require__(105);
 	var SeriesDataModelForTreemap = __webpack_require__(107);
 	var SeriesGroup = __webpack_require__(102);
-	var rawDataHandler = __webpack_require__(29);
-	var predicate = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var calculator = __webpack_require__(44);
 	var objectUtil = __webpack_require__(35);
@@ -28779,52 +28824,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * test current visible category is contained by two point
-	     * @param {string} startValue - first category value
-	     * @param {string} endValue - last category value
-	     * @returns {boolean} when it covered by two points or not
+	     * @param {string} value - category
+	     * @returns {number} - found: category index, not found: -1
 	     */
-	    containedAllVisibleCategory: function(startValue, endValue) {
-	        var visibleCategories = this.getCategories();
-	        var firstVisibleCategory, lastVisibleCategory;
-	        var firstVisibleCategoryIndex, lastVisibleCategoryIndex;
-	        var startValueIndex, endValueIndex;
+	    findAbsoluteCategoryIndex: function(value) {
+	        var originalCategories = this.originalRawData ? this.originalRawData.categories : null;
+	        var index = -1;
 
-	        if (!visibleCategories.length) {
-	            return false;
+	        if (!originalCategories) {
+	            return index;
 	        }
 
-	        if (!this.originalRawData || !this.originalRawData.categories) {
-	            return false;
-	        }
-
-	        firstVisibleCategory = visibleCategories[0];
-	        lastVisibleCategory = visibleCategories[visibleCategories.length - 1];
-
-	        snippet.forEachArray(this.originalRawData.categories, function(category, index) {
-	            var isFirstCategoryBeforeStartValueOrEndValue;
-	            var isEndValueBeforeLastCategory;
-
-	            if (category === startValue) {
-	                startValueIndex = index;
-	            } else if (category === endValue) {
-	                endValueIndex = index;
-	            } else if (category === firstVisibleCategory) {
-	                firstVisibleCategoryIndex = index;
-	            } else if (category === lastVisibleCategory) {
-	                lastVisibleCategoryIndex = index;
+	        snippet.forEach(originalCategories, function(category, categoryIndex) {
+	            var found = category === value;
+	            if (found) {
+	                index = categoryIndex;
 	            }
 
-	            isFirstCategoryBeforeStartValueOrEndValue = firstVisibleCategoryIndex &&
-	                (snippet.isUndefined(startValueIndex) || endValueIndex);
-	            isEndValueBeforeLastCategory = endValueIndex &&
-	                 snippet.isUndefined(lastVisibleCategoryIndex);
-
-	            return !(isFirstCategoryBeforeStartValueOrEndValue || isEndValueBeforeLastCategory);
+	            return !found;
 	        });
 
-	        return (startValueIndex < firstVisibleCategoryIndex &&
-	            lastVisibleCategoryIndex < endValueIndex);
+	        return index;
 	    },
 
 	    /**
@@ -29697,9 +29717,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = DataProcessor;
 
 
-/***/ },
+/***/ }),
 /* 100 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview data processor base.
@@ -29898,9 +29918,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = DataProcessorBase;
 
 
-/***/ },
+/***/ }),
 /* 101 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesDataModel is base model for drawing graph of chart series area,
@@ -29940,7 +29960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var SeriesGroup = __webpack_require__(102);
 	var SeriesItem = __webpack_require__(103);
 	var SeriesItemForCoordinateType = __webpack_require__(104);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
@@ -30561,9 +30581,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesDataModel;
 
 
-/***/ },
+/***/ }),
 /* 102 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesGroup is a element of SeriesDataModel.groups.
@@ -30844,9 +30864,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesGroup;
 
 
-/***/ },
+/***/ }),
 /* 103 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesItem is a element of SeriesGroup.items.
@@ -31101,9 +31121,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesItem;
 
 
-/***/ },
+/***/ }),
 /* 104 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesItemForCoordinateType is a element of SeriesGroup.items.
@@ -31114,7 +31134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -31266,9 +31286,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesItemForCoordinateType;
 
 
-/***/ },
+/***/ }),
 /* 105 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesDataModelForBoxplot is boxplot series model for drawing graph of chart series area,
@@ -31423,9 +31443,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesDataModelForBoxplot;
 
 
-/***/ },
+/***/ }),
 /* 106 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesItem is a element of SeriesGroup.items.
@@ -31731,9 +31751,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesItem;
 
 
-/***/ },
+/***/ }),
 /* 107 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
@@ -32045,9 +32065,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesDataModelForTreeMap;
 
 
-/***/ },
+/***/ }),
 /* 108 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview SeriesItem for treemap.
@@ -32154,9 +32174,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SeriesItemForTreemap;
 
 
-/***/ },
+/***/ }),
 /* 109 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Bounds and scale data builder.
@@ -32169,7 +32189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var BoundsModel = __webpack_require__(110);
 	var ScaleDataModel = __webpack_require__(116);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 
 	/**
 	 * Bounds and scale data builder.
@@ -32395,9 +32415,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = boundsAndScaleBuilder;
 
 
-/***/ },
+/***/ }),
 /* 110 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Bounds model.
@@ -32408,7 +32428,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var circleLegendCalculator = __webpack_require__(111);
@@ -32733,7 +32753,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    calculateSeriesHeight: function() {
 	        var dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis', 'chartExportMenu']);
 
-	        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend);
+	        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend, this.chartType, this.theme.series);
 	    },
 
 	    getBaseSizeForLimit: function(isVertical) {
@@ -33083,8 +33103,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
 	        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
 	        var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
+	        var seriesTop = titleOrExportMenuHeight + topLegendHeight;
+	        var defaultSeriesTop = renderUtil.getDefaultSeriesTopAreaHeight(this.chartType, this.theme.series);
 	        var seriesPosition = {
-	            top: titleOrExportMenuHeight + chartConst.CHART_PADDING + topLegendHeight,
+	            top: (!seriesTop ? defaultSeriesTop : seriesTop) + chartConst.CHART_PADDING,
 	            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
 	        };
 
@@ -33170,9 +33192,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = BoundsModel;
 
 
-/***/ },
+/***/ }),
 /* 111 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Calculator for circle legend.
@@ -33272,9 +33294,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = circleLegendCalculator;
 
 
-/***/ },
+/***/ }),
 /* 112 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Calculator for dimension of axis.
@@ -33285,7 +33307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 
 	/**
@@ -33344,9 +33366,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = axisCalculator;
 
 
-/***/ },
+/***/ }),
 /* 113 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Calculator for dimension of legend.
@@ -33358,7 +33380,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var snippet = __webpack_require__(6);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var renderUtil = __webpack_require__(7);
 	var arrayUtil = __webpack_require__(10);
@@ -33563,9 +33585,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = legendCalculator;
 
 
-/***/ },
+/***/ }),
 /* 114 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Calculator for series.
@@ -33576,7 +33598,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
+	var renderUtil = __webpack_require__(7);
 
 	/**
 	 * Calculator for series.
@@ -33616,31 +33639,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *      xAxis: {height: number}
 	     * }} dimensionMap - dimension map
 	     * @param {{align: ?string, visible: boolean}} legendOptions - legend options
+	     * @param {string} chartType - chart type
+	     * @param {object} seriesTheme - series theme;
 	     * @returns {number} series height
 	     */
-	    calculateHeight: function(dimensionMap, legendOptions) {
+	    calculateHeight: function(dimensionMap, legendOptions, chartType, seriesTheme) {
 	        var chartHeight = dimensionMap.chart.height;
-	        var titleOrExportMenuHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
-	        var legendHeight, bottomAreaWidth;
+	        var defaultTopAreaHeight = renderUtil.getDefaultSeriesTopAreaHeight(chartType, seriesTheme);
+	        var topAreaHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
+	        var bottomAreaHeight = dimensionMap.xAxis.height;
+	        var legendHeight = legendOptions.visible ? dimensionMap.legend.height : 0;
+	        var legendAlignment = legendOptions.align;
 
-	        if (predicate.isHorizontalLegend(legendOptions.align) && legendOptions.visible) {
-	            legendHeight = dimensionMap.legend.height;
-	        } else {
-	            legendHeight = 0;
-	        }
+	        bottomAreaHeight += (predicate.isLegendAlignBottom(legendAlignment) ? legendHeight : 0);
+	        topAreaHeight += (predicate.isLegendAlignTop(legendAlignment) ? legendHeight : 0);
+	        topAreaHeight = topAreaHeight || defaultTopAreaHeight;
 
-	        bottomAreaWidth = legendHeight + dimensionMap.xAxis.height;
-
-	        return chartHeight - (chartConst.CHART_PADDING * 2) - titleOrExportMenuHeight - bottomAreaWidth;
+	        return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight;
 	    }
 	};
 
 	module.exports = seriesCalculator;
 
 
-/***/ },
+/***/ }),
 /* 115 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Calculator for spectrum legend.
@@ -33696,16 +33720,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = spectrumLegendCalculator;
 
 
-/***/ },
+/***/ }),
 /* 116 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var scaleDataMaker = __webpack_require__(117);
 	var scaleLabelFormatter = __webpack_require__(119);
 	var axisDataMaker = __webpack_require__(120);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -34137,9 +34161,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ScaleDataModel;
 
 
-/***/ },
+/***/ }),
 /* 117 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
@@ -34150,7 +34174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var arrayUtil = __webpack_require__(10);
 	var coordinateScaleCalculator = __webpack_require__(118);
@@ -34464,9 +34488,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = scaleDataMaker;
 
 
-/***/ },
+/***/ }),
 /* 118 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Implement function that calculate coordinate scale data
@@ -34676,9 +34700,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = coordinateScaleCalculator;
 
 
-/***/ },
+/***/ }),
 /* 119 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
@@ -34688,7 +34712,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var calculator = __webpack_require__(44);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -34771,9 +34795,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = scaleLabelFormatter;
 
 
-/***/ },
+/***/ }),
 /* 120 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Axis Data Maker
@@ -34784,7 +34808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var geomatric = __webpack_require__(48);
 	var renderUtil = __webpack_require__(7);
 	var arrayUtil = __webpack_require__(10);
@@ -35340,9 +35364,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = axisDataMaker;
 
 
-/***/ },
+/***/ }),
 /* 121 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Column chart.
@@ -35354,7 +35378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ChartBase = __webpack_require__(41);
 	var chartConst = __webpack_require__(8);
-	var rawDataHandler = __webpack_require__(29);
+	var rawDataHandler = __webpack_require__(30);
 	var snippet = __webpack_require__(6);
 
 	var ColumnChart = snippet.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
@@ -35445,9 +35469,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ColumnChart;
 
 
-/***/ },
+/***/ }),
 /* 122 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Line chart
@@ -35458,10 +35482,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var ChartBase = __webpack_require__(41);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var DynamicDataHelper = __webpack_require__(123);
 	var Series = __webpack_require__(84);
-	var rawDataHandler = __webpack_require__(29);
+	var rawDataHandler = __webpack_require__(30);
 	var snippet = __webpack_require__(6);
 
 	var LineChart = snippet.defineClass(ChartBase, /** @lends LineChart.prototype */ {
@@ -35695,14 +35719,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LineChart;
 
 
-/***/ },
+/***/ }),
 /* 123 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototype */ {
@@ -35943,9 +35967,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = DynamicDataHelper;
 
 
-/***/ },
+/***/ }),
 /* 124 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Area chart
@@ -35957,7 +35981,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ChartBase = __webpack_require__(41);
 	var DynamicDataHelper = __webpack_require__(123);
-	var rawDataHandler = __webpack_require__(29);
+	var rawDataHandler = __webpack_require__(30);
 	var Series = __webpack_require__(87);
 	var snippet = __webpack_require__(6);
 
@@ -36169,9 +36193,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = AreaChart;
 
 
-/***/ },
+/***/ }),
 /* 125 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Column and Line Combo chart.
@@ -36182,8 +36206,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(29);
-	var predicate = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var validTypeMakerForYAxisOptions = __webpack_require__(126);
 	var snippet = __webpack_require__(6);
 
@@ -36394,9 +36418,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ColumnLineComboChart;
 
 
-/***/ },
+/***/ }),
 /* 126 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Implements valid type maker on yAxisOptions
@@ -36499,9 +36523,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = validTypeMakerForYAxisOptions;
 
 
-/***/ },
+/***/ }),
 /* 127 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Line and Scatter Combo chart.
@@ -36605,9 +36629,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LineScatterComboChart;
 
 
-/***/ },
+/***/ }),
 /* 128 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Line and Area Combo chart.
@@ -36618,8 +36642,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(29);
-	var predicate = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(30);
+	var predicate = __webpack_require__(11);
 	var validTypeMakerForYAxisOptions = __webpack_require__(126);
 	var DynamicDataHelper = __webpack_require__(123);
 	var snippet = __webpack_require__(6);
@@ -36889,9 +36913,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LineAreaComboChart;
 
 
-/***/ },
+/***/ }),
 /* 129 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Pie and Donut Combo chart.
@@ -36902,7 +36926,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(29);
+	var rawDataHandler = __webpack_require__(30);
 	var snippet = __webpack_require__(6);
 
 	var PieDonutComboChart = snippet.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
@@ -36987,9 +37011,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = PieDonutComboChart;
 
 
-/***/ },
+/***/ }),
 /* 130 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Pie chart.
@@ -37059,9 +37083,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = PieChart;
 
 
-/***/ },
+/***/ }),
 /* 131 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Bubble chart.
@@ -37178,9 +37202,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = BubbleChart;
 
 
-/***/ },
+/***/ }),
 /* 132 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
@@ -37271,9 +37295,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ScatterChart;
 
 
-/***/ },
+/***/ }),
 /* 133 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Heatmap chart is a graphical representation of data where the individual values contained
@@ -37410,9 +37434,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = HeatmapChart;
 
 
-/***/ },
+/***/ }),
 /* 134 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview ColorSpectrum create a color spectrum and provide color value.
@@ -37482,9 +37506,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ColorSpectrum;
 
 
-/***/ },
+/***/ }),
 /* 135 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Utility methods to manipulate colors
@@ -37732,9 +37756,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = colorutil;
 
 
-/***/ },
+/***/ }),
 /* 136 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Treemap chart is graphical representation of hierarchical data by using rectangles.
@@ -37836,9 +37860,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = TreemapChart;
 
 
-/***/ },
+/***/ }),
 /* 137 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Map chart.
@@ -37935,9 +37959,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MapChart;
 
 
-/***/ },
+/***/ }),
 /* 138 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview MapChartMapModel is map model of map chart.
@@ -38354,9 +38378,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MapChartMapModel;
 
 
-/***/ },
+/***/ }),
 /* 139 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Data processor for map chart.
@@ -38503,9 +38527,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MapChartDataProcessor;
 
 
-/***/ },
+/***/ }),
 /* 140 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Radial chart.
@@ -38592,9 +38616,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RadialChart;
 
 
-/***/ },
+/***/ }),
 /* 141 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Boxplot chart.
@@ -38605,7 +38629,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(29);
+	var rawDataHandler = __webpack_require__(30);
 	var snippet = __webpack_require__(6);
 
 	var BoxplotChart = snippet.defineClass(ChartBase, /** @lends BoxplotChart.prototype */ {
@@ -38698,9 +38722,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = BoxplotChart;
 
 
-/***/ },
+/***/ }),
 /* 142 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -38711,13 +38735,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	themeManager.register(chartConst.DEFAULT_THEME_NAME, defaultTheme);
 
 
-/***/ },
+/***/ }),
 /* 143 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
