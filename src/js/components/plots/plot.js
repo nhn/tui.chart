@@ -319,8 +319,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
+        var categories = this.dataProcessor.getCategories();
         var range = this._createOptionalLineValueRange(optionalLineData);
-        var isContainAll = false;
         var startPosition, endPosition;
 
         if (xAxisData.isLabelAxis) {
@@ -332,15 +332,11 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         if (snippet.isNull(startPosition)) {
-            isContainAll = this._testPlotBandCoversSeriesArea(range);
+            startPosition = this._isBeforeVisibleCategories(range[0], categories[0]) ? 0 : -1;
+        }
 
-            if (isContainAll) {
-                endPosition = width;
-            } else {
-                endPosition = endPosition || 0;
-            }
-
-            startPosition = 0;
+        if (snippet.isNull(endPosition)) {
+            endPosition = this._isAfterVisibleCatgories(range[1], categories[categories.length - 1]) ? width : -1;
         }
 
         return {
@@ -350,22 +346,51 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * test plot band covers series area
-     * @param {Array.<number>} range - range of plot band
-     * @returns {boolean} - whether it contains all a series area or not
+     * @param {string} value - value of starting point
+     * @param {string} firstCategory - first visible category data
+     * @returns {boolean} - whether starting point value is at before first visible category data or not
+     * @private
      */
-    _testPlotBandCoversSeriesArea: function(range) {
-        var categories, lastCategoryIndex, firstDateTime, lastDateTime;
-        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-            categories = this.dataProcessor.getCategories();
-            lastCategoryIndex = categories.length > 0 ? categories.length - 1 : 0;
-            firstDateTime = categories[0];
-            lastDateTime = categories[lastCategoryIndex];
+    _isBeforeVisibleCategories: function(value, firstCategory) {
+        var dataProcessor = this.dataProcessor;
+        var valueIndex, firstCategoryIndex;
 
-            return (range[0] <= firstDateTime && range[1] >= lastDateTime);
+        if (!snippet.isExisty(value)) {
+            return false;
         }
 
-        return this.dataProcessor.containedAllVisibleCategory(range[0], range[1]);
+        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
+            return value < firstCategory;
+        }
+
+        valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
+        firstCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(firstCategory);
+
+        return (valueIndex >= 0) && (valueIndex < firstCategoryIndex);
+    },
+
+    /**
+     * @param {string} value - value of end point
+     * @param {string} lastCategory - last visible category data
+     * @returns {boolean} - whether end point value is at after last visible category data or not
+     * @private
+     */
+    _isAfterVisibleCatgories: function(value, lastCategory) {
+        var dataProcessor = this.dataProcessor;
+        var valueIndex, lastCategoryIndex;
+
+        if (!snippet.isExisty(value)) {
+            return false;
+        }
+
+        if (predicate.isDatetimeType(this.xAxisTypeOption)) {
+            return value > lastCategory;
+        }
+
+        valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
+        lastCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(lastCategory);
+
+        return (valueIndex >= 0) && (valueIndex > lastCategoryIndex);
     },
 
     /**
@@ -381,7 +406,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
         var line;
 
-        if (snippet.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+        if (positionMap.start >= 0 && positionMap.start <= width) {
             attributes.width = 1;
 
             attributes.color = optionalLineData.color || 'transparent';
@@ -420,14 +445,13 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         return map(positionMaps, function(positionMap) {
-            var bandWidth = positionMap.end - positionMap.start;
-            var isStartPositionInsidePlotArea = snippet.isExisty(positionMap.start) &&
-                (positionMap.start >= 0) && (positionMap.start <= width);
-            var band;
+            var isStartPositionInsidePlotArea = (positionMap.start) >= 0 && (positionMap.start <= width);
+            var bandWidth, band;
 
-            if (isStartPositionInsidePlotArea) {
+            if (isStartPositionInsidePlotArea && positionMap.end >= 0) {
                 attributes.color = optionalLineData.color || 'transparent';
                 attributes.opacity = optionalLineData.opacity;
+                bandWidth = positionMap.end - positionMap.start;
                 band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
             }
 

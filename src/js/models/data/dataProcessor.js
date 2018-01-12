@@ -454,52 +454,27 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
     },
 
     /**
-     * test current visible category is contained by two point
-     * @param {string} startValue - first category value
-     * @param {string} endValue - last category value
-     * @returns {boolean} when it covered by two points or not
+     * @param {string} value - category
+     * @returns {number} - found: category index, not found: -1
      */
-    containedAllVisibleCategory: function(startValue, endValue) {
-        var visibleCategories = this.getCategories();
-        var firstVisibleCategory, lastVisibleCategory;
-        var firstVisibleCategoryIndex, lastVisibleCategoryIndex;
-        var startValueIndex, endValueIndex;
+    findAbsoluteCategoryIndex: function(value) {
+        var originalCategories = this.originalRawData ? this.originalRawData.categories : null;
+        var index = -1;
 
-        if (!visibleCategories.length) {
-            return false;
+        if (!originalCategories) {
+            return index;
         }
 
-        if (!this.originalRawData || !this.originalRawData.categories) {
-            return false;
-        }
-
-        firstVisibleCategory = visibleCategories[0];
-        lastVisibleCategory = visibleCategories[visibleCategories.length - 1];
-
-        snippet.forEachArray(this.originalRawData.categories, function(category, index) {
-            var isFirstCategoryBeforeStartValueOrEndValue;
-            var isEndValueBeforeLastCategory;
-
-            if (category === startValue) {
-                startValueIndex = index;
-            } else if (category === endValue) {
-                endValueIndex = index;
-            } else if (category === firstVisibleCategory) {
-                firstVisibleCategoryIndex = index;
-            } else if (category === lastVisibleCategory) {
-                lastVisibleCategoryIndex = index;
+        snippet.forEach(originalCategories, function(category, categoryIndex) {
+            var found = category === value;
+            if (found) {
+                index = categoryIndex;
             }
 
-            isFirstCategoryBeforeStartValueOrEndValue = firstVisibleCategoryIndex &&
-                (snippet.isUndefined(startValueIndex) || endValueIndex);
-            isEndValueBeforeLastCategory = endValueIndex &&
-                 snippet.isUndefined(lastVisibleCategoryIndex);
-
-            return !(isFirstCategoryBeforeStartValueOrEndValue || isEndValueBeforeLastCategory);
+            return !found;
         });
 
-        return (startValueIndex < firstVisibleCategoryIndex &&
-            lastVisibleCategoryIndex < endValueIndex);
+        return index;
     },
 
     /**
