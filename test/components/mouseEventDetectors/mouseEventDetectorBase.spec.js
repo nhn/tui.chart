@@ -110,7 +110,7 @@ describe('Test for MouseEventDetectorBase', function() {
 
             actual = mouseEventDetectorBase._calculateLayerPosition(30);
 
-            expect(actual.x).toBe(60);
+            expect(actual.x).toBe(50);
         });
 
         it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 작더라도 그대로 반환합니다.', function() {
@@ -139,7 +139,7 @@ describe('Test for MouseEventDetectorBase', function() {
 
             actual = mouseEventDetectorBase._calculateLayerPosition(480);
 
-            expect(actual.x).toBe(440);
+            expect(actual.x).toBe(430);
         });
 
         it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 크더라도 그대로 반환합니다.', function() {
