@@ -606,85 +606,70 @@ describe('PieChartSeries', function() {
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('labelAlign 옵션이 outer면 _renderOuterLegend()가 수행됩니다.', function() {
+        beforeEach(function() {
             var container = dom.create('div');
-            var paper = raphael(container, 100, 100);
+            this.seriesDataModel = new SeriesDataModel();
+            this.paper = raphael(container, 100, 100);
 
-            spyOn(series, '_renderOuterLegend');
+            spyOn(series.graphRenderer, 'renderLabels');
 
-            series.options.labelAlign = 'outer';
-            series.seriesData = {
-                circleBound: {
-                    cx: 110
-                },
-                sectorData: [
-                    {
-                        outerPosition: {
-                            middle: {
-                                left: 100,
-                                top: 50
-                            }
-                        },
-                        ratio: 0.3
-                    },
-                    {
-                        outerPosition: {
-                            middle: {
-                                left: 150,
-                                top: 100
-                            }
-                        },
-                        ratio: 0.4
-                    },
-                    {
-                        outerPosition: {
-                            middle: {
-                                left: 100,
-                                top: 150
-                            }
-                        },
-                        ratio: 0.4
-                    }
-                ]
-            };
-
-            series._renderSeriesLabel(paper);
-
-            expect(series._renderOuterLegend).toHaveBeenCalled();
-            paper.remove();
+            this.seriesDataModel.groups = [
+                new SeriesGroup([{
+                    label: 10
+                }, {
+                    label: 20
+                }, {
+                    label: 30
+                }])
+            ];
         });
 
-        it('labelAlign 옵션이 outer가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
-            var container = dom.create('div');
-            var paper = raphael(container, 100, 100);
+        it('showLabel and showLegend options are both true, they should all be displayed.', function() {
+            var expectLabelObj;
 
-            spyOn(series, '_renderCenterLegend');
-            series.seriesData = {
-                sectorData: [
-                    {
-                        centerPosition: {
-                            left: 100,
-                            top: 50
-                        }
-                    },
-                    {
-                        centerPosition: {
-                            left: 100,
-                            top: 100
-                        }
-                    },
-                    {
-                        centerPosition: {
-                            left: 100,
-                            top: 150
-                        }
-                    }
-                ]
-            };
-            series._renderSeriesLabel(paper);
+            series.options.showLabel = true;
+            series.options.showLegend = true;
 
-            expect(series._renderCenterLegend).toHaveBeenCalled();
-            paper.remove();
+            dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
+            series._renderSeriesLabel(this.paper, {});
+
+            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][2];
+
+            expect(expectLabelObj[0]).toBe('legend1\n10');
+
+            this.paper.remove();
+        });
+
+        it('showLabel option is true, only one should be displayed.', function() {
+            var expectLabelObj;
+
+            series.options.showLabel = true;
+            series.options.showLegend = false;
+
+            dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
+            series._renderSeriesLabel(this.paper, {});
+
+            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][2];
+
+            expect(expectLabelObj[0]).toBe('10');
+
+            this.paper.remove();
+        });
+
+        it('showRegend option is true, only one should be displayed.', function() {
+            var expectLabelObj;
+
+            series.options.showLabel = false;
+            series.options.showLegend = true;
+
+            dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
+            series._renderSeriesLabel(this.paper, {});
+
+            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][2];
+
+            expect(expectLabelObj[0]).toBe('legend1');
+
+            this.paper.remove();
         });
     });
 });

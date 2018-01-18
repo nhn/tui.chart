@@ -15,7 +15,7 @@ var DEGREE_HORIZONTAL_BAR = 360;
 var DEGREE_VERTICAL_BAR = 270;
 var GAP_BETWEEN_LABEL_AND_LEGEND_BAR = 35;
 var TICK_BAR_LENGTH = 15;
-
+var WEDGE_BASE_HALF = 3; // half of wedge triagle base
 /**
  * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
  * @class RaphaelMapLegend
@@ -144,8 +144,8 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
         var path = this.verticalBasePath;
 
         path[2] = top;
-        path[5] = top - 3;
-        path[8] = top + 3;
+        path[5] = top - WEDGE_BASE_HALF;
+        path[8] = top + WEDGE_BASE_HALF;
 
         return path;
     },
@@ -164,11 +164,10 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
      */
     _makeHorizontalWedgePath: function(left) {
         var path = this.horizontalBasePath;
-        var positionLeft = left + (PADDING / 2);
 
-        path[1] = positionLeft;
-        path[4] = positionLeft + 3;
-        path[7] = positionLeft - 3;
+        path[1] = left;
+        path[4] = left + WEDGE_BASE_HALF;
+        path[7] = left - WEDGE_BASE_HALF;
 
         return path;
     },

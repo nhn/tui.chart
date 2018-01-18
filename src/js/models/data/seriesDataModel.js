@@ -171,13 +171,15 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
         }
 
         return snippet.map(this.rawSeriesData, function(rawDatum) {
-            var stack, data;
-            var items;
+            var stack, data, legendName, items;
 
             data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
 
             if (!hasRawDatumAsArray) {
                 stack = rawDatum.stack;
+            }
+            if (rawDatum.name) {
+                legendName = rawDatum.name;
             }
 
             if (isCoordinateType || isPieChart) {
@@ -190,6 +192,7 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
                     chartType: chartType,
                     formatFunctions: formatFunctions,
                     index: index,
+                    legendName: legendName,
                     stack: stack,
                     isDivergingChart: isDivergingChart,
                     xAxisType: xAxisOption.type,

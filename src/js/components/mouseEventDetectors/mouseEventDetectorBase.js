@@ -252,10 +252,10 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
             clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
         }
 
-        layerPosition.x = clientX - bound.left + seriesPosition.left + expandSize - chartConst.CHART_PADDING;
+        layerPosition.x = clientX - bound.left + seriesPosition.left - chartConst.CHART_PADDING;
 
         if (!snippet.isUndefined(clientY)) {
-            layerPosition.y = clientY - bound.top + seriesPosition.top + expandSize - chartConst.CHART_PADDING;
+            layerPosition.y = clientY - bound.top + seriesPosition.top - chartConst.CHART_PADDING;
         }
 
         return layerPosition;

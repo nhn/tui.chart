@@ -137,6 +137,7 @@ function _createChart(container, rawData, options, chartType) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {string} options.yAxis.align - align option for center y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *          @param {string} options.yAxis.type - type of axis
@@ -146,6 +147,7 @@ function _createChart(container, rawData, options, chartType) {
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.min - minimum value for x axis
  *          @param {number} options.xAxis.max - maximum value for x axis
  *      @param {object} options.series - options for series component
@@ -237,6 +239,7 @@ function barChart(container, rawData, options) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
@@ -245,6 +248,7 @@ function barChart(container, rawData, options) {
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {string} options.xAxis.type - type of axis
@@ -338,6 +342,7 @@ function columnChart(container, rawData, options) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
@@ -346,6 +351,7 @@ function columnChart(container, rawData, options) {
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {string} options.xAxis.tickInterval - tick interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
@@ -454,6 +460,7 @@ function lineChart(container, rawData, options) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
@@ -462,6 +469,7 @@ function lineChart(container, rawData, options) {
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {string} options.xAxis.tickInterval - tick interval for x axis
@@ -565,6 +573,7 @@ function areaChart(container, rawData, options) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
@@ -573,6 +582,7 @@ function areaChart(container, rawData, options) {
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {number} options.xAxis.min - minimum value for y axis
@@ -675,6 +685,7 @@ function bubbleChart(container, rawData, options) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
@@ -683,6 +694,7 @@ function bubbleChart(container, rawData, options) {
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.min - minimum value for y axis
  *          @param {number} options.xAxis.max - maximum value for y axis
  *      @param {object} options.series - options for series component
@@ -773,12 +785,14 @@ function scatterChart(container, rawData, options) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
  *      @param {object} options.tooltip - options for tooltip component
@@ -934,6 +948,7 @@ function treemapChart(container, rawData, options) {
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
+ *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
@@ -942,6 +957,7 @@ function treemapChart(container, rawData, options) {
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
+ *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series - options for series component

@@ -185,7 +185,12 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
     _makeSumValues: function(values) {
         var sum = calculator.sum(values);
 
-        return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), this.chartType, 'seires');
+        return renderUtil.formatValue({
+            value: sum,
+            formatFunctions: this.dataProcessor.getFormatFunctions(),
+            chartType: this.chartType,
+            areaType: 'series'
+        });
     },
 
     /**

@@ -63,7 +63,12 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
         var formatFunctions = this.formatFunctions;
         var chartType = this.chartType;
         var colorValue = this.colorValue;
-        var formattedValue = renderUtil.formatValue(this.value, formatFunctions, chartType, 'tooltipValue');
+        var formattedValue = renderUtil.formatValue({
+            value: this.value,
+            formatFunctions: formatFunctions,
+            chartType: chartType,
+            areaType: 'tooltipValue'
+        });
         var label = (this.label ? this.label + ': ' : '') + formattedValue;
         var valueMap = {
             value: formattedValue,
@@ -72,7 +77,12 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
         };
 
         if (snippet.isExisty(colorValue)) {
-            valueMap.colorValue = renderUtil.formatValue(colorValue, formatFunctions, chartType, 'tooltipColorValue');
+            valueMap.colorValue = renderUtil.formatValue({
+                value: colorValue,
+                formatFunctions: formatFunctions,
+                chartType: chartType,
+                areaType: 'tooltipColorValue'
+            });
             valueMap.colorRatio = this.colorRatio;
         }
 

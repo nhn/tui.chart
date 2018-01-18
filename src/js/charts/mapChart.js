@@ -51,6 +51,11 @@ var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
         var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
+        this.componentManager.register('mapSeries', 'mapSeries', {
+            mapModel: mapModel,
+            colorSpectrum: colorSpectrum
+        });
+
         this.componentManager.register('title', 'title');
 
         this.componentManager.register('legend', 'spectrumLegend', {
@@ -59,11 +64,6 @@ var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
 
         this.componentManager.register('tooltip', 'tooltip', {
             mapModel: mapModel
-        });
-
-        this.componentManager.register('mapSeries', 'mapSeries', {
-            mapModel: mapModel,
-            colorSpectrum: colorSpectrum
         });
 
         this.componentManager.register('zoom', 'zoom');

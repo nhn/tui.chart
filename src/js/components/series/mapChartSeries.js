@@ -335,8 +335,7 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @param {{left: number, top: number}} position position
      */
     onMoveSeries: function(position) {
-        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex'),
-            containerBound;
+        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 
         if (!snippet.isNull(foundIndex)) {
             if (this.prevMovedIndex !== foundIndex) {
@@ -349,11 +348,9 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
             }
 
             if (this._isChangedPosition(this.prevPosition, position)) {
-                // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
-                containerBound = this.paper.canvas.getBoundingClientRect();
                 this._showTooltip(foundIndex, {
-                    left: position.left - containerBound.left,
-                    top: position.top - containerBound.top
+                    left: position.left,
+                    top: position.top
                 });
                 this.prevMovedIndex = foundIndex;
             }

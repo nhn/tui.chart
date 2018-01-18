@@ -378,24 +378,29 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_createMapData()', function() {
-        it('rawMapData를 전달받아 mapData 생성합니다.', function() {
-            var rawMapData = [
-                    {
-                        code: 'CD1',
-                        name: 'Map name1',
-                        path: 'M9,90L169,90L328,58L328,154L169,154L9,154',
-                        labelCoordinate: {
-                            x: 0.6,
-                            y: 0.6
-                        }
-                    },
-                    {
-                        code: 'CD2',
-                        name: 'Map name2',
-                        path: 'M9,122L169,106L328,74L328,154L169,154L9,154'
+        var rawMapData;
+
+        beforeEach(function() {
+            rawMapData = [
+                {
+                    code: 'CD1',
+                    name: 'Map name1',
+                    path: 'M9,90L169,90L328,58L328,154L169,154L9,154',
+                    labelCoordinate: {
+                        x: 0.6,
+                        y: 0.6
                     }
-                ],
-                actual, expected;
+                },
+                {
+                    code: 'CD2',
+                    name: 'Map name2',
+                    path: 'M9,122L169,106L328,74L328,154L169,154L9,154'
+                }
+            ];
+        });
+
+        it('rawMapData를 전달받아 mapData 생성합니다.', function() {
+            var actual, expected;
 
             dataProcessor.getValueMapDatum.and.returnValue({});
 
@@ -445,23 +450,7 @@ describe('MapChartMapModel', function() {
         });
 
         it('valueMap에 존재하는 경우 name, labelCoordinate에 한해 기존 data를 대체합니다.', function() {
-            var rawMapData = [
-                    {
-                        code: 'CD1',
-                        name: 'Map name1',
-                        path: 'M9,90L169,90L328,58L328,154L169,154L9,154',
-                        labelCoordinate: {
-                            x: 0.6,
-                            y: 0.6
-                        }
-                    },
-                    {
-                        code: 'CD2',
-                        name: 'Map name2',
-                        path: 'M9,122L169,106L328,74L328,154L169,154L9,154'
-                    }
-                ],
-                actual, expected;
+            var actual, expected;
 
             dataProcessor.getValueMapDatum.and.callFake(function(code) {
                 var result;
@@ -525,6 +514,27 @@ describe('MapChartMapModel', function() {
             ];
 
             expect(actual).toEqual(expected);
+        });
+
+        it('should have ratio property, when ratio is zero', function() {
+            var actual;
+
+            dataProcessor.getValueMapDatum.and.callFake(function(code) {
+                if (code === 'CD1') {
+                    return {
+                        name: 'New Map name1',
+                        ratio: 0
+                    };
+                }
+
+                return {
+                    name: 'New Map name2'
+                };
+            });
+
+            actual = mapModel._createMapData(rawMapData);
+            expect('ratio' in actual[0]).toBe(true);
+            expect('ratio' in actual[1]).toBe(false);
         });
     });
 

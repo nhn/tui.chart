@@ -318,7 +318,7 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
                 resultData.label = label;
             }
 
-            if (ratio) {
+            if (ratio >= 0) {
                 resultData.ratio = ratio;
             }
 

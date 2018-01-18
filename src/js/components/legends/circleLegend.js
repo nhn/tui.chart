@@ -91,7 +91,13 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
             formattedLabel = renderUtil.formatToDecimal(String(label), decimalLength);
         }
 
-        return renderUtil.formatValue(formattedLabel, formatFunctions, this.chartType, 'circleLegend', 'r');
+        return renderUtil.formatValue({
+            value: formattedLabel,
+            formatFunctions: formatFunctions,
+            chartType: this.chartType,
+            areaType: 'circleLegend',
+            valueType: 'r'
+        });
     },
 
     /**

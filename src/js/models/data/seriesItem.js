@@ -117,6 +117,12 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
          */
         this.ratioDistance = null;
 
+        /**
+         * series legend name
+         * @type {string}
+         */
+        this.legendName = params.legendName;
+
         this._initValues(params.datum, params.index);
     },
 
@@ -142,7 +148,13 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
         if (snippet.isNull(value)) {
             this.label = '';
         } else {
-            this.label = renderUtil.formatValue(value, this.formatFunctions, this.chartType, areaType);
+            this.label = renderUtil.formatValue({
+                value: value,
+                formatFunctions: this.formatFunctions,
+                chartType: this.chartType,
+                areaType: areaType,
+                legendName: this.legendName
+            });
         }
 
         this.endLabel = this.label;
@@ -187,7 +199,13 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
         }
 
         this.start = value;
-        this.startLabel = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'series');
+        this.startLabel = renderUtil.formatValue({
+            value: value,
+            formatFunctions: this.formatFunctions,
+            chartType: this.chartType,
+            areaType: 'series',
+            legendName: this.legendName
+        });
     },
 
     /**
@@ -224,7 +242,14 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _getFormattedValueForTooltip: function(valueType) {
-        return renderUtil.formatValue(this[valueType], this.formatFunctions, this.chartType, 'tooltip', valueType);
+        return renderUtil.formatValue({
+            value: this[valueType],
+            formatFunctions: this.formatFunctions,
+            chartType: this.chartType,
+            areaType: 'tooltip',
+            valueType: valueType,
+            legendName: this.legendName
+        });
     },
 
     /**

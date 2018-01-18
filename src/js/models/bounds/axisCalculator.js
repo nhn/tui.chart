@@ -17,14 +17,20 @@ var renderUtil = require('../../helpers/renderUtil');
 var axisCalculator = {
     /**
      * Calculate height for x axis.
-     * @param {string} title - title for x axis
+     * @param {{title: string, labelMargin: number}} options - title and label margin option for x axis
      * @param {{title: object, label: object}} theme - theme for x axis
      * @returns {*}
      */
-    calculateXAxisHeight: function(title, theme) {
+    calculateXAxisHeight: function(options, theme) {
+        var title = options.title;
         var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
         var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
+        var labelMargin = options.labelMargin || 0;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme.label);
+
+        if (labelMargin > 0) {
+            labelHeight += labelMargin;
+        }
 
         return titleAreaHeight + labelHeight + chartConst.CHART_PADDING;
     },
@@ -40,6 +46,7 @@ var axisCalculator = {
     calculateYAxisWidth: function(labels, options, theme) {
         var title = options.title || '';
         var titleAreaWidth = 0;
+        var labelMargin = options.labelMargin || 0;
         var width = 0;
 
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
@@ -54,6 +61,9 @@ var axisCalculator = {
 
         if (predicate.isDatetimeType(options.type)) {
             labels = renderUtil.formatDates(labels, options.dateFormat);
+        }
+        if (labelMargin > 0) {
+            width += labelMargin;
         }
 
         width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +

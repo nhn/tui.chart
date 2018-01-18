@@ -207,11 +207,15 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         }
 
         params.theme = this.theme[optionKey];
+        params.options = this.options[optionKey];
 
         if (!params.theme && optionKey === 'rightYAxis') {
             params.theme = this.theme.yAxis;
         }
-        params.options = this.options[optionKey];
+
+        if (!params.options && optionKey === 'rightYAxis') {
+            params.options = this.options.yAxis;
+        }
 
         if (optionKey === 'series') {
             // 시리즈는 옵션과 테마가 시리즈 이름으로 뎊스가 한번더 들어간다.

@@ -114,7 +114,8 @@ var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends 
                     datum: datum,
                     chartType: chartType,
                     formatFunctions: formatFunctions,
-                    index: index
+                    index: index,
+                    legendName: rawDatum.name
                 });
             });
 
