@@ -166,6 +166,8 @@ var chartConst = {
     PIE_GRAPH_SMALL_RATIO: 0.75,
     /** tick count for spectrum legend */
     SPECTRUM_LEGEND_TICK_COUNT: 4,
+    /** legend & lable concat separator */
+    LABEL_SEPARATOR: '\n',
     /** default position ratio of map chart label
      * @type {object}
      */
