@@ -151,6 +151,12 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
          */
         this.ratioDistance = null;
 
+        /**
+         * series legend name
+         * @type {string}
+         */
+        this.legendName = params.legendName;
+
         this._initValues(params.datum, params.index);
     },
 
@@ -161,9 +167,7 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _initValues: function(rawValue, index) {
-        var self = this;
         var values = this._createValues(rawValue);
-        var areaType = 'makingSeriesLabel';
         var max = values[4];
         var uq = values[3];
         var median = values[2];
@@ -171,6 +175,15 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
         var min = values[0];
         var hasOutlier = values.length > 5;
         var outliers;
+        var formatValue = snippet.bind(function(value) {
+            return renderUtil.formatValue({
+                value: value,
+                formatFunctions: this.formatFunctions,
+                chartType: this.chartType,
+                areaType: 'makingSeriesLabel',
+                legendName: this.legendName
+            });
+        }, this);
 
         this.value = this.max = max;
         this.uq = uq;
@@ -187,17 +200,18 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
             snippet.forEach(values.slice(5), function(outlier) {
                 outliers.push({
                     value: outlier,
-                    label: renderUtil.formatValue(outlier, self.formatFunctions, self.chartType, areaType)
+                    label: formatValue(outlier)
                 });
             });
         }
 
-        this.label = renderUtil.formatValue(max, this.formatFunctions, this.chartType, areaType);
+        this.label = formatValue(max);
+        this.uqLabel = formatValue(uq);
+        this.medianLabel = formatValue(median);
+        this.lqLabel = formatValue(lq);
+        this.minLabel = formatValue(min);
+
         this.maxLabel = this.label;
-        this.uqLabel = renderUtil.formatValue(uq, this.formatFunctions, this.chartType, areaType);
-        this.medianLabel = renderUtil.formatValue(median, this.formatFunctions, this.chartType, areaType);
-        this.lqLabel = renderUtil.formatValue(lq, this.formatFunctions, this.chartType, areaType);
-        this.minLabel = renderUtil.formatValue(min, this.formatFunctions, this.chartType, areaType);
     },
 
     /**
@@ -225,7 +239,13 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
         }
 
         this.min = value;
-        this.minLabel = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'series');
+        this.minLabel = renderUtil.formatValue({
+            value: value,
+            formatFunctions: this.formatFunctions,
+            chartType: this.chartType,
+            areaType: 'series',
+            legendName: this.legendName
+        });
     },
 
     /**
@@ -269,7 +289,14 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _getFormattedValueForTooltip: function(valueType) {
-        return renderUtil.formatValue(this[valueType], this.formatFunctions, this.chartType, 'tooltip', valueType);
+        return renderUtil.formatValue({
+            value: this[valueType],
+            formatFunctions: this.formatFunctions,
+            chartType: this.chartType,
+            areaType: 'tooltip',
+            valueType: valueType,
+            legendName: this.legendName
+        });
     },
 
     /**

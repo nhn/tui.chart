@@ -93,10 +93,19 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
             if (predicate.isLineTypeChart(this.chartType) && predicate.isDatetimeType(this.xAxisType)) {
                 this.label = renderUtil.formatDate(this.x, this.dateFormat);
             } else {
-                this.label = renderUtil.formatValue(this.x, this.formatFunctions, this.chartType, 'series');
+                this.label = renderUtil.formatValue({
+                    value: this.x,
+                    formatFunctions: this.formatFunctions,
+                    chartType: this.chartType,
+                    areaType: 'series'
+                });
             }
-
-            this.label += ',&nbsp;' + renderUtil.formatValue(this.y, this.formatFunctions, this.chartType, 'series');
+            this.label += ',&nbsp;' + renderUtil.formatValue({
+                value: this.y,
+                formatFunctions: this.formatFunctions,
+                chartType: this.chartType,
+                areaType: 'series'
+            });
         }
     },
 
@@ -130,7 +139,13 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
     _getFormattedValueForTooltip: function(valueType) {
         var ratio = this.ratioMap[valueType];
         var value = this[valueType];
-        var formattedValue = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'tooltip', valueType);
+        var formattedValue = renderUtil.formatValue({
+            value: value,
+            formatFunctions: this.formatFunctions,
+            chartType: this.chartType,
+            areaType: 'tooltip',
+            valueType: valueType
+        });
 
         return snippet.isNumber(ratio) ? formattedValue : value;
     },

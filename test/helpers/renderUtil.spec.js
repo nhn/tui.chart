@@ -101,9 +101,23 @@ describe('Test for renderUtil', function() {
             var formatFunctions = [function(value) {
                     return '00' + value;
                 }],
-                actual = renderUtil.formatValue(3, formatFunctions),
+                actual = renderUtil.formatValue({
+                    value: 3,
+                    formatFunctions: formatFunctions
+                }),
+
                 expected = '003';
             expect(actual).toEqual(expected);
+        });
+
+        it('legendName argument is present, it should be returned.', function() {
+            var spy = jasmine.createSpy('spy');
+            renderUtil.formatValue({
+                value: 3,
+                formatFunctions: [spy],
+                legendName: 'newLegend'
+            });
+            expect(spy.calls.mostRecent().args[4]).toBe('newLegend');
         });
     });
 

@@ -9,6 +9,7 @@
 var chartConst = require('./../const');
 var dom = require('./domHandler');
 var arrayUtil = require('./arrayUtil');
+
 var snippet = require('tui-code-snippet');
 var predicate = require('./predicate');
 
@@ -397,24 +398,30 @@ var renderUtil = {
 
     /**
      * Format value.
-     * @param {number} value value
-     * @param {Array.<function>} formatFunctions - functions for format
-     * @param {string} chartType - type of chart
-     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
-     * @param {string} [valueType] - type of value
+     * @param {object} params - raw data
+     *     @param {number} params.value value
+     *     @param {Array.<function>} params.formatFunctions - functions for format
+     *     @param {string} params.chartType - type of chart
+     *     @param {string} params.areaType - type of area like yAxis, xAxis, series, circleLegend
+     *     @param {string} [params.valueType] - type of value
+     *     @param {string} [params.legendName] - legendName
      * @returns {string} formatted value
      * @memberof module:renderUtil
      */
-    formatValue: function(value, formatFunctions, chartType, areaType, valueType) {
+    formatValue: function(params) {
+        var value = params.value;
+        var formatFunctions = params.formatFunctions;
+        var valueType = params.valueType || 'value';
+        var areaType = params.areaType;
+        var chartType = params.chartType;
+        var legendName = params.legendName;
+
         var fns = [String(value)].concat(formatFunctions || []);
 
-        valueType = valueType || 'value';
-
         return snippet.reduce(fns, function(stored, fn) {
-            return fn(stored, chartType, areaType, valueType);
+            return fn(stored, chartType, areaType, valueType, legendName);
         });
     },
-
     /**
      * Format values.
      * @param {Array.<number>} values values
@@ -433,7 +440,13 @@ var renderUtil = {
         }
 
         formatedValues = snippet.map(values, function(label) {
-            return renderUtil.formatValue(label, formatFunctions, chartType, areaType, valueType);
+            return renderUtil.formatValue({
+                value: label,
+                formatFunctions: formatFunctions,
+                chartType: chartType,
+                areaType: areaType,
+                valueType: valueType
+            });
         });
 
         return formatedValues;

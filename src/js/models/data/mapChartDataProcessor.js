@@ -73,7 +73,12 @@ var MapChartDataProcessor = snippet.defineClass(DataProcessorBase, /** @lends Ma
         snippet.forEachArray(rawSeriesData, function(datum) {
             var result = {
                 value: datum.data,
-                label: renderUtil.formatValue(datum.data, formatFunctions, 'map', 'series')
+                label: renderUtil.formatValue({
+                    value: datum.data,
+                    formatFunctions: formatFunctions,
+                    chartType: 'map',
+                    areaType: 'series'
+                })
             };
 
             if (datum.name) {

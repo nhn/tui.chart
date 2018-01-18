@@ -56,7 +56,13 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
         var maxValue = this.getMaxValue(chartType, valueType);
         var formatFunctions = this.getFormatFunctions();
 
-        return renderUtil.formatValue(maxValue, formatFunctions, chartType, areaType, valueType);
+        return renderUtil.formatValue({
+            value: maxValue,
+            formatFunctions: formatFunctions,
+            chartType: chartType,
+            areaType: areaType,
+            valueType: valueType
+        });
     },
 
     /**
