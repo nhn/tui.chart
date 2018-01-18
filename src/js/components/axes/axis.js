@@ -1,4 +1,5 @@
 /**
+
  * @fileoverview  Axis component.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
@@ -421,6 +422,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var halfWidth = labelSize / 2;
         var horizontalTop = this.layout.position.top + chartConst.AXIS_LABEL_PADDING;
         var baseLeft = this.layout.position.left;
+        var labelMargin = this.options.labelMargin || 0;
 
         snippet.forEach(positions, function(position, index) {
             var labelPosition = position + (additionalSize || 0);
@@ -428,9 +430,9 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
 
             if (isYAxis) {
                 positionTopAndLeft.top = labelPosition + halfWidth;
-                positionTopAndLeft.left = labelSize;
+                positionTopAndLeft.left = labelSize + labelMargin;
             } else {
-                positionTopAndLeft.top = horizontalTop;
+                positionTopAndLeft.top = horizontalTop + labelMargin;
                 positionTopAndLeft.left = baseLeft + labelPosition;
 
                 if (self.isLabelAxis) {
@@ -468,6 +470,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
         var isPointOnColumn = isLineTypeChart && this.options.pointOnColumn;
         var layout = this.layout;
+        var labelMargin = this.options.labelMargin || 0;
 
         snippet.forEach(positions, function(position, index) {
             var labelPosition = position + additionalSize;
@@ -485,12 +488,15 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 }
 
                 if (isPositionRight) {
-                    labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING;
+                    labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING + labelMargin;
                 } else {
-                    labelLeftPosition = layout.position.left + layout.dimension.width - chartConst.AXIS_LABEL_PADDING;
+                    labelLeftPosition = layout.position.left + layout.dimension.width -
+                                        chartConst.AXIS_LABEL_PADDING - labelMargin;
                 }
             } else {
-                labelTopPosition = layout.position.top + chartConst.CHART_PADDING + chartConst.AXIS_LABEL_PADDING;
+                labelTopPosition = layout.position.top + chartConst.CHART_PADDING +
+                                   chartConst.AXIS_LABEL_PADDING + labelMargin;
+
                 labelLeftPosition = labelPosition + layout.position.left;
 
                 if (isCategoryLabel) {

@@ -17,9 +17,14 @@ describe('Test for axisCalculator', function() {
 
     describe('calculateXAxisHeight()', function() {
         it('calculate height for x axis', function() {
-            var actual = axisCalculator.calculateXAxisHeight('Axis Title', {});
+            var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title'}, {});
 
             expect(actual).toBe(60);
+        });
+
+        it('labelMargin option should increase the x-axis height.', function() {
+            var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title', labelMargin: 30}, {});
+            expect(actual).toBe(90);
         });
     });
 
@@ -54,6 +59,17 @@ describe('Test for axisCalculator', function() {
             }, {});
 
             expect(actual).toBe(64);
+        });
+
+        it('labelMargin option should increase the y-axis width.', function() {
+            var actual;
+
+            actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
+                title: 'Axis Title',
+                labelMargin: 30
+            }, {});
+
+            expect(actual).toBe(117);
         });
     });
 });

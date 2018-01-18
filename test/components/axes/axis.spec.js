@@ -138,4 +138,40 @@ describe('Test for Axis', function() {
             expect(axis._renderDividedAxis).not.toHaveBeenCalled();
         });
     });
+
+    describe('_renderNormalLabels()', function() {
+        it('"_renderNormalLabels()" method, the labelMargin option must be reflected in the label position.', function() {
+            var labelPosition;
+
+            spyOn(axis.graphRenderer, 'renderLabel');
+
+            axis.layout = {position: {top: 20}};
+            axis.options = {
+                labelMargin: 30
+            };
+            axis._renderNormalLabels([0], ['abc'], 0, 0);
+
+            labelPosition = axis.graphRenderer.renderLabel.calls.argsFor(0)[0].positionTopAndLeft;
+
+            expect(labelPosition.top).toBe(67);
+        });
+    });
+
+    describe('_renderRotationLabels()', function() {
+        it('"_renderRotationLabels()" method, the labelMargin option must be reflected in the label position.', function() {
+            var labelPosition;
+
+            spyOn(axis.graphRenderer, 'renderRotatedLabel');
+
+            axis.layout = {position: {top: 20}};
+            axis.options = {
+                labelMargin: 30
+            };
+            axis._renderRotationLabels([0], ['label1'], 0, 0);
+
+            labelPosition = axis.graphRenderer.renderRotatedLabel.calls.argsFor(0)[0].positionTopAndLeft;
+
+            expect(labelPosition.top).toBe(57);
+        });
+    });
 });

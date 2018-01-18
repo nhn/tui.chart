@@ -251,7 +251,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     registerXAxisHeight: function() {
         this._registerDimension('xAxis', {
-            height: axisCalculator.calculateXAxisHeight(this.options.xAxis.title, this.theme.xAxis)
+            height: axisCalculator.calculateXAxisHeight(this.options.xAxis, this.theme.xAxis)
         });
     },
 
