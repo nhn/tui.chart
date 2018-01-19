@@ -72,6 +72,22 @@ var singleTooltipMixer = {
     },
 
     /**
+     * Make tooltip position for bullet chart
+     * @param {object} params - mouse position
+     * @returns {object} - position of single tooltip
+     * @private
+     */
+    _makeTooltipPositionForBulletChart: function(params) {
+        var mousePosition = params.mousePosition;
+        var tooltipAreaPosition = this.layout.position;
+
+        return {
+            left: mousePosition.left - tooltipAreaPosition.left,
+            top: mousePosition.top - tooltipAreaPosition.top
+        };
+    },
+
+    /**
      * Make left position of not bar chart.
      * @param {number} baseLeft base left
      * @param {string} alignOption align option
@@ -241,7 +257,7 @@ var singleTooltipMixer = {
         var position = this.layout.position;
         var bound = params.bound;
         var positionOption = params.positionOption;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.labelTheme);
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, this.labelTheme);
 
         return {
             left: bound.left + ((bound.width - params.dimension.width) / 2) + positionOption.left - position.left,
@@ -468,7 +484,7 @@ var singleTooltipMixer = {
      * Hide tooltip.
      * @param {HTMLElement} tooltipElement - tooltip element
      * @param {object} prevFoundData - data represented by tooltip elements
-     * @param {{silent: {boolean}}} options - options for hiding a tooltip element
+     * @param {{silent: {boolean}}} [options] - options for hiding a tooltip element
      * @private
      */
     _hideTooltip: function(tooltipElement, prevFoundData, options) {

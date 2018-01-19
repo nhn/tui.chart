@@ -68,12 +68,13 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         var position = snippet.extend({}, this.basePosition);
 
         snippet.forEach(legendData, function(legendDatum, index) {
+            var iconType = legendDatum.iconType;
             var legendIndex = legendDatum.index;
             var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
             var isUnselected = legendDatum.isUnselected;
             var labelHeight = legendDatum.labelHeight;
             var checkboxData = legendDatum.checkbox;
-            var predicatedLegendWidth = position.left + self._calculateSingleLegendWidth(legendIndex);
+            var predicatedLegendWidth = position.left + self._calculateSingleLegendWidth(legendIndex, iconType);
             var isNeedBreakLine = (predicatedLegendWidth >= self.paper.width);
 
             if (self.isHorizontal && isNeedBreakLine) {
@@ -93,7 +94,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
 
             self._renderIcon(position, {
                 legendColor: legendColor,
-                iconType: legendDatum.iconType,
+                iconType: iconType,
                 labelHeight: labelHeight,
                 isUnselected: isUnselected,
                 legendIndex: legendIndex,

@@ -136,5 +136,8 @@
   },
   "example14-01-boxplot-chart-basic": {
     "title": "14.1 [Boxplot chart] basic"
+  },
+  "example15-01-bullet-chart-basic": {
+    "title": "15.1 [Bullet chart] basic"
   }
 }

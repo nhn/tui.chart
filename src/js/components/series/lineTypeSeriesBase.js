@@ -175,7 +175,7 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
     _getLabelPositions: function(seriesDataModel, theme) {
         var self = this;
         var basePositions = arrayUtil.pivot(this.seriesData.groupPositions);
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {

@@ -250,6 +250,8 @@ var rawDataHandler = {
      */
     filterCheckedRawData: function(rawData, checkedLegends) {
         var cloneData = JSON.parse(JSON.stringify(rawData));
+        var filteredCategories;
+
         if (checkedLegends) {
             snippet.forEach(cloneData.series, function(serieses, chartType) {
                 if (!checkedLegends[chartType]) {
@@ -262,7 +264,32 @@ var rawDataHandler = {
             });
         }
 
+        if (cloneData.series.bullet) {
+            filteredCategories = [];
+            snippet.forEach(checkedLegends.bullet, function(isChecked, index) {
+                if (isChecked) {
+                    filteredCategories.push(rawData.categories[index]);
+                }
+            });
+            cloneData.categories = filteredCategories;
+        }
+
         return cloneData;
+    },
+
+    /**
+     * Modify rawData to fit chart format
+     * @param {object} rawData - raw data
+     * @private
+     */
+    _makeRawSeriesDataForBulletChart: function(rawData) {
+        var bullet = rawData.series.bullet;
+
+        rawData.categories = rawData.categories || [];
+
+        rawData.categories = snippet.map(bullet, function(seriesData) {
+            return seriesData.name || '';
+        });
     }
 };
 

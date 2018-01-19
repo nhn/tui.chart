@@ -67,6 +67,8 @@ var chartConst = {
     CHART_TYPE_RADIAL: 'radial',
     /** @type {string} */
     CHART_TYPE_BOXPLOT: 'boxplot',
+    /** @type {string} */
+    CHART_TYPE_BULLET: 'bullet',
     /** chart padding */
     CHART_PADDING: 10,
     /** chart default width */
@@ -101,7 +103,7 @@ var chartConst = {
      * @type {string}
      */
     DEFAULT_THEME_NAME: 'default',
-    MAX_HEIGHT_WORLD: 'A',
+    MAX_HEIGHT_WORD: 'A',
     /** stack type
      * @type {string}
      */
@@ -186,7 +188,7 @@ var chartConst = {
     THEME_PROPS_MAP: {
         yAxis: ['tickColor', 'title', 'label'],
         series: ['label', 'colors', 'borderColor', 'borderWidth', 'selectionColor', 'startColor', 'endColor',
-            'overColor', 'dot']
+            'overColor', 'dot', 'ranges']
     },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
@@ -388,6 +390,17 @@ var chartConst = {
     IMAGE_EXTENSIONS: ['png', 'jpeg'],
     DATA_EXTENSIONS: ['xls', 'csv'],
 
-    GUIDE_AREACHART_AREAOPACITY_TYPE: 'areaOpacity should be a number between 0 and 1'
+    GUIDE_AREACHART_AREAOPACITY_TYPE: 'areaOpacity should be a number between 0 and 1',
+
+    /** for bullet */
+    BULLET_TYPE_ACTUAL: 'Actual',
+    BULLET_TYPE_RANGE: 'Ranges',
+    BULLET_TYPE_MARKER: 'Markers',
+    BULLET_MARKER_STROKE_TICK: 3,
+    BULLET_MARKER_BUFFER_POSITION: 5,
+    BULLET_RANGES_HEIGHT_RATIO: 0.7,
+    BULLET_ACTUAL_HEIGHT_RATIO: 0.28,
+    BULLET_MARKERS_HEIGHT_RATIO: 0.55,
+    BULLET_MARKER_DETECT_PADDING: 3
 };
 module.exports = chartConst;

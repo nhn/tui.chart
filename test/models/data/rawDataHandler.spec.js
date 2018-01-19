@@ -395,5 +395,79 @@ describe('Test for rawDataHandler', function() {
 
             expect(actual.series).toEqual(expected);
         });
+
+        it('should filter categories of rawData by checkedLegends, if it is a bullet chart and fillSeriesName option is enabled', function() {
+            var actual = rawDataHandler.filterCheckedRawData({
+                categories: ['a', 'b', 'c', 'd'],
+                series: {
+                    bullet: ['a', 'b', 'c', 'd']
+                }
+            }, {
+                bullet: [null, true, null, true]
+            }, {
+                fillSeriesName: true
+            });
+            var expected = {
+                categories: ['b', 'd'],
+                series: {
+                    bullet: ['b', 'd']
+                }
+            };
+
+            expect(actual.categories).toEqual(expected.categories);
+            expect(actual.series).toEqual(expected.series);
+        });
+
+        it('should not filter categories of rawData by checkedLegends, when it is a bullet chart, and fillSeriesName option is disabled', function() {
+            var actual = rawDataHandler.filterCheckedRawData({
+                categories: ['a', 'b'],
+                series: {
+                    column: ['a', 'b', 'c', 'd']
+                }
+            }, {
+                column: [null, true, null, true]
+            });
+            var expected = {
+                categories: ['a', 'b'],
+                series: {
+                    column: ['b', 'd']
+                }
+            };
+
+            expect(actual.categories).toEqual(expected.categories);
+            expect(actual.series).toEqual(expected.series);
+        });
+    });
+
+    describe('_makeRawSeriesDataForBulletChart', function() {
+        it('should fill categories to empty array, if there isn\'t categories property on rawData', function() {
+            var rawData1 = {
+                series: {}
+            };
+            var rawData2 = {
+                series: {}
+            };
+            rawDataHandler._makeRawSeriesDataForBulletChart(rawData1);
+            rawDataHandler._makeRawSeriesDataForBulletChart(rawData2, true);
+
+            expect(rawData1.categories).toEqual([]);
+            expect(rawData2.categories).toEqual([]);
+        });
+
+        it('should overwrite categories, when it is bullet chart', function() {
+            var rawData = {
+                categories: ['category-0'],
+                series: {
+                    bullet: [
+                        {name: 'series-0'},
+                        {name: 'series-1'},
+                        {name: 'series-2'}
+                    ]
+                }
+            };
+            rawDataHandler._makeRawSeriesDataForBulletChart(rawData);
+
+            expect(rawData.categories).toEqual(['series-0', 'series-1', 'series-2']);
+        });
     });
 });

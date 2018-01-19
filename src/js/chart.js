@@ -1359,6 +1359,49 @@ function boxplotChart(container, rawData, options) {
 }
 
 /**
+ * Bullet chart creator.
+ * @memberof module:chart
+ * @memberof tui.chart
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData chart data
+ * @param {object} options - chart options
+ * @returns {object} box plot chart
+ * @api
+ * @example
+ * var chart = tui.chart; // or require('tui-chart');
+ * var container = document.getElementById('chart-area');
+ * var data = {
+ *   categories: ['July', 'August'],
+ *   series: [{
+ *       name: 'Budget',
+ *       data: 25,
+ *      markers: [28, 2, 15],
+ *       ranges: [[-1, 10], [10, 20], [20, 30]]
+ *   },{
+ *       name: 'Hello',
+ *       data: 11,
+ *       markers: [20],
+ *       ranges: [[0, 8], [8, 15]]
+ *   }]
+ * };
+ * var options = {
+ *    chart: {
+ *       width: 700,
+ *       height: 300,
+ *       title: 'Monthly Revenue'
+ *   },
+ *   series: {
+ *       showLabel: true,
+ *       vertical: false
+ *   }
+ * };
+ * chart.bulletChart(container, data, options);
+ */
+function bulletChart(container, rawData, options) {
+    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BULLET);
+}
+
+/**
  * Register theme.
  * @memberof tui.chart
  * @param {string} themeName - theme name
@@ -1516,6 +1559,7 @@ module.exports = {
     mapChart: mapChart,
     radialChart: radialChart,
     boxplotChart: boxplotChart,
+    bulletChart: bulletChart,
     registerTheme: registerTheme,
     registerMap: registerMap,
     registerPlugin: registerPlugin

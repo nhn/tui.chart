@@ -56,8 +56,26 @@ describe('GroupTooltip', function() {
 
             actual = tooltip.makeTooltipData();
             expected = [
-                {category: 'Silver', values: ['10', '20']},
-                {category: 'Gold', values: ['30', '40']}
+                {
+                    category: 'Silver',
+                    values: [{
+                        type: 'data',
+                        label: '10'
+                    }, {
+                        type: 'data',
+                        label: '20'
+                    }]
+                },
+                {
+                    category: 'Gold',
+                    values: [{
+                        type: 'data',
+                        label: '30'
+                    }, {
+                        type: 'data',
+                        label: '40'
+                    }]
+                }
             ];
             expect(actual).toEqual(expected);
         });
@@ -118,19 +136,27 @@ describe('GroupTooltip', function() {
 
             tooltip.suffix = 'suffix';
 
-            actual = tooltip._makeItemRenderingData(['20', '30']);
+            actual = tooltip._makeItemRenderingData([{
+                label: '20',
+                type: 'data'
+            }, {
+                label: '30',
+                type: 'data'
+            }]);
             expected = [
                 {
                     value: '20',
                     legend: 'legend1',
                     chartType: 'column',
-                    suffix: 'suffix'
+                    suffix: 'suffix',
+                    type: 'data'
                 },
                 {
                     value: '30',
                     legend: 'legend2',
                     chartType: 'line',
-                    suffix: 'suffix'
+                    suffix: 'suffix',
+                    type: 'data'
                 }
             ];
 
@@ -163,8 +189,19 @@ describe('GroupTooltip', function() {
         it('전달하는 index에 해당하는 datum을 추출하여 기본 그룹 툴팁 html을 생성합니다.', function() {
             var actual, expected;
             tooltip.data = [
-                {category: 'Silver', values: ['10']},
-                {category: 'Gold', values: ['30']}
+                {
+                    category: 'Silver',
+                    values: [{
+                        label: '10',
+                        type: 'data'
+                    }]},
+                {
+                    category: 'Gold',
+                    values: [{
+                        label: '30',
+                        type: 'data'
+                    }]
+                }
             ];
             tooltip.theme = {
                 colors: ['red']
@@ -188,13 +225,27 @@ describe('GroupTooltip', function() {
                     body = snippet.map(items, function(item) {
                         return '<div>' + item.legend + ': ' + item.value + '</div>';
                     }).join('');
-
                 return head + body;
             };
 
             tooltip.data = [
-                {category: 'Silver', values: ['10']},
-                {category: 'Gold', values: ['30', '20']}
+                {
+                    category: 'Silver',
+                    values: [{
+                        label: '10',
+                        type: 'data'
+                    }]
+                },
+                {
+                    category: 'Gold',
+                    values: [{
+                        label: '30',
+                        type: 'data'
+                    }, {
+                        label: '20',
+                        type: 'data'
+                    }]
+                }
             ];
             tooltip.theme = {
                 colors: ['red']

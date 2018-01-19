@@ -52,12 +52,15 @@ var dataExporter = {
  */
 function _get2DArrayFromRawData(rawData) {
     var resultArray = [];
-    var categories, seriesName, data;
+    var categories;
     var isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
+    var isBullet = (rawData.series && snippet.isExisty(rawData.series.bullet));
 
     if (rawData) {
         if (isHeatMap) {
-            categories = rawData.categories.x;
+            return _get2DArrayFromHeatmapRawData(rawData);
+        } else if (isBullet) {
+            return _get2DArrayFromBulletRawData(rawData);
         } else if (rawData.categories) {
             categories = rawData.categories;
         }
@@ -65,19 +68,150 @@ function _get2DArrayFromRawData(rawData) {
         resultArray.push([''].concat(categories));
 
         snippet.forEach(rawData.series, function(seriesDatum) {
-            snippet.forEach(seriesDatum, function(seriesItem, index) {
-                if (isHeatMap) {
-                    seriesName = rawData.categories.y[index];
-                    data = seriesItem;
-                } else {
-                    seriesName = seriesItem.name;
-                    data = seriesItem.data;
-                }
+            snippet.forEach(seriesDatum, function(seriesItem) {
+                var row = [seriesItem.name].concat(seriesItem.data);
 
-                resultArray.push([seriesName].concat(data));
+                resultArray.push(row);
             });
         });
     }
+
+    return resultArray;
+}
+
+/**
+ * Make table head data for Excel
+ * @param {number} maxRangeCount - max range count
+ * @param {number} maxMarkerCount - max marker count
+ * @returns {Array.<string>} - table head data
+ * @private
+ */
+function _makeTHeadForBullet(maxRangeCount, maxMarkerCount) {
+    var tableHead = ['', chartConst.BULLET_TYPE_ACTUAL];
+    var i = 0;
+
+    for (; i < maxRangeCount; i += 1) {
+        tableHead.push(chartConst.BULLET_TYPE_RANGE + i);
+    }
+
+    i = 0;
+    for (; i < maxMarkerCount; i += 1) {
+        tableHead.push(chartConst.BULLET_TYPE_MARKER + i);
+    }
+
+    return tableHead;
+}
+
+/**
+ * Make table cells from bullet ranges
+ * @param {Array.<Array.<number>>} ranges - series item's ranges data
+ * @param {number} maxRangeCount - max range count
+ * @returns {Array.<number>} - cells containing range data
+ * @private
+ */
+function _makeTCellsFromBulletRanges(ranges, maxRangeCount) {
+    var cells = [];
+    var i = 0;
+    var dataText;
+
+    for (; i < maxRangeCount; i += 1) {
+        dataText = '';
+
+        if (ranges && ranges[i]) {
+            dataText = ((ranges[i].length > 0) ? ranges[i][0] : '') +
+             '~' + ((ranges[i].length > 1) ? ranges[i][1] : '');
+        }
+        cells.push(dataText);
+    }
+
+    return cells;
+}
+
+/**
+ * Make table cells from bullet markers
+ * @param {Array.<Array.<number>>} markers - series item's markers data
+ * @param {number} maxMarkerCount - max marker count
+ * @returns {Array.<number>} - cells containing marker data
+ * @private
+ */
+function _makeTCellsFromBulletMarkers(markers, maxMarkerCount) {
+    var cells = [];
+    var i = 0;
+    var dataText;
+
+    for (; i < maxMarkerCount; i += 1) {
+        dataText = markers && markers[i] ? markers[i] : '';
+        cells.push(dataText);
+    }
+
+    return cells;
+}
+
+/**
+ * Make table data for importing in excel, by using bullet chart raw data
+ * @param {object} rawData - raw data
+ * @param {object} [options] download option
+ * @returns {Array.<Array.<string>>} - table data for importing in excel
+ * @private
+ */
+function _get2DArrayFromBulletRawData(rawData) {
+    var resultArray = [];
+    var maxCounts = _calculateMaxCounts(rawData.series.bullet);
+    var maxRangeCount = maxCounts.maxRangeCount;
+    var maxMarkerCount = maxCounts.maxMarkerCount;
+
+    resultArray.push(_makeTHeadForBullet(maxRangeCount, maxMarkerCount));
+
+    snippet.forEach(rawData.series.bullet, function(seriesItem) {
+        var row = [seriesItem.name, seriesItem.data];
+
+        row = row.concat(_makeTCellsFromBulletRanges(seriesItem.ranges, maxRangeCount));
+        row = row.concat(_makeTCellsFromBulletMarkers(seriesItem.markers, maxMarkerCount));
+        resultArray.push(row);
+    });
+
+    return resultArray;
+}
+
+/**
+ * Calculate maxinum count of range and marker property
+ * @param {object} bulletSeries - raw series data of bullet chart
+ * @returns {object} - maximum count of range and marker property
+ * @private
+ */
+function _calculateMaxCounts(bulletSeries) {
+    var maxRangeCount = 0;
+    var maxMarkerCount = 0;
+
+    snippet.forEach(bulletSeries, function(series) {
+        maxRangeCount = Math.max(maxRangeCount, series.ranges.length);
+        maxMarkerCount = Math.max(maxMarkerCount, series.markers.length);
+    });
+
+    return {
+        maxRangeCount: maxRangeCount,
+        maxMarkerCount: maxMarkerCount
+    };
+}
+
+/**
+ * Make table data for importing in excel, by using heatmap chart raw data
+ * @param {object} rawData - raw data
+ * @returns {Array.<Array.<string>>} - table data for importing in excel
+ * @private
+ */
+function _get2DArrayFromHeatmapRawData(rawData) {
+    var resultArray = [];
+
+    resultArray.push([''].concat(rawData.categories.x));
+
+    snippet.forEach(rawData.series, function(seriesDatum) {
+        snippet.forEach(seriesDatum, function(seriesItem, index) {
+            var row = [rawData.categories.y[index]].concat(seriesItem);
+
+            resultArray.push(row);
+        });
+    });
 
     return resultArray;
 }
@@ -186,5 +320,10 @@ function _makeCsvBodyWithRawData(chartData2DArray, option) {
 dataExporter._makeCsvBodyWithRawData = _makeCsvBodyWithRawData;
 dataExporter._makeXlsBodyWithRawData = _makeXlsBodyWithRawData;
 dataExporter._get2DArrayFromRawData = _get2DArrayFromRawData;
+dataExporter._get2DArrayFromBulletRawData = _get2DArrayFromBulletRawData;
+dataExporter._get2DArrayFromHeatmapRawData = _get2DArrayFromHeatmapRawData;
+dataExporter._makeTCellsFromBulletRanges = _makeTCellsFromBulletRanges;
+dataExporter._makeTCellsFromBulletMarkers = _makeTCellsFromBulletMarkers;
+dataExporter._makeTHeadForBullet = _makeTHeadForBullet;
 
 module.exports = dataExporter;

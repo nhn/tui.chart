@@ -42,6 +42,7 @@ var PieSeries = require('../components/series/pieChartSeries');
 var HeatmapSeries = require('../components/series/heatmapChartSeries');
 var TreemapSeries = require('../components/series/treemapChartSeries');
 var BoxplotSeries = require('../components/series/boxPlotChartSeries');
+var BulletSeries = require('../components/series/bulletChartSeries');
 
 var Zoom = require('../components/series/zoom');
 
@@ -71,6 +72,7 @@ var COMPONENT_FACTORY_MAP = {
     heatmapSeries: HeatmapSeries,
     treemapSeries: TreemapSeries,
     boxplotSeries: BoxplotSeries,
+    bulletSeries: BulletSeries,
     zoom: Zoom,
     chartExportMenu: ChartExportMenu,
     title: title

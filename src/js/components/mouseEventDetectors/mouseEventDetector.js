@@ -33,6 +33,7 @@ function mouseEventDetectorFactory(params) {
         || predicate.isBoxplotChart(chartType)
         || predicate.isHeatmapChart(chartType)
         || predicate.isTreemapChart(chartType)
+        || predicate.isBulletChart(chartType)
     ) {
         factory = boundsTypeEventDetectorFactory;
     } else if (predicate.isCoordinateTypeChart(chartType)

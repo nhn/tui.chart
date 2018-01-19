@@ -152,10 +152,8 @@ module.exports = {
      * @private
      */
     _setSeriesColors: function(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
-        var self = this;
         var seriesColors, seriesCount, hasOwnColors;
         var colorIndex = 0;
-        var rawSeriesDatum;
 
         rawSeriesThemes = rawSeriesThemes || {}; // 분기문 간소화를위해
 
@@ -168,25 +166,38 @@ module.exports = {
                 hasOwnColors = false;
             }
 
-            rawSeriesDatum = rawSeriesData[seriesType];
-            if (rawSeriesDatum && rawSeriesDatum.length) {
-                if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
-                    seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
-                } else {
-                    seriesCount = rawSeriesDatum.length;
-                }
-            } else {
-                seriesCount = 0;
-            }
+            seriesCount = this._getSeriesThemeColorCount(rawSeriesData[seriesType]);
 
-            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors, seriesCount,
+            seriesThemes[seriesType].colors = this._makeEachSeriesColors(seriesColors, seriesCount,
                 !hasOwnColors && colorIndex);
 
             // To distinct between series that use default theme, we make the colors different
             if (!hasOwnColors) {
                 colorIndex = (seriesCount + colorIndex) % seriesColors.length;
             }
-        });
+        }, this);
+    },
+
+    /**
+     * Get number of series theme color from seriesData
+     * @param {object} rawSeriesDatum - raw series data contains series information
+     * @returns {number} number of series theme color
+     * @private
+     */
+    _getSeriesThemeColorCount: function(rawSeriesDatum) {
+        var seriesCount = 0;
+
+        if (rawSeriesDatum && rawSeriesDatum.length) {
+            if (rawSeriesDatum.colorLength) {
+                seriesCount = rawSeriesDatum.colorLength;
+            } else if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
+                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
+            } else {
+                seriesCount = rawSeriesDatum.length;
+            }
+        }
+
+        return seriesCount;
     },
 
     /**

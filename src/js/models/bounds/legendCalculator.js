@@ -39,8 +39,8 @@ var legendCalculator = {
      * @private
      */
     _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
-        var restWidth = LEGEND_AREA_PADDING + checkboxWidth
-            + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+        var restWidth = LEGEND_AREA_PADDING + checkboxWidth +
+            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
         var legendMargin = this.legendMargin;
 
         return calculator.sum(snippet.map(labels, function(label) {

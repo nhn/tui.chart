@@ -274,12 +274,8 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
             this._hideChartExportMenu();
         } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
             && (this.chartExportMenuContainer === elTarget.parentNode)
-        ) {
-            if (dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
-                this._hideChartExportMenu();
-            } else {
-                this._showChartExportMenu();
-            }
+            && !dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
+            this._showChartExportMenu();
         } else {
             this._hideChartExportMenu();
         }

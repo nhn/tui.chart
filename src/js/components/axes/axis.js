@@ -478,6 +478,13 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             var positionTopAndLeft = {};
             var labelTopPosition, labelLeftPosition;
 
+            /*
+             * to prevent printing `undefined` text, when category label is not set
+             */
+            if (labelPosition < 0) {
+                return;
+            }
+
             if (isYAxis) {
                 labelTopPosition = labelPosition;
 

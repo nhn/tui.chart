@@ -31,6 +31,12 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
         this.prevFoundData = null;
 
         /**
+         * previous client position of mouse event (clientX, clientY)
+         * @type {null | object}
+         */
+        this.prevClientPosition = null;
+
+        /**
          * whether zoomable or not
          * @type {boolean}
          */
@@ -40,6 +46,26 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
             snippet.extend(this, zoomMixer);
             this._initForZoom(params.zoomable);
         }
+    },
+
+    /**
+     * Animate for adding data.
+     */
+    animateForAddingData: function() {
+        var foundData, isMoving;
+
+        if (!this.prevClientPosition) {
+            return;
+        }
+
+        foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
+
+        if (foundData) {
+            isMoving = this.prevFoundData && (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
+            this._showTooltip(foundData, isMoving);
+        }
+
+        this.prevFoundData = foundData;
     },
 
     /**
@@ -120,16 +146,17 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      */
     _showTooltip: function(foundData) {
         this.eventBus.fire('showTooltip', foundData);
+        this.prevFoundData = foundData;
     },
 
     /**
      * Hide tooltip.
-     * @param {{silent: {boolean}}} options - options for hiding tooltip
+     * @param {{silent: {boolean}}} [options] - options for hiding tooltip
      * @private
      */
     _hideTooltip: function(options) {
-        options = options || {};
         this.eventBus.fire('hideTooltip', this.prevFoundData, options);
+        this.prevFoundData = null;
     },
 
     /**
@@ -141,7 +168,7 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
     _onMousemove: function(e) {
         var dragMoseupResult, foundData;
 
-        MouseEventDetectorBase.prototype._onMousemove.call(this, e);
+        this._setPrevClientPosition(e);
 
         foundData = this._findData(e.clientX, e.clientY);
 
@@ -172,7 +199,8 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
             this._hideTooltip();
         }
 
-        MouseEventDetectorBase.prototype._onMouseout.call(this);
+        this.prevClientPosition = null;
+        this.prevFoundData = null;
     },
 
     /**
@@ -182,6 +210,21 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      */
     findDataByIndexes: function(indexes) {
         return this.dataModel.findDataByIndexes(indexes);
+    },
+
+    /**
+     * Set prevClientPosition by MouseEvent
+     * @param {?MouseEvent} event - mouse event
+     */
+    _setPrevClientPosition: function(event) {
+        if (!event) {
+            this.prevClientPosition = null;
+        } else {
+            this.prevClientPosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
     }
 });
 

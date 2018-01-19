@@ -18,6 +18,7 @@ var TreemapChart = require('./treemapChart');
 var MapChart = require('./mapChart');
 var RadialChart = require('./radialChart');
 var BoxplotChart = require('./boxplotChart');
+var BulletChart = require('./bulletChart');
 
 chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);
@@ -35,3 +36,4 @@ chartFactory.register(chartConst.CHART_TYPE_TREEMAP, TreemapChart);
 chartFactory.register(chartConst.CHART_TYPE_MAP, MapChart);
 chartFactory.register(chartConst.CHART_TYPE_RADIAL, RadialChart);
 chartFactory.register(chartConst.CHART_TYPE_BOXPLOT, BoxplotChart);
+chartFactory.register(chartConst.CHART_TYPE_BULLET, BulletChart);

@@ -63,6 +63,31 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
     },
 
     /**
+     * @param {string} chartType - chart type
+     * @param {object} indexes - index of SeriesDataModel
+     * @param {boolean} allowNegativeTooltip - whether allow negative tooltip or not
+     * @param {object} bound - coordinate data for rendering graph
+     * @returns {object} - `sendData`: tooltip contents, `bound`: for detecting hovered or not
+     * @private
+     */
+    _makeTooltipData: function(chartType, indexes, allowNegativeTooltip, bound) {
+        return {
+            sendData: {
+                chartType: chartType,
+                indexes: indexes,
+                allowNegativeTooltip: allowNegativeTooltip,
+                bound: bound
+            },
+            bound: {
+                left: bound.left,
+                top: bound.top,
+                right: bound.left + bound.width,
+                bottom: bound.top + bound.height
+            }
+        };
+    },
+
+    /**
      * Make position data for rect type graph
      * @param {groupBound} groupBounds group bounds
      * @param {string} chartType chart type
@@ -73,33 +98,22 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
         var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
 
         return snippet.map(groupBounds, function(bounds, groupIndex) {
-            return snippet.map(bounds, function(_bound, index) {
-                var bound;
-                if (!_bound) {
+            return snippet.map(bounds, function(bound, index) {
+                if (!bound) {
                     return null;
                 }
 
-                bound = _bound.end;
-
-                return {
-                    sendData: {
-                        chartType: chartType,
-                        indexes: {
-                            groupIndex: groupIndex,
-                            index: index
-                        },
-                        allowNegativeTooltip: allowNegativeTooltip,
-                        bound: bound
+                return this._makeTooltipData(
+                    chartType,
+                    {
+                        groupIndex: groupIndex,
+                        index: index
                     },
-                    bound: {
-                        left: bound.left,
-                        top: bound.top,
-                        right: bound.left + bound.width,
-                        bottom: bound.top + bound.height
-                    }
-                };
-            });
-        });
+                    allowNegativeTooltip,
+                    bound.end || bound
+                );
+            }, this);
+        }, this);
     },
 
     /**
@@ -114,42 +128,34 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
         var _groupBounds = [].concat(groupBounds);
 
         snippet.forEach(_groupBounds, function(bounds, groupIndex) {
-            snippet.forEach(bounds, function(_bound, index) {
+            snippet.forEach(bounds, function(bound, index) {
                 var outliers;
 
-                if (_bound.outliers && _bound.outliers.length) {
-                    outliers = snippet.map(_bound.outliers, function(outlier, outlierIndex) {
-                        var bound = {
+                if (bound.outliers && bound.outliers.length) {
+                    outliers = snippet.map(bound.outliers, function(outlier, outlierIndex) {
+                        var outlierBound = {
                             top: outlier.top - 3,
                             left: outlier.left - 3,
                             width: 6,
                             height: 6
                         };
 
-                        return {
-                            sendData: {
-                                chartType: chartType,
-                                indexes: {
-                                    groupIndex: groupIndex,
-                                    index: index,
-                                    outlierIndex: outlierIndex
-                                },
-                                allowNegativeTooltip: allowNegativeTooltip,
-                                bound: bound
+                        return this._makeTooltipData(
+                            chartType,
+                            {
+                                groupIndex: groupIndex,
+                                index: index,
+                                outlierIndex: outlierIndex
                             },
-                            bound: {
-                                left: bound.left,
-                                top: bound.top,
-                                right: bound.left + bound.width,
-                                bottom: bound.top + bound.height
-                            }
-                        };
-                    });
+                            allowNegativeTooltip,
+                            outlierBound
+                        );
+                    }, this);
 
                     resultData[groupIndex] = resultData[groupIndex].concat(outliers);
                 }
-            });
-        });
+            }, this);
+        }, this);
     },
 
     /**
@@ -226,22 +232,21 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @private
      */
     _makeData: function(seriesItemBoundsData) {
-        var self = this;
         var data = snippet.map(seriesItemBoundsData, function(info) {
             var result;
 
             if (predicate.isLineTypeChart(info.chartType)) {
-                result = self._makeDotTypePositionData(info.data.groupPositions, info.chartType);
+                result = this._makeDotTypePositionData(info.data.groupPositions, info.chartType);
             } else {
-                result = self._makeRectTypePositionData(info.data.groupBounds, info.chartType);
+                result = this._makeRectTypePositionData(info.data.groupBounds, info.chartType);
             }
 
             if (predicate.isBoxplotChart(info.chartType)) {
-                self._makeOutliersPositionDataForBoxplot(info.data.groupBounds, info.chartType, result);
+                this._makeOutliersPositionDataForBoxplot(info.data.groupBounds, info.chartType, result);
             }
 
             return result;
-        });
+        }, this);
 
         return this._joinData(data);
     },

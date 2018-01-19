@@ -369,13 +369,14 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * onHideTooltip is callback of mouse event detector hideTooltip for SeriesView
-     * @param {number} index index
-     * @param {{silent: {boolean}}} options - hide tooltip options
+     * @param {number|object} prevFound - showing tooltip object in case single tooltip,
+     *                                  - showing tooltip index in case group tooltip
+     * @param {{silent: {boolean}}} [options] - hide tooltip options
      */
-    onHideTooltip: function(index, options) {
+    onHideTooltip: function(prevFound, options) {
         var tooltipElement = this._getTooltipElement();
 
-        this._hideTooltip(tooltipElement, index, options);
+        this._hideTooltip(tooltipElement, prevFound, options);
     },
 
     /**

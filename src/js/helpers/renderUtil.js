@@ -723,7 +723,7 @@ var renderUtil = {
             return 0;
         }
 
-        labelHeight = this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+        labelHeight = this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
 
         return labelHeight + chartConst.SERIES_LABEL_PADDING;
     }

@@ -36,6 +36,7 @@ var htmls = {
         '<div>{{ category }}</div>' +
         '{{ items }}' +
     '</div>',
+    HTML_GROUP_TYPE: '<div class="tui-chart-tooltip-type">{{ type }}</div>',
     HTML_GROUP_ITEM: '<div>' +
         '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
         '&nbsp;<span>{{ legend }}</span>:&nbsp;<span>{{ value }}</span>' +
@@ -86,6 +87,10 @@ var htmls = {
                 '<span>{{ label }}</span>' +
                 '<span>{{ suffix }}</span>' +
             '</div>' +
+    '</div>',
+    HTML_BULLET_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+        '<div class="{{ categoryVisible }}">{{ category }}' +
+        '<span>{{ label }}</span><span>{{ suffix }}</span></div>' +
     '</div>'
 };
 
@@ -94,9 +99,11 @@ module.exports = {
     tplPieChart: templateMaker.template(htmls.HTML_PIE_TEMPLATE),
     tplCoordinatetypeChart: templateMaker.template(htmls.HTML_COORDINATE_TYPE_CHART_TEMPLATE),
     tplGroup: templateMaker.template(htmls.HTML_GROUP),
+    tplGroupType: templateMaker.template(htmls.HTML_GROUP_TYPE),
     tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
     tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),
     tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE),
     tplBoxplotChartDefault: templateMaker.template(htmls.HTML_BOXPLOT_TEMPLATE),
-    tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER)
+    tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER),
+    tplBulletChartDefault: templateMaker.template(htmls.HTML_BULLET_TEMPLATE)
 };

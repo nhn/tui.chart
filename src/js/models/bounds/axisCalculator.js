@@ -26,7 +26,7 @@ var axisCalculator = {
         var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
         var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
         var labelMargin = options.labelMargin || 0;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme.label);
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
 
         if (labelMargin > 0) {
             labelHeight += labelMargin;

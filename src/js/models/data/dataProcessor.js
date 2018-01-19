@@ -12,6 +12,7 @@ var chartConst = require('../../const');
 var DataProcessorBase = require('./dataProcessorBase');
 var SeriesDataModel = require('../data/seriesDataModel');
 var SeriesDataModelForBoxplot = require('../data/seriesDataModelForBoxplot');
+var SeriesDataModelForBullet = require('../data/seriesDataModelForBullet');
 var SeriesDataModelForTreemap = require('../data/seriesDataModelForTreemap');
 var SeriesGroup = require('./seriesGroup');
 var rawDataHandler = require('../../models/data/rawDataHandler');
@@ -583,6 +584,8 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
                 SeriesDataModelClass = SeriesDataModelForBoxplot;
             } else if (predicate.isTreemapChart(this.chartType)) {
                 SeriesDataModelClass = SeriesDataModelForTreemap;
+            } else if (predicate.isBulletChart(this.chartType)) {
+                SeriesDataModelClass = SeriesDataModelForBullet;
             } else {
                 SeriesDataModelClass = SeriesDataModel;
             }
@@ -1341,6 +1344,24 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
             minItem: seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio),
             maxItem: seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio)
         };
+    },
+
+    /**
+     * Register color and opacity data of tooltip icon
+     * @param {Array.<Array.<object>>} colors - color and opacities setGraphColors
+     * @ignore
+     */
+    setGraphColors: function(colors) {
+        this.graphColors = colors;
+    },
+
+    /**
+     * Get color and opacity data of tooltip data
+     * @returns {Array.<Array.<object>>} - color and opacities set
+     * @ignore
+     */
+    getGraphColors: function() {
+        return this.graphColors;
     }
 });
 
