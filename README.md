@@ -1,142 +1,167 @@
 ## ![Toast UI Chart](https://cloud.githubusercontent.com/assets/7088720/21300155/e52f31ae-c5e4-11e6-8d6a-d660a48d0d50.png)
-ToastUI Chart supports an easy way to draw various and essential charts on your web service.  
 
-## Features
+> 🍞🤹‍ Interactive Chart Library for JavaScript
 
-#### Bar Chart
-: represents a series of data in the form of a horizontal bar.
+[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
-![bar chart](https://cloud.githubusercontent.com/assets/2888775/17967950/33635188-6b05-11e6-87ab-cf67929ddb9f.png)
+![스크린샷 2018-01-22 오전 9.43.54.png](/files/2133037361858297252)
 
-#### Column Chart
-: represents a series of data in the form of a vertical bar.
+## 🚩 Table of Contents
+* [Browser Support](#-browser-support)
+* [Features & Examples](#-features)
+* [Install](#-install)
+  * [Package Installs](#package-installs)
+  * [Installing from source](#installing-from-source)
+* [Load](#-load)
+    * [namespace](#namespace)
+    * [modules](#modules)
+* [Usage](#-usage)
+  * [HTML](#html)
+  * [JavaScript](#javascript)
+* [Development](#-development)
+* [Documents](#-documents)
+* [Contributing](#-contributing)
+* [TOAST UI Family](#-toast-ui-family)
+* [License](#-license)
 
-![column chart](https://cloud.githubusercontent.com/assets/2888775/17967954/336be0c8-6b05-11e6-91ef-55b6b003d256.png)
+## 🌏 Browser Support
+|<img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE / Edge" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="IE / Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari |
+| --- | --- | --- | ---- | --- |
+| 8+ | Yes | Yes | Yes | Yes |
 
-#### Line Chart
-: represents a series of data by line segments.
 
-![line chart](https://cloud.githubusercontent.com/assets/2888775/17968200/70490420-6b06-11e6-8a8e-659f5476cda5.png)
+## 🎨 Features & Examples
 
-#### Area Chart
-: represents graphically quantitative data. It is based on the line chart.
+* [Bar Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)
+* [Column Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html)
+* [Line Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)
+* [Area Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)
+* [Bubble Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)
+* [Scatter Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html)
+* [Pie Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)
+* [Radial Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)
+* [Boxplot Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html)
 
-![area chart](https://cloud.githubusercontent.com/assets/2888775/17967949/33611576-6b05-11e6-83b4-830ac2102347.png)
 
-#### Bubble Chart
-: represents three dimensions of data like x, y position and circle's radius.
+## 💾 Install
 
-![bubble chart](https://cloud.githubusercontent.com/assets/2888775/17967952/336925d6-6b05-11e6-89e5-94698a955352.png)
+### Dependencies
 
-#### Scatter Chart
-: represents tendency or distribution, using two dimensional data like x, y position.
+TOAST UI Chart have `external` dependencies on these libraries. These means before loading TOAST UI Chart, you need to download these and load it.
 
-![scatter chart](https://cloud.githubusercontent.com/assets/2888775/17967960/33970370-6b05-11e6-8af1-d590d547ff4c.png)
+* [raphael](https://github.com/nhnent/raphael)
+* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet)
 
-#### Pie Chart
-: represents a circular graph, which has divided sectors have to do with numeric proportion of data size to whole data quantity.
+### Package Installs
 
-![pie chart](https://cloud.githubusercontent.com/assets/2888775/17967958/3390131c-6b05-11e6-83e1-8cadb7bd58fc.png)
-
-#### Combo Chart (Combination Chart)
-: represents combined features of two kinds of charts.
-
-![combo chart](https://cloud.githubusercontent.com/assets/7088720/21537341/bfe0fe0e-cdd3-11e6-95da-83e662a2c646.png)
-
-#### Map Chart
-: represents relationships in data by indicating data by color range on a geographical map.
-
-![map chart](https://cloud.githubusercontent.com/assets/2888775/17967956/3389ef0a-6b05-11e6-8bb4-d4a0db8fecf8.png)
-
-#### Heatmap Chart
-: represents relationships in data by color range.
-
-![heatmap chart](https://cloud.githubusercontent.com/assets/2888775/17967951/3369065a-6b05-11e6-946a-b25faf213c5d.png)
-
-#### Treemap Chart
-: represents hierarchical data by using rectangles and color range.
-
-![treemap chart](https://cloud.githubusercontent.com/assets/2888775/17967959/3392b338-6b05-11e6-88af-b870c9c4c13a.png)
-
-#### Radial Chart
-: represents quantitative data with closed poly lines.
-
-![radial chart](https://cloud.githubusercontent.com/assets/7088720/21537366/29c89534-cdd4-11e6-83be-513f9a699368.png)
-
-#### Boxplot Chart
-: represents visually displaying groups of numerical data quartiles. Typically used in descriptive statistics.
-
-![boxplot chart](https://cloud.githubusercontent.com/assets/7088720/23646857/2a787816-0356-11e7-96ab-de17fa63c60b.png)
-
-## Documentation
-* **API** : [https://nhnent.github.io/tui.chart/latest/](https://nhnent.github.io/tui.chart/latest/)
-* **Tutorial** : [https://github.com/nhnent/tui.chart/wiki/tutorial/](https://github.com/nhnent/tui.chart/wiki/tutorial/)
-* **Getting started** : [https://github.com/nhnent/tui.chart/wiki/getting-started/](https://github.com/nhnent/tui.chart/wiki/getting-started/)
-* **Example** : [https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)
-
-## Dependency
-* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.2.5
-* [Raphaël](https://github.com/nhnent/raphael) 2.2.0b
-
-## Map Data Attribution
-* [https://www.amcharts.com/svg-maps/](https://www.amcharts.com/svg-maps/)
-
-## Test Environment
-### PC
-* IE8~11
-* Edge
-* Chrome
-* Firefox
-* Safari
-
-## Usage
-### Use `npm`
-
-Install the latest version using `npm` command:
-
-```
-$ npm install tui-chart --save
+#### npm
+``` sh
+$ npm install --save tui-chart # latest version
+$ npm install --save tui-chart@<version> # specific version
 ```
 
-or want to install the each version:
+#### bower
 
-```
-$ npm install tui-chart@<version> --save
-```
-
-To access as module format in your code:
-
-```javascript
-var chart = require('tui-chart');
-var barChart = chart.barChart(...);
+``` sh
+$ bower install tui-chart # latest version
+$ bower install tui-chart#<tag> # specific version
 ```
 
-### Use `bower`
-Install the latest version using `bower` command:
+### Installing from Source
 
-```
-$ bower install tui-chart
-```
+#### CDN
 
-or want to install the each version:
+* [chart.js](https://rawgit.com/nhnent/tui.chart/v2.14.0/dist/tui-chart.js)
+* [chart.css](https://rawgit.com/nhnent/tui.chart/v2.14.0/dist/tui.chart.css)
 
-```
-$ bower install tui-chart#<tag>
-```
+#### Download Manually
 
-To access as namespace format in your code:
-
-```javascript
-var barChart = new tui.chart.barChart(...);
-```
-
-## Download/Install
-* [Download bundle files from `dist` folder](https://github.com/nhnent/tui.chart/tree/production/dist)
+* [Download bundle files](https://github.com/nhnent/tui.chart/tree/production/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.chart/releases)
 
-## Release History
-* [https://github.com/nhnent/tui.chart/releases](https://github.com/nhnent/tui.chart/releases)
+## Load
 
-## License
-[MIT License](https://github.com/nhnent/tui.chart/blob/production/LICENSE).
+### namespace
 
+```html
+<script src="./path/to/raphael.js"></script>
+<script src="./path/to/tui-code-snippet.js"></script>
+<script src="./path/to/tui-chart.js"></script>
+<script>
+    tui.chart.barChart(...);
+</script>
+```
+
+### module
+
+```javascript
+import {chart} from 'tui-chart';
+
+chart.barChart(...);
+```
+
+## 🔨 Usage
+
+### HTML
+
+Add the container element where TOAST UI Chart will be created.
+
+``` html
+<div id="chart"></div>
+```
+
+### JavaScript
+
+``` javascript
+var container = document.getElementById('chart-area');
+var data = {
+    category: [...], series: [...]
+};
+var options = {
+    chart: {width: 700, height: 400}
+};
+
+chart.barChart(container, data, options);
+```
+
+See [details](https://nhnent.github.io/nhnent/tui.chart/latest) for additional informations.
+
+## 🔧 Development
+
+``` sh
+# Setup
+$ git clone https://github.com/nhnent/tui.chart.git
+$ cd tui.chart
+$ npm install
+
+# test
+$ npm run test
+
+# local server
+$ npm run serve
+$ npm run serve:ie8 # Run on Internet Explorer 8
+
+# bundle
+$ npm run deploy
+```
+
+## 📙 Documents
+* [Getting Started](https://github.com/nhnent/tui.chart/wiki/Getting-Started)
+* [Tutorials](https://github.com/nhnent/tui.chart/wiki)
+* [APIs](https://nhnent.github.io/tui.chart/api)
+
+You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
+
+## 💬 Contributing
+* [Code of Conduct](CODE_OF_CONDUCT.md)
+* [Contributing guideline](CONTRIBUTING.md)
+* [Issue guideline](ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+
+## 🍞 TOAST UI Family
+* [TOAST UI Editor](https://github.com/nhnent/tui.editor)
+* [TOAST UI Grid](https://github.com/nhnent/tui.grid)
+* [TOAST UI Components](https://github.com/nhnent)
+
+## 📜 License
+This software is licensed under the [MIT](https://github.com/nhnent/tui.chart/blob/production/LICENSE) © [NHN Entertainment](https://github.com/nhnent).
