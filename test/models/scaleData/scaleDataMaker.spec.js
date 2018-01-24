@@ -276,10 +276,12 @@ describe('Test for ScaleDataMaker', function() {
             expect(scaleData.step).toBe(50);
         });
 
-        it('scaleData를 반환합니다.', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
-                min: null,
-                max: null
+        it('should set scale data\'s limit value by baseValues, when limit option is not set', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 39], 100, null, false, {
+                limitOption: {
+                    min: null,
+                    max: null
+                }
             });
 
             expect(scaleData.limit.max).toBe(40);
@@ -287,26 +289,69 @@ describe('Test for ScaleDataMaker', function() {
             expect(scaleData.step).toBe(10);
         });
 
-        it('data가 한개이며 음수인 경우 (min : data, max: 0)을 반환합니다.', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([-10], 100, null, false, {
-                min: null,
-                max: null
+        it('should adjust limit.max value, if no limtOption and max value is not zero', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
+                limitOption: {
+                    min: null,
+                    max: null
+                }
+            });
+
+            expect(scaleData.limit.max).toBe(50);
+            expect(scaleData.limit.min).toBe(0);
+            expect(scaleData.step).toBe(10);
+        });
+
+        it('should adjust limit.min value, if no limit option and min value is not zero', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([-10, -20, -30, 0], 100, null, false, {
+                limitOption: {
+                    min: null,
+                    max: null
+                }
             });
 
             expect(scaleData.limit.max).toBe(0);
-            expect(scaleData.limit.min).toBe(-10);
+            expect(scaleData.limit.min).toBe(-40);
+            expect(scaleData.step).toBe(10);
         });
 
-        it('data가 한개이며 양수인 경우 (min : 0, max: data)를 반환합니다.', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([10], 100, null, false, {
-                min: null,
-                max: null
+        it('should set limit to (min : data - step, max: 0), when base values count is 1, and the value is negative', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([-10], 100, null, false, {
+                limitOption: {
+                    min: null,
+                    max: null
+                }
             });
 
-            expect(scaleData.limit.max).toBe(10);
+            expect(scaleData.limit.max).toBe(0);
+            expect(scaleData.limit.min).toBe(-15);
+        });
+
+        it('should set limit to (min : 0, max: data + step), when baseValues count is 1, and the value is positive.', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([10], 100, null, false, {
+                limitOption: {
+                    min: null,
+                    max: null
+                }
+            });
+
+            expect(scaleData.limit.max).toBe(15);
+            expect(scaleData.limit.min).toBe(0);
+        });
+
+        it('should set minimum value to zero, when limit.min is zero', function() {
+            var scaleData = scaleDataMaker._calculateCoordinateScale([0.501, 0.551], 100, null, false, {
+                limitOption: {
+                    min: 0,
+                    max: null
+                }
+            });
+
+            expect(scaleData.limit.max).toBe(0.6);
             expect(scaleData.limit.min).toBe(0);
         });
     });
+
     describe('_calculatePercentStackedScale()', function() {
         it('음수의 합이 0일 경우에는 chartConst.PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var baseValues = [10, 20, 30, 40];
@@ -365,6 +410,67 @@ describe('Test for ScaleDataMaker', function() {
                 min: 0,
                 max: 10
             });
+        });
+    });
+
+    describe('_isOverflowed()', function() {
+        var scaleData;
+        beforeEach(function() {
+            scaleData = {
+                limit: {min: -10, max: 30},
+                step: 10
+            };
+        });
+
+        it('should check overflowed when there are overflow items', function() {
+            var overflowItem = {minItem: [{}]};
+            var isOverflowed = scaleDataMaker._isOverflowed(overflowItem, scaleData, {});
+
+            expect(isOverflowed.min).toBe(true);
+            expect(isOverflowed.max).toBe(false);
+        });
+
+        it('should check overflowed, when scaled min value is same to minimum data value and no min option', function() {
+            var isOverflowed = scaleDataMaker._isOverflowed(null, scaleData, {min: -10, max: 25}, false, false);
+
+            expect(isOverflowed.min).toBe(true);
+            expect(isOverflowed.max).toBe(false);
+        });
+
+        it('should check overflowed, when scaled max value is same to maximum data value and no max option', function() {
+            var isOverflowed = scaleDataMaker._isOverflowed(null, scaleData, {min: -6, max: 30}, false, false);
+
+            expect(isOverflowed.min).toBe(false);
+            expect(isOverflowed.max).toBe(true);
+        });
+
+        it('should check overflowed, when scaled min value is same to min option', function() {
+            var isOverflowed = scaleDataMaker._isOverflowed(null, scaleData, {min: -10, max: 25}, true, false);
+
+            expect(isOverflowed).toBe(null);
+        });
+
+        it('should check overflowed, when scaled max value is same to max option', function() {
+            var isOverflowed = scaleDataMaker._isOverflowed(null, scaleData, {min: -6, max: 30}, false, true);
+
+            expect(isOverflowed).toBe(null);
+        });
+
+        it('should check overflowed, when scaled min value is zero', function() {
+            var isOverflowed;
+            scaleData.limit = {min: 0, max: 30};
+            isOverflowed = scaleDataMaker._isOverflowed(null, scaleData, {min: 0, max: 25}, false, false);
+
+            expect(isOverflowed).toBe(null);
+        });
+
+        it('should not append step, when scaled max value is zero', function() {
+            var isOverflowed;
+            scaleData.limit = {min: -30, max: 0};
+
+            isOverflowed = scaleDataMaker._isOverflowed(null, scaleData, {min: -25, max: 0}, false, false);
+
+            expect(isOverflowed).toBe(null);
         });
     });
 });
