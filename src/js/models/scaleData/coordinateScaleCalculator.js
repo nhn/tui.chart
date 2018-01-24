@@ -115,7 +115,7 @@ function getNormalizedLimit(min, max, step) {
 function getNormalizedStepCount(limitSize, step) {
     var multiplier = 1 / Math.min(getDigits(limitSize), getDigits(step));
 
-    return ((limitSize * multiplier) / (step * multiplier));
+    return Math.ceil((limitSize * multiplier) / (step * multiplier));
 }
 
 /**

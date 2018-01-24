@@ -41,19 +41,19 @@ var scaleDataMaker = {
      * Adjust limit for bubble chart.
      * @param {{min: number, max: number}} limit - limit
      * @param {number} step - step;
-     * @param {object.<string, object>} overflowItem - overflow Item map
+     * @param {{min: boolean, max: boolean}} isOverflowed - overflow Item map
      * @returns {object} limit
      * @private
      */
-    _adjustLimitForBubbleChart: function(limit, step, overflowItem) {
+    _adjustLimitForOverflow: function(limit, step, isOverflowed) {
         var min = limit.min;
         var max = limit.max;
 
-        if (overflowItem.minItem) {
+        if (isOverflowed.min) {
             min -= step;
         }
 
-        if (overflowItem.maxItem) {
+        if (isOverflowed.max) {
             max += step;
         }
 
@@ -254,16 +254,22 @@ var scaleDataMaker = {
      */
     _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, options) {
         var limit = this._getLimitSafely(baseValues);
-        var limitOption = options.limitOption;
-        var stepCount = options.stepCount;
+        var limitOption = options.limitOption || {};
+        var hasMinOption = snippet.isExisty(limitOption.min);
+        var hasMaxOption = snippet.isExisty(limitOption.max);
         var min = limit.min;
         var max = limit.max;
-        var scaleData;
+        var stepCount = options.stepCount;
+        var isOverflowed, scaleData;
 
-        if (limitOption && (limitOption.min || limitOption.max)) {
+        if (hasMinOption) {
+            min = limitOption.min;
             stepCount = null;
-            min = snippet.isExisty(limitOption.min) ? limitOption.min : min;
-            max = snippet.isExisty(limitOption.max) ? limitOption.max : max;
+        }
+
+        if (hasMaxOption) {
+            max = limitOption.max;
+            stepCount = null;
         }
 
         scaleData = coordinateScaleCalculator({
@@ -273,13 +279,36 @@ var scaleDataMaker = {
             offsetSize: baseSize
         });
 
-        if (overflowItem) {
-            scaleData.limit = this._adjustLimitForBubbleChart(scaleData.limit, scaleData.step, overflowItem);
-        } else if (isDiverging) {
+        isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+
+        if (isOverflowed) {
+            scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);
+        }
+
+        if (isDiverging) {
             scaleData.limit = this._makeLimitForDivergingOption(scaleData.limit);
         }
 
         return scaleData;
+    },
+
+    _isOverflowed: function(overflowItem, scaleData, limit, hasMinOption, hasMaxOption) {
+        var isBubbleMinOverflowed = !!(overflowItem && overflowItem.minItem);
+        var isBubbleMaxOverflowed = !!(overflowItem && overflowItem.maxItem);
+        var scaleDataLimit = scaleData.limit;
+        var isOverflowedMin = isBubbleMinOverflowed ||
+             (!hasMinOption && scaleDataLimit.min === limit.min && scaleDataLimit.min !== 0);
+        var isOverflowedMax = isBubbleMaxOverflowed ||
+            (!hasMaxOption && scaleDataLimit.max === limit.max && scaleDataLimit.max !== 0);
+
+        if (!isOverflowedMin && !isOverflowedMax) {
+            return null;
+        }
+
+        return {
+            min: isOverflowedMin,
+            max: isOverflowedMax
+        };
     },
 
     /**
