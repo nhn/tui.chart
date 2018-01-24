@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.14.0
+ * @version 2.14.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Jan 19 2018 03:14:31 GMT+0900 (KST)"
+ * bundle created at "Wed Jan 24 2018 14:57:56 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -34364,19 +34364,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Adjust limit for bubble chart.
 	     * @param {{min: number, max: number}} limit - limit
 	     * @param {number} step - step;
-	     * @param {object.<string, object>} overflowItem - overflow Item map
+	     * @param {{min: boolean, max: boolean}} isOverflowed - overflow Item map
 	     * @returns {object} limit
 	     * @private
 	     */
-	    _adjustLimitForBubbleChart: function(limit, step, overflowItem) {
+	    _adjustLimitForOverflow: function(limit, step, isOverflowed) {
 	        var min = limit.min;
 	        var max = limit.max;
 
-	        if (overflowItem.minItem) {
+	        if (isOverflowed.min) {
 	            min -= step;
 	        }
 
-	        if (overflowItem.maxItem) {
+	        if (isOverflowed.max) {
 	            max += step;
 	        }
 
@@ -34577,16 +34577,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, options) {
 	        var limit = this._getLimitSafely(baseValues);
-	        var limitOption = options.limitOption;
-	        var stepCount = options.stepCount;
+	        var limitOption = options.limitOption || {};
+	        var hasMinOption = snippet.isExisty(limitOption.min);
+	        var hasMaxOption = snippet.isExisty(limitOption.max);
 	        var min = limit.min;
 	        var max = limit.max;
-	        var scaleData;
+	        var stepCount = options.stepCount;
+	        var isOverflowed, scaleData;
 
-	        if (limitOption && (limitOption.min || limitOption.max)) {
+	        if (hasMinOption) {
+	            min = limitOption.min;
 	            stepCount = null;
-	            min = snippet.isExisty(limitOption.min) ? limitOption.min : min;
-	            max = snippet.isExisty(limitOption.max) ? limitOption.max : max;
+	        }
+
+	        if (hasMaxOption) {
+	            max = limitOption.max;
+	            stepCount = null;
 	        }
 
 	        scaleData = coordinateScaleCalculator({
@@ -34596,13 +34602,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	            offsetSize: baseSize
 	        });
 
-	        if (overflowItem) {
-	            scaleData.limit = this._adjustLimitForBubbleChart(scaleData.limit, scaleData.step, overflowItem);
-	        } else if (isDiverging) {
+	        isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+
+	        if (isOverflowed) {
+	            scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);
+	        }
+
+	        if (isDiverging) {
 	            scaleData.limit = this._makeLimitForDivergingOption(scaleData.limit);
 	        }
 
 	        return scaleData;
+	    },
+
+	    _isOverflowed: function(overflowItem, scaleData, limit, hasMinOption, hasMaxOption) {
+	        var isBubbleMinOverflowed = !!(overflowItem && overflowItem.minItem);
+	        var isBubbleMaxOverflowed = !!(overflowItem && overflowItem.maxItem);
+	        var scaleDataLimit = scaleData.limit;
+	        var isOverflowedMin = isBubbleMinOverflowed ||
+	             (!hasMinOption && scaleDataLimit.min === limit.min && scaleDataLimit.min !== 0);
+	        var isOverflowedMax = isBubbleMaxOverflowed ||
+	            (!hasMaxOption && scaleDataLimit.max === limit.max && scaleDataLimit.max !== 0);
+
+	        if (!isOverflowedMin && !isOverflowedMax) {
+	            return null;
+	        }
+
+	        return {
+	            min: isOverflowedMin,
+	            max: isOverflowedMax
+	        };
 	    },
 
 	    /**
@@ -34765,7 +34794,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function getNormalizedStepCount(limitSize, step) {
 	    var multiplier = 1 / Math.min(getDigits(limitSize), getDigits(step));
 
-	    return ((limitSize * multiplier) / (step * multiplier));
+	    return Math.ceil((limitSize * multiplier) / (step * multiplier));
 	}
 
 	/**
