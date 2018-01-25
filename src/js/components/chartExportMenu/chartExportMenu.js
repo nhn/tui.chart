@@ -44,6 +44,12 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
         this.chartTitle = params.chartTitle || 'tui-chart';
 
         /**
+         * export filename
+         * @type {string}
+         */
+        this.exportFilename = params.exportFilename || this.chartTitle;
+
+        /**
          * chart type
          * @type {string}
          */
@@ -265,7 +271,7 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
             if (elTarget.id) {
                 this.eventBus.fire('beforeImageDownload');
 
-                chartExporter.exportChart(this.chartTitle, elTarget.id,
+                chartExporter.exportChart(this.exportFilename, elTarget.id,
                     this.dataProcessor.rawData, svgElement, this.options);
 
                 this.eventBus.fire('afterImageDownload');
@@ -335,9 +341,14 @@ function chartExportMenuFactory(params) {
     var isVisible = params.options.visible;
     var chartExportMenu = null;
     var chartOption = params.chartOptions.chart || {};
+    var exportingOption = params.chartOptions.chartExportMenu;
 
     if (chartOption.title) {
         params.chartTitle = chartOption.title.text;
+    }
+
+    if (exportingOption && exportingOption.filename) {
+        params.exportFilename = exportingOption.filename;
     }
 
     if (isVisible) {

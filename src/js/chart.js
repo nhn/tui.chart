@@ -170,6 +170,7 @@ function _createChart(container, rawData, options, chartType) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme - theme name
@@ -273,10 +274,13 @@ function barChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} column chart
  * @api
  * @example
@@ -378,6 +382,7 @@ function columnChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *          @param {Array} options.plot.bands - plot bands
@@ -392,6 +397,8 @@ function columnChart(container, rawData, options) {
  *                  - plot lines
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} bar chart
  * @api
  * @example
@@ -496,6 +503,7 @@ function lineChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *          @param {Array} options.plot.bands - plot bands
@@ -508,6 +516,8 @@ function lineChart(container, rawData, options) {
  *              @param {number} options.plot.lines.opacity - band opacity
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} bar chart
  * @api
  * @example
@@ -603,12 +613,15 @@ function areaChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {object} options.circleLegend - options for circleLegend
  *          @param {boolean} options.circleLegend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} bubble chart
  * @api
  * @example
@@ -713,10 +726,13 @@ function bubbleChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} scatter chart
  * @api
  * @example
@@ -807,8 +823,11 @@ function scatterChart(container, rawData, options) {
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} scatter chart
  * @api
  * @example
@@ -877,8 +896,11 @@ function heatmapChart(container, rawData, options) {
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} scatter chart
  * @api
  * @example
@@ -999,6 +1021,7 @@ function treemapChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *          @param {Array} options.plot.bands - plot bands for line & area combo chart
@@ -1011,6 +1034,8 @@ function treemapChart(container, rawData, options) {
  *              @param {number} options.plot.lines.opacity - band opacity
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} bar chart
  * @api
  * @example
@@ -1107,8 +1132,11 @@ function comboChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} bar chart
  * @api
  * @example
@@ -1178,6 +1206,8 @@ function pieChart(container, rawData, options) {
  *      @param {string} options.theme - theme name
  *      @param {string} options.map map type
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} bar chart
  * @api
  * @example
@@ -1249,8 +1279,11 @@ function mapChart(container, rawData, options) {
  *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *          @param {number} options.legend.maxWidth - legend name display max width
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {object} options.chartExportMenu - options for exporting
+ *          @param {string} options.chartExportMenu.filename - export file name
  * @returns {object} bar chart
  * @api
  * @example

@@ -35,16 +35,22 @@ var legendCalculator = {
      * @param {Array.<string>} labels - legend labels
      * @param {{fontSize: number, fontFamily: number}} labelTheme - legend label theme
      * @param {number} checkboxWidth - width for checkbox
+     * @param {?number} [maxWidth] - user option legend maxWidth
      * @returns {number}
      * @private
      */
-    _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
-        var restWidth = LEGEND_AREA_PADDING + checkboxWidth
-            + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+    _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth, maxWidth) {
+        var restWidth = LEGEND_AREA_PADDING + checkboxWidth +
+            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
         var legendMargin = this.legendMargin;
 
         return calculator.sum(snippet.map(labels, function(label) {
-            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + restWidth;
+            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme);
+
+            if (maxWidth && labelWidth > maxWidth) {
+                labelWidth = maxWidth;
+            }
+            labelWidth += restWidth;
 
             return labelWidth + legendMargin;
         }));
@@ -83,13 +89,14 @@ var legendCalculator = {
      * @param {Array.<string>} dividedLabels - divided labels
      * @param {{fontFamily: ?string, fontSize: ?string}} labelTheme - label theme
      * @param {number} checkboxWidth - width for checkbox
+     * @param {?number} [maxWidth] - user option legend maxWidth
      * @returns {number}
      * @private
      */
-    _getMaxLineWidth: function(dividedLabels, labelTheme, checkboxWidth) {
+    _getMaxLineWidth: function(dividedLabels, labelTheme, checkboxWidth, maxWidth) {
         var self = this;
         var lineWidths = snippet.map(dividedLabels, function(labels) {
-            return self._calculateLegendsWidthSum(labels, labelTheme, checkboxWidth);
+            return self._calculateLegendsWidthSum(labels, labelTheme, checkboxWidth, maxWidth);
         });
 
         return arrayUtil.max(lineWidths);
@@ -101,10 +108,11 @@ var legendCalculator = {
      * @param {number} chartWidth chart width
      * @param {{fontSize: number, fontFamily: number}} labelTheme legend label theme
      * @param {number} checkboxWidth - width for checkbox
+     * @param {?number} [maxWidth] - user option legend maxWidth
      * @returns {{dividedLabels: Array.<Array.<string>>, maxLineWidth: number}}
      * @private
      */
-    _makeDividedLabelsAndMaxLineWidth: function(labels, chartWidth, labelTheme, checkboxWidth) {
+    _makeDividedLabelsAndMaxLineWidth: function(labels, chartWidth, labelTheme, checkboxWidth, maxWidth) {
         var divideCount = 1;
         var maxLineWidth = 0;
         var prevMaxWidth = 0;
@@ -112,7 +120,7 @@ var legendCalculator = {
 
         do {
             dividedLabels = this._divideLegendLabels(labels, divideCount);
-            maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth);
+            maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth, maxWidth);
 
             if (prevMaxWidth === maxLineWidth) {
                 dividedLabels = prevLabels;
@@ -153,11 +161,14 @@ var legendCalculator = {
      * @param {Array.<string>} legendLabels - labels for legend
      * @param {number} chartWidth - chart width
      * @param {number} checkboxWidth - width for checkbox
+     * @param {?number} [maxWidth] - user option legend maxWidth
      * @returns {{width: number, height: (number)}}
      * @private
      */
-    _makeHorizontalDimension: function(labelTheme, legendLabels, chartWidth, checkboxWidth) {
-        var dividedInfo = this._makeDividedLabelsAndMaxLineWidth(legendLabels, chartWidth, labelTheme, checkboxWidth);
+    _makeHorizontalDimension: function(labelTheme, legendLabels, chartWidth, checkboxWidth, maxWidth) {
+        var dividedInfo = this._makeDividedLabelsAndMaxLineWidth(
+            legendLabels, chartWidth, labelTheme, checkboxWidth, maxWidth
+        );
         var horizontalLegendHeight = this._calculateHorizontalLegendHeight(dividedInfo.labels, labelTheme);
         var legendHeight = horizontalLegendHeight + (LEGEND_AREA_PADDING * 2);
 
@@ -172,13 +183,16 @@ var legendCalculator = {
      * @param {{fontSize: number, fontFamily: number}} labelTheme - label theme for legend
      * @param {Array.<string>} legendLabels - labels for legend
      * @param {number} checkboxWidth - width for checkbox
+     * @param {?number} [maxWidth] - user option legend maxWidth
      * @returns {{width: (number)}}
      * @private
      */
-    _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth) {
-        var labelWidth = LEGEND_AREA_PADDING + checkboxWidth +
-            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING +
-            renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+    _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth, maxWidth) {
+        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+        if (maxWidth && labelWidth > maxWidth) {
+            labelWidth = maxWidth;
+        }
+        labelWidth += LEGEND_AREA_PADDING + checkboxWidth + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
 
         return {
             width: labelWidth + this.legendMargin,
@@ -196,14 +210,17 @@ var legendCalculator = {
      */
     calculate: function(options, labelTheme, legendLabels, chartWidth) {
         var checkboxWidth = options.showCheckbox === false ? 0 : LEGEND_CHECKBOX_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+        var maxWidth = options.maxWidth;
         var dimension = {};
 
         if (!options.visible) {
             dimension.width = 0;
         } else if (predicate.isHorizontalLegend(options.align)) {
-            dimension = this._makeHorizontalDimension(labelTheme, legendLabels, chartWidth, checkboxWidth);
+            dimension = this._makeHorizontalDimension(
+                labelTheme, legendLabels, chartWidth, checkboxWidth, maxWidth
+            );
         } else {
-            dimension = this._makeVerticalDimension(labelTheme, legendLabels, checkboxWidth);
+            dimension = this._makeVerticalDimension(labelTheme, legendLabels, checkboxWidth, maxWidth);
         }
 
         return dimension;
