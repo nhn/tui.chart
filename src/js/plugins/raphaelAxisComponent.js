@@ -172,18 +172,13 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var baseTop = layout.position.top;
         var baseLeft = layout.position.left;
         var tick;
-        var isContainDivensionArea = function(position) {
-            var compareType = isVertical ? 'height' : 'width';
-
-            return (position > layout.dimension[compareType]);
-        };
 
         snippet.forEach(positions, function(position) {
             var pathString = 'M';
 
             position += additionalSize;
 
-            if (isContainDivensionArea(position)) {
+            if (position > layout.dimension.width) {
                 return;
             }
 

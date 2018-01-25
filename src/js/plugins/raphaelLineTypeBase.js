@@ -350,10 +350,9 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     /**
      * Show dot.
      * @param {object} dotInformation raphael object
-     * @param {number} groupIndex seriesIndex
      * @private
      */
-    _showDot: function(dotInformation, groupIndex) {
+    _showDot: function(dotInformation) {
         var hoverTheme = this.theme.dot.hover;
         var attributes = {
             'fill-opacity': hoverTheme.fillOpacity,
@@ -362,27 +361,13 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             'stroke-width': hoverTheme.strokeWidth,
             r: hoverTheme.radius
         };
-
-        this._setPrevDotAttributes(groupIndex, dotInformation.dot);
+        this.prevDotAttributes = dotInformation.dot.attr();
 
         if (hoverTheme.fillColor) {
             attributes.fill = hoverTheme.fillColor;
         }
 
         dotInformation.dot.attr(attributes);
-    },
-
-    /**
-     * temp save dot style attribute
-     * @param {number} groupIndex seriesIndex
-     * @param {object} dot raphael circle object
-     * @private
-     */
-    _setPrevDotAttributes: function(groupIndex, dot) {
-        if (!this._prevDotAttributes) {
-            this._prevDotAttributes = {};
-        }
-        this._prevDotAttributes[groupIndex] = dot.attr();
     },
 
     /**
@@ -425,10 +410,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
         }
-        this._showDot(item.endDot, groupIndex);
+
+        this._showDot(item.endDot);
 
         if (item.startDot) {
-            this._showDot(item.startDot, groupIndex);
+            this._showDot(item.startDot);
         }
     },
 
@@ -458,13 +444,13 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             return;
         }
 
-        snippet.forEachArray(groupDots[index], function(item, groupIndex) {
+        snippet.forEachArray(groupDots[index], function(item) {
             if (item.endDot) {
-                self._showDot(item.endDot, groupIndex);
+                self._showDot(item.endDot);
             }
 
             if (item.startDot) {
-                self._showDot(item.startDot, groupIndex);
+                self._showDot(item.startDot);
             }
         });
     },
@@ -507,21 +493,18 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     /**
      * Hide dot.
      * @param {object} dot raphael object
-     * @param {number} groupIndex seriesIndex
      * @param {?number} opacity opacity
      * @private
      */
-    _hideDot: function(dot, groupIndex, opacity) {
-        var prev = this._prevDotAttributes[groupIndex];
+    _hideDot: function(dot, opacity) {
+        var prev = this.prevDotAttributes;
         var outDotStyle = this.outDotStyle;
 
         // prev 정보가 있다면 prev의 r을 적용해준다
         // hideDot시 dot이 사라져버리는 이슈 있음
         if (prev && !snippet.isUndefined(opacity)) {
             outDotStyle = snippet.extend({
-                'r': prev.r,
-                'stroke': prev.stroke,
-                'fill': prev.fill,
+                r: prev.r,
                 'stroke-opacity': prev['stroke-opacity'],
                 'stroke-width': prev['stroke-width']
             }, {
@@ -571,10 +554,10 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         if (item) {
-            this._hideDot(item.endDot.dot, groupIndex, opacity);
+            this._hideDot(item.endDot.dot, opacity);
 
             if (item.startDot) {
-                this._hideDot(item.startDot.dot, groupIndex, opacity);
+                this._hideDot(item.startDot.dot, opacity);
             }
         }
     },
@@ -602,11 +585,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             }
 
             if (item.endDot) {
-                self._hideDot(item.endDot.dot, groupIndex, opacity);
+                self._hideDot(item.endDot.dot, opacity);
             }
 
             if (item.startDot) {
-                self._hideDot(item.startDot.dot, groupIndex, opacity);
+                self._hideDot(item.startDot.dot, opacity);
             }
         });
     },

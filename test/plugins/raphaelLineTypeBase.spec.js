@@ -7,7 +7,6 @@
 'use strict';
 
 var RaphaelLineTypeBase = require('../../src/js/plugins/raphaelLineTypeBase');
-var raphael = require('raphael');
 
 describe('RaphaelLineTypeBase', function() {
     var lineTypeBase;
@@ -170,22 +169,6 @@ describe('RaphaelLineTypeBase', function() {
             var actual = lineTypeBase._getClipRectId();
 
             expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_hideDot()', function() {
-        it('should set the existing fill and stroke values.', function() {
-            var paper = raphael(document.createElement('DIV'), 100, 100);
-            var dot = lineTypeBase.renderDot(paper, 1, '#D95576', 1).dot;
-            var dotSetArgs;
-            lineTypeBase._setPrevDotAttributes(0, dot);
-            spyOn(dot, 'attr');
-
-            lineTypeBase._hideDot(dot, 0, 1);
-            dotSetArgs = dot.attr.calls.mostRecent().args[0];
-
-            expect(dotSetArgs.fill).toBe('#D95576');
-            expect(dotSetArgs.stroke).toBe('#D95576');
         });
     });
 });
