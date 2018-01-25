@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.14.1
+ * @version 2.14.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Wed Jan 24 2018 14:57:56 GMT+0900 (KST)"
+ * bundle created at "Thu Jan 25 2018 21:47:01 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -861,6 +861,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @private
 	 */
 	var raphaelRenderUtil = {
+
 	    /**
 	     * Make line path.
 	     * @memberOf module:raphaelRenderUtil
@@ -909,6 +910,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	        line.attr(strokeStyle);
 
 	        return line;
+	    },
+
+	    /**
+	     * text ellipsis for fixed width
+	     * @param {string} text - target text
+	     * @param {number} fixedWidth - width for elipsis
+	     * @param {object} theme - lable theme
+	     * @returns {string}
+	     */
+	    getEllipsisText: function(text, fixedWidth, theme) {
+	        var textArray = text.split('');
+	        var textLength = textArray.length;
+	        var dotWidth = this.getRenderedTextSize('.', theme.fontSize, theme.fontFamily).width;
+	        var textWidth = dotWidth * 2;
+	        var newString = '';
+	        var i = 0;
+
+	        for (; i < textLength; i += 1) {
+	            textWidth += this.getRenderedTextSize(textArray[i], theme.fontSize, theme.fontFamily).width;
+	            if (textWidth >= fixedWidth) {
+	                newString += '..';
+	                break;
+	            }
+	            newString += textArray[i];
+	        }
+
+	        return newString;
 	    },
 
 	    /**
@@ -4538,9 +4566,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Show dot.
 	     * @param {object} dotInformation raphael object
+	     * @param {number} groupIndex seriesIndex
 	     * @private
 	     */
-	    _showDot: function(dotInformation) {
+	    _showDot: function(dotInformation, groupIndex) {
 	        var hoverTheme = this.theme.dot.hover;
 	        var attributes = {
 	            'fill-opacity': hoverTheme.fillOpacity,
@@ -4549,13 +4578,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'stroke-width': hoverTheme.strokeWidth,
 	            r: hoverTheme.radius
 	        };
-	        this.prevDotAttributes = dotInformation.dot.attr();
+
+	        this._setPrevDotAttributes(groupIndex, dotInformation.dot);
 
 	        if (hoverTheme.fillColor) {
 	            attributes.fill = hoverTheme.fillColor;
 	        }
 
 	        dotInformation.dot.attr(attributes);
+	    },
+
+	    /**
+	     * temp save dot style attribute
+	     * @param {number} groupIndex seriesIndex
+	     * @param {object} dot raphael circle object
+	     * @private
+	     */
+	    _setPrevDotAttributes: function(groupIndex, dot) {
+	        if (!this._prevDotAttributes) {
+	            this._prevDotAttributes = {};
+	        }
+	        this._prevDotAttributes[groupIndex] = dot.attr();
 	    },
 
 	    /**
@@ -4598,11 +4641,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (startLine) {
 	            this._updateLineStrokeWidth(startLine, strokeWidth);
 	        }
-
-	        this._showDot(item.endDot);
+	        this._showDot(item.endDot, groupIndex);
 
 	        if (item.startDot) {
-	            this._showDot(item.startDot);
+	            this._showDot(item.startDot, groupIndex);
 	        }
 	    },
 
@@ -4632,13 +4674,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 
-	        snippet.forEachArray(groupDots[index], function(item) {
+	        snippet.forEachArray(groupDots[index], function(item, groupIndex) {
 	            if (item.endDot) {
-	                self._showDot(item.endDot);
+	                self._showDot(item.endDot, groupIndex);
 	            }
 
 	            if (item.startDot) {
-	                self._showDot(item.startDot);
+	                self._showDot(item.startDot, groupIndex);
 	            }
 	        });
 	    },
@@ -4681,18 +4723,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Hide dot.
 	     * @param {object} dot raphael object
+	     * @param {number} groupIndex seriesIndex
 	     * @param {?number} opacity opacity
 	     * @private
 	     */
-	    _hideDot: function(dot, opacity) {
-	        var prev = this.prevDotAttributes;
+	    _hideDot: function(dot, groupIndex, opacity) {
+	        var prev = this._prevDotAttributes[groupIndex];
 	        var outDotStyle = this.outDotStyle;
 
 	        // prev 정보가 있다면 prev의 r을 적용해준다
 	        // hideDot시 dot이 사라져버리는 이슈 있음
 	        if (prev && !snippet.isUndefined(opacity)) {
 	            outDotStyle = snippet.extend({
-	                r: prev.r,
+	                'r': prev.r,
+	                'stroke': prev.stroke,
+	                'fill': prev.fill,
 	                'stroke-opacity': prev['stroke-opacity'],
 	                'stroke-width': prev['stroke-width']
 	            }, {
@@ -4742,10 +4787,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (item) {
-	            this._hideDot(item.endDot.dot, opacity);
+	            this._hideDot(item.endDot.dot, groupIndex, opacity);
 
 	            if (item.startDot) {
-	                this._hideDot(item.startDot.dot, opacity);
+	                this._hideDot(item.startDot.dot, groupIndex, opacity);
 	            }
 	        }
 	    },
@@ -4773,11 +4818,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            if (item.endDot) {
-	                self._hideDot(item.endDot.dot, opacity);
+	                self._hideDot(item.endDot.dot, groupIndex, opacity);
 	            }
 
 	            if (item.startDot) {
-	                self._hideDot(item.startDot.dot, opacity);
+	                self._hideDot(item.startDot.dot, groupIndex, opacity);
 	            }
 	        });
 	    },
@@ -7912,11 +7957,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Make labels width.
 	     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
 	     * @param {object} theme theme object
+	     * @param {number} maxWidth user option legend max width size
 	     * @returns {Array.<number>} label widths
 	     */
-	    makeLabelWidths: function(legendData, theme) {
+	    makeLabelWidths: function(legendData, theme, maxWidth) {
 	        return snippet.map(legendData, function(item) {
 	            var labelWidth = raphaelRenderUtil.getRenderedTextSize(item.label, theme.fontSize, theme.fontFamily).width;
+	            if (maxWidth && labelWidth > maxWidth) {
+	                labelWidth = maxWidth;
+	            }
 
 	            return labelWidth + chartConst.LEGEND_AREA_PADDING;
 	        });
@@ -8665,13 +8714,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var baseTop = layout.position.top;
 	        var baseLeft = layout.position.left;
 	        var tick;
+	        var isContainDivensionArea = function(position) {
+	            var compareType = isVertical ? 'height' : 'width';
+
+	            return (position > layout.dimension[compareType]);
+	        };
 
 	        snippet.forEach(positions, function(position) {
 	            var pathString = 'M';
 
 	            position += additionalSize;
 
-	            if (position > layout.dimension.width) {
+	            if (isContainDivensionArea(position)) {
 	                return;
 	            }
 
@@ -9310,6 +9364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *      @param {string} options.theme - theme name
@@ -9413,10 +9468,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} column chart
 	 * @api
 	 * @example
@@ -9518,6 +9576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *          @param {Array} options.plot.bands - plot bands
@@ -9532,6 +9591,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *                  - plot lines
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -9636,6 +9697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *          @param {Array} options.plot.bands - plot bands
@@ -9648,6 +9710,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {number} options.plot.lines.opacity - band opacity
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -9743,12 +9807,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {object} options.circleLegend - options for circleLegend
 	 *          @param {boolean} options.circleLegend.visible - whether visible or not (default: true)
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} bubble chart
 	 * @api
 	 * @example
@@ -9853,10 +9920,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} scatter chart
 	 * @api
 	 * @example
@@ -9947,8 +10017,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} scatter chart
 	 * @api
 	 * @example
@@ -10017,8 +10090,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} scatter chart
 	 * @api
 	 * @example
@@ -10139,6 +10215,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *          @param {Array} options.plot.bands - plot bands for line & area combo chart
@@ -10151,6 +10228,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {number} options.plot.lines.opacity - band opacity
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -10247,8 +10326,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -10318,6 +10400,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.map map type
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -10389,8 +10473,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+	 *          @param {number} options.legend.maxWidth - legend name display max width
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {object} options.chartExportMenu - options for exporting
+	 *          @param {string} options.chartExportMenu.filename - export file name
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -15458,6 +15545,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.chartTitle = params.chartTitle || 'tui-chart';
 
 	        /**
+	         * export filename
+	         * @type {string}
+	         */
+	        this.exportFilename = params.exportFilename || this.chartTitle;
+
+	        /**
 	         * chart type
 	         * @type {string}
 	         */
@@ -15679,7 +15772,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (elTarget.id) {
 	                this.eventBus.fire('beforeImageDownload');
 
-	                chartExporter.exportChart(this.chartTitle, elTarget.id,
+	                chartExporter.exportChart(this.exportFilename, elTarget.id,
 	                    this.dataProcessor.rawData, svgElement, this.options);
 
 	                this.eventBus.fire('afterImageDownload');
@@ -15749,9 +15842,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var isVisible = params.options.visible;
 	    var chartExportMenu = null;
 	    var chartOption = params.chartOptions.chart || {};
+	    var exportingOption = params.chartOptions.chartExportMenu;
 
 	    if (chartOption.title) {
 	        params.chartTitle = chartOption.title.text;
+	    }
+
+	    if (exportingOption && exportingOption.filename) {
+	        params.exportFilename = exportingOption.filename;
 	    }
 
 	    if (isVisible) {
@@ -16532,6 +16630,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var LegendModel = __webpack_require__(56);
 	var pluginFactory = __webpack_require__(31);
 	var predicate = __webpack_require__(11);
+	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
 	var ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
@@ -16685,14 +16784,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _getLegendRenderingData: function(legendData, labelHeight, labelWidths) {
-	        var self = this;
+	        var maxWidth = this.options.maxWidth;
 	        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
 	            && this.dataProcessor.options.series.colorByPoint;
 
 	        return snippet.map(legendData, function(legendDatum, index) {
-	            var checkbox = self.options.showCheckbox === false ? null : {
-	                checked: self.legendModel.isCheckedIndex(index)
+	            var checkbox = this.options.showCheckbox === false ? null : {
+	                checked: this.legendModel.isCheckedIndex(index)
 	            };
+	            var legendLabel = legendDatum.label;
+
+	            if (maxWidth) {
+	                legendLabel = raphaelRenderUtil.getEllipsisText(legendLabel, maxWidth, this.theme.label);
+	            }
 
 	            return {
 	                checkbox: checkbox,
@@ -16700,12 +16804,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                colorByPoint: colorByPoint,
 	                index: index,
 	                theme: legendDatum.theme,
-	                label: legendDatum.label,
+	                label: legendLabel,
 	                labelHeight: labelHeight,
 	                labelWidth: labelWidths[index],
-	                isUnselected: self.legendModel.isUnselectedIndex(index)
+	                isUnselected: this.legendModel.isUnselectedIndex(index)
 	            };
-	        });
+	        }, this);
 	    },
 
 	    /**
@@ -16719,7 +16823,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var graphRenderer = this.graphRenderer;
 	        var isHorizontal = predicate.isHorizontalLegend(this.options.align);
 	        var basePosition = this.layout.position;
-	        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
+	        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label, this.options.maxWidth);
 	        var labelTheme = legendData[0] ? legendData[0].theme : {};
 	        var labelHeight = graphRenderer.getRenderedLabelHeight('DEFAULT_TEXT', labelTheme) - 1;
 	        var labelCount = labelWidths.length;
@@ -26472,6 +26576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
+	var raphaelRenderUtil = __webpack_require__(5);
 
 	var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {
 	    /**
@@ -26504,6 +26609,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.prevClickedIndex = null;
 
 	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
+	        this.legendMaxWidth = params.legendMaxWidth;
 
 	        this._setDefaultOptions();
 	    },
@@ -26936,7 +27043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var seriesLabel = '';
 
 	        if (this.options.showLegend) {
-	            seriesLabel = legend;
+	            seriesLabel = raphaelRenderUtil.getEllipsisText(legend, this.legendMaxWidth, this.theme.label);
 	        }
 	        if (this.options.showLabel) {
 	            seriesLabel += (seriesLabel ? chartConst.LABEL_SEPARATOR : '') + label;
@@ -27180,6 +27287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var libType = params.chartOptions.libType;
 	    var chartTheme = params.chartTheme;
 	    var chartType = params.chartOptions.chartType;
+	    var legendOption = params.chartOptions.legend;
 
 	    params.libType = libType;
 	    params.chartType = 'pie';
@@ -27190,6 +27298,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // 추후 차트 생성자를 통합하게되면 데이터에 시리즈 타입이 포함되기 앨리어스가 필요 없어진다.
 	        params.seriesType = params.name.split('Series')[0];
 	        params.isCombo = true;
+	    }
+
+	    if (legendOption) {
+	        params.legendMaxWidth = legendOption.maxWidth;
 	    }
 
 	    params.chartBackground = chartTheme.chart.background;
@@ -33563,16 +33675,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Array.<string>} labels - legend labels
 	     * @param {{fontSize: number, fontFamily: number}} labelTheme - legend label theme
 	     * @param {number} checkboxWidth - width for checkbox
+	     * @param {?number} [maxWidth] - user option legend maxWidth
 	     * @returns {number}
 	     * @private
 	     */
-	    _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth) {
-	        var restWidth = LEGEND_AREA_PADDING + checkboxWidth
-	            + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+	    _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth, maxWidth) {
+	        var restWidth = LEGEND_AREA_PADDING + checkboxWidth +
+	            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
 	        var legendMargin = this.legendMargin;
 
 	        return calculator.sum(snippet.map(labels, function(label) {
-	            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme) + restWidth;
+	            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme);
+
+	            if (maxWidth && labelWidth > maxWidth) {
+	                labelWidth = maxWidth;
+	            }
+	            labelWidth += restWidth;
 
 	            return labelWidth + legendMargin;
 	        }));
@@ -33611,13 +33729,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Array.<string>} dividedLabels - divided labels
 	     * @param {{fontFamily: ?string, fontSize: ?string}} labelTheme - label theme
 	     * @param {number} checkboxWidth - width for checkbox
+	     * @param {?number} [maxWidth] - user option legend maxWidth
 	     * @returns {number}
 	     * @private
 	     */
-	    _getMaxLineWidth: function(dividedLabels, labelTheme, checkboxWidth) {
+	    _getMaxLineWidth: function(dividedLabels, labelTheme, checkboxWidth, maxWidth) {
 	        var self = this;
 	        var lineWidths = snippet.map(dividedLabels, function(labels) {
-	            return self._calculateLegendsWidthSum(labels, labelTheme, checkboxWidth);
+	            return self._calculateLegendsWidthSum(labels, labelTheme, checkboxWidth, maxWidth);
 	        });
 
 	        return arrayUtil.max(lineWidths);
@@ -33629,10 +33748,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} chartWidth chart width
 	     * @param {{fontSize: number, fontFamily: number}} labelTheme legend label theme
 	     * @param {number} checkboxWidth - width for checkbox
+	     * @param {?number} [maxWidth] - user option legend maxWidth
 	     * @returns {{dividedLabels: Array.<Array.<string>>, maxLineWidth: number}}
 	     * @private
 	     */
-	    _makeDividedLabelsAndMaxLineWidth: function(labels, chartWidth, labelTheme, checkboxWidth) {
+	    _makeDividedLabelsAndMaxLineWidth: function(labels, chartWidth, labelTheme, checkboxWidth, maxWidth) {
 	        var divideCount = 1;
 	        var maxLineWidth = 0;
 	        var prevMaxWidth = 0;
@@ -33640,7 +33760,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        do {
 	            dividedLabels = this._divideLegendLabels(labels, divideCount);
-	            maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth);
+	            maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth, maxWidth);
 
 	            if (prevMaxWidth === maxLineWidth) {
 	                dividedLabels = prevLabels;
@@ -33681,11 +33801,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Array.<string>} legendLabels - labels for legend
 	     * @param {number} chartWidth - chart width
 	     * @param {number} checkboxWidth - width for checkbox
+	     * @param {?number} [maxWidth] - user option legend maxWidth
 	     * @returns {{width: number, height: (number)}}
 	     * @private
 	     */
-	    _makeHorizontalDimension: function(labelTheme, legendLabels, chartWidth, checkboxWidth) {
-	        var dividedInfo = this._makeDividedLabelsAndMaxLineWidth(legendLabels, chartWidth, labelTheme, checkboxWidth);
+	    _makeHorizontalDimension: function(labelTheme, legendLabels, chartWidth, checkboxWidth, maxWidth) {
+	        var dividedInfo = this._makeDividedLabelsAndMaxLineWidth(
+	            legendLabels, chartWidth, labelTheme, checkboxWidth, maxWidth
+	        );
 	        var horizontalLegendHeight = this._calculateHorizontalLegendHeight(dividedInfo.labels, labelTheme);
 	        var legendHeight = horizontalLegendHeight + (LEGEND_AREA_PADDING * 2);
 
@@ -33700,13 +33823,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{fontSize: number, fontFamily: number}} labelTheme - label theme for legend
 	     * @param {Array.<string>} legendLabels - labels for legend
 	     * @param {number} checkboxWidth - width for checkbox
+	     * @param {?number} [maxWidth] - user option legend maxWidth
 	     * @returns {{width: (number)}}
 	     * @private
 	     */
-	    _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth) {
-	        var labelWidth = LEGEND_AREA_PADDING + checkboxWidth +
-	            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING +
-	            renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+	    _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth, maxWidth) {
+	        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+	        if (maxWidth && labelWidth > maxWidth) {
+	            labelWidth = maxWidth;
+	        }
+	        labelWidth += LEGEND_AREA_PADDING + checkboxWidth + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
 
 	        return {
 	            width: labelWidth + this.legendMargin,
@@ -33724,14 +33850,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    calculate: function(options, labelTheme, legendLabels, chartWidth) {
 	        var checkboxWidth = options.showCheckbox === false ? 0 : LEGEND_CHECKBOX_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+	        var maxWidth = options.maxWidth;
 	        var dimension = {};
 
 	        if (!options.visible) {
 	            dimension.width = 0;
 	        } else if (predicate.isHorizontalLegend(options.align)) {
-	            dimension = this._makeHorizontalDimension(labelTheme, legendLabels, chartWidth, checkboxWidth);
+	            dimension = this._makeHorizontalDimension(
+	                labelTheme, legendLabels, chartWidth, checkboxWidth, maxWidth
+	            );
 	        } else {
-	            dimension = this._makeVerticalDimension(labelTheme, legendLabels, checkboxWidth);
+	            dimension = this._makeVerticalDimension(labelTheme, legendLabels, checkboxWidth, maxWidth);
 	        }
 
 	        return dimension;
