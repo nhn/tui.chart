@@ -10,6 +10,7 @@ var chartConst = require('../../const');
 var LegendModel = require('./legendModel');
 var pluginFactory = require('../../factories/pluginFactory');
 var predicate = require('../../helpers/predicate');
+var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 var snippet = require('tui-code-snippet');
 
 var ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
@@ -163,14 +164,19 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _getLegendRenderingData: function(legendData, labelHeight, labelWidths) {
-        var self = this;
+        var maxWidth = this.options.maxWidth;
         var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
             && this.dataProcessor.options.series.colorByPoint;
 
         return snippet.map(legendData, function(legendDatum, index) {
-            var checkbox = self.options.showCheckbox === false ? null : {
-                checked: self.legendModel.isCheckedIndex(index)
+            var checkbox = this.options.showCheckbox === false ? null : {
+                checked: this.legendModel.isCheckedIndex(index)
             };
+            var legendLabel = legendDatum.label;
+
+            if (maxWidth) {
+                legendLabel = raphaelRenderUtil.getEllipsisText(legendLabel, maxWidth, this.theme.label);
+            }
 
             return {
                 checkbox: checkbox,
@@ -178,12 +184,12 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
                 colorByPoint: colorByPoint,
                 index: index,
                 theme: legendDatum.theme,
-                label: legendDatum.label,
+                label: legendLabel,
                 labelHeight: labelHeight,
                 labelWidth: labelWidths[index],
-                isUnselected: self.legendModel.isUnselectedIndex(index)
+                isUnselected: this.legendModel.isUnselectedIndex(index)
             };
-        });
+        }, this);
     },
 
     /**
@@ -197,7 +203,7 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
         var graphRenderer = this.graphRenderer;
         var isHorizontal = predicate.isHorizontalLegend(this.options.align);
         var basePosition = this.layout.position;
-        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label);
+        var labelWidths = graphRenderer.makeLabelWidths(legendData, this.theme.label, this.options.maxWidth);
         var labelTheme = legendData[0] ? legendData[0].theme : {};
         var labelHeight = graphRenderer.getRenderedLabelHeight('DEFAULT_TEXT', labelTheme) - 1;
         var labelCount = labelWidths.length;

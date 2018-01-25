@@ -10,6 +10,7 @@ var Series = require('./series');
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var snippet = require('tui-code-snippet');
+var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 
 var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -42,6 +43,8 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
         this.prevClickedIndex = null;
 
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
+        this.legendMaxWidth = params.legendMaxWidth;
 
         this._setDefaultOptions();
     },
@@ -474,7 +477,7 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
         var seriesLabel = '';
 
         if (this.options.showLegend) {
-            seriesLabel = legend;
+            seriesLabel = raphaelRenderUtil.getEllipsisText(legend, this.legendMaxWidth, this.theme.label);
         }
         if (this.options.showLabel) {
             seriesLabel += (seriesLabel ? chartConst.LABEL_SEPARATOR : '') + label;
@@ -718,6 +721,7 @@ function pieSeriesFactory(params) {
     var libType = params.chartOptions.libType;
     var chartTheme = params.chartTheme;
     var chartType = params.chartOptions.chartType;
+    var legendOption = params.chartOptions.legend;
 
     params.libType = libType;
     params.chartType = 'pie';
@@ -728,6 +732,10 @@ function pieSeriesFactory(params) {
         // 추후 차트 생성자를 통합하게되면 데이터에 시리즈 타입이 포함되기 앨리어스가 필요 없어진다.
         params.seriesType = params.name.split('Series')[0];
         params.isCombo = true;
+    }
+
+    if (legendOption) {
+        params.legendMaxWidth = legendOption.maxWidth;
     }
 
     params.chartBackground = chartTheme.chart.background;
