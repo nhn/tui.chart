@@ -266,11 +266,15 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      * Make labels width.
      * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
      * @param {object} theme theme object
+     * @param {number} maxWidth user option legend max width size
      * @returns {Array.<number>} label widths
      */
-    makeLabelWidths: function(legendData, theme) {
+    makeLabelWidths: function(legendData, theme, maxWidth) {
         return snippet.map(legendData, function(item) {
             var labelWidth = raphaelRenderUtil.getRenderedTextSize(item.label, theme.fontSize, theme.fontFamily).width;
+            if (maxWidth && labelWidth > maxWidth) {
+                labelWidth = maxWidth;
+            }
 
             return labelWidth + chartConst.LEGEND_AREA_PADDING;
         });

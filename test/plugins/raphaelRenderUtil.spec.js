@@ -47,4 +47,16 @@ describe('RaphaelLineTypeBase', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('getEllipsisText()', function() {
+        it('should be a string value less than the set width.', function() {
+            var fontOption = {
+                fontSize: 11,
+                fontFamily: 'Verdana'
+            };
+            var newString = raphaelRenderUtil.getEllipsisText('get elipsis text test', 50, fontOption);
+
+            expect(newString).toBe('get elip..');
+        });
+    });
 });

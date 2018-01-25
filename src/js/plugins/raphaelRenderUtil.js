@@ -16,6 +16,7 @@ var raphael = require('raphael');
  * @private
  */
 var raphaelRenderUtil = {
+
     /**
      * Make line path.
      * @memberOf module:raphaelRenderUtil
@@ -64,6 +65,33 @@ var raphaelRenderUtil = {
         line.attr(strokeStyle);
 
         return line;
+    },
+
+    /**
+     * text ellipsis for fixed width
+     * @param {string} text - target text
+     * @param {number} fixedWidth - width for elipsis
+     * @param {object} theme - lable theme
+     * @returns {string}
+     */
+    getEllipsisText: function(text, fixedWidth, theme) {
+        var textArray = text.split('');
+        var textLength = textArray.length;
+        var dotWidth = this.getRenderedTextSize('.', theme.fontSize, theme.fontFamily).width;
+        var textWidth = dotWidth * 2;
+        var newString = '';
+        var i = 0;
+
+        for (; i < textLength; i += 1) {
+            textWidth += this.getRenderedTextSize(textArray[i], theme.fontSize, theme.fontFamily).width;
+            if (textWidth >= fixedWidth) {
+                newString += '..';
+                break;
+            }
+            newString += textArray[i];
+        }
+
+        return newString;
     },
 
     /**
