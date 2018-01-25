@@ -35,6 +35,29 @@ describe('RaphaelAxisComponent', function() {
         positionWithoutOffset = null;
     });
 
+    describe('renderTicks() ', function() {
+        beforeEach(function() {
+            data.paper = paper;
+            data.additionalSize = 0;
+            raphaelAxisComponent.ticks = [];
+        });
+
+        it('position beyond the dimension in the vertical axis should not be added.', function() {
+            data.isVertical = true;
+            data.positions = [300, 900, 1200, 1500];
+            raphaelAxisComponent.renderTicks(data);
+
+            expect(raphaelAxisComponent.ticks.length).toBe(2);
+        });
+        it('position beyond the dimension in the horizontal axis should not be added.', function() {
+            data.isVertical = false;
+            data.positions = [200, 400, 800, 900, 1000, 1200];
+            raphaelAxisComponent.renderTicks(data);
+
+            expect(raphaelAxisComponent.ticks.length).toBe(5);
+        });
+    });
+
     describe('calculatePosition() ', function() {
         it('should add offset when rotationInfo is empty object', function() {
             positionWithoutOffset = raphaelAxisComponent.calculatePosition(paper, data);
