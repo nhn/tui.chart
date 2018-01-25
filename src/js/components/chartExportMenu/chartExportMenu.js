@@ -341,19 +341,7 @@ function chartExportMenuFactory(params) {
     var isVisible = params.options.visible;
     var chartExportMenu = null;
     var chartOption = params.chartOptions.chart || {};
-<<<<<<< HEAD
-    var exportingOption = params.chartOptions.exporting;
-    var getExportFilename = function() {
-        var chartTitle;
-        if (exportingOption && exportingOption.filename) {
-            chartTitle = exportingOption.filename;
-        }
-        if (chartOption.title) {
-            chartTitle = chartOption.title.text;
-        }
-=======
     var exportingOption = params.chartOptions.chartExportMenu;
->>>>>>> ba1d9809... fix: edit codereview all (fix #707)
 
     if (chartOption.title) {
         params.chartTitle = chartOption.title.text;
