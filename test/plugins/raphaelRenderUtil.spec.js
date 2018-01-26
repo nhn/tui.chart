@@ -50,13 +50,18 @@ describe('RaphaelLineTypeBase', function() {
 
     describe('getEllipsisText()', function() {
         it('should be a string value less than the set width.', function() {
-            var fontOption = {
+            var paper = raphael(document.body, 100, 100);
+            var newString = raphaelRenderUtil.getEllipsisText('get elipsis text test', 50, {
                 fontSize: 11,
-                fontFamily: 'Verdana'
-            };
-            var newString = raphaelRenderUtil.getEllipsisText('get elipsis text test', 50, fontOption);
+                fontFamily: 'Verdana',
+                color: '#000000'
+            });
+            var textElement = paper.text(0, 0, newString).attr({fontFamily: 'Verdana', color: '#000000'});
 
-            expect(newString).toBe('get elip..');
+            expect(textElement.getBBox().width).toBeLessThan(50);
+
+            textElement.remove();
+            paper.remove();
         });
     });
 });
