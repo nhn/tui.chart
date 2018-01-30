@@ -264,7 +264,7 @@ describe('Test for ScaleDataMaker', function() {
     });
 
     describe('_calculateCoordinateScale()', function() {
-        it('limitOption 값이 있는 경우 옵션의 min, max를 반환합니다.', function() {
+        it('should return limitOption, if there is limitOption', function() {
             var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
                 limitOption: {
                     min: 0,
@@ -287,7 +287,6 @@ describe('Test for ScaleDataMaker', function() {
             expect(scaleData.limit.max).toBe(40);
             expect(scaleData.limit.min).toBe(0);
             expect(scaleData.step).toBe(10);
-        });
 
         it('should adjust limit.max value, if no limtOption and max value is not zero', function() {
             var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
@@ -353,7 +352,7 @@ describe('Test for ScaleDataMaker', function() {
     });
 
     describe('_calculatePercentStackedScale()', function() {
-        it('음수의 합이 0일 경우에는 chartConst.PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('should return chartConst.PERCENT_STACKED_AXIS_RANGE, when sum of negative values is 0', function() {
             var baseValues = [10, 20, 30, 40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues);
             var expected = chartConst.PERCENT_STACKED_AXIS_SCALE;
@@ -361,7 +360,7 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('양수의 합이 0일 경우에는 chartConst.MINUS_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('should return chartConst.MINUS_PERCENT_STACKED_AXIS_RANGE, when sum of positive values is 0', function() {
             var baseValues = [-10, -20, -30, -40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues);
             var expected = chartConst.MINUS_PERCENT_STACKED_AXIS_SCALE;
@@ -369,7 +368,7 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 있을 경우에는 chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('should return chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE, when there is diverging option with negatives and positives sum are not 0', function() {
             var baseValues = [-10, 20, -30, 40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, true);
             var expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
@@ -377,7 +376,7 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE 반환합니다.', function() {
+        it('should return chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE, when there is no diverging option with negatives and positives sum are not 0', function() {
             var baseValues = [-10, 20, -30, 40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, false);
             var expected = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;

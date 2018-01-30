@@ -32,7 +32,8 @@ var RadialChart = snippet.defineClass(ChartBase, /** @lends RadialChart.prototyp
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        // Radial차트는 그룹툴팁을 지원하지 않음, 지원하게되면 아래 코드 삭제
+        // radial chart doesn't supprot group tooltip
+        // should delete this code, when it supports group tooltip
         if (options.tooltip) {
             options.tooltip.grouped = false;
         }

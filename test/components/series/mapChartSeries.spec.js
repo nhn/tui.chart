@@ -34,7 +34,7 @@ describe('MapChartSeries', function() {
     });
 
     describe('_setMapRatio()', function() {
-        it('맵이 그려지는 시리즈의 사이즈 영역의 사이즈를 실제 맵의 사이즈로 나누어 비율값을 구해 mapRatio로 설정합니다. ', function() {
+        it('should calculate map ratio by dividing map size to chart area size. ', function() {
             var actual, expected;
 
             series.layout = {
@@ -55,7 +55,7 @@ describe('MapChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('너비와 높이의 ratio가 다를 경우 작은 값을 mapRatio로 설정합니다', function() {
+        it('should set map ratio, to smaller ratio of width and height', function() {
             var actual, expected;
 
             series.layout = {
@@ -78,7 +78,7 @@ describe('MapChartSeries', function() {
     });
 
     describe('_setGraphDimension()', function() {
-        it('시리즈 dimension에 zoomMagn를 곱하여 graphDimension을 구합니다', function() {
+        it('should set graph dimension by multiplying series dimension with zoom magnification', function() {
             var actual, expected;
 
             series.layout = {
@@ -101,7 +101,7 @@ describe('MapChartSeries', function() {
     });
 
     describe('_setLimitPositionToMoveMap', function() {
-        it('지도 이동 position의 limit을 설정합니다.', function() {
+        it('should limit position of moving map.', function() {
             var actual, expected;
 
             series.layout = {
@@ -127,7 +127,7 @@ describe('MapChartSeries', function() {
     });
 
     describe('_adjustMapPosition()', function() {
-        it('설정된 limit position부터 0까지의 범위를 넘어가는 position값에 대해 넘어가지 않도록 보정합니다', function() {
+        it('should adjust map position for making position not to over limit or under 0', function() {
             var actual, expected;
 
             series.limitPosition = {
@@ -149,7 +149,7 @@ describe('MapChartSeries', function() {
     });
 
     describe('_updatePositionsToResize()', function() {
-        it('리사이즈 시의 position 정보들을 변경되는 비율만큼 갱신합니다.', function() {
+        it('should update position for resizing.', function() {
             series.mapRatio = 2;
             series.basePosition = {
                 left: -10,

@@ -22,7 +22,7 @@ describe('Test for MapChartEventDetector', function() {
     });
 
     describe('_onMouseDown()', function() {
-        it('mousedown 이벤트 발생시에 dragStartMapSeries 커스텀 이벤트를 발생시킵니다.', function() {
+        it('should trigger `dragStartMapSeries` custom event on mousedown event', function() {
             var eventObject = {
                     clientX: 10,
                     clientY: 20
@@ -40,7 +40,7 @@ describe('Test for MapChartEventDetector', function() {
     });
 
     describe('_onMouseup()', function() {
-        it('isDrag가 true일 경우에 mouseEventDetectorContainer에 drag class를 제거하고 dragEndMapSeries 커스텀 이벤트를 발생시킵니다.', function() {
+        it('should reset drag state and trigger `dragEndMapSeries` custom event, on mouse up while dragging', function() {
             var expectedEventName = 'dragEndMapSeries';
 
             mouseEventDetector.mouseEventDetectorContainer = dom.create('DIV', 'drag');
@@ -51,7 +51,7 @@ describe('Test for MapChartEventDetector', function() {
             expect(mouseEventDetector.mouseEventDetectorContainer.className).toBe('');
         });
 
-        it('isDrag가 false일 경우에 _onMouseEvent함수에 "click"문자열과 event object를 전달합니다.', function() {
+        it('should think mouse up without dragging to click event, then pass click object to series', function() {
             var eventObject = {
                     clientX: 10,
                     clientY: 20
@@ -67,7 +67,7 @@ describe('Test for MapChartEventDetector', function() {
     });
 
     describe('_onMousemove()', function() {
-        it('isDown true일 경우에 dragMapSeries 커스텀 이벤트를 발생시킵니다.', function() {
+        it('should trigger `dragMapSeries` custom event, when after mousedown', function() {
             var eventObject = {
                     clientX: 10,
                     clientY: 20
@@ -85,7 +85,7 @@ describe('Test for MapChartEventDetector', function() {
             expect(mouseEventDetector.eventBus.fire).toHaveBeenCalledWith(expectedEventName, expectedPosition);
         });
 
-        it('isDown true이면서 isDrag가 false이면 추가적으로 container에 darg class를 추가합니다.', function() {
+        it('should set state of mouse event detector to dragging, when mousedown and not yet dragging', function() {
             var eventObject = {
                 clientX: 10,
                 clientY: 20
@@ -99,7 +99,7 @@ describe('Test for MapChartEventDetector', function() {
             expect(mouseEventDetector.mouseEventDetectorContainer.className).toBe('drag');
         });
 
-        it('isDrag가 false일 경우에 _onMouseEvent함수에 "move"문자열과 event object를 전달합니다.', function() {
+        it('should think no drag event trigger, if mouse moved without isDrag frag, and then pass event target coordinate', function() {
             var eventObject = {
                     clientX: 10,
                     clientY: 20
@@ -115,7 +115,7 @@ describe('Test for MapChartEventDetector', function() {
     });
 
     describe('_onMouseup()', function() {
-        it('isDrag가 true일 경우에 mouseEventDetectorContainer에 drag class를 제거하고 dragEndMapSeries 커스텀 이벤트를 발생시킵니다.', function() {
+        it('should judge dragging is end and trigger `dragEndMapSeries` custom event, when mouse up after dragging', function() {
             var expectedEventName = 'dragEndMapSeries';
 
             mouseEventDetector.mouseEventDetectorContainer = dom.create('DIV', 'drag');

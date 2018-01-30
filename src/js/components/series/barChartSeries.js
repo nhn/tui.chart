@@ -181,7 +181,7 @@ function barSeriesFactory(params) {
     return new BarChartSeries(params);
 }
 
-// @todo 더나은 방법 찾아보자
+// @todo let's find better way
 barSeriesFactory.componentType = 'series';
 barSeriesFactory.BarChartSeries = BarChartSeries;
 

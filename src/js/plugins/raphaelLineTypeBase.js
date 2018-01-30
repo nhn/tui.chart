@@ -515,8 +515,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var prev = this._prevDotAttributes[groupIndex];
         var outDotStyle = this.outDotStyle;
 
-        // prev 정보가 있다면 prev의 r을 적용해준다
-        // hideDot시 dot이 사라져버리는 이슈 있음
+        // if prev data exists, use prev.r
+        // there is dot disappearing issue, when hideDot
         if (prev && !snippet.isUndefined(opacity)) {
             outDotStyle = snippet.extend({
                 'r': prev.r,

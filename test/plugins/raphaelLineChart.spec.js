@@ -16,7 +16,7 @@ describe('RaphaelLineChart', function() {
     });
 
     describe('_getLinesPath()', function() {
-        it('라인 차트를 그리기 위한 path정보를 반환합니다.', function() {
+        it('should creat path for normal line chart', function() {
             var actual = lineChart._getLinesPath([[{
                     left: 10,
                     top: 30,
@@ -32,7 +32,7 @@ describe('RaphaelLineChart', function() {
     });
 
     describe('_getSplineLinesPath()', function() {
-        it('spline 라인 차트를 그리기 위한 path정보를 반환합니다.', function() {
+        it('should creat path for spline line chart', function() {
             var actual, expected;
 
             lineChart.zeroTop = 50;

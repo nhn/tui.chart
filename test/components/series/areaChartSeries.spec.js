@@ -29,8 +29,7 @@ describe('AreaChartSeries', function() {
     });
 
     describe('_makePositionTopOfZeroPoint', function() {
-        it('min이 음수이고 max가 양수일 경우에는 0점에서 max까지의 거리(_getLimitDistanceFromZeroPoint)를' +
-            ' top position 정보에 확장 사이트를 더하여 반환합니다.', function() {
+        it('should make postion to _getLimitDistanceFromZeroPoint().toMax + EXPAND_SIZE, when min is negative and max is positive', function() {
             var limit = {
                 min: -10,
                 max: 10
@@ -53,7 +52,7 @@ describe('AreaChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('min, max가 모두 양수인 경우에는 입력 높이에 확장 사이즈를 더하여 반환합니다.', function() {
+        it('should return height + EXPAND_SIZE, if min, max are positive.', function() {
             var limit = {
                 min: 0,
                 max: 10
@@ -76,7 +75,7 @@ describe('AreaChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('min, max가 모두 음수인 경우에는 확장 사이즈를 반환합니다.', function() {
+        it('should return EXPAND_SIZE if min, max are negatives.', function() {
             var limit = {
                 min: -20,
                 max: -10
@@ -101,7 +100,7 @@ describe('AreaChartSeries', function() {
     });
 
     describe('_makeStackedPositions()', function() {
-        it('영역 chart의 기존 position값에 이전 top을 startTop으로 설정하여 stackType position 정보를 구합니다.', function() {
+        it('should make stack type position by setting the previous top to startTop.', function() {
             var actual, expected;
 
             series.layout.dimension = {
@@ -140,7 +139,7 @@ describe('AreaChartSeries', function() {
     });
 
     describe('_makePositions()', function() {
-        it('영역 차트의 position은 stack 차트의 경우 _makeBasicPositions 실행 결과를 전달하여 _makeStackedPositions를 실행한 결과를 반환합니다.', function() {
+        it('should make stack type position by using _makeBasicPositions() and _makeStackedPosition().', function() {
             var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
                 actual, expected;
 
@@ -157,7 +156,7 @@ describe('AreaChartSeries', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('영역 차트의 position은 stack 차트가 아닌경우 경우 _makeBasicPositions 실행한 결과를 반환합니다.', function() {
+        it('should make non stack type position by using _makeBasicPosition().', function() {
             var actual, expected;
 
             series.layout.dimension = {

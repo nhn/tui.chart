@@ -17,7 +17,8 @@ describe('BarTypeSeriesBase', function() {
     var series, dataProcessor;
 
     beforeAll(function() {
-        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        // Rendered width, height is different according to browser
+        // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
@@ -51,28 +52,27 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_getBarWidthOptionSize()', function() {
-        it('optionBarWidth 가 (pointInterval * 2) 보다 작을 경우에는 옵션 값을 반환합니다.', function() {
+        it('should return optionBarWidth, if optionBarWidth is less than (pointInterval * 2).', function() {
             expect(series._getBarWidthOptionSize(14, 27)).toBe(27);
         });
 
-        it('(optionBarWidth / 2) >= pointInterval 인경우에는 (pointInterval * 2)를 반환합니다.', function() {
+        it('should return (pointInterval * 2) if (optionBarWidth / 2) >= pointInterval', function() {
             expect(series._getBarWidthOptionSize(14, 50)).toBe(28);
         });
-        it('optionBarWidth < 0 인경우에는 0을 반환합니다.', function() {
+        it('should return 0 if optionBarWidth < 0.', function() {
             expect(series._getBarWidthOptionSize(14, -2)).toBe(0);
         });
     });
 
     describe('_calculateAdditionalPosition()', function() {
-        it('시리즈 양쪽 사이드 영역의 추가적인 position값을 구합니다. 옵션이 없을 경우에는 0을 반환합니다.', function() {
+        it('should return 0 when no option.', function() {
             var actual = series._calculateAdditionalPosition(14);
             var expected = 0;
 
             expect(actual).toBe(expected);
         });
 
-        it('optionsSize(두번째인자) 값이 있으면서 barSize보다 작으면 barSize(첫번째인자)을 반으로 나눈 값에' +
-            'barSize와의 차를 itemCount(세번째인자)로 곱하고 2로 나눈 값을 더하여 반환합니다.', function() {
+        it('should return (barSize / 2) + ((barSize - optionSize) * itemCount / 2) when optionsSize < barSize.', function() {
             var actual = series._calculateAdditionalPosition(14, 10, 4);
             var expected = 15;
             expect(actual).toBe(expected);
@@ -113,7 +113,7 @@ describe('BarTypeSeriesBase', function() {
 
             expect(actual).toBe();
         });
-        it('바, 컬럼 차트의 bound를 계산하기 위한 baseData를 생성합니다.', function() {
+        it('should make baseData for calculating bounds of bar or column chart.', function() {
             var baseGroupSize = 60;
             var baseBarSize = 60;
             var seriesDataModel = new SeriesDataModel();
@@ -158,12 +158,12 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_makeSumValues()', function() {
-        it('[10, 20, 30] values의 합은 60입니다.', function() {
+        it('should calculate sum of [10, 20, 30].', function() {
             var actual = series._makeSumValues([10, 20, 30]);
             expect(actual).toBe('60');
         });
 
-        it('두번째 인자에 포맷팅 함수 배열을 넘기면 합한 결과를 전달한 함수 배열들로 포맷팅 하여 반환합니다.', function() {
+        it('should format sum, if second argument is array of format function.', function() {
             var actual;
 
             dataProcessor.getFormatFunctions.and.returnValue([function(value) {
@@ -176,7 +176,7 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('stackType 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
+        it('should call _renderNormalSeriesLabel(), if there is not stack option.', function() {
             var elLabelArea = dom.create('div');
             var paper = raphael(elLabelArea, 100, 100);
             var seriesDataModel = new SeriesDataModel();
@@ -213,7 +213,7 @@ describe('BarTypeSeriesBase', function() {
             expect(series._renderNormalSeriesLabel).toHaveBeenCalled();
         });
 
-        it('stackType 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
+        it('should call _renderStackedSeriesLabel() if there is stack option.', function() {
             var elLabelArea = dom.create('div');
             var paper = raphael(elLabelArea, 100, 100);
             var seriesDataModel = new SeriesDataModel();

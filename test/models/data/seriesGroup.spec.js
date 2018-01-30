@@ -17,7 +17,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('_createValues()', function() {
-        it('seriesItem들에서 values를 추출합니다.', function() {
+        it('should pick values from all series items', function() {
             var actual, expected;
             seriesGroup.items = [
                 new SeriesItem({
@@ -40,7 +40,7 @@ describe('Test for seriesGroup', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('seriesItem이 range 타입일 경우 start값을 포함하여 추출합니다.', function() {
+        it('should return start value, when series item is range type', function() {
             var actual, expected;
             seriesGroup.items = [
                 new SeriesItem({
@@ -65,7 +65,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('_makeValuesMapPerStack()', function() {
-        it('seriesItem에서 value를 추출하여 stack 기준으로 values map을 생성합니다.', function() {
+        it('should create stacked values from series item', function() {
             var actual, expected;
 
             seriesGroup.items = [
@@ -113,7 +113,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('_makeSumMapPerStack()', function() {
-        it('stack으로 구성된 valueMap을 값을 values의 합 으로 대체하여 반환합니다.', function() {
+        it('should replace each stack data to sum of values', function() {
             var actual, expected;
 
             seriesGroup.items = [
@@ -161,7 +161,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('addRatiosWhenPercentStacked()', function() {
-        it('percent stackType옵션일 경우에는 dividingNumber를 구하여 baseRatio와 함께 seriesItem.addRatio에 전달 합니다.', function() {
+        it('should calculate dividing number, when percent stack chart.', function() {
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;
@@ -174,7 +174,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('addRatiosWhenDivergingStacked()', function() {
-        it('diverging stackType옵션일 경우에는 plusSum, minusSum 중 하나를 선택하여 dividingNumber로 선택한 후 baseRatio 0.5와 함께 seriesItem.addRatio에 전달 합니다.', function() {
+        it('should send dividing number and 0.5 when diverging chart. dividing number should be selected from plus or minus sum', function() {
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;
@@ -186,7 +186,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('addRatios()', function() {
-        it('addRatios는 전달 받은 divNumber, subValue를 seriesItem.addRatio에 그대로 전달 합니다.', function() {
+        it('should send a dividing number and substraction value to addRatio()', function() {
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;

@@ -288,10 +288,10 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
         var candidates;
 
         if (groupIndex > -1 && this.data[groupIndex]) {
-            // layerX, layerY를 포함하는 data 추출
+            // extract data containing layerX, layerY
             candidates = this._findCandidates(this.data[groupIndex], layerX, layerY);
 
-            // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
+            // find nearest data to top position among extracted data
             snippet.forEachArray(candidates, function(data) {
                 var diff = Math.abs(layerY - data.bound.top);
 

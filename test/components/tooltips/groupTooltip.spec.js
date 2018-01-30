@@ -28,7 +28,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('makeTooltipData()', function() {
-        it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function() {
+        it('should make data for making group tooltip.', function() {
             var actual, expected;
 
             dataProcessor.getSeriesGroups.and.returnValue([
@@ -82,7 +82,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeColors()', function() {
-        it('툴팁 테마에 colors가 설정되어있으면 그대로 반환합니다.', function() {
+        it('should set colors if there is preset color theme.', function() {
             var actual, expected;
 
             dataProcessor.getLegendData.and.returnValue([{
@@ -101,7 +101,7 @@ describe('GroupTooltip', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('툴팁 테마에 colors값이 없으면 기본 series 색상 정보를 반환합니다.', function() {
+        it('should set colors to default series color, if there is no preset colors theme.', function() {
             var legendLabels = [{
                     chartType: 'column',
                     label: 'legend1'
@@ -116,7 +116,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeItemRenderingData()', function() {
-        it('렌더링에 사용할 seriesItem data를 생성합니다.', function() {
+        it('should make series item model for series rendering.', function() {
             var actual, expected;
 
             dataProcessor.getLegendItem.and.callFake(function(index) {
@@ -186,7 +186,7 @@ describe('GroupTooltip', function() {
             tooltip.data = [];
             expect(tooltip._makeGroupTooltipHtml(1)).toBe('');
         });
-        it('전달하는 index에 해당하는 datum을 추출하여 기본 그룹 툴팁 html을 생성합니다.', function() {
+        it('should make default tooltip HTML from data of specific index', function() {
             var actual, expected;
             tooltip.data = [
                 {
@@ -217,7 +217,7 @@ describe('GroupTooltip', function() {
             expect(actual).toBe(expected);
         });
 
-        it('전달하는 index에 해당하는 datum을 추출하여 template 그룹 툴팁 html을 생성합니다.', function() {
+        it('should make defualt group tooltip HTML from data.', function() {
             var actual, expected;
 
             tooltip.templateFunc = function(category, items) {
@@ -261,7 +261,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('_getTooltipSectorElement', function() {
-        it('툴팁 섹터 엘리먼트를 얻습니다.', function() {
+        it('should make tooltip selector element.', function() {
             var tooltipContainer = dom.create('DIV'),
                 actual;
             tooltip.tooltipContainer = tooltipContainer;
@@ -270,7 +270,7 @@ describe('GroupTooltip', function() {
             expect(actual.className).toBe('tui-chart-group-tooltip-sector');
         });
 
-        it('this.elTooltipSector이 존재하면 그대로 반환합니다.', function() {
+        it('should return existing tooltip element, this.elTooltipSector.', function() {
             var groupTooltipSector = dom.create('DIV'),
                 actual, expected;
             tooltip.groupTooltipSector = groupTooltipSector;
@@ -281,7 +281,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeVerticalTooltipSectorBound()', function() {
-        it('라인타입 차트의 세로영역 툴팁 섹터 bound 정보를 생성합니다.', function() {
+        it('should make vertical tooltip sector bound of line type chart.', function() {
             var actual = tooltip._makeVerticalTooltipSectorBound(200, {
                     start: 0,
                     end: 50
@@ -299,7 +299,7 @@ describe('GroupTooltip', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('라인타입 차트가 아닌경우의 세로영역 툴팁 섹터 bound 정보를 생성합니다.', function() {
+        it('should make vertical tooltip sector bound of non-line type chart.', function() {
             var actual = tooltip._makeVerticalTooltipSectorBound(200, {
                     start: 0,
                     end: 50
@@ -319,7 +319,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeHorizontalTooltipSectorBound()', function() {
-        it('가로영역 툴팁 섹터 bound 정보를 생성합니다.', function() {
+        it('should make tooltip sector bound of horizontal chart.', function() {
             var actual = tooltip._makeHorizontalTooltipSectorBound(200, {
                     start: 0,
                     end: 50
@@ -339,7 +339,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeTooltipSectorBound()', function() {
-        it('세로타입의 차트의 경우는 _makeVerticalTooltipSectorBound()의 실행 결과를 반환합니다.', function() {
+        it('should call _makeVerticalTooltipSectorBound() if vertical chart.', function() {
             var size = 200,
                 range = {
                     start: 0,
@@ -352,7 +352,7 @@ describe('GroupTooltip', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('가로타입의 차트의 경우는 _makeHorizontalTooltipSectorBound()의 실행 결과를 반환합니다.', function() {
+        it('should call _makeHorizontalTooltipSectorBound() if horizontal chart.', function() {
             var size = 200,
                 range = {
                     start: 0,

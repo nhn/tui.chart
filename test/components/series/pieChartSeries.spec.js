@@ -18,7 +18,8 @@ describe('PieChartSeries', function() {
     var series, dataProcessor;
 
     beforeAll(function() {
-        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        // Rendered width, height is different according to browser
+        // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
@@ -50,19 +51,19 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makeValidAngle()', function() {
-        it('angle이 음수각인 경우에는 360 이하의 양수각으로 변경하여 반환합니다.', function() {
+        it('should convert negative angle to positive angle under 360.', function() {
             var actual = series._makeValidAngle(-90);
 
             expect(actual).toBe(270);
         });
 
-        it('angle이 양수일 경우에는 360이하의 각으로 변경하여 반환합니다', function() {
+        it('should convert over 360 angle to under 360 angle', function() {
             var actual = series._makeValidAngle(450);
 
             expect(actual).toBe(90);
         });
 
-        it('angle이 undefined인 경우에는 defaultAngle을 반환합니다.', function() {
+        it('should return default angle if angle is undefined.', function() {
             var angle;
             var defaultAngle = 0;
             var actual = series._makeValidAngle(angle, defaultAngle);
@@ -72,7 +73,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_calculateAngleForRendering()', function() {
-        it('startAngle이 endAngle보다 작으면 endAngle에서 startAngle을 뺀 값을 반환합니다.', function() {
+        it('should calculate angle by subtracting start angle from end angle, if start angle is larger than end angle.', function() {
             var actual;
 
             series.options = {
@@ -85,7 +86,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(80);
         });
 
-        it('startAngle이 endAngle보다 크면 360에서 endAngle과 startAngle의 차를 뺀 값을 반환합니다.', function() {
+        it('should calculate angle by (360 - (start - angle)), if start angle is larger than end angle.', function() {
             var actual;
 
             series.options = {
@@ -98,7 +99,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(280);
         });
 
-        it('startAngle과 endAngle이 같으면 360을 반환합니다.', function() {
+        it('should return 360, if start and end angle are same.', function() {
             var actual;
 
             series.options = {
@@ -113,7 +114,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_getQuadrantFromAngle()', function() {
-        it('angle이 0 이상 90 미만이면 1을 반환합니다.', function() {
+        it('should return 1 if angle is more or same to 0, and less than 90.', function() {
             var actual = series._getQuadrantFromAngle(0);
 
             expect(actual).toBe(1);
@@ -127,7 +128,7 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(1);
         });
 
-        it('angle이 90 이상 180 미만이면 2를 반환합니다.', function() {
+        it('should return 2, if angle is more or same to 90, and less than 180.', function() {
             var actual = series._getQuadrantFromAngle(90);
 
             expect(actual).toBe(2);
@@ -141,7 +142,7 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(2);
         });
 
-        it('angle이 180이상 270 미만이면 3을 반환합니다.', function() {
+        it('should return 3, if angle is more or same to 180, and less than 270.', function() {
             var actual = series._getQuadrantFromAngle(180);
 
             expect(actual).toBe(3);
@@ -155,7 +156,7 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(2);
         });
 
-        it('angle이 270이상 360 미만이면 4를 반환합니다.', function() {
+        it('should return 4, if angle is more or same to 270, and less than 360.', function() {
             var actual = series._getQuadrantFromAngle(270);
 
             expect(actual).toBe(4);
@@ -169,7 +170,7 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(4);
         });
 
-        it('isEnd가 true이면서 angle이 90의 배수이면 기존 결과값에서 1을 빼낸 결과를 반환합니다.', function() {
+        it('should subtract 1 from original quadrant, if isEnd is true and angle is multiples of 90', function() {
             var isEnd = true;
             var actual = series._getQuadrantFromAngle(90, isEnd);
 
@@ -184,7 +185,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(3);
         });
 
-        it('isEnd가 true이면서 angle이 0인 경우에는 4를 반환합니다.', function() {
+        it('should return 4, if isEnd is true and angle is 0.', function() {
             var isEnd = true;
             var actual = series._getQuadrantFromAngle(0, isEnd);
 
@@ -222,7 +223,7 @@ describe('PieChartSeries', function() {
             expect(actual[0].ratio).toBe(0);
         });
 
-        it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
+        it('should create angle, center position, outer position values using percentValues.', function() {
             var seriesDataModel = new SeriesDataModel(),
                 actual;
 
@@ -271,7 +272,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_calculateBaseSize()', function() {
-        it('사분면의 범위가 2 ~ 3 사분면인 경우 높이 값을 두배로 하여 너비와 높이값 중 작은 값을 반환합니다.', function() {
+        it('should set base size to smaller of twiced height and width, if it is on 2 ~ 3 quadrant.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -286,7 +287,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(600);
         });
 
-        it('사분면의 범위가 4 ~ 1 사분면인 경우에도 높이 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
+        it('should set base size to smaller of twiced height and width, if it is on 4 ~ 1 quadrant.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -301,7 +302,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(600);
         });
 
-        it('사분면의 범위가 1 ~ 2 사분면인 경우 너비 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
+        it('should set base size to smaller of height and twiced width, if it is on 1 ~ 2 quadrant.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -316,7 +317,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(400);
         });
 
-        it('사분면의 범위가 3 ~ 4 사분면인 경우에도 너비 값을 두배로 하여 너비와 높이 값 중 작은 값을 반환합니다.', function() {
+        it('should set base size to smaller of height and twiced width, if it is on 3 ~ 4 quadrant.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -331,7 +332,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(400);
         });
 
-        it('시작 사분변과 종료 사분면이 같은 경우에는 너비, 높이 값 모두 두배로 하여 작은 값을 반환합니다.', function() {
+        it('should set base size to smaller of twiced width and twiced height, if start quardrant and end quadrant is same.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -346,7 +347,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(800);
         });
 
-        it('콤보 차트의 경우 추가적인 계산 없이 너비와 높이 값 중 작은 값을 반환합니다.', function() {
+        it('should return smaller of width and height without any calculation, if it is combo chart.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -362,7 +363,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_calculateRadius()', function() {
-        it('시리즈 영역의 너비와 높이 중 작은 값의 반의 90%를 반지름으로 반환합니다.', function() {
+        it('should calculate radius to min(width, height) * 0.9.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -375,7 +376,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(180);
         });
 
-        it('isShowOuterLabel이 true인 경우에는 75%를 반환합니다.', function() {
+        it('should calculate radius to min(width, height) * 0.75, if isShowOuterLabel is true.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -391,7 +392,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_calculateCenterXY()', function() {
-        it('pie sector가 1사분면에만 존재하면 계산된 cx를 반지름의 반 길이만큼 줄여주고 cy를 반지름의 반 길이만큼 늘여줍니다', function() {
+        it('should calculate cx by subtracting half of radius, cy by adding half of radius. if pie sector is only on 1 quadrant', function() {
             var actual;
 
             series.layout.dimension = {
@@ -407,7 +408,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(360);
         });
 
-        it('pie sector가 1 ~ 2 사분면에 존재하면 계산된 cx를 반지름의 반 길이만큼 줄여줍니다', function() {
+        it('should calculate cx by subtracting half of radius. if pie sector is on 1 ~ 2 quadrant', function() {
             var actual;
 
             series.layout.dimension = {
@@ -423,7 +424,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(200);
         });
 
-        it('pie sector가 2사분면에만 존재하면 계산된 cx, cy 모두 반지름의 반 길이만큼 줄여줍니다', function() {
+        it('should calculate cx by subtracting half of radius, cy by substraction half of radius. if pie sector is only on 1 quadrant', function() {
             var actual;
 
             series.layout.dimension = {
@@ -439,7 +440,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(40);
         });
 
-        it('pie sector가 2 ~ 3 사분면에 존재하면 계산된 cy를 반지름의 반 길이만큼 줄여줍니다', function() {
+        it('should calculate cy by substracting half of radius. if pie sector is on 2 and 3 quadrant', function() {
             var actual;
 
             series.layout.dimension = {
@@ -455,7 +456,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(100);
         });
 
-        it('pie sector가 3사분면에만 존재하면 계산된 cx를 반지름의 반 길이만큼 늘여주고 cy를 반지름의 반 길이만큼 줄여줍니다', function() {
+        it('should calculate cx by adding half of radius, cy by substractiong half of radius. if pie sector is only on 3 quadrant', function() {
             var actual;
 
             series.layout.dimension = {
@@ -471,7 +472,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(40);
         });
 
-        it('pie sector가 3 ~ 4 사분면에 존재하면 계산된 cx를 반지름의 반 길이만큼 늘여줍니다', function() {
+        it('should calculate cx by adding half of radius. if pie sector is on 3 and 4 quadrant', function() {
             var actual;
 
             series.layout.dimension = {
@@ -487,7 +488,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(200);
         });
 
-        it('pie sector가 4 ~ 1 사분면에 존재하면 계산된 cy를 반지름의 반 길이만큼 늘여줍니다', function() {
+        it('should calculate cy by adding half of radius. if pie sector is on 4 and 1 quadrant.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -503,7 +504,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(300);
         });
 
-        it('pie sector가 4사분면에만 존재하면 계산된 cx, cy 모두 반지름의 반 길이만큼 늘여줍니다', function() {
+        it('should calculate cx, cy by adding half of radius, if pie sector is on 4 quadrant', function() {
             var actual;
 
             series.layout.dimension = {
@@ -519,7 +520,7 @@ describe('PieChartSeries', function() {
             expect(actual.cy).toEqual(360);
         });
 
-        it('콤보차트 인 경우에는 cx, cy에 대해 추가적인 연산을 수행하지 않습니다.', function() {
+        it('should return cx, cy without any calculation, if it is combo chart', function() {
             var actual;
 
             series.layout.dimension = {
@@ -536,7 +537,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makeCircleBound()', function() {
-        it('pie 타입 차트(pie, donut)의 circle bounds정보를 생성합니다.', function() {
+        it('should make circle bounds of pie type chart like pie or donut chart.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -554,7 +555,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_getArcPosition()', function() {
-        it('원의 중점(cx, cy), 반지름(r), angle 정보를 계산하여 해당 각의 호 position 값을 얻어낸다.', function() {
+        it('should make arc position by using midpoint(cx, cy), radius, angle', function() {
             var actual = series._getArcPosition({
                     cx: 100,
                     cy: 100,
@@ -570,7 +571,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_addEndPosition()', function() {
-        it('pie 차트의 외곽 legend line을 표현하기 위해 요소에 end position정보를 추가합니다.', function() {
+        it('should add end position for rendering outer legend line.', function() {
             var positions = [
                 {
                     middle: {

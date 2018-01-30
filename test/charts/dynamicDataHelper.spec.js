@@ -80,7 +80,7 @@ describe('Test for DynamicDataHelper', function() {
             });
         });
 
-        it('_animateForAddingData 함수를 호출하면 addesDataCount를 증가시킵니다.', function() {
+        it('should increase addesDataCount', function() {
             expect(ddh.addedDataCount).toBe(0);
 
             ddh._animateForAddingData();
@@ -88,14 +88,13 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh.addedDataCount).toBe(1);
         });
 
-        it('_animateForAddingData 함수를 호출하면 readyForRender 함수를 실행합니다.', function() {
+        it('should call readyForRender()', function() {
             ddh._animateForAddingData();
 
             expect(ddh.chart.readyForRender).toHaveBeenCalled();
         });
 
-        it('_animateForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
-           '각 컴포넌트 animateForAddingData함수를 tickSize와 shifting 옵션 값을 전달하며 실행합니다.', function() {
+        it('should call animateForAddingData() with tickSize and shifting option for each component', function() {
             var boundsAndScale = {
                 dimensionMap: {
                     xAxis: {
@@ -116,7 +115,7 @@ describe('Test for DynamicDataHelper', function() {
             });
         });
 
-        it('shifting 옵션이 있으면 dataProcessor.shiftData 함수를 실행합니다.', function() {
+        it('should call dataProcessor.shiftData(), when there is shifting option', function() {
             ddh.chart.options.series.shifting = true;
             ddh._animateForAddingData();
 
@@ -125,14 +124,13 @@ describe('Test for DynamicDataHelper', function() {
     });
 
     describe('_rerenderForAddingData()', function() {
-        it('_rerenderForAddingData 함수를 호출하면 readyForRender 함수를 실행합니다.', function() {
+        it('should call readyForRender()', function() {
             ddh._rerenderForAddingData();
 
             expect(ddh.chart.readyForRender).toHaveBeenCalled();
         });
 
-        it('_rerenderForAddingData 함수를 호출하면 _renderComponents를 실행 해' +
-           '각 컴포넌트 rerender함수를 animatable=false 값을 전달하며 실행합니다.', function() {
+        it('should call rerender() with animatable of false value', function() {
             var boundsAndScale = {dimensionMap: {
                 xAxis: {
                     width: 200
@@ -163,7 +161,7 @@ describe('Test for DynamicDataHelper', function() {
                 return boundsAndScale;
             });
         });
-        it('동적데이터가 존재하면 dataProcessor.addDataFromDynamicData를 통해 데이터를 추가하고 _animateForAddingData를 호출합니다.', function() {
+        it('should append dynamic data when some dynamic data added, and then call _animateForAddingData()', function() {
             dataProcessor.addDataFromDynamicData.and.returnValue(true);
             spyOn(ddh, '_animateForAddingData');
 
@@ -183,7 +181,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh._animateForAddingData).toHaveBeenCalled();
         });
 
-        it('동적데이터가 존재하면 0.4초 뒤에 _rerenderForAddingData, _checkForAddedData를 호출합니다. ', function(done) {
+        it('should call _rerenderForAddingData, _checkForAddedData 0.4 sec after dynamic data detection', function(done) {
             dataProcessor.addDataFromDynamicData.and.returnValue(true);
             spyOn(ddh, '_rerenderForAddingData');
 
@@ -194,7 +192,7 @@ describe('Test for DynamicDataHelper', function() {
             }, 1000);
         });
 
-        it('동적데이터가 존재하지 않는다면 lookupping을 false로 변경하고 바로 종료 합니다.', function() {
+        it('should quit lookupping and appending data, when there is no dynamic data', function() {
             dataProcessor.addDataFromDynamicData.and.returnValue(false);
             spyOn(ddh, '_animateForAddingData');
 
@@ -204,7 +202,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh._animateForAddingData).not.toHaveBeenCalled();
         });
 
-        it('paused값이 true이면 동적데이터가 존재하더라도 하위의 함수들을 실행하지 않고 바로 종료 합니다.', function() {
+        it('should not append data even thought it has dynamic data, when paused is true', function() {
             dataProcessor.addDataFromDynamicData.and.returnValue(false);
             spyOn(ddh, '_animateForAddingData');
             ddh.paused = true;
@@ -216,7 +214,7 @@ describe('Test for DynamicDataHelper', function() {
     });
 
     describe('pauseAnimation()', function() {
-        it('pauseAnimation을 호출하면 paused값이 true로 설정합니다.', function() {
+        it('should set paused true', function() {
             ddh._initForAutoTickInterval = jasmine.createSpy('_initForAutoTickInterval');
 
             ddh.paused = false;
@@ -225,7 +223,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh.paused).toBe(true);
         });
 
-        it('this.rerenderingDelayTimerId 값이 있으면 clearTimeout을 수행하고 this.delayRerender를 null로 설정합니다.', function() {
+        it('should stop timer, when there is this.rerenderingDelayTimerId value.', function() {
             spyOn(window, 'clearTimeout');
 
             ddh.rerenderingDelayTimerId = 1;
@@ -235,7 +233,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(window.clearTimeout).toHaveBeenCalled();
         });
 
-        it('this.rerenderingDelayTimerId 값이 있으면서 shifting옵션이 ture이면 dataProcessor.shiftData함수를 호출합니다.', function() {
+        it('should shift data, when shifting option is true and rerendering is on', function() {
             spyOn(window, 'clearTimeout');
 
             ddh.chart.options.series.shifting = true;
@@ -255,15 +253,14 @@ describe('Test for DynamicDataHelper', function() {
             ddh.chart.rerender = jasmine.createSpy('rerender');
         });
 
-        it('일시정지 상태가 아니라면 _pauseAnimationForAddingData를 호출하여 동적데이터 추가 애니메이션을 일시 정지하고' +
-           ' rerender를 실행합니다', function() {
+        it('should stop adding data animation and rerender graph, if it is not paused', function() {
             ddh.changeCheckedLegends();
 
             expect(ddh.pauseAnimation).toHaveBeenCalled();
             expect(ddh.chart.rerender).toHaveBeenCalled();
         });
 
-        it('일시정지 상태가 아니라면 rerender 후 0.7초 뒤에 _restartAnimationForAddingData를 실행합니다.', function(done) {
+        it('should restart andding data animation after 0.7s, if it is not paused', function(done) {
             ddh.changeCheckedLegends();
 
             setTimeout(function() {

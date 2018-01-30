@@ -148,8 +148,8 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
 
     /**
      * Resize graph of line chart.
-     * 1raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
-     * 그룹툴팁 동작 안해서 tooltipLine 관련 코드 제거됨
+     * /todo copied at raphaelLineCharts#resize, should remove duplication
+     * tooltipLine code was deleted, as group tooltip not works on radial chart/
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
@@ -175,7 +175,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
 
     /**
      * Select legend.
-     * raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
+     * /todo copied at raphaelLineCharts, should remove duplication
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {

@@ -170,7 +170,7 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
 
     /**
      * Get lines path.
-     * raphaelLineTypeBase에서 가져옴, 구조 개선 작업시 수정필요
+     * /todo remove duplication, copied from raphaelLineTypeBase
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
      * @returns {Array.<Array.<string>>} path
      * @private
@@ -185,7 +185,7 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
 
     /**
      * Make lines path.
-     * raphaelLineTypeBase에서 가져옴, 구조 개선 작업시 수정필요
+     * /todo remove duplication, copied from raphaelLineTypeBase
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
      * @param {?string} [posTopType='top'] position top type
      * @param {boolean} [connectNulls] - boolean value connect nulls or not

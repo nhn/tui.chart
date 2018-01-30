@@ -19,7 +19,7 @@ describe('RaphaelLineTypeBase', function() {
         });
     });
     describe('makeLinePath()', function() {
-        it('from position, to position을 이용하여 line graph를 그리기 위한 line path를 생성합니다.', function() {
+        it('should create line path using from and to position', function() {
             var actual = raphaelRenderUtil.makeLinePath(
                     {
                         left: 10,
@@ -33,7 +33,7 @@ describe('RaphaelLineTypeBase', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('from position, to position이 같으면 (line두께 % 2 / 2)를 뺀 path를 생성합니다.', function() {
+        it('should subtract (line두께 % 2 / 2) from original value, when from position is same to `to` postion from position', function() {
             var actual = raphaelRenderUtil.makeLinePath(
                     {
                         left: 10,

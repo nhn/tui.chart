@@ -20,7 +20,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeCoordinate', function() {
-        it('coordinateStr값으로 부터 coordinate를 생성합니다', function() {
+        it('create coordinate from coordinateStr', function() {
             var coordinateStr = '1.11,2.22',
                 actual = mapModel._makeCoordinate(coordinateStr),
                 expected = {
@@ -32,7 +32,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeCoordinateFromRelativeCoordinate', function() {
-        it('상대 coordinateStr값과 prevCoordinate 정보를 이용하여 coordinate를 생성합니다', function() {
+        it('should create coordinate from coordinateStr, prevCoordinate', function() {
             var coordinateStr = '1.11,2.22',
                 prevCoordinate = {
                     x: 3,
@@ -48,7 +48,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeXCoordinate', function() {
-        it('coordinateStr값으로 부터 x coordinate를 생성합니다', function() {
+        it('should create x coordinate from coordinateStr', function() {
             var coordinateStr = '1.11',
                 actual = mapModel._makeXCoordinate(coordinateStr),
                 expected = {
@@ -57,7 +57,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('","가 포함된 두자리의 이상의 coordinateStr값이 있을 경우 두번째 부터는 무시합니다.', function() {
+        it('should discard coordinateStr value after ",", when coordinateStr length is larger than 1', function() {
             var coordinateStr = '1.11,2.22',
                 actual = mapModel._makeXCoordinate(coordinateStr),
                 expected = {
@@ -68,7 +68,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeXCoordinateFroRelativeCoordinate', function() {
-        it('상대 coordinateStr값으로 부터 x coordinate를 생성합니다', function() {
+        it('create x cooridnate from coordinateStr', function() {
             var coordinateStr = '1.11',
                 prevCoordinate = {
                     x: 3,
@@ -81,7 +81,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('","가 포함된 두자리의 이상의 상대 coordinateStr값이 있을 경우 두번째 부터는 무시합니다.', function() {
+        it('should discard coordinateStr after ",", if coordinateStr length is larget than 1', function() {
             var coordinateStr = '1.11,0',
                 prevCoordinate = {
                     x: 3,
@@ -96,7 +96,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeYCoordinate', function() {
-        it('coordinateStr값으로 부터 y coordinate를 생성합니다', function() {
+        it('create y coordinate from coordinateStr', function() {
             var coordinateStr = '1.11',
                 actual = mapModel._makeYCoordinate(coordinateStr),
                 expected = {
@@ -105,7 +105,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('","가 포함된 두자리의 이상의 coordinateStr값이 있을 경우 두번째 부터는 무시합니다.', function() {
+        it('should discard coordinateStr after ",", if coordinateStr length is larget than 1', function() {
             var coordinateStr = '1.11,0',
                 actual = mapModel._makeYCoordinate(coordinateStr),
                 expected = {
@@ -116,7 +116,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeYCoordinateFromRelativeCoordinate', function() {
-        it('상대 coordinateStr값으로 부터 y coordinate를 생성합니다', function() {
+        it('should create y coordinate from coordinateStr', function() {
             var coordinateStr = '2.11',
                 prevCoordinate = {
                     x: 3,
@@ -129,7 +129,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('","가 포함된 두자리의 이상의 상대 coordinateStr값이 있을 경우 두번째 부터는 무시합니다.', function() {
+        it('should discard coordinateStr after ",", if coordinateStr length is larget than 1', function() {
             var coordinateStr = '2.11,0',
                 prevCoordinate = {
                     x: 3,
@@ -144,7 +144,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_splitPath()', function() {
-        it('path 정보를 command(M, m, L, l, H, h, V, v) 기준으로 나눕니다.', function() {
+        it('should split path infomation by command(M, m, L, l, H, h, V, v)', function() {
             var path = 'M0,1L2,3l4,5m6,7H8h9V10v11',
                 actual = mapModel._splitPath(path),
                 expected = [
@@ -185,7 +185,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('path에 Z command가 포함되어있을 경우에는 무시합니다.', function() {
+        it('should ignore z command', function() {
             var path = 'M0,1L2,3Z',
                 actual = mapModel._splitPath(path),
                 expected = [
@@ -202,7 +202,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('path에 z command가 포함되어있을 경우에는 무시합니다.', function() {
+        it('should ingnore z command', function() {
             var path = 'M0,1l2,3z',
                 actual = mapModel._splitPath(path),
                 expected = [
@@ -221,7 +221,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeCoordinatesFromPath()', function() {
-        it('path정보를 파싱하여 coordinates를 생성합니다', function() {
+        it('create coordinates by path information', function() {
             var path = 'M0,1L2,3l4,5m6,7H8h9V10v11',
                 actual = mapModel._makeCoordinatesFromPath(path),
                 expected = [
@@ -260,7 +260,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_findBoundFromCoordinates()', function() {
-        it('coordinates 정보로 부터 bounds 정보를 계산합니다.', function() {
+        it('should calculate bounds from coordinates', function() {
             var coordinates = [
                     {
                         x: 0,
@@ -308,7 +308,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeLabelPosition()', function() {
-        it('bounds와 position ratio정보를 이용하여 label의 positon 정보를 계산합니다', function() {
+        it('should calculate label position by bounds and position ratio', function() {
             var bound = {
                     dimension: {
                         width: 319,
@@ -332,7 +332,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('ratio값에 따라 결과값이 달라집니다.', function() {
+        it('should set label position according to ratio', function() {
             var bound = {
                     dimension: {
                         width: 319,
@@ -356,7 +356,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('ratio값이 없으면 default ratio인 {left: 0.5, top: 0.5}가 반영됩니다.', function() {
+        it('should set default value({left: 0.5, top: 0.5}), when no ratio value', function() {
             var bound = {
                     dimension: {
                         width: 319,
@@ -399,7 +399,7 @@ describe('MapChartMapModel', function() {
             ];
         });
 
-        it('rawMapData를 전달받아 mapData 생성합니다.', function() {
+        it('should create mapData from rawMapData', function() {
             var actual, expected;
 
             dataProcessor.getValueMapDatum.and.returnValue({});
@@ -449,7 +449,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('valueMap에 존재하는 경우 name, labelCoordinate에 한해 기존 data를 대체합니다.', function() {
+        it('should replace name, labelCoordinate data, when valueMap[code] exists', function() {
             var actual, expected;
 
             dataProcessor.getValueMapDatum.and.callFake(function(code) {
@@ -539,7 +539,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('getLabelData()', function() {
-        it('valueMap에 해당하는 data만 필터링하여 반환합니다', function() {
+        it('should filter valueMap data by code', function() {
             var zoomMagn = 1,
                 actual, expected;
 
@@ -584,7 +584,7 @@ describe('MapChartMapModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('zoomMagn를 2로 하면 labelPosition을 두배의 수치로 계산하여 반환합니다', function() {
+        it('should double labelPosition, when zoomMagn set to 2', function() {
             var zoomMagn = 2,
                 actual, expected;
 
@@ -615,7 +615,7 @@ describe('MapChartMapModel', function() {
     });
 
     describe('_makeMapDimension()', function() {
-        it('mapData의 dimension과 position 정보를 이용하여 map dimension을 생성합니다', function() {
+        it('should create map dimension from dimension and position of map data', function() {
             var actual, expected;
 
             mapModel.mapData = [

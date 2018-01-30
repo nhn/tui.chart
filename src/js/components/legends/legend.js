@@ -374,7 +374,7 @@ function legendFactory(params) {
         params.seriesTypes = seriesTypes;
         params.chartType = chartType;
 
-        // @todo axisTypeMixer에서 addComponents에서 추가된 additionalParams가 extends되야됨 우선 생략 그내용이 뭔지 파악해서 여기서 그옵션을 넣어야함
+        // @todo should extends additionalParams added when addComponents(), should grasp the omitted
         legend = new Legend(params);
     }
 

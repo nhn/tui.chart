@@ -68,7 +68,7 @@ var singleTooltipMixer = {
     _isShowedTooltip: function(elTooltip) {
         var isShowed = elTooltip.getAttribute('data-showed');
 
-        return isShowed === 'true' || isShowed === true; // ie7에서는 boolean형태의 true를 반환함
+        return isShowed === 'true' || isShowed === true; // true in ie7
     },
 
     /**

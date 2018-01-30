@@ -16,7 +16,8 @@ describe('BarChartSeries', function() {
     var series, dataProcessor;
 
     beforeAll(function() {
-        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        // Rendered width, height is different according to browser
+        // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
@@ -48,7 +49,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeBound()', function() {
-        it('baseBound 정보에 startLeft, endLeft, endWidth정보를 더하여 start, end로 구분된 bound 정보를 생성합니다.', function() {
+        it('should make bounds having start and end property, by adding startLeft, endLeft, endWidth to baseBound.', function() {
             var width = 40,
                 height = 30,
                 top = 10,
@@ -75,7 +76,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_calculateAdditionalLeft()', function() {
-        it('divided 옵션이 있고 value가 0보다 크면 additional yAxis 너비와 OVERLAPPING_WIDTH를 더하여 반환합니다.', function() {
+        it('should calculate additional left position by adding additional yAxis and OVERLAPPING_WIDTH when divided option and value is more than 0.', function() {
             var value = 10;
             var actual, expected;
 
@@ -91,7 +92,7 @@ describe('BarChartSeries', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('divided 옵션이 없으면 0을 반환합니다.', function() {
+        it('should return 0 if divided option is not exist.', function() {
             var value = 10;
             var actual = series._calculateAdditionalLeft(value);
             var expected = 0;
@@ -99,7 +100,7 @@ describe('BarChartSeries', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('divided 옵션이 있어도 value가 0보다 작으면 0을 반환합니다.', function() {
+        it('should return 0, if negative value althoght there is divided option.', function() {
             var value = -10;
             var actual, expected;
 
@@ -112,7 +113,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeBarChartBound()', function() {
-        it('옵션 없는 바 차트의 bound 정보를 생성합니다.', function() {
+        it('should make bar chart bound of emtpy option.', function() {
             var baseData = {
                     baseBarSize: 100,
                     basePosition: 10,
@@ -153,7 +154,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeBounds()', function() {
-        it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
+        it('should make bar chart bounds of empty option.', function() {
             var seriesDataModel, actual, expected;
 
             seriesDataModel = new SeriesDataModel();

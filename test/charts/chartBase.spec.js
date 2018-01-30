@@ -262,7 +262,7 @@ describe('Test for ChartBase', function() {
     });
 
     describe('_makeProcessedData()', function() {
-        it('전달된 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
+        it('should create easy-to-use data from user data', function() {
             var actual;
             actual = chartBase._createDataProcessor({
                 DataProcessor: DataProcessor,
@@ -279,7 +279,7 @@ describe('Test for ChartBase', function() {
     });
 
     describe('_updateChartDimension()', function() {
-        it('전달받은 디멘션 정보로 차트 너비, 높이 정보를 갱신합니다.', function() {
+        it('should update chart width and height using passed dimension', function() {
             chartBase.options = {
                 chart: {}
             };
@@ -293,7 +293,7 @@ describe('Test for ChartBase', function() {
     });
 
     describe('resize()', function() {
-        it('전댤된 dimension이 없으면 resize를 위한 readyForRender()를 호출하지 않습니다.', function() {
+        it('should not update dimension, when resize is called without dimension', function() {
             spyOn(chartBase, 'readyForRender');
 
             chartBase.resize();
@@ -301,7 +301,7 @@ describe('Test for ChartBase', function() {
             expect(chartBase.readyForRender).not.toHaveBeenCalled();
         });
 
-        it('dimension이 있다면 _updateChartDimension()를 호출하여 dimension을 갱신 합니다.', function() {
+        it('should update dimension, when resize is called with dimension', function() {
             spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
 
             chartBase.resize({
@@ -315,7 +315,7 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('dimension이 변경된 내용이 없어도 readyForRender()를 호출하지 않습니다.', function() {
+        it('should not update dimension, when dimension infomation does not change', function() {
             spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
             spyOn(chartBase, 'readyForRender');
 

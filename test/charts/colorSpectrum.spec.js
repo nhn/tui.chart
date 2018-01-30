@@ -16,7 +16,7 @@ describe('Test for ColorSpectrum', function() {
     });
 
     describe('_makeDistance()', function() {
-        it('시작 RGB값과 종료 RGB값의 각 속성별 차이값을 계산하여 반환합니다.', function() {
+        it('should calculate diffs between start and end RGB values', function() {
             var startRGB = [255, 255, 255],
                 endRGB = [0, 0, 0],
                 actual = colorSpectrum._makeDistances(startRGB, endRGB),
@@ -27,7 +27,7 @@ describe('Test for ColorSpectrum', function() {
     });
 
     describe('getColor()', function() {
-        it('전달하는 ratio에 맞는 hex color를 계산하여 반환합니다.', function() {
+        it('should calculate hex color according to ratio', function() {
             var actual, expected;
 
             colorSpectrum.startRGB = [255, 255, 255];
@@ -39,7 +39,7 @@ describe('Test for ColorSpectrum', function() {
             expect(actual).toBe(expected);
         });
 
-        it('ratio해당하는 color값이 캐싱되어있다면, 캐싱된 값을 반환합니다.', function() {
+        it('should return cached data, if color value corresponding to ratio is cached', function() {
             var actual, expected;
 
             colorSpectrum.colorMap = {

@@ -197,7 +197,7 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      * @override
      */
     _onMouseout: function(e) {
-        // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+        // do not cache getBoundingClientRect() - if not, it will cause error when chart location changed
         var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
         var clientX = e.clientX;
         var clientY = e.clientY;

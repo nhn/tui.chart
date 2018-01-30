@@ -33,7 +33,7 @@ describe('Series', function() {
     });
 
     describe('_getLimitDistanceFromZeroPoint()', function() {
-        it('min, max 사이에 0점이 존재하는 경우에 0점으로 부터 limit min, max까지의 거리를 구합니다.', function() {
+        it('should calculate limit distance from zero, if 0 is between min, max value.', function() {
             var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: -20,
                 max: 80
@@ -44,7 +44,7 @@ describe('Series', function() {
             });
         });
 
-        it('min, max 모두 0보다 큰 경우에는 toMax는 size를, toMin은 0을 반환합니다.', function() {
+        it('should set {toMax: size, toMin: 0}, if min, max are positive number.', function() {
             var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: 20,
                 max: 80
@@ -55,7 +55,7 @@ describe('Series', function() {
             });
         });
 
-        it('min, max 모두 음수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
+        it('should set {toMax: 0, toMin: 0}, if min, max are negative number.', function() {
             var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: -80,
                 max: -20
@@ -68,7 +68,7 @@ describe('Series', function() {
     });
 
     describe('renderBounds()', function() {
-        it('series 영역 너비, 높이, 위치를 렌더링 합니다.', function() {
+        it('should render position of series area.', function() {
             var seriesContainer = dom.create('DIV');
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
@@ -84,7 +84,7 @@ describe('Series', function() {
     });
 
     describe('_findLabelElement()', function() {
-        it('대상 엘리먼트가 시리즈 라벨(series label) 엘리먼트이면 대상 엘리먼트를 반환합니다.', function() {
+        it('should return target element if target is series label element.', function() {
             var elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL);
             var actual = series._findLabelElement(elTarget);
             var expected = elTarget;

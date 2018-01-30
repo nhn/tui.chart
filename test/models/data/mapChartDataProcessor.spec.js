@@ -16,7 +16,7 @@ describe('Test for MapChartDataProcessor', function() {
     });
 
     describe('_makeValueMap()', function() {
-        it('valueMap을 생성합니다.', function() {
+        it('create valuemap.', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
@@ -47,7 +47,7 @@ describe('Test for MapChartDataProcessor', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('format options을 추가하여 valueMap을 생성합니다.', function() {
+        it('create valueMap by adding format options', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
@@ -82,7 +82,7 @@ describe('Test for MapChartDataProcessor', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('name속성을 추가하여 valueMap을 생성합니다.', function() {
+        it('should create valueMap by adding name property', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
@@ -125,7 +125,7 @@ describe('Test for MapChartDataProcessor', function() {
     });
 
     describe('getValues', function() {
-        it('valueMap에서 value 속성만 뽑아서 반환합니다', function() {
+        it('should pick value property from valueMap', function() {
             var actual, expected;
 
             dataProcessor.valueMap = {
@@ -144,7 +144,7 @@ describe('Test for MapChartDataProcessor', function() {
     });
 
     describe('addDataRatios()', function() {
-        it('data의 ratio를 계산하여 추가합니다.', function() {
+        it('should add ratios', function() {
             var limit = {
                     min: 0,
                     max: 200

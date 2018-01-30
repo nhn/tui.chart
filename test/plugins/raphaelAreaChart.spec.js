@@ -17,7 +17,7 @@ describe('RaphaelAreaChart', function() {
     });
 
     describe('_makeHeight()', function() {
-        it('top값과 zeroTop(axis의 0위치 top)의 차를 이용하여 graph의 height값을 구합니다.', function() {
+        it('should calculate height by substracting zeroTop from top', function() {
             var actual = areaChart._makeHeight(30, 100),
                 expected = 70;
             expect(actual).toBe(expected);
@@ -25,7 +25,7 @@ describe('RaphaelAreaChart', function() {
     });
 
     describe('_makeAreasPath()', function() {
-        it('positions의 left, top, startTop 정보를 이용하여 area graph의 path를 구합니다.', function() {
+        it('should make area graph path by left, top, startTop of position', function() {
             var actual = areaChart._makeAreasPath([{
                     left: 10,
                     top: 30,
@@ -39,7 +39,7 @@ describe('RaphaelAreaChart', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('hasExtraPath가 false이면 추가 path를 제외합니다.', function() {
+        it('should skip additional path if hasExtraPath is true', function() {
             var hasExtraPath = false;
             var actual = areaChart._makeAreasPath([{
                     left: 10,
@@ -56,7 +56,7 @@ describe('RaphaelAreaChart', function() {
     });
 
     describe('_makeAreaChartPath()', function() {
-        it('영역 차트를 그리기 위한 area, line path정보를 반환합니다.', function() {
+        it('should make line, area path', function() {
             var actual = areaChart._makeAreaChartPath([[{
                     left: 10,
                     top: 30,
@@ -73,7 +73,7 @@ describe('RaphaelAreaChart', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('range data를 갖고 있다면 startLine path도 생성합니다.', function() {
+        it('should create startLine path, if it is range data', function() {
             var actual, expected;
 
             areaChart.hasRangeData = true;
@@ -96,7 +96,7 @@ describe('RaphaelAreaChart', function() {
     });
 
     describe('_makeSplineAreaBottomPath()', function() {
-        it('position정보를 이용하여 영역 차트 하단의 path 정보를 생성합니다.', function() {
+        it('should create spline chart\'s bottom path by position', function() {
             var actual, expected;
 
             areaChart.zeroTop = 50;
@@ -111,7 +111,7 @@ describe('RaphaelAreaChart', function() {
     });
 
     describe('_makeSplineAreaChartPath()', function() {
-        it('spline 영역 차트를 그리기 위한 area, line path정보를 반환합니다.', function() {
+        it('should creat area, line path', function() {
             var actual, expected;
 
             areaChart.zeroTop = 50;
@@ -131,7 +131,7 @@ describe('RaphaelAreaChart', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('hasExtraPath가 false이면 추가 path를 제외합니다.', function() {
+        it('should skip additional path, if hasExtraPath is false', function() {
             var hasExtraPath = false;
             var actual, expected;
 

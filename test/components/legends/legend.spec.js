@@ -51,7 +51,7 @@ describe('Test for Legend', function() {
     });
 
     describe('render()', function() {
-        it('render를 수행하면 _renderLegendArea를 실행한 렌더링, click 이벤트 등록 등을 수행한다.', function() {
+        it('should call _renderLegendArea()', function() {
             spyOn(legend, '_renderLegendArea');
             spyOn(legend, '_listenEvents');
             legend.layout = {

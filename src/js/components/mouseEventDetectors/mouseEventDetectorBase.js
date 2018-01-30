@@ -356,8 +356,9 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
     _hideTooltip: function() {},
 
     /**
-     * Send mouse position data to series component, when occur mouse event like move, click.
-     * 이벤트 발생시 시리즈 엘리먼트 감지가 가능하도록 mouseEventDetector container를 일시적으로 숨긴다.
+     * When mouse event happens,
+     * hide MouseEventDetector container so that detect event of series elements
+     * and send mouse position data to series component
      * @param {string} eventType - mouse event detector type
      * @param {MouseEvent} e - mouse event
      * @private

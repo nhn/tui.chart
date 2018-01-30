@@ -68,17 +68,17 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
                 if (!snippet.isNull(seriesItem.end)) {
                     valueSize = seriesItem.ratio * radius;
 
-                    // centerY에 데이터의 값에 해당하는 높이만큼 더 해서 실제 좌표Y를 만든다.
+                    // center y + real vaule size
                     y = centerY + valueSize;
 
-                    // 각도를 시계 방향으로 바꿈
+                    // turn angle to clockwise
                     angle = 360 - (stepAngle * index);
 
                     point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, y, angle);
 
                     position = {
                         left: point.x,
-                        top: height - point.y // y좌표를 top좌표로 변환(4/4분면)
+                        top: height - point.y // convert y coordinate to top
                     };
                 }
 

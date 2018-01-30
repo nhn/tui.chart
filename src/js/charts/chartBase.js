@@ -337,7 +337,6 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
             this.prevXAxisData = boundsAndScale.axisDataMap.xAxis;
         }
 
-        // 비율값 추가
         this.addDataRatios(boundsAndScale.limitMap);
 
         return boundsAndScale;

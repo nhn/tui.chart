@@ -24,7 +24,7 @@ describe('Test for TickBaseCoordinateModel', function() {
     });
 
     describe('_makeLineTypeData()', function() {
-        it('line type 차트의 경우는 tick과 tick 사이를 경계로 분할하여 limit 데이터를 생성합니다.', function() {
+        it('should make limit data base on middle of tick intervals when line type chart.', function() {
             var actual = coordinateModel._makeLineTypeData(199, 3),
                 expected = [{min: -50, max: 50}, {min: 50, max: 150}, {min: 150, max: 249}];
             expect(actual).toEqual(expected);
@@ -32,7 +32,7 @@ describe('Test for TickBaseCoordinateModel', function() {
     });
 
     describe('_makeNormalData()', function() {
-        it('line type 차트가 아닌 경우에는 tick 지점을 기준으로 분할하여 limit 데이터를 생성합니다.', function() {
+        it('should make limit data base on tick when not line type chart.', function() {
             var actual = coordinateModel._makeNormalData(200, 3),
                 expected = [{min: 0, max: 100}, {min: 100, max: 200}];
             expect(actual).toEqual(expected);
@@ -40,7 +40,7 @@ describe('Test for TickBaseCoordinateModel', function() {
     });
 
     describe('_makeData()', function() {
-        it('line type 차트의 경우는 _makeLineTypeData의 실행 결과를 반환합니다.', function() {
+        it('should make data from _makeLineTypeData() when line type chart.', function() {
             var actual, expected;
 
             coordinateModel.isLineType = true;
@@ -59,7 +59,7 @@ describe('Test for TickBaseCoordinateModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('line type 차트가 아닌 경우는 _makeNormalData 실행 결과를 반환합니다.', function() {
+        it('should make data from _makeNormalData() when not line type chart.', function() {
             var actual, expected;
 
             coordinateModel.isLineType = false;
@@ -81,14 +81,14 @@ describe('Test for TickBaseCoordinateModel', function() {
     });
 
     describe('findIndex()', function() {
-        it('마우스 X좌표값(layerX)으로 groups를 탐색하여 해당하는 group index를 찾아냅니다.', function() {
+        it('should find group index by mouse position(layerX).', function() {
             var actual, expected;
             actual = coordinateModel.findIndex(110);
             expected = 1;
             expect(actual).toBe(expected);
         });
 
-        it('그룹 정보에 해당 좌표값이 없을 경우에는 -1을 반환합니다.', function() {
+        it('should return -1 if cannot find group index', function() {
             var actual, exptected;
             coordinateModel.coordinateData = [
                 {
@@ -107,7 +107,7 @@ describe('Test for TickBaseCoordinateModel', function() {
     });
 
     describe('makeRange()', function() {
-        it('라인타입인 경우에는 index에 해당하는 data(limit)의 중간값을 툴팁 범위로 반환합니다.', function() {
+        it('should set tooltip ranges to intermediate value of limit when line type chart.', function() {
             var actual, expected;
 
             coordinateModel.isLineType = true;
@@ -124,7 +124,7 @@ describe('Test for TickBaseCoordinateModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('라인타입이 아닌 경우에는 index에 해당하는 data 그대로 반환합니다.', function() {
+        it('should set tooltip reanges as it is when not line type chart.', function() {
             var actual, expected;
 
             coordinateModel.isLineType = false;
