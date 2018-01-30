@@ -66,7 +66,7 @@ tui.chart.lineChart(container, data, options);
 
 ![Group Tooltip](https://cloud.githubusercontent.com/assets/2888775/12045583/bf466e48-aee9-11e5-9c76-00c3a2a6d687.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)_
+* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
 
 ***
 
