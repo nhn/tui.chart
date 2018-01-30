@@ -61,14 +61,14 @@ var rawData = {
 
 |Map Name|File Name|Code Table Link|Sample Link|
 |---|---|---|:---:|
-|world|world.js|[Code table of World map](code-table-of-world-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map.html)|
-|south-korea|south-korea.js|[Code table of South Korea map](code-table-of-south-korea-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-02-map-chart-south-korea-map.html)|
-|usa|usa.js|[Code table of USA map](code-table-of-usa-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-03-map-chart-usa-map.html)|
-|china|china.js|[Code table of China map](code-table-of-china-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-04-map-chart-china-map.html)|
-|japan|japan.js|[Code table of Japan map](code-table-of-japan-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-05-map-chart-japan-map.html)|
-|singapore|singapore.js|[Code table of Singapore map](code-table-of-singapore-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-06-map-chart-singapore-map.html)|
-|thailand|thailand.js|[Code table of Thailand map](code-table-of-thailand-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-07-map-chart-thailand-map.html)|
-|taiwan|taiwan.js|[Code table of Taiwan map](code-table-of-taiwan-map)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-08-map-chart-taiwan-map.html)|
+|world|world.js|[Code table of World map](code-table-of-world-map.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map.html)|
+|south-korea|south-korea.js|[Code table of South Korea map](code-table-of-south-korea-ma.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-02-map-chart-south-korea-map.html)|
+|usa|usa.js|[Code table of USA map](code-table-of-usa-map.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-03-map-chart-usa-map.html)|
+|china|china.js|[Code table of China map](code-table-of-china-map.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-04-map-chart-china-map.html)|
+|japan|japan.js|[Code table of Japan map](code-table-of-japan-map.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-05-map-chart-japan-map.html)|
+|singapore|singapore.js|[Code table of Singapore map](code-table-of-singapore-map.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-06-map-chart-singapore-map.html)|
+|thailand|thailand.js|[Code table of Thailand map](code-table-of-thailand-map.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-07-map-chart-thailand-map.html)|
+|taiwan|taiwan.js|[Code table of Taiwan map](code-table-of-taiwan-map.md)|[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example09-08-map-chart-taiwan-map.html)|
 
 
 ***
