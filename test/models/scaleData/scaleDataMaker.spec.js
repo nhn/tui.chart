@@ -287,6 +287,7 @@ describe('Test for ScaleDataMaker', function() {
             expect(scaleData.limit.max).toBe(40);
             expect(scaleData.limit.min).toBe(0);
             expect(scaleData.step).toBe(10);
+        });
 
         it('should adjust limit.max value, if no limtOption and max value is not zero', function() {
             var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
