@@ -94,4 +94,28 @@ describe('Test for circleLegendCalculator', function() {
             expect(actual).toBe(90);
         });
     });
+
+    describe('calculateMaxRadius()', function() {
+        it('maxRadius should be calculated normally even without circlelegend.', function() {
+            var axisDataMap = {
+                xAxis: {
+                    tickCount: 4
+                },
+                yAxis: {
+                    tickCount: 4
+                }
+            };
+            var dimensionMap = {
+                circleLegend: {
+                    width: 0
+                },
+                series: {
+                    width: 300,
+                    height: 300
+                }
+            };
+
+            expect(circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap)).toBe(100);
+        });
+    });
 });

@@ -82,12 +82,17 @@ var circleLegendCalculator = {
      * Calculate max radius.
      * @param {{series: {width: number, height: number}, circleLegend: {width: number}}} dimensionMap - dimension map
      * @param {{xAxis: object, yAxis: object}} axisDataMap - axis data map
+     * @param {boolean} [circleLegendVisible] - circleLegend visible option
      * @returns {number}
      * @private
      */
-    calculateMaxRadius: function(dimensionMap, axisDataMap) {
+    calculateMaxRadius: function(dimensionMap, axisDataMap, circleLegendVisible) {
         var maxRadius = this._calculateRadiusByAxisData(dimensionMap.series, axisDataMap);
         var circleLegendWidth = dimensionMap.circleLegend.width;
+
+        if (!circleLegendVisible) {
+            return maxRadius;
+        }
 
         return Math.min((circleLegendWidth - chartConst.CIRCLE_LEGEND_PADDING) / 2, maxRadius);
     }
