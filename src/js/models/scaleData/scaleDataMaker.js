@@ -50,11 +50,11 @@ var scaleDataMaker = {
         var max = limit.max;
 
         if (isOverflowed.min) {
-            min -= step;
+            min = calculator.subtract(min, step);
         }
 
         if (isOverflowed.max) {
-            max += step;
+            max = calculator.add(max, step);
         }
 
         return {

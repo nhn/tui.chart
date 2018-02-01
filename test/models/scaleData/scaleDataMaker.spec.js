@@ -473,4 +473,39 @@ describe('Test for ScaleDataMaker', function() {
             expect(isOverflowed).toBe(null);
         });
     });
+
+    describe('_adjustLimitForOverflow()', function() {
+        var limit, step, isOverflowed;
+
+        beforeEach(function() {
+            limit = {min: 0.01, max: 0.06};
+            step = 0.01;
+            isOverflowed = {min: false, max: false};
+        });
+
+        it('should return limit value same to input, if (data.min !== axis.min && data.max !== axis.max)', function() {
+            var actual = scaleDataMaker._adjustLimitForOverflow(limit, step, isOverflowed);
+
+            expect(actual.min).toBe(0.01);
+            expect(actual.max).toBe(0.06);
+        });
+
+        it('should lower limit.min value, if (data.min === axis.min)', function() {
+            var actual;
+            isOverflowed.min = true;
+            actual = scaleDataMaker._adjustLimitForOverflow(limit, step, isOverflowed);
+
+            expect(actual.min).toBe(0);
+            expect(actual.max).toBe(0.06);
+        });
+
+        it('should upper limit.max value, if (data.max === axis.max)', function() {
+            var actual;
+            isOverflowed.max = true;
+            actual = scaleDataMaker._adjustLimitForOverflow(limit, step, isOverflowed);
+
+            expect(actual.min).toBe(0.01);
+            expect(actual.max).toBe(0.07);
+        });
+    });
 });
