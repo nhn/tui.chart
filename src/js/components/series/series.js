@@ -175,6 +175,12 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
          */
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
 
+        /**
+         * whether series lable is supported
+         * @type {boolean}
+         */
+        this.supportSeriesLable = true;
+
         this._attachToEventBus();
     },
 
@@ -292,7 +298,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
                 this.seriesSet = funcRenderGraph(dimension, seriesData, paper);
             }
 
-            if (predicate.isShowLabel(this.options)) {
+            if (predicate.isShowLabel(this.options) && this.supportSeriesLable) {
                 this.labelSet = this._renderSeriesLabelArea(paper);
             }
         }
@@ -770,7 +776,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
     showLabel: function() {
         this.options.showLabel = true;
 
-        if (!this.seriesLabelContainer) {
+        if (!this.seriesLabelContainer && this.supportSeriesLable) {
             this._renderSeriesLabelArea(this.paper);
         }
     },
