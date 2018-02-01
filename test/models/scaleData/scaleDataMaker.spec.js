@@ -411,6 +411,14 @@ describe('Test for ScaleDataMaker', function() {
                 max: 10
             });
         });
+
+        it('get min = 0, max = 10 from single zero baseValue of length 1', function() {
+            var actual = scaleDataMaker._getLimitSafely([0]);
+            expect(actual).toEqual({
+                min: 0,
+                max: 10
+            });
+        });
     });
 
     describe('_isOverflowed()', function() {

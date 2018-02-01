@@ -174,6 +174,8 @@ var scaleDataMaker = {
 
             if (firstValue > 0) {
                 limit.min = 0;
+            } else if (firstValue === 0) {
+                limit.max = 10;
             } else {
                 limit.max = 0;
             }
