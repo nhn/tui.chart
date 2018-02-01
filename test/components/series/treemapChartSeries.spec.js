@@ -170,4 +170,14 @@ describe('TreemapChartSeries', function() {
             expect(actual[0][6]).toEqual({end: {left: 500, top: 0, width: 100, height: 200}});
         });
     });
+
+    describe('_zoom()', function() {
+        it('should be animated after zooming.', function() {
+            series._renderSeriesArea = jasmine.createSpy('_renderSeriesArea');
+            series.animateComponent = jasmine.createSpy('animateComponent');
+            series._zoom(rootId, 2, 0);
+
+            expect(series.animateComponent).toHaveBeenCalled();
+        });
+    });
 });
