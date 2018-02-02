@@ -17,7 +17,7 @@ describe('RaphaelLineTypeBase', function() {
     });
 
     describe('_makeLinesPath()', function() {
-        it('positions의 top, left 정보를 이용하여 line graph를 그리기 위한 path를 생성합니다.', function() {
+        it('should create path usgin top, left data', function() {
             var actual = lineTypeBase._makeLinesPath([
                     {
                         left: 10,
@@ -32,7 +32,7 @@ describe('RaphaelLineTypeBase', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('posTopType이 startTop이면 position 정보에서 startTop을 추출하여 path를 생성합니다.', function() {
+        it('should create path using position.startTop, if posTopType is startTop', function() {
             var actual = lineTypeBase._makeLinesPath([
                     {
                         left: 10,
@@ -51,7 +51,7 @@ describe('RaphaelLineTypeBase', function() {
     });
 
     describe('_makeSplineLinesPath()', function() {
-        it('positions의 top, left 정보를 이용하여 spline line graph를 그리기 위한 path를 생성합니다.', function() {
+        it('should create spline path using top, left data', function() {
             var actual = lineTypeBase._makeSplineLinesPath([
                     {
                         left: 10,
@@ -118,7 +118,7 @@ describe('RaphaelLineTypeBase', function() {
     });
 
     describe('makeBorderStyle()', function() {
-        it('borderColor와 opacity 정보를 전달하여, line graph의 기본 border style을 생성합니다.', function() {
+        it('should create border type using borderColor and opacity', function() {
             var actual = lineTypeBase.makeBorderStyle('red', 0.5),
                 expected = {
                     stroke: 'red',
@@ -130,7 +130,7 @@ describe('RaphaelLineTypeBase', function() {
     });
 
     describe('makeOutDotStyle', function() {
-        it('opaity 전달하여, dot 외곽 style을 생성합니다.', function() {
+        it('should create dot stroke style by opaity', function() {
             var actual = lineTypeBase.makeOutDotStyle(0.7),
                 expected = {
                     'fill-opacity': 0.7,
@@ -140,7 +140,7 @@ describe('RaphaelLineTypeBase', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('borderStyle 정보도 전달하면 병합하여 반환합니다.', function() {
+        it('should add borderStyle information, if borderStype information exists', function() {
             var actual = lineTypeBase.makeOutDotStyle(0.5, {
                     stroke: 'red',
                     'stroke-width': 1,

@@ -1,6 +1,6 @@
 /**
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @fileoverview webpack 설정파일
+ * @fileoverview webpack configuration file
  */
 
 'use strict';
@@ -42,7 +42,6 @@ module.exports = (function() {
             path: BUNDLE_PATH,
             publicPath: '/dist/',
             // We make minify file only in production build
-            // 개발 테스트시에 서비스 코드의 수정없이 미니파이된 파일도 테스트 할수 있게 하기위해 미니 파일 파일은 프로덕션 빌드에서만 만든다
             filename: FILENAME + '.js'
         },
         externals: {
@@ -91,7 +90,8 @@ module.exports = (function() {
                 quiet: false,
                 stats: {
                     colors: true
-                }
+                },
+                disableHostCheck: true
             }
         });
     }

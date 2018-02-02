@@ -113,14 +113,14 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_escapeCategories()', function() {
-        it('카테고리에 대해 escaping 처리를 합니다.', function() {
+        it('should escape category label on HTML', function() {
             var actual = dataProcessor._escapeCategories(['<div>ABC</div>', 'EFG']);
             var expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
 
             expect(actual).toEqual(expected);
         });
 
-        it('숫자형인 경우, 문자형으로 변환하여 처리 합니다.', function() {
+        it('should change type to string, if input data type is number', function() {
             var actual = dataProcessor._escapeCategories([1, 2]);
             var expected = ['1', '2'];
 
@@ -165,7 +165,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_processCategories()', function() {
-        it('rawData.categories가 배열 형태이면 전달받은 type을 키로하는 map으로 생성하여 반환합니다.', function() {
+        it('should set rawData.categories to object\'s type property, if type of rawData.categories is array', function() {
             var actual;
 
             dataProcessor.rawData = {
@@ -180,7 +180,7 @@ describe('Test for DataProcessor', function() {
             });
         });
 
-        it('rawData.categories가 객체 형태이면 y값에 대해 역순으로 정렬하여 반환합니다.', function() {
+        it('should reverse data, if type of rawData.categories is object', function() {
             var actual;
 
             dataProcessor.rawData = {
@@ -196,7 +196,7 @@ describe('Test for DataProcessor', function() {
             expect(actual.y).toEqual(['2', '1']);
         });
 
-        it('rawData.categories가 객체 형태이면서 x, y이외의 key값을 갖고 있다면 무시합니다.', function() {
+        it('should not return value, when type of rawData.categories is obejct, and having prperties other than x, y.', function() {
             var actual;
 
             dataProcessor.rawData = {
@@ -210,7 +210,7 @@ describe('Test for DataProcessor', function() {
             expect(actual.z).toBeUndefined();
         });
 
-        it('rawData.categories가 없다면 빈 객체를 반환합니다.', function() {
+        it('should return empty object, if data processor has not rawData.categories.', function() {
             var actual;
 
             dataProcessor.rawData = {};
@@ -222,7 +222,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('getCategories()', function() {
-        it('캐싱된 categoriesMap이 없는 세로형 카테고리의 경우 y를 key로하는 categories map을 캐싱합니다.', function() {
+        it('should cache categories map of key y, when there is no categoriesMap, and vertical categories.', function() {
             var isVertical = true;
 
             dataProcessor.rawData = {
@@ -236,7 +236,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.categoriesMap.x).toBeUndefined();
         });
 
-        it('캐싱된 categoriesMap이 없는 가로형 카테고리의 경우 x를 key로하는 categories map을 캐싱합니다.', function() {
+        it('should cache categories map of key x, when there is no categoriesMap, and horizontal categories.', function() {
             var isVertical = false;
 
             dataProcessor.rawData = {
@@ -250,7 +250,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.categoriesMap.y).toBeUndefined();
         });
 
-        it('세로형 카테고리의 경우 캐싱된 categorieMap에서 y에 해당하는 categories를 반환합니다.', function() {
+        it('should return categories from cached categoriesMap.y when vertical category.', function() {
             var isVertical = true;
             var actual;
 
@@ -263,7 +263,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
 
-        it('가로형 카테고리의 경우 x를 key로하여 categories map을 생성하고 categories를 반환합니다.', function() {
+        it('should return categories from cached categoriesMap.x when horizontal category', function() {
             var isVertical = false;
             var actual;
 
@@ -276,7 +276,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
 
-        it('isVertical 값이 없다면 categoriesMap에서 한가지 카테고리를 추출하여 반환합니다(hasCategories에서 존재 여부 체크에 사용).', function() {
+        it('should pick any category, when find categories without isVertical option.(used to check existence on hasCategories()).', function() {
             var actual;
 
             dataProcessor.categoriesMap = {
@@ -316,7 +316,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('makeTooltipCategory()', function() {
-        it('가로형 차트의 경우 세로형 카테고리를 기본 값으로 합니다.', function() {
+        it('should use vertical category as default on horizontal chart', function() {
             var actual;
 
             dataProcessor.rawData = {
@@ -330,7 +330,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toBe('cate1');
         });
 
-        it('세로형 차트의 경우 가로형 카테고리를 기본 값으로 합니다.', function() {
+        it('should use horizontal category as default on vertical chart.', function() {
             var actual;
 
             dataProcessor.rawData = {
@@ -344,7 +344,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toBe('cate1');
         });
 
-        it('세로형 차트의 경우 세로형 카테고리도 존재하면 가로형 카테고리와 ","연결하여 반환합니다.', function() {
+        it('should add vertical category with ",", if there is vertical chart and having vertical category', function() {
             var actual;
 
             dataProcessor.rawData = {
@@ -433,7 +433,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_pushCategory', function() {
-        it('전달된 category를 rawData와 originalRawData의 categories에 추가합니다.', function() {
+        it('should append categories to rawData.categories and originalRawData.categories.', function() {
             dataProcessor.rawData.categories = ['cate1', 'cate2'];
             dataProcessor.originalRawData.categories = ['cate1', 'cate2'];
 
@@ -445,7 +445,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_shiftCategory', function() {
-        it('rawData와 originalRawData의 categories에서 첫번째 요소를 삭제합니다.', function() {
+        it('should delete first element from rawData.categories and originalRawData.categories', function() {
             dataProcessor.rawData.categories = ['cate1', 'cate2', 'cate3'];
             dataProcessor.originalRawData.categories = ['cate1', 'cate2', 'cate3'];
 
@@ -648,7 +648,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_pushSeriesData()', function() {
-        it('rawData와 originalRawData의 series배열 각 항목의 data요소에 전달된 values를 순서에 맞춰 추가합니다.', function() {
+        it('should push series data to rawData.series, originalRawData.series. it should be pushed to data of same index', function() {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -683,7 +683,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.originalRawData.series.line[1].data).toEqual([3, 4, 6]);
         });
 
-        it('rawData에 선택된 legend만 남은 경우 originalRawData name 기준으로 value를 설정합니다.', function() {
+        it('should push data using originalRawData\'s name, when rawData is filtered by checked legend data.', function() {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -780,7 +780,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_shiftSeriesData', function() {
-        it('rawData와 originalRawData의 series배열 각 항목의 data요소 첫번째 항목을 삭제합니다.', function() {
+        it('should delete first element of data from rawData and originalRawData.', function() {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -814,7 +814,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.originalRawData.series.line[1].data).toEqual([5, 6]);
         });
 
-        it('rawData에 선택된 legend만 남은 경우 originalRawData name 기준으로 data요소 첫번째 항목을 삭제합니다.', function() {
+        it('should delete first item using originalRawData when raw data is filtered by checked legend data.', function() {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -910,7 +910,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('addDataFromRemainDynamicData', function() {
-        it('남은 동적 데이터 모두 기존 data에 추가합니다.', function() {
+        it('should append data to rest dynamic data.', function() {
             dataProcessor.dynamicData = [
                 {
                     category: 'cate1',
@@ -933,7 +933,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.dynamicData.length).toBe(0);
         });
 
-        it('shifting옵션이 있을 경우 기존 데이터의 첫 항목들을 제거합니다.', function() {
+        it('should delete first item when shifting option is on', function() {
             var shiftingOption = true;
 
             dataProcessor.dynamicData = [
@@ -960,7 +960,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('isValidAllSeriesDataModel()', function() {
-        it('모든 SeriesDataModel이 유효한 seriesGroup을 갖고 있으면 true를 반환합니다.', function() {
+        it('should return true, when all SeriesDataModel has valid series group.', function() {
             var actual, expected;
 
             dataProcessor.seriesDataModelMap = {
@@ -977,7 +977,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toBe(expected);
         });
 
-        it('하나의 그룹이라도 유효한 seriesGroup을 갖고 있지 않으면 false를 반환합니다.', function() {
+        it('should return false when some SeriesDataModel has invalid series group', function() {
             var actual, expected;
 
             dataProcessor.seriesDataModelMap = {
@@ -996,7 +996,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_makeSeriesGroups()', function() {
-        it('객체로 구성된(colum, line) groups의 seriesItem들을 같은 seriesItem index끼리 모아 seriesGroup을 새로 구성하여 반환합니다.', function() {
+        it('should make series groups by merging series item from by chart type', function() {
             var actual;
 
             dataProcessor.seriesDataModelMap = {
@@ -1030,7 +1030,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_createValues()', function() {
-        it('combo 차트 경우에는 모든 chartType에 속한 sereisItem의 value를 추출 하여 반환합니다.', function() {
+        it('should pick all values when combo chart', function() {
             var actual, expected;
 
             dataProcessor.chartType = chartConst.CHART_TYPE_COMBO;
@@ -1064,7 +1064,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('single chart인 경우에는 해당하는 chartType에 속하는 sereisItem의 value를 추출 하여 반환합니다.', function() {
+        it('should pick values from series item of corresponding chart type, when single chart', function() {
             var actual;
             var expected = [10, 5, 30, 20];
 
@@ -1092,7 +1092,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('start값이 null이 아닐경우 포함하여 반환합니다.', function() {
+        it('should include start value, if start value is not null', function() {
             var actual;
             var expected = [10, 5, 30, 20];
 
@@ -1155,7 +1155,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_pickLegendData()', function() {
-        it('사용자가 입력한 data에서 legend label을 추출합니다.', function() {
+        it('should pick legend label from series data', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
@@ -1294,26 +1294,26 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_formatToZeroFill()', function() {
-        it('1을 길이 3으로 zero fill하면 "001"이 반환됩니다.', function() {
+        it('should return "001" when fill zero 1 to lenght 3', function() {
             var result = dataProcessor._formatToZeroFill(3, 1);
             expect(result).toBe('001');
         });
 
-        it('22을 길이 4로 zero fill하면 "0022"가 반환됩니다.', function() {
+        it('should return "0022", when fill zero 22 to 4', function() {
             var result = dataProcessor._formatToZeroFill(4, 22);
             expect(result).toBe('0022');
         });
     });
 
     describe('_pickMaxLenUnderPoint()', function() {
-        it('입력받은 인자 [1.12, 2.2, 3.33, 4.456]중에 소수점 이하의 길이를 비교하여 제일 긴 길이 3(4.456의 소수점 이하 길이)을 반환합니다.', function() {
+        it('should pick max length of decimal places from [1.12, 2.2, 3.33, 4.456]', function() {
             var point = dataProcessor._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
             expect(point).toBe(3);
         });
     });
 
     describe('_findFormatFunctions()', function() {
-        it('포맷이 function인 경우에는 해당 function을 배열에 담아 반환합니다.', function() {
+        it('should return array consist of format function, when format type is function', function() {
             var format = function() {};
             var actual;
 
@@ -1328,7 +1328,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toEqual([format]);
         });
 
-        it('포맷이 string인 경우에는 _findSimpleTypeFormatFunctions의 수행 결과를 반환합니다.', function() {
+        it('should call _findSimpleTypeFormatFunctions() when format type is string', function() {
             var format = '1,000';
 
             dataProcessor.options = {
@@ -1343,14 +1343,14 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor._findSimpleTypeFormatFunctions).toHaveBeenCalledWith(format);
         });
 
-        it('포맷 정보가 없을 경우에는 빈 배열을 반환합니다.', function() {
+        it('should return empty array, when there is no format infomation.', function() {
             var actual = dataProcessor._findFormatFunctions();
             expect(actual).toEqual([]);
         });
     });
 
     describe('_findSimpleTypeFormatFunctions()', function() {
-        it('포맷이 0.000인 경우에는 [_formatDecimal] 반환합니다.(currying되어있는 함수이기 때문에 함수 실행 결과로 테스트 했습니다)', function() {
+        it('should format to number with 3 decimal places, when format  is "0.000"', function() {
             var actual, expected;
             var format = '0.000';
 
@@ -1360,7 +1360,7 @@ describe('Test for DataProcessor', function() {
             expect(actual[0](1000)).toBe(expected);
         });
 
-        it('포맷이 1,000인 경우에는 [_formatComma] 반환합니다.', function() {
+        it('should format numbers with comma, when format is "1,000"', function() {
             var format = '1,000';
             var actual, expected;
 
@@ -1370,7 +1370,7 @@ describe('Test for DataProcessor', function() {
             expect(actual[0](1000)).toBe(expected);
         });
 
-        it('포맷이 1,000.00인 경우에는 [_formatDecimal, _formatComma] 반환합니다.', function() {
+        it('should format number with comma and decimal places, when format is "1,000.00"', function() {
             var format = '1,000.00';
             var actual, expected;
 
@@ -1381,7 +1381,7 @@ describe('Test for DataProcessor', function() {
             expect(actual[1](actual[0](1000))).toBe(expected);
         });
 
-        it('포맷이 0001인 경우에는 [_formatToZeroFill] 반환합니다.', function() {
+        it('should fill zero, when format is "0001".', function() {
             var format = '0001';
             var actual, expected;
 
@@ -1393,7 +1393,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_addStartValueToAllSeriesItem()', function() {
-        it('limit의 값들이 모두 양수이면 start값을 limit.min으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
+        it('should set start value as limit.min, when limit.min, limit.max are positive', function() {
             dataProcessor.seriesDataModelMap = {
                 bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
             };
@@ -1405,7 +1405,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(10);
         });
 
-        it('limit의 값들이 모두 음수이면 start값을 limit.max으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
+        it('should set start value as limit.max, when all limit.min, limit.max are negative.', function() {
             dataProcessor.seriesDataModelMap = {
                 bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
             };
@@ -1417,7 +1417,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(-10);
         });
 
-        it('limit의 min은 음수이고 max는 양수이면 start값을 0으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
+        it('should set start value to 0, when limit.min is negative and limit.max is positive', function() {
             dataProcessor.seriesDataModelMap = {
                 bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
             };

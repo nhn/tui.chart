@@ -715,17 +715,16 @@ var renderUtil = {
      * @returns {number} - default series top height
      */
     getDefaultSeriesTopAreaHeight: function(chartType, theme) {
-        var labelHeight;
-
-        if (!predicate.isBarTypeChart(chartType) &&
-            !predicate.isLineTypeChart(chartType) &&
-            !predicate.isComboChart(chartType)) {
-            return 0;
+        if (predicate.isBarTypeChart(chartType) ||
+            predicate.isLineTypeChart(chartType) ||
+            predicate.isComboChart(chartType) ||
+            predicate.isBulletChart(chartType)
+        ) {
+            return this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme) +
+                chartConst.SERIES_LABEL_PADDING;
         }
 
-        labelHeight = this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-
-        return labelHeight + chartConst.SERIES_LABEL_PADDING;
+        return 0;
     }
 };
 

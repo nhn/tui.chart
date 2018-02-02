@@ -37,29 +37,54 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @private
      */
     _makeTooltipHtml: function(category, item) {
-        var isPieOrPieDonutComboChart = predicate.isPieChart(this.chartType)
-            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
-        var template;
-
-        if (predicate.isBoxplotChart(this.chartType)) {
-            if (snippet.isNumber(item.outlierIndex)) {
-                template = tooltipTemplate.tplBoxplotChartOutlier;
-                item.label = item.outliers[item.outlierIndex].label;
-            } else {
-                template = tooltipTemplate.tplBoxplotChartDefault;
-            }
-        } else if (isPieOrPieDonutComboChart) {
-            template = tooltipTemplate.tplPieChart;
-        } else if (this.dataProcessor.coordinateType) {
-            template = tooltipTemplate.tplCoordinatetypeChart;
-        } else {
-            template = tooltipTemplate.tplDefault;
-        }
+        var template = this._getTooltipTemplate(item);
 
         return template(snippet.extend({
             categoryVisible: category ? 'show' : 'hide',
             category: category
         }, item));
+    },
+
+    /**
+     * get tooltip template from a templates collection
+     * @param {{value: string, legend: string, chartType: string, suffix: ?string}} item item data
+     * @returns {string} tooltip template
+     * @private
+     */
+    _getTooltipTemplate: function(item) {
+        var template = tooltipTemplate.tplDefault;
+
+        if (predicate.isBoxplotChart(this.chartType)) {
+            template = this._getBoxplotTooltipTemplate(item);
+        } else if (predicate.isPieChart(this.chartType) ||
+            predicate.isPieDonutComboChart(this.chartType, this.chartTypes)) {
+            template = tooltipTemplate.tplPieChart;
+        } else if (this.dataProcessor.coordinateType) {
+            template = tooltipTemplate.tplCoordinatetypeChart;
+        } else if (predicate.isBulletChart(this.chartType)) {
+            template = tooltipTemplate.tplBulletChartDefault;
+        }
+
+        return template;
+    },
+
+    /**
+     * Get tooltip template of box plot chart
+     * If item has outlierIndex, return outlier template
+     * Otherwise, return box plot default template
+     * @param {{value: string, legend: string, chartType: string, suffix: ?string}} item item data
+     * @returns {string} tooltip template
+     * @private
+     */
+    _getBoxplotTooltipTemplate: function(item) {
+        var template = tooltipTemplate.tplBoxplotChartDefault;
+
+        if (snippet.isNumber(item.outlierIndex)) {
+            template = tooltipTemplate.tplBoxplotChartOutlier;
+            item.label = item.outliers[item.outlierIndex].label;
+        }
+
+        return template;
     },
 
     /**
@@ -162,10 +187,10 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         var tooltipLabel = seriesItem.tooltipLabel;
         var labelFormatter = this.labelFormatter;
         var tooltipDatum = {
-            legend: (legendLabel || '')
+            legend: legendLabel || '',
+            label: tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : ''),
+            category: category || ''
         };
-
-        tooltipDatum.label = tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
 
         if (labelFormatter) {
             tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
@@ -195,14 +220,20 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         }
 
         this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
-            var data;
+            var data, isBulletChart;
 
             chartType = chartType || self.chartType;
+            isBulletChart = predicate.isBulletChart(chartType);
 
             data = seriesGroup.map(function(seriesItem, index) {
                 var category = self.dataProcessor.makeTooltipCategory(groupIndex, index, self.isVertical);
+                var legendIndex = isBulletChart ? groupIndex : index;
 
-                return seriesItem ? self._makeTooltipDatum(legendLabels[chartType][index], category, seriesItem) : null;
+                if (!seriesItem) {
+                    return null;
+                }
+
+                return self._makeTooltipDatum(legendLabels[chartType][legendIndex], category, seriesItem);
             });
 
             if (!tooltipData[chartType]) {

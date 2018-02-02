@@ -152,12 +152,10 @@ module.exports = {
      * @private
      */
     _setSeriesColors: function(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
-        var self = this;
         var seriesColors, seriesCount, hasOwnColors;
         var colorIndex = 0;
-        var rawSeriesDatum;
 
-        rawSeriesThemes = rawSeriesThemes || {}; // 분기문 간소화를위해
+        rawSeriesThemes = rawSeriesThemes || {}; // to simplify if/else statement
 
         snippet.forEachArray(seriesTypes, function(seriesType) {
             if (rawSeriesThemes[seriesType]) {
@@ -168,25 +166,38 @@ module.exports = {
                 hasOwnColors = false;
             }
 
-            rawSeriesDatum = rawSeriesData[seriesType];
-            if (rawSeriesDatum && rawSeriesDatum.length) {
-                if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
-                    seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
-                } else {
-                    seriesCount = rawSeriesDatum.length;
-                }
-            } else {
-                seriesCount = 0;
-            }
+            seriesCount = this._getSeriesThemeColorCount(rawSeriesData[seriesType]);
 
-            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors, seriesCount,
+            seriesThemes[seriesType].colors = this._makeEachSeriesColors(seriesColors, seriesCount,
                 !hasOwnColors && colorIndex);
 
             // To distinct between series that use default theme, we make the colors different
             if (!hasOwnColors) {
                 colorIndex = (seriesCount + colorIndex) % seriesColors.length;
             }
-        });
+        }, this);
+    },
+
+    /**
+     * Get number of series theme color from seriesData
+     * @param {object} rawSeriesDatum - raw series data contains series information
+     * @returns {number} number of series theme color
+     * @private
+     */
+    _getSeriesThemeColorCount: function(rawSeriesDatum) {
+        var seriesCount = 0;
+
+        if (rawSeriesDatum && rawSeriesDatum.length) {
+            if (rawSeriesDatum.colorLength) {
+                seriesCount = rawSeriesDatum.colorLength;
+            } else if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
+                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
+            } else {
+                seriesCount = rawSeriesDatum.length;
+            }
+        }
+
+        return seriesCount;
     },
 
     /**
@@ -202,15 +213,14 @@ module.exports = {
     _initTheme: function(themeName, rawTheme, seriesTypes, rawSeriesData) {
         var theme;
 
-        // 테마 선택, 디폴트 테마 or 유저가 지정하는 컬러
-        if (themeName !== chartConst.DEFAULT_THEME_NAME) {
+        if (themeName !== chartConst.DEFAULT_THEME_NAME) { // customized theme that overrides default theme
             theme = JSON.parse(JSON.stringify(defaultTheme));
             this._overwriteTheme(rawTheme, theme);
-        } else {
+        } else { // default theme
             theme = JSON.parse(JSON.stringify(rawTheme));
         }
 
-        // 각 컴포넌트 테마에 시리즈명별로 뎊스를 넣어준다. theme.yAxis.테마들 -> theme.yAxis.line.테마들
+        // make each component theme have theme by series name. theme.yAxis.theme -> theme.yAxis.line.theme
         theme.yAxis = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.yAxis, theme.yAxis, 'yAxis');
         theme.series = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.series, theme.series, 'series');
 

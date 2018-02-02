@@ -64,14 +64,14 @@ describe('Test for SeriesItem', function() {
     });
 
     describe('_createValues()', function() {
-        it('전달된 value가 배열여부와 상관없이 무조건 배열로 만들고 내림차순 정렬하여 반환합니다.', function() {
+        it('should create arrays sorted in descending order', function() {
             var actual = seriesItem._createValues([3, 1, 2, 10]),
                 expected = [10, 3, 2, 1];
 
             expect(actual).toEqual(expected);
         });
 
-        it('음수가 포함된 경우도 문제없이 내림차순 정렬하여 반환합니다.', function() {
+        it('should sorted in descending order, when inputs are negative', function() {
             var actual = seriesItem._createValues([3, 1, -2, 10]),
                 expected = [10, 3, 1, -2];
 
@@ -80,7 +80,7 @@ describe('Test for SeriesItem', function() {
     });
 
     describe('addRatio()', function() {
-        it('value값 기준으로 ratio를 계산하여 ratio와 endRatio에 계산된 값을 할당합니다.', function() {
+        it('should set calculated value ratio to ratio and endRatio', function() {
             seriesItem.value = 40;
             seriesItem.addRatio(100);
 
@@ -88,7 +88,7 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.endRatio).toBe(0.4);
         });
 
-        it('start값이 있을 경우 start값 기준으로 startRatio도 계산하여 할당합니다.', function() {
+        it('should calculated start ratio to startRatio', function() {
             seriesItem.hasStart = true;
             seriesItem.start = 20;
             seriesItem.value = 40;

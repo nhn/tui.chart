@@ -22,7 +22,7 @@ describe('HeatmapChartSeries', function() {
     });
 
     describe('_makeBound()', function() {
-        it('block의 너비 높이와 x, y정보를 이용하여 bound 정보를 생성합니다.', function() {
+        it('should make bonds using block dimesion and x, y position.', function() {
             var actual;
 
             series.layout = {

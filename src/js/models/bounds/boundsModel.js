@@ -763,8 +763,9 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     calculateMaxRadius: function(axisDataMap) {
         var dimensionMap = this.getDimensionMap(['series', 'circleLegend']);
+        var circleLegendVisible = this.options.circleLegend ? this.options.circleLegend.visible : false;
 
-        return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap);
+        return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap, circleLegendVisible);
     }
 });
 

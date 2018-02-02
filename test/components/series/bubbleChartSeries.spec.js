@@ -40,7 +40,7 @@ describe('BubbleChartSeries', function() {
     });
 
     describe('_calculateStep()', function() {
-        it('카테고리가 있고 x값 개수가 y값 개수보다 많을 경우에는 시리즈 높이를 카테고리 수로 나누어 반환합니다.', function() {
+        it('should calculate step of chart having categories and number of x values are larger than y values, by dividing series.height to number of categories.', function() {
             var actual, expected;
 
             dataProcessor.hasCategories.and.returnValue(true);
@@ -57,7 +57,7 @@ describe('BubbleChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('카테고리가 있고 x값 개수가 y값 개수보다 작거나 같을 경우에는 시리즈 너비를 카테고리 수로 나누어 반환합니다.', function() {
+        it('should calculate step of chart having categories and number of x values are less or same to y values, by dividing series.width to categories', function() {
             var actual, expected;
 
             dataProcessor.hasCategories.and.returnValue(true);
@@ -76,7 +76,7 @@ describe('BubbleChartSeries', function() {
     });
 
     describe('_makeBound()', function() {
-        it('x ratio(ratioMap.x)값이 있는 경우에는 x ratio와 시리즈 너비 값으로 left를 계산합니다.', function() {
+        it('should calculate left using x ratio and series.width if there is x ratio(ratioMap.x).', function() {
             var actual, expected;
 
             series.layout.dimension = {
@@ -91,7 +91,7 @@ describe('BubbleChartSeries', function() {
             expect(actual.left).toBe(expected);
         });
 
-        it('x ratio(ratioMap.x)값이 없는 경우에는 positionByStep값으로 left를 계산합니다.', function() {
+        it('should calculate left using positinoByStep if there is not x ratio(ratioMap.x).', function() {
             var positionByStep = 40,
                 actual, expected;
 
@@ -102,7 +102,7 @@ describe('BubbleChartSeries', function() {
             expect(actual.left).toBe(expected);
         });
 
-        it('y ratio(ratioMap.y)값이 있는 경우에는 y ratio와 시리즈 높이 값으로 top을 계산합니다.', function() {
+        it('should calculate top using y ratio and series.height if y ratio(ratioMap.y) is exists.', function() {
             var actual, expected;
 
             series.layout.dimension = {
@@ -116,7 +116,7 @@ describe('BubbleChartSeries', function() {
             expect(actual.top).toBe(expected);
         });
 
-        it('y ratio(ratioMap.y)값이 없는 경우에는 positionByStep값과 시리즈 높이 값으로 top을 계산합니다.', function() {
+        it('should calculate top using positionByStep, if y ratio(ratioMap.y) is not exist', function() {
             var positionByStep = 40,
                 actual, expected;
 

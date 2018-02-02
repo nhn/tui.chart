@@ -35,7 +35,7 @@ describe('ScatterChartSeries', function() {
     });
 
     describe('_makeBound()', function() {
-        it('x ratio와 시리즈 너비 값으로 left를 계산합니다.', function() {
+        it('should calculate left postion using x ratio and series width.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -49,7 +49,7 @@ describe('ScatterChartSeries', function() {
             expect(actual.left).toBe(80);
         });
 
-        it('y ratio와 시리즈 높이 값으로 top을 계산합니다.', function() {
+        it('should calculate top position using y ratio and series height.', function() {
             var actual;
 
             series.layout.dimension = {
@@ -62,7 +62,7 @@ describe('ScatterChartSeries', function() {
             expect(actual.top).toBe(75);
         });
 
-        it('radius는 항상 chartConst.SCATTER_RADIUS를 반환합니다.', function() {
+        it('should always return chartConst.SCATTER_RADIUS as radius.', function() {
             var actual;
 
             series.layout.dimension = {};

@@ -11,7 +11,7 @@ var chartConst = require('../../../src/js/const');
 
 describe('Test for rawDataHandler', function() {
     describe('_pickStacks', function() {
-        it('rawSeriesData에서 stack을 추출합니다.', function() {
+        it('should pick stack from rawSeriesData.', function() {
             var rawSeriesData = [{
                     data: [],
                     stack: 'stack1'
@@ -25,7 +25,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('stack 값이 없는 경우에는 chartConst.DEFAULT_STACK을 추가합니다.', function() {
+        it('should append DEFAULT_STACK, when there is no stack value', function() {
             var rawSeriesData = [{
                     data: []
                 },
@@ -38,7 +38,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('중복되지 않은 상태의 추출된 순서대로 반환합니다.', function() {
+        it('should return values in input order, and no duplication', function() {
             var rawSeriesData = [{
                     data: [],
                     stack: 'stack1'
@@ -56,7 +56,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('divergingOption이 없는 경우 stack 개수에 제한은 없습니다.', function() {
+        it('should not limit a number of stacks, when there is not divergingOption.', function() {
             var rawSeriesData = [{
                     data: [],
                     stack: 'stack1'
@@ -74,7 +74,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('divergingOption이 ture이면서 3개 이상인 경우 2개 까지만 반환합니다.', function() {
+        it('should use values up to 2, when diversingOption is true', function() {
             var rawSeriesData = [
                 {
                     data: [],
@@ -95,7 +95,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('모든 값에 stack 값이 없는 경우에는 defalut stack만을 담은 배열이 반환되어야 합니다.', function() {
+        it('should return arrays with DEFAULT_STACK, when all data does not have stack property', function() {
             var rawSeriesData = [{
                     data: []
                 },
@@ -109,7 +109,7 @@ describe('Test for rawDataHandler', function() {
     });
 
     describe('_sortSeriesData()', function() {
-        it('stacks의 stack 순서대로 seriesData를 정렬합니다.', function() {
+        it('should sort series data order by stacks', function() {
             var rawSriesData = [{
                     data: [1, 2, 3],
                     stack: 'st1'
@@ -138,7 +138,7 @@ describe('Test for rawDataHandler', function() {
     });
 
     describe('removeSeriesStack()', function() {
-        it('seriesData에서 stack 정보를 제거합니다.', function() {
+        it('should delete stack property from seriesData', function() {
             var rawSriesData = [{
                     data: [1, 2, 3],
                     stack: 'st1'
@@ -166,7 +166,7 @@ describe('Test for rawDataHandler', function() {
     });
 
     describe('_makeNormalDivergingrawSeriesDataData()', function() {
-        it('stack값이 없는 경우 두번째 요소 까지를 유효한 데이터로 취급합니다.', function() {
+        it('should use data upto second element, when data have not stack property.', function() {
             var rawSeriesData = [
                 {
                     data: [1, 2, 3]
@@ -191,7 +191,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('0번 요소의 data들의 양수는 모두 음수로 변경하고 음수는 모두 0으로 변경합니다.', function() {
+        it('should change data of index 0, by making positives to negatives, and negatives to 0', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3]
@@ -207,7 +207,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('1번 요소가 존재할 경우 1번 요소 data들의 음수는 모두 0으로 변경합니다.', function() {
+        it('should change data of index 1, by making negatives to 0', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3]
@@ -231,7 +231,7 @@ describe('Test for rawDataHandler', function() {
     });
 
     describe('_makeRawSeriesDataForStackedDiverging()', function() {
-        it('stacks중 0번 stack값을 갖고있는 요소의 data들의 양수는 음수로 음수는 0으로 변경합니다.', function() {
+        it('should change data of index 0, by making positives to negatives, negatives to 0', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3],
@@ -248,7 +248,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('stacks중 1번 stack값을 갖고있는 요소의 data들의 음수는 0으로 변경합니다.', function() {
+        it('should change data of index 1, by making negatives to zero', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3],
@@ -274,7 +274,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('stacks가 하나일 경우에는 stack값이 없는 data들의 음수를 0으로 변경합니다.', function() {
+        it('should change data without stack property, by making negatives to 0', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3],
@@ -300,7 +300,7 @@ describe('Test for rawDataHandler', function() {
     });
 
     describe('_makeRawSeriesDataForDiverging()', function() {
-        it('stackType옵션이 없을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
+        it('should call _makeNormalDivergingRawSeriesData() when there is not stackType option', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3],
@@ -321,7 +321,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('유효한 stackType옵션이 있을 경우에는 _makeRawSeriesDataForStackedDiverging()의 실행 결과를 반환합니다.', function() {
+        it('should return value of _makeRawSeriesDataForStackedDiverging(), when stackType option is valid', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3],
@@ -342,7 +342,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('유효하지 않은 stackType옵션이 있을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
+        it('should return value of _makeNormalDivergingRawSeriesData(), when stackType option is invalid.', function() {
             var rawSeriesData = [
                 {
                     data: [1, -2, 3],
@@ -365,7 +365,7 @@ describe('Test for rawDataHandler', function() {
     });
 
     describe('filterCheckedRawData()', function() {
-        it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
+        it('should filter rawData of which legend is checked', function() {
             var actual = rawDataHandler.filterCheckedRawData({
                 series: {
                     line: ['a', 'b', 'c', 'd']
@@ -378,7 +378,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual.series).toEqual(expected);
         });
 
-        it('두가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
+        it('should filter rawData by each chart type', function() {
             var actual = rawDataHandler.filterCheckedRawData({
                 series: {
                     column: ['a', 'b', 'c', 'd'],
@@ -394,6 +394,80 @@ describe('Test for rawDataHandler', function() {
             };
 
             expect(actual.series).toEqual(expected);
+        });
+
+        it('should filter categories of rawData by checkedLegends, if it is a bullet chart and fillSeriesName option is enabled', function() {
+            var actual = rawDataHandler.filterCheckedRawData({
+                categories: ['a', 'b', 'c', 'd'],
+                series: {
+                    bullet: ['a', 'b', 'c', 'd']
+                }
+            }, {
+                bullet: [null, true, null, true]
+            }, {
+                fillSeriesName: true
+            });
+            var expected = {
+                categories: ['b', 'd'],
+                series: {
+                    bullet: ['b', 'd']
+                }
+            };
+
+            expect(actual.categories).toEqual(expected.categories);
+            expect(actual.series).toEqual(expected.series);
+        });
+
+        it('should not filter categories of rawData by checkedLegends, when it is a bullet chart, and fillSeriesName option is disabled', function() {
+            var actual = rawDataHandler.filterCheckedRawData({
+                categories: ['a', 'b'],
+                series: {
+                    column: ['a', 'b', 'c', 'd']
+                }
+            }, {
+                column: [null, true, null, true]
+            });
+            var expected = {
+                categories: ['a', 'b'],
+                series: {
+                    column: ['b', 'd']
+                }
+            };
+
+            expect(actual.categories).toEqual(expected.categories);
+            expect(actual.series).toEqual(expected.series);
+        });
+    });
+
+    describe('_makeRawSeriesDataForBulletChart', function() {
+        it('should fill categories to empty array, if there isn\'t categories property on rawData', function() {
+            var rawData1 = {
+                series: {}
+            };
+            var rawData2 = {
+                series: {}
+            };
+            rawDataHandler._makeRawSeriesDataForBulletChart(rawData1);
+            rawDataHandler._makeRawSeriesDataForBulletChart(rawData2, true);
+
+            expect(rawData1.categories).toEqual([]);
+            expect(rawData2.categories).toEqual([]);
+        });
+
+        it('should overwrite categories, when it is bullet chart', function() {
+            var rawData = {
+                categories: ['category-0'],
+                series: {
+                    bullet: [
+                        {name: 'series-0'},
+                        {name: 'series-1'},
+                        {name: 'series-2'}
+                    ]
+                }
+            };
+            rawDataHandler._makeRawSeriesDataForBulletChart(rawData);
+
+            expect(rawData.categories).toEqual(['series-0', 'series-1', 'series-2']);
         });
     });
 });

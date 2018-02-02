@@ -143,7 +143,7 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
             });
         }
 
-        // 마지막 스탭 라벨은 카테고리랑 겹칠수 있어 만들지 않음
+        // skip last step label. it could overlapped by category label
         for (j = 0; j < (stepLabels.length - 1); j += 1) {
             stepLabelData.push({
                 text: stepLabels[j],
@@ -211,11 +211,11 @@ function makeSpiderWebPositions(params) {
     var points = [];
     var stepPoints, pointY, point, stepPixel, i, j;
 
-    stepPixel = radius / (stepCount - 1); // 0 스텝에는 크기가 없는 점이니 스텝한개는 제거
+    stepPixel = radius / (stepCount - 1); // As there is not size in step 0, one step is removed
 
     for (i = 0; i < stepCount; i += 1) {
         stepPoints = [];
-        // 회전할 첫번째 픽셀의 Y축 값
+        // point Y of first pixel to rotate
         pointY = centerY + (stepPixel * i);
 
         for (j = 0; j < angleStepCount; j += 1) {
@@ -223,7 +223,7 @@ function makeSpiderWebPositions(params) {
 
             stepPoints.push({
                 left: point.x,
-                top: height - point.y // y좌표를 top좌표로 전환
+                top: height - point.y // convert y to top
             });
         }
 
@@ -273,7 +273,7 @@ function makeRadialCategoryPositions(params) {
 
         points.push({
             left: point.x,
-            top: height - point.y, // y좌표를 top좌표로 전환
+            top: height - point.y, // convert y to top
             anchor: anchor
         });
     }

@@ -86,16 +86,16 @@ function getNormalizedLimit(min, max, step) {
     var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
     var fixedStep = (step * placeNumber);
 
-    // max의 step 자릿수 이하 올림
+    // ceil max value step digits
     max = Math.ceil((max * placeNumber) / fixedStep) * fixedStep / placeNumber;
 
     if (min > step) {
-        // 최소값을 step 의 배수로 조정
+        // floor min value to multiples of step
         min = Math.floor((min * placeNumber) / fixedStep) * fixedStep / placeNumber;
     } else if (min < 0) {
         min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
     } else {
-        // min값이 양수이고 step 보다 작으면 0으로 설정
+        // 0 when min value is positive and smaller than step
         min = 0;
     }
 

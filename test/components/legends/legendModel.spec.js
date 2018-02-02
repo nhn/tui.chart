@@ -45,7 +45,7 @@ describe('Test for LegendModel', function() {
     });
 
     describe('_addSendingDatum()', function() {
-        it('chartType이 column이고 index가 1인 sending datum을 하나 추가합니다.', function() {
+        it('add sending data of column, index 1', function() {
             legendModel.data[1] = {
                 chartType: 'column',
                 index: 1
@@ -57,7 +57,7 @@ describe('Test for LegendModel', function() {
     });
 
     describe('_initCheckedIndexes()', function() {
-        it('범례 checkbox 기능에 사용되는 checkedIndexes를 초기화 합니다.', function() {
+        it('should reset checkedIndexes(used to legend checkbox', function() {
             spyOn(legendModel, 'updateCheckedLegendsWith');
             legendModel.labelInfos = [
                 {
@@ -78,7 +78,7 @@ describe('Test for LegendModel', function() {
     });
 
     describe('_setThemeToLegendData()', function() {
-        it('테마가 전달받은 레이블 정보에 테마 정보와 index를 설정합니다.', function() {
+        it('should set theme information and index to legend data', function() {
             var legendData = [{}, {}];
             var theme = {
                 colors: ['red', 'blue'],
@@ -105,7 +105,7 @@ describe('Test for LegendModel', function() {
             });
         });
 
-        it('세번째 파라미터(checkedIndexes)에 값이 있을 경우 해당하는 index에 대해서는 증가값을 부여하고 해당하지 않는 index에 대해서는 -1을 할당합니다.', function() {
+        it('should set increased index for checked indexes only. If not, it should set index to -1', function() {
             var legendData = [{}, {}];
             var theme = {
                 colors: ['red', 'blue'],
@@ -122,7 +122,7 @@ describe('Test for LegendModel', function() {
     });
 
     describe('_setData()', function() {
-        it('seriesTypes 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
+        it('should make label data by labelInfos and theme, if seriesTypes is empty', function() {
             var legendData = [{}, {}];
             var expected = [{}, {}];
             var colorTheme = {
@@ -142,8 +142,7 @@ describe('Test for LegendModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('seriesTypes값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다.' +
-            ' index는 chartType 별로 구분되서 설정됩니다.', function() {
+        it('should make legend data by seriesTypes, and set index for each chartType', function() {
             var legendData = [{}, {}];
             var seriesTypes = ['column', 'line'];
             var labelMap = {
@@ -189,13 +188,13 @@ describe('Test for LegendModel', function() {
     });
 
     describe('toggleSelectedIndex()', function() {
-        it('selectedIndex와 index가 같지 않으면 index를 selectedIndex에 셋팅합니다.', function() {
+        it('should set index to selectedIndex, when selectedIndex is not same to index', function() {
             legendModel.toggleSelectedIndex(0);
 
             expect(legendModel.selectedIndex).toBe(0);
         });
 
-        it('selectedIndex와 index가 같으면 null을 셋팅합니다.', function() {
+        it('should return null if selectedIndex is same to index', function() {
             legendModel.selectedIndex = 0;
             legendModel.toggleSelectedIndex(0);
 
@@ -235,7 +234,7 @@ describe('Test for LegendModel', function() {
     });
 
     describe('updateCheckedData()', function() {
-        it('checkbox 기능에 해당하는 data를 update 합니다.', function() {
+        it('should update checkbox check data', function() {
             var checkedIndexes = [];
             var checkedIndexesMap = {
                 column: [true],

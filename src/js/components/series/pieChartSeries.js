@@ -727,9 +727,9 @@ function pieSeriesFactory(params) {
     params.chartType = 'pie';
 
     if (chartType === 'combo') {
-        // 앨리어스라고 불리는 시리즈 매핑 키가 내부에서는 seriesType으로 사용되고 있다.(ex pie1)
-        // 기존 내용과 맞추기 위해 우선은 컴포넌트 메니저에 등록될 당시의 이름으로 구분
-        // 추후 차트 생성자를 통합하게되면 데이터에 시리즈 타입이 포함되기 앨리어스가 필요 없어진다.
+        // elias series mapping key is used as a seriesType(ex. pie1)
+        // It is now distinguished to follow current structure
+        // elias will not be needed after chart constructor is integrated
         params.seriesType = params.name.split('Series')[0];
         params.isCombo = true;
     }

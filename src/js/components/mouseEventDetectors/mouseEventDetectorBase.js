@@ -56,6 +56,7 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
 
         /**
          * whether allow select series or not
+         * @type {boolean}
          */
         this.allowSelect = params.allowSelect;
 
@@ -76,18 +77,6 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
          * @type {null | object}
          */
         this.selectedData = null;
-
-        /**
-         * previous client position of mouse event (clientX, clientY)
-         * @type {null | object}
-         */
-        this.prevClientPosition = null;
-
-        /**
-         * previous found data
-         * @type {null | object}
-         */
-        this.prevFoundData = null;
 
         isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
         /**
@@ -360,28 +349,16 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
     _showTooltip: function() {},
 
     /**
-     * Animate for adding data.
+     * hide tooltip
+     * @private
+     * @abstract
      */
-    animateForAddingData: function() {
-        var foundData, isMoving;
-
-        if (!this.prevClientPosition) {
-            return;
-        }
-
-        foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
-
-        if (foundData) {
-            isMoving = this.prevFoundData && (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
-            this._showTooltip(foundData, isMoving);
-        }
-
-        this.prevFoundData = foundData;
-    },
+    _hideTooltip: function() {},
 
     /**
-     * Send mouse position data to series component, when occur mouse event like move, click.
-     * 이벤트 발생시 시리즈 엘리먼트 감지가 가능하도록 mouseEventDetector container를 일시적으로 숨긴다.
+     * When mouse event happens,
+     * hide MouseEventDetector container so that detect event of series elements
+     * and send mouse position data to series component
      * @param {string} eventType - mouse event detector type
      * @param {MouseEvent} e - mouse event
      * @private
@@ -444,23 +421,17 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
     /**
      * Store client position, when occur mouse move event.
      * @param {MouseEvent} e - mouse event
+     * @abstract
      * @private
      */
-    _onMousemove: function(e) {
-        this.prevClientPosition = {
-            x: e.clientX,
-            y: e.clientY
-        };
-    },
+    _onMousemove: function() {},
 
     /**
-     * Initialize prevClientPosition and prevFoundData, when occur mouse out.
+     * Abstract mouseout handler
+     * @abstract
      * @private
      */
-    _onMouseout: function() {
-        this.prevClientPosition = null;
-        this.prevFoundData = null;
-    },
+    _onMouseout: function() {},
 
     /**
      * Attach mouse event.
@@ -480,7 +451,22 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * find data by indexes
      * @abstract
      */
-    findDataByIndexes: function() {}
+    findDataByIndexes: function() {},
+
+    /**
+     * Set prevClientPosition by MouseEvent
+     * @param {?MouseEvent} event - mouse event
+     */
+    _setPrevClientPosition: function(event) {
+        if (!event) {
+            this.prevClientPosition = null;
+        } else {
+            this.prevClientPosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+    }
 });
 
 snippet.CustomEvents.mixin(MouseEventDetectorBase);

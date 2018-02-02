@@ -361,10 +361,10 @@ var zoomMixer = {
      * @private
      */
     _onMouseupAfterDrag: function(e) {
-        // @TODO: 데이터가 없는 경우의 zoomable 정책 정의 필요
-        // dragStartIndexes도 마찬가지지만 dragEnd 인덱스를 찾기 위해서는 차트에 data가 필요하다.
-        // 하지만 data가 없어도 차트는 그려질 수 있음.
-        // 그래서 이 부분에서 data가 없는경우 zoom을 실행하지 않도록 하기 위해 먼저 index를 확인한다.
+        // @TODO: define zoomable policy, when there is no data
+        // To find dragEndIndex for zoom, data should not be null.
+        // To avoid zooming avoid zooming with no data, check dragStartIndexes first
+        // Becault chart without data returns invalid dragStartIndexes
         var foundedDragEndData = this._findDataForZoomable(e.clientX, e.clientY);
         var target;
 

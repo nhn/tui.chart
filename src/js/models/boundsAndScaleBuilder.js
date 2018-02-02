@@ -114,7 +114,7 @@ var boundsAndScaleBuilder = {
         var isVertical = params.isVertical;
         var scaleDataMap;
 
-        // 01. base dimension 등록
+        // 01. register base dimension
         if (componentManager.has('xAxis')) {
             boundsModel.registerXAxisHeight();
         }
@@ -127,7 +127,7 @@ var boundsAndScaleBuilder = {
             }
         }
 
-        // 02. y axis, legend scale 추가
+        // 02. add scale of y axis and legend
         if (scaleOption.yAxis) {
             this.addYAxisScale(scaleDataModel, 'yAxis', scaleOption.yAxis, params.options.yAxis);
         }
@@ -146,41 +146,42 @@ var boundsAndScaleBuilder = {
 
         scaleDataMap = scaleDataModel.scaleDataMap;
 
-        // 03. y axis dimension 등록
+        // 03. register y axis dimension
         this._registerYAxisDimension(componentManager, boundsModel, scaleDataMap, 'yAxis', isVertical);
         this._registerYAxisDimension(componentManager, boundsModel, scaleDataMap, 'rightYAxis', isVertical);
 
-        // 04. x axis scale 추가
+        // 04. add x axis scale
         if (scaleOption.xAxis) {
             scaleDataModel.addScale('xAxis', options.xAxis, {
                 valueType: scaleOption.xAxis.valueType || 'value'
             }, scaleOption.xAxis.additionalOptions);
         }
 
-        // 05. axis data map 생성 및 설정
+        // 05. create and configure axis data map
         if (params.hasAxes) {
             scaleDataModel.setAxisDataMap();
         }
 
-        // 06. series 영역 dimension 등록
+        // 06. register series dimension
         boundsModel.registerSeriesDimension();
 
-        // 07. circle legend가 있을 경우에 circle legend dimension 등록
+        // 07. register circle legend dimension, if there is a circle legend
         if (componentManager.has('circleLegend') && options.circleLegend.visible) {
             boundsModel.registerCircleLegendDimension(scaleDataModel.axisDataMap);
         }
 
         if (componentManager.has('xAxis')) {
-            // 08. 자동 tick 계산 옵션이 있을 경우에 axisData 갱신
+            // 08. update axisData, when autoTickInterval option exist
             if (predicate.isAutoTickInterval(options.xAxis.tickInterval)) {
                 scaleDataModel.updateXAxisDataForAutoTickInterval(params.prevXAxisData, addingDataMode);
             }
 
-            // 09. x축 label의 회전 여부 관련한 axisData 갱신
+            // 09. update axisData related to the rotation of label on x axis
             scaleDataModel.updateXAxisDataForLabel(addingDataMode);
         }
 
-        // 10. 나머지 영역 dimension 등록 및 각 영역의 position 정보 등록
+        // 10. regiser dimension of rest components
+        //     register positon of all components
         boundsModel.registerBoundsData(scaleDataModel.axisDataMap.xAxis);
     },
 

@@ -175,6 +175,12 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
          */
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
 
+        /**
+         * whether series lable is supported
+         * @type {boolean}
+         */
+        this.supportSeriesLable = true;
+
         this._attachToEventBus();
     },
 
@@ -292,7 +298,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
                 this.seriesSet = funcRenderGraph(dimension, seriesData, paper);
             }
 
-            if (predicate.isShowLabel(this.options)) {
+            if (predicate.isShowLabel(this.options) && this.supportSeriesLable) {
                 this.labelSet = this._renderSeriesLabelArea(paper);
             }
         }
@@ -368,6 +374,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         var checkedLegends;
         this.paper = data.paper;
         this._setDataForRendering(data);
+        this._clearSeriesContainer();
         this.beforeAxisDataMap = this.axisDataMap;
 
         if (data.checkedLegends) {
@@ -412,9 +419,15 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      */
     _clearSeriesContainer: function() {
         if (this.seriesSet && this.seriesSet.remove) {
+            this.seriesSet.forEach(function(series) {
+                series.remove();
+            }, this);
             this.seriesSet.remove();
         }
         if (this.labelSet && this.labelSet.remove) {
+            this.labelSet.forEach(function(label) {
+                label.remove();
+            }, this);
             this.labelSet.remove();
         }
 
@@ -428,8 +441,6 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
     rerender: function(data) {
         var checkedLegends;
 
-        this._clearSeriesContainer();
-
         if (this.dataProcessor.getGroupCount(this.seriesType)) {
             if (data.checkedLegends) {
                 checkedLegends = data.checkedLegends[this.seriesType];
@@ -437,6 +448,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
             }
 
             this._setDataForRendering(data);
+            this._clearSeriesContainer();
             this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
 
             if (this.labelShowEffector) {
@@ -485,10 +497,8 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     resize: function(data) {
+        this._clearSeriesContainer();
         this._setDataForRendering(data);
-        if (this.labelSet && this.labelSet.remove) {
-            this.labelSet.remove();
-        }
         this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
     },
 
@@ -770,7 +780,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
     showLabel: function() {
         this.options.showLabel = true;
 
-        if (!this.seriesLabelContainer) {
+        if (!this.seriesLabelContainer && this.supportSeriesLable) {
             this._renderSeriesLabelArea(this.paper);
         }
     },

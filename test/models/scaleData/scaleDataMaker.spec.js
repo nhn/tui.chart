@@ -264,7 +264,7 @@ describe('Test for ScaleDataMaker', function() {
     });
 
     describe('_calculateCoordinateScale()', function() {
-        it('limitOption 값이 있는 경우 옵션의 min, max를 반환합니다.', function() {
+        it('should return limitOption, if there is limitOption', function() {
             var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
                 limitOption: {
                     min: 0,
@@ -353,7 +353,7 @@ describe('Test for ScaleDataMaker', function() {
     });
 
     describe('_calculatePercentStackedScale()', function() {
-        it('음수의 합이 0일 경우에는 chartConst.PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('should return chartConst.PERCENT_STACKED_AXIS_RANGE, when sum of negative values is 0', function() {
             var baseValues = [10, 20, 30, 40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues);
             var expected = chartConst.PERCENT_STACKED_AXIS_SCALE;
@@ -361,7 +361,7 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('양수의 합이 0일 경우에는 chartConst.MINUS_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('should return chartConst.MINUS_PERCENT_STACKED_AXIS_RANGE, when sum of positive values is 0', function() {
             var baseValues = [-10, -20, -30, -40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues);
             var expected = chartConst.MINUS_PERCENT_STACKED_AXIS_SCALE;
@@ -369,7 +369,7 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 있을 경우에는 chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('should return chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE, when there is diverging option with negatives and positives sum are not 0', function() {
             var baseValues = [-10, 20, -30, 40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, true);
             var expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
@@ -377,7 +377,7 @@ describe('Test for ScaleDataMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE 반환합니다.', function() {
+        it('should return chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE, when there is no diverging option with negatives and positives sum are not 0', function() {
             var baseValues = [-10, 20, -30, 40];
             var actual = scaleDataMaker._calculatePercentStackedScale(baseValues, false);
             var expected = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;
@@ -406,6 +406,14 @@ describe('Test for ScaleDataMaker', function() {
         it('get min = 0, max = 10 from single zero baseValue', function() {
             var actual = scaleDataMaker._getLimitSafely([0, 0]);
 
+            expect(actual).toEqual({
+                min: 0,
+                max: 10
+            });
+        });
+
+        it('get min = 0, max = 10 from single zero baseValue of length 1', function() {
+            var actual = scaleDataMaker._getLimitSafely([0]);
             expect(actual).toEqual({
                 min: 0,
                 max: 10
@@ -471,6 +479,41 @@ describe('Test for ScaleDataMaker', function() {
             isOverflowed = scaleDataMaker._isOverflowed(null, scaleData, {min: -25, max: 0}, false, false);
 
             expect(isOverflowed).toBe(null);
+        });
+    });
+
+    describe('_adjustLimitForOverflow()', function() {
+        var limit, step, isOverflowed;
+
+        beforeEach(function() {
+            limit = {min: 0.01, max: 0.06};
+            step = 0.01;
+            isOverflowed = {min: false, max: false};
+        });
+
+        it('should return limit value same to input, if (data.min !== axis.min && data.max !== axis.max)', function() {
+            var actual = scaleDataMaker._adjustLimitForOverflow(limit, step, isOverflowed);
+
+            expect(actual.min).toBe(0.01);
+            expect(actual.max).toBe(0.06);
+        });
+
+        it('should lower limit.min value, if (data.min === axis.min)', function() {
+            var actual;
+            isOverflowed.min = true;
+            actual = scaleDataMaker._adjustLimitForOverflow(limit, step, isOverflowed);
+
+            expect(actual.min).toBe(0);
+            expect(actual.max).toBe(0.06);
+        });
+
+        it('should upper limit.max value, if (data.max === axis.max)', function() {
+            var actual;
+            isOverflowed.max = true;
+            actual = scaleDataMaker._adjustLimitForOverflow(limit, step, isOverflowed);
+
+            expect(actual.min).toBe(0.01);
+            expect(actual.max).toBe(0.07);
         });
     });
 });

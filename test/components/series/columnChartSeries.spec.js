@@ -16,7 +16,8 @@ describe('ColumnChartSeries', function() {
     var series, dataProcessor;
 
     beforeAll(function() {
-        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        // Rendered width, height is different according to browser
+        // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
@@ -42,7 +43,7 @@ describe('ColumnChartSeries', function() {
     });
 
     describe('_makeBound()', function() {
-        it('baseBound 정보에 startLeft, endLeft, endWidth정보를 더하여 start, end로 구분된 bound 정보를 생성합니다.', function() {
+        it('should make bounds information having start and end property, using baseBound, startLeft, endLeft, endWidth', function() {
             var width = 40,
                 height = 30,
                 left = 10,
@@ -68,7 +69,7 @@ describe('ColumnChartSeries', function() {
     });
 
     describe('_makeColumnChartBound()', function() {
-        it('옵션 없는 바 차트의 bound 정보를 생성합니다.', function() {
+        it('should calculate column chart bound of empty option.', function() {
             var baseData = {
                     baseBarSize: 100,
                     basePosition: 40,
@@ -108,7 +109,7 @@ describe('ColumnChartSeries', function() {
     });
 
     describe('_makeBounds()', function() {
-        it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
+        it('should make bar chart bounds of empty option.', function() {
             var actual, expected;
             var seriesDataModel = new SeriesDataModel();
 

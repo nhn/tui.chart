@@ -26,7 +26,7 @@ describe('Test for MouseEventDetectorBase', function() {
     });
 
     describe('_isChangedSelectData()', function() {
-        it('찾아낸 data가 없으면 true를 반환합니다..', function() {
+        it('should return true, when found no data', function() {
             var actual = mouseEventDetectorBase._isChangedSelectData({
                     chartType: 'column'
                 }, null),
@@ -34,7 +34,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('이전 data가 없으면 true를 반환합니다..', function() {
+        it('should return true, if there is no previous data', function() {
             var actual = mouseEventDetectorBase._isChangedSelectData(null, {
                     chartType: 'line'
                 }),
@@ -42,7 +42,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('찾아낸 data가 이전 data와 chartType이 다르면 true를 반환합니다..', function() {
+        it('should return true, if found data is not same to previous one', function() {
             var actual = mouseEventDetectorBase._isChangedSelectData({
                     chartType: 'column'
                 }, {
@@ -52,7 +52,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('찾아낸 data가 이전 data와 groupIndex가 다르면 true를 반환합니다..', function() {
+        it('should return true, if found data\'s groupIndex is not same to previous one', function() {
             var actual = mouseEventDetectorBase._isChangedSelectData({
                     indexes: {
                         groupIndex: 0
@@ -66,7 +66,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('찾아낸 data가 이전 data와 index 다르면 true를 반환합니다..', function() {
+        it('should return true, if found data\'s index is not same to previous one', function() {
             var actual = mouseEventDetectorBase._isChangedSelectData({
                     indexes: {
                         index: 0
@@ -86,7 +86,7 @@ describe('Test for MouseEventDetectorBase', function() {
             mouseEventDetectorBase.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
         });
 
-        it('clientX에 SERIES_EXPAND_SIZE와 container의 left정보를 감하여 layerX를 구합니다.', function() {
+        it('should calulate layerX by subtract SERIES_EXPAND_SIZE and rect.left from clientX', function() {
             var actual;
 
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -99,7 +99,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual.x).toBe(140);
         });
 
-        it('전달하는 clientX가 container의 bound.left 보다 작을 경우의 x는 -10(확장 크기)만큼을 반환합니다.', function() {
+        it('should adjust limit, if clientX is less than container.left', function() {
             var actual;
 
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -113,7 +113,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual.x).toBe(50);
         });
 
-        it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 작더라도 그대로 반환합니다.', function() {
+        it('should not adjust limit value, when checkLimit is false', function() {
             var clientX = 30;
             var checkLimit = false;
             var actual, clientY;
@@ -128,7 +128,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual.x).toBe(20);
         });
 
-        it('전달하는 clientX가 container의 bound.right 보다 클 경우의 x를 구합니다.', function() {
+        it('should adjust position, if clientX is less than event detector left', function() {
             var actual;
 
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -142,7 +142,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual.x).toBe(430);
         });
 
-        it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 크더라도 그대로 반환합니다.', function() {
+        it('should not adjust position, if checkLimit is false even though clientX is less than event detector left.', function() {
             var clientX = 480;
             var checkLimit = false;
             var actual, clientY;
@@ -157,7 +157,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual.x).toBe(470);
         });
 
-        it('clientY값이 있는 경우 y값을 계산하여 반환합니다.', function() {
+        it('should return y when clientY is exist.', function() {
             var actual;
 
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -171,7 +171,7 @@ describe('Test for MouseEventDetectorBase', function() {
             expect(actual.y).toBe(140);
         });
 
-        it('clientY값이 없는 경우 y값은 반환하지 않습니다.', function() {
+        it('should not return y when no clientY.', function() {
             var actual;
 
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({

@@ -31,7 +31,7 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
 
         /**
          * history array for treemap chart.
-         * @type {number}
+         * @type {array}
          */
         this.zoomHistory = [-1];
 
@@ -60,15 +60,15 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      */
     _showTooltip: function(foundData) {
         this.eventBus.fire('showTooltip', foundData);
+        this.prevFoundData = foundData;
     },
 
     /**
      * Hide tooltip.
-     * @param {{silent: {boolean}}} options - options for hiding a tooltip
+     * @param {{silent: {boolean}}} [options] - options for hiding a tooltip
      * @private
      */
     _hideTooltip: function(options) {
-        options = options || {};
         this.eventBus.fire('hideTooltip', this.prevFoundData, options);
         this.prevFoundData = null;
         this.styleCursor(false);
@@ -94,7 +94,9 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      * @override
      */
     _onMousemove: function(e) {
-        var layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
+        var clientX = e.clientX;
+        var clientY = e.clientY;
+        var layerPosition = this._calculateLayerPosition(clientX, clientY);
         var foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
         var seriesItem;
 
@@ -115,8 +117,12 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
         if (predicate.isTreemapChart(this.chartType)) {
             seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
             this.styleCursor(seriesItem.hasChild);
+        } else if (predicate.isBulletChart(this.chartType)) {
+            foundData.mousePosition = {
+                left: clientX,
+                top: clientY
+            };
         }
-
         this._showTooltip(foundData);
     },
 
@@ -191,7 +197,7 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      * @override
      */
     _onMouseout: function(e) {
-        // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+        // do not cache getBoundingClientRect() - if not, it will cause error when chart location changed
         var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
         var clientX = e.clientX;
         var clientY = e.clientY;
@@ -205,7 +211,7 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
             this._hideTooltip();
         }
 
-        EventDetectorBase.prototype._onMouseout.call(this);
+        this.prevFoundData = null;
     },
 
     /**

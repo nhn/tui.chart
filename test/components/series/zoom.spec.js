@@ -21,7 +21,7 @@ describe('Zoom', function() {
     });
 
     describe('_zoom()', function() {
-        it('position 값을 전달하면 magn값의 다음 인자로 전달합니다.', function() {
+        it('should send position to zoom event handler.', function() {
             var magn = 2,
                 position = {
                     left: 10,
@@ -38,7 +38,7 @@ describe('Zoom', function() {
             });
         });
 
-        it('1배율에서 축소를 시도하면 변경되지 않습니다.', function() {
+        it('should not zoom-out at 1 magnification.', function() {
             var magn = 0.5;
 
             zoom.magn = 1;
@@ -62,7 +62,7 @@ describe('Zoom', function() {
     });
 
     describe('onWheel()', function() {
-        it('마우스를 휠하여 발생한 wheelDelta값을 전달받아 zoom을 수행합니다.', function() {
+        it('should zoom using wheelDelta value made with mouse wheel movement', function() {
             var expectedMagn = 1.1;
 
             zoom.magn = 1;

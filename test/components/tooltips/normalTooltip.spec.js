@@ -29,7 +29,7 @@ describe('NormalTooltip', function() {
     });
 
     describe('_makeTooltipDatum()', function() {
-        it('legend와 seriesItem.label이 모두 존재하면 ":&nbsp"가 앞에 붙은 label을 생성합니다.', function() {
+        it('should generate labels with ":&nbsp" prepended, if both legend and seriesItem.label exist.', function() {
             var actual, expected;
             var legendLabels = {
                 'column': ['legend1']
@@ -77,7 +77,7 @@ describe('NormalTooltip', function() {
             expect(actual.ratioLabel).toBe(':&nbsp;35&nbsp;%&nbsp;');
         });
 
-        it('legend없이 seriesItem.label만 존재하면 prefix없는 label만 생성합니다.', function() {
+        it('should make labels without prefix, if only seriesItem.label exists and no legend.', function() {
             var actual, expected;
             var legendLabels = {
                 'column': []
@@ -93,7 +93,7 @@ describe('NormalTooltip', function() {
             expect(actual.label).toBe(expected);
         });
 
-        it('seriesItem의 pickValueMapForTooltip 함수가 valueMap을 반환하면, 결과값에 추가하여 반환합니다.', function() {
+        it('should add label inside return value, if seriesItem.pickValueMapForTooltip() returns valueMap.', function() {
             var actual, expected;
             var legendLabels = {
                 'column': ['legend1']
@@ -122,7 +122,7 @@ describe('NormalTooltip', function() {
     });
 
     describe('makeTooltipData()', function() {
-        it('툴팁 렌더링에 사용될 data를 생성합니다.', function() {
+        it('should create data for tooltip rendering.', function() {
             var actual, expected;
             var seriesDataModel = new SeriesDataModel();
             var pickValueMapForTooltip = jasmine.createSpy('pickValueMapForTooltip').and.returnValue({});
@@ -160,7 +160,7 @@ describe('NormalTooltip', function() {
     });
 
     describe('_makeSingleTooltipHtml()', function() {
-        it('툴팁 html을 생성합니다.', function() {
+        it('should create tooltip HTML.', function() {
             var actual, expected;
             tooltip.data = {
                 'column': [[
@@ -180,7 +180,7 @@ describe('NormalTooltip', function() {
             expect(actual).toBe(expected);
         });
 
-        it('템플릿 옵션으로 툴팁 html을 생성합니다.', function() {
+        it('should create tooltip HTML by custom template.', function() {
             var actual, expected;
             tooltip.data = {
                 'column': [[

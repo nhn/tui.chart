@@ -37,7 +37,7 @@ describe('Test for zoomMixer', function() {
             zoomMixer.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
         });
 
-        it('clinetX값을 전달하여 layerX를 구해 left와 width를 설정합니다.', function() {
+        it('should set left and width using clinetX, layerX', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 100;
             zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -51,7 +51,7 @@ describe('Test for zoomMixer', function() {
             expect(zoomMixer.dragSelectionElement.style.width).toBe('60px');
         });
 
-        it('layerX가 startLayerX보다 클 경우에는 left값을 startLayerX로 설정합니다.', function() {
+        it('should set left to startLayerX, if layerX is greater than startLayerX.', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
             zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -65,7 +65,7 @@ describe('Test for zoomMixer', function() {
             expect(zoomMixer.dragSelectionElement.style.width).toBe('90px');
         });
 
-        it('_showLayerSelection을 수행하면 dragSelectionElement에 show 스타일 클래스가 설정됩니다.', function() {
+        it('should append `show` class name to dragSelectionElement when calling _showLayerSelection().', function() {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
             zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -80,49 +80,49 @@ describe('Test for zoomMixer', function() {
     });
 
     describe('_adjustIndexRange()', function() {
-        it('startIndex와 endIndex값을 받아 index range 배열을 반환합니다.', function() {
+        it('should make ranges of index from startIndex and endIndex.', function() {
             var actual = zoomMixer._adjustIndexRange(2, 5);
 
             expect(actual).toEqual([2, 5]);
         });
 
-        it('startIndex값이 endIndex값 보다 작을 경우 순서를 변경하여 index range 배열을 반환합니다.', function() {
+        it('should switch order of startIndex and endIndex, if startIndex is less than endIndex.', function() {
             var actual = zoomMixer._adjustIndexRange(8, 5);
 
             expect(actual).toEqual([5, 8]);
         });
 
-        it('startIndex와 endIndex값 모두 0일 경우에 endIndex를 2로 변경합니다.', function() {
+        it('should change endIndex to 2, if startIndex and endIndex are 0', function() {
             var actual = zoomMixer._adjustIndexRange(0, 0);
 
             expect(actual).toEqual([0, 2]);
         });
 
-        it('startIndex와 endIndex값 모두 0이 아닌 경우에 startIndex는 1을 빼고 endIndex는 1을 더합니다.', function() {
+        it('should make ranges to [startIndex - 1, endIndex + 1], if startIndex and endIndex are not 0.', function() {
             var actual = zoomMixer._adjustIndexRange(2, 2);
 
             expect(actual).toEqual([1, 3]);
         });
 
-        it('startIndex와 endIndex보다 1 작으면서 startIndex가 0일 경우에는 endIndex에 1을 더합니다.', function() {
+        it('should set ranges [startIndex, endIndex + 1], if startIndex is 0 and endIndex is 1.', function() {
             var actual = zoomMixer._adjustIndexRange(0, 1);
 
             expect(actual).toEqual([0, 2]);
         });
 
-        it('startIndex와 endIndex보다 1 작으면서 startIndex가 0이 아닌 경우에는 startIndex에 1을 뺍니다.', function() {
+        it('should set reanges [startIndex -1, endIndex], when (startIndex === endIndex - 1 && startIndex !== 0)', function() {
             var actual = zoomMixer._adjustIndexRange(5, 6);
 
             expect(actual).toEqual([4, 6]);
         });
 
-        it('startIndex와 endIndex의 값의 차이가 1보다 크면 그대로 반환합니다.', function() {
+        it('should return as it is, if (startIndex - endIndex) > 1.', function() {
             var actual = zoomMixer._adjustIndexRange(5, 10);
 
             expect(actual).toEqual([5, 10]);
         });
 
-        it('startIndex가 endIndex보다 크면서 값의 차이가 1보다 두 index의 위치를 바꿔 반환합니다.', function() {
+        it('should switch startIndex and endIndex, if (endIndex - startIndex) > 1.', function() {
             var actual = zoomMixer._adjustIndexRange(15, 10);
 
             expect(actual).toEqual([10, 15]);

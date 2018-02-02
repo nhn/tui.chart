@@ -93,7 +93,102 @@ describe('Test for dataExporter', function() {
                 }
             })).toEqual(result);
         });
+    });
 
+    describe('_makeTHeadForBullet()', function() {
+        it('should make table head of 2 cells if it only has data property', function() {
+            var actual = dataExporter._makeTHeadForBullet(0, 0);
+
+            expect(actual).toEqual(['', 'Actual']);
+        });
+
+        it('should make table head containing 1 range cell and 2 marker cells', function() {
+            var actual = dataExporter._makeTHeadForBullet(1, 2);
+
+            expect(actual).toEqual(['', 'Actual', 'Ranges0', 'Markers0', 'Markers1']);
+        });
+    });
+
+    describe('_makeTCellsFromBulletRanges()', function() {
+        var actual, ranges, maxRangeCount;
+
+        it('should return array having length of maxRangeCount', function() {
+            maxRangeCount = 0;
+            actual = dataExporter._makeTCellsFromBulletRanges(ranges, maxRangeCount);
+
+            expect(actual).toEqual([]);
+            expect(actual.length).toBe(0);
+        });
+
+        it('should not return empty array, if ranges is empty and maxRangeCount is natural number', function() {
+            ranges = [];
+            maxRangeCount = 3;
+            actual = dataExporter._makeTCellsFromBulletRanges(ranges, maxRangeCount);
+
+            expect(actual).toEqual(['', '', '']);
+            expect(actual.length).toBe(3);
+        });
+
+        it('should make range data cells using range array', function() {
+            ranges = [[-10, 0], [0, 10], [10, 20]];
+            maxRangeCount = 3;
+            actual = dataExporter._makeTCellsFromBulletRanges(ranges, maxRangeCount);
+
+            expect(actual).toEqual(['-10~0', '0~10', '10~20']);
+        });
+    });
+
+    describe('_makeTCellsFromBulletMarkers()', function() {
+        var actual, markers, maxMarkerCount;
+
+        it('should return array having length of maxRangeCount', function() {
+            maxMarkerCount = 3;
+            actual = dataExporter._makeTCellsFromBulletMarkers(markers, maxMarkerCount);
+
+            expect(actual).toEqual(['', '', '']);
+            expect(actual.length).toBe(3);
+        });
+
+        it('should make marker data cells using marker array', function() {
+            markers = [-5, 5];
+            maxMarkerCount = 3;
+            actual = dataExporter._makeTCellsFromBulletMarkers(markers, maxMarkerCount);
+
+            expect(actual).toEqual([-5, 5, '']);
+        });
+    });
+
+    describe('_get2DArrayFromBulletRawData()', function() {
+        it('should create 2D array from raw data of bullet chart', function() {
+            var actual = dataExporter._get2DArrayFromBulletRawData({
+                series: {
+                    bullet: [{
+                        name: 'series0',
+                        data: 25,
+                        ranges: [[1, 0]],
+                        markers: [13, 15]
+                    }, {
+                        name: 'series1',
+                        data: 13,
+                        ranges: [[7, 10], [10, 13]],
+                        markers: [15]
+                    }]
+                }
+            }, {
+                maxRangeCount: 2,
+                maxMarkerCount: 2
+            });
+
+            expect(actual).toEqual([
+                ['', 'Actual', 'Ranges0', 'Ranges1', 'Markers0', 'Markers1'],
+                ['series0', 25, '1~0', '', 13, 15],
+                ['series1', 13, '7~10', '10~13', 15, '']
+            ]);
+        });
+    });
+
+    describe('_get2DArrayFromHeatmapRawData()', function() {
+        var result = [['', 'jan', 'feb'], ['john', 10, 20], ['jane', 30, 25]];
         it('should create 2D array from heatmap rawData.', function() {
             expect(dataExporter._get2DArrayFromRawData({
                 categories: {

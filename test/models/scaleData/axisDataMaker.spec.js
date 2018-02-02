@@ -14,14 +14,14 @@ var geometric = require('../../../src/js/helpers/geometric');
 
 describe('Test for axisDataMaker', function() {
     describe('_makeLabelsByIntervalOption()', function() {
-        it('labelInterval option 위치에 해당하는 label을 제외하고 모두 EMPTY_AXIS_LABEL로 대체합니다.', function() {
+        it('should skip label, except label is on labelInterval', function() {
             var actual = maker._makeLabelsByIntervalOption(['label1', 'label2', 'label3', 'label4', 'label5'], 2, 0);
             var expected = ['label1', chartConst.EMPTY_AXIS_LABEL, 'label3', chartConst.EMPTY_AXIS_LABEL, 'label5'];
 
             expect(actual).toEqual(expected);
         });
 
-        it('추가된 data가 있으면 추가된 data를 interval로 나눈 나머지 만큼을 건너 띄고 label을 생성합니다.', function() {
+        it('should set start interval to (additional data % interval), when there is additional data', function() {
             var actual = maker._makeLabelsByIntervalOption(['label1', 'label2', 'label3', 'label4', 'label5'], 2, 1);
             var expected = [chartConst.EMPTY_AXIS_LABEL, 'label2', chartConst.EMPTY_AXIS_LABEL, 'label4', chartConst.EMPTY_AXIS_LABEL];
 
@@ -173,7 +173,7 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('_makeAdjustingIntervalInfo()', function() {
-        it('이전 블럭수와 영역 너비 새로운 block너비 정보를 계산하여 조정된 interval 정보를 반환합니다.', function() {
+        it('should adjust interval using remaining block count and new block count', function() {
             var actual = maker._makeAdjustingIntervalInfo(30, 300, 50);
 
             expect(actual.blockCount).toBe(6);
@@ -181,19 +181,19 @@ describe('Test for axisDataMaker', function() {
             expect(actual.interval).toBe(5);
         });
 
-        it('새로 계산된 block수가 이전 블럭수보다 많을 경우 null을 반환합니다.', function() {
+        it('should return null, when new block count is greater than previous block count', function() {
             var actual = maker._makeAdjustingIntervalInfo(4, 300, 50);
 
             expect(actual).toBeNull();
         });
 
-        it('interval이 1인 경우 null을 반환합니다.', function() {
+        it('should return null, when interval is 1', function() {
             var actual = maker._makeAdjustingIntervalInfo(7, 300, 50);
 
             expect(actual).toBeNull();
         });
 
-        it('남은 이전 block가 계산된 interval 수보다 크다면 새로 계산된 block count를 늘려줍니다.', function() {
+        it('should increase block count, when remaining block count is greater than interval', function() {
             var actual = maker._makeAdjustingIntervalInfo(15, 300, 50);
 
             expect(actual.blockCount).toBe(7);
@@ -203,13 +203,13 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('_makeCandidatesForAdjustingInterval()', function() {
-        it('block의 한칸이 90 ~ 120px(90, 95, 100, 105, 110, 115, 120)인 범위에서 tick interval 후보를 생성합니다.', function() {
+        it('should make 7 candidates which is ranged from 90px to 120px(90, 95, 100, 105, 110, 115, 120)', function() {
             var actual = maker._makeCandidatesForAdjustingInterval(15, 300);
 
             expect(actual.length).toBe(7);
         });
 
-        it('후보 모두가 null이라면 빈 배열을 반환합니다.', function() {
+        it('should return empty array, when all candidates are null', function() {
             var actual;
 
             spyOn(maker, '_makeAdjustingIntervalInfo').and.returnValue(null);
@@ -220,7 +220,7 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('_calculateAdjustingIntervalInfo()', function() {
-        it('현재의 블럭 수(tick개수 - 1)와 시리즈 영역의 너비 정보를 이용하여 interval과 블럭 정보 계산하고 그 결과를 반환합니다.', function() {
+        it('should make adjust interval info according to currunt block count and series width', function() {
             var actual = maker._calculateAdjustingIntervalInfo(73, 400);
 
             expect(actual.blockCount).toBe(3);
@@ -228,7 +228,7 @@ describe('Test for axisDataMaker', function() {
             expect(actual.interval).toBe(24);
         });
 
-        it('후보가 없다면 null을 반환합니다.', function() {
+        it('should return null, if there is no candidates', function() {
             var actual;
 
             spyOn(maker, '_makeCandidatesForAdjustingInterval').and.returnValue([]);
@@ -239,13 +239,13 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('_makeFilteredLabelsByInterval()', function() {
-        it('inteval에 해당하는 label만 걸러냅니다.', function() {
+        it('should select labels at intervals', function() {
             var actual = maker._makeFilteredLabelsByInterval(['label1', 'label2', 'label3', 'label4'], 0, 2);
 
             expect(actual).toEqual(['label1', 'label3']);
         });
 
-        it('startIndex 지점부터 inteval에 해당하는 label만 걸러냅니다.', function() {
+        it('should select labels at intervals, and the index starts from `startIndex`', function() {
             var actual = maker._makeFilteredLabelsByInterval(['label1', 'label2', 'label3', 'label4'], 1, 2);
 
             expect(actual).toEqual(['label2', 'label4']);
@@ -253,7 +253,7 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('updateLabelAxisDataForAutoTickInterval()', function() {
-        it('보기좋은 tick inertval을 계산하여 axisData 정보의 tick interval관련 부분을 추가 갱신 합니다.', function() {
+        it('should make auto tick interval', function() {
             var axisData = {
                 tickCount: 20,
                 labels: snippet.range(10, 201, 10)
@@ -271,7 +271,7 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('updateLabelAxisDataForStackingDynamicData()', function() {
-        it('이전에 갱신된 prevUpdatedData 정보와 새로 생성된 axisData를 이용하여 axisData의 tick interval관련 부분을 갱신합니다.', function() {
+        it('should update tick intervals using previous data and new axis data', function() {
             var axisData = {
                 tickCount: 21,
                 labels: snippet.range(10, 211, 10)

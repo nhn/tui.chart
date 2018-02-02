@@ -21,7 +21,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
     });
 
     describe('_makeRectTypePositionData()', function() {
-        it('rect 형태의 그래프로 된 series들의 좌표 data를 생성합니다.', function() {
+        it('should create rect type coordinate data', function() {
             var actual = coordinateModel._makeRectTypePositionData([[
                 {
                     end: {
@@ -52,7 +52,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
     });
 
     describe('_makeDotTypePositionData()', function() {
-        it('dot 형태의 그래프로 된 series들의 좌표 data를 생성합니다.', function() {
+        it('should create dot type coordinate data', function() {
             var actual = coordinateModel._makeDotTypePositionData([[
                 {
                     left: 10,
@@ -336,7 +336,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
     });
 
     describe('_findCandidates()', function() {
-        it('입력받은 data중에서 layerX, laeryY에 포함되는 후보군을 찾아 반환합니다.', function() {
+        it('should filter candidates from data by layerX, laeryY', function() {
             var data = [
                     {
                         bound: {
@@ -387,7 +387,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
     });
 
     describe('findData()', function() {
-        it('groupIndex에 해당하는 data 그룹 중 layerX, layerY정보를 포함하는 data 후보군 중에서 layerY에 제일 가까운 data를 찾습니다.', function() {
+        it('should find closest data from candinates', function() {
             var actual, expected;
             coordinateModel.data = [[
                 {

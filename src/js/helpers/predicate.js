@@ -55,6 +55,16 @@ var predicate = {
     },
 
     /**
+     * Whether bullet chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
+     */
+    isBulletChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_BULLET;
+    },
+
+    /**
      * Whether radial type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
@@ -262,7 +272,7 @@ var predicate = {
      * @returns {boolean}
      */
     isPieChart: function(chartType) {
-        // alias 때문에 indexOf로 변경
+        // change to indexOf for handling alias
         return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
     },
 
@@ -294,7 +304,7 @@ var predicate = {
      */
     allowMinusPointRender: function(chartType) {
         return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
-            predicate.isBoxTypeChart(chartType);
+            predicate.isBoxTypeChart(chartType) || predicate.isBulletChart(chartType);
     },
 
     /**

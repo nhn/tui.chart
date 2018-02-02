@@ -285,7 +285,7 @@ describe('LineTypeSeriesBase', function() {
     });
 
     describe('_calculateLabelPositionTop()', function() {
-        it('stackType 옵션인 경우의 라벨 position top값을 계산합니다.', function() {
+        it('should calculate label top position if stack type chart.', function() {
             var actual, expected;
 
             series.options = {
@@ -301,7 +301,7 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('stack 차트가 아니면서 value가 양수이며 시작값이 아닌 경우의 top값을 계산합니다. ', function() {
+        it('should calculates top when the value is positive and not the starting value, not stack chart', function() {
             var actual, expected;
 
             series.options = {};
@@ -315,7 +315,7 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('stack 차트가 아니면서 value가 음수이며 시작값인 경우의 top값을 계산합니다. ', function() {
+        it('should calculate top when the value is negative and start value, not stack chart', function() {
             var actual, expected;
 
             series.options = {};
@@ -329,7 +329,7 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('stack 차트가 아니면서 value가 양수이며 시작값인 경우의 top값을 계산합니다. ', function() {
+        it('should calculate top when the value is positive and start value, not stack chart', function() {
             var actual, expected;
 
             series.options = {};
@@ -343,7 +343,7 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('stack 차트가 아니면서 value가 음수이며 시작값이 아닌 경우의 top값을 계산합니다. ', function() {
+        it('should calculate top when the value is negative and not start value, not stack chart', function() {
             var actual, expected;
 
             series.options = {};
@@ -359,7 +359,7 @@ describe('LineTypeSeriesBase', function() {
     });
 
     describe('_makeLabelPosition()', function() {
-        it('라벨 너비와 basePostion.left를 이용하여 너비에 비하는 left값 비율을 계산합니다.', function() {
+        it('should calculate left using labe.width and basePostion.left', function() {
             var position, actual, expected;
 
             spyOn(series, '_calculateLabelPositionTop');
@@ -379,7 +379,7 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toBe(expected);
         });
 
-        it('라벨 너비와 _calculateLabelPositionTop()의 실행 결과로 top을 설정합니다.', function() {
+        it('should calculate top using label.width and result of _calculateLabelPositionTop().', function() {
             var position, actual, expected;
 
             spyOn(series, '_calculateLabelPositionTop').and.returnValue(50);
@@ -397,12 +397,6 @@ describe('LineTypeSeriesBase', function() {
             expected = 50;
 
             expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_animate()', function() {
-        it('캐싱된 limit과 새로 생성된 yAxis의 limit의 min이 다르면 true를 반환합니다.', function() {
-
         });
     });
 });

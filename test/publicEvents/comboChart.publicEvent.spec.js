@@ -112,7 +112,7 @@ describe('Test user events for combo chart', function() {
         });
     });
 
-    // group tooltip 부터
+    // if group tooltip
     describe('beforeShowTooltip', function() {
         it('before show tooltip', function(done) {
             var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');

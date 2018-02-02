@@ -10,6 +10,7 @@
 var chartConst = require('../../const');
 var renderUtil = require('../../helpers/renderUtil');
 var calculator = require('../../helpers/calculator');
+var predicate = require('../../helpers/predicate');
 var snippet = require('tui-code-snippet');
 
 var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
@@ -117,6 +118,13 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
          */
         this.ratioDistance = null;
 
+        if (predicate.isBulletChart(this.chartType)) {
+            /**
+             * @type {string}
+             */
+            this.type = params.type;
+        }
+
         /**
          * series legend name
          * @type {string}
@@ -191,7 +199,7 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
     /**
      * Add start.
      * @param {number} value - value
-     * @private
+     * @ignore
      */
     addStart: function(value) {
         if (!snippet.isNull(this.start)) {

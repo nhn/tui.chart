@@ -15,7 +15,8 @@ describe('Test for BoundsModel', function() {
     var boundsModel, dataProcessor;
 
     beforeAll(function() {
-        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        // Spy to produce consistence results
+        // Because calculated width and hight might be differ for each browsers
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(raphaelRenderUtil, 'getRenderedTextSize').and.returnValue(50);
         dataProcessor = jasmine.createSpyObj('dataProcessor',
@@ -51,7 +52,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_registerChartDimension()', function() {
-        it('chart option(width, height) 정보를 받아 chart dimension을 등록합니다.', function() {
+        it('should register chart dimension from chart option(width, height)', function() {
             var actual, expected;
 
             boundsModel.options.chart = {
@@ -68,7 +69,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('chart option이 없는 경우에는 기본값으로 dimension을 등록합니다.', function() {
+        it('should register default dimension when there is no chart option.', function() {
             var actual, expected;
 
             boundsModel._registerChartDimension();
@@ -83,7 +84,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_registerTitleDimension()', function() {
-        it('title dimension 정보를 등록합니다.', function() {
+        it('should register title dimension.', function() {
             var actual, expected;
 
             raphaelRenderUtil.getRenderedTextSize.and.returnValue({
@@ -97,7 +98,7 @@ describe('Test for BoundsModel', function() {
 
             expect(actual).toEqual(expected);
         });
-        it('title 옵션이 없는 경우 너비 높이가 0, 0 인 정보를 등록합니다.', function() {
+        it('should register 0 dimension, if not have title option title.', function() {
             var actual, expected;
 
             boundsModel = new BoundsModel({
@@ -126,7 +127,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_registerChartExportMenuDimension()', function() {
-        it('chartExportMenu dimension 정보를 등록합니다.', function() {
+        it('should register chartExportMenu dimension.', function() {
             var actual, expected;
 
             boundsModel._registerChartExportMenuDimension();
@@ -138,7 +139,7 @@ describe('Test for BoundsModel', function() {
 
             expect(actual).toEqual(expected);
         });
-        it('chartExportMenu 옵션이 없는 경우 너비 높이가 0, 0 인 정보를 등록합니다.', function() {
+        it('should register 0 dimension, if chartExportMenu option is not exist', function() {
             var actual, expected;
 
             boundsModel = new BoundsModel({
@@ -200,7 +201,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_updateDimensionsHeight()', function() {
-        it('50의 diffHeight를 전달하면 xAxis.heihgt는 50 감소하고, plot.height, series.height는 50 증가합니다.', function() {
+        it('should increase plot.height, series.height by 50, and descrease xAxis.heigth by 50.', function() {
             boundsModel.dimensionMap = {
                 plot: {
                     height: 200
@@ -237,7 +238,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_makePlotDimension()', function() {
-        it('plot dimension은 전달하는 series dimension에서 hidden width 1을 더한 수치로 생성합니다.', function() {
+        it('should make plot dimension from series dimension by adding hidden height 1', function() {
             var actual, expected;
 
             boundsModel.dimensionMap.series = {
@@ -256,7 +257,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_registerAxisComponentsDimension()', function() {
-        it('plot dimension을 계산하여 axis를 구성하는 component들의 dimension을 등록합니다.', function() {
+        it('should register component dimension from plot dimension', function() {
             spyOn(boundsModel, '_makePlotDimension').and.returnValue({
                 width: 300,
                 height: 200
@@ -272,7 +273,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_makeSeriesDimension()', function() {
-        it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
+        it('should make series dimesion using dimension of virtical legend, series', function() {
             var actual, expected;
 
             boundsModel.dimensionMap = {
@@ -309,7 +310,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
+        it('should calculate series dimension using horizontal legend width.', function() {
             var actual, expected;
 
             boundsModel.dimensionMap = {
@@ -349,7 +350,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_registerCenterComponentsDimension()', function() {
-        it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
+        it('should register tooltip and event detector dimension from series dimension.', function() {
             boundsModel.dimensionMap = {
                 series: {
                     width: 300,
@@ -366,7 +367,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_registerAxisComponentsPosition()', function() {
-        it('시리즈 position과 leftLegendWidth 정보를 이용하여 axis를 구성하는 components들의 position정보를 등록합니다.', function() {
+        it('should set position related to axis using dimension of series, leftLegendWidth, yAxis.', function() {
             var leftLegendWidth = 0;
 
             boundsModel.dimensionMap.series = {
@@ -395,7 +396,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_makeLegendPosition()', function() {
-        it('기본 옵션의 legend position정보를 생성합니다.', function() {
+        it('should make legend position of default align(left).', function() {
             var actual, expected;
 
             boundsModel.dimensionMap = {
@@ -424,7 +425,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('align옵션이 bottom인 legend의 position정보를 생성합니다.', function() {
+        it('should make legend position of bottom align.', function() {
             var actual, expected;
 
             boundsModel.dimensionMap = {
@@ -458,7 +459,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_makeCircleLegendPosition()', function() {
-        it('series의 left와 너비값 그리고 circleLegend와 legend의 너비 차를 이용하여 left를 구합니다.', function() {
+        it('should calculate left position of circle legend using width fo series, circle legend, legend', function() {
             var actual, expected;
 
             boundsModel.positionMap = {
@@ -484,7 +485,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('왼쪽 정렬인 경우에는 circleLegend와 legend의 너비 차만 이용하여 left를 구합니다.', function() {
+        it('should calculate left position of circle legend, using width of circle legend and legend, when circle aligns left.', function() {
             var actual, expected;
 
             boundsModel.options.legend.align = chartConst.LEGEND_ALIGN_LEFT;
@@ -508,7 +509,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('가로타입의 범례인 경우에는 series의 left와 너비 값 만을 이용하여 left를 구합니다.', function() {
+        it('should calculate left position using series.left and series.width, when horizontal circle legend', function() {
             var actual, expected;
 
             boundsModel.positionMap = {
@@ -534,7 +535,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('범례가 숨겨진 경우에도 series의 left와 너비 값 만을 이용하여 left를 구합니다.', function() {
+        it('should calculate left position using series.left and series.width, when circle legend is hidden.', function() {
             var actual, expected;
 
             boundsModel.positionMap = {
@@ -560,7 +561,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('series의 position.top과 series의 높이 값을 더한 값에 circleLegend의 높이를 빼 circleLegend의 top을 구합니다.', function() {
+        it('should set circleLegend.top to position.top + series.height - circleLegend.height.', function() {
             var actual, expected;
 
             boundsModel.positionMap = {
@@ -586,7 +587,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_registerEssentialComponentsPositions()', function() {
-        it('계산된 series position정보를 이용하여 필수 component들의 position을 등록합니다.', function() {
+        it('should set position of event detector and legend, tooltip using series position.', function() {
             spyOn(boundsModel, '_makeLegendPosition').and.returnValue({
                 top: 30,
                 left: 250
@@ -610,7 +611,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('_updateBoundsForYAxisCenterOption()', function() {
-        it('yAxis 중앙정렬을 위해 각종 컴포넌트들의 bounds를 갱신합니다.', function() {
+        it('should update bounds for center align yAxis.', function() {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             boundsModel.dimensionMap = {
                 extendedSeries: {
@@ -677,7 +678,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.positionMap.tooltip.left).toBe(1);
         });
 
-        it('구형 브라우저(IE7, IE8)의 경우 series와 extendedSeries의 left값이 1만큼 더 많아야 합니다.', function() {
+        it('should add series.left and extendedSeries.left by 1 for older browsers(IE7, IE8)', function() {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
             boundsModel.dimensionMap = {
                 extendedSeries: {
@@ -781,7 +782,7 @@ describe('Test for BoundsModel', function() {
     });
 
     describe('getBaseSizeForLimit()', function() {
-        it('x축일 경우에는 series width를 기본 사이즈로 반환합니다.', function() {
+        it('should return series.width to default size, when value axis is x.', function() {
             var actual, expected;
 
             spyOn(boundsModel, 'calculateSeriesWidth').and.returnValue(400);
@@ -792,7 +793,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('y축일 경우에는 series height를 기본 사이즈로 반환합니다.', function() {
+        it('should set series.height to default size, when value axis is y.', function() {
             var actual, expected;
 
             spyOn(boundsModel, 'calculateSeriesHeight').and.returnValue(300);

@@ -23,7 +23,7 @@ describe('Test for SpectrumLegend', function() {
     });
 
     describe('_renderTickArea()', function() {
-        it('주어진 라벨 수 대로 tick을 렌더링 합니다.', function(done) {
+        it('should render tick with given labels', function(done) {
             var paper = raphael(document.createElement('div'), 100, 100);
             var legendSet = paper.set();
 

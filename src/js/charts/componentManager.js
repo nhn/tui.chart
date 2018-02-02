@@ -42,6 +42,7 @@ var PieSeries = require('../components/series/pieChartSeries');
 var HeatmapSeries = require('../components/series/heatmapChartSeries');
 var TreemapSeries = require('../components/series/treemapChartSeries');
 var BoxplotSeries = require('../components/series/boxPlotChartSeries');
+var BulletSeries = require('../components/series/bulletChartSeries');
 
 var Zoom = require('../components/series/zoom');
 
@@ -71,6 +72,7 @@ var COMPONENT_FACTORY_MAP = {
     heatmapSeries: HeatmapSeries,
     treemapSeries: TreemapSeries,
     boxplotSeries: BoxplotSeries,
+    bulletSeries: BulletSeries,
     zoom: Zoom,
     chartExportMenu: ChartExportMenu,
     title: title
@@ -181,7 +183,7 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
      * @param {string} classType component factory name
-     * @param {object} params params that for alternative charts, 기본 흐름을 타지않는 특이 차트들을 위해 제공
+     * @param {object} params params that for alternative charts
      */
     register: function(name, classType, params) {
         var index, component, componentType, componentFactory, optionKey;
@@ -199,8 +201,9 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         params.chartOptions = this.options;
         params.seriesTypes = this.seriesTypes;
 
-        // axis의 경우 name으로 테마와 옵션을 가져온다. xAxis, yAxis
         if (componentType === 'axis') {
+            // Get theme and options by axis name
+            // As axis has 3 types(xAxis, yAxis, rightYAxis)
             optionKey = name;
         } else {
             optionKey = componentType;
@@ -218,12 +221,10 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         }
 
         if (optionKey === 'series') {
-            // 시리즈는 옵션과 테마가 시리즈 이름으로 뎊스가 한번더 들어간다.
-            // 테마는 항상 뎊스가 더들어가고 옵션은 콤보인경우에만 더들어간다.
             snippet.forEach(this.seriesTypes, function(seriesType) {
                 if (name.indexOf(seriesType) === 0) {
-                    params.options = params.options[seriesType] || params.options;
-                    params.theme = params.theme[seriesType];
+                    params.options = params.options[seriesType] || params.options; // For combo chart, options are set for each chart
+                    params.theme = params.theme[seriesType]; // For combo, single chart, themes are set for each chart
 
                     if (snippet.isArray(params.options)) {
                         params.options = params.options[index] || {};
@@ -241,12 +242,12 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         params.isVertical = this.isVertical;
         params.eventBus = this.eventBus;
 
-        // 맵과 같이 일반적인 스케일 모델을 사용하지 않는 차트를 위한 개별 구현한 차트 모델
+        // alternative scale models for charts that do not use common scale models like maps
         params.alternativeModel = this.alternativeModel;
 
         component = componentFactory(params);
 
-        // 팩토리에서 옵션에따라 생성을 거부할 수 있다.
+        // component creation can be refused by factory, according to option data
         if (component) {
             component.componentName = name;
             component.componentType = componentType;

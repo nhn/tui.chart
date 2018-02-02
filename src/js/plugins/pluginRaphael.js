@@ -10,6 +10,7 @@ var raphael = require('raphael');
 
 var BarChart = require('./raphaelBarChart');
 var Boxplot = require('./raphaelBoxplotChart');
+var Bullet = require('./raphaelBulletChart');
 var LineChart = require('./raphaelLineChart');
 var AreaChart = require('./raphaelAreaChart');
 var PieChart = require('./raphaelPieChart');
@@ -29,6 +30,7 @@ var RadialPlot = require('./raphaelRadialPlot');
 var pluginRaphael = {
     bar: BarChart,
     boxplot: Boxplot,
+    bullet: Bullet,
     column: BarChart,
     line: LineChart,
     area: AreaChart,

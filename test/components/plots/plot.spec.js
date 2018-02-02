@@ -35,7 +35,7 @@ describe('Test for Plot', function() {
     });
 
     describe('_renderPlotArea()', function() {
-        it('options.showLine을 설정하지 않으면 기본값이 true로 설정되어 line을 렌더링 합니다.', function() {
+        it('should render line, default plot type when options.showLine property is not exist.', function() {
             plot.layout = {
                 dimension: {
                     width: 400,
@@ -52,7 +52,7 @@ describe('Test for Plot', function() {
             });
         });
 
-        it('options.showLine이 false이면 _renderLines()을 호출하지 않습니다.', function() {
+        it('should not call _renderLines() if options.showLine is false.', function() {
             plot.layout = {
                 dimension: {
                     width: 400,

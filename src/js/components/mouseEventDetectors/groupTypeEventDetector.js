@@ -141,7 +141,7 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
 
     /**
      * Show tooltip.
-     * @param {{indexes: {groupIndex: number}}} foundData - data
+     * @param {{indexes: {groupIndex: number}, silent: boolean}} foundData - data
      * @param {boolean} [isMoving] - whether moving or not
      * @private
      */
@@ -155,7 +155,6 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
          * At this time, the index may be larger than the data size.
          */
         if (this.tickBaseCoordinateModel.data.length > index) {
-            this.prevIndex = index;
             this.eventBus.fire('showTooltip', {
                 index: index,
                 range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
@@ -164,16 +163,16 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
                 isMoving: isMoving,
                 silent: foundData.silent
             });
+            this.prevIndex = index;
         }
     },
 
     /**
      * Hide tooltip
-     * @param {{silent: {boolean}}} options - options for hiding tooltip
+     * @param {{silent: {boolean}}} [options] - options for hiding tooltip
      * @private
      */
     _hideTooltip: function(options) {
-        options = options || {};
         this.eventBus.fire('hideTooltip', this.prevIndex, options);
         this.prevIndex = null;
     },
@@ -187,8 +186,6 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
      */
     _onMousemove: function(e) {
         var foundData, index;
-
-        EventDetectorBase.prototype._onMousemove.call(this, e);
 
         if (this.zoomable && this._isAfterDragMouseup()) {
             return;
@@ -217,8 +214,6 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
         if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !snippet.isNull(this.prevIndex)) {
             this._hideTooltip();
         }
-
-        EventDetectorBase.prototype._onMouseout.call(this);
     }
 });
 

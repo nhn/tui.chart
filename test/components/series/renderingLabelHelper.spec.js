@@ -17,7 +17,7 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('_calculateLeftPositionForCenterAlign()', function() {
-        it('label을 그래프의 중앙에 위치시키기 위한 left를 계산합니다.', function() {
+        it('should calculate left position for center alignment.', function() {
             var bound = {
                 left: 50,
                 width: 40
@@ -29,7 +29,7 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('_calculateTopPositionForMiddleAlign()', function() {
-        it('label을 그래프의 중앙에 위치시키기 위한 top 계산합니다.', function() {
+        it('should calculate top position for middle alignment.', function() {
             var bound = {
                 top: 50,
                 height: 40
@@ -41,7 +41,7 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('_makePositionForBoundType()', function() {
-        it('bound type 차트의 position을 계산합니다.', function() {
+        it('should calculate position of bound type chart.', function() {
             var bound = {
                 left: 30,
                 top: 20,
@@ -56,7 +56,7 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('_makePositionMap()', function() {
-        it('range data가 아닐 경우에는 end로만 구성된 position 맵을 생성합니다.', function() {
+        it('should make position map having only an end property, if it is not range value.', function() {
             var seriesItem = {
                 value: 10
             };
@@ -76,7 +76,7 @@ describe('Test for renderingLabelHelper', function() {
             expect(actual.start).toBeUndefined();
         });
 
-        it('range data인 경우에는 start를 계산하여 position 맵에 추가합니다.', function() {
+        it('should make position map having start, end property, if it is range value.', function() {
             var seriesItem = {
                 value: 10,
                 isRange: true

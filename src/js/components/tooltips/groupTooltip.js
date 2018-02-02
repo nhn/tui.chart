@@ -14,6 +14,7 @@ var renderUtil = require('../../helpers/renderUtil');
 var defaultTheme = require('../../themes/defaultTheme');
 var tooltipTemplate = require('./tooltipTemplate');
 var snippet = require('tui-code-snippet');
+var predicate = require('../../helpers/predicate');
 
 /**
  * @classdesc GroupTooltip component.
@@ -27,31 +28,50 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @private
      * @override
      */
-    init: function() {
+    init: function(params) {
         this.prevIndex = null;
-        TooltipBase.apply(this, arguments);
+        this.isBullet = predicate.isBulletChart(params.chartType);
+        TooltipBase.call(this, params);
     },
 
     /**
      * Make tooltip html.
      * @param {string} category category
      * @param {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} items items data
+     * @param {string} rawCategory raw category
+     * @param {number} groupIndex group index
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(category, items) {
-        var template = tooltipTemplate.tplGroupItem,
-            cssTextTemplate = tooltipTemplate.tplGroupCssText,
-            colors = this._makeColors(this.theme),
-            itemsHtml = snippet.map(items, function(item, index) {
-                if (!item.value) {
-                    return null;
-                }
+    _makeTooltipHtml: function(category, items, rawCategory, groupIndex) {
+        var template = tooltipTemplate.tplGroupItem;
+        var cssTextTemplate = tooltipTemplate.tplGroupCssText;
+        var colors = this._makeColors(this.theme, groupIndex);
+        var prevType, itemsHtml;
 
-                return template(snippet.extend({
-                    cssText: cssTextTemplate({color: colors[index]})
-                }, item));
-            }).join('');
+        itemsHtml = snippet.map(items, function(item, index) {
+            var type = item.type;
+            var typeVisible = (type !== 'data') && (prevType !== type);
+            var itemHtml = '';
+
+            prevType = type;
+
+            if (!item.value) {
+                return null;
+            }
+
+            if (typeVisible) {
+                itemHtml = tooltipTemplate.tplGroupType({
+                    type: type
+                });
+            }
+
+            itemHtml += template(snippet.extend({
+                cssText: cssTextTemplate({color: colors[index]})
+            }, item));
+
+            return itemHtml;
+        }).join('');
 
         return tooltipTemplate.tplGroup({
             category: category,
@@ -146,27 +166,38 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @override
      */
     makeTooltipData: function() {
-        var self = this;
         var length = this.dataProcessor.getCategoryCount(this.isVertical);
 
         return snippet.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
+            var values = seriesGroup.map(function(item) {
+                return {
+                    type: item.type || 'data',
+                    label: item.label
+                };
+            });
+
             return {
-                category: self.dataProcessor.makeTooltipCategory(index, length - index, self.isVertical),
-                values: seriesGroup.pluck('label')
+                category: this.dataProcessor.makeTooltipCategory(index, length - index, this.isVertical),
+                values: values
             };
-        });
+        }, this);
     },
 
     /**
      * Make colors.
      * @param {object} theme tooltip theme
+     * @param {number} [groupIndex] groupIndex
      * @returns {Array.<string>} colors
      * @private
      */
-    _makeColors: function(theme) {
+    _makeColors: function(theme, groupIndex) {
         var colorIndex = 0,
             legendLabels = this.dataProcessor.getLegendData(),
             defaultColors, colors, prevChartType;
+
+        if (this.isBullet) {
+            return this.dataProcessor.getGraphColors()[groupIndex];
+        }
 
         if (theme.colors) {
             return theme.colors;
@@ -193,23 +224,34 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
     /**
      * Make rendering data about legend item.
      * @param {Array.<string>} values values
+     * @param {number} groupIndex groupIndex
      * @returns {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
      * @private
      */
-    _makeItemRenderingData: function(values) {
+    _makeItemRenderingData: function(values, groupIndex) {
         var dataProcessor = this.dataProcessor,
             suffix = this.suffix;
 
-        return snippet.map(values, function(value, index) {
-            var legendLabel = dataProcessor.getLegendItem(index);
-
-            return {
-                value: value,
-                legend: legendLabel.label,
-                chartType: legendLabel.chartType,
-                suffix: suffix
+        return snippet.map(values, function(data, index) {
+            var item = {
+                value: data.label,
+                type: data.type,
+                suffix: suffix,
+                legend: ''
             };
-        });
+            var legendLabel;
+
+            if (this.isBullet) {
+                legendLabel = dataProcessor.getLegendItem(groupIndex);
+            } else {
+                legendLabel = dataProcessor.getLegendItem(index);
+                item.legend = legendLabel.label;
+            }
+
+            item.chartType = legendLabel.chartType;
+
+            return item;
+        }, this);
     },
 
     /**
@@ -223,8 +265,8 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         var items, htmlString = '';
 
         if (data) {
-            items = this._makeItemRenderingData(data.values);
-            htmlString = this.templateFunc(data.category, items, this.getRawCategory(groupIndex));
+            items = this._makeItemRenderingData(data.values, groupIndex);
+            htmlString = this.templateFunc(data.category, items, this.getRawCategory(groupIndex), groupIndex);
         }
 
         return htmlString;
@@ -439,18 +481,18 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
 
     /**
      * Hide tooltip.
-     * @param {HTMLElement} elTooltip tooltip element
-     * @param {number} index index
-     * @param {object} options - options for hiding tooltip
+     * @param {HTMLElement} tooltipElement tooltip element
+     * @param {number} prevFoundIndex - showing tooltip index
+     * @param {object} [options] - options for hiding tooltip
      * @private
      */
-    _hideTooltip: function(elTooltip, index, options) {
-        var silent = options.silent;
+    _hideTooltip: function(tooltipElement, prevFoundIndex, options) {
+        var silent = !!(options && options.silent);
         this.prevIndex = null;
-        this._fireBeforeHideTooltipPublicEvent(index, silent);
-        this._hideTooltipSector(index);
-        dom.removeClass(elTooltip, 'show');
-        elTooltip.style.cssText = '';
+        this._fireBeforeHideTooltipPublicEvent(prevFoundIndex, silent);
+        this._hideTooltipSector(prevFoundIndex);
+        dom.removeClass(tooltipElement, 'show');
+        tooltipElement.style.cssText = '';
     },
 
     /**

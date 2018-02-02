@@ -22,9 +22,9 @@ var abs = Math.abs;
 var scaleDataMaker = {
     /**
      * Make limit for diverging option.
-     * 다이버징 차트에서는 min, max의 값을 절대값으로 최대치로 동일하게하고
-     * 한쪽만 음수로 처리해서 양쪽의 균형이 맞게 한다.
-     * 이렇게 하지 않으면 중심이 한쪽으로 쏠려있다.
+     * To balance diverging chart
+     * compare absolute value of min, max. and find larger one
+     * set min by making the value negative
      * @param {{min: number, max: number}} limit limit
      * @returns {{min: number, max: number}} changed limit
      * @private
@@ -50,11 +50,11 @@ var scaleDataMaker = {
         var max = limit.max;
 
         if (isOverflowed.min) {
-            min -= step;
+            min = calculator.subtract(min, step);
         }
 
         if (isOverflowed.max) {
-            max += step;
+            max = calculator.add(max, step);
         }
 
         return {
@@ -174,6 +174,8 @@ var scaleDataMaker = {
 
             if (firstValue > 0) {
                 limit.min = 0;
+            } else if (firstValue === 0) {
+                limit.max = 10;
             } else {
                 limit.max = 0;
             }

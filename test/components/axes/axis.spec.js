@@ -15,7 +15,8 @@ describe('Test for Axis', function() {
     var dataProcessor, axis;
 
     beforeAll(function() {
-        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        // Rendered width, height is different according to browser
+        // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
@@ -73,7 +74,7 @@ describe('Test for Axis', function() {
     });
 
     describe('_renderAxisArea()', function() {
-        it('divided이 true이면 _renderDividedAxis()를 수행하고 너비를 yAxis 너비만큼 늘려줍니다.', function() {
+        it('should increase width by yAxis, and make divided axis, when divided option is true', function() {
             var container = dom.create('DIV');
 
             spyOn(axis, '_renderNotDividedAxis');
@@ -106,7 +107,7 @@ describe('Test for Axis', function() {
             expect(axis._renderDividedAxis).toHaveBeenCalled();
         });
 
-        it('divided이 true가 아니면 _renderNotDividedAxis()를 수행합니다.', function() {
+        it('should call _renderNotDividedAxis(), when divided option is not true', function() {
             var container = dom.create('DIV');
 
             spyOn(axis, '_renderNotDividedAxis');

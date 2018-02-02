@@ -478,6 +478,13 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             var positionTopAndLeft = {};
             var labelTopPosition, labelLeftPosition;
 
+            /*
+             * to prevent printing `undefined` text, when category label is not set
+             */
+            if (labelPosition < 0) {
+                return;
+            }
+
             if (isYAxis) {
                 labelTopPosition = labelPosition;
 
@@ -577,8 +584,9 @@ function axisFactory(axisParam) {
     axisParam.isYAxis = (name === 'yAxis' || name === 'rightYAxis');
     axisParam.shifting = axisParam.chartOptions.series.shifting;
 
-    // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
-    // 나중에 테마에서 시리즈로 다시 분기되는게 아니라 커포넌트 네임인 rightYAxis로 따로 받도록 테마 구조를 변경하자.
+    // In combo chart, the theme is divided into series name considering two YAxis(yAxis and rightYAxis)
+    // @todo change theme structure so that access theme by axis type, not considering chart type
+    //     like theme.xAxis, theme.yAxis, theme.rightYAxis
     if (chartType === 'combo') {
         if (axisParam.isYAxis) {
             axisParam.theme = axisParam.theme[axisParam.seriesTypes[0]];
@@ -587,10 +595,10 @@ function axisFactory(axisParam) {
             axisParam.theme = axisParam.theme[axisParam.seriesTypes[1]];
             axisParam.index = 1;
         }
-    // 왜 싱글타입의  yAxis도 내부에 차트이름으로 한번더 분기가 되는 지는 모르겠다 일관성이 없는 느낌, 추가 개선요소
+    // @todo I do not know why the single type chart with yAxis branches once again as the chart name inside it. I feel inconsistent
     } else if (axisParam.isYAxis) {
         axisParam.theme = axisParam.theme[chartType];
-    // 싱글에 xAxis인 경우
+    // single chart, xAxis
     } else {
         axisParam.theme = axisParam.theme;
     }

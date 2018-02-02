@@ -85,7 +85,7 @@ var renderingLabelHelper = {
      */
     boundsToLabelPositions: function(seriesDataModel, boundsSet, theme, makePosition, isPivot) {
         var self = this;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
 
         makePosition = makePosition || snippet.bind(this._makePositionForBoundType, this);
         isPivot = !!isPivot;

@@ -188,16 +188,16 @@ var axisDataMaker = {
      */
     _makeAdjustingIntervalInfo: function(beforeBlockCount, seriesWidth, blockSize) {
         var newBlockCount = parseInt(seriesWidth / blockSize, 10);
-        // interval : 하나의 새로운 block(tick과 tick 사이의 공간) 영역에 포함되는 이전 block 수
+        // interval : number of previous blocks in a new block(spaces between tick and tick)
         var interval = parseInt(beforeBlockCount / newBlockCount, 10);
         var intervalInfo = null;
         var remainCount;
 
         if (interval > 1) {
-            // remainCount : 이전 block들 중 새로운 block으로 채우고 남은 이전 block 수
-            // | | | | | | | | | | | |  - 이전 block
-            // |     |     |     |      - 새로 계산된 block
-            //                   |*|*|  - 남은 이전 block 수
+            // remainCount : remaining block count after filling new blocks
+            // | | | | | | | | | | | |  - previous block interval
+            // |     |     |     |      - new block interval
+            //                   |*|*|  - remaining block
             remainCount = beforeBlockCount - (interval * newBlockCount);
 
             if (remainCount >= interval) {
@@ -296,13 +296,12 @@ var axisDataMaker = {
         beforeRemainBlockCount = intervalInfo.beforeRemainBlockCount;
         axisData.eventTickCount = axisData.tickCount;
 
-        // startIndex는 남은 block수의 반 만큼에서 현재 이동된 tick 수를 뺀 만큼으로 설정함
-        // |     |     |     |*|*|*|    - * 영역이 남은 이전 block 수
-        // |*|*|O    |     |     |*|    - 현재 이동된 tick이 없을 경우 (O 지점이 startIndex = 2)
-        // |*|O    |     |     |*|*|    - tick이 하나 이동 됐을 경우 : O 지점이 startIndex = 1)
+        // startIndex: (remaing block count / 2) - current moved tick index
+        // |     |     |     |*|*|*|    - * remaing block
+        // |*|*|O    |     |     |*|    - tick is not moved (O startIndex = 2)
+        // |*|O    |     |     |*|*|    - tick moved 1 (O startIndex = 1)
         startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
 
-        // startIndex가 0보다 작을 경우 interval만큼 증가시킴
         if (startIndex < 0) {
             startIndex += interval;
         }
@@ -332,7 +331,7 @@ var axisDataMaker = {
         var firstBlockCount = firstTickCount ? firstTickCount - 1 : 0;
         var beforeRemainBlockCount;
 
-        // 새로 계산된 block의 수가 최초로 계산된 block 수의 두배수 보다 많아지면 interval 숫자를 두배로 늘림
+        // twice interval, if new block count is greater than twice of new block count
         if (firstBlockCount && ((firstBlockCount * 2) <= newBlockCount)) {
             interval *= 2;
         }
@@ -490,7 +489,7 @@ var axisDataMaker = {
         var firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, labelTheme);
         var newLabelWidth = geomatric.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
 
-        // overflow 체크시에는 우측 상단 꼭지 기준으로 계산해야 함
+        // when checking overflow, calculation should be based on right top angle
         newLabelWidth -= geomatric.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
 
         return newLabelWidth;
@@ -516,7 +515,7 @@ var axisDataMaker = {
 
     /**
      * Make additional data for rotated labels.
-     * 라벨 크기가 지정된 영역보다 커서 경계를 넘어가는부분을 처리하기 위한 데이터를 만든다.
+     * The label size is larger than the specified area, creating data to handle the area beyond the border.
      * @param {Array.<string>} validLabels - valid labels
      * @param {Array.<string>} validLabelCount - valid label count
      * @param {object} labelTheme - theme for label
@@ -538,7 +537,7 @@ var axisDataMaker = {
             rotatedHeight = geomatric.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
             rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
             limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
-            contentWidth += rotatedWidth; // 라벨한개 더 표현할정도의 공간 확보
+            contentWidth += rotatedWidth; // add spaces to render maybe one label
 
             additionalData = {
                 degree: degree,

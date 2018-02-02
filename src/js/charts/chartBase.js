@@ -337,7 +337,6 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
             this.prevXAxisData = boundsAndScale.axisDataMap.xAxis;
         }
 
-        // 비율값 추가
         this.addDataRatios(boundsAndScale.limitMap);
 
         return boundsAndScale;
@@ -385,7 +384,10 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         var boundsAndScale;
 
         if (!rawData) {
-            rawData = rawDataHandler.filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
+            rawData = rawDataHandler.filterCheckedRawData(
+                dataProcessor.getZoomedRawData(),
+                checkedLegends
+            );
         }
 
         this.dataProcessor.initData(rawData);
@@ -680,9 +682,6 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
         if (foundData) {
             foundData.silent = true;
-            if (!isGroupTooltip) {
-                mouseEventDetector.prevFoundData = foundData;
-            }
             mouseEventDetector._showTooltip(foundData);
         } else {
             this.hideTooltip();

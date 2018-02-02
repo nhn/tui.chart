@@ -255,6 +255,7 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         this.startDepth = startDepth;
         this.selectedGroup = group;
         this._renderSeriesArea(this.paper, snippet.bind(this._renderGraph, this));
+        this.animateComponent(true);
     },
 
     /**

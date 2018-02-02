@@ -11,7 +11,7 @@ var chartConst = require('../../const');
 var snippet = require('tui-code-snippet');
 
 var browser = snippet.browser;
-var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
+var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 
 var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.prototype */ {
     /**
@@ -104,7 +104,7 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
     _attachToEventBus: function() {
         Series.prototype._attachToEventBus.call(this);
 
-        if (!IS_LTE_THAN_IE8) {
+        if (!IS_LTE_IE8) {
             this.eventBus.on({
                 dragStartMapSeries: this.onDragStartMapSeries,
                 dragMapSeries: this.onDragMapSeries,

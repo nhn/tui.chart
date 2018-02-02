@@ -133,10 +133,10 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
     _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
         var startRadian = startAngle * RAD;
         var endRadian = endAngle * RAD;
-        var x1 = cx + (r * Math.sin(startRadian)); // 원 호의 시작 x 좌표
-        var y1 = cy - (r * Math.cos(startRadian)); // 원 호의 시작 y 좌표
-        var x2 = cx + (r * Math.sin(endRadian)); // 원 호의 종료 x 좌표
-        var y2 = cy - (r * Math.cos(endRadian)); // 원 호의 종료 y 좌표
+        var x1 = cx + (r * Math.sin(startRadian)); // x point of start radian
+        var y1 = cy - (r * Math.cos(startRadian)); // y posint of start radian
+        var x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
+        var y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
         var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
         var path = ['M', cx, cy,
             'L', x1, y1,
@@ -144,7 +144,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
             'Z'
         ];
 
-        // path에 대한 자세한 설명은 아래 링크를 참고
+        // see details about path
         // http://www.w3schools.com/svg/svg_path.asp
         // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d
         return {path: path};
@@ -165,7 +165,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         /* eslint max-params: [2, 6]*/
         var startRadian = startAngle * RAD;
         var endRadian = endAngle * RAD;
-        var r2 = holeRadius || (r * this.holeRatio); // 구멍 반지름
+        var r2 = holeRadius || (r * this.holeRatio); // radius of donut hole
         var x1 = cx + (r * Math.sin(startRadian));
         var y1 = cy - (r * Math.cos(startRadian));
         var x2 = cx + (r2 * Math.sin(startRadian));

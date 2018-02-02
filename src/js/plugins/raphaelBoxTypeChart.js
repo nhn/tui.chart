@@ -321,12 +321,13 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         var colorSpectrum = this.colorSpectrum;
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
         var opacity = 1;
-        var paper = box.rect.paper;
-        var color;
+        var color, paper;
 
         if (!box) {
             return;
         }
+
+        paper = box.rect.paper;
 
         if (box.seriesItem.hasChild) {
             color = null;

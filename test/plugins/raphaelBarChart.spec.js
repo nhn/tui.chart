@@ -16,7 +16,7 @@ describe('RaphaelBarChart', function() {
     });
 
     describe('_makeRectPoints()', function() {
-        it('전달하는 rect bound 정보를 가지고 사방(왼쪽위, 오른쪽위, 오른쪽아래, 왼쪽아래) position 정보를 구합니다.', function() {
+        it('should create position data by boundingRect data', function() {
             var actual = barChart._makeRectPoints({
                     left: 10,
                     top: 10,
@@ -46,7 +46,7 @@ describe('RaphaelBarChart', function() {
     });
 
     describe('_makeTopLinePath()', function() {
-        it('top 영역의 line path를 구합니다.', function() {
+        it('should make top line path', function() {
             var points = {
                     leftTop: {
                         left: 10,
@@ -62,7 +62,7 @@ describe('RaphaelBarChart', function() {
             expect(actual).toBe(expected);
         });
 
-        it('top 영역의 line path의 left 정보는 column차트일 경우에는 1만큼 더 빼줍니다.', function() {
+        it('should subtract 1 from top line path, when it is column chart', function() {
             var points = {
                     leftTop: {
                         left: 10,
@@ -80,7 +80,7 @@ describe('RaphaelBarChart', function() {
             expect(actual).toBe(expected);
         });
 
-        it('top 영역의 line path의 left 정보는 bar차트이면서 음수인 경우에도 1만큼 더 빼줍니다.', function() {
+        it('should subtract 1 from top line path, when it is bar chart of negative value', function() {
             var points = {
                     leftTop: {
                         left: 10,
@@ -100,7 +100,7 @@ describe('RaphaelBarChart', function() {
     });
 
     describe('_makeBorderLinesPaths()', function() {
-        it('bar 차트이면서 value가 양수인 경우에는 top, right, bottom의 path 정보를 반환합니다.', function() {
+        it('should create top, right, bottom path when it is bar chart of positive value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -116,7 +116,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).not.toBeDefined();
         });
 
-        it('bar 차트이면서 value가 양수인 경우라 하더라도 range seriesItem 일 경우에는 left path 정보도 반환합니다.', function() {
+        it('should create additional left path, if it is ranged bar chart of positive value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -133,7 +133,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('bar 차트이면서 value가 음수인 경우에는 top, bottom, left의 path 정보를 반환합니다.', function() {
+        it('should creat top, bottom, left path, when it is bar chart of negative value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -149,7 +149,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('bar 차트이면서 value가 음수인 경우라 하더라도 range seriesItem 일 경우에는 right path 정보도 반환합니다.', function() {
+        it('should create additional right path, if it is ranged bar chart of negative value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -166,7 +166,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('column 차트이면서 value가 양수인 경우에는 top, right, left의 path 정보를 반환합니다.', function() {
+        it('should creat top, right, left path, if it is column chart of positive value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -182,7 +182,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('column 차트이면서 value가 양수인 경우라 하더라도 range seriesItem 일 경우에는 bottom path 정보도 반환합니다.', function() {
+        it('should create additional bottom path, if it is ranged column chart of positive value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -199,7 +199,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('column 차트이면서 value가 음수인 경우에는 right, bottom, left의 path 정보를 반환합니다.', function() {
+        it('should create right, bottom, left path, if it is column chart of negative value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -215,7 +215,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('column 차트이면서 value가 음수인 경우라 하더라도 range seriesItem 일 경우에는 top path 정보도 반환합니다.', function() {
+        it('should create additional top path if it is ranged column chart of negative value', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,

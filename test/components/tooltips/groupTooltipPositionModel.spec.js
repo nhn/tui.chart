@@ -20,19 +20,19 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_getHorizontalDirection()', function() {
-        it('align option에 left가 포함되어 있으면 backward를 반환합니다.', function() {
+        it('should return backward, if align option contains left.', function() {
             var actual = positionModel._getHorizontalDirection('left'),
                 exptected = chartConst.TOOLTIP_DIRECTION_BACKWARD;
             expect(actual).toBe(exptected);
         });
 
-        it('align option에 center가 포함되어 있으면 center를 반환합니다.', function() {
+        it('should return center, if align option contains center.', function() {
             var actual = positionModel._getHorizontalDirection('center'),
                 exptected = chartConst.TOOLTIP_DIRECTION_CENTER;
             expect(actual).toBe(exptected);
         });
 
-        it('나머지 경우에는 forward를 반환합니다.', function() {
+        it('should return forward otherwise', function() {
             var actual = positionModel._getHorizontalDirection('right'),
                 exptected = chartConst.TOOLTIP_DIRECTION_FORWARD;
             expect(actual).toBe(exptected);
@@ -40,19 +40,19 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_getVerticalDirection()', function() {
-        it('align option에 top이 포함되어 있으면 backward를 반환합니다.', function() {
+        it('should return backward, if align option contains top', function() {
             var actual = positionModel._getVerticalDirection('top'),
                 exptected = chartConst.TOOLTIP_DIRECTION_BACKWARD;
             expect(actual).toBe(exptected);
         });
 
-        it('align option에 bottom이 포함되어 있으면 forward를 반환합니다.', function() {
+        it('should return forward, if align option contains bottom.', function() {
             var actual = positionModel._getVerticalDirection('bottom'),
                 exptected = chartConst.TOOLTIP_DIRECTION_FORWARD;
             expect(actual).toBe(exptected);
         });
 
-        it('나머지 경우에는 center를 반환합니다.', function() {
+        it('should return center otherwise', function() {
             var actual = positionModel._getVerticalDirection('middle'),
                 exptected = chartConst.TOOLTIP_DIRECTION_CENTER;
             expect(actual).toBe(exptected);
@@ -65,25 +65,25 @@ describe('GroupTooltipPositionModel', function() {
             spyOn(positionModel, '_makeHorizontalData').and.returnValue('horizontalData');
         });
 
-        it('세로형 차트의 경우에는 verticalData가 mainData가 되고 horizontalData가 subData가 됩니다.', function() {
+        it('should set virticalData as main, and horizontalData as sub, if it is virtical chart.', function() {
             positionModel._setData({}, {}, true, {});
             expect(positionModel.mainData).toBe('verticalData');
             expect(positionModel.subData).toBe('horizontalData');
         });
 
-        it('가로형 차트의 경우에는 horizontalData가 mainData가 되고 verticalData가 subData가 됩니다.', function() {
+        it('should set horizontalData as main, and verticalData as sub, if it is horizontal chart.', function() {
             positionModel._setData({}, {}, false, {});
             expect(positionModel.mainData).toBe('horizontalData');
             expect(positionModel.subData).toBe('verticalData');
         });
 
-        it('options.position 정보가 없는 경우에는 positionOption의 left, top이 0으로 설정됩니다.', function() {
+        it('should set position to zero, if options.position is not exist', function() {
             positionModel._setData({}, {}, false, {});
             expect(positionModel.positionOption.left).toBe(0);
             expect(positionModel.positionOption.top).toBe(0);
         });
 
-        it('options.offset 정보가 있는 경우에는 positionOption을 갱신합니다. ', function() {
+        it('should upate position if options.offset exists', function() {
             positionModel._setData({}, {}, false, {
                 offset: {
                     x: 10,
@@ -96,7 +96,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_calculateMainPositionValue()', function() {
-        it('direction이 forword인 경우에는 range end 오른쪽 편에 5만큼의 간격을 두고 놓이도록 값을 계산하여 반환합니다.', function() {
+        it('should calculate position to have right spaces of 5, if forward direction.', function() {
             var tooltipSize = 50,
                 range = {
                     start: 0,
@@ -111,7 +111,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 backword인 경우에는 range start 왼쪽 편에 5만큼의 간격을 두고 놓이도록 값을 계산하여 반환합니다.', function() {
+        it('should calculate position to have left spaces of 5, if backword direction.', function() {
             var tooltipSize = 50,
                 range = {
                     start: 100,
@@ -126,7 +126,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 center이면서 line(rnage.start === range.end)인 경우에는 tooltip의 중앙이 range.start에 놓이도록 값을 계산하여 반환합니다.', function() {
+        it('should calculate position to range.start, if center direction && line(rnage.start === range.end).', function() {
             var tooltipSize = 50,
                 range = {
                     start: 100,
@@ -141,7 +141,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 center이면서 line이 아닌 경우에는 툴팁이 range star와 end 가운데 놓이는 값을 반환합니다.', function() {
+        it('should calculate position to (range.start + range.end) /2, if center direction && !line(range.start !== range.end)', function() {
             var tooltipSize = 50,
                 range = {
                     start: 100,
@@ -158,7 +158,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_calculateSubPositionValue()', function() {
-        it('direction이 forword인 경우에는 툴팁이 증앙 부터 그려지도록 툴팁 영역 사이즈값을 반으로 나누어 반환합니다..', function() {
+        it('should position tooltip positions at the center. if it is forward direction.', function() {
             var tooltipSize = 50,
                 data = {
                     basePosition: 0,
@@ -170,7 +170,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 backword인 경우에는 툴팁의 하단이 중앙에 그려지도록 영역을 반으로 나눈값에서 툴팁 사이즈를 뺀 후 반환합니다..', function() {
+        it('should position tooltip bottom at the middle of tooltip area, if backward direction.', function() {
             var tooltipSize = 50,
                 data = {
                     basePosition: 0,
@@ -182,7 +182,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 center인 경우에는 툴팀 중앙이 중앙에 그려지도록 영역을 반으로 나눈값에서 툴팁을 반으로 나누 값을 뺀 후 반환합니다.', function() {
+        it('should position tooltip at the middle of tooltip area, if center direction.', function() {
             var tooltipSize = 50,
                 data = {
                     basePosition: 0,
@@ -196,7 +196,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_adjustBackwardPositionValue()', function() {
-        it('position value가 차트 backward 영역을 넘지 않으면 보정 없이 그대로 반환합니다.', function() {
+        it('should not adjust position, if position value is not beyond chart backward position.', function() {
             var value = -10,
                 range = {},
                 tooltipSize = 50,
@@ -208,7 +208,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('position value가 차트 backward 영역을 넘어 서면 반전된 위치에 툴팁이 뜨도록 반전 위치를 계산하여 반환합니다.', function() {
+        it('should flip position, if position value is beyond chart backward.', function() {
             var value = -30,
                 range = {
                     start: 25,
@@ -224,7 +224,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('반전된 위치도 차트 영역을 넘어가면 먼저 위치에서 차트 안쪽으로 뜨도록 값을 조절합니다.', function() {
+        it('should re-correct chart position, if position is beyond chart area after flip', function() {
             var value = -30,
                 range = {
                     start: 5,
@@ -242,7 +242,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_adjustForwardPositionValue()', function() {
-        it('position value가 차트 forward 영역을 넘지 않으면 보정 없이 그대로 반환합니다.', function() {
+        it('should not adjust position, if position is not beyond chart forward area.', function() {
             var value = 50,
                 range = {
                     start: 50,
@@ -259,7 +259,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('position value가 차트 forward 영역을 넘어 서면 반전된 위치에 툴팁이 뜨도록 반전 위치를 계산하여 반환합니다.', function() {
+        it('should flip position, if position is beyond chart forward area.', function() {
             var value = 50,
                 range = {
                     start: 50,
@@ -276,7 +276,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('반전된 위치도 차트 영역을 넘어가면 먼저 위치에서 차트 안쪽으로 뜨도록 값을 조절합니다.', function() {
+        it('should re-correct position, if position is beyond chart area after flipping.', function() {
             var value = 50,
                 range = {
                     start: 50,
@@ -295,7 +295,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_adjustMainPositionValue()', function() {
-        it('direction이 backward이면 _adjustBackwardPositionValue의 실행 결과를 반환합니다.', function() {
+        it('should call _adjustBackwardPositionValue() if backward direction.', function() {
             var value = -10,
                 range = {},
                 tooltipSize = 50,
@@ -308,7 +308,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 forward이면 _adjustForwardPositionValue의 실행 결과를 반환합니다.', function() {
+        it('should call _adjustForwardPositionValue() if forward direction.', function() {
             var value = 50,
                 range = {
                     start: 50,
@@ -326,7 +326,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 center이면 툴팁이 차트 영역을 넘어갈 경우에 보정만 합니다.', function() {
+        it('should correct tooltip position of center direction, only if tooltip is beyond chart area.', function() {
             var value = 50,
                 range = {
                     start: 50,
@@ -346,7 +346,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_adjustSubPositionValue()', function() {
-        it('direction이 forward이면 툴팁이 차트 영역을 forward방향으로 넘어가지 않도록 값을 조절하여 반환합니다.', function() {
+        it('should adjust tooltip position of forward direction, to make tooltip is not beyond chart forward area.', function() {
             var value = 50,
                 tooltipSize = 50,
                 data = {
@@ -359,7 +359,7 @@ describe('GroupTooltipPositionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('direction이 나머지 방향이면 툴팁이 차트 영역을 backward방향으로 넘어가지 않도록 값을 조절하여 반환합니다.', function() {
+        it('should adjust tooltip position of backward directoin, to make tooltip is not beyond chart backward area.', function() {
             var value = -20,
                 tooltipSize = 50,
                 data = {
@@ -374,7 +374,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_makeMainPositionValue()', function() {
-        it('main에 해당하는 position값을 구합니다.', function() {
+        it('should calculate main position.', function() {
             var tooltipDimension = {
                     width: 50
                 },
@@ -401,7 +401,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_makeSubPositionValue()', function() {
-        it('sub에 해당하는 position값을 구합니다.', function() {
+        it('should calculate sub position.', function() {
             var tooltipDimension = {
                     width: 50
                 },
@@ -427,7 +427,7 @@ describe('GroupTooltipPositionModel', function() {
     });
 
     describe('_calculatePosition()', function() {
-        it('그룹 툴팁의 position을 계산합니다.', function() {
+        it('should calculate group tooltip position.', function() {
             var actual;
             positionModel.mainData = {
                 positionType: 'left'

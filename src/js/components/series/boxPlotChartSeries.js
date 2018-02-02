@@ -26,6 +26,12 @@ var BoxplotChartSeries = snippet.defineClass(Series, /** @lends BoxplotChartSeri
      */
     init: function() {
         Series.apply(this, arguments);
+
+        /**
+         * whether series label is supported
+         * @type {boolean}
+         */
+        this.supportSeriesLable = false;
     },
 
     /**

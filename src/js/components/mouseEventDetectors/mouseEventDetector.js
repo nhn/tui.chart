@@ -33,6 +33,7 @@ function mouseEventDetectorFactory(params) {
         || predicate.isBoxplotChart(chartType)
         || predicate.isHeatmapChart(chartType)
         || predicate.isTreemapChart(chartType)
+        || predicate.isBulletChart(chartType)
     ) {
         factory = boundsTypeEventDetectorFactory;
     } else if (predicate.isCoordinateTypeChart(chartType)
@@ -45,7 +46,7 @@ function mouseEventDetectorFactory(params) {
     }
 
     params.chartType = chartType;
-    // @todo chartType이나 chartTypes없이 모두 seriesTypes만 보도록 변경해야한다.컴포넌트 전체의 문제임
+    // @todo replace chartType, chartTypes to seriesTypes, problem of the whole component
     params.chartTypes = seriesTypes;
     params.zoomable = zoomable;
     params.allowSelect = seriesAllowSelect;

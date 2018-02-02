@@ -22,7 +22,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_removeRangeValue()', function() {
-        it('range형의 seriesItem에서 data의 첫번째 인자만 남기고 나머지는 지웁니다.', function() {
+        it('should filter first element from series item\'s range data', function() {
             seriesDataModel.rawSeriesData = [
                 {
                     data: [[10, 20], [20, 30]]
@@ -37,7 +37,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel.rawSeriesData[1].data).toEqual([-20, 30]);
         });
 
-        it('range형의 차트(bar, column, area)의 경우 range value를 삭제하지 않습니다.', function() {
+        it('should not filter data arrays, when range type chart like bar, column, area chart', function() {
             seriesDataModel.rawSeriesData = [
                 {
                     data: [[10, 20], [20, 30]]
@@ -53,7 +53,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel.rawSeriesData[1].data).toEqual([[-20, 10], [30, 40]]);
         });
 
-        it('range형의 차트(bar, column, area)가 아니더라도 stackType옵션이 있다면 range value를 삭제하지 않습니다.', function() {
+        it('should not filter data arrays when, stack type chart', function() {
             seriesDataModel.rawSeriesData = [
                 {
                     data: [[10, 20], [20, 30]]
@@ -74,7 +74,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_createBaseGroups()', function() {
-        it('rawData.series를 이용하여 SeriesItem을 2차원 배열로 들고있는 baseGroups를 생성합니다.', function() {
+        it('should create base groups from rawData.series', function() {
             var actual;
 
             seriesDataModel.rawSeriesData = [{
@@ -95,7 +95,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual[1][2].stack).toBe('st2');
         });
 
-        it('data가 숫자인 파이차트형의 경우의 baseGroups를 생성합니다.', function() {
+        it('should create base groups when it is pie chart and data type is number', function() {
             var actual;
 
             seriesDataModel.rawSeriesData = [{
@@ -214,7 +214,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_createSeriesGroupsFromRawData()', function() {
-        it('seriesGroup을 요소로 갖는 groups를 생성합니다.', function() {
+        it('should create groups which is consist of series group', function() {
             var actual;
 
             seriesDataModel.rawSeriesData = [{
@@ -231,7 +231,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual[0] instanceof SeriesGroup).toBe(true);
         });
 
-        it('isPivot이 true이면 회전된 결과로 groups를 생성합니다.', function() {
+        it('should create pivoted groups, if isPivot is true', function() {
             var actual;
 
             seriesDataModel.rawSeriesData = [{
@@ -378,7 +378,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_addRatiosWhenNormalStacked()', function() {
-        it('normal stackType 옵션인 경우에는 limit.min, limit.max의 간격을 구하여 seriesGroup.addRatios에 전달합니다.', function() {
+        it('should call addRatios() with limit values, when normal stack chart', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatios']);
 
             seriesDataModel.groups = [seriesGroup];
@@ -389,7 +389,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_calculateBaseRatio()', function() {
-        it('groupseriesGroup에서 values 추출한 후 values에 음수와 양수 모두 포함되어있으면 0.5를 반환합니다.', function() {
+        it('should return 0.5 when value map consist of both positive and negative value', function() {
             var actual, expected;
 
             seriesDataModel.valuesMap = {
@@ -402,7 +402,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('groupseriesGroup에서 values 추출한 후 values에 음수와 양수 중 하나만 존재하면 1을 반환합니다.', function() {
+        it('should return 1, when value map consist of only positive value, or only negative value', function() {
             var actual, expected;
 
             seriesDataModel.valuesMap = {
@@ -417,7 +417,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_addRatiosWhenPercentStacked()', function() {
-        it('percent stackType 옵션인 경우에는 baseRatio구해 seriesGroup.addRatiosWhenPercentStacked에 전달합니다.', function() {
+        it('should call seriesGroup.addRatiosWhenPercentStacked() with baseRatio, when percent stack chart', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosWhenPercentStacked']);
 
             seriesDataModel.groups = [seriesGroup];
@@ -432,7 +432,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_addRatiosWhenDivergingStacked()', function() {
-        it('divergion stackType 옵션인 경우에는 plusSum, minuSum을 구해 seriesGroup.addRatiosWhenDivergingStacked에 전달합니다.', function() {
+        it('should call seriesGroup.addRatiosWhenDivergingStacked() with plusSum and minusSum, when diverging stack chart', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['pluck', 'addRatiosWhenDivergingStacked']);
 
             seriesGroup.pluck.and.returnValue([10, -20, 30, 40]);
@@ -445,7 +445,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_makeSubtractionValue()', function() {
-        it('라인타입 차트가 아니면서 limit의 값이 모두 음수인 경우에는 limit.max를 반환합니다.', function() {
+        it('should return limit.max when it is not a line chart and min, max are all negative', function() {
             var actual, expected;
 
             seriesDataModel.chartType = 'bar';
@@ -458,7 +458,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('라인타입 차트인 경우에는 limit.min을 반환합니다.', function() {
+        it('should return limit.min, when it is line type chart', function() {
             var actual, expected;
 
             seriesDataModel.chartType = 'line';
@@ -471,7 +471,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('라인차트가 아니면서 모두 양수인 경우에도 limit.min을 반환합니다.', function() {
+        it('should return limit.min, when it is not line type chart and min, max values are positive', function() {
             var actual, expected;
 
             seriesDataModel.chartType = 'bar';
@@ -484,7 +484,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('그 외의 경우에는 0을 반환합니다.', function() {
+        it('should return 0 otherwise', function() {
             var actual, expected;
 
             seriesDataModel.chartType = 'bar';
@@ -499,7 +499,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_addRatios()', function() {
-        it('옵션이 없는 차트의 경우에는 limit.min, limit.max의 간격과 substractionValue를 구해 seriesGroup.addRatios에 전달합니다.', function() {
+        it('should send limit interval and substraction value when chart is no option', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatios']);
 
             seriesDataModel.groups = [seriesGroup];
@@ -510,14 +510,14 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('addDataRatios()', function() {
-        it('옵션이 없는 경우에는 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+        it('should add ratio data by calling _addRatios(), when chart is no option', function() {
             spyOn(seriesDataModel, '_addRatios');
             seriesDataModel.addDataRatios({min: 0, max: 160}, null, 'column');
 
             expect(seriesDataModel._addRatios).toHaveBeenCalled();
         });
 
-        it('stackType option이 유효한 차트의 옵션이 normal stackType인 경우에는 _addRatiosWhenNormalStacked()를 호출하여 ratio를 추가합니다.', function() {
+        it('should add ratio data by calling _addRatiosWhenNormalStacked(), when normal stack chart', function() {
             spyOn(seriesDataModel, '_addRatiosWhenNormalStacked');
             seriesDataModel.chartType = 'bar';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal');
@@ -525,7 +525,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatiosWhenNormalStacked).toHaveBeenCalled();
         });
 
-        it('stackType option이 유효하지 않는 라인 차트에는 normal stackType 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+        it('should call _addRatios() when there is `invalid` stack type option.', function() {
             spyOn(seriesDataModel, '_addRatios');
             seriesDataModel.chartType = 'line';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal');
@@ -533,7 +533,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatios).toHaveBeenCalled();
         });
 
-        it('stackType option이 유효한 차트의 옵션이 diverging percent stackType인 경우에는 _addRatiosWhenDivergingStacked()를 호출하여 ratio를 추가합니다.', function() {
+        it('should call _addRatiosWhenDivergingStacked() when diverging percent stackType.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenDivergingStacked');
             seriesDataModel.isDivergingChart = true;
             seriesDataModel.chartType = 'bar';
@@ -542,7 +542,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatiosWhenDivergingStacked).toHaveBeenCalled();
         });
 
-        it('stackType option이 유효한 차트의 옵션이 percent stackType인 경우에는 _addRatiosWhenPercentStacked()를 호출하여 ratio를 추가합니다.', function() {
+        it('should call _addRatiosWhenPercentStacked(), when percent stack type', function() {
             spyOn(seriesDataModel, '_addRatiosWhenPercentStacked');
             seriesDataModel.chartType = 'bar';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
@@ -550,7 +550,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatiosWhenPercentStacked).toHaveBeenCalled();
         });
 
-        it('stackType option이 유효하지 않는 라인 차트에는 percent stackType 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+        it('should call _addRatios() when there is percent stack type with in valid stackType option', function() {
             spyOn(seriesDataModel, '_addRatios');
             seriesDataModel.chartType = 'line';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
@@ -560,7 +560,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('addDataRatiosOfPieChart()', function() {
-        it('파이 차트의 경우에는 seriesGroup values의 합을 구해 seriesGroup.addRatios에 전달합니다.', function() {
+        it('should call addRatios() with all series group values, when pie chart', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['pluck', 'addRatios']);
 
             seriesDataModel.groups = [seriesGroup];
@@ -572,7 +572,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('addDataRatiosForCoordinateType()', function() {
-        it('limitMap.x로 xDistance와 xSubValue를 계산하여 각각의 seriesItem의 addRatio를 호출하여 x ratio를 등록합니다.', function() {
+        it('should set x ratio using xDistance and xSubstraction values from limitMap.x', function() {
             var limitMap = {
                 xAxis: {
                     min: 0,
@@ -588,7 +588,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesItem.addRatio).toHaveBeenCalledWith('x', 20, 0);
         });
 
-        it('limitMap.y로 yDistance와 ySubValue를 계산하여 각각의 seriesItem의 addRatio를 호출하여 y ratio를 등록합니다.', function() {
+        it('should set y ratio using yDistance and ySubstraction values from limitMap.y', function() {
             var limitMap = {
                 yAxis: {
                     min: 10,
@@ -604,7 +604,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesItem.addRatio).toHaveBeenCalledWith('y', 40, 10);
         });
 
-        it('maxRadious를 구하여 각각의 seriesItem의 addRatio를 호출하여 r ratio를 등록합니다.', function() {
+        it('should set r ratio from maxRadious', function() {
             var limitMap = {};
             var hasRadius = true;
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
@@ -618,7 +618,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('each()', function() {
-        it('groups에 포함된 seriesGroup 수 만큼 iteratee를 실행합니다.', function() {
+        it('should execuate iteratee for each series groups', function() {
             var spy = jasmine.createSpyObj('spy', ['iteratee']);
 
             seriesDataModel.groups = [
@@ -641,7 +641,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('map()', function() {
-        it('groups에 포함된 seriesGroup 수 만큼 iteratee를 실행하고 실행 결과를 배열로 반환합니다.', function() {
+        it('should return arrays after executing iteratee for each series group', function() {
             var actual, expected;
 
             seriesDataModel.groups = [

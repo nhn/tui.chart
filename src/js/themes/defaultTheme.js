@@ -74,7 +74,8 @@ var defaultTheme = {
                 strokeWidth: 3,
                 radius: 4
             }
-        }
+        },
+        ranges: []
     },
     legend: {
         label: {
