@@ -827,7 +827,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {number} width series width
      * @param {number} height series height
      */
-    resizeClipRect(width, height) {
+    resizeClipRect: function(width, height) {
         var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
 
         clipRect.attr({
