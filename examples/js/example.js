@@ -45,7 +45,7 @@
         indentUnit: 4,
         gutters: ['CodeMirror-lint-markers'],
         lint: true,
-        value: document.getElementById('code-js').innerText
+        value: document.getElementById('code-js').innerHTML
     });
 
     root.chartCM.setSize(600, 500);
