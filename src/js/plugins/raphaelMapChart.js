@@ -11,7 +11,7 @@ var dom = require('../helpers/domHandler');
 var snippet = require('tui-code-snippet');
 var browser = snippet.browser;
 
-var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
+var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var STROKE_COLOR = 'gray';
 var ANIMATION_DURATION = 100;
 var G_ID = 'tui-chart-series-group';
@@ -40,7 +40,7 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
         this.sectorSet = paper.set();
         this.sectors = this._renderMap(data, this.ratio);
 
-        if (!IS_LTE_THAN_IE8) {
+        if (!IS_LTE_IE8) {
             this.g = createGElement(paper, this.sectorSet, G_ID);
         }
 
@@ -276,7 +276,7 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
             label.node.style.cursor = 'default';
             label.node.setAttribute('filter', 'url(#glow)');
 
-            if (!IS_LTE_THAN_IE8) {
+            if (!IS_LTE_IE8) {
                 self.g.appendChild(label.node);
             }
         });

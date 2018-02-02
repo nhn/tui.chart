@@ -12,7 +12,7 @@ var snippet = require('tui-code-snippet');
 var arrayUtil = require('../helpers/arrayUtil');
 
 var browser = snippet.browser;
-var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
+var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
 var DEFAULT_DOT_RADIUS = 3;
 var SELECTION_DOT_RADIUS = 7;
@@ -659,7 +659,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var clipRect = this.clipRect;
         var clipRectId = this._getClipRectId();
 
-        if (!IS_LTE_THAN_IE8 && dimension) {
+        if (!IS_LTE_IE8 && dimension) {
             if (!clipRect) {
                 clipRect = createClipPathRectWithLayout(paper, position, dimension, clipRectId);
                 this.clipRect = clipRect;
@@ -824,14 +824,15 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
 
     /**
      * Resize clip rect size
-     * @param {object} dimension series dimension
+     * @param {number} width series width
+     * @param {number} height series height
      */
-    resizeClipRect: function(dimension) {
+    resizeClipRect(width, height) {
         var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
 
         clipRect.attr({
-            width: dimension.width,
-            height: dimension.height
+            width: width,
+            height: height
         });
     },
 

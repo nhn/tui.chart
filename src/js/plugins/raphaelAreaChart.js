@@ -303,7 +303,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             dimension = params.dimension,
             groupPositions = params.groupPositions;
 
-        this.resizeClipRect(dimension);
+        this.resizeClipRect(dimension.width, dimension.height);
 
         this.zeroTop = params.zeroTop;
         this.groupPositions = groupPositions;

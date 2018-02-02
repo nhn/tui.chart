@@ -169,24 +169,12 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @private
      */
     _makeVerticalBarBound: function(iterationData, baseData, barWidth, barHeight, barEndHeight) {
-        var top = iterationData.top;
-        var left = iterationData.left + ((baseData.itemWidth - barWidth) / 2);
-        var bound = {
-            start: {
-                top: top - barEndHeight + barHeight,
-                left: left,
-                width: barWidth,
-                height: 0
-            },
-            end: {
-                top: top - barEndHeight,
-                left: left,
-                width: barWidth,
-                height: barHeight
-            }
+        return {
+            top: iterationData.top - barEndHeight,
+            left: iterationData.left + ((baseData.itemWidth - barWidth) / 2),
+            width: barWidth,
+            height: barHeight
         };
-
-        return bound;
     },
 
     /**
@@ -200,24 +188,12 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @private
      */
     _makeHorizontalBarBound: function(iterationData, baseData, barWidth, barHeight, barEndHeight) {
-        var top = iterationData.top + ((baseData.itemWidth - barWidth) / 2);
-        var left = iterationData.left + barEndHeight - barHeight;
-        var bound = {
-            start: {
-                top: top,
-                left: left,
-                width: 0,
-                height: barWidth
-            },
-            end: {
-                top: top,
-                left: left,
-                width: barHeight,
-                height: barWidth
-            }
+        return {
+            top: iterationData.top + ((baseData.itemWidth - barWidth) / 2),
+            left: iterationData.left + barEndHeight - barHeight,
+            width: barHeight,
+            height: barWidth
         };
-
-        return bound;
     },
 
     /**
@@ -308,17 +284,15 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      */
     _getLabelTexts: function(seriesDataModel) {
         return seriesDataModel.map(function(seriesGroup) {
-            return seriesGroup.map(function(seriesDatum) {
-                var label = {
-                    end: seriesDatum.endLabel
-                };
+            var seriesLabels = [];
 
-                if (seriesDatum.isRange) {
-                    label.start = seriesDatum.startLabel;
+            seriesGroup.each(function(seriesDatum) {
+                if (seriesDatum.type !== chartConst.BULLET_TYPE_RANGE) {
+                    seriesLabels.push(seriesDatum.endLabel);
                 }
-
-                return label;
             });
+
+            return seriesLabels;
         });
     },
 
@@ -336,8 +310,10 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
         return snippet.map(serieses, function(series) {
             var bounds = [];
 
-            snippet.forEach(series, function(component) {
-                bounds.push(this._makePositionByBound(component.end || component, labelHeight));
+            snippet.forEach(series, function(item) {
+                if (item.type !== chartConst.BULLET_TYPE_RANGE) {
+                    bounds.push(this._makePositionByBound(item, labelHeight));
+                }
             }, this);
 
             return bounds;

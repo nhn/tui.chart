@@ -9,12 +9,15 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var chartConst = require('../const');
 var snippet = require('tui-code-snippet');
-var raphael = require('raphael');
+var renderUtil = require('../helpers/renderUtil');
 
+var browser = snippet.browser;
+var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
 var ANIMATION_DELAY = 700;
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
+var EVENT_DETECTOR_PADDING = 20;
 
 /**
  * @classdesc RaphaelBulletChart is graph renderer for bullet chart.
@@ -39,6 +42,8 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
         this.paper = paper;
 
         this.theme = data.theme;
+        this.dimension = data.dimension;
+        this.position = data.position;
         this.options = data.options;
         this.chartType = data.chartType;
         this.isVertical = data.isVertical;
@@ -49,7 +54,6 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
 
         this.rangeOpacities = {};
 
-        this._initData();
         this.paper.setStart();
 
         this._renderBounds(groupBounds);
@@ -95,47 +99,33 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
      */
     _renderBounds: function(groupBounds) {
         var rangeThemes = this.theme.ranges;
+        var paper = this.paper;
 
-        this.serieses = snippet.map(groupBounds, function(bounds, groupIndex) {
-            var barSet = this.paper.set();
-            var lineSet = this.paper.set();
-            var barBounds = [];
+        this.groupBars = [];
+        this.groupLines = [];
+
+        snippet.forEach(groupBounds, function(bounds, groupIndex) {
             var seriesColor = this.theme.colors[groupIndex];
             var rangeIndex = 0;
+            var barSet = paper.set();
+            var lineSet = paper.set();
 
             snippet.forEach(bounds, function(bound) {
                 var type = bound.type;
 
                 if (type === chartConst.BULLET_TYPE_ACTUAL) {
-                    barSet.push(this._renderActual(bound.start, seriesColor));
-                    barBounds.push(bound.end);
+                    barSet.push(this._renderActual(bound, seriesColor));
                 } else if (type === chartConst.BULLET_TYPE_RANGE) {
-                    barSet.push(this._renderRange(bound.start, seriesColor, rangeIndex, rangeThemes[rangeIndex]));
-                    barBounds.push(bound.end);
+                    barSet.push(this._renderRange(bound, seriesColor, rangeIndex, rangeThemes[rangeIndex]));
                     rangeIndex += 1;
                 } else if (type === chartConst.BULLET_TYPE_MARKER) {
                     lineSet.push(this._renderMarker(bound, seriesColor));
                 }
             }, this);
 
-            return {
-                barSet: barSet,
-                lineSet: lineSet,
-                barBounds: barBounds
-            };
+            this.groupBars.push(barSet);
+            this.groupLines.push(lineSet);
         }, this);
-    },
-
-    /**
-     * clear array(like) object, before rendering
-     * @private
-     */
-    _initData: function() {
-        snippet.forEach(this.serieses, function(series) {
-            series.barSet.clear();
-            series.lineSet.clear();
-            series.labelSet.clear();
-        });
     },
 
     /**
@@ -206,16 +196,11 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
      * @private
      */
     _renderMarker: function(bound, seriesColor) {
-        var line;
-
         if (!bound) {
             return null;
         }
 
-        line = this._renderLine(bound, seriesColor);
-        line.attr({opacity: 0});
-
-        return line;
+        return this._renderLine(bound, seriesColor);
     },
 
     /**
@@ -238,26 +223,56 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
     /**
      * Animate.
      * @param {function} onFinish finish callback function
+     * @param {Array.<object>} seriesSet series set
      */
-    animate: function(onFinish) {
-        var animation = raphael.animation({
-            opacity: 1
-        }, ANIMATION_DURATION);
+    animate: function(onFinish, seriesSet) {
+        var paper = this.paper;
+        var dimension = this.dimension;
+        var position = this.position;
+        var clipRect = this.clipRect;
+        var clipRectId = this._getClipRectId();
+        var clipRectWidth = dimension.width - EVENT_DETECTOR_PADDING;
+        var clipRectHeight = dimension.height - EVENT_DETECTOR_PADDING;
+        var startDimension = {};
+        var animateAttr = {};
 
-        snippet.forEach(this.serieses, function(series) {
-            var barBounds = series.barBounds;
+        if (this.isVertical) {
+            startDimension.width = clipRectWidth;
+            startDimension.height = 0;
+            animateAttr.height = clipRectHeight;
+        } else {
+            startDimension.width = 0;
+            startDimension.height = clipRectHeight;
+            animateAttr.width = clipRectWidth;
+        }
 
-            series.barSet.forEach(function(bar, index) {
-                if (bar) {
-                    this._animateRect(bar, barBounds[index]);
-                }
-            }, this);
-            series.lineSet.forEach(function(line) {
-                if (line) {
-                    line.animate(animation.delay(ANIMATION_DURATION));
+        // Animation was implemented using <clipPath> SVG element
+        // As Browser compatibility of <clipPath> is IE9+,
+        // No Animation on IE8
+        if (!IS_LTE_IE8 && dimension) {
+            if (!clipRect) {
+                clipRect = createClipPathRectWithLayout(paper, position, startDimension, clipRectId);
+                this.clipRect = clipRect;
+            } else {
+                clipRect.attr({
+                    x: position.left,
+                    y: position.top
+                });
+                clipRect.attr(startDimension);
+            }
+
+            seriesSet.forEach(function(element) {
+                if (element.type === 'set') {
+                    element.forEach(function(item) {
+                        item.node.setAttribute('clip-path', 'url(#' + clipRectId + ')');
+                    });
+                } else {
+                    element.node.setAttribute('clip-path', 'url(#' + clipRectId + ')');
                 }
             });
-        }, this);
+
+            clipRect.animate(animateAttr, ANIMATION_DURATION, '>', onFinish);
+        }
 
         if (onFinish) {
             this.callbackTimeout = setTimeout(function() {
@@ -265,21 +280,6 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
                 delete self.callbackTimeout;
             }, ANIMATION_DELAY);
         }
-    },
-
-    /**
-     * Animate rect.
-     * @param {SVGElement} element svg rect element
-     * @param {object} bound - bound info
-     * @private
-     */
-    _animateRect: function(element, bound) {
-        element.animate({
-            x: bound.left,
-            y: bound.top,
-            width: bound.width,
-            height: bound.height
-        }, ANIMATION_DURATION, '>');
     },
 
     /**
@@ -293,12 +293,55 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
     resize: function(params) {
         var dimension = params.dimension;
         var groupBounds = params.groupBounds;
+        var width = dimension.width;
+        var height = dimension.height;
 
+        this.dimension = params.dimension;
         this.groupBounds = groupBounds;
-        this.paper.setSize(dimension.width, dimension.height);
+        this.resizeClipRect(width, height);
+        this.paper.setSize(width, height);
 
-        this._initData();
         this._renderBounds(groupBounds);
+    },
+
+    /**
+     * Resize clip rect size
+     * @param {number} width series width
+     * @param {number} height series height
+     */
+    resizeClipRect: function(width, height) {
+        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
+
+        clipRect.attr({
+            width: width,
+            height: height
+        });
+    },
+
+    /**
+     * set clip rect position
+     * @param {object} position series position
+     */
+    setClipRectPosition: function(position) {
+        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
+
+        clipRect.attr({
+            x: position.left,
+            y: position.top
+        });
+    },
+
+    /**
+     * Set clip rect id
+     * @returns {string} id - clip rect id
+     * @private
+     */
+    _getClipRectId: function() {
+        if (!this.clipRectId) {
+            this.clipRectId = renderUtil.generateClipRectId();
+        }
+
+        return this.clipRectId;
     },
 
     /**
@@ -318,25 +361,27 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var noneSelected = snippet.isNull(legendIndex);
+        var allEmphasized = snippet.isNull(legendIndex);
 
-        snippet.forEach(this.serieses, function(series, index) {
-            var opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+        snippet.forEachArray(this.groupBars, function(bars, groupIndex) {
+            var opacity = (allEmphasized || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
-            series.barSet.attr({'fill-opacity': opacity});
-            series.lineSet.attr({opacity: opacity});
-            series.labelSet.attr({opacity: opacity});
+            this.groupBars[groupIndex].attr({'fill-opacity': opacity});
+            this.groupLabels[groupIndex].attr({opacity: opacity});
+            snippet.forEachArray(this.groupLabels[groupIndex], function(label) {
+                label.attr({opacity: opacity});
+            });
         }, this);
     },
 
     /**
      * @param {object} paper - raphael paper
-     * @param {Array.<object>} groupPositions - series label positions
-     * @param {Array.<string>} groupLabels - series labels
+     * @param {Array.<object>} positionData - series label positions
+     * @param {Array.<string>} labelData - series labels
      * @param {object} labelTheme - series text theme
      * @returns {object} - rendered label set
      */
-    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme) {
+    renderSeriesLabel: function(paper, positionData, labelData, labelTheme) {
         var attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
@@ -345,25 +390,20 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
             opacity: 0,
             'text-anchor': this.isVertical ? 'middle' : 'start'
         };
-        var labelSet = paper.set();
+        var set = paper.set();
 
-        snippet.forEach(groupLabels, function(labels, groupIndex) {
-            var seriesLabelSet = paper.set();
-
+        this.groupLabels = snippet.map(labelData, function(labels, groupIndex) {
+            var labelSet = paper.set();
             snippet.forEach(labels, function(label, index) {
-                var labelElement;
-
-                if (!label.start) {/* if not range */
-                    labelElement = this._renderLabel(paper, groupPositions[groupIndex][index], attributes, label.end);
-                    seriesLabelSet.push(labelElement);
-                    labelSet.push(labelElement);
-                }
+                var labelElement = this._renderLabel(paper, positionData[groupIndex][index], attributes, label);
+                labelSet.push(labelElement);
+                set.push(labelElement);
             }, this);
 
-            this.serieses[groupIndex].labelSet = seriesLabelSet;
+            return labelSet;
         }, this);
 
-        return labelSet;
+        return set;
     },
 
     /**
@@ -390,21 +430,47 @@ var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.proto
      * @returns {Array.<object>} - color and opacity of series
      */
     getGraphColors: function() {
-        return snippet.map(this.serieses, function(series) {
-            var barColors = snippet.map(series.barSet.items, function(bar) {
-                return bar.attrs.fill;
-            });
-            var legendColor = barColors[barColors.length - 1];
-            var markerCount = series.lineSet.items.length;
+        return snippet.map(this.groupBars, function(barSet, groupIndex) {
+            var barColors = [];
+            var markerCount = this.groupLines[groupIndex].length;
             var i = 0;
+            var legendColor;
+
+            barSet.forEach(function(item) {
+                barColors.push(item.attrs.fill);
+            });
+
+            legendColor = barColors[barColors.length - 1];
 
             for (; i <= markerCount; i += 1) {
                 barColors.push(legendColor);
             }
 
             return barColors;
-        });
+        }, this);
     }
 });
+
+/**
+ * Create clip rect with layout
+ * @param {object} paper Raphael paper
+ * @param {object} position position
+ * @param {object} dimension dimension
+ * @param {string} id ID string
+ * @returns {object}
+ * @ignore
+ */
+function createClipPathRectWithLayout(paper, position, dimension, id) {
+    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+    var rect = paper.rect(position.left, position.top, dimension.width, dimension.height);
+
+    rect.id = id + '_rect';
+    clipPath.id = id;
+
+    clipPath.appendChild(rect.node);
+    paper.defs.appendChild(clipPath);
+
+    return rect;
+}
 
 module.exports = RaphaelBulletChart;

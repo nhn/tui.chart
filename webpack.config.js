@@ -90,7 +90,8 @@ module.exports = (function() {
                 quiet: false,
                 stats: {
                     colors: true
-                }
+                },
+                disableHostCheck: true
             }
         });
     }

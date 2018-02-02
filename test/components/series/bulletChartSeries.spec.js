@@ -143,19 +143,20 @@ describe('BulletChartSeries', function() {
     });
 
     describe('_makeBarBound()', function() {
-        var model, widthRatio, baseData, iterationData;
+        var model, widthRatio, baseData, iterationData, valueAxisWidth;
 
         beforeEach(function() {
             model = {
-                start: {value: 25, label: '25', ratio: 0.83333},
-                end: {value: 0, label: '0', ratio: 0.16666},
+                startValue: 0, startLabel: '0', startRatio: 0.16666,
+                endValue: 25, endLabel: '25', endRatio: 0.83333,
                 ratioDistance: 0.67777
             };
             widthRatio = 0.5;
+            valueAxisWidth = 400;
             baseData = {
                 categoryAxisTop: 50,
                 categoryAxisLeft: 30,
-                valueAxisWidth: 400,
+                valueAxisWidth: valueAxisWidth,
                 itemWidth: 15
             };
             iterationData = {
@@ -169,49 +170,53 @@ describe('BulletChartSeries', function() {
             series.isVertical = false;
             barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
-            expect(barBound.start.top).toEqual(barBound.end.top);
-            expect(barBound.start.left).toEqual(barBound.end.left);
-            expect(barBound.start.width).not.toEqual(barBound.end.width);
-            expect(barBound.start.height).toEqual(barBound.end.height);
+            expect(barBound.top).toBe(53.75);
+            expect(barBound.left).toBe(92.22399999999999);
+            expect(barBound.width).toBe(271.108);
+            expect(barBound.height).toBe(7.5);
         });
 
-        it('should create a virtical bound, when it is verical chart', function() {
-            var barBound, barHeight;
+        it('should create a virtical bound, when it is vertical chart', function() {
+            var barBound;
             series.isVertical = true;
+            iterationData.top += valueAxisWidth;
             barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
-            barHeight = barBound.end.height;
 
-            expect(barBound.start.top).toEqual(barBound.end.top + barHeight);
-            expect(barBound.start.left).toEqual(barBound.end.left);
-            expect(barBound.start.width).toEqual(barBound.end.width);
+            expect(barBound.top).toBe(116.668);
+            expect(barBound.left).toBe(33.75);
+            expect(barBound.width).toBe(7.5);
+            expect(barBound.height).toBe(271.108);
         });
 
         it('should set bar width, according to widthRatio', function() {
             var barBound;
             series.isVertical = true;
+            iterationData.top += valueAxisWidth;
             barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
-            expect(barBound.end.width).toBe(7.5);
-            expect(barBound.start.width).toBe(7.5);
+            expect(barBound.width).toBe(7.5);
+            expect(barBound.width).toBe(7.5);
 
             series.isVertical = false;
             barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
-            expect(barBound.end.height).toBe(7.5);
-            expect(barBound.start.height).toBe(7.5);
+            expect(barBound.height).toBe(7.5);
+            expect(barBound.height).toBe(7.5);
         });
 
         it('should set bar height, according to ratioDistance', function() {
             var barBound;
             series.isVertical = true;
+            iterationData.top += valueAxisWidth;
             barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
-            expect(barBound.end.height).toBe(271.108);
+            expect(barBound.height).toBe(271.108);
 
             series.isVertical = false;
+            iterationData.top -= valueAxisWidth;
             barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
-            expect(barBound.end.width).toBe(271.108);
+            expect(barBound.width).toBe(271.108);
         });
     });
 

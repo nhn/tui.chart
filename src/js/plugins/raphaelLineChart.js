@@ -151,7 +151,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
             dimension = params.dimension,
             groupPositions = params.groupPositions;
 
-        this.resizeClipRect(dimension);
+        this.resizeClipRect(dimension.width, dimension.height);
 
         this.groupPositions = groupPositions;
         this.groupPaths = this.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
