@@ -33,4 +33,22 @@
 
     root.openWindow = openWindow;
     root.evaluationCode = evaluationCode;
+
+    root.textArea = document.getElementById('code');
+    root.chartCM = CodeMirror(function (elt) {
+        root.textArea.parentElement.replaceChild(elt, textArea);
+    }, {
+        mode: 'javascript',
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        gutters: ['CodeMirror-lint-markers'],
+        lint: true,
+        value: document.getElementById('code-js').innerHTML
+    });
+
+    root.chartCM.setSize(600, 500);
+
+    root.codeString = root.chartCM.doc.getValue();
 })(window);

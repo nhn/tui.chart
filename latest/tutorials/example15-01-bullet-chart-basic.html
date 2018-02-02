@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head lang='kr'>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=Edge'/>
+    <title>[Bullet Chart] basic</title>
+    <link rel='stylesheet' type='text/css' href='../dist/tui-chart.css'/>
+
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'></textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;'
+                onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script class='code-js' id='code-js'>
+var container = document.getElementById('chart-area');
+var data = {
+    categories: ['July', 'August'],
+    series: [{
+        name: 'Budget',
+        data: 25,
+        markers: [28, 2, 15],
+        ranges: [[-1, 10], [10, 20], [20, 30]]
+    }, {
+        name: 'Hello',
+        data: 11,
+        markers: [20],
+        ranges: [[0, 8], [8, 15]]
+    }, {
+        name: 'World',
+        data: 30,
+        markers: [25],
+        ranges: [[0, 10], [10, 19], [19, 28]]
+    }, {
+        name: 'Income',
+        data: 23,
+        markers: [],
+        ranges: [[19, 25], [13, 19], [0, 13]]
+    }]
+};
+var options = {
+    chart: {
+        width: 700,
+        height: 300,
+        title: 'Monthly Revenue',
+        format: '1,000'
+    },
+    legend: {
+        visible: true
+    },
+    xAxis: {
+        max: 35
+    },
+    series: {
+        showLabel: true,
+        vertical: false
+    }
+};
+var theme = {
+    series: {
+        colors: ['#012744', '#155764', '#588681', '#8C9C88'],
+        ranges: [{ color: 'red', opacity: 0.7 },
+            null,
+        { color: 'yellow' }
+        ]
+    }
+};
+
+// For apply theme
+
+tui.chart.registerTheme('myTheme', theme);
+options.theme = 'myTheme';
+
+tui.chart.bulletChart(container, data, options);
+</script>
+
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>

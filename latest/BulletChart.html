@@ -1,0 +1,4531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Class: BulletChart | Chart</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Chart</a></h1>
+        
+            <span class="version">v2.15.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-01-bar-chart-basic.html">1.1 [Bar Chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-01-bar-chart-basic_sub"></div></li><li><a href="tutorial-example01-02-bar-chart-negative-data.html">1.2 [Bar Chart] negative data</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-02-bar-chart-negative-data_sub"></div></li><li><a href="tutorial-example01-03-bar-chart-normal-stack.html">1.3 [Bar Chart] normal stack</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-03-bar-chart-normal-stack_sub"></div></li><li><a href="tutorial-example01-04-bar-chart-diverging.html">1.4 [Bar Chart] diverging</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-04-bar-chart-diverging_sub"></div></li><li><a href="tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html">1.5 [Bar Chart] diverging and center yAxis</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-05-bar-chart-diverging-and-center-yaxis_sub"></div></li><li><a href="tutorial-example01-06-bar-chart-range-data.html">1.6 [Bar Chart] range data</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-06-bar-chart-range-data_sub"></div></li><li><a href="tutorial-example02-01-column-chart-basic.html">2.1 [Column Chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-01-column-chart-basic_sub"></div></li><li><a href="tutorial-example02-02-column-chart-negative-data.html">2.2 [Column Chart] negative data</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-02-column-chart-negative-data_sub"></div></li><li><a href="tutorial-example02-03-column-chart-percent-stack.html">2.3 [Column Chart] percent stack</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-03-column-chart-percent-stack_sub"></div></li><li><a href="tutorial-example02-04-column-chart-group-stack.html">2.4 [Column Chart] group stack</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-04-column-chart-group-stack_sub"></div></li><li><a href="tutorial-example02-05-column-chart-diverging-and-stacked.html">2.5 [Column Chart] diverging and stacked</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-05-column-chart-diverging-and-stacked_sub"></div></li><li><a href="tutorial-example03-01-line-chart-basic.html">3.1 [Line Chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-01-line-chart-basic_sub"></div></li><li><a href="tutorial-example03-02-line-chart-spline.html">3.2 [Line Chart] spline</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-02-line-chart-spline_sub"></div></li><li><a href="tutorial-example03-03-line-chart-coordinate-data.html">3.3 [Line Chart] coordinate data</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-03-line-chart-coordinate-data_sub"></div></li><li><a href="tutorial-example03-04-line-chart-without-series-data.html">3.4 [Line Chart] without series data</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-04-line-chart-without-series-data_sub"></div></li><li><a href="tutorial-example03-05-line-chart-synchronized-tooltip.html">3.5 [Line Chart] synchronized tooltip</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-05-line-chart-synchronized-tooltip_sub"></div></li><li><a href="tutorial-example04-01-area-chart-basic.html">4.1 [Area Chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-01-area-chart-basic_sub"></div></li><li><a href="tutorial-example04-02-area-chart-normal-stack.html">4.2 [Area Chart] normal stack</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-02-area-chart-normal-stack_sub"></div></li><li><a href="tutorial-example04-03-area-chart-range-data.html">4.3 [Area Chart] range data</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-03-area-chart-range-data_sub"></div></li><li><a href="tutorial-example04-04-area-chart-auto-tick-zoomable.html">4.4 [Area Chart] auto tick and zoomable</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-04-area-chart-auto-tick-zoomable_sub"></div></li><li><a href="tutorial-example04-05-area-chart-merge-overlapping-plotbands.html">4.5 [Area Chart] merge overlapping plotbands</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-05-area-chart-merge-overlapping-plotbands_sub"></div></li><li><a href="tutorial-example05-01-bubble-chart-basic.html">5.1 [Bubble Chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-01-bubble-chart-basic_sub"></div></li><li><a href="tutorial-example06-01-scatter-chart-basic.html">6.1 [Scatter Chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-01-scatter-chart-basic_sub"></div></li><li><a href="tutorial-example07-01-pie-chart-basic.html">7.1 [Pie Chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-01-pie-chart-basic_sub"></div></li><li><a href="tutorial-example07-02-pie-chart-center-legend.html">7.2 [Pie Chart] center legend</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-02-pie-chart-center-legend_sub"></div></li><li><a href="tutorial-example07-03-pie-chart-outer-legend.html">7.3 [Pie Chart] outer legend</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-03-pie-chart-outer-legend_sub"></div></li><li><a href="tutorial-example07-04-pie-chart-donut.html">7.4 [Pie Chart] donut</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-04-pie-chart-donut_sub"></div></li><li><a href="tutorial-example07-05-pie-chart-semi-circle-donut.html">7.5 [Pie Chart] semi circle donut</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-05-pie-chart-semi-circle-donut_sub"></div></li><li><a href="tutorial-example08-01-combo-chart-column-and-line.html">8.1 [Combo Chart] column and line</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-01-combo-chart-column-and-line_sub"></div></li><li><a href="tutorial-example08-02-combo-chart-pie-and-donut.html">8.2 [Combo Chart] pie and donut</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-02-combo-chart-pie-and-donut_sub"></div></li><li><a href="tutorial-example08-03-combo-chart-line-and-area.html">8.3 [Combo Chart] line and area</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-03-combo-chart-line-and-area_sub"></div></li><li><a href="tutorial-example08-04-combo-chart-line-and-scatter.html">8.4 [Combo Chart] line and scatter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-04-combo-chart-line-and-scatter_sub"></div></li><li><a href="tutorial-example09-01-map-chart-world-map.html">9.1 [Map chart] world map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-01-map-chart-world-map_sub"></div></li><li><a href="tutorial-example09-02-map-chart-south-korea-map.html">9.2 [Map chart] south korea map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-02-map-chart-south-korea-map_sub"></div></li><li><a href="tutorial-example09-03-map-chart-usa-map.html">9.3 [Map chart] USA map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-03-map-chart-usa-map_sub"></div></li><li><a href="tutorial-example09-04-map-chart-china-map.html">9.4 [Map chart] china map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-04-map-chart-china-map_sub"></div></li><li><a href="tutorial-example09-05-map-chart-japan-map.html">9.5 [Map chart] japan map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-05-map-chart-japan-map_sub"></div></li><li><a href="tutorial-example09-06-map-chart-singapore-map.html">9.6 [Map chart] singapore map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-06-map-chart-singapore-map_sub"></div></li><li><a href="tutorial-example09-07-map-chart-thailand-map.html">9.7 [Map chart] thailand map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-07-map-chart-thailand-map_sub"></div></li><li><a href="tutorial-example09-08-map-chart-taiwan-map.html">9.8 [Map chart] taiwan map</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-08-map-chart-taiwan-map_sub"></div></li><li><a href="tutorial-example10-01-heatmap-chart-basic.html">10.1 [Heatmap chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example10-01-heatmap-chart-basic_sub"></div></li><li><a href="tutorial-example11-01-treemap-chart-basic.html">11.1 [Treemap chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-01-treemap-chart-basic_sub"></div></li><li><a href="tutorial-example11-02-treemap-chart-useColorValue-option.html">11.2 [Treemap chart] useColorValue option</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-02-treemap-chart-useColorValue-option_sub"></div></li><li><a href="tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html">12.1 [Dynamic chart] append and shift data dynamically</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example12-01-dynamic-chart-append-and-shift-data-dynamically_sub"></div></li><li><a href="tutorial-example13-01-radial-chart-basic.html">13.1 [Radial chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example13-01-radial-chart-basic_sub"></div></li><li><a href="tutorial-example14-01-boxplot-chart-basic.html">14.1 [Boxplot chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example14-01-boxplot-chart-basic_sub"></div></li><li><a href="tutorial-example15-01-bullet-chart-basic.html">15.1 [Bullet chart] basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example15-01-bullet-chart-basic_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="AreaChart.html">AreaChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="AreaChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="AreaChart.html#chartType">chartType</a></li><li><a href="AreaChart.html#className">className</a></li><li><a href="AreaChart.html#componentManager">componentManager</a></li><li><a href="AreaChart.html#dataProcessor">dataProcessor</a></li><li><a href="AreaChart.html#eventBus">eventBus</a></li><li><a href="AreaChart.html#hasAxes">hasAxes</a></li><li><a href="AreaChart.html#isVertical">isVertical</a></li><li><a href="AreaChart.html#options">options</a></li><li><a href="AreaChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="AreaChart.html#Series">Series</a></li><li><a href="AreaChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="AreaChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="AreaChart.html#addComponents">addComponents</a></li><li><a href="AreaChart.html#addData">addData</a></li><li><a href="AreaChart.html#addDataRatios">addDataRatios</a></li><li><a href="AreaChart.html#addPlotBand">addPlotBand</a></li><li><a href="AreaChart.html#addPlotLine">addPlotLine</a></li><li><a href="AreaChart.html#animateChart">animateChart</a></li><li><a href="AreaChart.html#getScaleOption">getScaleOption</a></li><li><a href="AreaChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="AreaChart.html#off">off</a></li><li><a href="AreaChart.html#on">on</a></li><li><a href="AreaChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="AreaChart.html#onResetZoom">onResetZoom</a></li><li><a href="AreaChart.html#onZoom">onZoom</a></li><li><a href="AreaChart.html#readyForRender">readyForRender</a></li><li><a href="AreaChart.html#removePlotBand">removePlotBand</a></li><li><a href="AreaChart.html#removePlotLine">removePlotLine</a></li><li><a href="AreaChart.html#render">render</a></li><li><a href="AreaChart.html#rerender">rerender</a></li><li><a href="AreaChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="AreaChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="AreaChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="AreaChart.html#resize">resize</a></li><li><a href="AreaChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="AreaChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="AreaChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="AreaChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="BarChart.html">BarChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="BarChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BarChart.html#chartType">chartType</a></li><li><a href="BarChart.html#className">className</a></li><li><a href="BarChart.html#componentManager">componentManager</a></li><li><a href="BarChart.html#dataProcessor">dataProcessor</a></li><li><a href="BarChart.html#eventBus">eventBus</a></li><li><a href="BarChart.html#hasAxes">hasAxes</a></li><li><a href="BarChart.html#hasRightYAxis">hasRightYAxis</a></li><li><a href="BarChart.html#isVertical">isVertical</a></li><li><a href="BarChart.html#options">options</a></li><li><a href="BarChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="BarChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BarChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="BarChart.html#addComponents">addComponents</a></li><li><a href="BarChart.html#addData">addData</a></li><li><a href="BarChart.html#addDataRatios">addDataRatios</a></li><li><a href="BarChart.html#addPlotBand">addPlotBand</a></li><li><a href="BarChart.html#addPlotLine">addPlotLine</a></li><li><a href="BarChart.html#animateChart">animateChart</a></li><li><a href="BarChart.html#getScaleOption">getScaleOption</a></li><li><a href="BarChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="BarChart.html#off">off</a></li><li><a href="BarChart.html#on">on</a></li><li><a href="BarChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="BarChart.html#readyForRender">readyForRender</a></li><li><a href="BarChart.html#removePlotBand">removePlotBand</a></li><li><a href="BarChart.html#removePlotLine">removePlotLine</a></li><li><a href="BarChart.html#render">render</a></li><li><a href="BarChart.html#rerender">rerender</a></li><li><a href="BarChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="BarChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="BarChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="BarChart.html#resize">resize</a></li><li><a href="BarChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="BarChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="BarChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="BarChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="BoxplotChart.html">BoxplotChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="BoxplotChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BoxplotChart.html#chartType">chartType</a></li><li><a href="BoxplotChart.html#className">className</a></li><li><a href="BoxplotChart.html#componentManager">componentManager</a></li><li><a href="BoxplotChart.html#dataProcessor">dataProcessor</a></li><li><a href="BoxplotChart.html#eventBus">eventBus</a></li><li><a href="BoxplotChart.html#hasAxes">hasAxes</a></li><li><a href="BoxplotChart.html#isVertical">isVertical</a></li><li><a href="BoxplotChart.html#options">options</a></li><li><a href="BoxplotChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="BoxplotChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BoxplotChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="BoxplotChart.html#addComponents">addComponents</a></li><li><a href="BoxplotChart.html#addData">addData</a></li><li><a href="BoxplotChart.html#addDataRatios">addDataRatios</a></li><li><a href="BoxplotChart.html#addPlotBand">addPlotBand</a></li><li><a href="BoxplotChart.html#addPlotLine">addPlotLine</a></li><li><a href="BoxplotChart.html#animateChart">animateChart</a></li><li><a href="BoxplotChart.html#getScaleOption">getScaleOption</a></li><li><a href="BoxplotChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="BoxplotChart.html#off">off</a></li><li><a href="BoxplotChart.html#on">on</a></li><li><a href="BoxplotChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="BoxplotChart.html#readyForRender">readyForRender</a></li><li><a href="BoxplotChart.html#removePlotBand">removePlotBand</a></li><li><a href="BoxplotChart.html#removePlotLine">removePlotLine</a></li><li><a href="BoxplotChart.html#render">render</a></li><li><a href="BoxplotChart.html#rerender">rerender</a></li><li><a href="BoxplotChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="BoxplotChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="BoxplotChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="BoxplotChart.html#resize">resize</a></li><li><a href="BoxplotChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="BoxplotChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="BoxplotChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="BoxplotChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="BubbleChart.html">BubbleChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="BubbleChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BubbleChart.html#chartType">chartType</a></li><li><a href="BubbleChart.html#className">className</a></li><li><a href="BubbleChart.html#componentManager">componentManager</a></li><li><a href="BubbleChart.html#dataProcessor">dataProcessor</a></li><li><a href="BubbleChart.html#eventBus">eventBus</a></li><li><a href="BubbleChart.html#hasAxes">hasAxes</a></li><li><a href="BubbleChart.html#isVertical">isVertical</a></li><li><a href="BubbleChart.html#options">options</a></li><li><a href="BubbleChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="BubbleChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BubbleChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="BubbleChart.html#addComponents">addComponents</a></li><li><a href="BubbleChart.html#addData">addData</a></li><li><a href="BubbleChart.html#addDataRatios">addDataRatios</a></li><li><a href="BubbleChart.html#addPlotBand">addPlotBand</a></li><li><a href="BubbleChart.html#addPlotLine">addPlotLine</a></li><li><a href="BubbleChart.html#animateChart">animateChart</a></li><li><a href="BubbleChart.html#getScaleOption">getScaleOption</a></li><li><a href="BubbleChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="BubbleChart.html#off">off</a></li><li><a href="BubbleChart.html#on">on</a></li><li><a href="BubbleChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="BubbleChart.html#readyForRender">readyForRender</a></li><li><a href="BubbleChart.html#removePlotBand">removePlotBand</a></li><li><a href="BubbleChart.html#removePlotLine">removePlotLine</a></li><li><a href="BubbleChart.html#render">render</a></li><li><a href="BubbleChart.html#rerender">rerender</a></li><li><a href="BubbleChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="BubbleChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="BubbleChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="BubbleChart.html#resize">resize</a></li><li><a href="BubbleChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="BubbleChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="BubbleChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="BubbleChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="BulletChart.html">BulletChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="BulletChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BulletChart.html#chartType">chartType</a></li><li><a href="BulletChart.html#className">className</a></li><li><a href="BulletChart.html#componentManager">componentManager</a></li><li><a href="BulletChart.html#dataProcessor">dataProcessor</a></li><li><a href="BulletChart.html#eventBus">eventBus</a></li><li><a href="BulletChart.html#hasAxes">hasAxes</a></li><li><a href="BulletChart.html#isVertical">isVertical</a></li><li><a href="BulletChart.html#options">options</a></li><li><a href="BulletChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="BulletChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BulletChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="BulletChart.html#addComponents">addComponents</a></li><li><a href="BulletChart.html#addData">addData</a></li><li><a href="BulletChart.html#addDataRatios">addDataRatios</a></li><li><a href="BulletChart.html#addPlotBand">addPlotBand</a></li><li><a href="BulletChart.html#addPlotLine">addPlotLine</a></li><li><a href="BulletChart.html#animateChart">animateChart</a></li><li><a href="BulletChart.html#getScaleOption">getScaleOption</a></li><li><a href="BulletChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="BulletChart.html#off">off</a></li><li><a href="BulletChart.html#on">on</a></li><li><a href="BulletChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="BulletChart.html#readyForRender">readyForRender</a></li><li><a href="BulletChart.html#removePlotBand">removePlotBand</a></li><li><a href="BulletChart.html#removePlotLine">removePlotLine</a></li><li><a href="BulletChart.html#render">render</a></li><li><a href="BulletChart.html#rerender">rerender</a></li><li><a href="BulletChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="BulletChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="BulletChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="BulletChart.html#resize">resize</a></li><li><a href="BulletChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="BulletChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="BulletChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="BulletChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="ChartBase.html">ChartBase</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ChartBase_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ChartBase.html#chartType">chartType</a></li><li><a href="ChartBase.html#componentManager">componentManager</a></li><li><a href="ChartBase.html#dataProcessor">dataProcessor</a></li><li><a href="ChartBase.html#eventBus">eventBus</a></li><li><a href="ChartBase.html#hasAxes">hasAxes</a></li><li><a href="ChartBase.html#isVertical">isVertical</a></li><li><a href="ChartBase.html#options">options</a></li><li><a href="ChartBase.html#prevXAxisData">prevXAxisData</a></li><li><a href="ChartBase.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ChartBase.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="ChartBase.html#addComponents">addComponents</a></li><li><a href="ChartBase.html#addData">addData</a></li><li><a href="ChartBase.html#addDataRatios">addDataRatios</a></li><li><a href="ChartBase.html#addPlotBand">addPlotBand</a></li><li><a href="ChartBase.html#addPlotLine">addPlotLine</a></li><li><a href="ChartBase.html#animateChart">animateChart</a></li><li><a href="ChartBase.html#getScaleOption">getScaleOption</a></li><li><a href="ChartBase.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ChartBase.html#off">off</a></li><li><a href="ChartBase.html#on">on</a></li><li><a href="ChartBase.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ChartBase.html#readyForRender">readyForRender</a></li><li><a href="ChartBase.html#removePlotBand">removePlotBand</a></li><li><a href="ChartBase.html#removePlotLine">removePlotLine</a></li><li><a href="ChartBase.html#render">render</a></li><li><a href="ChartBase.html#rerender">rerender</a></li><li><a href="ChartBase.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ChartBase.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ChartBase.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ChartBase.html#resize">resize</a></li><li><a href="ChartBase.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ChartBase.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ChartBase.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ChartBase.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="ColumnChart.html">ColumnChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ColumnChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ColumnChart.html#chartType">chartType</a></li><li><a href="ColumnChart.html#className">className</a></li><li><a href="ColumnChart.html#componentManager">componentManager</a></li><li><a href="ColumnChart.html#dataProcessor">dataProcessor</a></li><li><a href="ColumnChart.html#eventBus">eventBus</a></li><li><a href="ColumnChart.html#hasAxes">hasAxes</a></li><li><a href="ColumnChart.html#isVertical">isVertical</a></li><li><a href="ColumnChart.html#options">options</a></li><li><a href="ColumnChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="ColumnChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ColumnChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="ColumnChart.html#addComponents">addComponents</a></li><li><a href="ColumnChart.html#addData">addData</a></li><li><a href="ColumnChart.html#addDataRatios">addDataRatios</a></li><li><a href="ColumnChart.html#addPlotBand">addPlotBand</a></li><li><a href="ColumnChart.html#addPlotLine">addPlotLine</a></li><li><a href="ColumnChart.html#animateChart">animateChart</a></li><li><a href="ColumnChart.html#getScaleOption">getScaleOption</a></li><li><a href="ColumnChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ColumnChart.html#off">off</a></li><li><a href="ColumnChart.html#on">on</a></li><li><a href="ColumnChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ColumnChart.html#readyForRender">readyForRender</a></li><li><a href="ColumnChart.html#removePlotBand">removePlotBand</a></li><li><a href="ColumnChart.html#removePlotLine">removePlotLine</a></li><li><a href="ColumnChart.html#render">render</a></li><li><a href="ColumnChart.html#rerender">rerender</a></li><li><a href="ColumnChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ColumnChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ColumnChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ColumnChart.html#resize">resize</a></li><li><a href="ColumnChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ColumnChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ColumnChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ColumnChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="ColumnLineComboChart.html">ColumnLineComboChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ColumnLineComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ColumnLineComboChart.html#chartType">chartType</a></li><li><a href="ColumnLineComboChart.html#chartTypes">chartTypes</a></li><li><a href="ColumnLineComboChart.html#componentManager">componentManager</a></li><li><a href="ColumnLineComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="ColumnLineComboChart.html#eventBus">eventBus</a></li><li><a href="ColumnLineComboChart.html#hasAxes">hasAxes</a></li><li><a href="ColumnLineComboChart.html#hasRightYAxis">hasRightYAxis</a></li><li><a href="ColumnLineComboChart.html#isVertical">isVertical</a></li><li><a href="ColumnLineComboChart.html#options">options</a></li><li><a href="ColumnLineComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="ColumnLineComboChart.html#seriesTypes">seriesTypes</a></li><li><a href="ColumnLineComboChart.html#theme">theme</a></li><li><a href="ColumnLineComboChart.html#yAxisOptions">yAxisOptions</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ColumnLineComboChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="ColumnLineComboChart.html#addComponents">addComponents</a></li><li><a href="ColumnLineComboChart.html#addData">addData</a></li><li><a href="ColumnLineComboChart.html#addDataRatios">addDataRatios</a></li><li><a href="ColumnLineComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="ColumnLineComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="ColumnLineComboChart.html#animateChart">animateChart</a></li><li><a href="ColumnLineComboChart.html#getScaleOption">getScaleOption</a></li><li><a href="ColumnLineComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ColumnLineComboChart.html#off">off</a></li><li><a href="ColumnLineComboChart.html#on">on</a></li><li><a href="ColumnLineComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ColumnLineComboChart.html#readyForRender">readyForRender</a></li><li><a href="ColumnLineComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="ColumnLineComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="ColumnLineComboChart.html#render">render</a></li><li><a href="ColumnLineComboChart.html#rerender">rerender</a></li><li><a href="ColumnLineComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ColumnLineComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ColumnLineComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ColumnLineComboChart.html#resize">resize</a></li><li><a href="ColumnLineComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ColumnLineComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ColumnLineComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ColumnLineComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="HeatmapChart.html">HeatmapChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="HeatmapChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="HeatmapChart.html#chartType">chartType</a></li><li><a href="HeatmapChart.html#className">className</a></li><li><a href="HeatmapChart.html#componentManager">componentManager</a></li><li><a href="HeatmapChart.html#dataProcessor">dataProcessor</a></li><li><a href="HeatmapChart.html#eventBus">eventBus</a></li><li><a href="HeatmapChart.html#hasAxes">hasAxes</a></li><li><a href="HeatmapChart.html#isVertical">isVertical</a></li><li><a href="HeatmapChart.html#options">options</a></li><li><a href="HeatmapChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="HeatmapChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="HeatmapChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="HeatmapChart.html#addComponents">addComponents</a></li><li><a href="HeatmapChart.html#addData">addData</a></li><li><a href="HeatmapChart.html#addDataRatios">addDataRatios</a></li><li><a href="HeatmapChart.html#addPlotBand">addPlotBand</a></li><li><a href="HeatmapChart.html#addPlotLine">addPlotLine</a></li><li><a href="HeatmapChart.html#animateChart">animateChart</a></li><li><a href="HeatmapChart.html#getScaleOption">getScaleOption</a></li><li><a href="HeatmapChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="HeatmapChart.html#off">off</a></li><li><a href="HeatmapChart.html#on">on</a></li><li><a href="HeatmapChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="HeatmapChart.html#readyForRender">readyForRender</a></li><li><a href="HeatmapChart.html#removePlotBand">removePlotBand</a></li><li><a href="HeatmapChart.html#removePlotLine">removePlotLine</a></li><li><a href="HeatmapChart.html#render">render</a></li><li><a href="HeatmapChart.html#rerender">rerender</a></li><li><a href="HeatmapChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="HeatmapChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="HeatmapChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="HeatmapChart.html#resize">resize</a></li><li><a href="HeatmapChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="HeatmapChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="HeatmapChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="HeatmapChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="LineAreaComboChart.html">LineAreaComboChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LineAreaComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LineAreaComboChart.html#chartType">chartType</a></li><li><a href="LineAreaComboChart.html#chartTypes">chartTypes</a></li><li><a href="LineAreaComboChart.html#className">className</a></li><li><a href="LineAreaComboChart.html#componentManager">componentManager</a></li><li><a href="LineAreaComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="LineAreaComboChart.html#eventBus">eventBus</a></li><li><a href="LineAreaComboChart.html#hasAxes">hasAxes</a></li><li><a href="LineAreaComboChart.html#hasRightYAxis">hasRightYAxis</a></li><li><a href="LineAreaComboChart.html#isVertical">isVertical</a></li><li><a href="LineAreaComboChart.html#options">options</a></li><li><a href="LineAreaComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="LineAreaComboChart.html#seriesTypes">seriesTypes</a></li><li><a href="LineAreaComboChart.html#theme">theme</a></li><li><a href="LineAreaComboChart.html#yAxisOptions">yAxisOptions</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LineAreaComboChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="LineAreaComboChart.html#addComponents">addComponents</a></li><li><a href="LineAreaComboChart.html#addData">addData</a></li><li><a href="LineAreaComboChart.html#addDataRatios">addDataRatios</a></li><li><a href="LineAreaComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="LineAreaComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="LineAreaComboChart.html#animateChart">animateChart</a></li><li><a href="LineAreaComboChart.html#getScaleOption">getScaleOption</a></li><li><a href="LineAreaComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="LineAreaComboChart.html#off">off</a></li><li><a href="LineAreaComboChart.html#on">on</a></li><li><a href="LineAreaComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="LineAreaComboChart.html#onResetZoom">onResetZoom</a></li><li><a href="LineAreaComboChart.html#onZoom">onZoom</a></li><li><a href="LineAreaComboChart.html#readyForRender">readyForRender</a></li><li><a href="LineAreaComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="LineAreaComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="LineAreaComboChart.html#render">render</a></li><li><a href="LineAreaComboChart.html#rerender">rerender</a></li><li><a href="LineAreaComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="LineAreaComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="LineAreaComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="LineAreaComboChart.html#resize">resize</a></li><li><a href="LineAreaComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="LineAreaComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="LineAreaComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="LineAreaComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="LineChart.html">LineChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LineChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LineChart.html#chartType">chartType</a></li><li><a href="LineChart.html#className">className</a></li><li><a href="LineChart.html#componentManager">componentManager</a></li><li><a href="LineChart.html#dataProcessor">dataProcessor</a></li><li><a href="LineChart.html#eventBus">eventBus</a></li><li><a href="LineChart.html#hasAxes">hasAxes</a></li><li><a href="LineChart.html#isVertical">isVertical</a></li><li><a href="LineChart.html#options">options</a></li><li><a href="LineChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="LineChart.html#Series">Series</a></li><li><a href="LineChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LineChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="LineChart.html#addComponents">addComponents</a></li><li><a href="LineChart.html#addData">addData</a></li><li><a href="LineChart.html#addDataRatios">addDataRatios</a></li><li><a href="LineChart.html#addPlotBand">addPlotBand</a></li><li><a href="LineChart.html#addPlotLine">addPlotLine</a></li><li><a href="LineChart.html#animateChart">animateChart</a></li><li><a href="LineChart.html#getScaleOption">getScaleOption</a></li><li><a href="LineChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="LineChart.html#off">off</a></li><li><a href="LineChart.html#on">on</a></li><li><a href="LineChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="LineChart.html#onResetZoom">onResetZoom</a></li><li><a href="LineChart.html#onZoom">onZoom</a></li><li><a href="LineChart.html#readyForRender">readyForRender</a></li><li><a href="LineChart.html#removePlotBand">removePlotBand</a></li><li><a href="LineChart.html#removePlotLine">removePlotLine</a></li><li><a href="LineChart.html#render">render</a></li><li><a href="LineChart.html#rerender">rerender</a></li><li><a href="LineChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="LineChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="LineChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="LineChart.html#resize">resize</a></li><li><a href="LineChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="LineChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="LineChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="LineChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="LineScatterComboChart.html">LineScatterComboChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LineScatterComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LineScatterComboChart.html#chartType">chartType</a></li><li><a href="LineScatterComboChart.html#chartTypes">chartTypes</a></li><li><a href="LineScatterComboChart.html#componentManager">componentManager</a></li><li><a href="LineScatterComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="LineScatterComboChart.html#eventBus">eventBus</a></li><li><a href="LineScatterComboChart.html#hasAxes">hasAxes</a></li><li><a href="LineScatterComboChart.html#isVertical">isVertical</a></li><li><a href="LineScatterComboChart.html#options">options</a></li><li><a href="LineScatterComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="LineScatterComboChart.html#seriesTypes">seriesTypes</a></li><li><a href="LineScatterComboChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LineScatterComboChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="LineScatterComboChart.html#addComponents">addComponents</a></li><li><a href="LineScatterComboChart.html#addData">addData</a></li><li><a href="LineScatterComboChart.html#addDataRatios">addDataRatios</a></li><li><a href="LineScatterComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="LineScatterComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="LineScatterComboChart.html#animateChart">animateChart</a></li><li><a href="LineScatterComboChart.html#getScaleOption">getScaleOption</a></li><li><a href="LineScatterComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="LineScatterComboChart.html#off">off</a></li><li><a href="LineScatterComboChart.html#on">on</a></li><li><a href="LineScatterComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="LineScatterComboChart.html#readyForRender">readyForRender</a></li><li><a href="LineScatterComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="LineScatterComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="LineScatterComboChart.html#render">render</a></li><li><a href="LineScatterComboChart.html#rerender">rerender</a></li><li><a href="LineScatterComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="LineScatterComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="LineScatterComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="LineScatterComboChart.html#resize">resize</a></li><li><a href="LineScatterComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="LineScatterComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="LineScatterComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="LineScatterComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="MapChart.html">MapChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MapChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MapChart.html#chartType">chartType</a></li><li><a href="MapChart.html#className">className</a></li><li><a href="MapChart.html#componentManager">componentManager</a></li><li><a href="MapChart.html#dataProcessor">dataProcessor</a></li><li><a href="MapChart.html#eventBus">eventBus</a></li><li><a href="MapChart.html#hasAxes">hasAxes</a></li><li><a href="MapChart.html#isVertical">isVertical</a></li><li><a href="MapChart.html#options">options</a></li><li><a href="MapChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="MapChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MapChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="MapChart.html#addComponents">addComponents</a></li><li><a href="MapChart.html#addData">addData</a></li><li><a href="MapChart.html#addDataRatios">addDataRatios</a></li><li><a href="MapChart.html#addPlotBand">addPlotBand</a></li><li><a href="MapChart.html#addPlotLine">addPlotLine</a></li><li><a href="MapChart.html#animateChart">animateChart</a></li><li><a href="MapChart.html#getScaleOption">getScaleOption</a></li><li><a href="MapChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="MapChart.html#off">off</a></li><li><a href="MapChart.html#on">on</a></li><li><a href="MapChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="MapChart.html#readyForRender">readyForRender</a></li><li><a href="MapChart.html#removePlotBand">removePlotBand</a></li><li><a href="MapChart.html#removePlotLine">removePlotLine</a></li><li><a href="MapChart.html#render">render</a></li><li><a href="MapChart.html#rerender">rerender</a></li><li><a href="MapChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="MapChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="MapChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="MapChart.html#resize">resize</a></li><li><a href="MapChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="MapChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="MapChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="MapChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="MapChartMapModel.html">MapChartMapModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MapChartMapModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MapChartMapModel.html#commandFuncMap">commandFuncMap</a></li><li><a href="MapChartMapModel.html#dataProcessor">dataProcessor</a></li><li><a href="MapChartMapModel.html#ignoreCommandMap">ignoreCommandMap</a></li><li><a href="MapChartMapModel.html#mapData">mapData</a></li><li><a href="MapChartMapModel.html#mapDimension">mapDimension</a></li><li><a href="MapChartMapModel.html#rawMapData">rawMapData</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MapChartMapModel.html#getDatum">getDatum</a></li><li><a href="MapChartMapModel.html#getLabelData">getLabelData</a></li><li><a href="MapChartMapModel.html#getMapData">getMapData</a></li><li><a href="MapChartMapModel.html#getMapDimension">getMapDimension</a></li></ul></div></li><li><a href="PieChart.html">PieChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PieChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PieChart.html#chartType">chartType</a></li><li><a href="PieChart.html#className">className</a></li><li><a href="PieChart.html#componentManager">componentManager</a></li><li><a href="PieChart.html#dataProcessor">dataProcessor</a></li><li><a href="PieChart.html#eventBus">eventBus</a></li><li><a href="PieChart.html#hasAxes">hasAxes</a></li><li><a href="PieChart.html#isVertical">isVertical</a></li><li><a href="PieChart.html#options">options</a></li><li><a href="PieChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="PieChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PieChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="PieChart.html#addComponents">addComponents</a></li><li><a href="PieChart.html#addData">addData</a></li><li><a href="PieChart.html#addDataRatios">addDataRatios</a></li><li><a href="PieChart.html#addPlotBand">addPlotBand</a></li><li><a href="PieChart.html#addPlotLine">addPlotLine</a></li><li><a href="PieChart.html#animateChart">animateChart</a></li><li><a href="PieChart.html#getScaleOption">getScaleOption</a></li><li><a href="PieChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="PieChart.html#off">off</a></li><li><a href="PieChart.html#on">on</a></li><li><a href="PieChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="PieChart.html#readyForRender">readyForRender</a></li><li><a href="PieChart.html#removePlotBand">removePlotBand</a></li><li><a href="PieChart.html#removePlotLine">removePlotLine</a></li><li><a href="PieChart.html#render">render</a></li><li><a href="PieChart.html#rerender">rerender</a></li><li><a href="PieChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="PieChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="PieChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="PieChart.html#resize">resize</a></li><li><a href="PieChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="PieChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="PieChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="PieChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="PieDonutComboChart.html">PieDonutComboChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PieDonutComboChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PieDonutComboChart.html#chartType">chartType</a></li><li><a href="PieDonutComboChart.html#chartTypes">chartTypes</a></li><li><a href="PieDonutComboChart.html#className">className</a></li><li><a href="PieDonutComboChart.html#componentManager">componentManager</a></li><li><a href="PieDonutComboChart.html#dataProcessor">dataProcessor</a></li><li><a href="PieDonutComboChart.html#eventBus">eventBus</a></li><li><a href="PieDonutComboChart.html#hasAxes">hasAxes</a></li><li><a href="PieDonutComboChart.html#isVertical">isVertical</a></li><li><a href="PieDonutComboChart.html#options">options</a></li><li><a href="PieDonutComboChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="PieDonutComboChart.html#seriesTypes">seriesTypes</a></li><li><a href="PieDonutComboChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PieDonutComboChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="PieDonutComboChart.html#addComponents">addComponents</a></li><li><a href="PieDonutComboChart.html#addData">addData</a></li><li><a href="PieDonutComboChart.html#addDataRatios">addDataRatios</a></li><li><a href="PieDonutComboChart.html#addPlotBand">addPlotBand</a></li><li><a href="PieDonutComboChart.html#addPlotLine">addPlotLine</a></li><li><a href="PieDonutComboChart.html#animateChart">animateChart</a></li><li><a href="PieDonutComboChart.html#getScaleOption">getScaleOption</a></li><li><a href="PieDonutComboChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="PieDonutComboChart.html#off">off</a></li><li><a href="PieDonutComboChart.html#on">on</a></li><li><a href="PieDonutComboChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="PieDonutComboChart.html#readyForRender">readyForRender</a></li><li><a href="PieDonutComboChart.html#removePlotBand">removePlotBand</a></li><li><a href="PieDonutComboChart.html#removePlotLine">removePlotLine</a></li><li><a href="PieDonutComboChart.html#render">render</a></li><li><a href="PieDonutComboChart.html#rerender">rerender</a></li><li><a href="PieDonutComboChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="PieDonutComboChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="PieDonutComboChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="PieDonutComboChart.html#resize">resize</a></li><li><a href="PieDonutComboChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="PieDonutComboChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="PieDonutComboChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="PieDonutComboChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="Plot.html">Plot</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Plot_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Plot.html#axisDataMap">axisDataMap</a></li><li><a href="Plot.html#chartType">chartType</a></li><li><a href="Plot.html#chartTypes">chartTypes</a></li><li><a href="Plot.html#className">className</a></li><li><a href="Plot.html#className">className</a></li><li><a href="Plot.html#dataProcessor">dataProcessor</a></li><li><a href="Plot.html#graphRenderer">graphRenderer</a></li><li><a href="Plot.html#layout">layout</a></li><li><a href="Plot.html#options">options</a></li><li><a href="Plot.html#options">options</a></li><li><a href="Plot.html#theme">theme</a></li><li><a href="Plot.html#theme">theme</a></li><li><a href="Plot.html#xAxisTypeOption">xAxisTypeOption</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Plot.html#_makeCategoryPositions">_makeCategoryPositions</a></li><li><a href="Plot.html#_makeLabelData">_makeLabelData</a></li><li><a href="Plot.html#_makePositions">_makePositions</a></li><li><a href="Plot.html#_renderPlotArea">_renderPlotArea</a></li><li><a href="Plot.html#addPlotBand">addPlotBand</a></li><li><a href="Plot.html#addPlotLine">addPlotLine</a></li><li><a href="Plot.html#animateForAddingData">animateForAddingData</a></li><li><a href="Plot.html#removePlotBand">removePlotBand</a></li><li><a href="Plot.html#removePlotLine">removePlotLine</a></li><li><a href="Plot.html#render">render</a></li><li><a href="Plot.html#render">render</a></li><li><a href="Plot.html#rerender">rerender</a></li><li><a href="Plot.html#rerender">rerender</a></li><li><a href="Plot.html#resize">resize</a></li><li><a href="Plot.html#resize">resize</a></li><li><a href="Plot.html#zoom">zoom</a></li></ul></div></li><li><a href="RadialChart.html">RadialChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="RadialChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="RadialChart.html#chartType">chartType</a></li><li><a href="RadialChart.html#className">className</a></li><li><a href="RadialChart.html#componentManager">componentManager</a></li><li><a href="RadialChart.html#dataProcessor">dataProcessor</a></li><li><a href="RadialChart.html#eventBus">eventBus</a></li><li><a href="RadialChart.html#hasAxes">hasAxes</a></li><li><a href="RadialChart.html#isVertical">isVertical</a></li><li><a href="RadialChart.html#options">options</a></li><li><a href="RadialChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="RadialChart.html#Series">Series</a></li><li><a href="RadialChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="RadialChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="RadialChart.html#addComponents">addComponents</a></li><li><a href="RadialChart.html#addData">addData</a></li><li><a href="RadialChart.html#addDataRatios">addDataRatios</a></li><li><a href="RadialChart.html#addPlotBand">addPlotBand</a></li><li><a href="RadialChart.html#addPlotLine">addPlotLine</a></li><li><a href="RadialChart.html#animateChart">animateChart</a></li><li><a href="RadialChart.html#getScaleOption">getScaleOption</a></li><li><a href="RadialChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="RadialChart.html#off">off</a></li><li><a href="RadialChart.html#on">on</a></li><li><a href="RadialChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="RadialChart.html#readyForRender">readyForRender</a></li><li><a href="RadialChart.html#removePlotBand">removePlotBand</a></li><li><a href="RadialChart.html#removePlotLine">removePlotLine</a></li><li><a href="RadialChart.html#render">render</a></li><li><a href="RadialChart.html#rerender">rerender</a></li><li><a href="RadialChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="RadialChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="RadialChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="RadialChart.html#resize">resize</a></li><li><a href="RadialChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="RadialChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="RadialChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="RadialChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="RaphaelRadialLineSeries.html">RaphaelRadialLineSeries</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="RaphaelRadialLineSeries_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="RaphaelRadialLineSeries.html#chartType">chartType</a></li><li><a href="RaphaelRadialLineSeries.html#lineWidth">lineWidth</a></li><li><a href="RaphaelRadialLineSeries.html#selectedLegendIndex">selectedLegendIndex</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="RaphaelRadialLineSeries.html#animate">animate</a></li><li><a href="RaphaelRadialLineSeries.html#clear">clear</a></li><li><a href="RaphaelRadialLineSeries.html#hideAnimation">hideAnimation</a></li><li><a href="RaphaelRadialLineSeries.html#hideGroupAnimation">hideGroupAnimation</a></li><li><a href="RaphaelRadialLineSeries.html#hideGroupTooltipLine">hideGroupTooltipLine</a></li><li><a href="RaphaelRadialLineSeries.html#makeBorderStyle">makeBorderStyle</a></li><li><a href="RaphaelRadialLineSeries.html#makeOutDotStyle">makeOutDotStyle</a></li><li><a href="RaphaelRadialLineSeries.html#render">render</a></li><li><a href="RaphaelRadialLineSeries.html#renderDot">renderDot</a></li><li><a href="RaphaelRadialLineSeries.html#resize">resize</a></li><li><a href="RaphaelRadialLineSeries.html#resizeClipRect">resizeClipRect</a></li><li><a href="RaphaelRadialLineSeries.html#selectLegend">selectLegend</a></li><li><a href="RaphaelRadialLineSeries.html#selectSeries">selectSeries</a></li><li><a href="RaphaelRadialLineSeries.html#setSize">setSize</a></li><li><a href="RaphaelRadialLineSeries.html#showAnimation">showAnimation</a></li><li><a href="RaphaelRadialLineSeries.html#showGroupAnimation">showGroupAnimation</a></li><li><a href="RaphaelRadialLineSeries.html#showGroupTooltipLine">showGroupTooltipLine</a></li><li><a href="RaphaelRadialLineSeries.html#unselectSeries">unselectSeries</a></li></ul></div></li><li><a href="ScatterChart.html">ScatterChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScatterChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ScatterChart.html#chartType">chartType</a></li><li><a href="ScatterChart.html#className">className</a></li><li><a href="ScatterChart.html#componentManager">componentManager</a></li><li><a href="ScatterChart.html#dataProcessor">dataProcessor</a></li><li><a href="ScatterChart.html#eventBus">eventBus</a></li><li><a href="ScatterChart.html#hasAxes">hasAxes</a></li><li><a href="ScatterChart.html#isVertical">isVertical</a></li><li><a href="ScatterChart.html#options">options</a></li><li><a href="ScatterChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="ScatterChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ScatterChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="ScatterChart.html#addComponents">addComponents</a></li><li><a href="ScatterChart.html#addData">addData</a></li><li><a href="ScatterChart.html#addDataRatios">addDataRatios</a></li><li><a href="ScatterChart.html#addPlotBand">addPlotBand</a></li><li><a href="ScatterChart.html#addPlotLine">addPlotLine</a></li><li><a href="ScatterChart.html#animateChart">animateChart</a></li><li><a href="ScatterChart.html#getScaleOption">getScaleOption</a></li><li><a href="ScatterChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="ScatterChart.html#off">off</a></li><li><a href="ScatterChart.html#on">on</a></li><li><a href="ScatterChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="ScatterChart.html#readyForRender">readyForRender</a></li><li><a href="ScatterChart.html#removePlotBand">removePlotBand</a></li><li><a href="ScatterChart.html#removePlotLine">removePlotLine</a></li><li><a href="ScatterChart.html#render">render</a></li><li><a href="ScatterChart.html#rerender">rerender</a></li><li><a href="ScatterChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="ScatterChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="ScatterChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="ScatterChart.html#resize">resize</a></li><li><a href="ScatterChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="ScatterChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="ScatterChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="ScatterChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li><li><a href="SeriesDataModel.html">SeriesDataModel</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SeriesDataModel_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SeriesDataModel.html#baseGroups">baseGroups</a></li><li><a href="SeriesDataModel.html#baseGroups">baseGroups</a></li><li><a href="SeriesDataModel.html#chartType">chartType</a></li><li><a href="SeriesDataModel.html#chartType">chartType</a></li><li><a href="SeriesDataModel.html#formatFunctions">formatFunctions</a></li><li><a href="SeriesDataModel.html#formatFunctions">formatFunctions</a></li><li><a href="SeriesDataModel.html#groups">groups</a></li><li><a href="SeriesDataModel.html#groups">groups</a></li><li><a href="SeriesDataModel.html#isCoordinateType">isCoordinateType</a></li><li><a href="SeriesDataModel.html#isDivergingChart">isDivergingChart</a></li><li><a href="SeriesDataModel.html#options">options</a></li><li><a href="SeriesDataModel.html#options">options</a></li><li><a href="SeriesDataModel.html#rawSeriesData">rawSeriesData</a></li><li><a href="SeriesDataModel.html#rawSeriesData">rawSeriesData</a></li><li><a href="SeriesDataModel.html#valuesMap">valuesMap</a></li><li><a href="SeriesDataModel.html#valuesMap">valuesMap</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SeriesDataModel.html#_getPivotGroups">_getPivotGroups</a></li><li><a href="SeriesDataModel.html#addDataRatiosForCoordinateType">addDataRatiosForCoordinateType</a></li><li><a href="SeriesDataModel.html#addDataRatiosOfPieChart">addDataRatiosOfPieChart</a></li><li><a href="SeriesDataModel.html#addStartValueToAllSeriesItem">addStartValueToAllSeriesItem</a></li><li><a href="SeriesDataModel.html#each">each</a></li><li><a href="SeriesDataModel.html#findMaxSeriesItem">findMaxSeriesItem</a></li><li><a href="SeriesDataModel.html#findMinSeriesItem">findMinSeriesItem</a></li><li><a href="SeriesDataModel.html#getFirstItemLabel">getFirstItemLabel</a></li><li><a href="SeriesDataModel.html#getFirstSeriesGroup">getFirstSeriesGroup</a></li><li><a href="SeriesDataModel.html#getFirstSeriesItem">getFirstSeriesItem</a></li><li><a href="SeriesDataModel.html#getGroupCount">getGroupCount</a></li><li><a href="SeriesDataModel.html#getMaxValue">getMaxValue</a></li><li><a href="SeriesDataModel.html#getMinValue">getMinValue</a></li><li><a href="SeriesDataModel.html#getSeriesGroup">getSeriesGroup</a></li><li><a href="SeriesDataModel.html#getSeriesItem">getSeriesItem</a></li><li><a href="SeriesDataModel.html#getValue">getValue</a></li><li><a href="SeriesDataModel.html#getValues">getValues</a></li><li><a href="SeriesDataModel.html#hasRangeData">hasRangeData</a></li><li><a href="SeriesDataModel.html#isXCountGreaterThanYCount">isXCountGreaterThanYCount</a></li><li><a href="SeriesDataModel.html#map">map</a></li></ul></div></li><li><a href="Title.html">Title</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Title_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Title.html#drawingType">drawingType</a></li><li><a href="Title.html#graphRenderer">graphRenderer</a></li><li><a href="Title.html#offset">offset</a></li><li><a href="Title.html#theme">theme</a></li><li><a href="Title.html#titleText">titleText</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Title.html#render">render</a></li><li><a href="Title.html#rerender">rerender</a></li><li><a href="Title.html#resize">resize</a></li></ul></div></li><li><a href="TreemapChart.html">TreemapChart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="TreemapChart_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="TreemapChart.html#chartType">chartType</a></li><li><a href="TreemapChart.html#className">className</a></li><li><a href="TreemapChart.html#componentManager">componentManager</a></li><li><a href="TreemapChart.html#dataProcessor">dataProcessor</a></li><li><a href="TreemapChart.html#eventBus">eventBus</a></li><li><a href="TreemapChart.html#hasAxes">hasAxes</a></li><li><a href="TreemapChart.html#isVertical">isVertical</a></li><li><a href="TreemapChart.html#options">options</a></li><li><a href="TreemapChart.html#prevXAxisData">prevXAxisData</a></li><li><a href="TreemapChart.html#theme">theme</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="TreemapChart.html#_findDataByIndexes">_findDataByIndexes</a></li><li><a href="TreemapChart.html#addComponents">addComponents</a></li><li><a href="TreemapChart.html#addData">addData</a></li><li><a href="TreemapChart.html#addDataRatios">addDataRatios</a></li><li><a href="TreemapChart.html#addPlotBand">addPlotBand</a></li><li><a href="TreemapChart.html#addPlotLine">addPlotLine</a></li><li><a href="TreemapChart.html#animateChart">animateChart</a></li><li><a href="TreemapChart.html#getScaleOption">getScaleOption</a></li><li><a href="TreemapChart.html#hideSeriesLabel">hideSeriesLabel</a></li><li><a href="TreemapChart.html#off">off</a></li><li><a href="TreemapChart.html#on">on</a></li><li><a href="TreemapChart.html#onChangeCheckedLegends">onChangeCheckedLegends</a></li><li><a href="TreemapChart.html#onZoom">onZoom</a></li><li><a href="TreemapChart.html#readyForRender">readyForRender</a></li><li><a href="TreemapChart.html#removePlotBand">removePlotBand</a></li><li><a href="TreemapChart.html#removePlotLine">removePlotLine</a></li><li><a href="TreemapChart.html#render">render</a></li><li><a href="TreemapChart.html#rerender">rerender</a></li><li><a href="TreemapChart.html#resetTooltipAlign">resetTooltipAlign</a></li><li><a href="TreemapChart.html#resetTooltipOffset">resetTooltipOffset</a></li><li><a href="TreemapChart.html#resetTooltipPosition">resetTooltipPosition</a></li><li><a href="TreemapChart.html#resize">resize</a></li><li><a href="TreemapChart.html#setTooltipAlign">setTooltipAlign</a></li><li><a href="TreemapChart.html#setTooltipOffset">setTooltipOffset</a></li><li><a href="TreemapChart.html#setTooltipPosition">setTooltipPosition</a></li><li><a href="TreemapChart.html#showSeriesLabel">showSeriesLabel</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="tui.chart.html">tui.chart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tui.chart_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="tui.chart.html#.areaChart">areaChart</a></li><li><a href="tui.chart.html#.barChart">barChart</a></li><li><a href="tui.chart.html#.boxplotChart">boxplotChart</a></li><li><a href="tui.chart.html#.bubbleChart">bubbleChart</a></li><li><a href="tui.chart.html#.bulletChart">bulletChart</a></li><li><a href="tui.chart.html#.columnChart">columnChart</a></li><li><a href="tui.chart.html#.comboChart">comboChart</a></li><li><a href="tui.chart.html#.heatmapChart">heatmapChart</a></li><li><a href="tui.chart.html#.lineChart">lineChart</a></li><li><a href="tui.chart.html#.mapChart">mapChart</a></li><li><a href="tui.chart.html#.pieChart">pieChart</a></li><li><a href="tui.chart.html#.radialChart">radialChart</a></li><li><a href="tui.chart.html#.registerMap">registerMap</a></li><li><a href="tui.chart.html#.registerPlugin">registerPlugin</a></li><li><a href="tui.chart.html#.registerTheme">registerTheme</a></li><li><a href="tui.chart.html#.scatterChart">scatterChart</a></li><li><a href="tui.chart.html#.treemapChart">treemapChart</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#bulletSeriesFactory">bulletSeriesFactory</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>BulletChart<span class="signature">(rawData, theme, options)</span><span class="type-signature"></span></h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dt>
+    
+        <h4 class="name" id="BulletChart">
+            
+                new <span class="type-signature"></span>BulletChart<span class="signature">(rawData, theme, options)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_bulletChart.js.html">charts/bulletChart.js</a></code>,
+                <code><a href="charts_bulletChart.js.html#line29">line 29</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Bullet chart.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>rawData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Array></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raw data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>theme</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>chart theme</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>chart options</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li>axisTypeMixer</li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+        </div>
+    
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="ChartBase.html">ChartBase</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="chartType">
+    <span class="type-signature"></span>chartType<span class="type-signature"> :string</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line44">line 44</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>chart type</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#chartType">ChartBase#chartType</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="className">
+    <span class="type-signature"></span>className<span class="type-signature"> :string</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_bulletChart.js.html">charts/bulletChart.js</a></code>,
+        <code><a href="charts_bulletChart.js.html#line18">line 18</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>className</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="componentManager">
+    <span class="type-signature"></span>componentManager<span class="type-signature"> :<a href="ComponentManager.html">ComponentManager</a></span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line80">line 80</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>component manager</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="ComponentManager.html">ComponentManager</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#componentManager">ChartBase#componentManager</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="dataProcessor">
+    <span class="type-signature"></span>dataProcessor<span class="type-signature"> :<a href="DataProcessor.html">DataProcessor</a></span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line62">line 62</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>data processor</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="DataProcessor.html">DataProcessor</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#dataProcessor">ChartBase#dataProcessor</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="eventBus">
+    <span class="type-signature"></span>eventBus<span class="type-signature"> :object</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line68">line 68</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>event bus for transmitting message</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#eventBus">ChartBase#eventBus</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="hasAxes">
+    <span class="type-signature"></span>hasAxes<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line50">line 50</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>whether chart has axes or not</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#hasAxes">ChartBase#hasAxes</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="isVertical">
+    <span class="type-signature"></span>isVertical<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line56">line 56</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>whether vertical or not</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#isVertical">ChartBase#isVertical</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="options">
+    <span class="type-signature"></span>options<span class="type-signature"> :object</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line215">line 215</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>options</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#options">ChartBase#options</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="prevXAxisData">
+    <span class="type-signature"></span>prevXAxisData<span class="type-signature"> :null|object</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line74">line 74</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>previous xAxis data</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">null</span>
+|
+
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#prevXAxisData">ChartBase#prevXAxisData</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="theme">
+    <span class="type-signature"></span>theme<span class="type-signature"> :object</span>
+    
+    <div class="container-source members">
+        <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+        <code><a href="charts_chartBase.js.html#line36">line 36</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>theme</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#theme">ChartBase#theme</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id="_findDataByIndexes">
+            
+                <span class="type-signature"></span>_findDataByIndexes<span class="signature">(index, seriesIndex)</span><span class="type-signature"> &rarr; {object}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line657">line 657</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>category index</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>seriesIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>series index</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">object</span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#_findDataByIndexes">ChartBase#_findDataByIndexes</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="addComponents">
+            
+                <span class="type-signature"></span>addComponents<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line258">line 258</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Add components.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="ChartBase.html#addComponents">ChartBase#addComponents</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="addData">
+            
+                <span class="type-signature"><span class="icon green">abstract</span> </span>addData<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line580">line 580</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Add data.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#addData">ChartBase#addData</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="addDataRatios">
+            
+                <span class="type-signature"></span>addDataRatios<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line326">line 326</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Add data ratios.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="ChartBase.html#addDataRatios">ChartBase#addDataRatios</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="addPlotBand">
+            
+                <span class="type-signature"><span class="icon green">abstract</span> </span>addPlotBand<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line592">line 592</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Add plot band.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#addPlotBand">ChartBase#addPlotBand</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="addPlotLine">
+            
+                <span class="type-signature"><span class="icon green">abstract</span> </span>addPlotLine<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line586">line 586</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Add plot line.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#addPlotLine">ChartBase#addPlotLine</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="animateChart">
+            
+                <span class="type-signature"></span>animateChart<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line415">line 415</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Animate chart.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#animateChart">ChartBase#animateChart</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="getScaleOption">
+            
+                <span class="type-signature"></span>getScaleOption<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line264">line 264</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get scale option.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="ChartBase.html#getScaleOption">ChartBase#getScaleOption</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="hideSeriesLabel">
+            
+                <span class="type-signature"></span>hideSeriesLabel<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line568">line 568</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Hide series label.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#hideSeriesLabel">ChartBase#hideSeriesLabel</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="off">
+            
+                <span class="type-signature"></span>off<span class="signature">(eventName, func)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line435">line 435</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Remove user event.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event name</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>func</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event callback</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#off">ChartBase#off</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="on">
+            
+                <span class="type-signature"></span>on<span class="signature">(eventName, func)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line424">line 424</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Register of user event.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eventName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event name</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>func</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event callback</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#on">ChartBase#on</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="onChangeCheckedLegends">
+            
+                <span class="type-signature"></span>onChangeCheckedLegends<span class="signature">(checkedLegends, rawData<span class="signature-attributes">nullable</span>, boundsParams<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line408">line 408</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>On change checked legend.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>checkedLegends</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;?boolean></span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>checked legends</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rawData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>rawData</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>boundsParams</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>addition params for calculating bounds</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#onChangeCheckedLegends">ChartBase#onChangeCheckedLegends</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="readyForRender">
+            
+                <span class="type-signature"></span>readyForRender<span class="signature">(addingDataMode<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; {object}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line333">line 333</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Make chart ready for render, it should be invoked before render, rerender, resize and zoom.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>addingDataMode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>whether adding data mode or not</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">object</span>
+
+
+
+
+
+- <p>Bounds and scale data</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#readyForRender">ChartBase#readyForRender</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="removePlotBand">
+            
+                <span class="type-signature"><span class="icon green">abstract</span> </span>removePlotBand<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line604">line 604</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Remove plot band.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#removePlotBand">ChartBase#removePlotBand</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="removePlotLine">
+            
+                <span class="type-signature"><span class="icon green">abstract</span> </span>removePlotLine<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line598">line 598</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Remove plot line.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#removePlotLine">ChartBase#removePlotLine</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="render">
+            
+                <span class="type-signature"></span>render<span class="signature">(wrapper)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line349">line 349</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render chart.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>wrapper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>chart wrapper element</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#render">ChartBase#render</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="rerender">
+            
+                <span class="type-signature"></span>rerender<span class="signature">(checkedLegends, rawData<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line382">line 382</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Rerender.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>checkedLegends</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;?boolean></span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>checked legends</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rawData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>rawData</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#rerender">ChartBase#rerender</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="resetTooltipAlign">
+            
+                <span class="type-signature"></span>resetTooltipAlign<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line531">line 531</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Reset tooltip align option.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#resetTooltipAlign">ChartBase#resetTooltipAlign</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="resetTooltipOffset">
+            
+                <span class="type-signature"></span>resetTooltipOffset<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line539">line 539</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Reset tooltip position.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#resetTooltipOffset">ChartBase#resetTooltipOffset</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="resetTooltipPosition">
+            
+                <span class="type-signature"></span>resetTooltipPosition<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line548">line 548</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Reset tooltip position.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#resetTooltipPosition">ChartBase#resetTooltipPosition</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="resize">
+            
+                <span class="type-signature"></span>resize<span class="signature">(dimension)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line473">line 473</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Public API for resizable.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dimension</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>dimension</p>
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>width</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>height</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#resize">ChartBase#resize</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="setTooltipAlign">
+            
+                <span class="type-signature"></span>setTooltipAlign<span class="signature">(align)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line500">line 500</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set tooltip align option.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>align</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>align (left|center|right, top|middle|bottom)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#setTooltipAlign">ChartBase#setTooltipAlign</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="setTooltipOffset">
+            
+                <span class="type-signature"></span>setTooltipOffset<span class="signature">(offset)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line511">line 511</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set tooltip offset option.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>tooltip offset</p>
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>offset x</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>offset y</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#setTooltipOffset">ChartBase#setTooltipOffset</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="setTooltipPosition">
+            
+                <span class="type-signature"></span>setTooltipPosition<span class="signature">(position)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line523">line 523</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set position option.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>moving position</p>
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>left</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>left</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>top</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>top</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#setTooltipPosition">ChartBase#setTooltipPosition</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="showSeriesLabel">
+            
+                <span class="type-signature"></span>showSeriesLabel<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="charts_chartBase.js.html">charts/chartBase.js</a></code>,
+                <code><a href="charts_chartBase.js.html#line556">line 556</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Show series label.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="ChartBase.html#showSeriesLabel">ChartBase#showSeriesLabel</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = 'BulletChart_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
