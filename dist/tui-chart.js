@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.14.2
+ * @version 2.15.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Jan 25 2018 21:47:01 GMT+0900 (KST)"
+ * bundle created at "Fri Feb 02 2018 11:24:48 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -66,13 +66,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var pluginRaphael = __webpack_require__(2);
-	var chart = __webpack_require__(28);
-	__webpack_require__(143);
+	var chart = __webpack_require__(29);
+	__webpack_require__(147);
 
 	chart.registerPlugin(pluginRaphael.name, pluginRaphael.plugins, pluginRaphael.callback);
 	chart.renderUtil = __webpack_require__(7);
 	chart.arrayUtil = __webpack_require__(10);
-	chart.colorutil = __webpack_require__(135);
+	chart.colorutil = __webpack_require__(138);
 
 	/**
 	 * NHN Entertainment Toast UI Chart.
@@ -98,25 +98,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var BarChart = __webpack_require__(4);
 	var Boxplot = __webpack_require__(12);
-	var LineChart = __webpack_require__(13);
-	var AreaChart = __webpack_require__(15);
-	var PieChart = __webpack_require__(17);
-	var RadialLineSeries = __webpack_require__(18);
-	var CoordinateTypeChart = __webpack_require__(19);
-	var BoxTypeChart = __webpack_require__(20);
-	var MapChart = __webpack_require__(21);
+	var Bullet = __webpack_require__(13);
+	var LineChart = __webpack_require__(14);
+	var AreaChart = __webpack_require__(16);
+	var PieChart = __webpack_require__(18);
+	var RadialLineSeries = __webpack_require__(19);
+	var CoordinateTypeChart = __webpack_require__(20);
+	var BoxTypeChart = __webpack_require__(21);
+	var MapChart = __webpack_require__(22);
 
-	var legend = __webpack_require__(22);
-	var MapLegend = __webpack_require__(23);
-	var CircleLegend = __webpack_require__(24);
-	var title = __webpack_require__(25);
-	var axis = __webpack_require__(26);
+	var legend = __webpack_require__(23);
+	var MapLegend = __webpack_require__(24);
+	var CircleLegend = __webpack_require__(25);
+	var title = __webpack_require__(26);
+	var axis = __webpack_require__(27);
 
-	var RadialPlot = __webpack_require__(27);
+	var RadialPlot = __webpack_require__(28);
 
 	var pluginRaphael = {
 	    bar: BarChart,
 	    boxplot: Boxplot,
+	    bullet: Bullet,
 	    column: BarChart,
 	    line: LineChart,
 	    area: AreaChart,
@@ -1862,17 +1864,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number} - default series top height
 	     */
 	    getDefaultSeriesTopAreaHeight: function(chartType, theme) {
-	        var labelHeight;
-
-	        if (!predicate.isBarTypeChart(chartType) &&
-	            !predicate.isLineTypeChart(chartType) &&
-	            !predicate.isComboChart(chartType)) {
-	            return 0;
+	        if (predicate.isBarTypeChart(chartType) ||
+	            predicate.isLineTypeChart(chartType) ||
+	            predicate.isComboChart(chartType) ||
+	            predicate.isBulletChart(chartType)
+	        ) {
+	            return this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme) +
+	                chartConst.SERIES_LABEL_PADDING;
 	        }
 
-	        labelHeight = this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
-
-	        return labelHeight + chartConst.SERIES_LABEL_PADDING;
+	        return 0;
 	    }
 	};
 
@@ -2028,6 +2029,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CHART_TYPE_RADIAL: 'radial',
 	    /** @type {string} */
 	    CHART_TYPE_BOXPLOT: 'boxplot',
+	    /** @type {string} */
+	    CHART_TYPE_BULLET: 'bullet',
 	    /** chart padding */
 	    CHART_PADDING: 10,
 	    /** chart default width */
@@ -2062,7 +2065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @type {string}
 	     */
 	    DEFAULT_THEME_NAME: 'default',
-	    MAX_HEIGHT_WORLD: 'A',
+	    MAX_HEIGHT_WORD: 'A',
 	    /** stack type
 	     * @type {string}
 	     */
@@ -2147,7 +2150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    THEME_PROPS_MAP: {
 	        yAxis: ['tickColor', 'title', 'label'],
 	        series: ['label', 'colors', 'borderColor', 'borderWidth', 'selectionColor', 'startColor', 'endColor',
-	            'overColor', 'dot']
+	            'overColor', 'dot', 'ranges']
 	    },
 	    /** title area width padding */
 	    TITLE_AREA_WIDTH_PADDING: 20,
@@ -2349,7 +2352,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    IMAGE_EXTENSIONS: ['png', 'jpeg'],
 	    DATA_EXTENSIONS: ['xls', 'csv'],
 
-	    GUIDE_AREACHART_AREAOPACITY_TYPE: 'areaOpacity should be a number between 0 and 1'
+	    GUIDE_AREACHART_AREAOPACITY_TYPE: 'areaOpacity should be a number between 0 and 1',
+
+	    /** for bullet */
+	    BULLET_TYPE_ACTUAL: 'Actual',
+	    BULLET_TYPE_RANGE: 'Ranges',
+	    BULLET_TYPE_MARKER: 'Markers',
+	    BULLET_MARKER_STROKE_TICK: 3,
+	    BULLET_MARKER_BUFFER_POSITION: 5,
+	    BULLET_RANGES_HEIGHT_RATIO: 0.7,
+	    BULLET_ACTUAL_HEIGHT_RATIO: 0.28,
+	    BULLET_MARKERS_HEIGHT_RATIO: 0.55,
+	    BULLET_MARKER_DETECT_PADDING: 3
 	};
 	module.exports = chartConst;
 
@@ -2771,6 +2785,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Whether bullet chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBulletChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BULLET;
+	    },
+
+	    /**
 	     * Whether radial type chart or not.
 	     * @memberOf module:predicate
 	     * @param {string} chartType - type of chart
@@ -2978,7 +3002,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {boolean}
 	     */
 	    isPieChart: function(chartType) {
-	        // alias 때문에 indexOf로 변경
+	        // change to indexOf for handling alias
 	        return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
 	    },
 
@@ -3010,7 +3034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    allowMinusPointRender: function(chartType) {
 	        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
-	            predicate.isBoxTypeChart(chartType);
+	            predicate.isBoxTypeChart(chartType) || predicate.isBulletChart(chartType);
 	    },
 
 	    /**
@@ -3935,6 +3959,488 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
+	 * @fileoverview Raphael bullet chart renderer.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var raphaelRenderUtil = __webpack_require__(5);
+	var chartConst = __webpack_require__(8);
+	var snippet = __webpack_require__(6);
+	var renderUtil = __webpack_require__(7);
+
+	var browser = snippet.browser;
+	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+	var ANIMATION_DURATION = 700;
+	var ANIMATION_DELAY = 700;
+	var EMPHASIS_OPACITY = 1;
+	var DE_EMPHASIS_OPACITY = 0.3;
+	var EVENT_DETECTOR_PADDING = 20;
+
+	/**
+	 * @classdesc RaphaelBulletChart is graph renderer for bullet chart.
+	 * @class RaphaelBulletChart
+	 * @private
+	 */
+	var RaphaelBulletChart = snippet.defineClass(/** @lends RaphaelBulletChart.prototype */ {
+	    /**
+	     * Render function of bar chart
+	     * @param {object} paper paper object
+	     * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
+	     * @returns {Array.<object>} seriesSet
+	     */
+	    render: function(paper, data) {
+	        var groupBounds = data.groupBounds;
+	        var seriesDataModel = data.seriesDataModel;
+
+	        if (!groupBounds || !groupBounds.length) {
+	            return null;
+	        }
+
+	        this.paper = paper;
+
+	        this.theme = data.theme;
+	        this.dimension = data.dimension;
+	        this.position = data.position;
+	        this.options = data.options;
+	        this.chartType = data.chartType;
+	        this.isVertical = data.isVertical;
+
+	        this.seriesDataModel = seriesDataModel;
+	        this.maxRangeCount = seriesDataModel.maxRangeCount;
+	        this.maxMarkerCount = seriesDataModel.maxMarkerCount;
+
+	        this.rangeOpacities = {};
+
+	        this.paper.setStart();
+
+	        this._renderBounds(groupBounds);
+
+	        return this.paper.setFinish();
+	    },
+
+	    /**
+	     * Get range opacity by index
+	     * If rangeOpacities[index] not exists, create and store. then use it next time
+	     * @param {number} index - ranges index
+	     * @returns {number} - opacity of ranges bar at index
+	     * @private
+	     */
+	    _getRangeOpacity: function(index) {
+	        var maxRangeCount = this.maxRangeCount;
+	        if (this.prevMaxRangeCount !== maxRangeCount) {
+	            this._updateOpacityStep(maxRangeCount);
+	        }
+
+	        if (index < maxRangeCount && !this.rangeOpacities[index]) {
+	            this.rangeOpacities[index] = 1 - (this.opacityStep * (index + 1));
+	        }
+
+	        return this.rangeOpacities[index];
+	    },
+
+	    /**
+	     * Update opacity step using maxRangeCount
+	     * @param {number} maxRangeCount - maximum count of ranges bar among series graphes
+	     * @private
+	     */
+	    _updateOpacityStep: function(maxRangeCount) {
+	        this.rangeOpacities = {};
+	        this.opacityStep = Number(1 / (maxRangeCount + 1)).toFixed(2);
+	        this.prevMaxRangeCount = maxRangeCount;
+	    },
+
+	    /**
+	     * Render bullet graph using groupBounds model
+	     * @param {Array.<object>} groupBounds - bounds data for rendering bullet graph
+	     * @private
+	     */
+	    _renderBounds: function(groupBounds) {
+	        var rangeThemes = this.theme.ranges;
+	        var paper = this.paper;
+
+	        this.groupBars = [];
+	        this.groupLines = [];
+
+	        snippet.forEach(groupBounds, function(bounds, groupIndex) {
+	            var seriesColor = this.theme.colors[groupIndex];
+	            var rangeIndex = 0;
+	            var barSet = paper.set();
+	            var lineSet = paper.set();
+
+	            snippet.forEach(bounds, function(bound) {
+	                var type = bound.type;
+
+	                if (type === chartConst.BULLET_TYPE_ACTUAL) {
+	                    barSet.push(this._renderActual(bound, seriesColor));
+	                } else if (type === chartConst.BULLET_TYPE_RANGE) {
+	                    barSet.push(this._renderRange(bound, seriesColor, rangeIndex, rangeThemes[rangeIndex]));
+	                    rangeIndex += 1;
+	                } else if (type === chartConst.BULLET_TYPE_MARKER) {
+	                    lineSet.push(this._renderMarker(bound, seriesColor));
+	                }
+	            }, this);
+
+	            this.groupBars.push(barSet);
+	            this.groupLines.push(lineSet);
+	        }, this);
+	    },
+
+	    /**
+	     * Render actual bar
+	     * @param {object} bound - bound model on start point
+	     * @param {string} seriesColor - series color for painting actual bar
+	     * @returns {Element} - rendered actual bar
+	     * @private
+	     */
+	    _renderActual: function(bound, seriesColor) {
+	        if (!bound) {
+	            return null;
+	        }
+
+	        return this._renderBar(bound, seriesColor);
+	    },
+
+	    /**
+	     * Render range bar
+	     * @param {object} bound - bound model on start point
+	     * @param {string} seriesColor - series color for painting range bar
+	     * @param {number} rangeIndex - ranges index
+	     * @param {object} rangeTheme - range theme
+	     * @returns {Element} - rendered range bar
+	     * @private
+	     */
+	    _renderRange: function(bound, seriesColor, rangeIndex, rangeTheme) {
+	        var color = seriesColor;
+	        var opacity = this._getRangeOpacity(rangeIndex);
+	        var attr = {opacity: opacity};
+
+	        if (!bound) {
+	            return null;
+	        }
+
+	        if (rangeTheme) {
+	            color = rangeTheme.color || color;
+	            attr.opacity = rangeTheme.opacity || opacity;
+	        }
+
+	        return this._renderBar(bound, color, attr);
+	    },
+
+	    /**
+	     * Create bar type element using passing arguments
+	     * @param {object} bound - bound data for render rect element
+	     * @param {string} color - hex type color string
+	     * @param {object} attributes - styling attributes
+	     * @returns {Element} - svg rect element
+	     * @private
+	     */
+	    _renderBar: function(bound, color, attributes) {
+	        if (bound.width < 0 || bound.height < 0) {
+	            return null;
+	        }
+
+	        return raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
+	            fill: color,
+	            stroke: 'none'
+	        }, attributes));
+	    },
+
+	    /**
+	     * Render marker
+	     * @param {object} bound - bound model of marker
+	     * @param {string} seriesColor - series color for painting marker
+	     * @returns {Element} - rendered marker
+	     * @private
+	     */
+	    _renderMarker: function(bound, seriesColor) {
+	        if (!bound) {
+	            return null;
+	        }
+
+	        return this._renderLine(bound, seriesColor);
+	    },
+
+	    /**
+	     * Create line element using passing arguments
+	     * @param {object} bound - bound data for render path element
+	     * @param {string} color - hex type color string
+	     * @returns {Element} - svg rect element
+	     * @private
+	     */
+	    _renderLine: function(bound, color) {
+	        var top = bound.top;
+	        var left = bound.left;
+	        var length = bound.length;
+	        var endPosition = this.isVertical ? 'L' + (left + length) + ',' + top : 'L' + left + ',' + (top + length);
+	        var path = 'M' + left + ',' + top + endPosition;
+
+	        return raphaelRenderUtil.renderLine(this.paper, path, color, chartConst.BULLET_MARKER_STROKE_TICK);
+	    },
+
+	    /**
+	     * Animate.
+	     * @param {function} onFinish finish callback function
+	     * @param {Array.<object>} seriesSet series set
+	     */
+	    animate: function(onFinish, seriesSet) {
+	        var paper = this.paper;
+	        var dimension = this.dimension;
+	        var position = this.position;
+	        var clipRect = this.clipRect;
+	        var clipRectId = this._getClipRectId();
+	        var clipRectWidth = dimension.width - EVENT_DETECTOR_PADDING;
+	        var clipRectHeight = dimension.height - EVENT_DETECTOR_PADDING;
+	        var startDimension = {};
+	        var animateAttr = {};
+
+	        if (this.isVertical) {
+	            startDimension.width = clipRectWidth;
+	            startDimension.height = 0;
+	            animateAttr.height = clipRectHeight;
+	        } else {
+	            startDimension.width = 0;
+	            startDimension.height = clipRectHeight;
+	            animateAttr.width = clipRectWidth;
+	        }
+
+	        // Animation was implemented using <clipPath> SVG element
+	        // As Browser compatibility of <clipPath> is IE9+,
+	        // No Animation on IE8
+	        if (!IS_LTE_IE8 && dimension) {
+	            if (!clipRect) {
+	                clipRect = createClipPathRectWithLayout(paper, position, startDimension, clipRectId);
+	                this.clipRect = clipRect;
+	            } else {
+	                clipRect.attr({
+	                    x: position.left,
+	                    y: position.top
+	                });
+	                clipRect.attr(startDimension);
+	            }
+
+	            seriesSet.forEach(function(element) {
+	                if (element.type === 'set') {
+	                    element.forEach(function(item) {
+	                        item.node.setAttribute('clip-path', 'url(#' + clipRectId + ')');
+	                    });
+	                } else {
+	                    element.node.setAttribute('clip-path', 'url(#' + clipRectId + ')');
+	                }
+	            });
+
+	            clipRect.animate(animateAttr, ANIMATION_DURATION, '>', onFinish);
+	        }
+
+	        if (onFinish) {
+	            this.callbackTimeout = setTimeout(function() {
+	                onFinish();
+	                delete self.callbackTimeout;
+	            }, ANIMATION_DELAY);
+	        }
+	    },
+
+	    /**
+	     * Resize bullet chart
+	     * @param {object} params parameters
+	     *      @param {{width: number, height:number}} params.dimension dimension
+	     *      @param {Array.<Array.<{
+	     *                  left:number, top:number, width: number, height: number
+	     *              }>>} params.groupBounds group bounds
+	     */
+	    resize: function(params) {
+	        var dimension = params.dimension;
+	        var groupBounds = params.groupBounds;
+	        var width = dimension.width;
+	        var height = dimension.height;
+
+	        this.dimension = params.dimension;
+	        this.groupBounds = groupBounds;
+	        this.resizeClipRect(width, height);
+	        this.paper.setSize(width, height);
+
+	        this._renderBounds(groupBounds);
+	    },
+
+	    /**
+	     * Resize clip rect size
+	     * @param {number} width series width
+	     * @param {number} height series height
+	     */
+	    resizeClipRect: function(width, height) {
+	        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
+
+	        clipRect.attr({
+	            width: width,
+	            height: height
+	        });
+	    },
+
+	    /**
+	     * set clip rect position
+	     * @param {object} position series position
+	     */
+	    setClipRectPosition: function(position) {
+	        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
+
+	        clipRect.attr({
+	            x: position.left,
+	            y: position.top
+	        });
+	    },
+
+	    /**
+	     * Set clip rect id
+	     * @returns {string} id - clip rect id
+	     * @private
+	     */
+	    _getClipRectId: function() {
+	        if (!this.clipRectId) {
+	            this.clipRectId = renderUtil.generateClipRectId();
+	        }
+
+	        return this.clipRectId;
+	    },
+
+	    /**
+	     * Change borders color.
+	     * @param {Array.<object>} lines raphael objects
+	     * @param {borderColor} borderColor border color
+	     * @private
+	     */
+	    _changeBordersColor: function(lines, borderColor) {
+	        snippet.forEach(lines, function(line) {
+	            line.attr({stroke: borderColor});
+	        });
+	    },
+
+	    /**
+	     * Select legend.
+	     * @param {?number} legendIndex legend index
+	     */
+	    selectLegend: function(legendIndex) {
+	        var allEmphasized = snippet.isNull(legendIndex);
+
+	        snippet.forEachArray(this.groupBars, function(bars, groupIndex) {
+	            var opacity = (allEmphasized || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+	            this.groupBars[groupIndex].attr({'fill-opacity': opacity});
+	            this.groupLabels[groupIndex].attr({opacity: opacity});
+	            snippet.forEachArray(this.groupLabels[groupIndex], function(label) {
+	                label.attr({opacity: opacity});
+	            });
+	        }, this);
+	    },
+
+	    /**
+	     * @param {object} paper - raphael paper
+	     * @param {Array.<object>} positionData - series label positions
+	     * @param {Array.<string>} labelData - series labels
+	     * @param {object} labelTheme - series text theme
+	     * @returns {object} - rendered label set
+	     */
+	    renderSeriesLabel: function(paper, positionData, labelData, labelTheme) {
+	        var attributes = {
+	            'font-size': labelTheme.fontSize,
+	            'font-family': labelTheme.fontFamily,
+	            'font-weight': labelTheme.fontWeight,
+	            fill: labelTheme.color,
+	            opacity: 0,
+	            'text-anchor': this.isVertical ? 'middle' : 'start'
+	        };
+	        var set = paper.set();
+
+	        this.groupLabels = snippet.map(labelData, function(labels, groupIndex) {
+	            var labelSet = paper.set();
+	            snippet.forEach(labels, function(label, index) {
+	                var labelElement = this._renderLabel(paper, positionData[groupIndex][index], attributes, label);
+	                labelSet.push(labelElement);
+	                set.push(labelElement);
+	            }, this);
+
+	            return labelSet;
+	        }, this);
+
+	        return set;
+	    },
+
+	    /**
+	     * @param {object} paper - raphael paper
+	     * @param {Array.<object>} position - series label positions
+	     * @param {Array.<string>} attributes - label text attributes
+	     * @param {string} labelText - label text
+	     * @returns {object} - rendered label object
+	     * @private
+	     */
+	    _renderLabel: function(paper, position, attributes, labelText) {
+	        var label = raphaelRenderUtil.renderText(paper, position, labelText, attributes);
+	        var node = label.node;
+	        var style = node.style;
+	        style.userSelect = 'none';
+	        style.cursor = 'default';
+	        node.setAttribute('filter', 'url(#glow)');
+
+	        return label;
+	    },
+
+	    /**
+	     * @param {number} index - series index
+	     * @returns {Array.<object>} - color and opacity of series
+	     */
+	    getGraphColors: function() {
+	        return snippet.map(this.groupBars, function(barSet, groupIndex) {
+	            var barColors = [];
+	            var markerCount = this.groupLines[groupIndex].length;
+	            var i = 0;
+	            var legendColor;
+
+	            barSet.forEach(function(item) {
+	                barColors.push(item.attrs.fill);
+	            });
+
+	            legendColor = barColors[barColors.length - 1];
+
+	            for (; i <= markerCount; i += 1) {
+	                barColors.push(legendColor);
+	            }
+
+	            return barColors;
+	        }, this);
+	    }
+	});
+
+	/**
+	 * Create clip rect with layout
+	 * @param {object} paper Raphael paper
+	 * @param {object} position position
+	 * @param {object} dimension dimension
+	 * @param {string} id ID string
+	 * @returns {object}
+	 * @ignore
+	 */
+	function createClipPathRectWithLayout(paper, position, dimension, id) {
+	    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+	    var rect = paper.rect(position.left, position.top, dimension.width, dimension.height);
+
+	    rect.id = id + '_rect';
+	    clipPath.id = id;
+
+	    clipPath.appendChild(rect.node);
+	    paper.defs.appendChild(clipPath);
+
+	    return rect;
+	}
+
+	module.exports = RaphaelBulletChart;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
 	 * @fileoverview Raphael line chart renderer.
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
@@ -3942,7 +4448,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(14);
+	var RaphaelLineBase = __webpack_require__(15);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -4087,7 +4593,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dimension = params.dimension,
 	            groupPositions = params.groupPositions;
 
-	        this.resizeClipRect(dimension);
+	        this.resizeClipRect(dimension.width, dimension.height);
 
 	        this.groupPositions = groupPositions;
 	        this.groupPaths = this.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
@@ -4211,7 +4717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4228,7 +4734,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var arrayUtil = __webpack_require__(10);
 
 	var browser = snippet.browser;
-	var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 	var ANIMATION_DURATION = 700;
 	var DEFAULT_DOT_RADIUS = 3;
 	var SELECTION_DOT_RADIUS = 7;
@@ -4731,8 +5237,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var prev = this._prevDotAttributes[groupIndex];
 	        var outDotStyle = this.outDotStyle;
 
-	        // prev 정보가 있다면 prev의 r을 적용해준다
-	        // hideDot시 dot이 사라져버리는 이슈 있음
+	        // if prev data exists, use prev.r
+	        // there is dot disappearing issue, when hideDot
 	        if (prev && !snippet.isUndefined(opacity)) {
 	            outDotStyle = snippet.extend({
 	                'r': prev.r,
@@ -4875,7 +5381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var clipRect = this.clipRect;
 	        var clipRectId = this._getClipRectId();
 
-	        if (!IS_LTE_THAN_IE8 && dimension) {
+	        if (!IS_LTE_IE8 && dimension) {
 	            if (!clipRect) {
 	                clipRect = createClipPathRectWithLayout(paper, position, dimension, clipRectId);
 	                this.clipRect = clipRect;
@@ -5040,14 +5546,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Resize clip rect size
-	     * @param {object} dimension series dimension
+	     * @param {number} width series width
+	     * @param {number} height series height
 	     */
-	    resizeClipRect: function(dimension) {
+	    resizeClipRect: function(width, height) {
 	        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
 
 	        clipRect.attr({
-	            width: dimension.width,
-	            height: dimension.height
+	            width: width,
+	            height: height
 	        });
 	    },
 
@@ -5091,7 +5598,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5102,7 +5609,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(14);
+	var RaphaelLineBase = __webpack_require__(15);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -5111,7 +5618,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var concat = Array.prototype.concat;
 	var GUIDE_AREACHART_AREAOPACITY_TYPE = __webpack_require__(8).GUIDE_AREACHART_AREAOPACITY_TYPE;
-	var consoleUtil = __webpack_require__(16);
+	var consoleUtil = __webpack_require__(17);
 
 	var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
 	    /**
@@ -5399,7 +5906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dimension = params.dimension,
 	            groupPositions = params.groupPositions;
 
-	        this.resizeClipRect(dimension);
+	        this.resizeClipRect(dimension.width, dimension.height);
 
 	        this.zeroTop = params.zeroTop;
 	        this.groupPositions = groupPositions;
@@ -5581,7 +6088,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 	/**
@@ -5609,7 +6116,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5747,10 +6254,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
 	        var startRadian = startAngle * RAD;
 	        var endRadian = endAngle * RAD;
-	        var x1 = cx + (r * Math.sin(startRadian)); // 원 호의 시작 x 좌표
-	        var y1 = cy - (r * Math.cos(startRadian)); // 원 호의 시작 y 좌표
-	        var x2 = cx + (r * Math.sin(endRadian)); // 원 호의 종료 x 좌표
-	        var y2 = cy - (r * Math.cos(endRadian)); // 원 호의 종료 y 좌표
+	        var x1 = cx + (r * Math.sin(startRadian)); // x point of start radian
+	        var y1 = cy - (r * Math.cos(startRadian)); // y posint of start radian
+	        var x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
+	        var y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
 	        var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
 	        var path = ['M', cx, cy,
 	            'L', x1, y1,
@@ -5758,7 +6265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'Z'
 	        ];
 
-	        // path에 대한 자세한 설명은 아래 링크를 참고
+	        // see details about path
 	        // http://www.w3schools.com/svg/svg_path.asp
 	        // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d
 	        return {path: path};
@@ -5779,7 +6286,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /* eslint max-params: [2, 6]*/
 	        var startRadian = startAngle * RAD;
 	        var endRadian = endAngle * RAD;
-	        var r2 = holeRadius || (r * this.holeRatio); // 구멍 반지름
+	        var r2 = holeRadius || (r * this.holeRatio); // radius of donut hole
 	        var x1 = cx + (r * Math.sin(startRadian));
 	        var y1 = cy - (r * Math.cos(startRadian));
 	        var x2 = cx + (r2 * Math.sin(startRadian));
@@ -6304,7 +6811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -6315,7 +6822,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineTypeBase = __webpack_require__(14);
+	var RaphaelLineTypeBase = __webpack_require__(15);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -6457,8 +6964,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Resize graph of line chart.
-	     * 1raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
-	     * 그룹툴팁 동작 안해서 tooltipLine 관련 코드 제거됨
+	     * /todo copied at raphaelLineCharts#resize, should remove duplication
+	     * tooltipLine code was deleted, as group tooltip not works on radial chart/
 	     * @param {object} params parameters
 	     *      @param {{width: number, height:number}} params.dimension dimension
 	     *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
@@ -6484,7 +6991,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Select legend.
-	     * raphaelLineCharts에서 가져옴, 구조 개편시 중복 제거
+	     * /todo copied at raphaelLineCharts, should remove duplication
 	     * @param {?number} legendIndex legend index
 	     */
 	    selectLegend: function(legendIndex) {
@@ -6513,7 +7020,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -6936,7 +7443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7262,12 +7769,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var colorSpectrum = this.colorSpectrum;
 	        var box = this.boxesSet[indexes.groupIndex][indexes.index];
 	        var opacity = 1;
-	        var paper = box.rect.paper;
-	        var color;
+	        var color, paper;
 
 	        if (!box) {
 	            return;
 	        }
+
+	        paper = box.rect.paper;
 
 	        if (box.seriesItem.hasChild) {
 	            color = null;
@@ -7372,7 +7880,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7388,7 +7896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(6);
 	var browser = snippet.browser;
 
-	var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 	var STROKE_COLOR = 'gray';
 	var ANIMATION_DURATION = 100;
 	var G_ID = 'tui-chart-series-group';
@@ -7417,7 +7925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.sectorSet = paper.set();
 	        this.sectors = this._renderMap(data, this.ratio);
 
-	        if (!IS_LTE_THAN_IE8) {
+	        if (!IS_LTE_IE8) {
 	            this.g = createGElement(paper, this.sectorSet, G_ID);
 	        }
 
@@ -7653,7 +8161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            label.node.style.cursor = 'default';
 	            label.node.setAttribute('filter', 'url(#glow)');
 
-	            if (!IS_LTE_THAN_IE8) {
+	            if (!IS_LTE_IE8) {
 	                self.g.appendChild(label.node);
 	            }
 	        });
@@ -7687,7 +8195,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7760,12 +8268,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var position = snippet.extend({}, this.basePosition);
 
 	        snippet.forEach(legendData, function(legendDatum, index) {
+	            var iconType = legendDatum.iconType;
 	            var legendIndex = legendDatum.index;
 	            var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
 	            var isUnselected = legendDatum.isUnselected;
 	            var labelHeight = legendDatum.labelHeight;
 	            var checkboxData = legendDatum.checkbox;
-	            var predicatedLegendWidth = position.left + self._calculateSingleLegendWidth(legendIndex);
+	            var predicatedLegendWidth = position.left + self._calculateSingleLegendWidth(legendIndex, iconType);
 	            var isNeedBreakLine = (predicatedLegendWidth >= self.paper.width);
 
 	            if (self.isHorizontal && isNeedBreakLine) {
@@ -7785,7 +8294,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            self._renderIcon(position, {
 	                legendColor: legendColor,
-	                iconType: legendDatum.iconType,
+	                iconType: iconType,
 	                labelHeight: labelHeight,
 	                isUnselected: isUnselected,
 	                legendIndex: legendIndex,
@@ -8178,7 +8687,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8405,7 +8914,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8469,7 +8978,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8537,7 +9046,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8962,7 +9471,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9137,7 +9646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Get lines path.
-	     * raphaelLineTypeBase에서 가져옴, 구조 개선 작업시 수정필요
+	     * /todo remove duplication, copied from raphaelLineTypeBase
 	     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
 	     * @returns {Array.<Array.<string>>} path
 	     * @private
@@ -9152,7 +9661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Make lines path.
-	     * raphaelLineTypeBase에서 가져옴, 구조 개선 작업시 수정필요
+	     * /todo remove duplication, copied from raphaelLineTypeBase
 	     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
 	     * @param {?string} [posTopType='top'] position top type
 	     * @param {boolean} [connectNulls] - boolean value connect nulls or not
@@ -9189,7 +9698,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9201,17 +9710,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var chartFactory = __webpack_require__(29);
-	var pluginFactory = __webpack_require__(31);
-	var themeManager = __webpack_require__(32);
-	var mapManager = __webpack_require__(34);
-	var objectUtil = __webpack_require__(35);
-	var seriesDataImporter = __webpack_require__(36);
-	var drawingToolPicker = __webpack_require__(37);
+	var chartFactory = __webpack_require__(30);
+	var pluginFactory = __webpack_require__(32);
+	var themeManager = __webpack_require__(33);
+	var mapManager = __webpack_require__(35);
+	var objectUtil = __webpack_require__(36);
+	var seriesDataImporter = __webpack_require__(37);
+	var drawingToolPicker = __webpack_require__(38);
 
-	__webpack_require__(38);
 	__webpack_require__(39);
-	__webpack_require__(142);
+	__webpack_require__(40);
+	__webpack_require__(146);
 
 	/**
 	 * Raw series datum.
@@ -10586,6 +11095,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * Bullet chart creator.
+	 * @memberof module:chart
+	 * @memberof tui.chart
+	 * @param {HTMLElement} container - chart container
+	 * @param {rawData} rawData chart data
+	 * @param {object} options - chart options
+	 * @returns {object} box plot chart
+	 * @api
+	 * @example
+	 * var chart = tui.chart; // or require('tui-chart');
+	 * var container = document.getElementById('chart-area');
+	 * var data = {
+	 *   categories: ['July', 'August'],
+	 *   series: [{
+	 *       name: 'Budget',
+	 *       data: 25,
+	 *      markers: [28, 2, 15],
+	 *       ranges: [[-1, 10], [10, 20], [20, 30]]
+	 *   },{
+	 *       name: 'Hello',
+	 *       data: 11,
+	 *       markers: [20],
+	 *       ranges: [[0, 8], [8, 15]]
+	 *   }]
+	 * };
+	 * var options = {
+	 *    chart: {
+	 *       width: 700,
+	 *       height: 300,
+	 *       title: 'Monthly Revenue'
+	 *   },
+	 *   series: {
+	 *       showLabel: true,
+	 *       vertical: false
+	 *   }
+	 * };
+	 * chart.bulletChart(container, data, options);
+	 */
+	function bulletChart(container, rawData, options) {
+	    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BULLET);
+	}
+
+	/**
 	 * Register theme.
 	 * @memberof tui.chart
 	 * @param {string} themeName - theme name
@@ -10743,6 +11295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    mapChart: mapChart,
 	    radialChart: radialChart,
 	    boxplotChart: boxplotChart,
+	    bulletChart: bulletChart,
 	    registerTheme: registerTheme,
 	    registerMap: registerMap,
 	    registerPlugin: registerPlugin
@@ -10750,7 +11303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10763,7 +11316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var rawDataHandler = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(31);
 	var predicate = __webpack_require__(11);
 
 	var charts = {};
@@ -10834,7 +11387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11089,6 +11642,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    filterCheckedRawData: function(rawData, checkedLegends) {
 	        var cloneData = JSON.parse(JSON.stringify(rawData));
+	        var filteredCategories;
+
 	        if (checkedLegends) {
 	            snippet.forEach(cloneData.series, function(serieses, chartType) {
 	                if (!checkedLegends[chartType]) {
@@ -11101,7 +11656,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 
+	        if (cloneData.series.bullet) {
+	            filteredCategories = [];
+	            snippet.forEach(checkedLegends.bullet, function(isChecked, index) {
+	                if (isChecked) {
+	                    filteredCategories.push(rawData.categories[index]);
+	                }
+	            });
+	            cloneData.categories = filteredCategories;
+	        }
+
 	        return cloneData;
+	    },
+
+	    /**
+	     * Modify rawData to fit chart format
+	     * @param {object} rawData - raw data
+	     * @private
+	     */
+	    _makeRawSeriesDataForBulletChart: function(rawData) {
+	        var bullet = rawData.series.bullet;
+
+	        rawData.categories = rawData.categories || [];
+
+	        rawData.categories = snippet.map(bullet, function(seriesData) {
+	            return seriesData.name || '';
+	        });
 	    }
 	};
 
@@ -11109,7 +11689,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11162,7 +11742,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11175,7 +11755,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var defaultTheme = __webpack_require__(33);
+	var defaultTheme = __webpack_require__(34);
 	var snippet = __webpack_require__(6);
 
 	var themes = {};
@@ -11319,12 +11899,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _setSeriesColors: function(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
-	        var self = this;
 	        var seriesColors, seriesCount, hasOwnColors;
 	        var colorIndex = 0;
-	        var rawSeriesDatum;
 
-	        rawSeriesThemes = rawSeriesThemes || {}; // 분기문 간소화를위해
+	        rawSeriesThemes = rawSeriesThemes || {}; // to simplify if/else statement
 
 	        snippet.forEachArray(seriesTypes, function(seriesType) {
 	            if (rawSeriesThemes[seriesType]) {
@@ -11335,25 +11913,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	                hasOwnColors = false;
 	            }
 
-	            rawSeriesDatum = rawSeriesData[seriesType];
-	            if (rawSeriesDatum && rawSeriesDatum.length) {
-	                if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
-	                    seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
-	                } else {
-	                    seriesCount = rawSeriesDatum.length;
-	                }
-	            } else {
-	                seriesCount = 0;
-	            }
+	            seriesCount = this._getSeriesThemeColorCount(rawSeriesData[seriesType]);
 
-	            seriesThemes[seriesType].colors = self._makeEachSeriesColors(seriesColors, seriesCount,
+	            seriesThemes[seriesType].colors = this._makeEachSeriesColors(seriesColors, seriesCount,
 	                !hasOwnColors && colorIndex);
 
 	            // To distinct between series that use default theme, we make the colors different
 	            if (!hasOwnColors) {
 	                colorIndex = (seriesCount + colorIndex) % seriesColors.length;
 	            }
-	        });
+	        }, this);
+	    },
+
+	    /**
+	     * Get number of series theme color from seriesData
+	     * @param {object} rawSeriesDatum - raw series data contains series information
+	     * @returns {number} number of series theme color
+	     * @private
+	     */
+	    _getSeriesThemeColorCount: function(rawSeriesDatum) {
+	        var seriesCount = 0;
+
+	        if (rawSeriesDatum && rawSeriesDatum.length) {
+	            if (rawSeriesDatum.colorLength) {
+	                seriesCount = rawSeriesDatum.colorLength;
+	            } else if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
+	                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
+	            } else {
+	                seriesCount = rawSeriesDatum.length;
+	            }
+	        }
+
+	        return seriesCount;
 	    },
 
 	    /**
@@ -11369,15 +11960,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _initTheme: function(themeName, rawTheme, seriesTypes, rawSeriesData) {
 	        var theme;
 
-	        // 테마 선택, 디폴트 테마 or 유저가 지정하는 컬러
-	        if (themeName !== chartConst.DEFAULT_THEME_NAME) {
+	        if (themeName !== chartConst.DEFAULT_THEME_NAME) { // customized theme that overrides default theme
 	            theme = JSON.parse(JSON.stringify(defaultTheme));
 	            this._overwriteTheme(rawTheme, theme);
-	        } else {
+	        } else { // default theme
 	            theme = JSON.parse(JSON.stringify(rawTheme));
 	        }
 
-	        // 각 컴포넌트 테마에 시리즈명별로 뎊스를 넣어준다. theme.yAxis.테마들 -> theme.yAxis.line.테마들
+	        // make each component theme have theme by series name. theme.yAxis.theme -> theme.yAxis.line.theme
 	        theme.yAxis = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.yAxis, theme.yAxis, 'yAxis');
 	        theme.series = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.series, theme.series, 'series');
 
@@ -11486,7 +12076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -11565,7 +12155,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                strokeWidth: 3,
 	                radius: 4
 	            }
-	        }
+	        },
+	        ranges: []
 	    },
 	    legend: {
 	        label: {
@@ -11588,7 +12179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports) {
 
 	/**
@@ -11629,7 +12220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11682,7 +12273,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11790,7 +12381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11867,7 +12458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports) {
 
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
@@ -11971,29 +12562,30 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var chartFactory = __webpack_require__(29);
-	var BarChart = __webpack_require__(40);
-	var ColumnChart = __webpack_require__(121);
-	var LineChart = __webpack_require__(122);
-	var AreaChart = __webpack_require__(124);
-	var ColumnLineComboChart = __webpack_require__(125);
-	var LineScatterComboChart = __webpack_require__(127);
-	var LineAreaComboChart = __webpack_require__(128);
-	var PieDonutComboChart = __webpack_require__(129);
-	var PieChart = __webpack_require__(130);
-	var BubbleChart = __webpack_require__(131);
-	var ScatterChart = __webpack_require__(132);
-	var HeatmapChart = __webpack_require__(133);
-	var TreemapChart = __webpack_require__(136);
-	var MapChart = __webpack_require__(137);
-	var RadialChart = __webpack_require__(140);
-	var BoxplotChart = __webpack_require__(141);
+	var chartFactory = __webpack_require__(30);
+	var BarChart = __webpack_require__(41);
+	var ColumnChart = __webpack_require__(124);
+	var LineChart = __webpack_require__(125);
+	var AreaChart = __webpack_require__(127);
+	var ColumnLineComboChart = __webpack_require__(128);
+	var LineScatterComboChart = __webpack_require__(130);
+	var LineAreaComboChart = __webpack_require__(131);
+	var PieDonutComboChart = __webpack_require__(132);
+	var PieChart = __webpack_require__(133);
+	var BubbleChart = __webpack_require__(134);
+	var ScatterChart = __webpack_require__(135);
+	var HeatmapChart = __webpack_require__(136);
+	var TreemapChart = __webpack_require__(139);
+	var MapChart = __webpack_require__(140);
+	var RadialChart = __webpack_require__(143);
+	var BoxplotChart = __webpack_require__(144);
+	var BulletChart = __webpack_require__(145);
 
 	chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 	chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);
@@ -12011,10 +12603,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	chartFactory.register(chartConst.CHART_TYPE_MAP, MapChart);
 	chartFactory.register(chartConst.CHART_TYPE_RADIAL, RadialChart);
 	chartFactory.register(chartConst.CHART_TYPE_BOXPLOT, BoxplotChart);
+	chartFactory.register(chartConst.CHART_TYPE_BULLET, BulletChart);
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12025,9 +12618,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var chartConst = __webpack_require__(8);
-	var rawDataHandler = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(31);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
@@ -12157,7 +12750,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12169,12 +12762,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var ComponentManager = __webpack_require__(42);
-	var DefaultDataProcessor = __webpack_require__(99);
-	var rawDataHandler = __webpack_require__(30);
+	var ComponentManager = __webpack_require__(43);
+	var DefaultDataProcessor = __webpack_require__(101);
+	var rawDataHandler = __webpack_require__(31);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
-	var boundsAndScaleBuilder = __webpack_require__(109);
+	var boundsAndScaleBuilder = __webpack_require__(112);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
@@ -12499,7 +13092,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.prevXAxisData = boundsAndScale.axisDataMap.xAxis;
 	        }
 
-	        // 비율값 추가
 	        this.addDataRatios(boundsAndScale.limitMap);
 
 	        return boundsAndScale;
@@ -12547,7 +13139,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var boundsAndScale;
 
 	        if (!rawData) {
-	            rawData = rawDataHandler.filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
+	            rawData = rawDataHandler.filterCheckedRawData(
+	                dataProcessor.getZoomedRawData(),
+	                checkedLegends
+	            );
 	        }
 
 	        this.dataProcessor.initData(rawData);
@@ -12842,9 +13437,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (foundData) {
 	            foundData.silent = true;
-	            if (!isGroupTooltip) {
-	                mouseEventDetector.prevFoundData = foundData;
-	            }
 	            mouseEventDetector._showTooltip(foundData);
 	        } else {
 	            this.hideTooltip();
@@ -12876,7 +13468,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12889,42 +13481,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var dom = __webpack_require__(9);
-	var Axis = __webpack_require__(43);
-	var Plot = __webpack_require__(45);
-	var title = __webpack_require__(46);
-	var RadialPlot = __webpack_require__(47);
-	var ChartExportMenu = __webpack_require__(49);
-	var DrawingToolPicker = __webpack_require__(37);
+	var Axis = __webpack_require__(44);
+	var Plot = __webpack_require__(46);
+	var title = __webpack_require__(47);
+	var RadialPlot = __webpack_require__(48);
+	var ChartExportMenu = __webpack_require__(50);
+	var DrawingToolPicker = __webpack_require__(38);
 
 	// legends
-	var Legend = __webpack_require__(55);
-	var SpectrumLegend = __webpack_require__(57);
-	var CircleLegend = __webpack_require__(58);
+	var Legend = __webpack_require__(56);
+	var SpectrumLegend = __webpack_require__(58);
+	var CircleLegend = __webpack_require__(59);
 
 	// tooltips
-	var Tooltip = __webpack_require__(59);
-	var GroupTooltip = __webpack_require__(65);
-	var MapChartTooltip = __webpack_require__(67);
+	var Tooltip = __webpack_require__(60);
+	var GroupTooltip = __webpack_require__(66);
+	var MapChartTooltip = __webpack_require__(68);
 
 	// mouse event detectors
-	var MapChartEventDetector = __webpack_require__(68);
-	var mouseEventDetector = __webpack_require__(72);
+	var MapChartEventDetector = __webpack_require__(69);
+	var mouseEventDetector = __webpack_require__(73);
 
 	// series
-	var BarSeries = __webpack_require__(79);
-	var ColumnSeries = __webpack_require__(83);
-	var LineSeries = __webpack_require__(84);
-	var RadialSeries = __webpack_require__(86);
-	var AreaSeries = __webpack_require__(87);
-	var BubbleSeries = __webpack_require__(88);
-	var ScatterSeries = __webpack_require__(90);
-	var MapSeries = __webpack_require__(91);
-	var PieSeries = __webpack_require__(92);
-	var HeatmapSeries = __webpack_require__(93);
-	var TreemapSeries = __webpack_require__(94);
-	var BoxplotSeries = __webpack_require__(96);
+	var BarSeries = __webpack_require__(80);
+	var ColumnSeries = __webpack_require__(84);
+	var LineSeries = __webpack_require__(85);
+	var RadialSeries = __webpack_require__(87);
+	var AreaSeries = __webpack_require__(88);
+	var BubbleSeries = __webpack_require__(89);
+	var ScatterSeries = __webpack_require__(91);
+	var MapSeries = __webpack_require__(92);
+	var PieSeries = __webpack_require__(93);
+	var HeatmapSeries = __webpack_require__(94);
+	var TreemapSeries = __webpack_require__(95);
+	var BoxplotSeries = __webpack_require__(97);
+	var BulletSeries = __webpack_require__(98);
 
-	var Zoom = __webpack_require__(97);
+	var Zoom = __webpack_require__(99);
 
 	var snippet = __webpack_require__(6);
 
@@ -12952,6 +13545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    heatmapSeries: HeatmapSeries,
 	    treemapSeries: TreemapSeries,
 	    boxplotSeries: BoxplotSeries,
+	    bulletSeries: BulletSeries,
 	    zoom: Zoom,
 	    chartExportMenu: ChartExportMenu,
 	    title: title
@@ -13062,7 +13656,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
 	     * @param {string} name component name
 	     * @param {string} classType component factory name
-	     * @param {object} params params that for alternative charts, 기본 흐름을 타지않는 특이 차트들을 위해 제공
+	     * @param {object} params params that for alternative charts
 	     */
 	    register: function(name, classType, params) {
 	        var index, component, componentType, componentFactory, optionKey;
@@ -13080,8 +13674,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        params.chartOptions = this.options;
 	        params.seriesTypes = this.seriesTypes;
 
-	        // axis의 경우 name으로 테마와 옵션을 가져온다. xAxis, yAxis
 	        if (componentType === 'axis') {
+	            // Get theme and options by axis name
+	            // As axis has 3 types(xAxis, yAxis, rightYAxis)
 	            optionKey = name;
 	        } else {
 	            optionKey = componentType;
@@ -13099,12 +13694,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (optionKey === 'series') {
-	            // 시리즈는 옵션과 테마가 시리즈 이름으로 뎊스가 한번더 들어간다.
-	            // 테마는 항상 뎊스가 더들어가고 옵션은 콤보인경우에만 더들어간다.
 	            snippet.forEach(this.seriesTypes, function(seriesType) {
 	                if (name.indexOf(seriesType) === 0) {
-	                    params.options = params.options[seriesType] || params.options;
-	                    params.theme = params.theme[seriesType];
+	                    params.options = params.options[seriesType] || params.options; // For combo chart, options are set for each chart
+	                    params.theme = params.theme[seriesType]; // For combo, single chart, themes are set for each chart
 
 	                    if (snippet.isArray(params.options)) {
 	                        params.options = params.options[index] || {};
@@ -13122,12 +13715,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        params.isVertical = this.isVertical;
 	        params.eventBus = this.eventBus;
 
-	        // 맵과 같이 일반적인 스케일 모델을 사용하지 않는 차트를 위한 개별 구현한 차트 모델
+	        // alternative scale models for charts that do not use common scale models like maps
 	        params.alternativeModel = this.alternativeModel;
 
 	        component = componentFactory(params);
 
-	        // 팩토리에서 옵션에따라 생성을 거부할 수 있다.
+	        // component creation can be refused by factory, according to option data
 	        if (component) {
 	            component.componentName = name;
 	            component.componentType = componentType;
@@ -13274,7 +13867,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13288,8 +13881,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
-	var pluginFactory = __webpack_require__(31);
+	var calculator = __webpack_require__(45);
+	var pluginFactory = __webpack_require__(32);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -13757,6 +14350,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var positionTopAndLeft = {};
 	            var labelTopPosition, labelLeftPosition;
 
+	            /*
+	             * to prevent printing `undefined` text, when category label is not set
+	             */
+	            if (labelPosition < 0) {
+	                return;
+	            }
+
 	            if (isYAxis) {
 	                labelTopPosition = labelPosition;
 
@@ -13856,8 +14456,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    axisParam.isYAxis = (name === 'yAxis' || name === 'rightYAxis');
 	    axisParam.shifting = axisParam.chartOptions.series.shifting;
 
-	    // 콤보에서 YAxis가 시리즈별로 두개인 경우를 고려해 시리즈이름으로 테마가 분기된다.
-	    // 나중에 테마에서 시리즈로 다시 분기되는게 아니라 커포넌트 네임인 rightYAxis로 따로 받도록 테마 구조를 변경하자.
+	    // In combo chart, the theme is divided into series name considering two YAxis(yAxis and rightYAxis)
+	    // @todo change theme structure so that access theme by axis type, not considering chart type
+	    //     like theme.xAxis, theme.yAxis, theme.rightYAxis
 	    if (chartType === 'combo') {
 	        if (axisParam.isYAxis) {
 	            axisParam.theme = axisParam.theme[axisParam.seriesTypes[0]];
@@ -13866,10 +14467,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            axisParam.theme = axisParam.theme[axisParam.seriesTypes[1]];
 	            axisParam.index = 1;
 	        }
-	    // 왜 싱글타입의  yAxis도 내부에 차트이름으로 한번더 분기가 되는 지는 모르겠다 일관성이 없는 느낌, 추가 개선요소
+	    // @todo I do not know why the single type chart with yAxis branches once again as the chart name inside it. I feel inconsistent
 	    } else if (axisParam.isYAxis) {
 	        axisParam.theme = axisParam.theme[chartType];
-	    // 싱글에 xAxis인 경우
+	    // single chart, xAxis
 	    } else {
 	        axisParam.theme = axisParam.theme;
 	    }
@@ -13884,7 +14485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14166,7 +14767,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14179,7 +14780,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var snippet = __webpack_require__(6);
 	var map = snippet.map;
 
@@ -14948,7 +15549,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var seriesTypes = param.seriesTypes;
 	    var xAxisType = param.chartOptions.xAxis.type;
 
-	    // bar, chart, line, area동일
+	    // same among bar, chart, line, area charts
 	    param.chartType = chartType;
 	    param.chartTypes = seriesTypes;
 	    param.xAxisTypeOption = xAxisType;
@@ -14963,7 +15564,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14975,7 +15576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var pluginFactory = __webpack_require__(31);
+	var pluginFactory = __webpack_require__(32);
 	var snippet = __webpack_require__(6);
 
 	var Title = snippet.defineClass(/** @lends Title.prototype */ {
@@ -15087,7 +15688,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15098,9 +15699,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var geom = __webpack_require__(48);
+	var geom = __webpack_require__(49);
 	var chartConst = __webpack_require__(8);
-	var pluginFactory = __webpack_require__(31);
+	var pluginFactory = __webpack_require__(32);
 	var snippet = __webpack_require__(6);
 
 	var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
@@ -15235,7 +15836,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 
-	        // 마지막 스탭 라벨은 카테고리랑 겹칠수 있어 만들지 않음
+	        // skip last step label. it could overlapped by category label
 	        for (j = 0; j < (stepLabels.length - 1); j += 1) {
 	            stepLabelData.push({
 	                text: stepLabels[j],
@@ -15303,11 +15904,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var points = [];
 	    var stepPoints, pointY, point, stepPixel, i, j;
 
-	    stepPixel = radius / (stepCount - 1); // 0 스텝에는 크기가 없는 점이니 스텝한개는 제거
+	    stepPixel = radius / (stepCount - 1); // As there is not size in step 0, one step is removed
 
 	    for (i = 0; i < stepCount; i += 1) {
 	        stepPoints = [];
-	        // 회전할 첫번째 픽셀의 Y축 값
+	        // point Y of first pixel to rotate
 	        pointY = centerY + (stepPixel * i);
 
 	        for (j = 0; j < angleStepCount; j += 1) {
@@ -15315,7 +15916,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            stepPoints.push({
 	                left: point.x,
-	                top: height - point.y // y좌표를 top좌표로 전환
+	                top: height - point.y // convert y to top
 	            });
 	        }
 
@@ -15365,7 +15966,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        points.push({
 	            left: point.x,
-	            top: height - point.y, // y좌표를 top좌표로 전환
+	            top: height - point.y, // convert y to top
 	            anchor: anchor
 	        });
 	    }
@@ -15384,7 +15985,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15496,7 +16097,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15508,9 +16109,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var chartExporter = __webpack_require__(50);
+	var chartExporter = __webpack_require__(51);
 	var dom = __webpack_require__(9);
-	var eventListener = __webpack_require__(54);
+	var eventListener = __webpack_require__(55);
 	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -15781,12 +16382,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._hideChartExportMenu();
 	        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
 	            && (this.chartExportMenuContainer === elTarget.parentNode)
-	        ) {
-	            if (dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
-	                this._hideChartExportMenu();
-	            } else {
-	                this._showChartExportMenu();
-	            }
+	            && !dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
+	            this._showChartExportMenu();
 	        } else {
 	            this._hideChartExportMenu();
 	        }
@@ -15865,7 +16462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15877,8 +16474,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var arrayUtil = __webpack_require__(10);
-	var dataExporter = __webpack_require__(51);
-	var imageExporter = __webpack_require__(53);
+	var dataExporter = __webpack_require__(52);
+	var imageExporter = __webpack_require__(54);
 	var snippet = __webpack_require__(6);
 
 	var browser = snippet.browser;
@@ -15961,7 +16558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15972,7 +16569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var downloader = __webpack_require__(52);
+	var downloader = __webpack_require__(53);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
@@ -16018,12 +16615,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function _get2DArrayFromRawData(rawData) {
 	    var resultArray = [];
-	    var categories, seriesName, data;
+	    var categories;
 	    var isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
+	    var isBullet = (rawData.series && snippet.isExisty(rawData.series.bullet));
 
 	    if (rawData) {
 	        if (isHeatMap) {
-	            categories = rawData.categories.x;
+	            return _get2DArrayFromHeatmapRawData(rawData);
+	        } else if (isBullet) {
+	            return _get2DArrayFromBulletRawData(rawData);
 	        } else if (rawData.categories) {
 	            categories = rawData.categories;
 	        }
@@ -16031,19 +16631,150 @@ return /******/ (function(modules) { // webpackBootstrap
 	        resultArray.push([''].concat(categories));
 
 	        snippet.forEach(rawData.series, function(seriesDatum) {
-	            snippet.forEach(seriesDatum, function(seriesItem, index) {
-	                if (isHeatMap) {
-	                    seriesName = rawData.categories.y[index];
-	                    data = seriesItem;
-	                } else {
-	                    seriesName = seriesItem.name;
-	                    data = seriesItem.data;
-	                }
+	            snippet.forEach(seriesDatum, function(seriesItem) {
+	                var row = [seriesItem.name].concat(seriesItem.data);
 
-	                resultArray.push([seriesName].concat(data));
+	                resultArray.push(row);
 	            });
 	        });
 	    }
+
+	    return resultArray;
+	}
+
+	/**
+	 * Make table head data for Excel
+	 * @param {number} maxRangeCount - max range count
+	 * @param {number} maxMarkerCount - max marker count
+	 * @returns {Array.<string>} - table head data
+	 * @private
+	 */
+	function _makeTHeadForBullet(maxRangeCount, maxMarkerCount) {
+	    var tableHead = ['', chartConst.BULLET_TYPE_ACTUAL];
+	    var i = 0;
+
+	    for (; i < maxRangeCount; i += 1) {
+	        tableHead.push(chartConst.BULLET_TYPE_RANGE + i);
+	    }
+
+	    i = 0;
+	    for (; i < maxMarkerCount; i += 1) {
+	        tableHead.push(chartConst.BULLET_TYPE_MARKER + i);
+	    }
+
+	    return tableHead;
+	}
+
+	/**
+	 * Make table cells from bullet ranges
+	 * @param {Array.<Array.<number>>} ranges - series item's ranges data
+	 * @param {number} maxRangeCount - max range count
+	 * @returns {Array.<number>} - cells containing range data
+	 * @private
+	 */
+	function _makeTCellsFromBulletRanges(ranges, maxRangeCount) {
+	    var cells = [];
+	    var i = 0;
+	    var dataText;
+
+	    for (; i < maxRangeCount; i += 1) {
+	        dataText = '';
+
+	        if (ranges && ranges[i]) {
+	            dataText = ((ranges[i].length > 0) ? ranges[i][0] : '') +
+	             '~' + ((ranges[i].length > 1) ? ranges[i][1] : '');
+	        }
+	        cells.push(dataText);
+	    }
+
+	    return cells;
+	}
+
+	/**
+	 * Make table cells from bullet markers
+	 * @param {Array.<Array.<number>>} markers - series item's markers data
+	 * @param {number} maxMarkerCount - max marker count
+	 * @returns {Array.<number>} - cells containing marker data
+	 * @private
+	 */
+	function _makeTCellsFromBulletMarkers(markers, maxMarkerCount) {
+	    var cells = [];
+	    var i = 0;
+	    var dataText;
+
+	    for (; i < maxMarkerCount; i += 1) {
+	        dataText = markers && markers[i] ? markers[i] : '';
+	        cells.push(dataText);
+	    }
+
+	    return cells;
+	}
+
+	/**
+	 * Make table data for importing in excel, by using bullet chart raw data
+	 * @param {object} rawData - raw data
+	 * @param {object} [options] download option
+	 * @returns {Array.<Array.<string>>} - table data for importing in excel
+	 * @private
+	 */
+	function _get2DArrayFromBulletRawData(rawData) {
+	    var resultArray = [];
+	    var maxCounts = _calculateMaxCounts(rawData.series.bullet);
+	    var maxRangeCount = maxCounts.maxRangeCount;
+	    var maxMarkerCount = maxCounts.maxMarkerCount;
+
+	    resultArray.push(_makeTHeadForBullet(maxRangeCount, maxMarkerCount));
+
+	    snippet.forEach(rawData.series.bullet, function(seriesItem) {
+	        var row = [seriesItem.name, seriesItem.data];
+
+	        row = row.concat(_makeTCellsFromBulletRanges(seriesItem.ranges, maxRangeCount));
+	        row = row.concat(_makeTCellsFromBulletMarkers(seriesItem.markers, maxMarkerCount));
+	        resultArray.push(row);
+	    });
+
+	    return resultArray;
+	}
+
+	/**
+	 * Calculate maxinum count of range and marker property
+	 * @param {object} bulletSeries - raw series data of bullet chart
+	 * @returns {object} - maximum count of range and marker property
+	 * @private
+	 */
+	function _calculateMaxCounts(bulletSeries) {
+	    var maxRangeCount = 0;
+	    var maxMarkerCount = 0;
+
+	    snippet.forEach(bulletSeries, function(series) {
+	        maxRangeCount = Math.max(maxRangeCount, series.ranges.length);
+	        maxMarkerCount = Math.max(maxMarkerCount, series.markers.length);
+	    });
+
+	    return {
+	        maxRangeCount: maxRangeCount,
+	        maxMarkerCount: maxMarkerCount
+	    };
+	}
+
+	/**
+	 * Make table data for importing in excel, by using heatmap chart raw data
+	 * @param {object} rawData - raw data
+	 * @returns {Array.<Array.<string>>} - table data for importing in excel
+	 * @private
+	 */
+	function _get2DArrayFromHeatmapRawData(rawData) {
+	    var resultArray = [];
+
+	    resultArray.push([''].concat(rawData.categories.x));
+
+	    snippet.forEach(rawData.series, function(seriesDatum) {
+	        snippet.forEach(seriesDatum, function(seriesItem, index) {
+	            var row = [rawData.categories.y[index]].concat(seriesItem);
+
+	            resultArray.push(row);
+	        });
+	    });
 
 	    return resultArray;
 	}
@@ -16152,12 +16883,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	dataExporter._makeCsvBodyWithRawData = _makeCsvBodyWithRawData;
 	dataExporter._makeXlsBodyWithRawData = _makeXlsBodyWithRawData;
 	dataExporter._get2DArrayFromRawData = _get2DArrayFromRawData;
+	dataExporter._get2DArrayFromBulletRawData = _get2DArrayFromBulletRawData;
+	dataExporter._get2DArrayFromHeatmapRawData = _get2DArrayFromHeatmapRawData;
+	dataExporter._makeTCellsFromBulletRanges = _makeTCellsFromBulletRanges;
+	dataExporter._makeTCellsFromBulletMarkers = _makeTCellsFromBulletMarkers;
+	dataExporter._makeTHeadForBullet = _makeTHeadForBullet;
 
 	module.exports = dataExporter;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16300,7 +17036,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16311,7 +17047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var downloader = __webpack_require__(52);
+	var downloader = __webpack_require__(53);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
@@ -16433,7 +17169,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16615,7 +17351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16627,8 +17363,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var LegendModel = __webpack_require__(56);
-	var pluginFactory = __webpack_require__(31);
+	var LegendModel = __webpack_require__(57);
+	var pluginFactory = __webpack_require__(32);
 	var predicate = __webpack_require__(11);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
@@ -16994,7 +17730,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        params.seriesTypes = seriesTypes;
 	        params.chartType = chartType;
 
-	        // @todo axisTypeMixer에서 addComponents에서 추가된 additionalParams가 extends되야됨 우선 생략 그내용이 뭔지 파악해서 여기서 그옵션을 넣어야함
+	        // @todo should extends additionalParams added when addComponents(), should grasp the omitted
 	        legend = new Legend(params);
 	    }
 
@@ -17008,12 +17744,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview LegendModel is legend model.
-	 * 각 범례 힝목의 체크와 선택 여부를 관리하는 모델
+	 * @fileoverview LegendModel is a model for legend area(checkbox, icon, label text)
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
 	 */
@@ -17356,7 +18091,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17369,7 +18104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var pluginFactory = __webpack_require__(31);
+	var pluginFactory = __webpack_require__(32);
 	var snippet = __webpack_require__(6);
 
 	var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ {
@@ -17648,7 +18383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17661,9 +18396,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
-	var pluginFactory = __webpack_require__(31);
+	var pluginFactory = __webpack_require__(32);
 	var snippet = __webpack_require__(6);
 
 	var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
@@ -17859,7 +18594,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17870,9 +18605,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var normalTooltipFactory = __webpack_require__(60);
-	var groupTooltipFactory = __webpack_require__(65);
-	var mapChartTooltipFactory = __webpack_require__(67);
+	var normalTooltipFactory = __webpack_require__(61);
+	var groupTooltipFactory = __webpack_require__(66);
+	var mapChartTooltipFactory = __webpack_require__(68);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
@@ -17945,7 +18680,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17956,11 +18691,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var TooltipBase = __webpack_require__(61);
-	var singleTooltipMixer = __webpack_require__(62);
+	var TooltipBase = __webpack_require__(62);
+	var singleTooltipMixer = __webpack_require__(63);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var tooltipTemplate = __webpack_require__(63);
+	var tooltipTemplate = __webpack_require__(64);
 	var snippet = __webpack_require__(6);
 
 	/**
@@ -17987,29 +18722,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _makeTooltipHtml: function(category, item) {
-	        var isPieOrPieDonutComboChart = predicate.isPieChart(this.chartType)
-	            || predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
-	        var template;
-
-	        if (predicate.isBoxplotChart(this.chartType)) {
-	            if (snippet.isNumber(item.outlierIndex)) {
-	                template = tooltipTemplate.tplBoxplotChartOutlier;
-	                item.label = item.outliers[item.outlierIndex].label;
-	            } else {
-	                template = tooltipTemplate.tplBoxplotChartDefault;
-	            }
-	        } else if (isPieOrPieDonutComboChart) {
-	            template = tooltipTemplate.tplPieChart;
-	        } else if (this.dataProcessor.coordinateType) {
-	            template = tooltipTemplate.tplCoordinatetypeChart;
-	        } else {
-	            template = tooltipTemplate.tplDefault;
-	        }
+	        var template = this._getTooltipTemplate(item);
 
 	        return template(snippet.extend({
 	            categoryVisible: category ? 'show' : 'hide',
 	            category: category
 	        }, item));
+	    },
+
+	    /**
+	     * get tooltip template from a templates collection
+	     * @param {{value: string, legend: string, chartType: string, suffix: ?string}} item item data
+	     * @returns {string} tooltip template
+	     * @private
+	     */
+	    _getTooltipTemplate: function(item) {
+	        var template = tooltipTemplate.tplDefault;
+
+	        if (predicate.isBoxplotChart(this.chartType)) {
+	            template = this._getBoxplotTooltipTemplate(item);
+	        } else if (predicate.isPieChart(this.chartType) ||
+	            predicate.isPieDonutComboChart(this.chartType, this.chartTypes)) {
+	            template = tooltipTemplate.tplPieChart;
+	        } else if (this.dataProcessor.coordinateType) {
+	            template = tooltipTemplate.tplCoordinatetypeChart;
+	        } else if (predicate.isBulletChart(this.chartType)) {
+	            template = tooltipTemplate.tplBulletChartDefault;
+	        }
+
+	        return template;
+	    },
+
+	    /**
+	     * Get tooltip template of box plot chart
+	     * If item has outlierIndex, return outlier template
+	     * Otherwise, return box plot default template
+	     * @param {{value: string, legend: string, chartType: string, suffix: ?string}} item item data
+	     * @returns {string} tooltip template
+	     * @private
+	     */
+	    _getBoxplotTooltipTemplate: function(item) {
+	        var template = tooltipTemplate.tplBoxplotChartDefault;
+
+	        if (snippet.isNumber(item.outlierIndex)) {
+	            template = tooltipTemplate.tplBoxplotChartOutlier;
+	            item.label = item.outliers[item.outlierIndex].label;
+	        }
+
+	        return template;
 	    },
 
 	    /**
@@ -18112,10 +18872,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var tooltipLabel = seriesItem.tooltipLabel;
 	        var labelFormatter = this.labelFormatter;
 	        var tooltipDatum = {
-	            legend: (legendLabel || '')
+	            legend: legendLabel || '',
+	            label: tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : ''),
+	            category: category || ''
 	        };
-
-	        tooltipDatum.label = tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
 
 	        if (labelFormatter) {
 	            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
@@ -18145,14 +18905,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
-	            var data;
+	            var data, isBulletChart;
 
 	            chartType = chartType || self.chartType;
+	            isBulletChart = predicate.isBulletChart(chartType);
 
 	            data = seriesGroup.map(function(seriesItem, index) {
 	                var category = self.dataProcessor.makeTooltipCategory(groupIndex, index, self.isVertical);
+	                var legendIndex = isBulletChart ? groupIndex : index;
 
-	                return seriesItem ? self._makeTooltipDatum(legendLabels[chartType][index], category, seriesItem) : null;
+	                if (!seriesItem) {
+	                    return null;
+	                }
+
+	                return self._makeTooltipDatum(legendLabels[chartType][legendIndex], category, seriesItem);
 	            });
 
 	            if (!tooltipData[chartType]) {
@@ -18179,7 +18945,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18553,13 +19319,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * onHideTooltip is callback of mouse event detector hideTooltip for SeriesView
-	     * @param {number} index index
-	     * @param {{silent: {boolean}}} options - hide tooltip options
+	     * @param {number|object} prevFound - showing tooltip object in case single tooltip,
+	     *                                  - showing tooltip index in case group tooltip
+	     * @param {{silent: {boolean}}} [options] - hide tooltip options
 	     */
-	    onHideTooltip: function(index, options) {
+	    onHideTooltip: function(prevFound, options) {
 	        var tooltipElement = this._getTooltipElement();
 
-	        this._hideTooltip(tooltipElement, index, options);
+	        this._hideTooltip(tooltipElement, prevFound, options);
 	    },
 
 	    /**
@@ -18671,7 +19438,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18744,7 +19511,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _isShowedTooltip: function(elTooltip) {
 	        var isShowed = elTooltip.getAttribute('data-showed');
 
-	        return isShowed === 'true' || isShowed === true; // ie7에서는 boolean형태의 true를 반환함
+	        return isShowed === 'true' || isShowed === true; // true in ie7
+	    },
+
+	    /**
+	     * Make tooltip position for bullet chart
+	     * @param {object} params - mouse position
+	     * @returns {object} - position of single tooltip
+	     * @private
+	     */
+	    _makeTooltipPositionForBulletChart: function(params) {
+	        var mousePosition = params.mousePosition;
+	        var tooltipAreaPosition = this.layout.position;
+
+	        return {
+	            left: mousePosition.left - tooltipAreaPosition.left,
+	            top: mousePosition.top - tooltipAreaPosition.top
+	        };
 	    },
 
 	    /**
@@ -18917,7 +19700,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var position = this.layout.position;
 	        var bound = params.bound;
 	        var positionOption = params.positionOption;
-	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.labelTheme);
+	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, this.labelTheme);
 
 	        return {
 	            left: bound.left + ((bound.width - params.dimension.width) / 2) + positionOption.left - position.left,
@@ -19144,7 +19927,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Hide tooltip.
 	     * @param {HTMLElement} tooltipElement - tooltip element
 	     * @param {object} prevFoundData - data represented by tooltip elements
-	     * @param {{silent: {boolean}}} options - options for hiding a tooltip element
+	     * @param {{silent: {boolean}}} [options] - options for hiding a tooltip element
 	     * @private
 	     */
 	    _hideTooltip: function(tooltipElement, prevFoundData, options) {
@@ -19218,7 +20001,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19229,7 +20012,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var templateMaker = __webpack_require__(64);
+	var templateMaker = __webpack_require__(65);
 
 	var htmls = {
 	    HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
@@ -19259,6 +20042,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        '<div>{{ category }}</div>' +
 	        '{{ items }}' +
 	    '</div>',
+	    HTML_GROUP_TYPE: '<div class="tui-chart-tooltip-type">{{ type }}</div>',
 	    HTML_GROUP_ITEM: '<div>' +
 	        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
 	        '&nbsp;<span>{{ legend }}</span>:&nbsp;<span>{{ value }}</span>' +
@@ -19309,6 +20093,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                '<span>{{ label }}</span>' +
 	                '<span>{{ suffix }}</span>' +
 	            '</div>' +
+	    '</div>',
+	    HTML_BULLET_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+	        '<div class="{{ categoryVisible }}">{{ category }}' +
+	        '<span>{{ label }}</span><span>{{ suffix }}</span></div>' +
 	    '</div>'
 	};
 
@@ -19317,16 +20105,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    tplPieChart: templateMaker.template(htmls.HTML_PIE_TEMPLATE),
 	    tplCoordinatetypeChart: templateMaker.template(htmls.HTML_COORDINATE_TYPE_CHART_TEMPLATE),
 	    tplGroup: templateMaker.template(htmls.HTML_GROUP),
+	    tplGroupType: templateMaker.template(htmls.HTML_GROUP_TYPE),
 	    tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
 	    tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),
 	    tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE),
 	    tplBoxplotChartDefault: templateMaker.template(htmls.HTML_BOXPLOT_TEMPLATE),
-	    tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER)
+	    tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER),
+	    tplBulletChartDefault: templateMaker.template(htmls.HTML_BULLET_TEMPLATE)
 	};
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19366,7 +20156,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19377,14 +20167,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var TooltipBase = __webpack_require__(61);
-	var GroupTooltipPositionModel = __webpack_require__(66);
+	var TooltipBase = __webpack_require__(62);
+	var GroupTooltipPositionModel = __webpack_require__(67);
 	var chartConst = __webpack_require__(8);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
-	var defaultTheme = __webpack_require__(33);
-	var tooltipTemplate = __webpack_require__(63);
+	var defaultTheme = __webpack_require__(34);
+	var tooltipTemplate = __webpack_require__(64);
 	var snippet = __webpack_require__(6);
+	var predicate = __webpack_require__(11);
 
 	/**
 	 * @classdesc GroupTooltip component.
@@ -19398,31 +20189,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     * @override
 	     */
-	    init: function() {
+	    init: function(params) {
 	        this.prevIndex = null;
-	        TooltipBase.apply(this, arguments);
+	        this.isBullet = predicate.isBulletChart(params.chartType);
+	        TooltipBase.call(this, params);
 	    },
 
 	    /**
 	     * Make tooltip html.
 	     * @param {string} category category
 	     * @param {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} items items data
+	     * @param {string} rawCategory raw category
+	     * @param {number} groupIndex group index
 	     * @returns {string} tooltip html
 	     * @private
 	     */
-	    _makeTooltipHtml: function(category, items) {
-	        var template = tooltipTemplate.tplGroupItem,
-	            cssTextTemplate = tooltipTemplate.tplGroupCssText,
-	            colors = this._makeColors(this.theme),
-	            itemsHtml = snippet.map(items, function(item, index) {
-	                if (!item.value) {
-	                    return null;
-	                }
+	    _makeTooltipHtml: function(category, items, rawCategory, groupIndex) {
+	        var template = tooltipTemplate.tplGroupItem;
+	        var cssTextTemplate = tooltipTemplate.tplGroupCssText;
+	        var colors = this._makeColors(this.theme, groupIndex);
+	        var prevType, itemsHtml;
 
-	                return template(snippet.extend({
-	                    cssText: cssTextTemplate({color: colors[index]})
-	                }, item));
-	            }).join('');
+	        itemsHtml = snippet.map(items, function(item, index) {
+	            var type = item.type;
+	            var typeVisible = (type !== 'data') && (prevType !== type);
+	            var itemHtml = '';
+
+	            prevType = type;
+
+	            if (!item.value) {
+	                return null;
+	            }
+
+	            if (typeVisible) {
+	                itemHtml = tooltipTemplate.tplGroupType({
+	                    type: type
+	                });
+	            }
+
+	            itemHtml += template(snippet.extend({
+	                cssText: cssTextTemplate({color: colors[index]})
+	            }, item));
+
+	            return itemHtml;
+	        }).join('');
 
 	        return tooltipTemplate.tplGroup({
 	            category: category,
@@ -19517,27 +20327,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @override
 	     */
 	    makeTooltipData: function() {
-	        var self = this;
 	        var length = this.dataProcessor.getCategoryCount(this.isVertical);
 
 	        return snippet.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
+	            var values = seriesGroup.map(function(item) {
+	                return {
+	                    type: item.type || 'data',
+	                    label: item.label
+	                };
+	            });
+
 	            return {
-	                category: self.dataProcessor.makeTooltipCategory(index, length - index, self.isVertical),
-	                values: seriesGroup.pluck('label')
+	                category: this.dataProcessor.makeTooltipCategory(index, length - index, this.isVertical),
+	                values: values
 	            };
-	        });
+	        }, this);
 	    },
 
 	    /**
 	     * Make colors.
 	     * @param {object} theme tooltip theme
+	     * @param {number} [groupIndex] groupIndex
 	     * @returns {Array.<string>} colors
 	     * @private
 	     */
-	    _makeColors: function(theme) {
+	    _makeColors: function(theme, groupIndex) {
 	        var colorIndex = 0,
 	            legendLabels = this.dataProcessor.getLegendData(),
 	            defaultColors, colors, prevChartType;
+
+	        if (this.isBullet) {
+	            return this.dataProcessor.getGraphColors()[groupIndex];
+	        }
 
 	        if (theme.colors) {
 	            return theme.colors;
@@ -19564,23 +20385,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Make rendering data about legend item.
 	     * @param {Array.<string>} values values
+	     * @param {number} groupIndex groupIndex
 	     * @returns {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
 	     * @private
 	     */
-	    _makeItemRenderingData: function(values) {
+	    _makeItemRenderingData: function(values, groupIndex) {
 	        var dataProcessor = this.dataProcessor,
 	            suffix = this.suffix;
 
-	        return snippet.map(values, function(value, index) {
-	            var legendLabel = dataProcessor.getLegendItem(index);
-
-	            return {
-	                value: value,
-	                legend: legendLabel.label,
-	                chartType: legendLabel.chartType,
-	                suffix: suffix
+	        return snippet.map(values, function(data, index) {
+	            var item = {
+	                value: data.label,
+	                type: data.type,
+	                suffix: suffix,
+	                legend: ''
 	            };
-	        });
+	            var legendLabel;
+
+	            if (this.isBullet) {
+	                legendLabel = dataProcessor.getLegendItem(groupIndex);
+	            } else {
+	                legendLabel = dataProcessor.getLegendItem(index);
+	                item.legend = legendLabel.label;
+	            }
+
+	            item.chartType = legendLabel.chartType;
+
+	            return item;
+	        }, this);
 	    },
 
 	    /**
@@ -19594,8 +20426,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var items, htmlString = '';
 
 	        if (data) {
-	            items = this._makeItemRenderingData(data.values);
-	            htmlString = this.templateFunc(data.category, items, this.getRawCategory(groupIndex));
+	            items = this._makeItemRenderingData(data.values, groupIndex);
+	            htmlString = this.templateFunc(data.category, items, this.getRawCategory(groupIndex), groupIndex);
 	        }
 
 	        return htmlString;
@@ -19810,18 +20642,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Hide tooltip.
-	     * @param {HTMLElement} elTooltip tooltip element
-	     * @param {number} index index
-	     * @param {object} options - options for hiding tooltip
+	     * @param {HTMLElement} tooltipElement tooltip element
+	     * @param {number} prevFoundIndex - showing tooltip index
+	     * @param {object} [options] - options for hiding tooltip
 	     * @private
 	     */
-	    _hideTooltip: function(elTooltip, index, options) {
-	        var silent = options.silent;
+	    _hideTooltip: function(tooltipElement, prevFoundIndex, options) {
+	        var silent = !!(options && options.silent);
 	        this.prevIndex = null;
-	        this._fireBeforeHideTooltipPublicEvent(index, silent);
-	        this._hideTooltipSector(index);
-	        dom.removeClass(elTooltip, 'show');
-	        elTooltip.style.cssText = '';
+	        this._fireBeforeHideTooltipPublicEvent(prevFoundIndex, silent);
+	        this._hideTooltipSector(prevFoundIndex);
+	        dom.removeClass(tooltipElement, 'show');
+	        tooltipElement.style.cssText = '';
 	    },
 
 	    /**
@@ -19853,7 +20685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20333,7 +21165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20345,9 +21177,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var TooltipBase = __webpack_require__(61);
-	var singleTooltipMixer = __webpack_require__(62);
-	var tooltipTemplate = __webpack_require__(63);
+	var TooltipBase = __webpack_require__(62);
+	var singleTooltipMixer = __webpack_require__(63);
+	var tooltipTemplate = __webpack_require__(64);
 	var snippet = __webpack_require__(6);
 
 	/**
@@ -20446,7 +21278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20457,9 +21289,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(69);
+	var MouseEventDetectorBase = __webpack_require__(70);
 	var chartConst = __webpack_require__(8);
-	var eventListener = __webpack_require__(54);
+	var eventListener = __webpack_require__(55);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -20641,7 +21473,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20652,10 +21484,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var TickBaseCoordinateModel = __webpack_require__(70);
-	var BoundsBaseCoordinateModel = __webpack_require__(71);
+	var TickBaseCoordinateModel = __webpack_require__(71);
+	var BoundsBaseCoordinateModel = __webpack_require__(72);
 	var chartConst = __webpack_require__(8);
-	var eventListener = __webpack_require__(54);
+	var eventListener = __webpack_require__(55);
 	var predicate = __webpack_require__(11);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
@@ -20702,6 +21534,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * whether allow select series or not
+	         * @type {boolean}
 	         */
 	        this.allowSelect = params.allowSelect;
 
@@ -20722,18 +21555,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {null | object}
 	         */
 	        this.selectedData = null;
-
-	        /**
-	         * previous client position of mouse event (clientX, clientY)
-	         * @type {null | object}
-	         */
-	        this.prevClientPosition = null;
-
-	        /**
-	         * previous found data
-	         * @type {null | object}
-	         */
-	        this.prevFoundData = null;
 
 	        isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
 	        /**
@@ -21006,28 +21827,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _showTooltip: function() {},
 
 	    /**
-	     * Animate for adding data.
+	     * hide tooltip
+	     * @private
+	     * @abstract
 	     */
-	    animateForAddingData: function() {
-	        var foundData, isMoving;
-
-	        if (!this.prevClientPosition) {
-	            return;
-	        }
-
-	        foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
-
-	        if (foundData) {
-	            isMoving = this.prevFoundData && (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
-	            this._showTooltip(foundData, isMoving);
-	        }
-
-	        this.prevFoundData = foundData;
-	    },
+	    _hideTooltip: function() {},
 
 	    /**
-	     * Send mouse position data to series component, when occur mouse event like move, click.
-	     * 이벤트 발생시 시리즈 엘리먼트 감지가 가능하도록 mouseEventDetector container를 일시적으로 숨긴다.
+	     * When mouse event happens,
+	     * hide MouseEventDetector container so that detect event of series elements
+	     * and send mouse position data to series component
 	     * @param {string} eventType - mouse event detector type
 	     * @param {MouseEvent} e - mouse event
 	     * @private
@@ -21090,23 +21899,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Store client position, when occur mouse move event.
 	     * @param {MouseEvent} e - mouse event
+	     * @abstract
 	     * @private
 	     */
-	    _onMousemove: function(e) {
-	        this.prevClientPosition = {
-	            x: e.clientX,
-	            y: e.clientY
-	        };
-	    },
+	    _onMousemove: function() {},
 
 	    /**
-	     * Initialize prevClientPosition and prevFoundData, when occur mouse out.
+	     * Abstract mouseout handler
+	     * @abstract
 	     * @private
 	     */
-	    _onMouseout: function() {
-	        this.prevClientPosition = null;
-	        this.prevFoundData = null;
-	    },
+	    _onMouseout: function() {},
 
 	    /**
 	     * Attach mouse event.
@@ -21126,7 +21929,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * find data by indexes
 	     * @abstract
 	     */
-	    findDataByIndexes: function() {}
+	    findDataByIndexes: function() {},
+
+	    /**
+	     * Set prevClientPosition by MouseEvent
+	     * @param {?MouseEvent} event - mouse event
+	     */
+	    _setPrevClientPosition: function(event) {
+	        if (!event) {
+	            this.prevClientPosition = null;
+	        } else {
+	            this.prevClientPosition = {
+	                x: event.clientX,
+	                y: event.clientY
+	            };
+	        }
+	    }
 	});
 
 	snippet.CustomEvents.mixin(MouseEventDetectorBase);
@@ -21135,7 +21953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21327,7 +22145,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21395,6 +22213,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * @param {string} chartType - chart type
+	     * @param {object} indexes - index of SeriesDataModel
+	     * @param {boolean} allowNegativeTooltip - whether allow negative tooltip or not
+	     * @param {object} bound - coordinate data for rendering graph
+	     * @returns {object} - `sendData`: tooltip contents, `bound`: for detecting hovered or not
+	     * @private
+	     */
+	    _makeTooltipData: function(chartType, indexes, allowNegativeTooltip, bound) {
+	        return {
+	            sendData: {
+	                chartType: chartType,
+	                indexes: indexes,
+	                allowNegativeTooltip: allowNegativeTooltip,
+	                bound: bound
+	            },
+	            bound: {
+	                left: bound.left,
+	                top: bound.top,
+	                right: bound.left + bound.width,
+	                bottom: bound.top + bound.height
+	            }
+	        };
+	    },
+
+	    /**
 	     * Make position data for rect type graph
 	     * @param {groupBound} groupBounds group bounds
 	     * @param {string} chartType chart type
@@ -21405,33 +22248,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
 
 	        return snippet.map(groupBounds, function(bounds, groupIndex) {
-	            return snippet.map(bounds, function(_bound, index) {
-	                var bound;
-	                if (!_bound) {
+	            return snippet.map(bounds, function(bound, index) {
+	                if (!bound) {
 	                    return null;
 	                }
 
-	                bound = _bound.end;
-
-	                return {
-	                    sendData: {
-	                        chartType: chartType,
-	                        indexes: {
-	                            groupIndex: groupIndex,
-	                            index: index
-	                        },
-	                        allowNegativeTooltip: allowNegativeTooltip,
-	                        bound: bound
+	                return this._makeTooltipData(
+	                    chartType,
+	                    {
+	                        groupIndex: groupIndex,
+	                        index: index
 	                    },
-	                    bound: {
-	                        left: bound.left,
-	                        top: bound.top,
-	                        right: bound.left + bound.width,
-	                        bottom: bound.top + bound.height
-	                    }
-	                };
-	            });
-	        });
+	                    allowNegativeTooltip,
+	                    bound.end || bound
+	                );
+	            }, this);
+	        }, this);
 	    },
 
 	    /**
@@ -21446,42 +22278,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _groupBounds = [].concat(groupBounds);
 
 	        snippet.forEach(_groupBounds, function(bounds, groupIndex) {
-	            snippet.forEach(bounds, function(_bound, index) {
+	            snippet.forEach(bounds, function(bound, index) {
 	                var outliers;
 
-	                if (_bound.outliers && _bound.outliers.length) {
-	                    outliers = snippet.map(_bound.outliers, function(outlier, outlierIndex) {
-	                        var bound = {
+	                if (bound.outliers && bound.outliers.length) {
+	                    outliers = snippet.map(bound.outliers, function(outlier, outlierIndex) {
+	                        var outlierBound = {
 	                            top: outlier.top - 3,
 	                            left: outlier.left - 3,
 	                            width: 6,
 	                            height: 6
 	                        };
 
-	                        return {
-	                            sendData: {
-	                                chartType: chartType,
-	                                indexes: {
-	                                    groupIndex: groupIndex,
-	                                    index: index,
-	                                    outlierIndex: outlierIndex
-	                                },
-	                                allowNegativeTooltip: allowNegativeTooltip,
-	                                bound: bound
+	                        return this._makeTooltipData(
+	                            chartType,
+	                            {
+	                                groupIndex: groupIndex,
+	                                index: index,
+	                                outlierIndex: outlierIndex
 	                            },
-	                            bound: {
-	                                left: bound.left,
-	                                top: bound.top,
-	                                right: bound.left + bound.width,
-	                                bottom: bound.top + bound.height
-	                            }
-	                        };
-	                    });
+	                            allowNegativeTooltip,
+	                            outlierBound
+	                        );
+	                    }, this);
 
 	                    resultData[groupIndex] = resultData[groupIndex].concat(outliers);
 	                }
-	            });
-	        });
+	            }, this);
+	        }, this);
 	    },
 
 	    /**
@@ -21558,22 +22382,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _makeData: function(seriesItemBoundsData) {
-	        var self = this;
 	        var data = snippet.map(seriesItemBoundsData, function(info) {
 	            var result;
 
 	            if (predicate.isLineTypeChart(info.chartType)) {
-	                result = self._makeDotTypePositionData(info.data.groupPositions, info.chartType);
+	                result = this._makeDotTypePositionData(info.data.groupPositions, info.chartType);
 	            } else {
-	                result = self._makeRectTypePositionData(info.data.groupBounds, info.chartType);
+	                result = this._makeRectTypePositionData(info.data.groupBounds, info.chartType);
 	            }
 
 	            if (predicate.isBoxplotChart(info.chartType)) {
-	                self._makeOutliersPositionDataForBoxplot(info.data.groupBounds, info.chartType, result);
+	                this._makeOutliersPositionDataForBoxplot(info.data.groupBounds, info.chartType, result);
 	            }
 
 	            return result;
-	        });
+	        }, this);
 
 	        return this._joinData(data);
 	    },
@@ -21615,10 +22438,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var candidates;
 
 	        if (groupIndex > -1 && this.data[groupIndex]) {
-	            // layerX, layerY를 포함하는 data 추출
+	            // extract data containing layerX, layerY
 	            candidates = this._findCandidates(this.data[groupIndex], layerX, layerY);
 
-	            // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
+	            // find nearest data to top position among extracted data
 	            snippet.forEachArray(candidates, function(data) {
 	                var diff = Math.abs(layerY - data.bound.top);
 
@@ -21680,7 +22503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21691,11 +22514,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var predicate = __webpack_require__(11);
-	var areaTypeEventDetectorFactory = __webpack_require__(73);
-	var simpleEventDetectorFactory = __webpack_require__(76);
-	var groupTypeEventDetectorFactory = __webpack_require__(77);
-	var boundsTypeEventDetectorFactory = __webpack_require__(78);
-	var mapChartEventDetectorFactory = __webpack_require__(68);
+	var areaTypeEventDetectorFactory = __webpack_require__(74);
+	var simpleEventDetectorFactory = __webpack_require__(77);
+	var groupTypeEventDetectorFactory = __webpack_require__(78);
+	var boundsTypeEventDetectorFactory = __webpack_require__(79);
+	var mapChartEventDetectorFactory = __webpack_require__(69);
 
 	/**
 	 * Factory for MouseEventDetector
@@ -21718,6 +22541,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        || predicate.isBoxplotChart(chartType)
 	        || predicate.isHeatmapChart(chartType)
 	        || predicate.isTreemapChart(chartType)
+	        || predicate.isBulletChart(chartType)
 	    ) {
 	        factory = boundsTypeEventDetectorFactory;
 	    } else if (predicate.isCoordinateTypeChart(chartType)
@@ -21730,7 +22554,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    params.chartType = chartType;
-	    // @todo chartType이나 chartTypes없이 모두 seriesTypes만 보도록 변경해야한다.컴포넌트 전체의 문제임
+	    // @todo replace chartType, chartTypes to seriesTypes, problem of the whole component
 	    params.chartTypes = seriesTypes;
 	    params.zoomable = zoomable;
 	    params.allowSelect = seriesAllowSelect;
@@ -21744,7 +22568,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21755,9 +22579,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(69);
-	var zoomMixer = __webpack_require__(74);
-	var AreaTypeDataModel = __webpack_require__(75);
+	var MouseEventDetectorBase = __webpack_require__(70);
+	var zoomMixer = __webpack_require__(75);
+	var AreaTypeDataModel = __webpack_require__(76);
 	var snippet = __webpack_require__(6);
 
 	var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
@@ -21780,6 +22604,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.prevFoundData = null;
 
 	        /**
+	         * previous client position of mouse event (clientX, clientY)
+	         * @type {null | object}
+	         */
+	        this.prevClientPosition = null;
+
+	        /**
 	         * whether zoomable or not
 	         * @type {boolean}
 	         */
@@ -21789,6 +22619,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	            snippet.extend(this, zoomMixer);
 	            this._initForZoom(params.zoomable);
 	        }
+	    },
+
+	    /**
+	     * Animate for adding data.
+	     */
+	    animateForAddingData: function() {
+	        var foundData, isMoving;
+
+	        if (!this.prevClientPosition) {
+	            return;
+	        }
+
+	        foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
+
+	        if (foundData) {
+	            isMoving = this.prevFoundData && (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
+	            this._showTooltip(foundData, isMoving);
+	        }
+
+	        this.prevFoundData = foundData;
 	    },
 
 	    /**
@@ -21869,16 +22719,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _showTooltip: function(foundData) {
 	        this.eventBus.fire('showTooltip', foundData);
+	        this.prevFoundData = foundData;
 	    },
 
 	    /**
 	     * Hide tooltip.
-	     * @param {{silent: {boolean}}} options - options for hiding tooltip
+	     * @param {{silent: {boolean}}} [options] - options for hiding tooltip
 	     * @private
 	     */
 	    _hideTooltip: function(options) {
-	        options = options || {};
 	        this.eventBus.fire('hideTooltip', this.prevFoundData, options);
+	        this.prevFoundData = null;
 	    },
 
 	    /**
@@ -21890,7 +22741,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _onMousemove: function(e) {
 	        var dragMoseupResult, foundData;
 
-	        MouseEventDetectorBase.prototype._onMousemove.call(this, e);
+	        this._setPrevClientPosition(e);
 
 	        foundData = this._findData(e.clientX, e.clientY);
 
@@ -21921,7 +22772,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._hideTooltip();
 	        }
 
-	        MouseEventDetectorBase.prototype._onMouseout.call(this);
+	        this.prevClientPosition = null;
+	        this.prevFoundData = null;
 	    },
 
 	    /**
@@ -21931,6 +22783,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    findDataByIndexes: function(indexes) {
 	        return this.dataModel.findDataByIndexes(indexes);
+	    },
+
+	    /**
+	     * Set prevClientPosition by MouseEvent
+	     * @param {?MouseEvent} event - mouse event
+	     */
+	    _setPrevClientPosition: function(event) {
+	        if (!event) {
+	            this.prevClientPosition = null;
+	        } else {
+	            this.prevClientPosition = {
+	                x: event.clientX,
+	                y: event.clientY
+	            };
+	        }
 	    }
 	});
 
@@ -21944,7 +22811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21955,11 +22822,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var MouseEventDetectorBase = __webpack_require__(69);
+	var MouseEventDetectorBase = __webpack_require__(70);
 	var chartConst = __webpack_require__(8);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
-	var eventListener = __webpack_require__(54);
+	var eventListener = __webpack_require__(55);
 	var snippet = __webpack_require__(6);
 
 	/**
@@ -22310,10 +23177,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onMouseupAfterDrag: function(e) {
-	        // @TODO: 데이터가 없는 경우의 zoomable 정책 정의 필요
-	        // dragStartIndexes도 마찬가지지만 dragEnd 인덱스를 찾기 위해서는 차트에 data가 필요하다.
-	        // 하지만 data가 없어도 차트는 그려질 수 있음.
-	        // 그래서 이 부분에서 data가 없는경우 zoom을 실행하지 않도록 하기 위해 먼저 index를 확인한다.
+	        // @TODO: define zoomable policy, when there is no data
+	        // To find dragEndIndex for zoom, data should not be null.
+	        // To avoid zooming avoid zooming with no data, check dragStartIndexes first
+	        // Becault chart without data returns invalid dragStartIndexes
 	        var foundedDragEndData = this._findDataForZoomable(e.clientX, e.clientY);
 	        var target;
 
@@ -22379,7 +23246,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -22543,7 +23410,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -22555,7 +23422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var MouseEventDetectorBase = __webpack_require__(69);
+	var MouseEventDetectorBase = __webpack_require__(70);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -22641,7 +23508,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -22653,8 +23520,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var EventDetectorBase = __webpack_require__(69);
-	var zoomMixer = __webpack_require__(74);
+	var EventDetectorBase = __webpack_require__(70);
+	var zoomMixer = __webpack_require__(75);
 	var snippet = __webpack_require__(6);
 
 	var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
@@ -22787,7 +23654,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Show tooltip.
-	     * @param {{indexes: {groupIndex: number}}} foundData - data
+	     * @param {{indexes: {groupIndex: number}, silent: boolean}} foundData - data
 	     * @param {boolean} [isMoving] - whether moving or not
 	     * @private
 	     */
@@ -22801,7 +23668,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * At this time, the index may be larger than the data size.
 	         */
 	        if (this.tickBaseCoordinateModel.data.length > index) {
-	            this.prevIndex = index;
 	            this.eventBus.fire('showTooltip', {
 	                index: index,
 	                range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
@@ -22810,16 +23676,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                isMoving: isMoving,
 	                silent: foundData.silent
 	            });
+	            this.prevIndex = index;
 	        }
 	    },
 
 	    /**
 	     * Hide tooltip
-	     * @param {{silent: {boolean}}} options - options for hiding tooltip
+	     * @param {{silent: {boolean}}} [options] - options for hiding tooltip
 	     * @private
 	     */
 	    _hideTooltip: function(options) {
-	        options = options || {};
 	        this.eventBus.fire('hideTooltip', this.prevIndex, options);
 	        this.prevIndex = null;
 	    },
@@ -22833,8 +23699,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _onMousemove: function(e) {
 	        var foundData, index;
-
-	        EventDetectorBase.prototype._onMousemove.call(this, e);
 
 	        if (this.zoomable && this._isAfterDragMouseup()) {
 	            return;
@@ -22863,8 +23727,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !snippet.isNull(this.prevIndex)) {
 	            this._hideTooltip();
 	        }
-
-	        EventDetectorBase.prototype._onMouseout.call(this);
 	    }
 	});
 
@@ -22878,7 +23740,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -22890,7 +23752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var EventDetectorBase = __webpack_require__(69);
+	var EventDetectorBase = __webpack_require__(70);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 	var dom = __webpack_require__(9);
@@ -22914,7 +23776,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * history array for treemap chart.
-	         * @type {number}
+	         * @type {array}
 	         */
 	        this.zoomHistory = [-1];
 
@@ -22943,15 +23805,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _showTooltip: function(foundData) {
 	        this.eventBus.fire('showTooltip', foundData);
+	        this.prevFoundData = foundData;
 	    },
 
 	    /**
 	     * Hide tooltip.
-	     * @param {{silent: {boolean}}} options - options for hiding a tooltip
+	     * @param {{silent: {boolean}}} [options] - options for hiding a tooltip
 	     * @private
 	     */
 	    _hideTooltip: function(options) {
-	        options = options || {};
 	        this.eventBus.fire('hideTooltip', this.prevFoundData, options);
 	        this.prevFoundData = null;
 	        this.styleCursor(false);
@@ -22977,7 +23839,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @override
 	     */
 	    _onMousemove: function(e) {
-	        var layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
+	        var clientX = e.clientX;
+	        var clientY = e.clientY;
+	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
 	        var foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
 	        var seriesItem;
 
@@ -22998,8 +23862,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (predicate.isTreemapChart(this.chartType)) {
 	            seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
 	            this.styleCursor(seriesItem.hasChild);
+	        } else if (predicate.isBulletChart(this.chartType)) {
+	            foundData.mousePosition = {
+	                left: clientX,
+	                top: clientY
+	            };
 	        }
-
 	        this._showTooltip(foundData);
 	    },
 
@@ -23074,7 +23942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @override
 	     */
 	    _onMouseout: function(e) {
-	        // getBoundingClientRect()값 캐싱 금지 - 차트 위치 변경 시 오류 발생
+	        // do not cache getBoundingClientRect() - if not, it will cause error when chart location changed
 	        var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
 	        var clientX = e.clientX;
 	        var clientY = e.clientY;
@@ -23088,7 +23956,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._hideTooltip();
 	        }
 
-	        EventDetectorBase.prototype._onMouseout.call(this);
+	        this.prevFoundData = null;
 	    },
 
 	    /**
@@ -23128,7 +23996,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -23139,8 +24007,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var BarTypeSeriesBase = __webpack_require__(81);
+	var Series = __webpack_require__(81);
+	var BarTypeSeriesBase = __webpack_require__(82);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
@@ -23314,7 +24182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new BarChartSeries(params);
 	}
 
-	// @todo 더나은 방법 찾아보자
+	// @todo let's find better way
 	barSeriesFactory.componentType = 'series';
 	barSeriesFactory.BarChartSeries = BarChartSeries;
 
@@ -23322,7 +24190,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -23343,7 +24211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dom = __webpack_require__(9);
 	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
-	var pluginFactory = __webpack_require__(31);
+	var pluginFactory = __webpack_require__(32);
 	var raphaelRenderUtil = __webpack_require__(5);
 
 	var Series = snippet.defineClass(/** @lends Series.prototype */ {
@@ -23502,6 +24370,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
 
+	        /**
+	         * whether series lable is supported
+	         * @type {boolean}
+	         */
+	        this.supportSeriesLable = true;
+
 	        this._attachToEventBus();
 	    },
 
@@ -23619,7 +24493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.seriesSet = funcRenderGraph(dimension, seriesData, paper);
 	            }
 
-	            if (predicate.isShowLabel(this.options)) {
+	            if (predicate.isShowLabel(this.options) && this.supportSeriesLable) {
 	                this.labelSet = this._renderSeriesLabelArea(paper);
 	            }
 	        }
@@ -23695,6 +24569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var checkedLegends;
 	        this.paper = data.paper;
 	        this._setDataForRendering(data);
+	        this._clearSeriesContainer();
 	        this.beforeAxisDataMap = this.axisDataMap;
 
 	        if (data.checkedLegends) {
@@ -23739,9 +24614,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _clearSeriesContainer: function() {
 	        if (this.seriesSet && this.seriesSet.remove) {
+	            this.seriesSet.forEach(function(series) {
+	                series.remove();
+	            }, this);
 	            this.seriesSet.remove();
 	        }
 	        if (this.labelSet && this.labelSet.remove) {
+	            this.labelSet.forEach(function(label) {
+	                label.remove();
+	            }, this);
 	            this.labelSet.remove();
 	        }
 
@@ -23755,8 +24636,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    rerender: function(data) {
 	        var checkedLegends;
 
-	        this._clearSeriesContainer();
-
 	        if (this.dataProcessor.getGroupCount(this.seriesType)) {
 	            if (data.checkedLegends) {
 	                checkedLegends = data.checkedLegends[this.seriesType];
@@ -23764,6 +24643,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            this._setDataForRendering(data);
+	            this._clearSeriesContainer();
 	            this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
 
 	            if (this.labelShowEffector) {
@@ -23812,10 +24692,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} data data for rendering
 	     */
 	    resize: function(data) {
+	        this._clearSeriesContainer();
 	        this._setDataForRendering(data);
-	        if (this.labelSet && this.labelSet.remove) {
-	            this.labelSet.remove();
-	        }
 	        this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
 	    },
 
@@ -24097,7 +24975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    showLabel: function() {
 	        this.options.showLabel = true;
 
-	        if (!this.seriesLabelContainer) {
+	        if (!this.seriesLabelContainer && this.supportSeriesLable) {
 	            this._renderSeriesLabelArea(this.paper);
 	        }
 	    },
@@ -24127,7 +25005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -24139,9 +25017,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var labelHelper = __webpack_require__(82);
+	var labelHelper = __webpack_require__(83);
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
@@ -24504,7 +25382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -24594,7 +25472,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    boundsToLabelPositions: function(seriesDataModel, boundsSet, theme, makePosition, isPivot) {
 	        var self = this;
-	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
 
 	        makePosition = makePosition || snippet.bind(this._makePositionForBoundType, this);
 	        isPivot = !!isPivot;
@@ -24714,7 +25592,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -24725,8 +25603,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var BarTypeSeriesBase = __webpack_require__(81);
+	var Series = __webpack_require__(81);
+	var BarTypeSeriesBase = __webpack_require__(82);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
@@ -24893,7 +25771,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -24904,8 +25782,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var LineTypeSeriesBase = __webpack_require__(85);
+	var Series = __webpack_require__(81);
+	var LineTypeSeriesBase = __webpack_require__(86);
 	var snippet = __webpack_require__(6);
 
 	var LineChartSeries = snippet.defineClass(Series, /** @lends LineChartSeries.prototype */ {
@@ -24993,7 +25871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -25007,7 +25885,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var arrayUtil = __webpack_require__(10);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -25173,7 +26051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _getLabelPositions: function(seriesDataModel, theme) {
 	        var self = this;
 	        var basePositions = arrayUtil.pivot(this.seriesData.groupPositions);
-	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
 
 	        return seriesDataModel.map(function(seriesGroup, groupIndex) {
 	            return seriesGroup.map(function(seriesItem, index) {
@@ -25392,7 +26270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -25403,9 +26281,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
+	var Series = __webpack_require__(81);
 	var chartConst = __webpack_require__(8);
-	var geom = __webpack_require__(48);
+	var geom = __webpack_require__(49);
 	var snippet = __webpack_require__(6);
 
 	var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries.prototype */ {
@@ -25465,17 +26343,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (!snippet.isNull(seriesItem.end)) {
 	                    valueSize = seriesItem.ratio * radius;
 
-	                    // centerY에 데이터의 값에 해당하는 높이만큼 더 해서 실제 좌표Y를 만든다.
+	                    // center y + real vaule size
 	                    y = centerY + valueSize;
 
-	                    // 각도를 시계 방향으로 바꿈
+	                    // turn angle to clockwise
 	                    angle = 360 - (stepAngle * index);
 
 	                    point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, y, angle);
 
 	                    position = {
 	                        left: point.x,
-	                        top: height - point.y // y좌표를 top좌표로 변환(4/4분면)
+	                        top: height - point.y // convert y coordinate to top
 	                    };
 	                }
 
@@ -25551,7 +26429,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -25562,8 +26440,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var LineTypeSeriesBase = __webpack_require__(85);
+	var Series = __webpack_require__(81);
+	var LineTypeSeriesBase = __webpack_require__(86);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
@@ -25709,7 +26587,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -25721,8 +26599,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var Series = __webpack_require__(80);
-	var CoordinateTypeSeriesBase = __webpack_require__(89);
+	var Series = __webpack_require__(81);
+	var CoordinateTypeSeriesBase = __webpack_require__(90);
 	var snippet = __webpack_require__(6);
 
 	var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
@@ -25866,7 +26744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -26002,7 +26880,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -26013,8 +26891,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var CoordinateTypeSeriesBase = __webpack_require__(89);
+	var Series = __webpack_require__(81);
+	var CoordinateTypeSeriesBase = __webpack_require__(90);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
@@ -26090,7 +26968,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -26101,12 +26979,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
+	var Series = __webpack_require__(81);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
 	var browser = snippet.browser;
-	var IS_LTE_THAN_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 
 	var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.prototype */ {
 	    /**
@@ -26199,7 +27077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _attachToEventBus: function() {
 	        Series.prototype._attachToEventBus.call(this);
 
-	        if (!IS_LTE_THAN_IE8) {
+	        if (!IS_LTE_IE8) {
 	            this.eventBus.on({
 	                dragStartMapSeries: this.onDragStartMapSeries,
 	                dragMapSeries: this.onDragMapSeries,
@@ -26561,7 +27439,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -26572,7 +27450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
+	var Series = __webpack_require__(81);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
@@ -27293,9 +28171,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    params.chartType = 'pie';
 
 	    if (chartType === 'combo') {
-	        // 앨리어스라고 불리는 시리즈 매핑 키가 내부에서는 seriesType으로 사용되고 있다.(ex pie1)
-	        // 기존 내용과 맞추기 위해 우선은 컴포넌트 메니저에 등록될 당시의 이름으로 구분
-	        // 추후 차트 생성자를 통합하게되면 데이터에 시리즈 타입이 포함되기 앨리어스가 필요 없어진다.
+	        // elias series mapping key is used as a seriesType(ex. pie1)
+	        // It is now distinguished to follow current structure
+	        // elias will not be needed after chart constructor is integrated
 	        params.seriesType = params.name.split('Series')[0];
 	        params.isCombo = true;
 	    }
@@ -27316,7 +28194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -27327,8 +28205,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var labelHelper = __webpack_require__(82);
+	var Series = __webpack_require__(81);
+	var labelHelper = __webpack_require__(83);
 	var snippet = __webpack_require__(6);
 
 	var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
@@ -27486,7 +28364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -27497,9 +28375,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var squarifier = __webpack_require__(95);
-	var labelHelper = __webpack_require__(82);
+	var Series = __webpack_require__(81);
+	var squarifier = __webpack_require__(96);
+	var labelHelper = __webpack_require__(83);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
@@ -27746,6 +28624,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.startDepth = startDepth;
 	        this.selectedGroup = group;
 	        this._renderSeriesArea(this.paper, snippet.bind(this._renderGraph, this));
+	        this.animateComponent(true);
 	    },
 
 	    /**
@@ -27848,7 +28727,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -27859,7 +28738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -28126,7 +29005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -28137,8 +29016,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Series = __webpack_require__(80);
-	var BarTypeSeriesBase = __webpack_require__(81);
+	var Series = __webpack_require__(81);
+	var BarTypeSeriesBase = __webpack_require__(82);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
@@ -28157,6 +29036,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    init: function() {
 	        Series.apply(this, arguments);
+
+	        /**
+	         * whether series label is supported
+	         * @type {boolean}
+	         */
+	        this.supportSeriesLable = false;
 	    },
 
 	    /**
@@ -28310,7 +29195,382 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 97 */
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Bullet chart series component.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var Series = __webpack_require__(81);
+	var renderUtil = __webpack_require__(7);
+	var chartConst = __webpack_require__(8);
+	var snippet = __webpack_require__(6);
+
+	var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries.prototype */ {
+	    /**
+	     * Bullet chart series component.
+	     * @constructs BulletChartSeries
+	     * @private
+	     * @extends Series
+	     * @param {object} params series initialization data
+	     */
+	    init: function(params) {
+	        Series.call(this, params);
+
+	        /**
+	         * true if graph stratches vertically
+	         * false if graph stratches horizontally
+	         * @type {boolean}
+	         */
+	        this.isVertical = params.isVertical;
+	    },
+
+	    /**
+	     * Create data for rendering series
+	     * @returns {object} - data for rendering series
+	     * @override
+	     * @private
+	     */
+	    _makeSeriesData: function() {
+	        var groupBounds = this._makeBounds();
+
+	        return {
+	            groupBounds: groupBounds,
+	            seriesDataModel: this._getSeriesDataModel(),
+	            isVertical: this.isVertical,
+	            isAvailable: function() {
+	                return groupBounds && groupBounds.length > 0;
+	            }
+	        };
+	    },
+
+	    /**
+	     * Create bounds data
+	     * @returns {Array.<Bound>} - bound data of bullet graph components
+	     * @private
+	     */
+	    _makeBounds: function() {
+	        var self = this;
+	        var seriesDataModel = this._getSeriesDataModel();
+	        var baseData = this._makeBaseDataForMakingBound();
+	        var iterationData = {
+	            renderedItemCount: 0,
+	            top: baseData.categoryAxisTop,
+	            left: baseData.categoryAxisLeft
+	        };
+
+	        return seriesDataModel.map(function(seriesGroup) {
+	            var iteratee = snippet.bind(self._makeBulletChartBound, self, baseData, iterationData);
+	            var bounds = seriesGroup.map(iteratee);
+
+	            self._updateIterationData(iterationData, baseData.itemWidth);
+
+	            return bounds;
+	        });
+	    },
+
+	    /**
+	     * prepare a base data before making a bound
+	     * @returns {object} - base data
+	     * @private
+	     */
+	    _makeBaseDataForMakingBound: function() {
+	        var groupCount = this._getSeriesDataModel().getGroupCount();
+	        var dimension = this.layout.dimension;
+	        var width = dimension.width;
+	        var height = dimension.height;
+	        var position = this.layout.position;
+	        var categoryAxisTop = position.top;
+	        var categoryAxisLeft = position.left;
+	        var categoryAxisWidth, valueAxisWidth, itemWidth;
+
+	        if (this.isVertical) {
+	            categoryAxisTop += height;
+	            categoryAxisWidth = width;
+	            valueAxisWidth = height;
+	        } else {
+	            categoryAxisWidth = height;
+	            valueAxisWidth = width;
+	        }
+
+	        itemWidth = categoryAxisWidth / groupCount;
+
+	        return {
+	            categoryAxisTop: categoryAxisTop,
+	            categoryAxisLeft: categoryAxisLeft,
+	            categoryAxisWidth: categoryAxisWidth,
+	            valueAxisWidth: valueAxisWidth,
+	            itemWidth: itemWidth
+	        };
+	    },
+
+	    /**
+	     * Create a bullet chart bound before making a base data
+	     * @param {object} baseData - base data for making a tooltip
+	     * @param {object} iterationData - increasing data while generating a graph data: index of item, graph position
+	     * @param {object} item - series item
+	     * @returns {Bound} - bullet graph bound
+	     * @private
+	     */
+	    _makeBulletChartBound: function(baseData, iterationData, item) {
+	        var type = item.type;
+	        var bound;
+
+	        if (type === chartConst.BULLET_TYPE_ACTUAL) {
+	            bound = this._makeBarBound(item, chartConst.BULLET_ACTUAL_HEIGHT_RATIO, baseData, iterationData);
+	        } else if (type === chartConst.BULLET_TYPE_RANGE) {
+	            bound = this._makeBarBound(item, chartConst.BULLET_RANGES_HEIGHT_RATIO, baseData, iterationData);
+	        } else if (type === chartConst.BULLET_TYPE_MARKER) {
+	            bound = this._makeLineBound(item, chartConst.BULLET_MARKERS_HEIGHT_RATIO, baseData, iterationData);
+	        }
+
+	        bound.type = type;
+
+	        return bound;
+	    },
+
+	    /**
+	     * Create bar type bound data
+	     * @param {object} model - series item data
+	     * @param {number} widthRatio - thickness compare to graph area
+	     * @param {object} baseData - base data needed for making a bar bound
+	     * @param {object} iterationData - data for setting up position
+	     * @returns {object} - bar type bound data
+	     * @private
+	     */
+	    _makeBarBound: function(model, widthRatio, baseData, iterationData) {
+	        var barWidth = baseData.itemWidth * widthRatio;
+	        var barHeight = baseData.valueAxisWidth * model.ratioDistance;
+	        var barEndHeight = baseData.valueAxisWidth * model.endRatio;
+	        var bound;
+
+	        if (this.isVertical) {
+	            bound = this._makeVerticalBarBound(iterationData, baseData, barWidth, barHeight, barEndHeight);
+	        } else {
+	            bound = this._makeHorizontalBarBound(iterationData, baseData, barWidth, barHeight, barEndHeight);
+	        }
+
+	        return bound;
+	    },
+
+	    /**
+	     * create a bound of bar type component, when it is virtical chart
+	     * @param {object} iterationData - increasing data while generating a graph data: graph position
+	     * @param {object} baseData - base data
+	     * @param {number} barWidth - width of bar
+	     * @param {number} barHeight - bar size from start position to end position
+	     * @param {number} barEndHeight - bar size from axis start point to end position
+	     * @returns {object} - bound data
+	     * @private
+	     */
+	    _makeVerticalBarBound: function(iterationData, baseData, barWidth, barHeight, barEndHeight) {
+	        return {
+	            top: iterationData.top - barEndHeight,
+	            left: iterationData.left + ((baseData.itemWidth - barWidth) / 2),
+	            width: barWidth,
+	            height: barHeight
+	        };
+	    },
+
+	    /**
+	     * create a bound of bar type component, when it is a horizontal chart
+	     * @param {object} iterationData - increasing data while generating a graph data: graph position
+	     * @param {object} baseData - base data
+	     * @param {number} barWidth - width of bar
+	     * @param {number} barHeight - bar size from start position to end position
+	     * @param {number} barEndHeight - bar size from axis start point to end position
+	     * @returns {object} - bound data
+	     * @private
+	     */
+	    _makeHorizontalBarBound: function(iterationData, baseData, barWidth, barHeight, barEndHeight) {
+	        return {
+	            top: iterationData.top + ((baseData.itemWidth - barWidth) / 2),
+	            left: iterationData.left + barEndHeight - barHeight,
+	            width: barHeight,
+	            height: barWidth
+	        };
+	    },
+
+	    /**
+	     * Create line type bound data
+	     * @param {object} model - series item data
+	     * @param {number} widthRatio - graph thickness compare to graph area
+	     * @param {object} baseData - base data needed for making a line bound
+	     * @param {object} iterationData - data for setting up position
+	     * @returns {object} - line type bound data
+	     * @private
+	     */
+	    _makeLineBound: function(model, widthRatio, baseData, iterationData) {
+	        var lineWidth = baseData.itemWidth * widthRatio;
+	        var endHeight = baseData.valueAxisWidth * model.endRatio;
+	        var width = chartConst.BULLET_MARKER_DETECT_PADDING;
+	        var height = chartConst.BULLET_MARKER_DETECT_PADDING;
+	        var top, left;
+
+	        if (this.isVertical) {
+	            top = iterationData.top - endHeight;
+	            left = iterationData.left + ((baseData.itemWidth - lineWidth) / 2);
+	            width = lineWidth;
+	        } else {
+	            top = iterationData.top + ((baseData.itemWidth - lineWidth) / 2);
+	            left = iterationData.left + endHeight;
+	            height = lineWidth;
+	        }
+
+	        return {
+	            top: top,
+	            left: left,
+	            length: lineWidth,
+	            width: width,
+	            height: height
+	        };
+	    },
+
+	    /**
+	     * update iterationData after making a graph bound
+	     * @param {object} iterationData - iteration data
+	     * @param {number} itemWidth - size of category axis area
+	     * @private
+	     */
+	    _updateIterationData: function(iterationData, itemWidth) {
+	        iterationData.renderedItemCount += 1;
+
+	        if (this.isVertical) {
+	            iterationData.left += itemWidth;
+	        } else {
+	            iterationData.top += itemWidth;
+	        }
+	    },
+
+	    /**
+	    * Render series area.
+	    * @param {object} paper - raphael object
+	    * @param {function} funcRenderGraph - function for graph rendering
+	    * @private
+	    */
+	    _renderSeriesArea: function(paper, funcRenderGraph) {
+	        Series.prototype._renderSeriesArea.call(this, paper, funcRenderGraph);
+
+	        this.dataProcessor.setGraphColors(this.graphRenderer.getGraphColors());
+	    },
+
+	    /**
+	     * Render series labels
+	     * Series labels are shown only when `options.series.showLabel` is enabled
+	     * @param {object} paper paper
+	     * @returns {Array.<SVGElement>} - svg label sets
+	     * @override
+	     * @private
+	     */
+	    _renderSeriesLabel: function(paper) {
+	        var theme = this.theme.label;
+	        var seriesDataModel = this._getSeriesDataModel();
+	        var groupLabels = this._getLabelTexts(seriesDataModel);
+	        var positionsSet = this._calculateLabelPositions(seriesDataModel, theme);
+
+	        return this.graphRenderer.renderSeriesLabel(paper, positionsSet, groupLabels, theme);
+	    },
+
+	    /**
+	     * Get label texts needed for enabling `options.series.showLabel` option
+	     * @param {object} seriesDataModel - seriesDataModel
+	     * @returns {Array.<string>} - actual data and marker data label
+	     * @private
+	     */
+	    _getLabelTexts: function(seriesDataModel) {
+	        return seriesDataModel.map(function(seriesGroup) {
+	            var seriesLabels = [];
+
+	            seriesGroup.each(function(seriesDatum) {
+	                if (seriesDatum.type !== chartConst.BULLET_TYPE_RANGE) {
+	                    seriesLabels.push(seriesDatum.endLabel);
+	                }
+	            });
+
+	            return seriesLabels;
+	        });
+	    },
+
+	    /**
+	     * calculate a label position
+	     * @param {object} seriesDataModel - bullet chart's series data model
+	     * @param {object} theme - style needed to calculate the size of the text
+	     * @returns {Array.<object>} - position of label text
+	     * @private
+	     */
+	    _calculateLabelPositions: function(seriesDataModel, theme) {
+	        var serieses = this.seriesData.groupBounds;
+	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
+
+	        return snippet.map(serieses, function(series) {
+	            var bounds = [];
+
+	            snippet.forEach(series, function(item) {
+	                if (item.type !== chartConst.BULLET_TYPE_RANGE) {
+	                    bounds.push(this._makePositionByBound(item, labelHeight));
+	                }
+	            }, this);
+
+	            return bounds;
+	        }, this);
+	    },
+
+	    /**
+	     * make position top, left data using bound data and label height
+	     * @param {object} bound - bound data
+	     * @param {number} labelHeight - label's height
+	     * @returns {object} - position top, left
+	     * @private
+	     */
+	    _makePositionByBound: function(bound, labelHeight) {
+	        var boundTop = bound.top;
+	        var boundLeft = bound.left;
+	        var width, height;
+	        var position = {};
+
+	        if (this.isVertical) {
+	            width = bound.width || bound.length;
+	            position.top = boundTop - labelHeight;
+	            position.left = boundLeft + (width / 2);
+	        } else {
+	            width = bound.width || 0;
+	            height = bound.height || bound.length;
+	            position.top = boundTop + (height / 2);
+	            position.left = boundLeft + 5 + (width || 0);
+	        }
+
+	        return position;
+	    }
+	});
+
+	/**
+	 * BulletChartSeries factory function
+	 * @param {object} params - series initialization data
+	 * @returns {BulletChartSeries} - bullet chart series
+	 */
+	function bulletSeriesFactory(params) {
+	    var chartTheme = params.chartTheme;
+
+	    params.libType = params.chartOptions.libType;
+	    params.chartType = 'bullet';
+	    params.chartBackground = chartTheme.chart.background;
+
+	    return new BulletChartSeries(params);
+	}
+
+	bulletSeriesFactory.componentType = 'series';
+	bulletSeriesFactory.BulletChartSeries = BulletChartSeries;
+
+	module.exports = bulletSeriesFactory;
+
+
+/***/ }),
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -28324,11 +29584,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(6);
 	var IS_MSIE_VERSION_LTE_THAN_8 = snippet.browser.msie && snippet.browser.version <= 8;
 
-	var seriesTemplate = __webpack_require__(98);
+	var seriesTemplate = __webpack_require__(100);
 	var chartConst = __webpack_require__(8);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
-	var eventListener = __webpack_require__(54);
+	var eventListener = __webpack_require__(55);
 
 	var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
 	    /**
@@ -28500,7 +29760,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -28511,7 +29771,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var templateMaker = __webpack_require__(64);
+	var templateMaker = __webpack_require__(65);
 
 	var htmls = {
 	    HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}"{{ rangeLabelAttribute }}>' +
@@ -28536,7 +29796,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -28550,16 +29810,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var DataProcessorBase = __webpack_require__(100);
-	var SeriesDataModel = __webpack_require__(101);
-	var SeriesDataModelForBoxplot = __webpack_require__(105);
-	var SeriesDataModelForTreemap = __webpack_require__(107);
-	var SeriesGroup = __webpack_require__(102);
-	var rawDataHandler = __webpack_require__(30);
+	var DataProcessorBase = __webpack_require__(102);
+	var SeriesDataModel = __webpack_require__(103);
+	var SeriesDataModelForBoxplot = __webpack_require__(107);
+	var SeriesDataModelForBullet = __webpack_require__(109);
+	var SeriesDataModelForTreemap = __webpack_require__(110);
+	var SeriesGroup = __webpack_require__(104);
+	var rawDataHandler = __webpack_require__(31);
 	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
-	var calculator = __webpack_require__(44);
-	var objectUtil = __webpack_require__(35);
+	var calculator = __webpack_require__(45);
+	var objectUtil = __webpack_require__(36);
 	var snippet = __webpack_require__(6);
 
 	var concat = Array.prototype.concat;
@@ -29124,6 +30385,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                SeriesDataModelClass = SeriesDataModelForBoxplot;
 	            } else if (predicate.isTreemapChart(this.chartType)) {
 	                SeriesDataModelClass = SeriesDataModelForTreemap;
+	            } else if (predicate.isBulletChart(this.chartType)) {
+	                SeriesDataModelClass = SeriesDataModelForBullet;
 	            } else {
 	                SeriesDataModelClass = SeriesDataModel;
 	            }
@@ -29882,6 +31145,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	            minItem: seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio),
 	            maxItem: seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio)
 	        };
+	    },
+
+	    /**
+	     * Register color and opacity data of tooltip icon
+	     * @param {Array.<Array.<object>>} colors - color and opacities setGraphColors
+	     * @ignore
+	     */
+	    setGraphColors: function(colors) {
+	        this.graphColors = colors;
+	    },
+
+	    /**
+	     * Get color and opacity data of tooltip data
+	     * @returns {Array.<Array.<object>>} - color and opacities set
+	     * @ignore
+	     */
+	    getGraphColors: function() {
+	        return this.graphColors;
 	    }
 	});
 
@@ -29889,7 +31170,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -29902,7 +31183,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var arrayUtil = __webpack_require__(10);
 	var renderUtil = __webpack_require__(7);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var snippet = __webpack_require__(6);
 
 	/**
@@ -30096,7 +31377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -30134,11 +31415,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * SeriesItem has processed terminal data like value, ratio, etc.
 	 */
 
-	var SeriesGroup = __webpack_require__(102);
-	var SeriesItem = __webpack_require__(103);
-	var SeriesItemForCoordinateType = __webpack_require__(104);
+	var SeriesGroup = __webpack_require__(104);
+	var SeriesItem = __webpack_require__(105);
+	var SeriesItemForCoordinateType = __webpack_require__(106);
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -30762,7 +32043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -30774,7 +32055,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var snippet = __webpack_require__(6);
 
 	var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
@@ -31045,7 +32326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -31059,7 +32340,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var renderUtil = __webpack_require__(7);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
+	var predicate = __webpack_require__(11);
 	var snippet = __webpack_require__(6);
 
 	var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
@@ -31167,6 +32449,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.ratioDistance = null;
 
+	        if (predicate.isBulletChart(this.chartType)) {
+	            /**
+	             * @type {string}
+	             */
+	            this.type = params.type;
+	        }
+
 	        /**
 	         * series legend name
 	         * @type {string}
@@ -31241,7 +32530,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Add start.
 	     * @param {number} value - value
-	     * @private
+	     * @ignore
 	     */
 	    addStart: function(value) {
 	        if (!snippet.isNull(this.start)) {
@@ -31327,7 +32616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -31507,7 +32796,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -31545,8 +32834,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * SeriesItem has processed terminal data like value, ratio, etc.
 	 */
 
-	var SeriesItemForBoxplot = __webpack_require__(106);
-	var SeriesDataModel = __webpack_require__(101);
+	var SeriesItemForBoxplot = __webpack_require__(108);
+	var SeriesDataModel = __webpack_require__(103);
 	var snippet = __webpack_require__(6);
 
 	var concat = Array.prototype.concat;
@@ -31665,7 +32954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -31678,7 +32967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var renderUtil = __webpack_require__(7);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var snippet = __webpack_require__(6);
 
 	var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
@@ -32000,7 +33289,113 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 107 */
+/* 109 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview SeriesDataModel for Bullet Chart
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var SeriesItem = __webpack_require__(105);
+	var SeriesDataModel = __webpack_require__(103);
+	var chartConst = __webpack_require__(8);
+	var snippet = __webpack_require__(6);
+
+	var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBullet.prototype */ {
+	    /**
+	     * SeriesDataModelForBullet is series model for boxplot chart
+	     * SeriesDataModel.groups has SeriesGroups.
+	     * @constructs SeriesDataModel
+	     * @param {rawSeriesData} rawSeriesData - raw series data
+	     * @param {string} chartType - chart type
+	     * @param {object} options - options
+	     * @param {Array.<function>} formatFunctions - format functions
+	     */
+	    init: function(rawSeriesData, chartType, options, formatFunctions) {
+	        SeriesDataModel.call(this, rawSeriesData, chartType, options, formatFunctions);
+	    },
+
+	    /**
+	     * Create base groups.
+	     * Base groups is two-dimensional array by seriesItems.
+	     * @returns {Array.<Array.<(SeriesItem | SeriesItemForCoordinateType)>>}
+	     * @private
+	     * @override
+	     */
+	    _createBaseGroups: function() {
+	        var chartType = this.chartType;
+	        var formatFunctions = this.formatFunctions;
+	        var maxRangeCount = 0;
+	        var maxMarkerCount = 0;
+	        var baseGroups = snippet.map(this.rawSeriesData, function(rawDatum) {
+	            var items = [];
+	            var data = rawDatum.data;
+	            var markers = rawDatum.markers;
+	            var markerCount = markers.length;
+	            var ranges = rawDatum.ranges;
+	            var rangeCount = ranges.length;
+
+	            if (ranges && rangeCount) {
+	                snippet.map(ranges, function(range) {
+	                    items.push(new SeriesItem({
+	                        datum: range,
+	                        chartType: chartType,
+	                        formatFunctions: formatFunctions,
+	                        type: chartConst.BULLET_TYPE_RANGE
+	                    }));
+	                });
+	                maxRangeCount = Math.max(maxRangeCount, rangeCount);
+	            }
+
+	            if (data) {
+	                items.push(new SeriesItem({
+	                    datum: data,
+	                    chartType: chartType,
+	                    formatFunctions: formatFunctions,
+	                    type: chartConst.BULLET_TYPE_ACTUAL
+	                }));
+	            }
+
+	            if (markers && markerCount) {
+	                snippet.map(markers, function(marker) {
+	                    items.push(new SeriesItem({
+	                        datum: marker,
+	                        chartType: chartType,
+	                        formabutFunctions: formatFunctions,
+	                        type: chartConst.BULLET_TYPE_MARKER
+	                    }));
+	                });
+	                maxMarkerCount = Math.max(maxMarkerCount, markerCount);
+	            }
+
+	            return items;
+	        });
+
+	        this.maxMarkerCount = maxMarkerCount;
+	        this.maxRangeCount = maxRangeCount;
+
+	        return baseGroups;
+	    },
+
+	    /**
+	     * Create SeriesGroups from rawData.series.
+	     * @returns {Array.<SeriesGroup>}
+	     * @private
+	     */
+	    _createSeriesGroupsFromRawData: function() {
+	        return SeriesDataModel.prototype._createSeriesGroupsFromRawData.call(this);
+	    }
+	});
+
+	module.exports = SeriesDataModelForBullet;
+
+
+/***/ }),
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -32012,10 +33407,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var SeriesDataModel = __webpack_require__(101);
-	var SeriesItem = __webpack_require__(108);
+	var SeriesDataModel = __webpack_require__(103);
+	var SeriesItem = __webpack_require__(111);
 	var chartConst = __webpack_require__(8);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var snippet = __webpack_require__(6);
 
 	var aps = Array.prototype.slice;
@@ -32314,7 +33709,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 108 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -32325,7 +33720,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -32433,7 +33828,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 109 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -32444,8 +33839,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var BoundsModel = __webpack_require__(110);
-	var ScaleDataModel = __webpack_require__(116);
+	var BoundsModel = __webpack_require__(113);
+	var ScaleDataModel = __webpack_require__(119);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
 
@@ -32552,7 +33947,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isVertical = params.isVertical;
 	        var scaleDataMap;
 
-	        // 01. base dimension 등록
+	        // 01. register base dimension
 	        if (componentManager.has('xAxis')) {
 	            boundsModel.registerXAxisHeight();
 	        }
@@ -32565,7 +33960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 
-	        // 02. y axis, legend scale 추가
+	        // 02. add scale of y axis and legend
 	        if (scaleOption.yAxis) {
 	            this.addYAxisScale(scaleDataModel, 'yAxis', scaleOption.yAxis, params.options.yAxis);
 	        }
@@ -32584,41 +33979,42 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        scaleDataMap = scaleDataModel.scaleDataMap;
 
-	        // 03. y axis dimension 등록
+	        // 03. register y axis dimension
 	        this._registerYAxisDimension(componentManager, boundsModel, scaleDataMap, 'yAxis', isVertical);
 	        this._registerYAxisDimension(componentManager, boundsModel, scaleDataMap, 'rightYAxis', isVertical);
 
-	        // 04. x axis scale 추가
+	        // 04. add x axis scale
 	        if (scaleOption.xAxis) {
 	            scaleDataModel.addScale('xAxis', options.xAxis, {
 	                valueType: scaleOption.xAxis.valueType || 'value'
 	            }, scaleOption.xAxis.additionalOptions);
 	        }
 
-	        // 05. axis data map 생성 및 설정
+	        // 05. create and configure axis data map
 	        if (params.hasAxes) {
 	            scaleDataModel.setAxisDataMap();
 	        }
 
-	        // 06. series 영역 dimension 등록
+	        // 06. register series dimension
 	        boundsModel.registerSeriesDimension();
 
-	        // 07. circle legend가 있을 경우에 circle legend dimension 등록
+	        // 07. register circle legend dimension, if there is a circle legend
 	        if (componentManager.has('circleLegend') && options.circleLegend.visible) {
 	            boundsModel.registerCircleLegendDimension(scaleDataModel.axisDataMap);
 	        }
 
 	        if (componentManager.has('xAxis')) {
-	            // 08. 자동 tick 계산 옵션이 있을 경우에 axisData 갱신
+	            // 08. update axisData, when autoTickInterval option exist
 	            if (predicate.isAutoTickInterval(options.xAxis.tickInterval)) {
 	                scaleDataModel.updateXAxisDataForAutoTickInterval(params.prevXAxisData, addingDataMode);
 	            }
 
-	            // 09. x축 label의 회전 여부 관련한 axisData 갱신
+	            // 09. update axisData related to the rotation of label on x axis
 	            scaleDataModel.updateXAxisDataForLabel(addingDataMode);
 	        }
 
-	        // 10. 나머지 영역 dimension 등록 및 각 영역의 position 정보 등록
+	        // 10. regiser dimension of rest components
+	        //     register positon of all components
 	        boundsModel.registerBoundsData(scaleDataModel.axisDataMap.xAxis);
 	    },
 
@@ -32674,7 +34070,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 110 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -32689,11 +34085,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(5);
-	var circleLegendCalculator = __webpack_require__(111);
-	var axisCalculator = __webpack_require__(112);
-	var legendCalculator = __webpack_require__(113);
-	var seriesCalculator = __webpack_require__(114);
-	var spectrumLegendCalculator = __webpack_require__(115);
+	var circleLegendCalculator = __webpack_require__(114);
+	var axisCalculator = __webpack_require__(115);
+	var legendCalculator = __webpack_require__(116);
+	var seriesCalculator = __webpack_require__(117);
+	var spectrumLegendCalculator = __webpack_require__(118);
 	var snippet = __webpack_require__(6);
 
 	/**
@@ -33442,8 +34838,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    calculateMaxRadius: function(axisDataMap) {
 	        var dimensionMap = this.getDimensionMap(['series', 'circleLegend']);
+	        var circleLegendVisible = this.options.circleLegend ? this.options.circleLegend.visible : false;
 
-	        return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap);
+	        return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap, circleLegendVisible);
 	    }
 	});
 
@@ -33451,7 +34848,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 111 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -33538,12 +34935,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Calculate max radius.
 	     * @param {{series: {width: number, height: number}, circleLegend: {width: number}}} dimensionMap - dimension map
 	     * @param {{xAxis: object, yAxis: object}} axisDataMap - axis data map
+	     * @param {boolean} [circleLegendVisible] - circleLegend visible option
 	     * @returns {number}
 	     * @private
 	     */
-	    calculateMaxRadius: function(dimensionMap, axisDataMap) {
+	    calculateMaxRadius: function(dimensionMap, axisDataMap, circleLegendVisible) {
 	        var maxRadius = this._calculateRadiusByAxisData(dimensionMap.series, axisDataMap);
 	        var circleLegendWidth = dimensionMap.circleLegend.width;
+
+	        if (!circleLegendVisible) {
+	            return maxRadius;
+	        }
 
 	        return Math.min((circleLegendWidth - chartConst.CIRCLE_LEGEND_PADDING) / 2, maxRadius);
 	    }
@@ -33553,7 +34955,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 112 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -33584,7 +34986,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
 	        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
 	        var labelMargin = options.labelMargin || 0;
-	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme.label);
+	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
 
 	        if (labelMargin > 0) {
 	            labelHeight += labelMargin;
@@ -33635,7 +35037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 113 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -33649,7 +35051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(6);
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var arrayUtil = __webpack_require__(10);
 
@@ -33871,7 +35273,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 114 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -33948,7 +35350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 115 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -34006,14 +35408,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 116 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var scaleDataMaker = __webpack_require__(117);
-	var scaleLabelFormatter = __webpack_require__(119);
-	var axisDataMaker = __webpack_require__(120);
+	var scaleDataMaker = __webpack_require__(120);
+	var scaleLabelFormatter = __webpack_require__(122);
+	var axisDataMaker = __webpack_require__(123);
 	var predicate = __webpack_require__(11);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -34447,7 +35849,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 117 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -34460,9 +35862,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var arrayUtil = __webpack_require__(10);
-	var coordinateScaleCalculator = __webpack_require__(118);
+	var coordinateScaleCalculator = __webpack_require__(121);
 	var snippet = __webpack_require__(6);
 
 	var abs = Math.abs;
@@ -34474,9 +35876,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var scaleDataMaker = {
 	    /**
 	     * Make limit for diverging option.
-	     * 다이버징 차트에서는 min, max의 값을 절대값으로 최대치로 동일하게하고
-	     * 한쪽만 음수로 처리해서 양쪽의 균형이 맞게 한다.
-	     * 이렇게 하지 않으면 중심이 한쪽으로 쏠려있다.
+	     * To balance diverging chart
+	     * compare absolute value of min, max. and find larger one
+	     * set min by making the value negative
 	     * @param {{min: number, max: number}} limit limit
 	     * @returns {{min: number, max: number}} changed limit
 	     * @private
@@ -34502,11 +35904,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var max = limit.max;
 
 	        if (isOverflowed.min) {
-	            min -= step;
+	            min = calculator.subtract(min, step);
 	        }
 
 	        if (isOverflowed.max) {
-	            max += step;
+	            max = calculator.add(max, step);
 	        }
 
 	        return {
@@ -34626,6 +36028,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (firstValue > 0) {
 	                limit.min = 0;
+	            } else if (firstValue === 0) {
+	                limit.max = 10;
 	            } else {
 	                limit.max = 0;
 	            }
@@ -34803,7 +36207,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 118 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -34894,16 +36298,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
 	    var fixedStep = (step * placeNumber);
 
-	    // max의 step 자릿수 이하 올림
+	    // ceil max value step digits
 	    max = Math.ceil((max * placeNumber) / fixedStep) * fixedStep / placeNumber;
 
 	    if (min > step) {
-	        // 최소값을 step 의 배수로 조정
+	        // floor min value to multiples of step
 	        min = Math.floor((min * placeNumber) / fixedStep) * fixedStep / placeNumber;
 	    } else if (min < 0) {
 	        min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
 	    } else {
-	        // min값이 양수이고 step 보다 작으면 0으로 설정
+	        // 0 when min value is positive and smaller than step
 	        min = 0;
 	    }
 
@@ -35015,7 +36419,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 119 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -35027,7 +36431,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var predicate = __webpack_require__(11);
-	var calculator = __webpack_require__(44);
+	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -35110,7 +36514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 120 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -35123,7 +36527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(11);
-	var geomatric = __webpack_require__(48);
+	var geomatric = __webpack_require__(49);
 	var renderUtil = __webpack_require__(7);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
@@ -35303,16 +36707,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _makeAdjustingIntervalInfo: function(beforeBlockCount, seriesWidth, blockSize) {
 	        var newBlockCount = parseInt(seriesWidth / blockSize, 10);
-	        // interval : 하나의 새로운 block(tick과 tick 사이의 공간) 영역에 포함되는 이전 block 수
+	        // interval : number of previous blocks in a new block(spaces between tick and tick)
 	        var interval = parseInt(beforeBlockCount / newBlockCount, 10);
 	        var intervalInfo = null;
 	        var remainCount;
 
 	        if (interval > 1) {
-	            // remainCount : 이전 block들 중 새로운 block으로 채우고 남은 이전 block 수
-	            // | | | | | | | | | | | |  - 이전 block
-	            // |     |     |     |      - 새로 계산된 block
-	            //                   |*|*|  - 남은 이전 block 수
+	            // remainCount : remaining block count after filling new blocks
+	            // | | | | | | | | | | | |  - previous block interval
+	            // |     |     |     |      - new block interval
+	            //                   |*|*|  - remaining block
 	            remainCount = beforeBlockCount - (interval * newBlockCount);
 
 	            if (remainCount >= interval) {
@@ -35411,13 +36815,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        beforeRemainBlockCount = intervalInfo.beforeRemainBlockCount;
 	        axisData.eventTickCount = axisData.tickCount;
 
-	        // startIndex는 남은 block수의 반 만큼에서 현재 이동된 tick 수를 뺀 만큼으로 설정함
-	        // |     |     |     |*|*|*|    - * 영역이 남은 이전 block 수
-	        // |*|*|O    |     |     |*|    - 현재 이동된 tick이 없을 경우 (O 지점이 startIndex = 2)
-	        // |*|O    |     |     |*|*|    - tick이 하나 이동 됐을 경우 : O 지점이 startIndex = 1)
+	        // startIndex: (remaing block count / 2) - current moved tick index
+	        // |     |     |     |*|*|*|    - * remaing block
+	        // |*|*|O    |     |     |*|    - tick is not moved (O startIndex = 2)
+	        // |*|O    |     |     |*|*|    - tick moved 1 (O startIndex = 1)
 	        startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
 
-	        // startIndex가 0보다 작을 경우 interval만큼 증가시킴
 	        if (startIndex < 0) {
 	            startIndex += interval;
 	        }
@@ -35447,7 +36850,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var firstBlockCount = firstTickCount ? firstTickCount - 1 : 0;
 	        var beforeRemainBlockCount;
 
-	        // 새로 계산된 block의 수가 최초로 계산된 block 수의 두배수 보다 많아지면 interval 숫자를 두배로 늘림
+	        // twice interval, if new block count is greater than twice of new block count
 	        if (firstBlockCount && ((firstBlockCount * 2) <= newBlockCount)) {
 	            interval *= 2;
 	        }
@@ -35605,7 +37008,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, labelTheme);
 	        var newLabelWidth = geomatric.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
 
-	        // overflow 체크시에는 우측 상단 꼭지 기준으로 계산해야 함
+	        // when checking overflow, calculation should be based on right top angle
 	        newLabelWidth -= geomatric.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
 
 	        return newLabelWidth;
@@ -35631,7 +37034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Make additional data for rotated labels.
-	     * 라벨 크기가 지정된 영역보다 커서 경계를 넘어가는부분을 처리하기 위한 데이터를 만든다.
+	     * The label size is larger than the specified area, creating data to handle the area beyond the border.
 	     * @param {Array.<string>} validLabels - valid labels
 	     * @param {Array.<string>} validLabelCount - valid label count
 	     * @param {object} labelTheme - theme for label
@@ -35653,7 +37056,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            rotatedHeight = geomatric.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
 	            rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
 	            limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
-	            contentWidth += rotatedWidth; // 라벨한개 더 표현할정도의 공간 확보
+	            contentWidth += rotatedWidth; // add spaces to render maybe one label
 
 	            additionalData = {
 	                degree: degree,
@@ -35679,7 +37082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 121 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -35690,9 +37093,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var chartConst = __webpack_require__(8);
-	var rawDataHandler = __webpack_require__(30);
+	var rawDataHandler = __webpack_require__(31);
 	var snippet = __webpack_require__(6);
 
 	var ColumnChart = snippet.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
@@ -35784,7 +37187,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 122 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -35795,11 +37198,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var predicate = __webpack_require__(11);
-	var DynamicDataHelper = __webpack_require__(123);
-	var Series = __webpack_require__(84);
-	var rawDataHandler = __webpack_require__(30);
+	var DynamicDataHelper = __webpack_require__(126);
+	var Series = __webpack_require__(85);
+	var rawDataHandler = __webpack_require__(31);
 	var snippet = __webpack_require__(6);
 
 	var LineChart = snippet.defineClass(ChartBase, /** @lends LineChart.prototype */ {
@@ -36034,7 +37437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 123 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36282,7 +37685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 124 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -36293,10 +37696,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var DynamicDataHelper = __webpack_require__(123);
-	var rawDataHandler = __webpack_require__(30);
-	var Series = __webpack_require__(87);
+	var ChartBase = __webpack_require__(42);
+	var DynamicDataHelper = __webpack_require__(126);
+	var rawDataHandler = __webpack_require__(31);
+	var Series = __webpack_require__(88);
 	var snippet = __webpack_require__(6);
 
 	var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
@@ -36508,7 +37911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 125 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -36519,10 +37922,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(30);
+	var ChartBase = __webpack_require__(42);
+	var rawDataHandler = __webpack_require__(31);
 	var predicate = __webpack_require__(11);
-	var validTypeMakerForYAxisOptions = __webpack_require__(126);
+	var validTypeMakerForYAxisOptions = __webpack_require__(129);
 	var snippet = __webpack_require__(6);
 
 	var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
@@ -36733,7 +38136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 126 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -36838,7 +38241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 127 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -36849,7 +38252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var snippet = __webpack_require__(6);
 
 	var LineScatterComboChart = snippet.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
@@ -36944,7 +38347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 128 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -36955,11 +38358,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(30);
+	var ChartBase = __webpack_require__(42);
+	var rawDataHandler = __webpack_require__(31);
 	var predicate = __webpack_require__(11);
-	var validTypeMakerForYAxisOptions = __webpack_require__(126);
-	var DynamicDataHelper = __webpack_require__(123);
+	var validTypeMakerForYAxisOptions = __webpack_require__(129);
+	var DynamicDataHelper = __webpack_require__(126);
 	var snippet = __webpack_require__(6);
 
 	var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaComboChart.prototype */ {
@@ -37228,7 +38631,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 129 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -37239,8 +38642,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(30);
+	var ChartBase = __webpack_require__(42);
+	var rawDataHandler = __webpack_require__(31);
 	var snippet = __webpack_require__(6);
 
 	var PieDonutComboChart = snippet.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
@@ -37326,7 +38729,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 130 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -37337,7 +38740,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
@@ -37398,7 +38801,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 131 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -37409,7 +38812,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
@@ -37517,7 +38920,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 132 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -37529,7 +38932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
@@ -37610,7 +39013,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 133 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -37622,8 +39025,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var ColorSpectrum = __webpack_require__(134);
+	var ChartBase = __webpack_require__(42);
+	var ColorSpectrum = __webpack_require__(137);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
 
@@ -37749,7 +39152,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 134 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -37760,7 +39163,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var colorutil = __webpack_require__(135);
+	var colorutil = __webpack_require__(138);
 	var snippet = __webpack_require__(6);
 
 	var ColorSpectrum = snippet.defineClass(/** @lends ColorSpectrum.prototype */ {
@@ -37821,7 +39224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 135 */
+/* 138 */
 /***/ (function(module, exports) {
 
 	/**
@@ -38071,7 +39474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 136 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -38082,8 +39485,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var ColorSpectrum = __webpack_require__(134);
+	var ChartBase = __webpack_require__(42);
+	var ColorSpectrum = __webpack_require__(137);
 	var snippet = __webpack_require__(6);
 
 	var TreemapChart = snippet.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
@@ -38175,7 +39578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 137 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -38186,11 +39589,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var mapManager = __webpack_require__(34);
-	var MapChartMapModel = __webpack_require__(138);
-	var MapChartDataProcessor = __webpack_require__(139);
-	var ColorSpectrum = __webpack_require__(134);
+	var ChartBase = __webpack_require__(42);
+	var mapManager = __webpack_require__(35);
+	var MapChartMapModel = __webpack_require__(141);
+	var MapChartDataProcessor = __webpack_require__(142);
+	var ColorSpectrum = __webpack_require__(137);
 	var snippet = __webpack_require__(6);
 
 	var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
@@ -38274,7 +39677,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 138 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -38693,7 +40096,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 139 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -38704,7 +40107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var DataProcessorBase = __webpack_require__(100);
+	var DataProcessorBase = __webpack_require__(102);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -38847,7 +40250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 140 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -38858,9 +40261,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
+	var ChartBase = __webpack_require__(42);
 	var snippet = __webpack_require__(6);
-	var Series = __webpack_require__(84);
+	var Series = __webpack_require__(85);
 
 	var RadialChart = snippet.defineClass(ChartBase, /** @lends RadialChart.prototype */ {
 	    /**
@@ -38884,7 +40287,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} options chart options
 	     */
 	    init: function(rawData, theme, options) {
-	        // Radial차트는 그룹툴팁을 지원하지 않음, 지원하게되면 아래 코드 삭제
+	        // radial chart doesn't supprot group tooltip
+	        // should delete this code, when it supports group tooltip
 	        if (options.tooltip) {
 	            options.tooltip.grouped = false;
 	        }
@@ -38936,7 +40340,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 141 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -38947,8 +40351,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var ChartBase = __webpack_require__(41);
-	var rawDataHandler = __webpack_require__(30);
+	var ChartBase = __webpack_require__(42);
+	var rawDataHandler = __webpack_require__(31);
 	var snippet = __webpack_require__(6);
 
 	var BoxplotChart = snippet.defineClass(ChartBase, /** @lends BoxplotChart.prototype */ {
@@ -39042,20 +40446,117 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 142 */
+/* 145 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Bullet chart.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var ChartBase = __webpack_require__(42);
+	var rawDataHandler = __webpack_require__(31);
+	var snippet = __webpack_require__(6);
+
+	var BulletChart = snippet.defineClass(ChartBase, /** @lends BulletChart.prototype */ {
+	    /**
+	     * className
+	     * @type {string}
+	     */
+	    className: 'tui-bullet-chart',
+
+	    /**
+	     * Bullet chart.
+	     * @constructs BulletChart
+	     * @extends ChartBase
+	     * @mixes axisTypeMixer
+	     * @param {Array.<Array>} rawData raw data
+	     * @param {object} theme chart theme
+	     * @param {object} options chart options
+	     */
+	    init: function(rawData, theme, options) {
+	        var isVertical = !!options.series.vertical;
+
+	        rawDataHandler._makeRawSeriesDataForBulletChart(rawData);
+
+	        ChartBase.call(this, {
+	            rawData: rawData,
+	            theme: theme,
+	            options: options,
+	            hasAxes: true,
+	            isVertical: isVertical
+	        });
+	    },
+
+	    /**
+	     * Add components
+	     * @override
+	     */
+	    addComponents: function() {
+	        this.componentManager.register('title', 'title');
+	        this.componentManager.register('plot', 'plot');
+	        this.componentManager.register('legend', 'legend');
+
+	        this.componentManager.register('bulletSeries', 'bulletSeries');
+
+	        this.componentManager.register('yAxis', 'axis');
+	        this.componentManager.register('xAxis', 'axis');
+
+	        this.componentManager.register('chartExportMenu', 'chartExportMenu', {chartType: 'bullet'});
+	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+	    },
+
+	    /**
+	     * Get scale option.
+	     * @returns {{xAxis: boolean}}
+	     * @override
+	     */
+	    getScaleOption: function() {
+	        if (this.isVertical) {
+	            return {
+	                yAxis: true
+	            };
+	        }
+
+	        return {
+	            xAxis: true
+	        };
+	    },
+
+	    /**
+	     * Add data ratios.
+	     * @override
+	     * modified from axisTypeMixer
+	     */
+	    addDataRatios: function(limitMap) {
+	        var chartType = this.chartType;
+
+	        this.dataProcessor.addDataRatios(limitMap[chartType], null, chartType);
+	    }
+	});
+
+	module.exports = BulletChart;
+
+
+/***/ }),
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var themeManager = __webpack_require__(32);
-	var defaultTheme = __webpack_require__(33);
+	var themeManager = __webpack_require__(33);
+	var defaultTheme = __webpack_require__(34);
 
 	themeManager.register(chartConst.DEFAULT_THEME_NAME, defaultTheme);
 
 
 /***/ }),
-/* 143 */
+/* 147 */
 /***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

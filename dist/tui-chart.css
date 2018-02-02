@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.14.2
+ * @version 2.15.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Thu Jan 25 2018 21:47:01 GMT+0900 (KST)"
+ * bundle created at "Fri Feb 02 2018 11:24:48 GMT+0900 (KST)"
  */
 .tui-chart {
   position: relative;
@@ -650,6 +650,9 @@
   padding-top: 6px;
   padding-bottom: 6px;
   text-align: center;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > .tui-chart-tooltip-type {
+  padding-left: 7px;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip .hide {
   display: none;
