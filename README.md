@@ -1,14 +1,14 @@
 ## ![Toast UI Chart](https://cloud.githubusercontent.com/assets/7088720/21300155/e52f31ae-c5e4-11e6-8d6a-d660a48d0d50.png)
 
-> 🍞🤹‍ Interactive Chart Library for JavaScript
+> 🍞🍯 Spread your data on TOAST UI Chart. TOAST UI Chart is Statistical Data Visualization library for javascript
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
-![스크린샷 2018-01-22 오전 9.43.54.png](/files/2133037361858297252)
 
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
-* [Features & Examples](#-features)
+* [Features](#-features)
+* [Examples](#-examples)
 * [Install](#-install)
   * [Package Installs](#package-installs)
   * [Installing from source](#installing-from-source)
@@ -25,12 +25,43 @@
 * [License](#-license)
 
 ## 🌏 Browser Support
-|<img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE / Edge" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="IE / Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari |
+|<img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari |
 | --- | --- | --- | ---- | --- |
 | 8+ | Yes | Yes | Yes | Yes |
 
 
-## 🎨 Features & Examples
+## 🎨 Features
+
+TOAST UI Chart is a Charting library written for plain JavaScript.
+
+### Great design, but also Customizable
+
+It's Clear design helps your data to be clarified, easy to understand.  
+You don't need to think of design. A pretty chart is drawn as soon as you put the data.  
+
+Of course, you can customize design easily.  
+Using options and themes, you can customize title, legend, axes, series, tooltips, and plots.  
+For more information about customizing see this.  
+
+### VanilaJS, SVG, IE8+
+
+It is a pure VinilaJS library. No dependencies on any frontend frameworks.  
+Dissappoint it? Contribute for framework wrappers! PR is always welcomed.  
+
+As it is SVG based chart, independent for resolution. Always clean vector graphic.  
+
+Supports all your possible customers, using IE8+, and latest modern browsers.
+
+### Maintained Actively, fast feedback!
+
+Did not find any features what you want? Asking us! We will make it.  
+It is being maintained actively for three years and so forth.  
+
+### Under MIT License. Free for commercial use
+
+Yes, It's free. :)
+
+## Examples
 
 * [Bar Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)
 * [Column Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html)
@@ -41,18 +72,22 @@
 * [Pie Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)
 * [Radial Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)
 * [Boxplot Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html)
-
+* [Bullet Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html)
 
 ## 💾 Install
 
 ### Dependencies
 
-TOAST UI Chart have `external` dependencies on these libraries. These means before loading TOAST UI Chart, you need to download these and load it.
-
 * [raphael](https://github.com/nhnent/raphael)
 * [tui.code-snippet](https://github.com/nhnent/tui.code-snippet)
 
+### Map Data Attribution
+* https://www.amcharts.com/svg-maps/
+
 ### Package Installs
+
+TOAST UI Chart is published on package mangers npm(and also bower).
+Your evironment supports 
 
 #### npm
 ``` sh
@@ -146,8 +181,8 @@ $ npm run deploy
 ```
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/tui.chart/wiki/Getting-Started)
-* [Tutorials](https://github.com/nhnent/tui.chart/wiki)
+* [Getting Started](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/getting-started.md)
+* [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/README.md)
 * [APIs](https://nhnent.github.io/tui.chart/api)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
