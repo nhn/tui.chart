@@ -130,8 +130,8 @@ When loading sources using `<script>` tag. Take care of dependency libraries. De
 
 However, at the module system, you don't need to think of dependencies. It will download dependencies when you install TOAST UI Chart.
 
-Below is the sample for referencing chart library.
-Notes, all charts are made by factory pattern.
+Below is the sample for how to references TOAST UI Chart.
+In this sample, we are using bar chart factory function.
 
 
 ### script
@@ -186,7 +186,7 @@ Factory function needs three paramters: container, data, options
 
 * Container: Wrapper HTMLElements that will contain charts as a child
 * data: numeric data need to make charts
-* options: parameter to provide needed options
+* options: functional options like legend aligment or tooltip visiblities
 
 ``` javascript
 var container = document.getElementById('chart-area');
