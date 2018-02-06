@@ -9,7 +9,7 @@
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
 * [Features](#-features)
-* [Demos & Examples](#-examples)
+* [Demos & Examples](#-demos-examples)
 * [Install](#-install)
   * [Package Installs](#package-installs)
   * [Installing from source](#installing-from-source)
@@ -37,16 +37,18 @@ TOAST UI Chart is a Charting library written for plain JavaScript.
 
 ### Great design, but also Customizable
 
-It's Clear design helps your data to be clarified, easy to understand.  
-You don't need to think of design. A pretty chart is drawn as soon as you put the data.  
+![all](https://user-images.githubusercontent.com/13758710/35847300-6139bcec-0b5d-11e8-861f-57d8a0b1c810.png)
+
+Clear design helps your data to be clarified, easy to understand.  
+With TOAST UI Chart, you don't need to think of design. A pretty chart is drawn as soon as you put the data.  
 
 Of course, you can customize design easily.  
 Using options and themes, you can customize title, legend, axes, series, tooltips, and plots.  
-For more information about customizing see this.  
+[Here](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md) is some some guides about customizing styles.
 
 ### VanilaJS, SVG, IE8+
 
-It is a pure VinilaJS library. No dependencies on any frontend frameworks.  
+It is a pure VanilaJS library. No dependencies on any frontend frameworks.  
 Dissappoint it? Contribute for framework wrappers! PR is always welcomed.  
 
 As it is SVG based chart, independent for resolution. Always clean vector graphic.  
@@ -62,36 +64,40 @@ It is being maintained actively for three years and so forth.
 
 Yes, It's free. :)
 
-## Demos & Examples
+## Demos
 
-* [Bar Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)
-* [Column Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html)
-* [Line Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)
-* [Area Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)
-* [Bubble Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)
-* [Scatter Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html)
-* [Pie Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)
-* [Radial Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)
-* [Boxplot Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html)
-* [Bullet Chart](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html)
+* Single Charts
+
+  | [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)(Donut) | [Map](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map.html)<br>[Heatmap](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)<br>[Treemap](https://nhnent.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic.html) | [Boxplot](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html) |
+  | --- | --- | --- | --- | --- | --- |
+
+* Combo Charts
+
+  | [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html) |
+  | --- | --- | --- | --- |
+
+## Examples
+
+
+## Dependencies
+
+* [raphael](https://github.com/nhnent/raphael)
+* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet)
 
 ## Map Data Attribution
 * [https://www.amcharts.com/svg-maps/](https://www.amcharts.com/svg-maps/)
 
 ## 💾 Install
 
-### Dependencies
+TOAST UI products provides 4 install(or loading) options: bower, npm, CDN, and manual download.
 
-* [raphael](https://github.com/nhnent/raphael)
-* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet)
+### via Package Manager
 
-### Map Data Attribution
-* https://www.amcharts.com/svg-maps/
+Package manager is a remote package storages. With a few commands, you can download any version at anywhere. Also, dependent packages are downloaded togather. You don't need to download these packages at each.
 
-### Package Installs
-
-TOAST UI Chart is published on package mangers npm(and also bower).
-Your evironment supports 
+TOAST UI Chart is published on two package managers: bower and npm.
+Node enviromnent and using module pattern, `npm` is recommended.
+Bower also supported. As it will be deprecated, you will changed to `npm` in the future.
 
 #### npm
 ``` sh
@@ -100,42 +106,67 @@ $ npm install --save tui-chart@<version> # specific version
 ```
 
 #### bower
-
 ``` sh
-$ bower install tui-chart # latest version
-$ bower install tui-chart#<tag> # specific version
+$ bower install --save tui-chart # latest version
+$ bower install --save tui-chart#<version> # specific version
 ```
 
 ### Installing from Source
+
 
 #### CDN
 
 * [chart.js](https://rawgit.com/nhnent/tui.chart/v2.14.0/dist/tui-chart.js)
 * [chart.css](https://rawgit.com/nhnent/tui.chart/v2.14.0/dist/tui.chart.css)
 
-#### Download Manually
+#### Manual Download
 
 * [Download bundle files](https://github.com/nhnent/tui.chart/tree/production/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.chart/releases)
 
 ## Load
 
-### namespace
+When loading sources using `<script>` tag. Take care of dependency libraries. Dependencies should be on before TOAST UI Chart bundle file. Script tag bring sources into global environment. `tui.chart` is namespace of TOAST UI Chart to prevent namespace pollution.
+
+However, at the module system, you don't need to think of dependencies. It will download dependencies when you install TOAST UI Chart.
+
+Below is the sample for referencing chart library.
+Notes, all charts are made by factory pattern.
+
+
+### script
 
 ```html
+/* scripts loading */
 <script src="./path/to/raphael.js"></script>
 <script src="./path/to/tui-code-snippet.js"></script>
 <script src="./path/to/tui-chart.js"></script>
-<script>
-    tui.chart.barChart(...);
+/* development using TOAST UI Chart */
+<script> 
+    /* namespace: tui.chart */
+    tui.chart.barChart(...); 
 </script>
 ```
 
 ### module
 
+#### ES6
+
 ```javascript
+/* no concern on dependencies */
 import {chart} from 'tui-chart';
 
+/* use it */
+chart.barChart(...);
+```
+
+#### CommonJS
+
+```javascript
+/* no concern on dependencies */
+var chart = require('tui-chart');
+
+/* use it */
 chart.barChart(...);
 ```
 
@@ -151,6 +182,12 @@ Add the container element where TOAST UI Chart will be created.
 
 ### JavaScript
 
+Factory function needs three paramters: container, data, options
+
+* Container: Wrapper HTMLElements that will contain charts as a child
+* data: numeric data need to make charts
+* options: parameter to provide needed options
+
 ``` javascript
 var container = document.getElementById('chart-area');
 var data = {
@@ -165,23 +202,39 @@ chart.barChart(container, data, options);
 
 See [details](https://nhnent.github.io/nhnent/tui.chart/latest) for additional informations.
 
-## 🔧 Development
+## 🔧 Pull Request Steps
+
+### Setup
+Fork `develop` branch into your personal repository.
+Clone it to local computer. Install node modules. Build TOAST UI Chart then check if it has no errors before starts development.
 
 ``` sh
-# Setup
-$ git clone https://github.com/nhnent/tui.chart.git
+$ git clone https://github.com/{your-personal-repo}/tui.chart.git
 $ cd tui.chart
 $ npm install
-
-# test
+$ npm run deploy
 $ npm run test
+```
 
+### Develop
+Let's start development!
+You can see your code is reflected as soon as you saving the codes by running a server.
+Don't miss adding test cases and then make green rights.
+```sh
 # local server
 $ npm run serve
 $ npm run serve:ie8 # Run on Internet Explorer 8
 
-# bundle
+# test
+$ npm run test
+```
+
+### Pull requests
+Before PR, check build lastly and then check any errors.
+If it has no error, commit and then push it!
+```sh
 $ npm run deploy
+$ npm run test
 ```
 
 ## 📙 Documents
