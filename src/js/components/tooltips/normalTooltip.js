@@ -55,15 +55,21 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         var template = tooltipTemplate.tplDefault;
 
         if (predicate.isBoxplotChart(this.chartType)) {
+            console.log('a');
             template = this._getBoxplotTooltipTemplate(item);
         } else if (predicate.isPieChart(this.chartType) ||
             predicate.isPieDonutComboChart(this.chartType, this.chartTypes)) {
+
+            console.log('b');
             template = tooltipTemplate.tplPieChart;
         } else if (this.dataProcessor.coordinateType) {
+            console.log('c');
             template = tooltipTemplate.tplCoordinatetypeChart;
         } else if (predicate.isBulletChart(this.chartType)) {
+            console.log('d');
             template = tooltipTemplate.tplBulletChartDefault;
         }
+        console.log('j');
 
         return template;
     },

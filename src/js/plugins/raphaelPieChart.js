@@ -141,8 +141,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         var path = ['M', cx, cy,
             'L', x1, y1,
             'A', r, r, 0, largeArcFlag, 1, x2, y2,
-            'Z'
-        ];
+            'Z'];
 
         // see details about path
         // http://www.w3schools.com/svg/svg_path.asp
