@@ -374,7 +374,6 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {{silent: {boolean}}} [options] - hide tooltip options
      */
     onHideTooltip: function(prevFound, options) {
-        return;
         var tooltipElement = this._getTooltipElement();
 
         this._hideTooltip(tooltipElement, prevFound, options);
