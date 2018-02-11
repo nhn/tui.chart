@@ -191,8 +191,6 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
             category: category || ''
         };
 
-        console.log(seriesItem);
-
         if (labelFormatter) {
             tooltipDatum = labelFormatter(seriesItem, tooltipDatum, '');
         }
