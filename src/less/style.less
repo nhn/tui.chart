@@ -19,6 +19,14 @@
     .border-box();
     line-height: 1;
   }
+  svg {
+      line, path, rect {
+          shape-rendering: crispEdges;
+      }
+      .auto-shape-rendering {
+          shape-rendering: auto;
+      }
+  }
   .tui-chart-title {
     position: absolute;
     top: 0;

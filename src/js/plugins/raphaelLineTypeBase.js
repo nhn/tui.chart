@@ -256,7 +256,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var dot, dotStyle, raphaelDot;
 
         if (position) {
-            dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
+            dot = paper.circle(
+                position.left,
+                position.top,
+                (!snippet.isUndefined(dotTheme.radius)) ? dotTheme.radius : DEFAULT_DOT_RADIUS
+            );
             dotStyle = {
                 fill: dotTheme.fillColor || color,
                 'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
@@ -370,6 +374,9 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         dotInformation.dot.attr(attributes);
+        if (dotInformation.dot.node) {
+            dotInformation.dot.node.setAttribute('filter', 'url(#shadow)');
+        }
     },
 
     /**
@@ -383,6 +390,28 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             this._prevDotAttributes = {};
         }
         this._prevDotAttributes[groupIndex] = dot.attr();
+    },
+
+    /**
+     * Update line stroke width.
+     * @param {string} changeType over or out
+     * @param {object} line raphael object
+     * @private
+     */
+    _updateLineStrokeOpacity: function(changeType, line) {
+        if (this.groupLines) {
+            snippet.forEachArray(this.groupLines, function(otherLine) {
+                otherLine.attr({
+                    'stroke-opacity': (changeType === 'over') ? 0.3 : 1
+                });
+            });
+
+            if (changeType === 'over') {
+                line.attr({
+                    'stroke-opacity': 1
+                });
+            }
+        }
     },
 
     /**
@@ -417,14 +446,16 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             startLine = line.startLine;
             line = line.line;
         } else {
-            strokeWidth = this.lineWidth * 2;
+            strokeWidth = this.lineWidth;
         }
 
-        this._updateLineStrokeWidth(line, strokeWidth);
+        this._updateLineStrokeOpacity('over', line);
 
+        this._updateLineStrokeWidth(line, strokeWidth);
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
         }
+
         this._showDot(item.endDot, groupIndex);
 
         if (item.startDot) {
@@ -530,6 +561,9 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         dot.attr(outDotStyle);
+        if (dot.node) {
+            dot.node.setAttribute('filter', '');
+        }
     },
 
     /**
@@ -562,8 +596,12 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             opacity = DE_EMPHASIS_OPACITY;
         }
 
+        this._updateLineStrokeOpacity('out', line);
+
         if (line) {
-            this._updateLineStrokeWidth(line, strokeWidth);
+            line.attr({
+                'stroke-opacity': 1
+            });
         }
 
         if (startLine) {

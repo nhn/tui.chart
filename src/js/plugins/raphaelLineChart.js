@@ -38,7 +38,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
          * Line width
          * @type {number}
          */
-        this.lineWidth = 2;
+        this.lineWidth = 6;
     },
 
     /**
@@ -90,7 +90,36 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 
+        this.appendShadowFilterToDefs();
+
         return paper.setFinish();
+    },
+
+    appendShadowFilterToDefs: function() {
+        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+        filter.setAttributeNS(null, 'id', 'shadow');
+        filter.setAttributeNS(null, 'x', '-50%');
+        filter.setAttributeNS(null, 'y', '-50%');
+        filter.setAttributeNS(null, 'width', '180%');
+        filter.setAttributeNS(null, 'height', '180%');
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+        feOffset.setAttributeNS(null, 'dx', '0');
+        feOffset.setAttributeNS(null, 'dy', '0');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feOffset);
+        filter.appendChild(feGaussianBlur);
+        filter.appendChild(feBlend);
+        this.paper.defs.appendChild(filter);
     },
 
     /**
