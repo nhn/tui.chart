@@ -174,7 +174,6 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         if (this.originalLegendData.length) {
             this._showCheckbox = snippet.isExisty(data.legendData[0].checkbox);
             this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
-            data.dimension.width = this._calculateLegendWidth(data.legendData[0].labelHeight);
 
             legendData = this._getLegendData(data.legendData, this._currentPageCount);
 
@@ -229,8 +228,8 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      */
     _renderPaginationArea: function(position, dimension) {
         var self = this;
-        var BUTTON_WIDTH = 10;
-        var BUTTON_PADDING_LEFT = 5;
+        var BUTTON_WIDTH = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
+        var BUTTON_PADDING_LEFT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_LEFT;
         var controllerPositionTop = position.top + dimension.height - chartConst.CHART_PADDING;
         var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
         var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
@@ -276,7 +275,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
                 labelWidth = maxWidth;
             }
 
-            return labelWidth + chartConst.LEGEND_AREA_PADDING;
+            return labelWidth + chartConst.LEGEND_LABEL_LEFT_PADDING;
         });
     },
 
@@ -448,7 +447,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
             labelWidth = arrayUtil.max(this.labelWidths);
         }
 
-        return labelWidth + chartConst.LEGEND_LABEL_LEFT_PADDING;
+        return labelWidth;
     },
 
     /**
