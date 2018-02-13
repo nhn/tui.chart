@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>12.1 [Dynamic chart] append and shift data dynamically</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'></textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script class='code-js' id='code-js'>
+function getRandom(start, end) {
+    return start + (Math.floor(Math.random() * (end - start + 1)));
+}
+
+function zeroFill(number) {
+    var filledNumber;
+
+    if (number < 10) {
+        filledNumber = '0' + number;
+    } else {
+        filledNumber = number;
+    }
+
+    return filledNumber;
+}
+
+function adjustTime(time, addTime) {
+    addTime = addTime || 60;
+    if (time < 0) {
+        time += addTime;
+    }
+    return time;
+}
+
+function makeDate(hour, minute, second) {
+    return zeroFill(adjustTime(hour, 24)) + ':' + zeroFill(adjustTime(minute)) + ':' + zeroFill(adjustTime(second));
+}
+
+var legends = ['SiteA', 'SiteB'];
+var seriesData = tui.util.map(tui.util.range(2), function (value, index) {
+    var name = legends[index];
+    var data = tui.util.map(tui.util.range(20), function () {
+        return getRandom(150, 200);
+    });
+    return {
+        name: name,
+        data: data
+    };
+});
+var baseNow = new Date();
+var startSecond = baseNow.getSeconds() - seriesData[0].data.length - 1;
+var categories = tui.util.map(seriesData[0].data, function (value, index) {
+    var hour = baseNow.getHours();
+    var minute = baseNow.getMinutes();
+    var second = startSecond + index;
+
+    if (second < 0) {
+        minute -= 1;
+    }
+
+    if (minute < 0) {
+        hour -= 1;
+    }
+    return makeDate(hour, minute, (startSecond + index));
+});
+var container = document.getElementById('chart-area');
+var data = {
+    categories: categories,
+    series: seriesData
+};
+var options = {
+    chart: {
+        width: 700,
+        height: 400,
+        title: 'Concurrent users'
+    },
+    xAxis: {
+        title: 'seconds',
+        labelInterval: 3,
+        tickInterval: 'auto'
+    },
+    yAxis: {
+        title: 'users'
+    },
+    series: {
+        spline: true,
+        showDot: true,
+        shifting: true
+    },
+    tooltip: {
+        grouped: true
+    }
+};
+var chart = tui.chart.lineChart(container, data, options);
+
+chart.on('load', function () {
+    var index = categories.length;
+    setInterval(function () {
+        var now = new Date();
+        var category = makeDate(now.getHours(), now.getMinutes(), now.getSeconds());
+        var values = [getRandom(150, 200), getRandom(150, 200)];
+
+        chart.addData(category, values);
+        index += 1;
+    }, 1000);
+});
+</script>
+
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>

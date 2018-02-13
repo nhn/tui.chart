@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>3.5 [Line Chart] synchronized tooltip</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html', id='code-html'>
+        <div id='chart-area1'></div>
+        <div id='chart-area2'></div>
+        <div id='chart-area3'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'></textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script class='code-js' id='code-js'>
+setChartData(window);
+var options = {
+    chart: {
+        width: 900,
+        height: 400
+    },
+    yAxis: {},
+    xAxis: {
+        title: 'Month',
+        type: 'datetime',
+        dateFormat: 'YYYY-MM-DD',
+        tickInterval: 'auto'
+    },
+    series: {
+        showDot: true,
+        zoomable: true
+    },
+    tooltip: {
+        grouped: true
+    },
+    legend: {
+        showCheckbox: true,
+        visible: true
+    }
+};
+
+var container1 = document.getElementById('chart-area1');
+var data1 = {
+    "categories": categories,
+    "series": series1
+};
+var chart1 = tui.chart.lineChart(container1, data1, options);
+
+var container2 = document.getElementById('chart-area2');
+var data2 = {
+    "categories": categories,
+    "series": series2
+};
+var chart2 = tui.chart.lineChart(container2, data2, options);
+
+var container3 = document.getElementById('chart-area3');
+var data3 = {
+    "categories": categories,
+    "series": series3
+};
+var chart3 = tui.chart.lineChart(container3, data3, options);
+
+chart1.on('afterShowTooltip', function (params) {
+    chart2.showTooltip(params);
+    chart3.showTooltip(params);
+});
+chart2.on('afterShowTooltip', function (params) {
+    chart1.showTooltip(params);
+    chart3.showTooltip(params);
+});
+chart3.on('afterShowTooltip', function (params) {
+    chart1.showTooltip(params);
+    chart2.showTooltip(params);
+});
+
+chart1.on('beforeHideTooltip', function (params) {
+    chart2.hideTooltip();
+    chart3.hideTooltip();
+});
+chart2.on('beforeHideTooltip', function (params) {
+    chart1.hideTooltip();
+    chart3.hideTooltip();
+});
+chart3.on('beforeHideTooltip', function (params) {
+    chart1.hideTooltip();
+    chart2.hideTooltip();
+});
+
+function setChartData(obj) {
+    obj.categories = [1488294000000, 1488294000000, 1488294000000, 1488294000000, 1488380400000, 1488466800000, 1488553200000, 1488639600000, 1488726000000, 1488812400000, 1488898800000,
+        1488985200000, 1489071600000, 1489158000000, 1489244400000, 1489330800000, 1489417200000, 1489503600000, 1489590000000, 1489676400000, 1489762800000, 1489849200000,
+        1489935600000, 1490022000000, 1490108400000, 1490194800000, 1490281200000, 1490367600000, 1490454000000, 1490540400000
+    ];
+    obj.series1 = [
+        {
+            name: 'Region1',
+            data: [
+                1694, 1778, 1610, 1521, 1722, null, 1660, 1695, 1676, 1732, 1811,
+                1667, 1667, 1720, null, null, null, 1643, 1688, 1700, 1739, 1719,
+                1680, 1900, 1667, 1674, 1665, 1714, 1400, 1682
+            ]
+        },
+        {
+            name: 'Region2',
+            data: [926, 787, 666, 777, 1078, 1091, 1129, 1190, 1062, 1114, 1040,
+                2034, 899, 916, 942, 988, 1096, 1173, 1185, 1099, 2176, 1134,
+                1172, 1391, 1100, 1246, 1258, 1158, 1204, 1186
+            ]
+        },
+        {
+            name: 'Region3',
+            data: [650, 510, 580, 500, 655, 610, 547, 721, 756, 652, 780,
+                756, 635, 653, 851, 798, 791, 817, 814, 725, 991, 837,
+                844, 986, 906, 950, 1096, 1193, 991, 1013
+            ]
+        },
+        {
+            name: 'Region4',
+            data: [
+                183, 183, 183, 173, 167, 176, 159, 162, 149, 191, 189,
+                184, 284, 485, 593, 655, 705, 171, 172, 162, 196, 165,
+                181, 196, 172, 164, 175, 172, 183, 183
+            ]
+        }
+    ];
+    obj.series2 = [
+        {
+            name: 'Region1',
+            data: [
+                535, 523, 592, 502, 935, 923, 835, 783, 732, 735, 888,
+                857, 764, 747, 763, 625, 456, 256, 246, 424, 388, 462,
+                568, 668, 467, 568, 464, 356, 367, 246
+            ]
+        },
+        {
+            name: 'Region2',
+            data: [0, 0, 0, 0, 0, 423, 144, 0, 0, 0, 0,
+                453, 0, 0, 0, 0, 762, 0, 0, 0, 0, 0,
+                425, 0, 0, 0, 0, 162, 0, 0
+            ]
+        },
+        {
+            name: 'Region3',
+            data: [1674, 1503, 1532, 1443, 1445, 1564, 1553, 1556, 1658, 1573, 1357,
+                1535, 1462, 1564, 1646, 1546, 1674, 1417, 1564, 1334, 1557, 1535,
+                1567, 1534, 1347, 1546, 1664, 1565, 1552, 1646
+            ]
+        },
+        {
+            name: 'Region4',
+            data: [
+                835, 745, 843, 753, 956, 946, 946, 822, 865, 756, 864,
+                567, 835, 656, 753, 846, 785, 885, 768, 814, 975, 645,
+                1081, 856, 432, 565, 553, 345, 254, 452
+            ]
+        }
+    ];
+    obj.series3 = [
+        {
+            name: 'Region1',
+            data: [
+                245, 352, 352, 391, 432, 423, 380, 345, 362, 386, 456,
+                null, null, null, 693, 753, 726, 634, 680, 770, 801, 846,
+                880, 820, 840, null, null, 359, 343, null
+            ]
+        },
+        {
+            name: 'Region2',
+            data: [500, 500, 500, 500, 500, 500, 1000, 1000, 1000, 1000, 1000,
+                1000, 500, 500, 500, 500, 500, 500, 1000, 1000, 1000, 1000,
+                1000, 1000, 500, 500, 500, 500, 500, 500
+            ]
+        },
+        {
+            name: 'Region3',
+            data: [800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,
+                800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800,
+                800, 800, 800, 800, 800, 800, 800, 800
+            ]
+        },
+        {
+            name: 'Region4',
+            data: [
+                200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
+                200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
+                200, 200, 200, 200, 200, 200, 200, 200
+            ]
+        }
+    ];
+}
+
+</script>
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+
+</body>
+</html>

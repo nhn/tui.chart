@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>9.7 [Map chart] thailand map</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'></textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script src='../dist/maps/thailand.js'></script>
+<script class='code-js' id='code-js'>
+var container = document.getElementById('chart-area');
+var data = {
+    series: [
+        {
+            code: 'TH-KM',
+            data: 1498
+        },
+        {
+            code: 'TH-CB',
+            data: 1133.8
+        },
+        {
+            code: 'TH-NR',
+            data: 1028.1
+        },
+        {
+            code: 'TH-UR',
+            data: 1593.2
+        },
+        {
+            code: 'TH-KK',
+            data: 1214.4
+        },
+        {
+            code: 'TH-CM',
+            data: 1126.2
+        },
+        {
+            code: 'TH-CR',
+            data: 1704.8
+        },
+        {
+            code: 'TH-MH',
+            data: 1279.5
+        },
+        {
+            code: 'TH-TK',
+            data: 1057.1
+        },
+        {
+            code: 'TH-ST',
+            data: 1561.6
+        },
+        {
+            code: 'TH-PN',
+            data: 1081.2
+        },
+        {
+            code: 'TH-KC',
+            data: 1049.6
+        },
+        {
+            code: 'TH-PK',
+            data: 988.9
+        },
+        {
+            code: 'TH-PU',
+            data: 2237.5
+        },
+        {
+            code: 'TH-SU',
+            data: 1956.4
+        },
+        {
+            code: 'TH-SL',
+            data: 1985.1
+        }
+    ]
+};
+var options = {
+    chart: {
+        width: 400,
+        height: 600,
+        title: 'Average annual precipitation\nof Thailand (mm)',
+        format: '1,000'
+    },
+    map: 'thailand',
+    legend: {
+        align: 'right'
+    }
+};
+var theme = {
+    series: {
+        startColor: '#ffefef',
+        endColor: '#ac4142',
+        overColor: '#75b5aa'
+    }
+};
+
+// For apply theme
+
+// tui.chart.registerTheme('myTheme', theme);
+// options.theme = 'myTheme';
+
+tui.chart.mapChart(container, data, options);
+</script>
+
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>
