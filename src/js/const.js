@@ -160,6 +160,10 @@ var chartConst = {
     LEGEND_ALIGN_BOTTOM: 'bottom',
     /** @type {string} */
     LEGEND_ALIGN_LEFT: 'left',
+    /** @type {number} */
+    LEGEND_PAGINATION_BUTTON_WIDTH: 10,
+    /** @type {number} */
+    LEGEND_PAGINATION_BUTTON_PADDING_LEFT: 5,
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default ratio for pie graph */

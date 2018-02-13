@@ -209,18 +209,23 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
         var labelCount = labelWidths.length;
         var legendItemHeight = Math.max(ICON_HEIGHT, labelHeight);
         var dimensionHeight = (chartConst.LINE_MARGIN_TOP + legendItemHeight) * (isHorizontal ? 1 : labelCount);
+        var left = basePosition.left;
+
+        if (!predicate.isLegendAlignLeft) {
+            left += chartConst.LEGEND_AREA_PADDING;
+        }
 
         return graphRenderer.render({
             paper: paper,
             legendData: this._getLegendRenderingData(legendData, labelHeight, labelWidths),
             isHorizontal: isHorizontal,
             position: {
-                left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
+                left: left,
                 top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
             },
             dimension: {
                 height: dimensionHeight,
-                width: 0
+                width: this.layout.dimension.width
             },
             labelTheme: this.theme.label,
             labelWidths: labelWidths,

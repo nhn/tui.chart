@@ -64,15 +64,32 @@ describe('Test for Legend', function() {
             legend.render({
                 paper: raphael(document.createElement('DIV'), 100, 100),
                 layout: {
-                    position: {
-                        top: 0,
-                        left: 0
-                    }
+                    position: {top: 0, left: 0}
                 }
             });
 
             expect(legend._renderLegendArea).toHaveBeenCalled();
-            expect(legend._renderLegendArea).toHaveBeenCalled();
+        });
+    });
+
+    describe('_renderLegendArea()', function() {
+        it('already calculated dimension width should be reflected.', function() {
+            var paper = raphael(document.createElement('DIV'), 100, 100);
+            legend.dataProcessor.options = {series: {}};
+            legend.layout = {
+                position: {
+                    top: 20,
+                    right: 10
+                },
+                dimension: {
+                    width: 100, height: 100
+                }
+            };
+            spyOn(legend.graphRenderer, 'render');
+
+            legend._renderLegendArea(paper);
+
+            expect(legend.graphRenderer.render.calls.argsFor(0)[0].dimension.width).toBe(100);
         });
     });
 

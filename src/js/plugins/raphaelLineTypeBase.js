@@ -847,7 +847,22 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         return this.clipRectId;
-    }
+    },
+
+    /**
+     * Reset series order after selected to be same to when it is first rendered
+     * @param {number} legendIndex - legend index to reset series order
+     * @ignore
+     * @abstract
+     */
+    resetSeriesOrder: function() {},
+
+    /**
+     * @param {SVGElement | {area: {SVGElement}, line: {SVGElement}, startLine: {SVGElement}}} lineType - line or area graph
+     * @param {Array.<SVGElement>} dots - dot type element
+     * @abstract
+     */
+    moveSeriesToFront: function() {}
 });
 
 /**
