@@ -341,13 +341,18 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var self = this,
-            noneSelected = snippet.isNull(legendIndex);
+        var noneSelected = snippet.isNull(legendIndex);
+
+        if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
+            this.resetSeriesOrder(this.selectedLegendIndex);
+        }
 
         this.selectedLegendIndex = legendIndex;
 
         snippet.forEachArray(this.groupAreas, function(area, groupIndex) {
-            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            var isSelectedLegend = legendIndex === groupIndex;
+            var opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            var groupDots = this.groupDots[groupIndex];
 
             area.area.attr({'fill-opacity': opacity});
             area.line.attr({'stroke-opacity': opacity});
@@ -356,14 +361,55 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 area.startLine.attr({'stroke-opacity': opacity});
             }
 
-            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
-                if (self.dotOpacity) {
+            snippet.forEachArray(groupDots, function(item) {
+                if (this.dotOpacity) {
                     item.endDot.dot.attr({'fill-opacity': opacity});
                     if (item.startDot) {
                         item.startDot.dot.attr({'fill-opacity': opacity});
                     }
                 }
+            }, this);
+
+            if (isSelectedLegend) {
+                this.moveSeriesToFront(area, groupDots);
+            }
+        }, this);
+    },
+
+    /**
+     * Reset series order after selected to be same to when it is first rendered
+     * @param {number} legendIndex - legend index to reset series order
+     * @ignore
+     */
+    resetSeriesOrder: function(legendIndex) {
+        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+
+        if (frontLine) {
+            this.groupLines[legendIndex].insertBefore(frontLine);
+            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
+                item.endDot.dot.insertBefore(frontLine);
             });
+        }
+    },
+
+    /**
+     * @param {{area: {SVGElement}, line: {SVGElement}, startLine: {SVGElement}}} areaSurface - line or plane to represent area chart
+     * @param {Array.<SVGElement>} dots - dot type element
+     * @ignore
+     * @override
+     */
+    moveSeriesToFront: function(areaSurface, dots) {
+        areaSurface.line.toFront();
+        areaSurface.area.toFront();
+        if (areaSurface.startLine) {
+            areaSurface.startLine.toFront();
+        }
+
+        snippet.forEachArray(dots, function(item) {
+            item.endDot.dot.toFront();
+            if (item.startDot) {
+                item.startDot.dot.toFront();
+            }
         });
     },
 
