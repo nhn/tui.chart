@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.15.0
+ * @version 2.16.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Feb 02 2018 11:24:48 GMT+0900 (KST)"
+ * bundle created at "Tue Feb 13 2018 10:52:22 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2122,6 +2122,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LEGEND_ALIGN_BOTTOM: 'bottom',
 	    /** @type {string} */
 	    LEGEND_ALIGN_LEFT: 'left',
+	    /** @type {number} */
+	    LEGEND_PAGINATION_BUTTON_WIDTH: 10,
+	    /** @type {number} */
+	    LEGEND_PAGINATION_BUTTON_PADDING_LEFT: 5,
 	    /** series outer label padding */
 	    SERIES_OUTER_LABEL_PADDING: 20,
 	    /** default ratio for pie graph */
@@ -4605,7 +4609,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
 	                if (item.endDot) {
-	                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+	                    self.moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
 	                }
 	            });
 	        });
@@ -4616,23 +4620,68 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {?number} legendIndex legend index
 	     */
 	    selectLegend: function(legendIndex) {
-	        var self = this,
-	            noneSelected = snippet.isNull(legendIndex);
+	        var noneSelected = snippet.isNull(legendIndex);
+
+	        if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
+	            this.resetSeriesOrder(this.selectedLegendIndex);
+	        }
 
 	        this.selectedLegendIndex = legendIndex;
 
 	        snippet.forEachArray(this.groupLines, function(line, groupIndex) {
-	            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+	            var isSelectedLegend = legendIndex === groupIndex;
+	            var opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+	            var groupDots = this.groupDots[groupIndex];
 
 	            line.attr({'stroke-opacity': opacity});
 
-	            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
+	            snippet.forEachArray(groupDots, function(item) {
 	                item.opacity = opacity;
 
-	                if (self.dotOpacity) {
+	                if (this.dotOpacity) {
 	                    item.endDot.dot.attr({'fill-opacity': opacity});
 	                }
+	            }, this);
+
+	            if (isSelectedLegend) {
+	                this.moveSeriesToFront(line, groupDots);
+	            }
+	        }, this);
+
+	        if (noneSelected) {
+	            snippet.forEachArray(this.groupLines, function(line, groupIndex) {
+	                this.moveSeriesToFront(line, this.groupDots[groupIndex]);
+	            }, this);
+	        }
+	    },
+
+	    /**
+	     * Reset series order after selected to be same to when it is first rendered
+	     * @param {number} legendIndex - legend index to reset series order
+	     * @ignore
+	     */
+	    resetSeriesOrder: function(legendIndex) {
+	        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+
+	        if (frontLine) {
+	            this.groupLines[legendIndex].insertBefore(frontLine);
+	            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
+	                item.endDot.dot.insertBefore(frontLine);
 	            });
+	        }
+	    },
+
+	    /**
+	     * @param {SVGElement} lineType - line or area graph
+	     * @param {Array.<SVGElement>} dots - dot type element
+	     * @ignore
+	     * @override
+	     */
+	    moveSeriesToFront: function(lineType, dots) {
+	        lineType.toFront();
+
+	        snippet.forEachArray(dots, function(item) {
+	            item.endDot.dot.toFront();
 	        });
 	    },
 
@@ -5569,7 +5618,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return this.clipRectId;
-	    }
+	    },
+
+	    /**
+	     * Reset series order after selected to be same to when it is first rendered
+	     * @param {number} legendIndex - legend index to reset series order
+	     * @ignore
+	     * @abstract
+	     */
+	    resetSeriesOrder: function() {},
+
+	    /**
+	     * @param {SVGElement | {area: {SVGElement}, line: {SVGElement}, startLine: {SVGElement}}} lineType - line or area graph
+	     * @param {Array.<SVGElement>} dots - dot type element
+	     * @abstract
+	     */
+	    moveSeriesToFront: function() {}
 	});
 
 	/**
@@ -5944,13 +6008,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {?number} legendIndex legend index
 	     */
 	    selectLegend: function(legendIndex) {
-	        var self = this,
-	            noneSelected = snippet.isNull(legendIndex);
+	        var noneSelected = snippet.isNull(legendIndex);
+
+	        if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
+	            this.resetSeriesOrder(this.selectedLegendIndex);
+	        }
 
 	        this.selectedLegendIndex = legendIndex;
 
 	        snippet.forEachArray(this.groupAreas, function(area, groupIndex) {
-	            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+	            var isSelectedLegend = legendIndex === groupIndex;
+	            var opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+	            var groupDots = this.groupDots[groupIndex];
 
 	            area.area.attr({'fill-opacity': opacity});
 	            area.line.attr({'stroke-opacity': opacity});
@@ -5959,14 +6028,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	                area.startLine.attr({'stroke-opacity': opacity});
 	            }
 
-	            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
-	                if (self.dotOpacity) {
+	            snippet.forEachArray(groupDots, function(item) {
+	                if (this.dotOpacity) {
 	                    item.endDot.dot.attr({'fill-opacity': opacity});
 	                    if (item.startDot) {
 	                        item.startDot.dot.attr({'fill-opacity': opacity});
 	                    }
 	                }
+	            }, this);
+
+	            if (isSelectedLegend) {
+	                this.moveSeriesToFront(area, groupDots);
+	            }
+	        }, this);
+	    },
+
+	    /**
+	     * Reset series order after selected to be same to when it is first rendered
+	     * @param {number} legendIndex - legend index to reset series order
+	     * @ignore
+	     */
+	    resetSeriesOrder: function(legendIndex) {
+	        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+
+	        if (frontLine) {
+	            this.groupLines[legendIndex].insertBefore(frontLine);
+	            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
+	                item.endDot.dot.insertBefore(frontLine);
 	            });
+	        }
+	    },
+
+	    /**
+	     * @param {{area: {SVGElement}, line: {SVGElement}, startLine: {SVGElement}}} areaSurface - line or plane to represent area chart
+	     * @param {Array.<SVGElement>} dots - dot type element
+	     * @ignore
+	     * @override
+	     */
+	    moveSeriesToFront: function(areaSurface, dots) {
+	        areaSurface.line.toFront();
+	        areaSurface.area.toFront();
+	        if (areaSurface.startLine) {
+	            areaSurface.startLine.toFront();
+	        }
+
+	        snippet.forEachArray(dots, function(item) {
+	            item.endDot.dot.toFront();
+	            if (item.startDot) {
+	                item.startDot.dot.toFront();
+	            }
 	        });
 	    },
 
@@ -8374,7 +8484,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.originalLegendData.length) {
 	            this._showCheckbox = snippet.isExisty(data.legendData[0].checkbox);
 	            this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
-	            data.dimension.width = this._calculateLegendWidth(data.legendData[0].labelHeight);
 
 	            legendData = this._getLegendData(data.legendData, this._currentPageCount);
 
@@ -8429,8 +8538,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderPaginationArea: function(position, dimension) {
 	        var self = this;
-	        var BUTTON_WIDTH = 10;
-	        var BUTTON_PADDING_LEFT = 5;
+	        var BUTTON_WIDTH = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
+	        var BUTTON_PADDING_LEFT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_LEFT;
 	        var controllerPositionTop = position.top + dimension.height - chartConst.CHART_PADDING;
 	        var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
 	        var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
@@ -8476,7 +8585,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                labelWidth = maxWidth;
 	            }
 
-	            return labelWidth + chartConst.LEGEND_AREA_PADDING;
+	            return labelWidth + chartConst.LEGEND_LABEL_LEFT_PADDING;
 	        });
 	    },
 
@@ -8648,7 +8757,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            labelWidth = arrayUtil.max(this.labelWidths);
 	        }
 
-	        return labelWidth + chartConst.LEGEND_LABEL_LEFT_PADDING;
+	        return labelWidth;
 	    },
 
 	    /**
@@ -16575,7 +16684,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var DATA_URI_HEADERS = {
 	    xls: 'data:application/vnd.ms-excel;base64,',
-	    csv: 'data:text/csv,'
+	    csv: 'data:text/csv;charset=utf-8,%EF%BB%BF' /* BOM for utf-8 */
 	};
 	var DATA_URI_BODY_MAKERS = {
 	    xls: _makeXlsBodyWithRawData,
@@ -17565,18 +17674,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var labelCount = labelWidths.length;
 	        var legendItemHeight = Math.max(ICON_HEIGHT, labelHeight);
 	        var dimensionHeight = (chartConst.LINE_MARGIN_TOP + legendItemHeight) * (isHorizontal ? 1 : labelCount);
+	        var left = basePosition.left;
+
+	        if (!predicate.isLegendAlignLeft) {
+	            left += chartConst.LEGEND_AREA_PADDING;
+	        }
 
 	        return graphRenderer.render({
 	            paper: paper,
 	            legendData: this._getLegendRenderingData(legendData, labelHeight, labelWidths),
 	            isHorizontal: isHorizontal,
 	            position: {
-	                left: basePosition.left + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING,
+	                left: left,
 	                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
 	            },
 	            dimension: {
 	                height: dimensionHeight,
-	                width: 0
+	                width: this.layout.dimension.width
 	            },
 	            labelTheme: this.theme.label,
 	            labelWidths: labelWidths,
