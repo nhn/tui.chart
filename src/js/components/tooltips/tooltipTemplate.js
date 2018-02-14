@@ -12,6 +12,7 @@ var htmls = {
     HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div class="head {{ categoryVisible }}">{{ category }}</div>' +
         '<div class="body">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
             '<span class="title">{{ legend }}</span>' +
             '<span class="value">{{ label }}{{ suffix }}</span>' +
         '</div>' +
@@ -20,6 +21,7 @@ var htmls = {
     HTML_PIE_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div class="head {{ categoryVisible }}">{{ category }}</div>' +
         '<div class="body">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
             '<span class="title">{{ legend }}</span>' +
             '<span class="value">{{ ratioLabel }} ( {{ label }} {{ suffix }})</span>' +
         '</div>' +

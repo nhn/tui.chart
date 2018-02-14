@@ -153,13 +153,15 @@ describe('NormalTooltip', function() {
                 ]]
             };
             tooltip.suffix = 'suffix';
+            tooltip.colors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
             actual = tooltip._makeSingleTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
+
             expected = '<div class="tui-chart-default-tooltip">' +
                 '<div class="head show">Silver</div>' +
-                '<div class="body"><span class="title">Density2</span><span class="value">20suffix</span></div>' +
+                '<div class="body"><span class="tui-chart-legend-rect column" style="background-color: blue"></span><span class="title">Density2</span><span class="value">20suffix</span></div>' +
                 '</div>';
             expect(actual).toBe(expected);
         });
@@ -173,6 +175,7 @@ describe('NormalTooltip', function() {
                 ]]
             };
             tooltip.suffix = 'suffix';
+            tooltip.colors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
             tooltip.templateFunc = function(category, series) {
                 return '<div>' + category + '</div><div>' + series.label + '</div><div>' + series.legend + '</div>';
             };

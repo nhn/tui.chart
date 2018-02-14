@@ -115,6 +115,8 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
             data.outlierIndex = indexes.outlierIndex;
         }
 
+        data.chartType = this.chartType;
+        data.cssText = 'background-color: ' + this.colors[indexes.index];
         data = snippet.extend({
             suffix: this.suffix
         }, data);
