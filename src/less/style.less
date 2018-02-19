@@ -415,7 +415,7 @@
     width: @legend-rect-width;
     height: @legend-rect-width;
     &.line {
-      padding: 3px 0 0 3px;
+        padding: 3px 0;
     }
     &.area, &.bubble {
       .opacity(0.5);
@@ -635,6 +635,9 @@
                     width: 10px;
                     margin-right: 8px;
                     vertical-align: text-top;
+                    &.line {
+                        padding: 0;
+                    }
                 }
             }
             .value {
