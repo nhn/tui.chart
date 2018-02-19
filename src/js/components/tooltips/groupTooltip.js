@@ -424,6 +424,10 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
 
         this._fireBeforeShowTooltipPublicEvent(params.index, params.range, params.silent);
 
+        if (params.range.start === params.range.end) {
+            this.makeLineLegendIcon(elTooltip.getElementsByClassName('tui-chart-legend-rect'));
+        }
+
         dom.addClass(elTooltip, 'show');
 
         this._showTooltipSector(params.size, params.range, params.isVertical, params.index, params.isMoving);

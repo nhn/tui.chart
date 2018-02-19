@@ -210,11 +210,11 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
         };
     },
     makeLineLegendIcon: function(elIcon) {
-        snippet.forEach(elIcon, function(aa) {
-            var strokeColor = aa.style['background-color'];
-            var paper = raphael(aa, 10, 10);
+        snippet.forEach(elIcon, function(icon) {
+            var strokeColor = icon.style['background-color'];
+            var paper = raphael(icon, 10, 10);
             var line = paper.path('M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1');
-            aa.style['background-color'] = '';
+            icon.style['background-color'] = '';
             line.attr({
                 'stroke': strokeColor,
                 'stroke-width': 2,
