@@ -90,7 +90,9 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 
-        this.appendShadowFilterToDefs();
+        if (paper.raphael.svg) {
+            this.appendShadowFilterToDefs();
+        }
 
         return paper.setFinish();
     },
