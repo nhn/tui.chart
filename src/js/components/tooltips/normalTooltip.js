@@ -38,7 +38,6 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      */
     _makeTooltipHtml: function(category, item) {
         var template = this._getTooltipTemplate(item);
-
         return template(snippet.extend({
             categoryVisible: category ? 'show' : 'hide',
             category: category
@@ -96,7 +95,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
         return snippet.map(valueTypes, function(type) {
-            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
+            return (data[type]) ? '<tr><td>' + type + '</td><td class="value">' + data[type] + '</td></tr>' : '';
         }).join('');
     },
 

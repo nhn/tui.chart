@@ -32,7 +32,7 @@ var htmls = {
         '<div class="body">' +
             '<span class="title">{{ legend }}</span>' +
             '<span class="value">{{ label }}</span>' +
-        '</div>{{ valueTypes }}' +
+        '</div><table class="body">{{ valueTypes }}</table>' +
     '</div>',
 
     HTML_GROUP: '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
