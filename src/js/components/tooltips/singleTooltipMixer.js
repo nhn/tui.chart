@@ -407,7 +407,7 @@ var singleTooltipMixer = {
 
         elTooltip.innerHTML = this._makeSingleTooltipHtml(params.seriesType || params.chartType, indexes);
 
-        if (params.chartType === 'line') {
+        if (params.chartType === 'line' && document.getElementsByClassName) {
             this.makeLineLegendIcon(elTooltip.getElementsByClassName('tui-chart-legend-rect'));
         }
 
