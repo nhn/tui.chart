@@ -37,7 +37,7 @@ describe('Test for axisDataMaker', function() {
             expect(actual).toEqual({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4,
-                validTickCount: 0,
+                validTickCount: 4,
                 options: {},
                 isLabelAxis: true,
                 isVertical: false,

@@ -7,13 +7,13 @@ var EMPTY = '';
 var DEFAULT_AXIS = {
     tickColor: DEFAULT_COLOR,
     title: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: EMPTY,
-        color: DEFAULT_COLOR,
+        color: '#bbbbbb',
         fontWeight: DEFAULT_FONTWEIGHT
     },
     label: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: EMPTY,
         color: DEFAULT_COLOR,
         fontWeight: DEFAULT_FONTWEIGHT
@@ -26,18 +26,18 @@ var defaultTheme = {
             color: DEFAULT_BACKGROUND,
             opacity: 1
         },
-        fontFamily: 'Verdana'
+        fontFamily: 'Arial'
     },
     title: {
         fontSize: 18,
-        fontFamily: EMPTY,
+        fontFamily: 'Arial',
         color: DEFAULT_COLOR,
         fontWeight: DEFAULT_FONTWEIGHT
     },
     yAxis: DEFAULT_AXIS,
     xAxis: DEFAULT_AXIS,
     plot: {
-        lineColor: '#dddddd',
+        lineColor: '#f4f4f4',
         background: '#ffffff',
         label: {
             fontSize: 11,
@@ -79,7 +79,7 @@ var defaultTheme = {
     },
     legend: {
         label: {
-            fontSize: 12,
+            fontSize: 11,
             fontFamily: EMPTY,
             color: DEFAULT_COLOR,
             fontWeight: DEFAULT_FONTWEIGHT

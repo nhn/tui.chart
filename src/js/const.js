@@ -299,8 +299,11 @@ var chartConst = {
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
     CIRCLE_LEGEND_PADDING: 10,
     HALF_RATIO: 0.5,
-    /** AXIS LABEL PADDING */
-    AXIS_LABEL_PADDING: 7,
+    /** X-AXIS LABEL PADDING */
+    X_AXIS_LABEL_PADDING: 7,
+    /** Y-AXIS LABEL PADDING */
+    Y_AXIS_LABEL_PADDING: 17,
+    Y_AXIS_TITLE_PADDING: 20,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
     /**

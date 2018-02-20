@@ -215,11 +215,17 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     _registerTitleDimension: function() {
         var chartOptions = this.options.chart || {};
         var hasTitleOption = snippet.isExisty(chartOptions.title);
-        var titleHeight =
-            hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
+        var titleTheme = this.theme.title;
+        var titleHeight = hasTitleOption ?
+            raphaelRenderUtil.getRenderedTextSize(
+                chartOptions.title.text,
+                titleTheme.fontSize,
+                titleTheme.fontFamily
+            ).height : 0;
+        var yAxisTitlePadding = this.options.yAxis.title ? chartConst.Y_AXIS_TITLE_PADDING : 0;
+        var height = titleHeight ? titleHeight + chartConst.TITLE_PADDING + yAxisTitlePadding : 0;
         var dimension = {
-            height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
+            height: height
         };
 
         this._registerDimension('title', dimension);
