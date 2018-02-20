@@ -52,12 +52,11 @@ var raphaelRenderUtil = {
      * @returns {object} raphael line
      */
     renderLine: function(paper, path, color, strokeWidth) {
-        var line = paper.path([path]);
-        var strokeStyle = {
-            stroke: color,
-            'stroke-width': strokeWidth || 2
-        };
-
+        var line = paper.path([path]),
+            strokeStyle = {
+                stroke: color,
+                'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth)
+            };
         if (color === 'transparent') {
             strokeStyle.stroke = '#fff';
             strokeStyle['stroke-opacity'] = 0;

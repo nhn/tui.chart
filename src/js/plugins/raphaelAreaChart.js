@@ -42,7 +42,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
          * Line width
          * @type {number}
          */
-        this.lineWidth = 1;
+        this.lineWidth = 0;
     },
 
     /**
@@ -93,6 +93,10 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         this.dotOpacity = dotOpacity;
 
         this.pivotGroupDots = null;
+
+        if (paper.raphael.svg) {
+            this.appendShadowFilterToDefs();
+        }
 
         return paper.setFinish();
     },
@@ -147,7 +151,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 };
 
             if (path.startLine) {
-                polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), lineColor, 1);
+                polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), lineColor, 0);
             }
 
             return polygons;

@@ -203,6 +203,33 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
     },
 
+    appendShadowFilterToDefs: function() {
+        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+        filter.setAttributeNS(null, 'id', 'shadow');
+        filter.setAttributeNS(null, 'x', '-50%');
+        filter.setAttributeNS(null, 'y', '-50%');
+        filter.setAttributeNS(null, 'width', '180%');
+        filter.setAttributeNS(null, 'height', '180%');
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+        feOffset.setAttributeNS(null, 'dx', '0');
+        feOffset.setAttributeNS(null, 'dy', '0');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feOffset);
+        filter.appendChild(feGaussianBlur);
+        filter.appendChild(feBlend);
+        this.paper.defs.appendChild(filter);
+    },
+
     /**
      * Make border style.
      * @param {string} borderColor border color
@@ -399,18 +426,36 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @private
      */
     _updateLineStrokeOpacity: function(changeType, line) {
-        if (this.groupLines) {
-            snippet.forEachArray(this.groupLines, function(otherLine) {
-                otherLine.attr({
-                    'stroke-opacity': (changeType === 'over') ? 0.3 : 1
-                });
-            });
+        var outLineOpacity = 1;
 
+        if (this.groupLines) {
             if (changeType === 'over') {
                 line.attr({
                     'stroke-opacity': 1
                 });
+                outLineOpacity = 0.3;
             }
+
+            snippet.forEachArray(this.groupLines, function(otherLine) {
+                otherLine.attr({
+                    'stroke-opacity': outLineOpacity
+                });
+            });
+        }
+    },
+
+    /**
+     * Update line stroke width.
+     * @param {string} changeType over or out
+     * @private
+     */
+    _updateAreaOpacity: function(changeType) {
+        if (this.groupAreas) {
+            snippet.forEach(this.groupAreas, function(otherArea) {
+                otherArea.area.attr({
+                    'fill-opacity': (changeType === 'over') ? 0.3 : 1
+                });
+            });
         }
     },
 
@@ -442,15 +487,15 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         if (this.chartType === 'area') {
-            strokeWidth = this.lineWidth * 2;
+            strokeWidth = 5;
             startLine = line.startLine;
+            this._updateAreaOpacity('over');
             line = line.line;
         } else {
             strokeWidth = this.lineWidth;
         }
 
         this._updateLineStrokeOpacity('over', line);
-
         this._updateLineStrokeWidth(line, strokeWidth);
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
@@ -588,6 +633,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             strokeWidth = this.lineWidth;
             startLine = line.startLine;
             line = line.line;
+            this._updateAreaOpacity('out');
         } else {
             strokeWidth = this.lineWidth;
         }
@@ -597,12 +643,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         this._updateLineStrokeOpacity('out', line);
-
-        if (line) {
-            line.attr({
-                'stroke-opacity': 1
-            });
-        }
+        this._updateLineStrokeWidth(line, strokeWidth);
 
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
