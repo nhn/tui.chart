@@ -11,7 +11,7 @@ var snippet = require('tui-code-snippet');
 var raphael = require('raphael');
 
 var ANIMATION_DURATION = 700;
-var CIRCLE_OPACITY = 0.5;
+var CIRCLE_OPACITY = 0.8;
 var STROKE_OPACITY = 1;
 var EMPHASIS_OPACITY = 0.5;
 var DE_EMPHASIS_OPACITY = 0.3;
@@ -306,6 +306,7 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
     showAnimation: function(indexes) {
         var circleInfo = this.groupCircleInfos[indexes.groupIndex][indexes.index];
         var bound = circleInfo.bound;
+        this.circle = circleInfo.circle;
 
         this.overlay.attr({
             fill: circleInfo.color,
@@ -316,9 +317,13 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
             opacity: 1
         });
 
-        if (this.overlay.node) {
-            this.overlay.node.setAttribute('filter', 'url(#shadow)');
-        }
+        this.circle.attr({
+            opacity: 1
+        });
+
+        this.circle.toFront();
+        this.overlay.node.setAttribute('filter', 'url(#shadow)');
+        this.overlay.toFront();
     },
 
     /**
@@ -331,6 +336,10 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
             cy: 0,
             r: 0,
             opacity: 0
+        });
+
+        this.circle.attr({
+            opacity: CIRCLE_OPACITY
         });
     },
 
