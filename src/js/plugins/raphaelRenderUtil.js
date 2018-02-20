@@ -56,6 +56,7 @@ var raphaelRenderUtil = {
             strokeStyle = {
                 stroke: color,
                 'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth)
+                'stroke-linecap': 'round'
             };
         if (color === 'transparent') {
             strokeStyle.stroke = '#fff';

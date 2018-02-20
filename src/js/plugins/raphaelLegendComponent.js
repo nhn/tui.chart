@@ -395,7 +395,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
 
         this.paper.setStart();
 
-        if (data.iconType === 'line' && this.paper.canvas.transform) {
+        if ((data.iconType === 'line' || data.iconType === 'radial') && this.paper.canvas.transform) {
             icon = this.paper.path(chartConst.LEGEND_LINE_ICON_PATH);
 
             icon.attr({

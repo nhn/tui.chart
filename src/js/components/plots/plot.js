@@ -529,7 +529,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
 
             path.attr({
                 stroke: lineColor,
-                'stroke-width': 1
+                'stroke-width': 1,
+                'stroke-opacity': 0.05
             });
 
             self.plotSet.push(path);
@@ -556,7 +557,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
 
             path.attr({
                 stroke: lineColor,
-                'stroke-width': 1
+                'stroke-width': 1,
+                'stroke-opacity': 0.05
             });
 
             self.plotSet.push(path);

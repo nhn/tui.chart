@@ -14,7 +14,7 @@ var arrayUtil = require('../helpers/arrayUtil');
 var browser = snippet.browser;
 var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
-var DEFAULT_DOT_RADIUS = 3;
+var DEFAULT_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
@@ -260,7 +260,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var outDotStyle = {
             'fill-opacity': opacity,
             'stroke-opacity': 0,
-            r: DEFAULT_DOT_RADIUS
+            r: DEFAULT_DOT_RADIUS,
+            filter: 'url(#shadow)'
         };
 
         if (borderStyle) {
@@ -391,7 +392,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             stroke: hoverTheme.strokeColor || dotInformation.color,
             'stroke-opacity': hoverTheme.strokeOpacity,
             'stroke-width': hoverTheme.strokeWidth,
-            r: hoverTheme.radius
+            r: hoverTheme.radius,
+            filter: 'url(#shadow)'
         };
 
         this._setPrevDotAttributes(groupIndex, dotInformation.dot);
@@ -401,9 +403,6 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         dotInformation.dot.attr(attributes);
-        if (dotInformation.dot.node) {
-            dotInformation.dot.node.setAttribute('filter', 'url(#shadow)');
-        }
     },
 
     /**

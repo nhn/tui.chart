@@ -37,7 +37,7 @@ var defaultTheme = {
     yAxis: DEFAULT_AXIS,
     xAxis: DEFAULT_AXIS,
     plot: {
-        lineColor: '#f4f4f4',
+        lineColor: '#000000',
         background: '#ffffff',
         label: {
             fontSize: 11,
