@@ -21,7 +21,7 @@ describe('Test for legendCalculator', function() {
             var actual = legendCalculator._calculateLegendsWidthSum(
                 ['legend1', 'legend2'], {}, chartConst.LEGEND_CHECKBOX_WIDTH
             );
-            var expected = 260;
+            var expected = 220;
 
             expect(actual).toBe(expected);
         });
@@ -61,7 +61,7 @@ describe('Test for legendCalculator', function() {
             );
             var expected = {
                 labels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
-                maxLineWidth: 260 /* max line width */
+                maxLineWidth: 220 /* max line width */
             };
 
             expect(actual).toEqual(expected);
@@ -73,7 +73,7 @@ describe('Test for legendCalculator', function() {
             );
             var expected = {
                 labels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
-                maxLineWidth: 130 /* width of a legend item */
+                maxLineWidth: 110 /* width of a legend item */
             };
 
             expect(actual).toEqual(expected);
@@ -85,7 +85,7 @@ describe('Test for legendCalculator', function() {
             var actual = legendCalculator._calculateHorizontalLegendHeight(
                 [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']]
             );
-            var expected = 70;
+            var expected = 88;
 
             expect(actual).toBe(expected);
         });
@@ -97,7 +97,7 @@ describe('Test for legendCalculator', function() {
                 {}, ['label1', 'label12'], 300, chartConst.LEGEND_CHECKBOX_WIDTH
             );
             var expected = {
-                width: 260,
+                width: 220,
                 height: 40
             };
 
@@ -111,7 +111,7 @@ describe('Test for legendCalculator', function() {
 
             actual = legendCalculator._makeVerticalDimension(
                 {}, ['label1', 'label12'], chartConst.LEGEND_CHECKBOX_WIDTH);
-            expected = 130;
+            expected = 110;
 
             expect(actual.width).toBe(expected);
         });
