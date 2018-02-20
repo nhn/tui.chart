@@ -65,14 +65,14 @@ var defaultTheme = {
             strokeColor: EMPTY,
             strokeOpacity: 1,
             strokeWidth: 2,
-            radius: 2,
+            radius: 0,
             hover: {
                 fillColor: EMPTY,
                 fillOpacity: 1,
-                strokeColor: EMPTY,
-                strokeOpacity: 0.8,
-                strokeWidth: 3,
-                radius: 4
+                strokeColor: '#fff',
+                strokeOpacity: 1,
+                strokeWidth: 4,
+                radius: 6
             }
         },
         ranges: []

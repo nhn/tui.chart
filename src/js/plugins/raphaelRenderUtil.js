@@ -52,17 +52,20 @@ var raphaelRenderUtil = {
      * @returns {object} raphael line
      */
     renderLine: function(paper, path, color, strokeWidth) {
-        var line = paper.path([path]),
-            strokeStyle = {
-                stroke: color,
-                'stroke-width': strokeWidth || 2
-            };
+        var line = paper.path([path]);
+        var strokeStyle = {
+            stroke: color,
+            'stroke-width': strokeWidth || 2
+        };
 
         if (color === 'transparent') {
             strokeStyle.stroke = '#fff';
             strokeStyle['stroke-opacity'] = 0;
         }
-        line.attr(strokeStyle);
+
+        line.attr(strokeStyle).node.setAttribute(
+            'class', 'auto-shape-rendering'
+        );
 
         return line;
     },
