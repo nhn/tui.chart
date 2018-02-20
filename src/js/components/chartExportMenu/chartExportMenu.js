@@ -130,6 +130,8 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
         var isImageExtension = chartExporter.isImageExtension;
         var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
         var menuElement = dom.create('ul', chartConst.CLASS_NAME_CHART_EXPORT_MENU);
+        var menuHead = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_HEAD);
+        var menuBody = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BODY);
         var menuStyle = menuElement.style;
         var menuTheme = this.theme;
         var menuItems = [];
@@ -143,7 +145,7 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
                 ) {
                     itemElement = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
                     itemElement.id = exportItemType;
-                    itemElement.innerHTML = 'Export to .' + exportItemType;
+                    itemElement.innerHTML = exportItemType;
                 }
 
                 return itemElement;
@@ -176,7 +178,11 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
             dom.addClass(menuElement, this.options.menuClass);
         }
 
-        dom.append(menuElement, menuItems);
+        menuHead.innerHTML = 'Export to';
+
+        dom.append(menuBody, menuItems);
+        dom.append(menuElement, menuHead);
+        dom.append(menuElement, menuBody);
 
         this.chartExportMenu = menuElement;
 

@@ -435,10 +435,11 @@
     z-index: 5000;
     .tui-chart-chartExportMenu-button{
       position: absolute;
-      width: 26px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       right :0;
-      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAKklEQVQ4EWMsKCj4z0BFwERFs8BGUd1AajtwCJjHOBrLQyCWKHXiCIxlAM/yBv2WsAlAAAAAAElFTkSuQmCC) top left no-repeat;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAALElEQVRIiWNgGAWjYHiB0NDQ/6Ghof9J0cNEK8eMUDAaBwMPRuNgFIwC8gAAvtgL+8uz36kAAAAASUVORK5CYII=);
+      background-color: #f4f4f4;
       border: 0px;
       font-size: 12px;
       padding: 3px 5px;
@@ -448,25 +449,38 @@
     ul {
       display: none;
       position: absolute;
-      top: 30px;
+      top: 37px;
       right: 0;
-      width: 120px;
+      width: 150px;
       background: #fff;
-      border: 0.5px solid #000;
-      font-size: 0.8em;
+      border: 1px solid #bab9ba;
+      font-size: 11px;
       padding: 0;
       margin: 0;
-      box-shadow: 3px 3px 5px #888888;
         > li {
           margin: 0;
-          padding: 7px 3px;
           border-collapse: collapse;
           text-align: center;
           list-style-type: none;
-          line-height: 1;
-          cursor: pointer;
-          &:hover {
-            background-color: #91ade5;
+          &.tui-chart-chartExportMenu-head {
+              padding: 10px;
+              text-align: left;
+              background-color: #f3f3f3;
+          }
+          &.tui-chart-chartExportMenu-body {
+              display: inline-block;
+              width: 100%;
+              padding: 7px 0;
+              > li {
+                  padding: 12px 3px;
+                  line-height: 1;
+                  cursor: pointer;
+                  width: 50%;
+                  float: left;
+                  &:hover {
+                      font-weight: bold;
+                  }
+              }
           }
         }
     }

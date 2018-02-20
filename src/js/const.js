@@ -32,6 +32,8 @@ var chartConst = {
     /** @type {string} */
     CLASS_NAME_CHART_EXPORT_MENU_BUTTON: 'tui-chart-chartExportMenu-button',
     /** @type {string} */
+    CLASS_NAME_CHART_EXPORT_MENU_HEAD: 'tui-chart-chartExportMenu-head',
+    CLASS_NAME_CHART_EXPORT_MENU_BODY: 'tui-chart-chartExportMenu-body',
     CLASS_NAME_TOOLTIP_VALUE: 'tui-chart-tooltip-value',
     /** @type {string} */
     CLASS_NAME_TOOLTIP_HEAD: 'tui-chart-tooltip-head',
