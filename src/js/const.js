@@ -192,7 +192,7 @@ var chartConst = {
     /** dot radius */
     DOT_RADIUS: 4,
     /** radius for circle of scatter chart*/
-    SCATTER_RADIUS: 5,
+    SCATTER_RADIUS: 7,
     /**
      * theme properties
      * @type {{yAxis: Array.<string>, series: Array.<string>}}
