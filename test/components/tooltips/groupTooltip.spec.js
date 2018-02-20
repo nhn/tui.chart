@@ -209,11 +209,11 @@ describe('GroupTooltip', function() {
             actual = tooltip._makeGroupTooltipHtml(1);
 
             expected = '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
-                        '<div class="head">Gold</div>' +
-                        '<table class="body">' +
+                        '<div class="tui-chart-tooltip-head">Gold</div>' +
+                        '<table class="tui-chart-tooltip-body">' +
                             '<tr>' +
                                 '<td><div class="tui-chart-legend-rect column" style="background-color:red"></div></td>' +
-                                '<td>legend1</td><td class="value">30 </td>' +
+                                '<td>legend1</td><td class="tui-chart-tooltip-value">30 </td>' +
                             '</tr>' +
                         '</table>' +
                         '</div>';

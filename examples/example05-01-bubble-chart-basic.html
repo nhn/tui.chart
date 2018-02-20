@@ -171,19 +171,19 @@ var options = {
     tooltip: {
         template: function (category, items) {
             return '<div class="tui-chart-default-tooltip">' +
-                '<div class="head">' + items.legend + items.label + '</div>' +
-                '<table class="body">' +
+                '<div class="tui-chart-tooltip-head">' + items.legend + items.label + '</div>' +
+                '<table class="tui-chart-tooltip-body">' +
                 '<tr>' +
                     '<td>GDP</td>' +
-                    '<td class="value">' + items.x + '</td>' +
+                    '<td class="tui-chart-tooltip-value">' + items.x + '</td>' +
                 '</tr>' +
                 '<tr>' +
                     '<td>Life Expectancy</td>' +
-                    '<td class="value">' + items.y + '</td>' +
+                    '<td class="tui-chart-tooltip-value">' + items.y + '</td>' +
                 '</tr>' +
                 '<tr>' +
                     '<td>Population</td>' +
-                    '<td class="value">' + items.r + '</td>' +
+                    '<td class="tui-chart-tooltip-value">' + items.r + '</td>' +
                 '</tr>' +
                 '</table>';
                 '</div>';

@@ -574,17 +574,17 @@ var options = {
     tooltip: {
         template: function (category, items) {
             return '<div class="tui-chart-default-tooltip">' +
-                '<div class="head">' + items.legend + '</div>' +
-                '<table class="body">' +
-                '<tr>' +
-                '<td>Weight</td>' +
-                '<td class="value">' + items.x + 'kg</td>' +
-                '</tr>' +
-                '<tr>' +
-                '<td>Height</td>' +
-                '<td class="value">' + items.y + 'cm</td>' +
-                '</tr>' +
-                '</table>' +
+                '<div class="tui-chart-tooltip-head">' + items.legend + '</div>' +
+                    '<table class="tui-chart-tooltip-body">' +
+                        '<tr>' +
+                            '<td>Weight</td>' +
+                        '<td class="tui-chart-tooltip-value">' + items.x + 'kg</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>Height</td>' +
+                            '<td class="tui-chart-tooltip-value">' + items.y + 'cm</td>' +
+                        '</tr>' +
+                    '</table>' +
                 '</div>';
         }
     }

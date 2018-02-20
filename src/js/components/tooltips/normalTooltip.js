@@ -95,7 +95,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
         return snippet.map(valueTypes, function(type) {
-            return (data[type]) ? '<tr><td>' + type + '</td><td class="value">' + data[type] + '</td></tr>' : '';
+            return (data[type]) ? '<tr><td>' + type + '</td><td class="' + chartConst.CLASS_NAME_TOOLTIP_VALUE + '">' + data[type] + '</td></tr>' : '';
         }).join('');
     },
 

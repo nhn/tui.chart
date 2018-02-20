@@ -160,8 +160,8 @@ describe('NormalTooltip', function() {
             });
 
             expected = '<div class="tui-chart-default-tooltip">' +
-                '<div class="head show">Silver</div>' +
-                '<div class="body"><span class="tui-chart-legend-rect column" style="background-color: blue"></span><span class="title">Density2</span><span class="value">20suffix</span></div>' +
+                '<div class="tui-chart-tooltip-head show">Silver</div>' +
+                '<div class="tui-chart-tooltip-body"><span class="tui-chart-legend-rect column" style="background-color: blue"></span><span>Density2</span><span class="tui-chart-tooltip-value">20suffix</span></div>' +
                 '</div>';
             expect(actual).toBe(expected);
         });

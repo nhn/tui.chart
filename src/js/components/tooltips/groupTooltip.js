@@ -425,7 +425,7 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         this._fireBeforeShowTooltipPublicEvent(params.index, params.range, params.silent);
 
         if (document.getElementsByClassName) {
-            this.makeLineLegendIcon(elTooltip.getElementsByClassName('tui-chart-legend-rect line'));
+            this.makeLineLegendIcon(elTooltip.querySelectorAll('.tui-chart-legend-rect.line'));
         }
 
         dom.addClass(elTooltip, 'show');

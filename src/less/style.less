@@ -415,10 +415,7 @@
     width: @legend-rect-width;
     height: @legend-rect-width;
     &.line {
-        padding: 3px 0;
-    }
-    &.area, &.bubble {
-      .opacity(0.5);
+      padding: 3px 0;
     }
   }
   .tui-chart-chartExportMenu-area {
@@ -610,7 +607,7 @@
           white-space: nowrap;
           padding: 5px 15px 5px 15px;
         }
-        > .head {
+        > .tui-chart-tooltip-head {
             padding: 8px 15px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             font-size: 13px;
@@ -624,7 +621,7 @@
                 padding-bottom: 5px;
             }
         }
-        > .body {
+        > .tui-chart-tooltip-body {
             padding: 11px 15px;
             font-size: 12px;
             font-weight: lighter;
@@ -640,7 +637,7 @@
                     }
                 }
             }
-            .value {
+            .tui-chart-tooltip-value {
                 padding-left: 44px;
                 text-align: right;
             }
@@ -666,14 +663,14 @@
                   padding-bottom: 5px;
               }
           }
-          > .body {
+          > .tui-chart-tooltip-body {
               padding: 11px 15px;
               font-size: 12px;
               font-weight: lighter;
               > span {
                   display: inline-block;
               }
-              .value {
+              .tui-chart-tooltip-value {
                   padding-left: 44px;
                   text-align: right;
               }
@@ -685,7 +682,7 @@
             margin-right: 5px;
           }
 
-          > .head {
+          > .tui-chart-tooltip-head {
             padding: 8px 15px;
             text-align: left;
           }

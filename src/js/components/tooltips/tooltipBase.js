@@ -209,18 +209,28 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
             offset: this.options.offset
         };
     },
-    makeLineLegendIcon: function(elIcon) {
-        snippet.forEach(elIcon, function(icon) {
-            var strokeColor = icon.style['background-color'];
-            var paper = raphael(icon, 10, 10);
-            var line = paper.path('M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1');
+
+    /**
+     * Render tooltip component.
+     * @param {HTMLElement} iconElement - icon element
+     */
+    makeLineLegendIcon: function(iconElement) {
+        var iconElementLength = iconElement.length;
+        var icon, strokeColor, paper, line;
+        var i = 0;
+
+        for (; i < iconElementLength; i += 1) {
+            icon = iconElement[i];
+            strokeColor = icon.style['background-color'];
+            paper = raphael(icon, 10, 10);
+            line = paper.path(chartConst.LEGEND_LINE_ICON_PATH);
             icon.style['background-color'] = '';
             line.attr({
                 'stroke': strokeColor,
                 'stroke-width': 2,
                 'stroke-opacity': 1
             });
-        });
+        }
     },
 
     /**
