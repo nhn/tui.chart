@@ -420,10 +420,7 @@
     width: @legend-rect-width;
     height: @legend-rect-width;
     &.line {
-      height: 2px;
-    }
-    &.area, &.bubble {
-      .opacity(0.5);
+      padding: 3px 0;
     }
   }
   .tui-chart-chartExportMenu-area {
@@ -599,26 +596,60 @@
       position: absolute;
       display: none;
       user-select: none;
+      font-family: Arial;
+      font-size: 12px;
       &.show {
         display: block;
       }
       .tui-chart-default-tooltip {
-        padding: 4px 0;
         font-size: 12px;
-        min-width: 100px;
         color: #fff;
         .border-radius(5px);
         background-color: rgba(0, 0, 0, 0.7);
         background-color: #555 \9;
         > * {
-          padding: 2px 7px;
-          text-align: center;
+          text-align: left;
           white-space: nowrap;
+          padding: 5px 15px 5px 15px;
+        }
+        > .tui-chart-tooltip-head {
+            padding: 8px 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            font-weight: bold;
+        }
+        > table {
+            width: 100%;
+            border-spacing: 0;
+            border-collapse: separate;
+            td {
+                padding-bottom: 5px;
+            }
+        }
+        > .tui-chart-tooltip-body {
+            padding: 11px 15px;
+            font-size: 12px;
+            font-weight: lighter;
+            > span {
+                display: inline-block;
+                height: 10px;
+                &.tui-chart-legend-rect {
+                    width: 10px;
+                    margin-right: 8px;
+                    vertical-align: text-top;
+                    &.line {
+                        padding: 0;
+                    }
+                }
+            }
+            .tui-chart-tooltip-value {
+                padding-left: 44px;
+                text-align: right;
+            }
         }
 
         > :first-child {
           backgound-color: #fff;
-          font-weight: bold;
         }
 
         &.tui-chart-group-tooltip {
@@ -629,22 +660,38 @@
             padding-top: 4px;
             padding-bottom: 4px;
           }
+
+          > table {
+              border-spacing: 0;
+              border-collapse: separate;
+              td {
+                  padding-bottom: 5px;
+              }
+          }
+          > .tui-chart-tooltip-body {
+              padding: 11px 15px;
+              font-size: 12px;
+              font-weight: lighter;
+              > span {
+                  display: inline-block;
+              }
+              .tui-chart-tooltip-value {
+                  padding-left: 44px;
+                  text-align: right;
+              }
+          }
           .tui-chart-legend-rect {
-            position: absolute;
-            left: 7px;
-            top: 2px;
-            &.line {
-              top: 7px;
-            }
+            position: relative;
+            left: 0px;
+            top: -2px;
+            margin-right: 5px;
           }
 
-          > :first-child {
-            padding-left: 7px;
-            padding-top: 6px;
-            padding-bottom: 6px;
-            text-align: center;
+          > .tui-chart-tooltip-head {
+            padding: 8px 15px;
+            text-align: left;
           }
-          
+
           > .tui-chart-tooltip-type {
             padding-left: 7px;
           }

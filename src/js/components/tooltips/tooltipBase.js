@@ -7,6 +7,7 @@
 'use strict';
 
 var snippet = require('tui-code-snippet');
+var raphael = require('raphael');
 var chartConst = require('../../const'),
     dom = require('../../helpers/domHandler'),
     predicate = require('../../helpers/predicate'),
@@ -207,6 +208,29 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
             align: this.options.align,
             offset: this.options.offset
         };
+    },
+
+    /**
+     * Render tooltip component.
+     * @param {HTMLElement} iconElement - icon element
+     */
+    makeLineLegendIcon: function(iconElement) {
+        var iconElementLength = iconElement.length;
+        var icon, strokeColor, paper, line;
+        var i = 0;
+
+        for (; i < iconElementLength; i += 1) {
+            icon = iconElement[i];
+            strokeColor = icon.style['background-color'];
+            paper = raphael(icon, 10, 10);
+            line = paper.path(chartConst.LEGEND_LINE_ICON_PATH);
+            icon.style['background-color'] = '';
+            line.attr({
+                'stroke': strokeColor,
+                'stroke-width': 2,
+                'stroke-opacity': 1
+            });
+        }
     },
 
     /**

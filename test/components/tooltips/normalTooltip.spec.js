@@ -29,22 +29,6 @@ describe('NormalTooltip', function() {
     });
 
     describe('_makeTooltipDatum()', function() {
-        it('should generate labels with ":&nbsp" prepended, if both legend and seriesItem.label exist.', function() {
-            var actual, expected;
-            var legendLabels = {
-                'column': ['legend1']
-            };
-            var seriesItem = {
-                label: 'label1',
-                pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
-            };
-
-            actual = tooltip._makeTooltipDatum(legendLabels.column[0], '', seriesItem);
-            expected = ':&nbsp;label1';
-
-            expect(actual.label).toBe(expected);
-        });
-
         it('should make tooltip datum ratioLabel for data percentage and label for raw data value.', function() {
             var actual, expected, seriesItem;
             var legendLabels = {
@@ -111,7 +95,7 @@ describe('NormalTooltip', function() {
             expected = {
                 category: 'category1',
                 legend: 'legend1',
-                label: ':&nbsp;label1',
+                label: 'label1',
                 x: '10',
                 y: '20',
                 r: '30'
@@ -150,8 +134,8 @@ describe('NormalTooltip', function() {
             actual = tooltip.makeTooltipData();
             expected = {
                 column: [[
-                    {category: 'Silver', label: ':&nbsp;10', legend: 'Density1'},
-                    {category: 'Silver', label: ':&nbsp;20', legend: 'Density2'}
+                    {category: 'Silver', label: '10', legend: 'Density1'},
+                    {category: 'Silver', label: '20', legend: 'Density2'}
                 ]]
             };
 
@@ -169,13 +153,15 @@ describe('NormalTooltip', function() {
                 ]]
             };
             tooltip.suffix = 'suffix';
+            tooltip.colors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
             actual = tooltip._makeSingleTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
+
             expected = '<div class="tui-chart-default-tooltip">' +
-                '<div class="show">Silver</div>' +
-                '<div><span>Density2</span><span>20</span><span>suffix</span></div>' +
+                '<div class="tui-chart-tooltip-head show">Silver</div>' +
+                '<div class="tui-chart-tooltip-body"><span class="tui-chart-legend-rect column" style="background-color: blue"></span><span>Density2</span><span class="tui-chart-tooltip-value">20suffix</span></div>' +
                 '</div>';
             expect(actual).toBe(expected);
         });
@@ -189,6 +175,7 @@ describe('NormalTooltip', function() {
                 ]]
             };
             tooltip.suffix = 'suffix';
+            tooltip.colors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
             tooltip.templateFunc = function(category, series) {
                 return '<div>' + category + '</div><div>' + series.label + '</div><div>' + series.legend + '</div>';
             };

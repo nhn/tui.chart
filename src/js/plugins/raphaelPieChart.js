@@ -138,7 +138,8 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         var x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
         var y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
         var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
-        var path = ['M', cx, cy,
+        var path = [
+            'M', cx, cy,
             'L', x1, y1,
             'A', r, r, 0, largeArcFlag, 1, x2, y2,
             'Z'
