@@ -11,7 +11,7 @@ var snippet = require('tui-code-snippet');
 
 var ANIMATION_DURATION = 100;
 var MIN_BORDER_WIDTH = 1;
-var MAX_BORDER_WIDTH = 3;
+var MAX_BORDER_WIDTH = 4;
 
 /**
  * @classdesc RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
@@ -22,7 +22,8 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
     /**
      * Render function of bar chart
      * @param {object} paper Raphael paper
-     * @param {{
+     * @param {
+{
      *      dimension: {width: number, height: number},
      *      colorSpectrum: object,
      *      seriesDataModel: SeriesDataModel,
@@ -35,6 +36,8 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         var seriesSet = paper.set();
 
         this.paper = paper;
+
+        this.chartType = seriesData.chartType;
 
         /**
          * theme
@@ -90,8 +93,34 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
          */
         this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot,
             seriesSet);
+        this.rectOverlay = this._renderRectOverlay();
 
         return seriesSet;
+    },
+
+    /**
+     * Render overlay.
+     * @returns {object} raphael object
+     * @private
+     */
+    _renderRectOverlay: function() {
+        var bound = {
+            width: 1,
+            height: 1,
+            left: 0,
+            top: 0
+        };
+        var attributes = {
+            'fill-opacity': 0
+        };
+
+        var rectOverlay = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
+            'stroke-width': 0
+        }, attributes));
+
+        rectOverlay.node.setAttribute('filter', 'url(#shadow)');
+
+        return rectOverlay;
     },
 
     /**
@@ -184,6 +213,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @param {{width: number, height: number, left: number, top: number}} bound - bound
      * @param {string} color - color
      * @param {number} strokeWidth - stroke width
+     * @param {number} fillOpacity - fill opacity
      * @returns {object}
      * @private
      */
@@ -205,10 +235,14 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
     _getStrokeWidth: function(depth, startDepth) {
         var strokeWidth;
 
+        if (depth !== startDepth) {
+            return MIN_BORDER_WIDTH;
+        }
+
         if (this.borderWidth) {
             strokeWidth = this.borderWidth;
         } else if (snippet.isExisty(depth)) {
-            strokeWidth = Math.max(MIN_BORDER_WIDTH, MAX_BORDER_WIDTH - (depth - startDepth));
+            strokeWidth = MAX_BORDER_WIDTH;
         } else {
             strokeWidth = MIN_BORDER_WIDTH;
         }
@@ -240,7 +274,9 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var result = null;
-                var strokeWidth = self._getStrokeWidth(seriesItem.depth, startDepth);
+                var depth = seriesItem.depth;
+                var strokeWidth = self.colorSpectrum ? 0 : self._getStrokeWidth(depth, startDepth);
+                var fillOpacity = 1;
                 var bound, color;
 
                 seriesItem.groupIndex = groupIndex;
@@ -250,7 +286,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
                 if (bound) {
                     color = self._getColor(seriesItem, startDepth);
                     result = {
-                        rect: self._renderRect(bound, color, strokeWidth),
+                        rect: self._renderRect(bound, color, strokeWidth, fillOpacity),
                         seriesItem: seriesItem,
                         color: color
                     };
@@ -271,11 +307,15 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @param {object} rect - raphael object
      * @param {string} [color] - fill color
      * @param {number} [opacity] - fill opacity
+     * @param {number} [strokeColor] - stroke color
+     * @param {number} [strokeWidth] - stroke width
      * @private
      */
-    _animateChangingColor: function(rect, color, opacity) {
+    _animateChangingColor: function(rect, color, opacity, strokeColor, strokeWidth) {
         var properties = {
-            'fill-opacity': snippet.isExisty(opacity) ? opacity : 1
+            'fill-opacity': snippet.isExisty(opacity) ? opacity : 1,
+            stroke: strokeColor,
+            'stroke-width': strokeWidth
         };
 
         if (color) {
@@ -288,64 +328,52 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
-     * @param {boolean} [useSpectrum] - whether use spectrum legend or not
-     * @param {number} [opacity] - fill opacity
      */
-    showAnimation: function(indexes, useSpectrum, opacity) {
+    showAnimation: function(indexes) {
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
-        var color;
+        var rect;
 
         if (!box) {
             return;
         }
 
-        useSpectrum = snippet.isUndefined(useSpectrum) ? true : useSpectrum;
-        color = useSpectrum ? this.theme.overColor : box.color;
+        rect = box.rect.node;
 
-        if (box.seriesItem.hasChild) {
-            if (useSpectrum) {
-                box.rect.attr({'fill-opacity': 0});
-            }
-            box.rect.toFront();
-        }
+        this.rectOverlay.attr({
+            x: rect.getAttribute('x'),
+            y: rect.getAttribute('y'),
+            width: rect.getAttribute('width'),
+            height: rect.getAttribute('height'),
+            fill: box.color,
+            'fill-opacity': 1,
+            stroke: '#ffffff',
+            'stroke-width': 4,
+            'stroke-opacity': 1
+        });
 
-        this._animateChangingColor(box.rect, color, opacity);
+        this.rectOverlay.toFront();
+        this.labelSet.toFront();
     },
 
     /**
      * Hide animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
-     * @param {boolean} [useColorValue] - whether use colorValue or not
      */
-    hideAnimation: function(indexes, useColorValue) {
-        var colorSpectrum = this.colorSpectrum;
+    hideAnimation: function(indexes) {
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
-        var opacity = 1;
-        var color, paper;
 
         if (!box) {
             return;
         }
 
-        paper = box.rect.paper;
-
-        if (box.seriesItem.hasChild) {
-            color = null;
-            if (useColorValue) {
-                opacity = 0;
-            }
-        } else {
-            color = box.color;
-        }
-
-        this._animateChangingColor(box.rect, color, opacity);
-
-        setTimeout(function() {
-            if (!colorSpectrum && box.seriesItem.hasChild) {
-                box.rect.toBack();
-                paper.pushDownBackgroundToBottom();
-            }
-        }, ANIMATION_DURATION);
+        this.rectOverlay.attr({
+            width: 1,
+            height: 1,
+            x: 0,
+            y: 0,
+            'fill-opacity': 0,
+            'stroke-opacity': 0
+        });
     },
 
     /**
@@ -384,7 +412,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
-            fill: labelTheme.color,
+            fill: '#ffffff',
             opacity: 0
         };
 
@@ -395,11 +423,12 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
 
                 seriesLabel.node.style.userSelect = 'none';
                 seriesLabel.node.style.cursor = 'default';
-                seriesLabel.node.setAttribute('filter', 'url(#glow)');
 
                 labelSet.push(seriesLabel);
             });
         });
+
+        this.labelSet = labelSet;
 
         return labelSet;
     },
@@ -419,10 +448,11 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
 
             seriesLabel.node.style.userSelect = 'none';
             seriesLabel.node.style.cursor = 'default';
-            seriesLabel.node.setAttribute('filter', 'url(#glow)');
 
             labelSet.push(seriesLabel);
         });
+
+        this.labelSet = labelSet;
 
         return labelSet;
     }

@@ -147,7 +147,8 @@ var chartConst = {
     /** default border color for treemap chart
      * @type {string}
      */
-    TREEMAP_DEFAULT_BORDER: '#ccc',
+    TREEMAP_DEFAULT_BORDER: '#ffffff',
+    TREEMAP_DEFAULT_BORDER_WIDTH: 4,
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel */
@@ -302,12 +303,22 @@ var chartConst = {
     /** lgend line icon svg path */
     LEGEND_LINE_ICON_PATH: 'M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1',
     MIN_LEGEND_WIDTH: 100,
+    /** map legend padding before spectrum graph area */
+    MAP_LEGEND_AREA_PADDING: 5,
+    /** map legend tooltip vertical padding */
+    MAP_LEGEND_TOOLTIP_VERTICAL_PADDING: 4,
+    /** map legend tooltip horizontal padding */
+    MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING: 6,
+    /** map legend wedge size */
+    MAP_LEGEND_WEDGE_SIZE: 4,
+    /** map legend padding between wedge and spectrum graph */
+    MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE: 4,
     /** map legend height */
-    MAP_LEGEND_SIZE: 200,
+    MAP_LEGEND_SIZE: 400,
     /** map legend graph size */
-    MAP_LEGEND_GRAPH_SIZE: 25,
+    MAP_LEGEND_GRAPH_SIZE: 6,
     /** map legend label padding */
-    MAP_LEGEND_LABEL_PADDING: 10,
+    MAP_LEGEND_LABEL_PADDING: 5,
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
     CIRCLE_LEGEND_PADDING: 10,
     HALF_RATIO: 0.5,
@@ -370,6 +381,8 @@ var chartConst = {
     SERIES_LABEL_OPACITY: 0.3,
     WHEEL_TICK: 120,
     MAX_ZOOM_MAGN: 5,
+    ZOOM_POSITION_TOP_EXIST_TITLE: 5,
+    ZOOM_POSITION_TOP_NONE_TITLE: 1,
     FF_WHEELDELTA_ADJUSTING_VALUE: -40,
     IE7_ROTATION_FILTER_STYLE_MAP: {
         25: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +

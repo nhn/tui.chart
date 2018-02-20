@@ -56,9 +56,9 @@ var defaultTheme = {
         borderColor: EMPTY,
         borderWidth: EMPTY,
         selectionColor: EMPTY,
-        startColor: '#F4F4F4',
-        endColor: '#345391',
-        overColor: '#F0C952',
+        startColor: '#00a9ff',
+        endColor: '#ff5a46',
+        overColor: EMPTY,
         dot: {
             fillColor: EMPTY,
             fillOpacity: 1,
@@ -80,7 +80,7 @@ var defaultTheme = {
     legend: {
         label: {
             fontSize: 11,
-            fontFamily: EMPTY,
+            fontFamily: 'Arial',
             color: DEFAULT_COLOR,
             fontWeight: DEFAULT_FONTWEIGHT
         }

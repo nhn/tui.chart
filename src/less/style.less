@@ -2,7 +2,7 @@
 
 @axis-color: #000;
 @chart-padding: 10px;
-@legend-rect-width: 12px;
+@legend-rect-width: 10px;
 @hidden-padding: 1px;
 
 .user-select() {
@@ -339,41 +339,30 @@
   .tui-chart-zoom-area {
     z-index: 1500;
     position: absolute;
-    border: 1px solid #cccccc;
-    background-color: #cccccc;
-    .border-radius(4px);
     > .tui-chart-zoom-btn {
-      width: 21px;
-      height: 21px;
-      display: block;
-      background-color: #fff;
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      background-color: #f4f4f4;
+      border-radius: 1px;
       cursor: pointer;
       position: relative;
-      &:first-child {
-        margin-bottom: 1px;
-        .border-radius(4px 4px 0 0);
-      }
-      &:last-child {
-        .border-radius(0 0 4px 4px);
-      }
-      &:hover {
-        background-color: #efefef;
-      }
+      margin-left: 5px;
       > div {
-        font-szie: 0;
+        font-size: 0;
         background-color: #555555;
         position: absolute;
         &.horizontal-line {
-          width:9px;
-          height: 1px;
-          left: 6px;
-          top: 10px;
+          width:8px;
+          height: 2px;
+          left: 8px;
+          top: 11px;
         }
         &.vertical-line {
-          width:1px;
-          height: 9px;
-          left: 10px;
-          top: 6px;
+          width: 2px;
+          height: 8px;
+          left: 11px;
+          top: 8px;
         }
       }
     }
@@ -410,9 +399,8 @@
       left: 20px;
       top: 20px;
       font-size: 11px;
-      padding: 5px;
-      border: 1px solid #ccc;
-      background-color: #efefef;
+      width: 24px;
+      height: 24px;
       cursor: pointer;
       .user-select();
     }
@@ -615,15 +603,21 @@
       user-select: none;
       font-family: Arial;
       font-size: 12px;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      text-align: left;
+      color: #ffffff;
       &.show {
         display: block;
       }
       .tui-chart-default-tooltip {
-        font-size: 12px;
-        color: #fff;
-        .border-radius(5px);
-        background-color: rgba(0, 0, 0, 0.7);
-        background-color: #555 \9;
+        .border-radius(3px);
+        background-color: rgba(85, 85, 85, 0.95);
+        background-color: #555555;
+        padding: 11px 15px;
         > * {
           text-align: left;
           white-space: nowrap;
@@ -645,8 +639,6 @@
         }
         > .tui-chart-tooltip-body {
             padding: 11px 15px;
-            font-size: 12px;
-            font-weight: lighter;
             > span {
                 display: inline-block;
                 height: 10px;
@@ -663,10 +655,6 @@
                 padding-left: 44px;
                 text-align: right;
             }
-        }
-
-        > :first-child {
-          backgound-color: #fff;
         }
 
         &.tui-chart-group-tooltip {
@@ -778,4 +766,8 @@
       }
     }
   }
+}
+
+.box-shadow {
+  filter: shadow(0 4px 4px);
 }

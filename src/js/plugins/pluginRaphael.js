@@ -55,6 +55,7 @@ var callback = function(container, dimension) {
     if (paper.raphael.svg) {
         appendGlowFilterToDefs(paper);
         appendShadowFilterToDefs(paper);
+        appendOpacityFilterToDefs(paper);
     }
 
     paper.pushDownBackgroundToBottom = function() {
@@ -169,6 +170,31 @@ function appendShadowFilterToDefs(paper) {
     filter.appendChild(feGaussianBlur);
     filter.appendChild(feBlend);
     paper.defs.appendChild(filter);
+}
+
+/**
+ * Append opacity filter for map type opacity effect
+ * @param {object} paper Raphael paper object
+ * @ignore
+ */
+function appendOpacityFilterToDefs(paper) {
+    var i = 0;
+    var length = 20;
+    var filter, feFlood, floodOpacity;
+
+    for (; i <= length; i += 1) {
+        filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
+        floodOpacity = 0.05 * i;
+
+        filter.id = 'opacity-' + floodOpacity;
+
+        feFlood.setAttribute('flood-opacity', floodOpacity);
+
+        filter.appendChild(feFlood);
+
+        paper.defs.appendChild(filter);
+    }
 }
 
 module.exports = {
