@@ -14,9 +14,8 @@ var ANIMATION_DURATION = 700;
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
-var BOX_STROKE_WIDTH = 1;
-var EDGE_LINE_WIDTH = 2;
-var MEDIAN_LINE_WIDTH = 2;
+var EDGE_LINE_WIDTH = 1;
+var MEDIAN_LINE_WIDTH = 1;
 var WHISKER_LINE_WIDTH = 1;
 
 /**
@@ -51,32 +50,10 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         this.groupBoxes = this._renderBoxplots(groupBounds);
         this.groupBorders = this._renderBoxBorders(groupBounds);
 
-        this.rectOverlay = this._renderRectOverlay();
         this.circleOverlay = this._renderCircleOverlay();
         this.groupBounds = groupBounds;
 
         return this.paper.setFinish();
-    },
-
-    /**
-     * Render overlay.
-     * @returns {object} raphael object
-     * @private
-     */
-    _renderRectOverlay: function() {
-        var bound = {
-            width: 1,
-            height: 1,
-            left: 0,
-            top: 0
-        };
-        var attributes = {
-            'fill-opacity': 0
-        };
-
-        return raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
-            'stroke-width': 0
-        }, attributes));
     },
 
     /**
@@ -114,9 +91,8 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         }
 
         rect = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
-            fill: '#fff',
-            stroke: color,
-            'stroke-width': BOX_STROKE_WIDTH
+            fill: color,
+            stroke: 'none'
         }, attributes));
 
         return rect;
@@ -229,10 +205,10 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         return groupWhiskers;
     },
 
-    _renderMedianLine: function(bound, color) {
+    _renderMedianLine: function(bound) {
         var width = bound.width;
         var medianLinePath = 'M' + bound.left + ',' + bound.top + 'H' + (bound.left + width);
-        var median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, color, MEDIAN_LINE_WIDTH);
+        var median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, '#ffffff', MEDIAN_LINE_WIDTH);
 
         median.attr({
             opacity: 0
@@ -243,21 +219,17 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
 
     _renderMedianLines: function(groupBounds) {
         var self = this;
-        var colors = this.theme.colors;
-        var colorByPoint = this.options.colorByPoint;
         var groupMedians = [];
 
-        snippet.forEach(groupBounds, function(bounds, groupIndex) {
+        snippet.forEach(groupBounds, function(bounds) {
             var medians = [];
 
-            snippet.forEach(bounds, function(bound, index) {
-                var color = colorByPoint ? colors[groupIndex] : colors[index];
-
+            snippet.forEach(bounds, function(bound) {
                 if (!bound) {
                     return;
                 }
 
-                medians.push(self._renderMedianLine(bound.median, color));
+                medians.push(self._renderMedianLine(bound.median));
             });
             groupMedians.push(medians);
         });
@@ -269,8 +241,9 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         var outlier = raphaelRenderUtil.renderCircle(this.paper, {
             left: bound.left,
             top: bound.top
-        }, 3, {
-            stroke: color
+        }, 3.5, {
+            stroke: color,
+            'stroke-width': 2
         });
 
         outlier.attr({
@@ -465,17 +438,14 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @param {{groupIndex: number, index:number}} data show info
      */
     showRectAnimation: function(data) {
-        var bar = this.groupBoxes[data.groupIndex][data.index],
-            bound = bar.bound;
+        var bar = this.groupBoxes[data.groupIndex][data.index];
+        this.hoveredBar = bar.rect;
 
-        this.rectOverlay.attr({
-            width: bound.width,
-            height: bound.height,
-            x: bound.left,
-            y: bound.top,
-            fill: bar.color,
-            'fill-opacity': 0.3
+        this.hoveredBar.attr({
+            stroke: '#ffffff',
+            'stroke-width': 4
         });
+        this.hoveredBar.node.setAttribute('filter', 'url(#shadow)');
     },
 
     /**
@@ -490,9 +460,9 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
             cx: targetAttr.cx,
             cy: targetAttr.cy,
             fill: targetAttr.stroke,
-            'fill-opacity': 0.3,
+            'fill-opacity': 1,
             stroke: targetAttr.stroke,
-            'stroke-width': 2
+            'stroke-width': 4
         });
     },
 
@@ -506,15 +476,12 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
             x: 0,
             y: 0,
             'fill-opacity': 0,
-            'stroke-width': 0
+            'stroke-width': 2
         });
-        this.rectOverlay.attr({
-            width: 1,
-            height: 1,
-            x: 0,
-            y: 0,
-            'fill-opacity': 0
+        this.hoveredBar.attr({
+            stroke: 'none'
         });
+        this.hoveredBar.node.setAttribute('filter', 'none');
     },
 
     /**

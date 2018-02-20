@@ -339,15 +339,16 @@
   .tui-chart-zoom-area {
     z-index: 1500;
     position: absolute;
+    background-color: #cccccc;
+    .border-radius(1px);
     > .tui-chart-zoom-btn {
       width: 24px;
       height: 24px;
-      display: inline-block;
+      display: block;
       background-color: #f4f4f4;
       border-radius: 1px;
       cursor: pointer;
       position: relative;
-      margin-left: 5px;
       > div {
         font-size: 0;
         background-color: #555555;
@@ -355,14 +356,14 @@
         &.horizontal-line {
           width:8px;
           height: 2px;
-          left: 8px;
+          left: 6px;
           top: 11px;
         }
         &.vertical-line {
           width: 2px;
           height: 8px;
           left: 11px;
-          top: 8px;
+          top: 6px;
         }
       }
     }
@@ -415,12 +416,11 @@
     }
   }
   .tui-chart-chartExportMenu-area {
-    z-index: 900;
     position: absolute;
     font-family: Verdana;
     margin: 0;
     padding: 10px 0 0 0;
-    z-index: 5000;
+    z-index: 501;
     .tui-chart-chartExportMenu-button{
       position: absolute;
       width: 24px;
@@ -592,7 +592,7 @@
 
   .tui-chart-tooltip-area {
     position: absolute;
-    z-index: 500;
+    z-index: 501;
     * {
       .user-select();
     }
@@ -623,8 +623,8 @@
           white-space: nowrap;
           padding: 5px 15px;
         }
-        > .tui-chart-tooltip-head {
-            padding: 8px 15px;
+        > .head {
+            padding: 8px 15px 7px 15px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             font-size: 13px;
             font-weight: bold;
