@@ -1,5 +1,6 @@
 /**
  * @fileoverview Bar chart series component.
+
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -106,10 +107,12 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
         var startLeft = baseData.basePosition + barStartLeft + additionalLeft;
         var changedStack = (seriesItem.stack !== iterationData.prevStack);
         var pointCount, endLeft, bound, boundTop;
+        var isOverLapBar = (baseData.barSize * baseData.itemCount > baseData.groupSize);
+        var barInterval = isOverLapBar ? baseData.pointInterval : baseData.barSize;
 
         if (!isStackType || (!this.options.diverging && changedStack)) {
             pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
-            iterationData.top = iterationData.baseTop + (baseData.pointInterval * pointCount);
+            iterationData.top = iterationData.baseTop + (barInterval * pointCount);
             iterationData.plusLeft = 0;
             iterationData.minusLeft = 0;
         }
@@ -123,7 +126,14 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
         }
 
         iterationData.prevStack = seriesItem.stack;
-        boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2);
+
+        if (isOverLapBar) {
+            boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2);
+        } else {
+            boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2)
+                + ((baseData.pointInterval - baseData.barSize) / 2 * (baseData.itemCount - 1));
+        }
+
         bound = this._makeBound(barWidth, baseData.barSize, boundTop, startLeft, endLeft);
 
         return bound;

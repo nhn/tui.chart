@@ -188,10 +188,10 @@ describe('Test for themeManager', function() {
 
             expect(seriesThemeMap).toEqual({
                 column: {
-                    colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5']
+                    colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c']
                 },
                 line: {
-                    colors: ['#aa759f', '#8f5536', '#ac4142', '#d28445']
+                    colors: ['#989486', '#516f7d', '#29dbe3', '#dddddd']
                 }
             });
         });
@@ -244,7 +244,7 @@ describe('Test for themeManager', function() {
             themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
             expect(seriesThemeMap).toEqual({
                 column: {
-                    colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa']
+                    colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff']
                 },
                 line: {
                     colors: ['white', 'block', 'white']
