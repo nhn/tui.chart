@@ -114,7 +114,8 @@ describe('Test for themeManager', function() {
             var fromTheme = {};
             var toTheme = {
                 label: {
-                    fontSize: 15
+                    fontSize: 15,
+                    color: '#000000'
                 },
                 title: {
                     fontSize: 18
@@ -258,7 +259,10 @@ describe('Test for themeManager', function() {
             var themeName = 'newTheme';
             var rawTheme = {
                 series: {
-                    colors: ['gray']
+                    colors: ['gray'],
+                    label: {
+                        color: '#000000'
+                    }
                 }
             };
             var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
@@ -276,6 +280,9 @@ describe('Test for themeManager', function() {
                     },
                     line: {
                         colors: ['white', 'block']
+                    },
+                    label: {
+                        color: '#000000'
                     }
                 }
             };
@@ -470,6 +477,11 @@ describe('Test for themeManager', function() {
                 plot: {
                     lineColor: '#e5dbc4',
                     background: '#f6f1e5'
+                },
+                series: {
+                    label: {
+                        color: '#000000'
+                    }
                 }
             });
         });

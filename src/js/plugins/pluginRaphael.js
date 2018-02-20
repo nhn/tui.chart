@@ -151,14 +151,14 @@ function appendShadowFilterToDefs(paper) {
     var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
 
     filter.setAttributeNS(null, 'id', 'shadow');
-    filter.setAttributeNS(null, 'x', '-50%');
-    filter.setAttributeNS(null, 'y', '-50%');
+    filter.setAttributeNS(null, 'x', '-15%');
+    filter.setAttributeNS(null, 'y', '-15%');
     filter.setAttributeNS(null, 'width', '180%');
     filter.setAttributeNS(null, 'height', '180%');
     feOffset.setAttributeNS(null, 'result', 'offOut');
     feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
-    feOffset.setAttributeNS(null, 'dx', '0');
-    feOffset.setAttributeNS(null, 'dy', '0');
+    feOffset.setAttributeNS(null, 'dx', '2');
+    feOffset.setAttributeNS(null, 'dy', '2');
     feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
     feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
     feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');

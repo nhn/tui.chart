@@ -2,7 +2,7 @@
 
 var DEFAULT_COLOR = '#000000';
 var DEFAULT_BACKGROUND = '#ffffff';
-var DEFAULT_FONTWEIGHT = 'normal';
+var DEFAULT_FONTWEIGHT = 'lighter';
 var EMPTY = '';
 var DEFAULT_AXIS = {
     tickColor: DEFAULT_COLOR,
