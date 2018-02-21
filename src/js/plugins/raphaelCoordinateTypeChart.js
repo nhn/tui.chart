@@ -321,9 +321,9 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
             opacity: 1
         });
 
-        this.circle.toFront();
         this.overlay.node.setAttribute('filter', 'url(#shadow)');
         this.overlay.toFront();
+        this.circle.toFront();
     },
 
     /**
