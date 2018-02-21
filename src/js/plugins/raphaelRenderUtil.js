@@ -55,14 +55,15 @@ var raphaelRenderUtil = {
         var line = paper.path([path]),
             strokeStyle = {
                 stroke: color,
-                'stroke-width': strokeWidth || 2
+                'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth),
+                'stroke-linecap': 'round'
             };
-
         if (color === 'transparent') {
             strokeStyle.stroke = '#fff';
             strokeStyle['stroke-opacity'] = 0;
         }
-        line.attr(strokeStyle);
+
+        line.attr(strokeStyle).node.setAttribute('class', 'auto-shape-rendering');
 
         return line;
     },

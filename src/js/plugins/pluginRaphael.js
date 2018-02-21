@@ -54,6 +54,8 @@ var callback = function(container, dimension) {
 
     if (paper.raphael.svg) {
         appendGlowFilterToDefs(paper);
+        appendShadowFilterToDefs(paper);
+        appendOpacityFilterToDefs(paper);
     }
 
     paper.pushDownBackgroundToBottom = function() {
@@ -136,6 +138,63 @@ function appendGlowFilterToDefs(paper) {
     feMerge.appendChild(feMergeNodeSourceGraphic);
 
     paper.defs.appendChild(filter);
+}
+
+/**
+ * Append shadow filter for series label
+ * @param {object} paper Raphael paper object
+ * @ignore
+ */
+function appendShadowFilterToDefs(paper) {
+    var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+    var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+    var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+    filter.setAttributeNS(null, 'id', 'shadow');
+    filter.setAttributeNS(null, 'x', '-15%');
+    filter.setAttributeNS(null, 'y', '-15%');
+    filter.setAttributeNS(null, 'width', '180%');
+    filter.setAttributeNS(null, 'height', '180%');
+    feOffset.setAttributeNS(null, 'result', 'offOut');
+    feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+    feOffset.setAttributeNS(null, 'dx', '2');
+    feOffset.setAttributeNS(null, 'dy', '2');
+    feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+    feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+    feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+    feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+    feBlend.setAttributeNS(null, 'in2', 'blurOut');
+    feBlend.setAttributeNS(null, 'mode', 'normal');
+    filter.appendChild(feOffset);
+    filter.appendChild(feGaussianBlur);
+    filter.appendChild(feBlend);
+    paper.defs.appendChild(filter);
+}
+
+/**
+ * Append opacity filter for map type opacity effect
+ * @param {object} paper Raphael paper object
+ * @ignore
+ */
+function appendOpacityFilterToDefs(paper) {
+    var i = 0;
+    var length = 20;
+    var filter, feFlood, floodOpacity;
+
+    for (; i <= length; i += 1) {
+        filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
+        floodOpacity = 0.05 * i;
+
+        filter.id = 'opacity-' + floodOpacity;
+
+        feFlood.setAttribute('flood-opacity', floodOpacity);
+
+        filter.appendChild(feFlood);
+
+        paper.defs.appendChild(filter);
+    }
 }
 
 module.exports = {

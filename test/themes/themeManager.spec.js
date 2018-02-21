@@ -114,7 +114,8 @@ describe('Test for themeManager', function() {
             var fromTheme = {};
             var toTheme = {
                 label: {
-                    fontSize: 15
+                    fontSize: 15,
+                    color: '#000000'
                 },
                 title: {
                     fontSize: 18
@@ -188,10 +189,10 @@ describe('Test for themeManager', function() {
 
             expect(seriesThemeMap).toEqual({
                 column: {
-                    colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5']
+                    colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c']
                 },
                 line: {
-                    colors: ['#aa759f', '#8f5536', '#ac4142', '#d28445']
+                    colors: ['#989486', '#516f7d', '#29dbe3', '#dddddd']
                 }
             });
         });
@@ -244,7 +245,7 @@ describe('Test for themeManager', function() {
             themeManager._setSeriesColors(seriesTypes, seriesThemeMap, rawSeriesThemeMap, rawSeriesData);
             expect(seriesThemeMap).toEqual({
                 column: {
-                    colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa']
+                    colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff']
                 },
                 line: {
                     colors: ['white', 'block', 'white']
@@ -258,7 +259,10 @@ describe('Test for themeManager', function() {
             var themeName = 'newTheme';
             var rawTheme = {
                 series: {
-                    colors: ['gray']
+                    colors: ['gray'],
+                    label: {
+                        color: '#000000'
+                    }
                 }
             };
             var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
@@ -276,6 +280,9 @@ describe('Test for themeManager', function() {
                     },
                     line: {
                         colors: ['white', 'block']
+                    },
+                    label: {
+                        color: '#000000'
                     }
                 }
             };
@@ -470,6 +477,11 @@ describe('Test for themeManager', function() {
                 plot: {
                     lineColor: '#e5dbc4',
                     background: '#f6f1e5'
+                },
+                series: {
+                    label: {
+                        color: '#000000'
+                    }
                 }
             });
         });

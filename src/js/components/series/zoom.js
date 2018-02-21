@@ -66,12 +66,21 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
      */
     render: function(data) {
         var container;
+        var positionTop;
+        var position;
 
         if (!IS_MSIE_VERSION_LTE_THAN_8) {
+            positionTop = data.dimensionMap.title.height ?
+                chartConst.ZOOM_POSITION_TOP_EXIST_TITLE : chartConst.ZOOM_POSITION_TOP_NONE_TITLE;
+            position = {
+                top: positionTop,
+                right: 5
+            };
+
             container = dom.create('DIV', this.className);
 
             container.innerHTML += seriesTemplate.ZOOM_BUTTONS;
-            renderUtil.renderPosition(container, data.positionMap.series);
+            renderUtil.renderPosition(container, position);
             this._attachEvent(container);
         }
 

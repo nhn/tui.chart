@@ -119,7 +119,8 @@ describe('BarChartSeries', function() {
                     basePosition: 10,
                     barSize: 20,
                     pointInterval: 20,
-                    additionalPosition: 0
+                    additionalPosition: 0,
+                    itemCount: 4
                 },
                 iterationData = {
                     baseTop: 10,
@@ -181,7 +182,8 @@ describe('BarChartSeries', function() {
                 basePosition: 10,
                 barSize: 20,
                 pointInterval: 20,
-                additionalPosition: 0
+                additionalPosition: 0,
+                itemCount: 4
             });
 
             actual = series._makeBounds();

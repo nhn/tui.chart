@@ -24,8 +24,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * Series component className
      * @type {string}
      */
-    className: 'tui-chart-series-area',
-    /**
+    className: 'tui-chart-series-area', /**
      * Series base component.
      * @constructs Series
      * @private

@@ -7,6 +7,7 @@
 'use strict';
 
 var Series = require('./series');
+
 var LineTypeSeriesBase = require('./lineTypeSeriesBase');
 var snippet = require('tui-code-snippet');
 

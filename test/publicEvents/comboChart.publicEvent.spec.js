@@ -127,7 +127,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 96, // index 1: 95 ~ 137
+                clientX: 100, // index 1: 99 ~ 172
                 clientY: 100
             });
         });
@@ -150,7 +150,7 @@ describe('Test user events for combo chart', function() {
             });
 
             mouseEventDetector._onMousemove({
-                clientX: 96, // index 1: 95 ~ 137
+                clientX: 100, // index 1: 99 ~ 172
                 clientY: 100
             });
         });

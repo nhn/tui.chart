@@ -2,18 +2,18 @@
 
 var DEFAULT_COLOR = '#000000';
 var DEFAULT_BACKGROUND = '#ffffff';
-var DEFAULT_FONTWEIGHT = 'normal';
+var DEFAULT_FONTWEIGHT = 'lighter';
 var EMPTY = '';
 var DEFAULT_AXIS = {
     tickColor: DEFAULT_COLOR,
     title: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: EMPTY,
-        color: DEFAULT_COLOR,
+        color: '#bbbbbb',
         fontWeight: DEFAULT_FONTWEIGHT
     },
     label: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: EMPTY,
         color: DEFAULT_COLOR,
         fontWeight: DEFAULT_FONTWEIGHT
@@ -26,18 +26,18 @@ var defaultTheme = {
             color: DEFAULT_BACKGROUND,
             opacity: 1
         },
-        fontFamily: 'Verdana'
+        fontFamily: 'Arial'
     },
     title: {
         fontSize: 18,
-        fontFamily: EMPTY,
+        fontFamily: 'Arial',
         color: DEFAULT_COLOR,
         fontWeight: DEFAULT_FONTWEIGHT
     },
     yAxis: DEFAULT_AXIS,
     xAxis: DEFAULT_AXIS,
     plot: {
-        lineColor: '#dddddd',
+        lineColor: '#000000',
         background: '#ffffff',
         label: {
             fontSize: 11,
@@ -52,35 +52,35 @@ var defaultTheme = {
             color: DEFAULT_COLOR,
             fontWeight: DEFAULT_FONTWEIGHT
         },
-        colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
+        colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c', '#989486', '#516f7d', '#29dbe3', '#dddddd'],
         borderColor: EMPTY,
         borderWidth: EMPTY,
         selectionColor: EMPTY,
-        startColor: '#F4F4F4',
-        endColor: '#345391',
-        overColor: '#F0C952',
+        startColor: '#00a9ff',
+        endColor: '#ff5a46',
+        overColor: EMPTY,
         dot: {
             fillColor: EMPTY,
             fillOpacity: 1,
             strokeColor: EMPTY,
             strokeOpacity: 1,
             strokeWidth: 2,
-            radius: 2,
+            radius: 6,
             hover: {
                 fillColor: EMPTY,
                 fillOpacity: 1,
-                strokeColor: EMPTY,
-                strokeOpacity: 0.8,
-                strokeWidth: 3,
-                radius: 4
+                strokeColor: '#fff',
+                strokeOpacity: 1,
+                strokeWidth: 4,
+                radius: 6
             }
         },
         ranges: []
     },
     legend: {
         label: {
-            fontSize: 12,
-            fontFamily: EMPTY,
+            fontSize: 11,
+            fontFamily: 'Arial',
             color: DEFAULT_COLOR,
             fontWeight: DEFAULT_FONTWEIGHT
         }

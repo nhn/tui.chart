@@ -306,9 +306,11 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                     rotateTitle: this.options.rotateTitle,
                     isVertical: this.isYAxis,
                     isPositionRight: this.data.isPositionRight,
-                    isCenter: this.options.isCenter
+                    isCenter: this.options.isCenter,
+                    isColumnType: predicate.isColumnTypeChart(this.dataProcessor.chartType)
                 },
                 layout: this.layout,
+                tickCount: this.data.tickCount,
                 set: this.axisSet
             });
         }
@@ -420,7 +422,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var theme = this.theme.label;
         var degree = this.data.degree;
         var halfWidth = labelSize / 2;
-        var horizontalTop = this.layout.position.top + chartConst.AXIS_LABEL_PADDING;
+        var horizontalTop = this.layout.position.top + chartConst.X_AXIS_LABEL_PADDING;
         var baseLeft = this.layout.position.left;
         var labelMargin = this.options.labelMargin || 0;
 
@@ -495,14 +497,15 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 }
 
                 if (isPositionRight) {
-                    labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING + labelMargin;
+                    labelLeftPosition = layout.position.left + layout.dimension.width;
+                } else if (self.options.isCenter) {
+                    labelLeftPosition = layout.position.left + (layout.dimension.width / 2);
                 } else {
-                    labelLeftPosition = layout.position.left + layout.dimension.width -
-                                        chartConst.AXIS_LABEL_PADDING - labelMargin;
+                    labelLeftPosition = layout.position.left;
                 }
             } else {
                 labelTopPosition = layout.position.top + chartConst.CHART_PADDING +
-                                   chartConst.AXIS_LABEL_PADDING + labelMargin;
+                                   chartConst.X_AXIS_LABEL_PADDING + labelMargin;
 
                 labelLeftPosition = labelPosition + layout.position.left;
 
@@ -519,6 +522,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             renderer.renderLabel({
                 isPositionRight: isPositionRight,
                 isVertical: isYAxis,
+                isCenter: self.options.isCenter,
                 labelSize: labelSize,
                 labelText: categories[index],
                 paper: self.paper,

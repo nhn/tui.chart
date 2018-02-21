@@ -69,9 +69,16 @@ var data = {
 };
 var options = {
     chart: {
-        width: 500,
-        height: 400,
-        title: 'Usage share of web browsers'
+        width: 700,
+        height: 700,
+        title: 'Usage share of web browsers',
+        format: function(value, chartType, areaType, valuetype, legendName) {
+            if (areaType === 'makingSeriesLabel') { // formatting at series area
+                value = value + '%';
+            }
+
+            return value;
+        }
     },
     series: {
         showLabel: true,
@@ -87,14 +94,18 @@ var options = {
 };
 var theme = {
     series: {
-        colors: ['#e6d3df', '#cfb4be', '#a9888d', '#8e6969', '#6d514b', '#55443c']
+        colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c', '#989486', '#516f7d', '#29dbe3', '#dddddd'],
+        label: {
+            color: '#fff',
+            fontFamily: 'sans-serif'
+        }
     }
 };
 
 // For apply theme
 
-// tui.chart.registerTheme('myTheme', theme);
-// options.theme = 'myTheme';
+tui.chart.registerTheme('myTheme', theme);
+options.theme = 'myTheme';
 
 tui.chart.pieChart(container, data, options);
 </script>

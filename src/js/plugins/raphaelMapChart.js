@@ -81,6 +81,7 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
                 fill: color,
                 opacity: 1,
                 stroke: STROKE_COLOR,
+                'stroke-width': 0.2,
                 'stroke-opacity': 1,
                 transform: 's' + dimensionRatio + ',' + dimensionRatio + ',0,0'
                     + 't' + (position.left / dimensionRatio) + ',' + (position.top / dimensionRatio)
@@ -117,10 +118,18 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
      */
     changeColor: function(index) {
         var sector = this.sectors[index];
+        var attributes = {
+            stroke: '#ffffff',
+            'stroke-width': 4
+        };
 
-        sector.sector.animate({
-            fill: this.overColor
-        }, ANIMATION_DURATION, '>');
+        if (this.overColor) {
+            attributes.fill = this.overColor;
+        }
+
+        sector.sector.animate(attributes, ANIMATION_DURATION, '>');
+        sector.sector.node.setAttribute('filter', 'url(#shadow)');
+        sector.sector.toFront();
     },
 
     /**
@@ -131,8 +140,11 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
         var sector = this.sectors[index];
 
         sector.sector.animate({
-            fill: sector.color
+            fill: sector.color,
+            stroke: STROKE_COLOR,
+            'stroke-width': 0.2
         }, ANIMATION_DURATION, '>');
+        sector.sector.node.setAttribute('filter', 'none');
     },
 
     /**

@@ -12,7 +12,7 @@ var snippet = require('tui-code-snippet');
 
 var DATA_URI_HEADERS = {
     xls: 'data:application/vnd.ms-excel;base64,',
-    csv: 'data:text/csv,'
+    csv: 'data:text/csv;charset=utf-8,%EF%BB%BF' /* BOM for utf-8 */
 };
 var DATA_URI_BODY_MAKERS = {
     xls: _makeXlsBodyWithRawData,

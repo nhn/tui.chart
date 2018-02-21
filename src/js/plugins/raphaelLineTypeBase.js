@@ -14,7 +14,7 @@ var arrayUtil = require('../helpers/arrayUtil');
 var browser = snippet.browser;
 var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
-var DEFAULT_DOT_RADIUS = 3;
+var DEFAULT_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
@@ -203,6 +203,33 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
     },
 
+    appendShadowFilterToDefs: function() {
+        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+        filter.setAttributeNS(null, 'id', 'shadow');
+        filter.setAttributeNS(null, 'x', '-50%');
+        filter.setAttributeNS(null, 'y', '-50%');
+        filter.setAttributeNS(null, 'width', '180%');
+        filter.setAttributeNS(null, 'height', '180%');
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+        feOffset.setAttributeNS(null, 'dx', '0');
+        feOffset.setAttributeNS(null, 'dy', '0');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feOffset);
+        filter.appendChild(feGaussianBlur);
+        filter.appendChild(feBlend);
+        this.paper.defs.appendChild(filter);
+    },
+
     /**
      * Make border style.
      * @param {string} borderColor border color
@@ -233,7 +260,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var outDotStyle = {
             'fill-opacity': opacity,
             'stroke-opacity': 0,
-            r: DEFAULT_DOT_RADIUS
+            r: DEFAULT_DOT_RADIUS,
+            filter: 'url(#shadow)'
         };
 
         if (borderStyle) {
@@ -256,7 +284,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var dot, dotStyle, raphaelDot;
 
         if (position) {
-            dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
+            dot = paper.circle(
+                position.left,
+                position.top,
+                (!snippet.isUndefined(dotTheme.radius)) ? dotTheme.radius : DEFAULT_DOT_RADIUS
+            );
             dotStyle = {
                 fill: dotTheme.fillColor || color,
                 'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
@@ -360,7 +392,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             stroke: hoverTheme.strokeColor || dotInformation.color,
             'stroke-opacity': hoverTheme.strokeOpacity,
             'stroke-width': hoverTheme.strokeWidth,
-            r: hoverTheme.radius
+            r: hoverTheme.radius,
+            filter: 'url(#shadow)'
         };
 
         this._setPrevDotAttributes(groupIndex, dotInformation.dot);
@@ -383,6 +416,46 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             this._prevDotAttributes = {};
         }
         this._prevDotAttributes[groupIndex] = dot.attr();
+    },
+
+    /**
+     * Update line stroke width.
+     * @param {string} changeType over or out
+     * @param {object} line raphael object
+     * @private
+     */
+    _updateLineStrokeOpacity: function(changeType, line) {
+        var outLineOpacity = 1;
+
+        if (this.groupLines) {
+            if (changeType === 'over') {
+                line.attr({
+                    'stroke-opacity': 1
+                });
+                outLineOpacity = 0.3;
+            }
+
+            snippet.forEachArray(this.groupLines, function(otherLine) {
+                otherLine.attr({
+                    'stroke-opacity': outLineOpacity
+                });
+            });
+        }
+    },
+
+    /**
+     * Update line stroke width.
+     * @param {string} changeType over or out
+     * @private
+     */
+    _updateAreaOpacity: function(changeType) {
+        if (this.groupAreas) {
+            snippet.forEach(this.groupAreas, function(otherArea) {
+                otherArea.area.attr({
+                    'fill-opacity': (changeType === 'over') ? 0.3 : 1
+                });
+            });
+        }
     },
 
     /**
@@ -413,18 +486,20 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         if (this.chartType === 'area') {
-            strokeWidth = this.lineWidth * 2;
+            strokeWidth = 5;
             startLine = line.startLine;
+            this._updateAreaOpacity('over');
             line = line.line;
         } else {
-            strokeWidth = this.lineWidth * 2;
+            strokeWidth = this.lineWidth;
         }
 
+        this._updateLineStrokeOpacity('over', line);
         this._updateLineStrokeWidth(line, strokeWidth);
-
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
         }
+
         this._showDot(item.endDot, groupIndex);
 
         if (item.startDot) {
@@ -530,6 +605,9 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         dot.attr(outDotStyle);
+        if (dot.node) {
+            dot.node.setAttribute('filter', '');
+        }
     },
 
     /**
@@ -554,6 +632,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             strokeWidth = this.lineWidth;
             startLine = line.startLine;
             line = line.line;
+            this._updateAreaOpacity('out');
         } else {
             strokeWidth = this.lineWidth;
         }
@@ -562,9 +641,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             opacity = DE_EMPHASIS_OPACITY;
         }
 
-        if (line) {
-            this._updateLineStrokeWidth(line, strokeWidth);
-        }
+        this._updateLineStrokeOpacity('out', line);
+        this._updateLineStrokeWidth(line, strokeWidth);
 
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
@@ -847,7 +925,22 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         return this.clipRectId;
-    }
+    },
+
+    /**
+     * Reset series order after selected to be same to when it is first rendered
+     * @param {number} legendIndex - legend index to reset series order
+     * @ignore
+     * @abstract
+     */
+    resetSeriesOrder: function() {},
+
+    /**
+     * @param {SVGElement | {area: {SVGElement}, line: {SVGElement}, startLine: {SVGElement}}} lineType - line or area graph
+     * @param {Array.<SVGElement>} dots - dot type element
+     * @abstract
+     */
+    moveSeriesToFront: function() {}
 });
 
 /**

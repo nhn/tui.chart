@@ -45,6 +45,18 @@ var predicate = {
     },
 
     /**
+     * Whether column type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
+     */
+    isColumnTypeChart: function(chartType) {
+        return predicate.isHeatmapChart(chartType) ||
+            predicate.isColumnChart(chartType) ||
+            predicate.isBoxplotChart(chartType);
+    },
+
+    /**
      * Whether boxplot chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart

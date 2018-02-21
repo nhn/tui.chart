@@ -101,9 +101,9 @@ var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeri
     onShowTooltip: function(params) {
         var seriesDataModel = this._getSeriesDataModel();
         var indexes = params.indexes;
-        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index).ratio;
+        var item = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index);
 
-        this.eventBus.fire('showWedge', ratio);
+        this.eventBus.fire('showWedge', item.ratio, item.label);
     },
 
     /**

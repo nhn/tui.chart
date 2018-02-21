@@ -38,7 +38,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
          * Line width
          * @type {number}
          */
-        this.lineWidth = 2;
+        this.lineWidth = 6;
     },
 
     /**
@@ -90,7 +90,38 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 
+        if (paper.raphael.svg) {
+            this.appendShadowFilterToDefs();
+        }
+
         return paper.setFinish();
+    },
+
+    appendShadowFilterToDefs: function() {
+        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+        filter.setAttributeNS(null, 'id', 'shadow');
+        filter.setAttributeNS(null, 'x', '-50%');
+        filter.setAttributeNS(null, 'y', '-50%');
+        filter.setAttributeNS(null, 'width', '180%');
+        filter.setAttributeNS(null, 'height', '180%');
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+        feOffset.setAttributeNS(null, 'dx', '0');
+        feOffset.setAttributeNS(null, 'dy', '0');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feOffset);
+        filter.appendChild(feGaussianBlur);
+        filter.appendChild(feBlend);
+        this.paper.defs.appendChild(filter);
     },
 
     /**
@@ -163,7 +194,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
 
             snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
                 if (item.endDot) {
-                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+                    self.moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
                 }
             });
         });
@@ -174,23 +205,68 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var self = this,
-            noneSelected = snippet.isNull(legendIndex);
+        var noneSelected = snippet.isNull(legendIndex);
+
+        if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
+            this.resetSeriesOrder(this.selectedLegendIndex);
+        }
 
         this.selectedLegendIndex = legendIndex;
 
         snippet.forEachArray(this.groupLines, function(line, groupIndex) {
-            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            var isSelectedLegend = legendIndex === groupIndex;
+            var opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            var groupDots = this.groupDots[groupIndex];
 
             line.attr({'stroke-opacity': opacity});
 
-            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
+            snippet.forEachArray(groupDots, function(item) {
                 item.opacity = opacity;
 
-                if (self.dotOpacity) {
+                if (this.dotOpacity) {
                     item.endDot.dot.attr({'fill-opacity': opacity});
                 }
+            }, this);
+
+            if (isSelectedLegend) {
+                this.moveSeriesToFront(line, groupDots);
+            }
+        }, this);
+
+        if (noneSelected) {
+            snippet.forEachArray(this.groupLines, function(line, groupIndex) {
+                this.moveSeriesToFront(line, this.groupDots[groupIndex]);
+            }, this);
+        }
+    },
+
+    /**
+     * Reset series order after selected to be same to when it is first rendered
+     * @param {number} legendIndex - legend index to reset series order
+     * @ignore
+     */
+    resetSeriesOrder: function(legendIndex) {
+        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+
+        if (frontLine) {
+            this.groupLines[legendIndex].insertBefore(frontLine);
+            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
+                item.endDot.dot.insertBefore(frontLine);
             });
+        }
+    },
+
+    /**
+     * @param {SVGElement} lineType - line or area graph
+     * @param {Array.<SVGElement>} dots - dot type element
+     * @ignore
+     * @override
+     */
+    moveSeriesToFront: function(lineType, dots) {
+        lineType.toFront();
+
+        snippet.forEachArray(dots, function(item) {
+            item.endDot.dot.toFront();
         });
     },
 

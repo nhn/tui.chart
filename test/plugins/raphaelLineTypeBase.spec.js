@@ -135,7 +135,8 @@ describe('RaphaelLineTypeBase', function() {
                 expected = {
                     'fill-opacity': 0.7,
                     'stroke-opacity': 0,
-                    r: 3
+                    r: 4,
+                    filter: 'url(#shadow)'
                 };
             expect(actual).toEqual(expected);
         });
@@ -148,10 +149,11 @@ describe('RaphaelLineTypeBase', function() {
                 }),
                 expected = {
                     'fill-opacity': 0.5,
-                    r: 3,
+                    r: 4,
                     stroke: 'red',
                     'stroke-width': 1,
-                    'stroke-opacity': 0.7
+                    'stroke-opacity': 0.7,
+                    filter: 'url(#shadow)'
                 };
             expect(actual).toEqual(expected);
         });
