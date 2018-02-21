@@ -110,6 +110,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var paper = data.paper;
         var isVertical = data.isVertical;
         var isPositionRight = data.isPositionRight;
+        var isCenter = data.isCenter;
         var theme = data.theme;
         var attributes = {
             'dominant-baseline': 'central',
@@ -122,6 +123,8 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
 
         if (isPositionRight) {
             attributes['text-anchor'] = 'end';
+        } else if (isCenter) {
+            attributes['text-anchor'] = 'middle';
         } else if (isVertical) {
             attributes['text-anchor'] = 'start';
         } else {
