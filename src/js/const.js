@@ -207,6 +207,8 @@ var chartConst = {
     },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
+    /** chart export menu width, height */
+    CHART_EXPORT_MENU_SIZE: 24,
     /** top margin of x axis label */
     XAXIS_LABEL_TOP_MARGIN: 10,
     /** right padding of vertical label */

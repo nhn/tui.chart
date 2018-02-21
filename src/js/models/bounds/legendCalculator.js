@@ -189,13 +189,14 @@ var legendCalculator = {
      */
     _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth, maxWidth) {
         var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+        var legendWidth = 0;
         if (maxWidth && labelWidth > maxWidth) {
             labelWidth = maxWidth;
         }
-        labelWidth += LEGEND_AREA_PADDING + checkboxWidth + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+        legendWidth = LEGEND_AREA_PADDING + checkboxWidth + LEGEND_ICON_WIDTH + labelWidth + this.legendMargin;
 
         return {
-            width: labelWidth + this.legendMargin,
+            width: legendWidth,
             height: 0
         };
     },

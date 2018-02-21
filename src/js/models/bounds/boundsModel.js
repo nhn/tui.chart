@@ -222,8 +222,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
                 titleTheme.fontSize,
                 titleTheme.fontFamily
             ).height : 0;
-        var yAxisTitlePadding = this.options.yAxis.title ? chartConst.Y_AXIS_TITLE_PADDING : 0;
-        var height = titleHeight ? titleHeight + chartConst.TITLE_PADDING + yAxisTitlePadding : 0;
+        var height = titleHeight ? titleHeight + chartConst.TITLE_PADDING + chartConst.Y_AXIS_TITLE_PADDING : 0;
         var dimension = {
             height: height
         };
@@ -240,8 +239,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
         if (this.options.chartExportMenu.visible) {
             dimension = {
-                height: 17 + chartConst.CHART_PADDING,
-                width: 60
+                height: chartConst.CHART_EXPORT_MENU_SIZE,
+                width: chartConst.CHART_EXPORT_MENU_SIZE
             };
         } else {
             dimension = {
@@ -570,7 +569,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     _makeLegendPosition: function() {
         var dimensionMap = this.dimensionMap;
-        var seriesDimension = this.getDimension('series');
+        var seriesDimension = dimensionMap.series;
         var legendOption = this.options.legend;
         var top = dimensionMap.title.height || dimensionMap.chartExportMenu.height;
         var yAxisAreaWidth, left;
@@ -588,7 +587,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
                 yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
                 left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
             }
-            top = this.getPosition('series').top;
+            top = this.getPosition('series').top + chartConst.LEGEND_AREA_PADDING;
         }
 
         return {
@@ -604,7 +603,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     _makeChartExportMenuPosition: function() {
         return {
-            top: 1,
+            top: this.getDimension('title') ? 36 : 10,
             right: 10
         };
     },

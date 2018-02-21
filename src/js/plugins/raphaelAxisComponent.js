@@ -8,7 +8,6 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var AXIS_BACKGROUND_RIGHT_PADDING = 4;
-var chartConst = require('../const');
 var snippet = require('tui-code-snippet');
 
 var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
@@ -81,10 +80,8 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var textAnchor = 'middle';
         if (rotationInfo.isPositionRight) {
             textAnchor = 'end';
-        } else if (rotationInfo.isVertical) {
+        } else if (rotationInfo.isVertical && !rotationInfo.isCenter) {
             textAnchor = 'start';
-        } else if (rotationInfo.isCategoryLabel) {
-            textAnchor = 'middle';
         }
 
         return textAnchor;
@@ -108,8 +105,6 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var positionTopAndLeft = data.positionTopAndLeft;
         var labelText = data.labelText;
         var paper = data.paper;
-        var isVertical = data.isVertical;
-        var isPositionRight = data.isPositionRight;
         var theme = data.theme;
         var attributes = {
             'dominant-baseline': 'central',
@@ -120,9 +115,9 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         };
         var textObj;
 
-        if (isPositionRight) {
+        if (data.isPositionRight) {
             attributes['text-anchor'] = 'end';
-        } else if (isVertical) {
+        } else if (data.isVertical && !data.isCenter) {
             attributes['text-anchor'] = 'start';
         } else {
             attributes['text-anchor'] = 'middle';
@@ -330,24 +325,28 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var rotationInfo = data.rotationInfo;
         var textHeight = getTextHeight(data.text, data.theme);
         var layout = data.layout;
+        var axisHeight = layout.dimension.height;
+        var axisWidth = layout.dimension.width;
+        var left = layout.position.left;
+        var top = layout.position.top;
 
         var position = {};
 
         if (rotationInfo.isCenter) {
             position.top = paper.height - (textHeight / 2);
-            position.left = layout.position.left;
+            position.left = left + (axisWidth / 2);
         } else if (rotationInfo.isPositionRight) {
-            position.top = layout.position.top - textHeight;
-            position.left = layout.position.left + layout.dimension.width + chartConst.Y_AXIS_LABEL_PADDING;
+            position.top = top - textHeight;
+            position.left = left + axisWidth;
         } else if (rotationInfo.isVertical) {
-            position.top = layout.position.top - textHeight;
-            position.left = layout.position.left;
+            position.top = top - textHeight;
+            position.left = left;
         } else if (rotationInfo.isColumnType) {
-            position.top = layout.position.top + layout.dimension.height - (textHeight / 2);
-            position.left = layout.position.left + (layout.dimension.width / (data.tickCount - 1) / 2);
+            position.top = top + axisHeight - (textHeight / 2);
+            position.left = left + (axisWidth / (data.tickCount - 1) / 2);
         } else {
-            position.top = layout.position.top + layout.dimension.height - (textHeight / 2);
-            position.left = layout.position.left;
+            position.top = top + axisHeight - (textHeight / 2);
+            position.left = left;
         }
 
         if (!rotationInfo.isCenter) {

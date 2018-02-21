@@ -46,27 +46,27 @@ var axisCalculator = {
     calculateYAxisWidth: function(labels, options, theme) {
         var title = options.title || '';
         var titleAreaWidth = 0;
-        var labelMargin = options.labelMargin || 0;
+        var labelMargin = options.labelMargin;
         var width = 0;
 
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
 
         if (options.isCenter) {
             width += chartConst.Y_AXIS_LABEL_PADDING;
-        } else if (options.rotateTitle === false) {
-            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title);
-        } else {
+        } else if (options.rotateTitle) {
             titleAreaWidth = renderUtil.getRenderedLabelHeight(title.text, theme.title);
+        } else {
+            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title);
         }
 
         if (predicate.isDatetimeType(options.type)) {
             labels = renderUtil.formatDates(labels, options.dateFormat);
         }
-        if (labelMargin > 0) {
+        if (labelMargin && labelMargin > 0) {
             width += labelMargin;
         }
 
-        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
+        width += Math.max(renderUtil.getRenderedLabelsMaxWidth(labels, theme.label), titleAreaWidth) +
             chartConst.Y_AXIS_LABEL_PADDING;
 
         return width;
