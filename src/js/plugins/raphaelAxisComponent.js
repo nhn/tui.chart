@@ -8,6 +8,7 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var AXIS_BACKGROUND_RIGHT_PADDING = 4;
+var chartConst = require('../const');
 var snippet = require('tui-code-snippet');
 
 var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
