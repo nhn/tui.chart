@@ -291,7 +291,9 @@ var chartConst = {
     DATE_TYPE_MINUTE: 'minute',
     DATE_TYPE_SECOND: 'second',
     /** title add padding */
-    TITLE_PADDING: 10,
+    TITLE_PADDING: 20,
+    /** default header height */
+    DEFAULT_HEADER_HEIGHT: 10,
     /** legend area padding */
     LEGEND_AREA_PADDING: 10,
     /** legend checkbox width */

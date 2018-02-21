@@ -10,13 +10,13 @@ var DEFAULT_AXIS = {
         fontSize: 11,
         fontFamily: EMPTY,
         color: '#bbbbbb',
-        fontWeight: DEFAULT_FONTWEIGHT
+        fontWeight: 'bold'
     },
     label: {
         fontSize: 11,
         fontFamily: EMPTY,
-        color: DEFAULT_COLOR,
-        fontWeight: DEFAULT_FONTWEIGHT
+        color: '#333',
+        fontWeight: 'normal'
     }
 };
 
@@ -81,7 +81,7 @@ var defaultTheme = {
         label: {
             fontSize: 11,
             fontFamily: 'Arial',
-            color: DEFAULT_COLOR,
+            color: '#333',
             fontWeight: DEFAULT_FONTWEIGHT
         }
     },

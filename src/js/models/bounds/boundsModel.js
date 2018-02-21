@@ -605,7 +605,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     _makeChartExportMenuPosition: function() {
         return {
             top: 1,
-            right: 20
+            right: 10
         };
     },
 
@@ -692,7 +692,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
         var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
-        var seriesTop = titleOrExportMenuHeight + topLegendHeight;
+        var headerHeight = titleOrExportMenuHeight || chartConst.DEFAULT_HEADER_HEIGHT;
+        var seriesTop = headerHeight + topLegendHeight;
         var defaultSeriesTop = renderUtil.getDefaultSeriesTopAreaHeight(this.chartType, this.theme.series);
         var seriesPosition = {
             top: (!seriesTop ? defaultSeriesTop : seriesTop) + chartConst.CHART_PADDING,

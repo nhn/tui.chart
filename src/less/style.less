@@ -14,10 +14,10 @@
 
 .tui-chart {
   position: relative;
+  font-family: Arial;
   .user-select();
   &, * {
     .border-box();
-    line-height: 1;
   }
   svg {
       line, path, rect {
@@ -454,6 +454,7 @@
               padding: 10px;
               text-align: left;
               background-color: #f3f3f3;
+              width: 147px;
           }
           &.tui-chart-chartExportMenu-body {
               display: inline-block;
@@ -601,29 +602,21 @@
       position: absolute;
       display: none;
       user-select: none;
-      font-family: Arial;
       font-size: 12px;
       font-weight: normal;
-      font-style: normal;
-      font-stretch: normal;
-      line-height: normal;
-      letter-spacing: normal;
-      text-align: left;
       color: #ffffff;
       &.show {
         display: block;
       }
       .tui-chart-default-tooltip {
         .border-radius(3px);
-        background-color: rgba(85, 85, 85, 0.95);
         background-color: #555555;
-        padding: 11px 15px;
+        background-color: rgba(85, 85, 85, 0.95);
         > * {
           text-align: left;
           white-space: nowrap;
-          padding: 5px 15px;
         }
-        > .head {
+        > .tui-chart-tooltip-head {
             padding: 8px 15px 7px 15px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             font-size: 13px;
