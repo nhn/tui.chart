@@ -570,16 +570,18 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     _makeLegendPosition: function() {
         var dimensionMap = this.dimensionMap;
         var seriesDimension = dimensionMap.series;
+        var seriesPositionTop = this.getPosition('series').top;
         var legendOption = this.options.legend;
-        var top = dimensionMap.title.height || dimensionMap.chartExportMenu.height;
+        var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
+        var top = 0;
         var yAxisAreaWidth, left;
 
-        if (predicate.isLegendAlignBottom(legendOption.align)) {
-            top += seriesDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
-        }
-
         if (predicate.isHorizontalLegend(legendOption.align)) {
+            top = seriesPositionTop - dimensionMap.legend.height + LEGEND_AREA_PADDING;
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
+            if (predicate.isLegendAlignBottom(legendOption.align)) {
+                top = seriesPositionTop + seriesDimension.height + this.getDimension('xAxis').height + LEGEND_AREA_PADDING;
+            }
         } else {
             if (predicate.isLegendAlignLeft(legendOption.align)) {
                 left = this.chartLeftPadding;
@@ -587,7 +589,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
                 yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
                 left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
             }
-            top = this.getPosition('series').top + chartConst.LEGEND_AREA_PADDING;
+            top = seriesPositionTop + LEGEND_AREA_PADDING;
         }
 
         return {

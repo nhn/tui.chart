@@ -304,6 +304,10 @@ var chartConst = {
     LEGEND_ICON_HEIGHT: 10,
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 8,
+    /** vertical legend right padding */
+    LEGEND_V_LABEL_RIGHT_PADDING: 18,
+    /** horizontal legend right padding */
+    LEGEND_H_LABEL_RIGHT_PADDING: 30,
     /** lgend line icon svg path */
     LEGEND_LINE_ICON_PATH: 'M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1',
     MIN_LEGEND_WIDTH: 100,
