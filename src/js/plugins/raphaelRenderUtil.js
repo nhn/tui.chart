@@ -55,7 +55,7 @@ var raphaelRenderUtil = {
         var line = paper.path([path]),
             strokeStyle = {
                 stroke: color,
-                'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth)
+                'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth),
                 'stroke-linecap': 'round'
             };
         if (color === 'transparent') {
