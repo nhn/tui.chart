@@ -79,7 +79,7 @@ var axisDataMaker = {
         return {
             labels: labels,
             tickCount: tickCount,
-            validTickCount: 0,
+            validTickCount: tickCount,
             isLabelAxis: true,
             options: options,
             isVertical: !!params.isVertical,

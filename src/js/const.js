@@ -31,6 +31,14 @@ var chartConst = {
     CLASS_NAME_CHART_EXPORT_MENU_ITEM: 'tui-chart-chartExportMenu-item',
     /** @type {string} */
     CLASS_NAME_CHART_EXPORT_MENU_BUTTON: 'tui-chart-chartExportMenu-button',
+    /** @type {string} */
+    CLASS_NAME_CHART_EXPORT_MENU_HEAD: 'tui-chart-chartExportMenu-head',
+    CLASS_NAME_CHART_EXPORT_MENU_BODY: 'tui-chart-chartExportMenu-body',
+    CLASS_NAME_TOOLTIP_VALUE: 'tui-chart-tooltip-value',
+    /** @type {string} */
+    CLASS_NAME_TOOLTIP_HEAD: 'tui-chart-tooltip-head',
+    /** @type {string} */
+    CLASS_NAME_TOOLTIP_BODY: 'tui-chart-tooltip-body',
     /** chart type
      * @type {string}
      */
@@ -139,7 +147,8 @@ var chartConst = {
     /** default border color for treemap chart
      * @type {string}
      */
-    TREEMAP_DEFAULT_BORDER: '#ccc',
+    TREEMAP_DEFAULT_BORDER: '#ffffff',
+    TREEMAP_DEFAULT_BORDER_WIDTH: 4,
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel */
@@ -170,6 +179,8 @@ var chartConst = {
     PIE_GRAPH_DEFAULT_RATIO: 0.9,
     /** small ratio for pie graph */
     PIE_GRAPH_SMALL_RATIO: 0.75,
+    /** pie chart legend label size */
+    PIE_GRAPH_LEGEND_LABEL_SIZE: 16,
     /** tick count for spectrum legend */
     SPECTRUM_LEGEND_TICK_COUNT: 4,
     /** legend & lable concat separator */
@@ -184,7 +195,7 @@ var chartConst = {
     /** dot radius */
     DOT_RADIUS: 4,
     /** radius for circle of scatter chart*/
-    SCATTER_RADIUS: 5,
+    SCATTER_RADIUS: 7,
     /**
      * theme properties
      * @type {{yAxis: Array.<string>, series: Array.<string>}}
@@ -284,23 +295,38 @@ var chartConst = {
     /** legend area padding */
     LEGEND_AREA_PADDING: 10,
     /** legend checkbox width */
-    LEGEND_CHECKBOX_WIDTH: 10,
-    LEGEND_ICON_WIDTH: 40,
-    LEGEND_ICON_HEIGHT: 15,
+    LEGEND_CHECKBOX_WIDTH: 14,
+    LEGEND_ICON_WIDTH: 10,
+    LEGEND_ICON_HEIGHT: 10,
     /** lgend label left padding */
-    LEGEND_LABEL_LEFT_PADDING: 5,
+    LEGEND_LABEL_LEFT_PADDING: 8,
+    /** lgend line icon svg path */
+    LEGEND_LINE_ICON_PATH: 'M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1',
     MIN_LEGEND_WIDTH: 100,
+    /** map legend padding before spectrum graph area */
+    MAP_LEGEND_AREA_PADDING: 5,
+    /** map legend tooltip vertical padding */
+    MAP_LEGEND_TOOLTIP_VERTICAL_PADDING: 4,
+    /** map legend tooltip horizontal padding */
+    MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING: 6,
+    /** map legend wedge size */
+    MAP_LEGEND_WEDGE_SIZE: 4,
+    /** map legend padding between wedge and spectrum graph */
+    MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE: 4,
     /** map legend height */
-    MAP_LEGEND_SIZE: 200,
+    MAP_LEGEND_SIZE: 400,
     /** map legend graph size */
-    MAP_LEGEND_GRAPH_SIZE: 25,
+    MAP_LEGEND_GRAPH_SIZE: 6,
     /** map legend label padding */
-    MAP_LEGEND_LABEL_PADDING: 10,
+    MAP_LEGEND_LABEL_PADDING: 5,
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
     CIRCLE_LEGEND_PADDING: 10,
     HALF_RATIO: 0.5,
-    /** AXIS LABEL PADDING */
-    AXIS_LABEL_PADDING: 7,
+    /** X-AXIS LABEL PADDING */
+    X_AXIS_LABEL_PADDING: 7,
+    /** Y-AXIS LABEL PADDING */
+    Y_AXIS_LABEL_PADDING: 17,
+    Y_AXIS_TITLE_PADDING: 20,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
     /**
@@ -326,9 +352,9 @@ var chartConst = {
      */
     AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
     /** label padding top */
-    LABEL_PADDING_TOP: 3,
+    LABEL_PADDING_TOP: 7,
     /** line margin top */
-    LINE_MARGIN_TOP: 5,
+    LINE_MARGIN_TOP: 14,
     /** tooltip gap */
     TOOLTIP_GAP: 5,
     /** tooltip direction
@@ -355,6 +381,8 @@ var chartConst = {
     SERIES_LABEL_OPACITY: 0.3,
     WHEEL_TICK: 120,
     MAX_ZOOM_MAGN: 5,
+    ZOOM_POSITION_TOP_EXIST_TITLE: 5,
+    ZOOM_POSITION_TOP_NONE_TITLE: 1,
     FF_WHEELDELTA_ADJUSTING_VALUE: -40,
     IE7_ROTATION_FILTER_STYLE_MAP: {
         25: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +

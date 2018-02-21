@@ -215,11 +215,17 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     _registerTitleDimension: function() {
         var chartOptions = this.options.chart || {};
         var hasTitleOption = snippet.isExisty(chartOptions.title);
-        var titleHeight =
-            hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
+        var titleTheme = this.theme.title;
+        var titleHeight = hasTitleOption ?
+            raphaelRenderUtil.getRenderedTextSize(
+                chartOptions.title.text,
+                titleTheme.fontSize,
+                titleTheme.fontFamily
+            ).height : 0;
+        var yAxisTitlePadding = this.options.yAxis.title ? chartConst.Y_AXIS_TITLE_PADDING : 0;
+        var height = titleHeight ? titleHeight + chartConst.TITLE_PADDING + yAxisTitlePadding : 0;
         var dimension = {
-            height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
+            height: height
         };
 
         this._registerDimension('title', dimension);
@@ -283,6 +289,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         this._registerDimension('legend', dimension);
+        this.useSpectrumLegend = true;
     },
 
     /**
@@ -574,11 +581,14 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
-        } else if (predicate.isLegendAlignLeft(legendOption.align)) {
-            left = this.chartLeftPadding;
         } else {
-            yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
-            left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
+            if (predicate.isLegendAlignLeft(legendOption.align)) {
+                left = this.chartLeftPadding;
+            } else {
+                yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
+                left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
+            }
+            top = this.getPosition('series').top;
         }
 
         return {
@@ -743,6 +753,10 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     registerBoundsData: function(xAxisData) {
         this._registerCenterComponentsDimension();
 
+        if (this.useSpectrumLegend) {
+            this._updateDimensionsForSpectrumLegend();
+        }
+
         if (this.hasAxes) {
             this._registerAxisComponentsDimension();
             this._updateDimensionsForXAxisLabel(xAxisData);
@@ -753,6 +767,24 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
         if (this.options.yAxis.isCenter) {
             this._updateBoundsForYAxisCenterOption();
+        }
+    },
+
+    /**
+     * Update spectrum legend dimension, to prevent overflow
+     * @private
+     */
+    _updateDimensionsForSpectrumLegend: function() {
+        var legendAlignOption = this.options.legend.align;
+        var legendDimension = this.getDimension('legend');
+        var seriesDimension = this.getDimension('series');
+
+        if (predicate.isHorizontalLegend(legendAlignOption) &&
+            (legendDimension.width > seriesDimension.width)) {
+            legendDimension.width = seriesDimension.width;
+        } else if (predicate.isVerticalLegend(legendAlignOption) &&
+            (legendDimension.height > seriesDimension.height)) {
+            legendDimension.height = seriesDimension.height;
         }
     },
 

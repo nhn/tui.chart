@@ -25,6 +25,8 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         Series.call(this, params);
 
         this.theme.borderColor = this.theme.borderColor || chartConst.TREEMAP_DEFAULT_BORDER;
+        this.theme.borderWidth = this.theme.borderWidth || chartConst.TREEMAP_DEFAULT_BORDER_WIDTH;
+        this.theme.label.color = this.options.useColorValue ? '#000' : '#fff';
 
         /**
          * root id
@@ -332,10 +334,11 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
     onShowTooltip: function(params) {
         var seriesDataModel = this._getSeriesDataModel();
         var indexes = params.indexes;
-        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).colorRatio;
+        var item = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true);
+        var ratio = item.colorRatio;
 
         if (ratio > -1) {
-            this.eventBus.fire('showWedge', ratio);
+            this.eventBus.fire('showWedge', ratio, item.colorValue);
         }
     }
 });

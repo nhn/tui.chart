@@ -52,11 +52,11 @@ var axisCalculator = {
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
 
         if (options.isCenter) {
-            width += chartConst.AXIS_LABEL_PADDING;
+            width += chartConst.Y_AXIS_LABEL_PADDING;
         } else if (options.rotateTitle === false) {
-            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title) + chartConst.TITLE_PADDING;
+            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title);
         } else {
-            titleAreaWidth = renderUtil.getRenderedLabelHeight(title.text, theme.title) + chartConst.TITLE_PADDING;
+            titleAreaWidth = renderUtil.getRenderedLabelHeight(title.text, theme.title);
         }
 
         if (predicate.isDatetimeType(options.type)) {
@@ -67,7 +67,7 @@ var axisCalculator = {
         }
 
         width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
-            chartConst.AXIS_LABEL_PADDING;
+            chartConst.Y_AXIS_LABEL_PADDING;
 
         return width;
     }

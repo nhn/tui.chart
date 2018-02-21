@@ -142,7 +142,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      * @private
      */
     _renderTickArea: function(legendSet) {
-        this.graphRenderer.renderTicksAndLabels(this.paper, this._makeBaseDataToMakeTickArea(),
+        this.graphRenderer.renderTickLabels(this.paper, this._makeBaseDataToMakeTickArea(),
             this.scaleData.labels, this.isHorizontal, legendSet);
     },
 
@@ -165,7 +165,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      */
     _makeHorizontalGraphDimension: function() {
         return {
-            width: this.layout.dimension.width + 10,
+            width: this.layout.dimension.width,
             height: chartConst.MAP_LEGEND_GRAPH_SIZE
         };
     },
@@ -176,6 +176,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      * @private
      */
     _renderGraph: function(legendSet) {
+        var position = this.layout.position;
         var dimension;
 
         if (this.isHorizontal) {
@@ -184,10 +185,18 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
             dimension = this._makeVerticalGraphDimension();
         }
 
-        this.graphRenderer.render(this.paper, {
-            dimension: dimension,
-            position: this.layout.position
-        }, this.colorSpectrum, this.isHorizontal, legendSet);
+        this.graphRenderer.render({
+            paper: this.paper,
+            layout: {
+                dimension: dimension,
+                position: position
+            },
+            colorSpectrum: this.colorSpectrum,
+            isHorizontal: this.isHorizontal,
+            legendSet: legendSet,
+            theme: this.theme.label,
+            labels: this.scaleData.labels
+        });
     },
 
     /**
@@ -224,7 +233,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      */
     render: function(data) {
         this._setDataForRendering(data);
-        this.legnedSet = this._renderLegendArea();
+        this.legendSet = this._renderLegendArea();
     },
 
     /**
@@ -232,7 +241,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      * @param {object} data - scale data
      */
     rerender: function(data) {
-        this.legnedSet.remove();
+        this.legendSet.remove();
         this.render(data);
     },
 
@@ -247,9 +256,10 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
     /**
      * On show wedge.
      * @param {number} ratio ratio
+     * @param {string} label label
      */
-    onShowWedge: function(ratio) {
-        this.graphRenderer.showWedge(chartConst.MAP_LEGEND_SIZE * ratio);
+    onShowWedge: function(ratio, label) {
+        this.graphRenderer.showWedge(ratio, label);
     },
 
     /**

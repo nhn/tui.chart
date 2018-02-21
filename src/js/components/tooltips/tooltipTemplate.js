@@ -10,87 +10,97 @@ var templateMaker = require('../../helpers/templateMaker');
 
 var htmls = {
     HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-        '<div>' +
+        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+        '<div class="tui-chart-tooltip-body">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
             '<span>{{ legend }}</span>' +
-            '<span>{{ label }}</span>' +
-            '<span>{{ suffix }}</span>' +
+            '<span class="tui-chart-tooltip-value">{{ label }}{{ suffix }}</span>' +
         '</div>' +
     '</div>',
+
     HTML_PIE_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-        '<div>' +
+        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+        '<div class="tui-chart-tooltip-body">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
             '<span>{{ legend }}</span>' +
-            '<span>{{ ratioLabel }}</span>' +
-            '<span>( {{ label }} {{ suffix }})</span>' +
+            '<span class="tui-chart-tooltip-value">{{ ratioLabel }} ( {{ label }} {{ suffix }})</span>' +
         '</div>' +
     '</div>',
+
     HTML_COORDINATE_TYPE_CHART_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div>{{ category }}</div>' +
-        '<div>' +
+        '<div class="tui-chart-tooltip-body">' +
             '<span>{{ legend }}</span>' +
-            '<span>{{ label }}</span>' +
-        '</div>{{ valueTypes }}' +
+            '<span class="tui-chart-tooltip-value">{{ label }}</span>' +
+        '</div><table class="tui-chart-tooltip-body">{{ valueTypes }}</table>' +
     '</div>',
+
     HTML_GROUP: '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
-        '<div>{{ category }}</div>' +
-        '{{ items }}' +
+        '<div class="tui-chart-tooltip-head">{{ category }}</div>' +
+        '<table class="tui-chart-tooltip-body">' +
+            '{{ items }}' +
+        '</table>' +
     '</div>',
-    HTML_GROUP_TYPE: '<div class="tui-chart-tooltip-type">{{ type }}</div>',
-    HTML_GROUP_ITEM: '<div>' +
-        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
-        '&nbsp;<span>{{ legend }}</span>:&nbsp;<span>{{ value }}</span>' +
-        '<span>{{ suffix }}</span>' +
-    '</div>',
+
+    HTML_GROUP_TYPE: '<tr>' +
+        '<td colspan="3" class="tui-chart-tooltip-type">{{ type }}</div>' +
+    '</tr>',
+
+    HTML_GROUP_ITEM: '<tr>' +
+        '<td>' +
+            '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
+        '</td>' +
+        '<td>{{ legend }}</td>' +
+        '<td class="tui-chart-tooltip-value">{{ value }} {{ suffix }}</td>' +
+    '</tr>',
+
     GROUP_CSS_TEXT: 'background-color:{{ color }}',
     HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div>{{ name }}: {{ value }}{{ suffix }}</div>' +
     '</div>',
     HTML_BOXPLOT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-            '<div>' +
-                '<span>{{ legend }}</span>' +
-            '</div>' +
-            '<div>' +
-                '<span>Maximum: </span>' +
-                '<span>{{ maxLabel }}</span>' +
-                '<span>{{ suffix }}</span>' +
-            '</div>' +
-            '<div>' +
-                '<span>Upper Quartile: </span>' +
-                '<span>{{ uqLabel }}</span>' +
-                '<span>{{ suffix }}</span>' +
-            '</div>' +
-            '<div>' +
-                '<span>Median: </span>' +
-                '<span>{{ medianLabel }}</span>' +
-                '<span>{{ suffix }}</span>' +
-            '</div>' +
-            '<div>' +
-                '<span>Lower Quartile: </span>' +
-                '<span>{{ lqLabel }}</span>' +
-                '<span>{{ suffix }}</span>' +
-            '</div>' +
-            '<div>' +
-                '<span>Minimum: </span>' +
-                '<span>{{ minLabel }}</span>' +
-                '<span>{{ suffix }}</span>' +
-            '</div>' +
+        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+            '<table class="tui-chart-tooltip-body">' +
+                '<tr>' +
+                    '<td colspan="2">{{ legend }}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td>Maximum: </td>' +
+                    '<td class="tui-chart-tooltip-value">{{ maxLabel }} {{ suffix }}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td>Upper Quartile: </td>' +
+                    '<td class="tui-chart-tooltip-value">{{ uqLabel }} {{ suffix }}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td>Median: </td>' +
+                    '<td class="tui-chart-tooltip-value">{{ medianLabel }} {{ suffix }}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td>Lower Quartile: </td>' +
+                    '<td class="tui-chart-tooltip-value">{{ lqLabel }} {{ suffix }}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td>Minimum: </td>' +
+                    '<td class="tui-chart-tooltip-value">{{ minLabel }} {{ suffix }}</td>' +
+                '</tr>' +
+            '</table>' +
     '</div>',
     HTML_BOXPLOT_OUTLIER: '<div class="tui-chart-default-tooltip">' +
-        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-            '<div>' +
+        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+            '<div class="tui-chart-tooltip-body">' +
                 '<span>{{ legend }}</span>' +
             '</div>' +
-            '<div>' +
+            '<div class="tui-chart-tooltip-body">' +
                 '<span>Outlier: </span>' +
-                '<span>{{ label }}</span>' +
-                '<span>{{ suffix }}</span>' +
+                '<span class="tui-chart-tooltip-value">{{ label }} {{ suffix }}</span>' +
             '</div>' +
     '</div>',
     HTML_BULLET_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div class="{{ categoryVisible }}">{{ category }}' +
-        '<span>{{ label }}</span><span>{{ suffix }}</span></div>' +
+            '<div class="tui-chart-tooltip-body {{ categoryVisible }}">' +
+            '<span>{{ category }}</span>' +
+            '<span class="tui-chart-tooltip-value">{{ label }} {{ suffix }}</span>' +
+        '</div>' +
     '</div>'
 };
 

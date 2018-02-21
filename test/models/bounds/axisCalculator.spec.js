@@ -58,7 +58,7 @@ describe('Test for axisCalculator', function() {
                 isCenter: true
             }, {});
 
-            expect(actual).toBe(64);
+            expect(actual).toBe(84);
         });
 
         it('labelMargin option should increase the y-axis width.', function() {

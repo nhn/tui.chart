@@ -281,7 +281,9 @@ var scaleDataMaker = {
             offsetSize: baseSize
         });
 
-        isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+        if (!options.useSpectrumLegend) {
+            isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+        }
 
         if (isOverflowed) {
             scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);

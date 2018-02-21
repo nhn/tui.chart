@@ -416,9 +416,13 @@ describe('Test for BoundsModel', function() {
                     width: 50
                 }
             };
+            boundsModel.positionMap.series = {
+                left: 20,
+                top: 50
+            };
             actual = boundsModel._makeLegendPosition();
             expected = {
-                top: 20,
+                top: 50,
                 left: 270
             };
 
@@ -448,9 +452,13 @@ describe('Test for BoundsModel', function() {
                     width: 50
                 }
             };
+            boundsModel.positionMap.series = {
+                left: 20,
+                top: 50
+            };
             actual = boundsModel._makeLegendPosition();
             expected = {
-                top: 20,
+                top: 50,
                 left: 270
             };
 

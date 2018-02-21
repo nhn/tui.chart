@@ -211,7 +211,7 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
         var dimensionHeight = (chartConst.LINE_MARGIN_TOP + legendItemHeight) * (isHorizontal ? 1 : labelCount);
         var left = basePosition.left;
 
-        if (!predicate.isLegendAlignLeft) {
+        if (!predicate.isLegendAlignLeft(this.options.align)) {
             left += chartConst.LEGEND_AREA_PADDING;
         }
 

@@ -2,7 +2,7 @@
 
 @axis-color: #000;
 @chart-padding: 10px;
-@legend-rect-width: 12px;
+@legend-rect-width: 10px;
 @hidden-padding: 1px;
 
 .user-select() {
@@ -339,40 +339,30 @@
   .tui-chart-zoom-area {
     z-index: 1500;
     position: absolute;
-    border: 1px solid #cccccc;
     background-color: #cccccc;
-    .border-radius(4px);
+    .border-radius(1px);
     > .tui-chart-zoom-btn {
-      width: 21px;
-      height: 21px;
+      width: 24px;
+      height: 24px;
       display: block;
-      background-color: #fff;
+      background-color: #f4f4f4;
+      border-radius: 1px;
       cursor: pointer;
       position: relative;
-      &:first-child {
-        margin-bottom: 1px;
-        .border-radius(4px 4px 0 0);
-      }
-      &:last-child {
-        .border-radius(0 0 4px 4px);
-      }
-      &:hover {
-        background-color: #efefef;
-      }
       > div {
-        font-szie: 0;
+        font-size: 0;
         background-color: #555555;
         position: absolute;
         &.horizontal-line {
-          width:9px;
-          height: 1px;
+          width:8px;
+          height: 2px;
           left: 6px;
-          top: 10px;
+          top: 11px;
         }
         &.vertical-line {
-          width:1px;
-          height: 9px;
-          left: 10px;
+          width: 2px;
+          height: 8px;
+          left: 11px;
           top: 6px;
         }
       }
@@ -410,9 +400,8 @@
       left: 20px;
       top: 20px;
       font-size: 11px;
-      padding: 5px;
-      border: 1px solid #ccc;
-      background-color: #efefef;
+      width: 24px;
+      height: 24px;
       cursor: pointer;
       .user-select();
     }
@@ -423,25 +412,22 @@
     width: @legend-rect-width;
     height: @legend-rect-width;
     &.line {
-      height: 2px;
-    }
-    &.area, &.bubble {
-      .opacity(0.5);
+      padding: 3px 0;
     }
   }
   .tui-chart-chartExportMenu-area {
-    z-index: 900;
     position: absolute;
     font-family: Verdana;
     margin: 0;
     padding: 10px 0 0 0;
-    z-index: 5000;
+    z-index: 501;
     .tui-chart-chartExportMenu-button{
       position: absolute;
-      width: 26px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       right :0;
-      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAKklEQVQ4EWMsKCj4z0BFwERFs8BGUd1AajtwCJjHOBrLQyCWKHXiCIxlAM/yBv2WsAlAAAAAAElFTkSuQmCC) top left no-repeat;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAALElEQVRIiWNgGAWjYHiB0NDQ/6Ghof9J0cNEK8eMUDAaBwMPRuNgFIwC8gAAvtgL+8uz36kAAAAASUVORK5CYII=);
+      background-color: #f4f4f4;
       border: 0px;
       font-size: 12px;
       padding: 3px 5px;
@@ -451,25 +437,38 @@
     ul {
       display: none;
       position: absolute;
-      top: 30px;
+      top: 37px;
       right: 0;
-      width: 120px;
+      width: 150px;
       background: #fff;
-      border: 0.5px solid #000;
-      font-size: 0.8em;
+      border: 1px solid #bab9ba;
+      font-size: 11px;
       padding: 0;
       margin: 0;
-      box-shadow: 3px 3px 5px #888888;
         > li {
           margin: 0;
-          padding: 7px 3px;
           border-collapse: collapse;
           text-align: center;
           list-style-type: none;
-          line-height: 1;
-          cursor: pointer;
-          &:hover {
-            background-color: #91ade5;
+          &.tui-chart-chartExportMenu-head {
+              padding: 10px;
+              text-align: left;
+              background-color: #f3f3f3;
+          }
+          &.tui-chart-chartExportMenu-body {
+              display: inline-block;
+              width: 100%;
+              padding: 7px 0;
+              > li {
+                  padding: 12px 3px;
+                  line-height: 1;
+                  cursor: pointer;
+                  width: 50%;
+                  float: left;
+                  &:hover {
+                      font-weight: bold;
+                  }
+              }
           }
         }
     }
@@ -593,7 +592,7 @@
 
   .tui-chart-tooltip-area {
     position: absolute;
-    z-index: 500;
+    z-index: 501;
     * {
       .user-select();
     }
@@ -602,26 +601,60 @@
       position: absolute;
       display: none;
       user-select: none;
+      font-family: Arial;
+      font-size: 12px;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      text-align: left;
+      color: #ffffff;
       &.show {
         display: block;
       }
       .tui-chart-default-tooltip {
-        padding: 4px 0;
-        font-size: 12px;
-        min-width: 100px;
-        color: #fff;
-        .border-radius(5px);
-        background-color: rgba(0, 0, 0, 0.7);
-        background-color: #555 \9;
+        .border-radius(3px);
+        background-color: rgba(85, 85, 85, 0.95);
+        background-color: #555555;
+        padding: 11px 15px;
         > * {
-          padding: 2px 7px;
-          text-align: center;
+          text-align: left;
           white-space: nowrap;
+          padding: 5px 15px;
         }
-
-        > :first-child {
-          backgound-color: #fff;
-          font-weight: bold;
+        > .head {
+            padding: 8px 15px 7px 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            font-weight: bold;
+        }
+        > table {
+            width: 100%;
+            border-spacing: 0;
+            border-collapse: separate;
+            td {
+                padding-bottom: 5px;
+            }
+        }
+        > .tui-chart-tooltip-body {
+            padding: 11px 15px;
+            > span {
+                display: inline-block;
+                height: 10px;
+                &.tui-chart-legend-rect {
+                    width: 10px;
+                    margin-right: 8px;
+                    vertical-align: text-top;
+                    &.line {
+                        padding: 0;
+                    }
+                }
+            }
+            .tui-chart-tooltip-value {
+                padding-left: 44px;
+                text-align: right;
+            }
         }
 
         &.tui-chart-group-tooltip {
@@ -632,22 +665,37 @@
             padding-top: 4px;
             padding-bottom: 4px;
           }
+
+          > table {
+              border-spacing: 0;
+              border-collapse: separate;
+              td {
+                  padding-bottom: 5px;
+              }
+          }
+          > .tui-chart-tooltip-body {
+              padding: 11px 15px;
+              font-size: 12px;
+              font-weight: lighter;
+              > span {
+                  display: inline-block;
+              }
+              .tui-chart-tooltip-value {
+                  padding-left: 44px;
+                  text-align: right;
+              }
+          }
           .tui-chart-legend-rect {
-            position: absolute;
-            left: 7px;
-            top: 2px;
-            &.line {
-              top: 7px;
-            }
+            position: relative;
+            left: 0px;
+            top: -2px;
+            margin-right: 5px;
+          }
+          > .tui-chart-tooltip-head {
+            padding: 8px 15px;
+            text-align: left;
           }
 
-          > :first-child {
-            padding-left: 7px;
-            padding-top: 6px;
-            padding-bottom: 6px;
-            text-align: center;
-          }
-          
           > .tui-chart-tooltip-type {
             padding-left: 7px;
           }
@@ -718,4 +766,8 @@
       }
     }
   }
+}
+
+.box-shadow {
+  filter: shadow(0 4px 4px);
 }

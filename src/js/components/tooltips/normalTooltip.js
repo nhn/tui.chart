@@ -38,7 +38,6 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      */
     _makeTooltipHtml: function(category, item) {
         var template = this._getTooltipTemplate(item);
-
         return template(snippet.extend({
             categoryVisible: category ? 'show' : 'hide',
             category: category
@@ -96,7 +95,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
         return snippet.map(valueTypes, function(type) {
-            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
+            return (data[type]) ? '<tr><td>' + type + '</td><td class="' + chartConst.CLASS_NAME_TOOLTIP_VALUE + '">' + data[type] + '</td></tr>' : '';
         }).join('');
     },
 
@@ -115,6 +114,8 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
             data.outlierIndex = indexes.outlierIndex;
         }
 
+        data.chartType = this.chartType;
+        data.cssText = 'background-color: ' + this.colors[indexes.index];
         data = snippet.extend({
             suffix: this.suffix
         }, data);
@@ -183,17 +184,16 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @private
      */
     _makeTooltipDatum: function(legendLabel, category, seriesItem) {
-        var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
         var tooltipLabel = seriesItem.tooltipLabel;
         var labelFormatter = this.labelFormatter;
         var tooltipDatum = {
             legend: legendLabel || '',
-            label: tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : ''),
+            label: tooltipLabel || (seriesItem.label ? seriesItem.label : ''),
             category: category || ''
         };
 
         if (labelFormatter) {
-            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
+            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, '');
         }
 
         tooltipDatum.category = category || '';
