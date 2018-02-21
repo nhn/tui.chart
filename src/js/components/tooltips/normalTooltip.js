@@ -25,7 +25,13 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @private
      * @override
      */
-    init: function() {
+    init: function(params) {
+        /**
+         * Color spectrum
+         * @type {ColorSpectrum}
+         */
+        this.colorSpectrum = params.colorSpectrum;
+
         TooltipBase.apply(this, arguments);
     },
 
@@ -109,13 +115,17 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
     _makeSingleTooltipHtml: function(chartType, indexes) {
         var groupIndex = indexes.groupIndex;
         var data = snippet.extend({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
+        var color = this.colors[indexes.index];
 
         if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;
         }
+        if (predicate.isHeatmapChart(this.chartType)) {
+            color = this.colorSpectrum.getColor(data.ratio);
+        }
 
         data.chartType = this.chartType;
-        data.cssText = 'background-color: ' + this.colors[indexes.index];
+        data.cssText = 'background-color: ' + color;
         data = snippet.extend({
             suffix: this.suffix
         }, data);

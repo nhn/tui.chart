@@ -56,7 +56,11 @@ var htmls = {
 
     GROUP_CSS_TEXT: 'background-color:{{ color }}',
     HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div>{{ name }}: {{ value }}{{ suffix }}</div>' +
+        '<div class="tui-chart-tooltip-body">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
+            '<span>{{ name }}</span>' +
+            '<span class="tui-chart-tooltip-value">{{ value }}{{ suffix }}</span>' +
+        '</div>' +
     '</div>',
     HTML_BOXPLOT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +

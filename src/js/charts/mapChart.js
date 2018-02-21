@@ -63,7 +63,8 @@ var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
         });
 
         this.componentManager.register('tooltip', 'tooltip', {
-            mapModel: mapModel
+            mapModel: mapModel,
+            colorSpectrum: colorSpectrum
         });
 
         this.componentManager.register('zoom', 'zoom');

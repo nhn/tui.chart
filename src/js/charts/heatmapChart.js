@@ -125,7 +125,9 @@ var HeatmapChart = snippet.defineClass(ChartBase, /** @lends HeatmapChart.protot
         this.componentManager.register('yAxis', 'axis');
 
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
-        this.componentManager.register('tooltip', 'tooltip');
+        this.componentManager.register('tooltip', 'tooltip', {
+            colorSpectrum: colorSpectrum
+        });
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
 });
