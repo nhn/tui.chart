@@ -63,7 +63,7 @@ var raphaelRenderUtil = {
             strokeStyle['stroke-opacity'] = 0;
         }
 
-        line.attr(strokeStyle).node.setAttribute('class', 'auto-shape-rendering');
+        line.attr(strokeStyle);
 
         return line;
     },

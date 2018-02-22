@@ -406,6 +406,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (dotInformation.dot.node) {
             dotInformation.dot.node.setAttribute('filter', 'url(#shadow)');
         }
+        dotInformation.dot.tofront();
     },
 
     /**
