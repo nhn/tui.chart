@@ -19,12 +19,12 @@ describe('Test for axisCalculator', function() {
         it('calculate height for x axis', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title'}, {});
 
-            expect(actual).toBe(60);
+            expect(actual).toBe(70);
         });
 
         it('labelMargin option should increase the x-axis height.', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title', labelMargin: 30}, {});
-            expect(actual).toBe(90);
+            expect(actual).toBe(100);
         });
     });
 
@@ -36,7 +36,7 @@ describe('Test for axisCalculator', function() {
                 title: 'Axis Title'
             }, {});
 
-            expect(actual).toBe(87);
+            expect(actual).toBe(67);
         });
 
         it('calculate width for y axis, when rotateTitle option is false', function() {
@@ -47,7 +47,7 @@ describe('Test for axisCalculator', function() {
                 rotateTitle: false
             }, {});
 
-            expect(actual).toBe(117);
+            expect(actual).toBe(67);
         });
 
         it('calculate width for y axis, when isCenter option is true', function() {
@@ -69,7 +69,7 @@ describe('Test for axisCalculator', function() {
                 labelMargin: 30
             }, {});
 
-            expect(actual).toBe(117);
+            expect(actual).toBe(97);
         });
     });
 });

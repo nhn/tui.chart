@@ -434,7 +434,7 @@ describe('Test for axisDataMaker', function() {
                 degree: 25,
                 overflowHeight: 10,
                 overflowLeft: -40,
-                overflowRight: 20
+                overflowRight: -70
             });
         });
 
@@ -464,7 +464,7 @@ describe('Test for axisDataMaker', function() {
 
             expect(actual).toEqual({
                 overflowLeft: -40,
-                overflowRight: 130
+                overflowRight: 40
             });
         });
     });

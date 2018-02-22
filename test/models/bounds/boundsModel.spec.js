@@ -93,7 +93,7 @@ describe('Test for BoundsModel', function() {
             boundsModel._registerTitleDimension();
             actual = boundsModel.getDimension('title');
             expected = {
-                height: 30
+                height: 60
             };
 
             expect(actual).toEqual(expected);
@@ -133,8 +133,8 @@ describe('Test for BoundsModel', function() {
             boundsModel._registerChartExportMenuDimension();
             actual = boundsModel.getDimension('chartExportMenu');
             expected = {
-                height: 27,
-                width: 60
+                height: 24,
+                width: 24
             };
 
             expect(actual).toEqual(expected);
@@ -422,7 +422,7 @@ describe('Test for BoundsModel', function() {
             };
             actual = boundsModel._makeLegendPosition();
             expected = {
-                top: 50,
+                top: 60,
                 left: 270
             };
 
@@ -458,7 +458,7 @@ describe('Test for BoundsModel', function() {
             };
             actual = boundsModel._makeLegendPosition();
             expected = {
-                top: 50,
+                top: 60,
                 left: 270
             };
 
