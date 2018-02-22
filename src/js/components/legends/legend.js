@@ -221,7 +221,7 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
             isHorizontal: isHorizontal,
             position: {
                 left: left,
-                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
+                top: basePosition.top
             },
             dimension: {
                 height: dimensionHeight,

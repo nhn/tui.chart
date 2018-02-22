@@ -222,8 +222,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
                 titleTheme.fontSize,
                 titleTheme.fontFamily
             ).height : 0;
-        var yAxisTitlePadding = this.options.yAxis.title ? chartConst.Y_AXIS_TITLE_PADDING : 0;
-        var height = titleHeight ? titleHeight + chartConst.TITLE_PADDING + yAxisTitlePadding : 0;
+        var height = titleHeight ? titleHeight + chartConst.TITLE_PADDING + chartConst.Y_AXIS_TITLE_PADDING : 0;
         var dimension = {
             height: height
         };
@@ -240,8 +239,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
         if (this.options.chartExportMenu.visible) {
             dimension = {
-                height: 17 + chartConst.CHART_PADDING,
-                width: 60
+                height: chartConst.CHART_EXPORT_MENU_SIZE,
+                width: chartConst.CHART_EXPORT_MENU_SIZE
             };
         } else {
             dimension = {
@@ -570,17 +569,19 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     _makeLegendPosition: function() {
         var dimensionMap = this.dimensionMap;
-        var seriesDimension = this.getDimension('series');
+        var seriesDimension = dimensionMap.series;
+        var seriesPositionTop = this.getPosition('series').top;
         var legendOption = this.options.legend;
-        var top = dimensionMap.title.height || dimensionMap.chartExportMenu.height;
+        var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
+        var top = 0;
         var yAxisAreaWidth, left;
 
-        if (predicate.isLegendAlignBottom(legendOption.align)) {
-            top += seriesDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
-        }
-
         if (predicate.isHorizontalLegend(legendOption.align)) {
+            top = seriesPositionTop - dimensionMap.legend.height + LEGEND_AREA_PADDING;
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
+            if (predicate.isLegendAlignBottom(legendOption.align)) {
+                top = seriesPositionTop + seriesDimension.height + this.getDimension('xAxis').height + LEGEND_AREA_PADDING;
+            }
         } else {
             if (predicate.isLegendAlignLeft(legendOption.align)) {
                 left = this.chartLeftPadding;
@@ -588,7 +589,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
                 yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
                 left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
             }
-            top = this.getPosition('series').top;
+            top = seriesPositionTop + LEGEND_AREA_PADDING;
         }
 
         return {
@@ -604,8 +605,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     _makeChartExportMenuPosition: function() {
         return {
-            top: 1,
-            right: 20
+            top: this.getDimension('title') ? 36 : 10,
+            right: 10
         };
     },
 
@@ -692,7 +693,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
         var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
-        var seriesTop = titleOrExportMenuHeight + topLegendHeight;
+        var headerHeight = titleOrExportMenuHeight || chartConst.DEFAULT_HEADER_HEIGHT;
+        var seriesTop = headerHeight + topLegendHeight;
         var defaultSeriesTop = renderUtil.getDefaultSeriesTopAreaHeight(this.chartType, this.theme.series);
         var seriesPosition = {
             top: (!seriesTop ? defaultSeriesTop : seriesTop) + chartConst.CHART_PADDING,

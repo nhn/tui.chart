@@ -528,8 +528,9 @@ var axisDataMaker = {
         var seriesWidth = dimensionMap.series.width;
         var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
         var additionalData = null;
+        var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0;
         var degree, labelHeight, rotatedHeight, limitWidth, rotatedWidth;
-        var contentWidth = chartConst.CHART_PADDING + dimensionMap.yAxis.width + seriesWidth;
+        var contentWidth = (chartConst.CHART_PADDING * 2) + yAxisAreaWidth + seriesWidth;
 
         if (labelAreaWidth < maxLabelWidth) {
             labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);

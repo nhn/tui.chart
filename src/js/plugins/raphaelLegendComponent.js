@@ -116,7 +116,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
             });
 
             if (self.isHorizontal) {
-                position.left += self.labelWidths[index] + labelPaddingLeft;
+                position.left += self.labelWidths[index] + chartConst.LEGEND_H_LABEL_RIGHT_PADDING;
             } else {
                 position.left = self.basePosition.left;
                 position.top += self._legendItemHeight + chartConst.LINE_MARGIN_TOP;

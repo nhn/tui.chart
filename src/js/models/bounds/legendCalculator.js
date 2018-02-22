@@ -18,18 +18,14 @@ var LEGEND_ICON_WIDTH = chartConst.LEGEND_ICON_WIDTH;
 var LEGEND_ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
 var LEGEND_LABEL_LEFT_PADDING = chartConst.LEGEND_LABEL_LEFT_PADDING;
 var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
+var VERTICAL_LEGEND_LABEL_RIGHT_PADDING = chartConst.LEGEND_V_LABEL_RIGHT_PADDING;
+var HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING = chartConst.LEGEND_H_LABEL_RIGHT_PADDING;
 
 /**
  * Calculator for dimension of legend.
  * @module legendCalculator
  * @private */
 var legendCalculator = {
-    /**
-     * Legend margin.
-     * @type {number}
-     */
-    legendMargin: LEGEND_LABEL_LEFT_PADDING + LEGEND_AREA_PADDING,
-
     /**
      * Calculate sum of legends width.
      * @param {Array.<string>} labels - legend labels
@@ -42,9 +38,7 @@ var legendCalculator = {
     _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth, maxWidth) {
         var restWidth = LEGEND_AREA_PADDING + checkboxWidth +
             LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
-        var legendMargin = this.legendMargin;
-
-        return calculator.sum(snippet.map(labels, function(label) {
+        var legendWidth = calculator.sum(snippet.map(labels, function(label) {
             var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme);
 
             if (maxWidth && labelWidth > maxWidth) {
@@ -52,8 +46,12 @@ var legendCalculator = {
             }
             labelWidth += restWidth;
 
-            return labelWidth + legendMargin;
+            return labelWidth + HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING;
         }));
+
+        legendWidth = legendWidth - HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING + LEGEND_AREA_PADDING;
+
+        return legendWidth;
     },
 
     /**
@@ -189,13 +187,15 @@ var legendCalculator = {
      */
     _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth, maxWidth) {
         var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+        var legendWidth = 0;
         if (maxWidth && labelWidth > maxWidth) {
             labelWidth = maxWidth;
         }
-        labelWidth += LEGEND_AREA_PADDING + checkboxWidth + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+        legendWidth = LEGEND_AREA_PADDING + checkboxWidth +
+            LEGEND_ICON_WIDTH + labelWidth + VERTICAL_LEGEND_LABEL_RIGHT_PADDING;
 
         return {
-            width: labelWidth + this.legendMargin,
+            width: legendWidth,
             height: 0
         };
     },
