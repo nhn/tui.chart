@@ -28,8 +28,12 @@ var htmls = {
     '</div>',
 
     HTML_COORDINATE_TYPE_CHART_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div>{{ category }}</div>' +
+        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
+            '{{ category }}' +
+        '</div>' +
         '<div class="tui-chart-tooltip-body">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
             '<span>{{ legend }}</span>' +
             '<span class="tui-chart-tooltip-value">{{ label }}</span>' +
         '</div><table class="tui-chart-tooltip-body">{{ valueTypes }}</table>' +
@@ -62,6 +66,13 @@ var htmls = {
             '<span class="tui-chart-tooltip-value">{{ value }}{{ suffix }}</span>' +
         '</div>' +
     '</div>',
+    HTML_HEATMAP_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+            '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+            '<div class="tui-chart-tooltip-body">' +
+                '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
+                '<span>{{ label }}{{ suffix }}</span>' +
+            '</div>' +
+        '</div>',
     HTML_BOXPLOT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
             '<table class="tui-chart-tooltip-body">' +
@@ -102,6 +113,7 @@ var htmls = {
     '</div>',
     HTML_BULLET_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
             '<div class="tui-chart-tooltip-body {{ categoryVisible }}">' +
+            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
             '<span>{{ category }}</span>' +
             '<span class="tui-chart-tooltip-value">{{ label }} {{ suffix }}</span>' +
         '</div>' +
@@ -117,6 +129,7 @@ module.exports = {
     tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
     tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),
     tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE),
+    tplHeatmapChart: templateMaker.template(htmls.HTML_HEATMAP_TEMPLATE),
     tplBoxplotChartDefault: templateMaker.template(htmls.HTML_BOXPLOT_TEMPLATE),
     tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER),
     tplBulletChartDefault: templateMaker.template(htmls.HTML_BULLET_TEMPLATE)

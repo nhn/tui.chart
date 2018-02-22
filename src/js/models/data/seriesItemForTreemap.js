@@ -69,8 +69,9 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
             chartType: chartType,
             areaType: 'tooltipValue'
         });
-        var label = (this.label ? this.label + ': ' : '') + formattedValue;
+        var label = formattedValue;
         var valueMap = {
+            legend: this.label || '',
             value: formattedValue,
             label: label,
             ratio: this.ratio

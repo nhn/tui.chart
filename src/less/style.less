@@ -20,9 +20,6 @@
     .border-box();
   }
   svg {
-      line, path, rect {
-          shape-rendering: crispEdges;
-      }
       .auto-shape-rendering {
           shape-rendering: auto;
       }
@@ -617,9 +614,10 @@
         }
         > .tui-chart-tooltip-head {
             padding: 8px 15px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             font-size: 13px;
             font-weight: bold;
+            border-bottom: 1px solid rgb(0, 0, 0);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
         > table {
             width: 100%;
@@ -630,6 +628,8 @@
             }
         }
         > .tui-chart-tooltip-body {
+            border-bottom: 1px solid rgb(0, 0, 0);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             padding: 11px 15px;
             > span {
                 display: inline-block;
