@@ -339,16 +339,16 @@
   .tui-chart-zoom-area {
     z-index: 1500;
     position: absolute;
-    background-color: #cccccc;
     .border-radius(1px);
     > .tui-chart-zoom-btn {
       width: 24px;
       height: 24px;
-      display: block;
+      display: inline-block;
       background-color: #f4f4f4;
       border-radius: 1px;
       cursor: pointer;
       position: relative;
+      margin-left: 5px;
       > div {
         font-size: 0;
         background-color: #555555;
@@ -356,14 +356,14 @@
         &.horizontal-line {
           width:8px;
           height: 2px;
-          left: 6px;
+          left: 8px;
           top: 11px;
         }
         &.vertical-line {
           width: 2px;
           height: 8px;
           left: 11px;
-          top: 6px;
+          top: 8px;
         }
       }
     }
