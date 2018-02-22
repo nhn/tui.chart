@@ -604,8 +604,14 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      * @private
      */
     _makeChartExportMenuPosition: function() {
+        var top = this.getPosition('series').top - chartConst.LEGEND_AREA_PADDING - chartConst.CHART_EXPORT_MENU_SIZE;
+
+        if (predicate.isLegendAlignTop(this.options.legend.align)) {
+            top -= this.getDimension('legend').height;
+        }
+
         return {
-            top: this.getDimension('title') ? 36 : 10,
+            top: top,
             right: 10
         };
     },
