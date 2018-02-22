@@ -66,7 +66,7 @@ var axisCalculator = {
             width += labelMargin;
         }
 
-        width += Math.max(renderUtil.getRenderedLabelsMaxWidth(labels, theme.label), titleAreaWidth) +
+        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) +
             chartConst.Y_AXIS_LABEL_PADDING;
 
         return width;
