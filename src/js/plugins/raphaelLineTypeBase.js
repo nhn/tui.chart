@@ -403,6 +403,9 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         dotInformation.dot.attr(attributes);
+        if (dotInformation.dot.node) {
+            dotInformation.dot.node.setAttribute('filter', 'url(#shadow)');
+        }
     },
 
     /**
@@ -425,20 +428,14 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @private
      */
     _updateLineStrokeOpacity: function(changeType, line) {
-        var outLineOpacity = 1;
-
         if (this.groupLines) {
-            if (changeType === 'over') {
-                line.attr({
-                    'stroke-opacity': 1
-                });
-                outLineOpacity = 0.3;
-            }
-
             snippet.forEachArray(this.groupLines, function(otherLine) {
                 otherLine.attr({
-                    'stroke-opacity': outLineOpacity
+                    'stroke-opacity': (changeType === 'over') ? DE_EMPHASIS_OPACITY : 1
                 });
+            });
+            line.attr({
+                'stroke-opacity': 1
             });
         }
     },
@@ -452,7 +449,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (this.groupAreas) {
             snippet.forEach(this.groupAreas, function(otherArea) {
                 otherArea.area.attr({
-                    'fill-opacity': (changeType === 'over') ? 0.3 : 1
+                    'fill-opacity': (changeType === 'over') ? DE_EMPHASIS_OPACITY : 1
                 });
             });
         }
