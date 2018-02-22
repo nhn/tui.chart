@@ -499,7 +499,6 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
 
         return category;
     },
-
     /**
      * Make category for tooltip.
      * @param {number} categoryIndex - category index
@@ -596,7 +595,14 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
 
         return this.seriesDataModelMap[seriesType];
     },
-
+    /**
+     * Get chart options
+     * @param {string} optionType option category
+     * @returns {object}
+     */
+    getOptions: function(optionType) {
+        return this.options[optionType] || {};
+    },
     /**
      * Get group count.
      * @param {string} chartType chart type
