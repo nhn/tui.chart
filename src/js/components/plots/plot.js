@@ -572,10 +572,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _renderPlotLines: function(container, dimension) {
-        if (!predicate.isLineTypeChart(this.chartType)) {
-            this._renderVerticalLines(dimension);
-        }
-
+        this._renderVerticalLines(dimension);
         this._renderHorizontalLines(dimension);
     },
 

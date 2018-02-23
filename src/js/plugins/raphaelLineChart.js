@@ -166,8 +166,10 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
         return snippet.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
+            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+            line.node.setAttribute('class', 'auto-shape-rendering');
 
-            return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+            return line;
         });
     },
 

@@ -139,16 +139,21 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         groupPaths.reverse();
 
         groupAreas = snippet.map(groupPaths, function(path, groupIndex) {
-            var areaColor = colors[groupIndex] || 'transparent',
-                lineColor = areaColor,
-                polygons = {
-                    area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
-                        fill: areaColor,
-                        opacity: opacity,
-                        stroke: areaColor
-                    }),
-                    line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth)
-                };
+            var polygons = {};
+            var areaColor = colors[groupIndex] || 'transparent';
+            var lineColor = areaColor;
+            var area = raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
+                fill: areaColor,
+                opacity: opacity,
+                stroke: areaColor
+            });
+            var line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth);
+
+            area.node.setAttribute('class', 'auto-shape-rendering');
+            line.node.setAttribute('class', 'auto-shape-rendering');
+
+            polygons.area = area;
+            polygons.line = line;
 
             if (path.startLine) {
                 polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), lineColor, 0);
