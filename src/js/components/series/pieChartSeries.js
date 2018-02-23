@@ -214,7 +214,7 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
                     r: centerR
                 }, positionData)),
                 outerPosition: self._getArcPosition(snippet.extend({
-                    r: r + self.legendLongestWidth + 25
+                    r: r + (self.legendLongestWidth / 2) + chartConst.PIE_GRAPH_LEGEND_LABEL_INTERVAL
                 }, positionData))
             };
         });
@@ -504,7 +504,11 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
                 this.labelTheme.fontSize,
                 this.labelTheme.fontFamily
             ).width;
-        }, this).sort();
+        }, this);
+
+        lableWidths.sort(function(prev, next) {
+            return prev - next;
+        });
 
         return lableWidths[lableWidths.length - 1];
     },

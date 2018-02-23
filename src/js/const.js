@@ -181,6 +181,8 @@ var chartConst = {
     PIE_GRAPH_SMALL_RATIO: 0.75,
     /** pie chart legend label size */
     PIE_GRAPH_LEGEND_LABEL_SIZE: 16,
+    /** pie chart legend label size */
+    PIE_GRAPH_LEGEND_LABEL_INTERVAL: 20,
     /** tick count for spectrum legend */
     SPECTRUM_LEGEND_TICK_COUNT: 4,
     /** legend & lable concat separator */
