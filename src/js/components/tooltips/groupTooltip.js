@@ -107,9 +107,7 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         var bound = this.layout;
 
         if (data.checkedLegends) {
-            this.theme = {
-                colors: this.colors
-            };
+            this.theme = this._updateLegendTheme(data.checkedLegends);
         }
 
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
