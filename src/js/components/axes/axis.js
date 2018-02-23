@@ -175,7 +175,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             this._renderTickArea(size, tickCount, additionalWidth);
         }
         if (isNegativeLimitChart && isBarChart && !isDivergingOption) {
-            this._renderNegativeStandardsLine(size, additionalWidth, this.dimensionMap.series);
+            this._renderNegativeStandardsLine(size, additionalWidth, this.dimensionMap.series, axisLimit);
         }
     },
 
@@ -385,14 +385,15 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         });
     },
 
-    _renderNegativeStandardsLine: function(size, additionalSize, seriesDimension) {
+    _renderNegativeStandardsLine: function(size, additionalSize, seriesDimension, axisLimit) {
         this.graphRenderer.renderStandardLine({
             areaSize: size,
             isVertical: this.isYAxis,
             layout: this.layout,
             paper: this.paper,
             set: this.axisSet,
-            seriesDimension: seriesDimension
+            seriesDimension: seriesDimension,
+            axisLimit: axisLimit
         });
     },
 
