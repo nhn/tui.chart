@@ -463,6 +463,8 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
             if (!snippet.isNull(this.selectedLegendIndex)) {
                 this.graphRenderer.selectLegend(this.selectedLegendIndex);
             }
+        } else {
+            this._clearSeriesContainer();
         }
     },
 
