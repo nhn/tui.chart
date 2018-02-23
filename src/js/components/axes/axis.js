@@ -385,15 +385,8 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     },
 
     _renderNegativeStandardsLine: function(size, additionalSize, seriesDimension) {
-        var isNotDividedXAxis = !this.isYAxis && !this.options.divided;
-        additionalSize = additionalSize || 0;
-
         this.graphRenderer.renderStandardLine({
             areaSize: size,
-            additionalSize: additionalSize,
-            additionalWidth: this.paperAdditionalWidth,
-            additionalHeight: this.paperAdditionalHeight,
-            isNotDividedXAxis: isNotDividedXAxis,
             isVertical: this.isYAxis,
             layout: this.layout,
             paper: this.paper,
