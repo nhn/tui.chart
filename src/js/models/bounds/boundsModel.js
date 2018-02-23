@@ -632,7 +632,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
             if (predicate.isLegendAlignTop(align)) {
                 top = seriesPosition.top - this.getDimension('legend').height;
             } else {
-                top = seriesPosition.top + seriesDimension.height;
+                top = seriesPosition.top + seriesDimension.height + this.getDimension('xAxis').height;
             }
         } else {
             top = seriesPosition.top + chartConst.MAP_LEGEND_AREA_PADDING;
@@ -640,7 +640,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
             if (predicate.isLegendAlignLeft(legendOption.align)) {
                 left = this.chartLeftPadding;
             } else {
-                left = this.chartLeftPadding + seriesDimension.width;
+                left = this.chartLeftPadding + this.getDimension('yAxis').width + seriesDimension.width;
             }
         }
 
