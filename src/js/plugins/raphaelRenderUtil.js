@@ -56,14 +56,14 @@ var raphaelRenderUtil = {
             strokeStyle = {
                 stroke: color,
                 'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth),
-                'stroke-linecap': 'round'
+                'stroke-linecap': 'butt'
             };
         if (color === 'transparent') {
             strokeStyle.stroke = '#fff';
             strokeStyle['stroke-opacity'] = 0;
         }
 
-        line.attr(strokeStyle);
+        line.attr(strokeStyle).node.setAttribute('class', 'auto-shape-rendering');
 
         return line;
     },
