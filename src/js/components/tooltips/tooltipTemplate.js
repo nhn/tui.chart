@@ -77,7 +77,7 @@ var htmls = {
         '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
             '<table class="tui-chart-tooltip-body">' +
                 '<tr>' +
-                    '<td colspan="2">{{ legend }}</td>' +
+        '<td colspan="2"><span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>{{ legend }}</td>' +
                 '</tr>' +
                 '<tr>' +
                     '<td>Maximum: </td>' +

@@ -247,16 +247,19 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var baseLeft = layout.position.left;
         var rightEdgeOfAxis = baseLeft + layout.dimension.width;
         var lineStartYCoord, lineEndXCoord, lineEndYCoord;
+        var minAbs = Math.abs(data.axisLimit.min);
+        var maxAbs = Math.abs(data.axisLimit.max);
+        var standardRatio = 1 - (maxAbs / (minAbs + maxAbs));
 
         if (isVertical) {
             lineStartYCoord = baseTop;
-            rightEdgeOfAxis += data.seriesDimension.width / 2;
+            rightEdgeOfAxis += data.seriesDimension.width * standardRatio;
             pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
             lineEndYCoord = baseTop + lineSize;
             pathString += 'V' + lineEndYCoord;
         } else {
             pathString += baseLeft;
-            baseTop -= data.seriesDimension.height / 2;
+            baseTop -= data.seriesDimension.height * standardRatio;
             pathString += ',' + baseTop + 'H';
             lineEndXCoord = (baseLeft + lineSize);
             pathString += lineEndXCoord;
@@ -384,6 +387,9 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         if (rotationInfo.isCenter) {
             position.top = paper.height - (textHeight / 2);
             position.left = left + (axisWidth / 2);
+        } else if (rotationInfo.isDiverging && rotationInfo.isVertical) {
+            position.top = top + axisHeight - (textHeight / 2);
+            position.left = left;
         } else if (rotationInfo.isPositionRight) {
             position.top = top - textHeight;
             position.left = left + axisWidth;
@@ -396,10 +402,6 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         } else {
             position.top = top + axisHeight - (textHeight / 2);
             position.left = left;
-        }
-
-        if (rotationInfo.isDiverging && rotationInfo.isVertical) {
-            position.top += axisHeight + (textHeight / 2);
         }
 
         if (!rotationInfo.isCenter) {
