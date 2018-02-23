@@ -261,8 +261,8 @@ describe('PieChartSeries', function() {
                 top: 246.96699141100893
             });
             expect(actual[0].outerPosition).toEqual({
-                left: 423.7436867076458,
-                top: 176.25631329235418
+                left: 420.2081528017131,
+                top: 179.79184719828692
             });
         });
     });
