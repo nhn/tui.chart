@@ -13,7 +13,7 @@ var raphael = require('raphael');
 var ANIMATION_DURATION = 700;
 var CIRCLE_OPACITY = 0.8;
 var STROKE_OPACITY = 1;
-var EMPHASIS_OPACITY = 0.5;
+var EMPHASIS_OPACITY = 0.8;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
 var OVERLAY_BORDER_WIDTH = 2;
@@ -328,9 +328,13 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
 
     /**
      * Hide overlay with animation.
+     * @param {object} indexes - indexes
+     *      @param {number} indexes.groupIndex - index of circles group
+     *      @param {number} indexes.index - index of circles
      * @private
      */
-    hideAnimation: function() {
+    hideAnimation: function(indexes) {
+        var changeOpacity = DE_EMPHASIS_OPACITY;
         this.overlay.attr({
             cx: 0,
             cy: 0,
@@ -338,8 +342,12 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
             opacity: 0
         });
 
+        if (snippet.isNull(this.selectedLegend) || indexes.index === this.selectedLegend) {
+            changeOpacity = EMPHASIS_OPACITY;
+        }
+
         this.circle.attr({
-            opacity: CIRCLE_OPACITY
+            opacity: changeOpacity
         });
     },
 
@@ -444,6 +452,8 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      */
     selectLegend: function(legendIndex) {
         var noneSelected = snippet.isNull(legendIndex);
+
+        this.selectedLegend = legendIndex;
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
             var opacity;
