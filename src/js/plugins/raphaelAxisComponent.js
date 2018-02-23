@@ -335,6 +335,9 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         if (rotationInfo.isCenter) {
             position.top = paper.height - (textHeight / 2);
             position.left = left + (axisWidth / 2);
+        } else if (rotationInfo.isDiverging && rotationInfo.isVertical) {
+            position.top = top + axisHeight - (textHeight / 2);
+            position.left = left;
         } else if (rotationInfo.isPositionRight) {
             position.top = top - textHeight;
             position.left = left + axisWidth;
@@ -347,10 +350,6 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         } else {
             position.top = top + axisHeight - (textHeight / 2);
             position.left = left;
-        }
-
-        if (rotationInfo.isDiverging && rotationInfo.isVertical) {
-            position.top += axisHeight + (textHeight / 2);
         }
 
         if (!rotationInfo.isCenter) {
