@@ -20,9 +20,6 @@
     .border-box();
   }
   svg {
-      line, path, rect {
-          shape-rendering: crispEdges;
-      }
       .auto-shape-rendering {
           shape-rendering: auto;
       }
@@ -339,7 +336,6 @@
   .tui-chart-zoom-area {
     z-index: 1500;
     position: absolute;
-    background-color: #cccccc;
     .border-radius(1px);
     > .tui-chart-zoom-btn {
       width: 24px;
@@ -349,6 +345,7 @@
       border-radius: 1px;
       cursor: pointer;
       position: relative;
+      margin-top: 5px;
       > div {
         font-size: 0;
         background-color: #555555;
@@ -356,14 +353,14 @@
         &.horizontal-line {
           width:8px;
           height: 2px;
-          left: 6px;
+          left: 8px;
           top: 11px;
         }
         &.vertical-line {
           width: 2px;
           height: 8px;
           left: 11px;
-          top: 6px;
+          top: 8px;
         }
       }
     }
@@ -625,9 +622,10 @@
         }
         > .tui-chart-tooltip-head {
             padding: 8px 15px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             font-size: 13px;
             font-weight: bold;
+            border-bottom: 1px solid rgb(0, 0, 0);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
         > table {
             width: 100%;
@@ -638,6 +636,8 @@
             }
         }
         > .tui-chart-tooltip-body {
+            border-bottom: 1px solid rgb(0, 0, 0);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             padding: 11px 15px;
             > span {
                 display: inline-block;

@@ -70,11 +70,10 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
         var position;
 
         if (!IS_MSIE_VERSION_LTE_THAN_8) {
-            positionTop = data.dimensionMap.title.height ?
-                chartConst.ZOOM_POSITION_TOP_EXIST_TITLE : chartConst.ZOOM_POSITION_TOP_NONE_TITLE;
+            positionTop = data.positionMap.series.top - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT - 10;
             position = {
                 top: positionTop,
-                right: 5
+                right: 0
             };
 
             container = dom.create('DIV', this.className);

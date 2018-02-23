@@ -194,6 +194,10 @@ var chartConst = {
         x: 0.5,
         y: 0.5
     },
+    /** map chart zoom area width */
+    MAP_CHART_ZOOM_AREA_WIDTH: 24,
+    /** map chart zoom area height */
+    MAP_CHART_ZOOM_AREA_HEIGHT: 53,
     /** dot radius */
     DOT_RADIUS: 4,
     /** radius for circle of scatter chart*/

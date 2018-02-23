@@ -68,6 +68,8 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
             template = tooltipTemplate.tplCoordinatetypeChart;
         } else if (predicate.isBulletChart(this.chartType)) {
             template = tooltipTemplate.tplBulletChartDefault;
+        } else if (predicate.isHeatmapChart(this.chartType)) {
+            template = tooltipTemplate.tplHeatmapChart;
         }
 
         return template;
@@ -120,8 +122,8 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;
         }
-        if (predicate.isHeatmapChart(this.chartType)) {
-            color = this.colorSpectrum.getColor(data.ratio);
+        if (this.colorSpectrum) {
+            color = this.colorSpectrum.getColor(data.colorRatio || data.ratio);
         }
 
         data.chartType = this.chartType;

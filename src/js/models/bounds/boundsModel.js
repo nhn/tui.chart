@@ -16,6 +16,9 @@ var legendCalculator = require('./legendCalculator');
 var seriesCalculator = require('./seriesCalculator');
 var spectrumLegendCalculator = require('./spectrumLegendCalculator');
 var snippet = require('tui-code-snippet');
+var browser = snippet.browser;
+var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
 
 /**
  * Dimension.
@@ -222,12 +225,13 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
                 titleTheme.fontSize,
                 titleTheme.fontFamily
             ).height : 0;
-        var height = titleHeight ? titleHeight + chartConst.TITLE_PADDING + chartConst.Y_AXIS_TITLE_PADDING : 0;
-        var dimension = {
-            height: height
-        };
+        var height = titleHeight || 0;
 
-        this._registerDimension('title', dimension);
+        if (height) {
+            height += (chartConst.TITLE_PADDING + chartConst.Y_AXIS_TITLE_PADDING);
+        }
+
+        this._registerDimension('title', {height: height});
     },
 
     /**
@@ -237,15 +241,15 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     _registerChartExportMenuDimension: function() {
         var dimension;
 
-        if (this.options.chartExportMenu.visible) {
-            dimension = {
-                height: chartConst.CHART_EXPORT_MENU_SIZE,
-                width: chartConst.CHART_EXPORT_MENU_SIZE
-            };
-        } else {
+        if (this.options.chartExportMenu.visible === false) {
             dimension = {
                 width: 0,
                 height: 0
+            };
+        } else {
+            dimension = {
+                height: chartConst.CHART_EXPORT_MENU_SIZE,
+                width: chartConst.CHART_EXPORT_MENU_SIZE
             };
         }
         this._registerDimension('chartExportMenu', dimension);
@@ -275,16 +279,19 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
     /**
      * Register dimension for spectrum legend component.
+     * @param {object} limit - min and maximum value
      */
-    registerSpectrumLegendDimension: function() {
-        var maxValue = this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+    registerSpectrumLegendDimension: function(limit) {
+        var maxValue = limit ? limit.max : this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+        var minValue = limit ? limit.min : '';
         var labelTheme = this.theme.label;
+        var align = this.options.legend.align;
         var dimension;
 
-        if (predicate.isHorizontalLegend(this.options.legend.align)) {
+        if (predicate.isHorizontalLegend(align)) {
             dimension = spectrumLegendCalculator._makeHorizontalDimension(maxValue, labelTheme);
         } else {
-            dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, labelTheme);
+            dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, minValue, labelTheme);
         }
 
         this._registerDimension('legend', dimension);
@@ -327,8 +334,17 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     calculateSeriesWidth: function() {
         var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
+        var seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
 
-        return seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
+        if (predicate.isBoxTypeChart(this.chartType)) {
+            seriesWidth -= (this.getDimension('chartExportMenu').width + LEGEND_AREA_PADDING);
+        }
+
+        if (predicate.isMapChart(this.chartType) && !IS_LTE_IE8) {
+            seriesWidth -= (chartConst.MAP_CHART_ZOOM_AREA_WIDTH + LEGEND_AREA_PADDING);
+        }
+
+        return seriesWidth;
     },
 
     /**
@@ -572,15 +588,15 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var seriesDimension = dimensionMap.series;
         var seriesPositionTop = this.getPosition('series').top;
         var legendOption = this.options.legend;
-        var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
         var top = 0;
         var yAxisAreaWidth, left;
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
-            top = seriesPositionTop - dimensionMap.legend.height + LEGEND_AREA_PADDING;
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
             if (predicate.isLegendAlignBottom(legendOption.align)) {
                 top = seriesPositionTop + seriesDimension.height + this.getDimension('xAxis').height + LEGEND_AREA_PADDING;
+            } else {
+                top = seriesPositionTop - dimensionMap.legend.height + LEGEND_AREA_PADDING;
             }
         } else {
             if (predicate.isLegendAlignLeft(legendOption.align)) {
@@ -599,13 +615,55 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
+     * make spectrum legend position
+     * @returns {{top: number, left: number}} legend bound
+     * @private
+     */
+    _makeSpectrumLegendPosition: function() {
+        var legendOption = this.options.legend;
+        var align = this.options.legend.align;
+        var seriesPosition = this.getPosition('series');
+        var seriesDimension = this.getDimension('series');
+        var top, left;
+
+        if (predicate.isHorizontalLegend(align)) {
+            left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
+
+            if (predicate.isLegendAlignTop(align)) {
+                top = seriesPosition.top - this.getDimension('legend').height;
+            } else {
+                top = seriesPosition.top + seriesDimension.height;
+            }
+        } else {
+            top = seriesPosition.top + chartConst.MAP_LEGEND_AREA_PADDING;
+
+            if (predicate.isLegendAlignLeft(legendOption.align)) {
+                left = this.chartLeftPadding;
+            } else {
+                left = this.chartLeftPadding + seriesDimension.width;
+            }
+        }
+
+        return {
+            top: top,
+            left: left
+        };
+    },
+
+    /**
      * Make chartExportMenu position.
      * @returns {{top: number, left: number}}
      * @private
      */
     _makeChartExportMenuPosition: function() {
+        var top = this.getPosition('series').top - LEGEND_AREA_PADDING - chartConst.CHART_EXPORT_MENU_SIZE;
+
+        if (predicate.isLegendAlignTop(this.options.legend.align)) {
+            top -= this.getDimension('legend').height;
+        }
+
         return {
-            top: this.getDimension('title') ? 36 : 10,
+            top: top,
             right: 10
         };
     },
@@ -663,7 +721,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var tooltipPosition;
 
         this.positionMap.mouseEventDetector = snippet.extend({}, seriesPosition);
-        this.positionMap.legend = this._makeLegendPosition();
+        this.positionMap.legend
+            = this.useSpectrumLegend ? this._makeSpectrumLegendPosition() : this._makeLegendPosition();
         this.positionMap.chartExportMenu = this._makeChartExportMenuPosition();
 
         if (this.getDimension('circleLegend').width) {

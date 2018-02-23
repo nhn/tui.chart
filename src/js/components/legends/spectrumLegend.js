@@ -130,7 +130,12 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
             baseData.position.top += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
         } else {
             baseData.step = dimension.height / stepCount;
-            baseData.position.left += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+
+            if (predicate.isLegendAlignLeft(this.options.align)) {
+                baseData.position.left = chartConst.CHART_PADDING;
+            } else {
+                baseData.position.left += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+            }
         }
 
         return baseData;
@@ -143,7 +148,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      */
     _renderTickArea: function(legendSet) {
         this.graphRenderer.renderTickLabels(this.paper, this._makeBaseDataToMakeTickArea(),
-            this.scaleData.labels, this.isHorizontal, legendSet);
+            this.scaleData.labels, this.options.align, legendSet);
     },
 
     /**
@@ -192,7 +197,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
                 position: position
             },
             colorSpectrum: this.colorSpectrum,
-            isHorizontal: this.isHorizontal,
+            align: this.options.align,
             legendSet: legendSet,
             theme: this.theme.label,
             labels: this.scaleData.labels
