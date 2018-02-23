@@ -149,9 +149,7 @@ describe('Test for Axis', function() {
             axis.componentName = 'xAxis';
             axis.dataProcessor = {
                 chartType: 'bar',
-                getOptions: function() {
-                    return {};
-                }
+                getOption: function() {}
             };
             axis.layout = {
                 dimension: {

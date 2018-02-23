@@ -596,12 +596,12 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         return this.seriesDataModelMap[seriesType];
     },
     /**
-     * Get chart options
+     * Get chart option
      * @param {string} optionType option category
      * @returns {object}
      */
-    getOptions: function(optionType) {
-        return this.options[optionType] || {};
+    getOption: function(optionType) {
+        return this.options[optionType];
     },
     /**
      * Get group count.

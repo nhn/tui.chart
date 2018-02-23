@@ -161,7 +161,8 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var axisLimit = this.limitMap[this.dataProcessor.chartType];
         var isNegativeLimitChart = !this.data.limit && axisLimit && axisLimit.min < 0;
         var isBarChart = predicate.isBarTypeChart(this.dataProcessor.chartType);
-        var isDivergingOption = this.dataProcessor.getOptions('series').diverging;
+        var seriesOption = this.dataProcessor.getOption('series') || {};
+        var isDivergingOption = seriesOption.diverging;
 
         if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
             this._renderBackground();
