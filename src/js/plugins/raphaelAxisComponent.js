@@ -235,6 +235,44 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      * @param {number} data data for render tick line
      * @param {number} data.areaSize area size width or height
      * @param {object} data.paper raphael paper
+     * @param {boolean} data.isVertical boolean value of vertical axis or not
+     */
+    renderStandardLine: function(data) {
+        var lineSize = data.areaSize;
+        var paper = data.paper;
+        var layout = data.layout;
+        var isVertical = data.isVertical;
+        var pathString = 'M';
+        var baseTop = layout.position.top;
+        var baseLeft = layout.position.left;
+        var rightEdgeOfAxis = baseLeft + layout.dimension.width;
+        var lineStartYCoord, lineEndXCoord, lineEndYCoord;
+
+        if (isVertical) {
+            lineStartYCoord = baseTop;
+            rightEdgeOfAxis += data.seriesDimension.width / 2;
+            pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
+            lineEndYCoord = baseTop + lineSize;
+            pathString += 'V' + lineEndYCoord;
+        } else {
+            pathString += baseLeft;
+            baseTop -= data.seriesDimension.height / 2;
+            pathString += ',' + baseTop + 'H';
+            lineEndXCoord = (baseLeft + lineSize);
+            pathString += lineEndXCoord;
+        }
+
+        data.set.push(paper.path(pathString).attr({
+            'stroke-width': 1,
+            opacity: 0.5
+        }));
+    },
+
+    /**
+     * Render tick line  on given paper
+     * @param {number} data data for render tick line
+     * @param {number} data.areaSize area size width or height
+     * @param {object} data.paper raphael paper
      * @param {boolean} data.isNotDividedXAxis boolean value for XAxis divided or not
      * @param {number} data.additionalSize additional size for position and line length
      * @param {number} data.additionalWidth additional width of tick line paper
@@ -248,6 +286,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var lineSize = areaSize;
         var paper = data.paper;
         var layout = data.layout;
+        var isNegativeStandard = data.isNegativeStandard;
         var isNotDividedXAxis = data.isNotDividedXAxis;
         var additionalSize = data.additionalSize;
         var isPositionRight = data.isPositionRight;
@@ -266,6 +305,10 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             pathString += 'V' + verticalTickLineEndYCoord;
         } else if (isVertical) {
             lineStartYCoord = baseTop;
+            if (isNegativeStandard) {
+                rightEdgeOfAxis += data.seriesDimension.width / 2;
+            }
+
             pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
 
             if (isCenter) {
@@ -282,6 +325,11 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             } else {
                 pathString += (baseLeft + additionalSize);
             }
+
+            if (isNegativeStandard) {
+                baseTop -= data.seriesDimension.height / 2;
+            }
+
             pathString += ',' + baseTop + 'H';
 
             lineEndXCoord = (baseLeft + lineSize);
@@ -289,6 +337,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             if (!isNotDividedXAxis) {
                 lineEndXCoord += additionalSize;
             }
+
             pathString += lineEndXCoord;
         }
 

@@ -158,6 +158,11 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      */
     _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
         var isYAxisLineType = this.isYAxis && this.data.aligned;
+        var axisLimit = this.limitMap[this.dataProcessor.chartType];
+        var isNegativeLimitChart = !this.data.limit && axisLimit && axisLimit.min < 0;
+        var isBarChart = predicate.isBarTypeChart(this.dataProcessor.chartType);
+        var seriesOption = this.dataProcessor.getOption('series') || {};
+        var isDivergingOption = seriesOption.diverging;
 
         if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
             this._renderBackground();
@@ -168,6 +173,9 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
 
         if (!isYAxisLineType) {
             this._renderTickArea(size, tickCount, additionalWidth);
+        }
+        if (isNegativeLimitChart && isBarChart && !isDivergingOption) {
+            this._renderNegativeStandardsLine(size, additionalWidth, this.dimensionMap.series);
         }
     },
 
@@ -249,6 +257,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _setDataForRendering: function(data) {
         this.layout = data.layout;
         this.dimensionMap = data.dimensionMap;
+        this.limitMap = data.limitMap;
         this.data = data.axisDataMap[this.componentName];
         this.options = this.data.options;
     },
@@ -376,6 +385,17 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         });
     },
 
+    _renderNegativeStandardsLine: function(size, additionalSize, seriesDimension) {
+        this.graphRenderer.renderStandardLine({
+            areaSize: size,
+            isVertical: this.isYAxis,
+            layout: this.layout,
+            paper: this.paper,
+            set: this.axisSet,
+            seriesDimension: seriesDimension
+        });
+    },
+
     /**
      * Render tick area.
      * @param {number} size - width or height
@@ -387,7 +407,6 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var isNotDividedXAxis = !this.isYAxis && !this.options.divided;
 
         this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0));
-
         this._renderTicks(size, tickCount, isNotDividedXAxis, (additionalSize || 0));
     },
 
