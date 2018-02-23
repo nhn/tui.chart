@@ -429,16 +429,35 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @private
      */
     _updateLineStrokeOpacity: function(changeType, line) {
+        var opacity = 1;
+        var isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
         if (this.groupLines) {
+            if (changeType === 'over' || isSelectedLegend) {
+                opacity = DE_EMPHASIS_OPACITY;
+            }
+
+            if (changeType === 'out' && isSelectedLegend) {
+                line = this.getLine(this.selectedLegendIndex);
+            }
+
             snippet.forEachArray(this.groupLines, function(otherLine) {
                 otherLine.attr({
-                    'stroke-opacity': (changeType === 'over') ? DE_EMPHASIS_OPACITY : 1
+                    'stroke-opacity': opacity
                 });
             });
             line.attr({
                 'stroke-opacity': 1
             });
         }
+    },
+
+    /**
+     * getLine
+     * @param {number} groupIndex  group index
+     * @returns {object} line raphael object
+     */
+    getLine: function(groupIndex) {
+        return this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
     },
 
     /**
