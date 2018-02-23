@@ -595,14 +595,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
 
         return this.seriesDataModelMap[seriesType];
     },
-    /**
-     * Get chart option
-     * @param {string} optionType option category
-     * @returns {object}
-     */
-    getOption: function(optionType) {
-        return this.options[optionType];
-    },
+
     /**
      * Get chart option
      * @param {string} optionType option category
