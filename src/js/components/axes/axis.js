@@ -305,6 +305,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      */
     _renderTitleArea: function() {
         var title = this.options.title || {};
+        var seriesOption = this.dataProcessor.getOption('series') || {};
 
         if (title.text) {
             this.graphRenderer.renderTitle(this.paper, {
@@ -316,7 +317,8 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                     isVertical: this.isYAxis,
                     isPositionRight: this.data.isPositionRight,
                     isCenter: this.options.isCenter,
-                    isColumnType: predicate.isColumnTypeChart(this.dataProcessor.chartType)
+                    isColumnType: predicate.isColumnTypeChart(this.dataProcessor.chartType),
+                    isDiverging: seriesOption.diverging
                 },
                 layout: this.layout,
                 tickCount: this.data.tickCount,

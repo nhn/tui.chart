@@ -604,6 +604,15 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         return this.options[optionType];
     },
     /**
+     * Get chart option
+     * @param {string} optionType option category
+     * @returns {object}
+     */
+    getOption: function(optionType) {
+        return this.options[optionType];
+    },
+
+    /**
      * Get group count.
      * @param {string} chartType chart type
      * @returns {number}

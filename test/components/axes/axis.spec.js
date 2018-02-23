@@ -23,7 +23,7 @@ describe('Test for Axis', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType']);
+            ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType', 'getOption']);
 
         axis = new axisFactory.Axis({
             theme: {

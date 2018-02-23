@@ -398,6 +398,10 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             position.left = left;
         }
 
+        if (rotationInfo.isDiverging && rotationInfo.isVertical) {
+            position.top += axisHeight + (textHeight / 2);
+        }
+
         if (!rotationInfo.isCenter) {
             addOffset(position, data.offset);
         }
