@@ -269,7 +269,7 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
 
         this._setDataForRendering(data);
         this.data = this.makeTooltipData();
-
+        this.tooltipColors = this.makeTooltipLegendColor(data.checkedLegends);
         renderUtil.renderPosition(el, this.layout.position);
 
         this.tooltipContainer = el;
@@ -284,8 +284,33 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
     rerender: function(data) {
         this.resize(data);
         this.data = this.makeTooltipData();
+        this.tooltipColors = this.makeTooltipLegendColor(data.checkedLegends);
     },
 
+    /**
+     * make legend color
+     * @param {object | Array.<boolean>}checkedLegends checked legends
+     * @returns {{colors: Array.<string>}} legend colors
+     * @private
+     */
+    makeTooltipLegendColor: function(checkedLegends) {
+        var colors = {};
+
+        if (checkedLegends) {
+            snippet.forEach(this.theme, function(themeItem, themeKey) {
+                if (!colors[themeKey]) {
+                    colors[themeKey] = [];
+                }
+                snippet.forEach(checkedLegends[themeKey], function(checked, index) {
+                    if (checked) {
+                        colors[themeKey].push(this.theme[themeKey].colors[index]);
+                    }
+                }, this);
+            }, this);
+        }
+
+        return colors;
+    },
     /**
      * Resize tooltip component.
      * @param {object} data - bounds data

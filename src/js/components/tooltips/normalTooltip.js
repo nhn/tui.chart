@@ -115,7 +115,9 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
     _makeSingleTooltipHtml: function(chartType, indexes) {
         var groupIndex = indexes.groupIndex;
         var data = snippet.extend({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
-        var color = this.colors[indexes.index];
+        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
+            && this.dataProcessor.options.series.colorByPoint;
+        var color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][indexes.index];
 
         if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;
