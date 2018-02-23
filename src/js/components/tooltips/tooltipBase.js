@@ -294,13 +294,20 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      */
     makeTooltipLegendColor: function(checkedLegends) {
-        var colors = [];
-        snippet.forEachArray(this.dataProcessor.getOriginalLegendData(), function(item) {
-            var _checkedLegends = checkedLegends[item.chartType] || checkedLegends;
-            if (_checkedLegends[item.index]) {
-                colors.push(item.theme.color);
-            }
-        });
+        var colors = {};
+
+        if (checkedLegends) {
+            snippet.forEach(this.theme, function(themeItem, themeKey) {
+                if (!colors[themeKey]) {
+                    colors[themeKey] = [];
+                }
+                snippet.forEach(checkedLegends[themeKey], function(checked, index) {
+                    if (checked) {
+                        colors[themeKey].push(this.theme[themeKey].colors[index]);
+                    }
+                }, this);
+            }, this);
+        }
 
         return colors;
     },

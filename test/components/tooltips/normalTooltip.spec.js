@@ -154,7 +154,9 @@ describe('NormalTooltip', function() {
             };
             tooltip.suffix = 'suffix';
             tooltip.colors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
-            tooltip.tooltipColors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
+            tooltip.tooltipColors = {
+                'column': ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white']
+            };
             actual = tooltip._makeSingleTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
@@ -177,7 +179,9 @@ describe('NormalTooltip', function() {
             };
             tooltip.suffix = 'suffix';
             tooltip.colors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
-            tooltip.tooltipColors = ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white'];
+            tooltip.tooltipColors = {
+                'column': ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white']
+            };
             tooltip.templateFunc = function(category, series) {
                 return '<div>' + category + '</div><div>' + series.label + '</div><div>' + series.legend + '</div>';
             };
