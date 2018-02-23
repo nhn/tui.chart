@@ -17,22 +17,21 @@ var spectrumLegendCalculator = {
     /**
      * Make vertical dimension.
      * @param {string} maxValue - formatted max value
+     * @param {string} minValue - formatted min value
      * @param {object} labelTheme - theme for label
      * @returns {{width: number, height: number}}
      * @private
      */
-    _makeVerticalDimension: function(maxValue, labelTheme) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(maxValue, labelTheme);
-        var tooltipWidth = (chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING * 2)
-            + labelWidth + chartConst.MAP_LEGEND_WEDGE_SIZE;
+    _makeVerticalDimension: function(maxValue, minValue, labelTheme) {
+        var maxValueLabelWidth = renderUtil.getRenderedLabelWidth(maxValue, labelTheme);
+        var minValueLabelWidth = renderUtil.getRenderedLabelWidth(minValue, labelTheme);
 
         return {
             width: chartConst.MAP_LEGEND_AREA_PADDING
-                + tooltipWidth
                 + chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE
                 + chartConst.MAP_LEGEND_GRAPH_SIZE
                 + chartConst.MAP_LEGEND_LABEL_PADDING
-                + labelWidth,
+                + Math.max(maxValueLabelWidth, minValueLabelWidth),
             height: chartConst.MAP_LEGEND_SIZE
         };
     },

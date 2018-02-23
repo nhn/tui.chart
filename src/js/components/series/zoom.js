@@ -70,7 +70,7 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
         var position;
 
         if (!IS_MSIE_VERSION_LTE_THAN_8) {
-            positionTop = data.positionMap.series.top - chartConst.CHART_EXPORT_MENU_SIZE - 10;
+            positionTop = data.positionMap.series.top - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT - 10;
             position = {
                 top: positionTop,
                 right: 0

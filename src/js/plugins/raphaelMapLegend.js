@@ -10,6 +10,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 var chartConst = require('../const');
 var snippet = require('tui-code-snippet');
 var renderUtil = require('../helpers/renderUtil');
+var predicate = require('../helpers/predicate');
 
 var DEGREE_HORIZONTAL_BAR = 360;
 var DEGREE_VERTICAL_BAR = 270;
@@ -33,24 +34,33 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
         var gradientBar;
 
         var layout = param.layout;
-        var isHorizontal = param.isHorizontal;
+        var align = param.align;
+        var isHorizontal = predicate.isHorizontalLegend(align);
         var legendSet = param.legendSet;
         var labels = param.labels;
+        var minLabel = labels[0];
+        var maxLabel = labels[labels.length - 1];
+        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth([minLabel, maxLabel]);
 
         this.layout = layout;
         this.isHorizontal = isHorizontal;
+        this.isLeftLegend = predicate.isLegendAlignLeft(align);
         this.theme = param.theme;
         this.paper = param.paper;
         this.legendSet = param.legendSet;
         this.colorSpectrum = param.colorSpectrum;
 
-        if (isHorizontal) {
+        if (predicate.isLegendAlignTop(align)) {
+            layout.position.top += this._calculateHorizontalLegendTooltipHeight(labels, this.theme)
+                + chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE;
+        } else if (predicate.isLegendAlignBottom(align)) {
             layout.position.top += chartConst.MAP_LEGEND_AREA_PADDING
                 + this._calculateHorizontalLegendTooltipHeight(labels, this.theme)
                 + chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE;
+        } else if (predicate.isLegendAlignLeft(align)) {
+            layout.position.left += maxLabelWidth + chartConst.MAP_LEGEND_LABEL_PADDING;
         } else {
             layout.position.left += chartConst.MAP_LEGEND_AREA_PADDING
-                + this._calculateVerticalLegendTooltipWidth(labels, this.theme)
                 + chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE;
         }
 
@@ -70,10 +80,10 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
      * @param {object} paper Raphael paper
      * @param {object} baseData base data for render ticks
      * @param {Array.<string>} labels labels
-     * @param {boolean} isHorizontal boolean value for is horizontal or not
+     * @param {string} align legend align option
      * @param {Array.<object>} legendSet legend set
      */
-    renderTickLabels: function(paper, baseData, labels, isHorizontal, legendSet) {
+    renderTickLabels: function(paper, baseData, labels, align, legendSet) {
         var theme = this.theme;
         var attribute = {
             'font-size': theme.fontSize,
@@ -81,21 +91,31 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
             'font-weight': theme.fontWeight,
             fill: theme.color
         };
+        var minLabel = labels[0];
+        var maxLabel = labels[labels.length - 1];
+        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth([minLabel, maxLabel]);
+        var labelHeight = renderUtil.getRenderedLabelHeight(minLabel, theme);
 
         snippet.forEach(labels, function(label, labelIndex) {
             var offsetValue = baseData.step * labelIndex;
             var pos = snippet.extend({}, baseData.position);
 
-            if (isHorizontal) {
+            if (predicate.isHorizontalLegend(align)) {
                 pos.left += offsetValue;
-                attribute['dominant-baseline'] = 'hanging';
+                pos.top += (labelHeight / 2);
             } else {
                 pos.top += offsetValue;
-                attribute['text-anchor'] = 'start';
+                if (this.isLeftLegend) {
+                    attribute['text-anchor'] = 'start';
+                    pos.left = chartConst.CHART_PADDING;
+                } else {
+                    attribute['text-anchor'] = 'end';
+                    pos.left += maxLabelWidth;
+                }
             }
 
             legendSet.push(raphaelRenderUtil.renderText(paper, pos, label, attribute));
-        });
+        }, this);
     },
 
     /**
@@ -143,6 +163,10 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
      * @returns {SVGTextElement} - wedge text
      */
     _renderWedgeText: function(paper, position, theme) {
+        if (this.isLeftLegend) {
+            position.left += chartConst.MAP_LEGEND_WEDGE_SIZE + chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING;
+        }
+
         return raphaelRenderUtil.renderText(paper, position, '', {
             'font-size': theme.fontSize,
             'font-family': theme.fontFamily,
@@ -161,7 +185,8 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
     _renderWedge: function(paper, position) {
         return paper.path(this.verticalBasePath).attr({
             fill: 'gray',
-            stroke: 'none',
+            stroke: 'white',
+            'stroke-opacity': 0.2,
             opacity: 0,
             transform: 't' + position.left + ',' + position.top
         });
@@ -171,7 +196,8 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
      * Vertical base path
      * @type {Array}
      */
-    verticalBasePath: ['M', -4, 0, 'L', -8, 2.5, 'L', -8, 12.5, 'L', -28, 12.5, 'L', -28, -12.5, 'L', -8, -12.5, 'L', -8, -2.5],
+    verticalRightBasePath: ['M', -4, 0, 'L', -8, 2.5, 'L', -8, 12.5, 'L', -28, 12.5, 'L', -28, -12.5, 'L', -8, -12.5, 'L', -8, -2.5],
+    verticalLeftBasePath: ['M', 10, 0, 'L', 14, 2.5, 'L', 14, 12.5, 'L', 34, 12.5, 'L', 34, -12.5, 'L', 14, -12.5, 'L', 14, -2.5],
 
     /**
      * Make vertical wedge path.
@@ -181,7 +207,8 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
      * @private
      */
     _makeVerticalWedgePath: function(top, labelDimension) {
-        var path = this.verticalBasePath;
+        var isLeftLegend = this.isLeftLegend;
+        var path = this.verticalBasePath = isLeftLegend ? this.verticalLeftBasePath : this.verticalRightBasePath;
         var PADDING_H = chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING;
         var PADDING_V = chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING;
         var labelWidth = labelDimension.width;
@@ -190,9 +217,14 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
         path[2] = top;
         path[5] = top + WEDGE_BASE_HALF;
         path[8] = path[11] = top + (labelHeight / 2) + PADDING_V;
-        path[10] = path[13] = path[4] - labelWidth - (PADDING_H * 2);
         path[14] = path[17] = top - (labelHeight / 2) - PADDING_V;
         path[20] = top - WEDGE_BASE_HALF;
+
+        if (isLeftLegend) {
+            path[10] = path[13] = path[4] + labelWidth + (PADDING_H * 2);
+        } else {
+            path[10] = path[13] = path[4] - labelWidth - (PADDING_H * 2);
+        }
 
         return path;
     },
@@ -237,6 +269,7 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
         var labelSize = raphaelRenderUtil.getRenderedTextSize(label, labelTheme.fontSize, labelTheme.fontFamily);
         var legendSize = this.isHorizontal ? this.layout.dimension.width : this.layout.dimension.height;
         var path = this._makeWedghPath(legendSize * ratio, labelSize);
+        var wedgeTextLeft;
 
         this.wedge.attr({
             path: path,
@@ -244,12 +277,23 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
             fill: this.colorSpectrum.getColor(ratio)
         });
 
+        wedgeTextLeft = this.wedge.getBBox().x
+            + chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING
+            + (labelSize.width / 2);
+
+        if (this.isLeftLegend) {
+            wedgeTextLeft += chartConst.MAP_LEGEND_WEDGE_SIZE;
+        }
+
         this.wedgeText.attr({
-            x: this.wedge.getBBox().x + chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING + (labelSize.width / 2),
+            x: wedgeTextLeft,
             y: this.wedge.getBBox().y + chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING + (labelSize.height / 2),
             text: label,
             opacity: 1
         });
+
+        this.wedge.toFront();
+        this.wedgeText.toFront();
     },
 
     /**

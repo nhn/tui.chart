@@ -146,6 +146,10 @@ var boundsAndScaleBuilder = {
 
         scaleDataMap = scaleDataModel.scaleDataMap;
 
+        if (scaleDataMap.legend && componentManager.get('legend') && componentManager.get('legend').colorSpectrum) {
+            boundsModel.registerSpectrumLegendDimension(scaleDataMap.legend.limit);
+        }
+
         // 03. register y axis dimension
         this._registerYAxisDimension(componentManager, boundsModel, scaleDataMap, 'yAxis', isVertical);
         this._registerYAxisDimension(componentManager, boundsModel, scaleDataMap, 'rightYAxis', isVertical);
