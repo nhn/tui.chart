@@ -409,7 +409,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
                 left: position.left,
                 top: position.top,
                 width: chartConst.LEGEND_ICON_WIDTH,
-                height: this._iconHeight
+                height: chartConst.LEGEND_ICON_HEIGHT
             }, {
                 'stroke-width': 0,
                 fill: data.legendColor,
