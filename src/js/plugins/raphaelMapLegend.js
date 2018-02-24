@@ -171,7 +171,7 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
             'font-size': theme.fontSize,
             'font-family': theme.fontFamily,
             'font-weight': theme.fontWeight,
-            fill: '#ffffff'
+            fill: theme.color
         });
     },
 

@@ -56,8 +56,8 @@ var defaultTheme = {
         borderColor: EMPTY,
         borderWidth: EMPTY,
         selectionColor: EMPTY,
-        startColor: '#00a9ff',
-        endColor: '#ff5a46',
+        startColor: '#FFE98A',
+        endColor: '#D74177',
         overColor: EMPTY,
         dot: {
             fillColor: EMPTY,

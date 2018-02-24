@@ -36,6 +36,10 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
          */
         this.theme = params.theme;
 
+        if (!predicate.isTreemapChart(this.chartType)) {
+            this.theme.label.color = '#fff';
+        }
+
         /**
          * options
          * @type {object}

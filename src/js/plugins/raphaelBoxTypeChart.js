@@ -8,6 +8,7 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var snippet = require('tui-code-snippet');
+var predicate = require('../helpers/predicate');
 
 var ANIMATION_DURATION = 100;
 var MIN_BORDER_WIDTH = 0;
@@ -260,6 +261,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      */
     _renderBoxes: function(seriesDataModel, startDepth, isPivot, seriesSet) {
         var self = this;
+        var isTreemapChart = predicate.isTreemapChart(this.chartType);
         var rectToBack;
 
         if (this.colorSpectrum || !this.zoomable) {
@@ -273,7 +275,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             var firstItem;
 
-            if (seriesGroup.getSeriesItemCount()) {
+            if (isTreemapChart && !self.colorSpectrum && seriesGroup.getSeriesItemCount()) {
                 firstItem = seriesGroup.getSeriesItem(0);
                 self._setTreeFillOpacity({
                     id: firstItem.parent
