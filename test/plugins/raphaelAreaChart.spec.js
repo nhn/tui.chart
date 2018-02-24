@@ -211,7 +211,7 @@ describe('RaphaelAreaChart', function() {
             delete data.options.areaOpacity;
             areaChart.render(paper, data);
             opacity = areaChart.groupAreas[0].area.attrs.opacity;
-            expect(opacity).toBe(0.5);
+            expect(opacity).toBe(1);
         });
 
         it('should set the opacity of series area region as a default, when an areaOpacity is not a number.', function() {
@@ -221,7 +221,7 @@ describe('RaphaelAreaChart', function() {
             areaChart.render(paper, data);
             opacity = areaChart.groupAreas[0].area.attrs.opacity;
 
-            expect(opacity).toBe(0.5);
+            expect(opacity).toBe(1);
         });
 
         it('should not change areaOpacity value, when an areaOpacity is less than 0 or bigger than 1.', function() {
