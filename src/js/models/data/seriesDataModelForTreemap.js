@@ -130,8 +130,7 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
 
             datum.depth = depth;
             datum.group = snippet.isUndefined(group) ? index : group;
-
-            descendants = self._setTreeProperties(rejected, childDepth, datum.id, datum.group);
+            descendants = self._setTreeProperties(rejected, childDepth, datum.id, datum.group, datum.fillOpacity);
             children = snippet.filter(descendants, function(descendant) {
                 return descendant.depth === childDepth;
             });
@@ -141,6 +140,12 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
                 datum.hasChild = true;
             } else {
                 datum.hasChild = false;
+            }
+
+            if (descendants.length) {
+                descendants.sort(function(a, b) {
+                    return b.value - a.value;
+                });
             }
 
             filtered = filtered.concat(descendants);

@@ -41,6 +41,7 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
         this.group = rawSeriesDatum.group;
         this.hasChild = !!rawSeriesDatum.hasChild;
         this.indexes = rawSeriesDatum.indexes;
+        this.fillOpacity = rawSeriesDatum.fillOpacity;
     },
 
     /**
