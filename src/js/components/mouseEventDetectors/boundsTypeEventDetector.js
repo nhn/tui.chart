@@ -221,7 +221,6 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
     onAfterZoom: function(index) {
         if (!this.historyBackBtn) {
             this.historyBackBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
-            this.historyBackBtn.innerHTML = '< Back';
             dom.append(this.mouseEventDetectorContainer, this.historyBackBtn);
         }
 
