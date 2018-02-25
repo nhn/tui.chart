@@ -370,15 +370,6 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 area.startLine.attr({'stroke-opacity': opacity});
             }
 
-            snippet.forEachArray(groupDots, function(item) {
-                if (this.dotOpacity) {
-                    item.endDot.dot.attr({'fill-opacity': opacity});
-                    if (item.startDot) {
-                        item.startDot.dot.attr({'fill-opacity': opacity});
-                    }
-                }
-            }, this);
-
             if (isSelectedLegend) {
                 this.moveSeriesToFront(area, groupDots);
             }
@@ -391,10 +382,14 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @ignore
      */
     resetSeriesOrder: function(legendIndex) {
-        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+        var frontSeries = (legendIndex + 1) < this.groupAreas.length ? this.groupAreas[legendIndex + 1] : null;
+        var frontLine, frontArea;
 
-        if (frontLine) {
-            this.groupLines[legendIndex].insertBefore(frontLine);
+        if (frontSeries) {
+            frontArea = frontSeries.area;
+            frontLine = frontSeries.line;
+            this.groupAreas[legendIndex].area.insertBefore(frontArea);
+            this.groupAreas[legendIndex].line.insertBefore(frontLine);
             snippet.forEachArray(this.groupDots[legendIndex], function(item) {
                 item.endDot.dot.insertBefore(frontLine);
             });

@@ -222,14 +222,6 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
 
             line.attr({'stroke-opacity': opacity});
 
-            snippet.forEachArray(groupDots, function(item) {
-                item.opacity = opacity;
-
-                if (this.dotOpacity) {
-                    item.endDot.dot.attr({'fill-opacity': opacity});
-                }
-            }, this);
-
             if (isSelectedLegend) {
                 this.moveSeriesToFront(line, groupDots);
             }

@@ -14,7 +14,7 @@ var arrayUtil = require('../helpers/arrayUtil');
 var browser = snippet.browser;
 var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
-var DEFAULT_DOT_RADIUS = 4;
+var DEFAULT_DOT_RADIUS = 6;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
@@ -242,7 +242,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (borderColor) {
             borderStyle = {
                 stroke: borderColor,
-                'stroke-width': 1,
+                'stroke-width': 2,
                 'stroke-opacity': opacity
             };
         }
@@ -259,9 +259,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     makeOutDotStyle: function(opacity, borderStyle) {
         var outDotStyle = {
             'fill-opacity': opacity,
-            'stroke-opacity': 0,
-            r: DEFAULT_DOT_RADIUS,
-            filter: 'url(#shadow)'
+            'stroke-opacity': 1,
+            r: DEFAULT_DOT_RADIUS
         };
 
         if (borderStyle) {
@@ -615,9 +614,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
                 'stroke': prev.stroke,
                 'fill': prev.fill,
                 'stroke-opacity': prev['stroke-opacity'],
-                'stroke-width': prev['stroke-width']
-            }, {
-                'fill-opacity': opacity
+                'stroke-width': prev['stroke-width'],
+                'fill-opacity': prev['fill-opacity']
             });
         }
 

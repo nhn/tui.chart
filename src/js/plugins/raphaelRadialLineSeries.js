@@ -185,8 +185,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var self = this,
-            noneSelected = snippet.isNull(legendIndex);
+        var noneSelected = snippet.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
@@ -194,17 +193,6 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             line.attr({'stroke-opacity': opacity});
-
-            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
-                item.opacity = opacity;
-
-                if (self.dotOpacity) {
-                    item.endDot.dot.attr({
-                        'fill-opacity': opacity,
-                        'stroke-opacity': opacity
-                    });
-                }
-            });
         });
     }
 });
