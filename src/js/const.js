@@ -299,7 +299,7 @@ var chartConst = {
     DATE_TYPE_MINUTE: 'minute',
     DATE_TYPE_SECOND: 'second',
     /** title add padding */
-    TITLE_PADDING: 20,
+    TITLE_PADDING: 40,
     /** default header height */
     DEFAULT_HEADER_HEIGHT: 10,
     /** legend area padding */
@@ -338,9 +338,11 @@ var chartConst = {
     HALF_RATIO: 0.5,
     /** X-AXIS LABEL PADDING */
     X_AXIS_LABEL_PADDING: 7,
+    /** X-AXIS title padding */
+    X_AXIS_TITLE_PADDING: 5,
     /** Y-AXIS LABEL PADDING */
     Y_AXIS_LABEL_PADDING: 17,
-    Y_AXIS_TITLE_PADDING: 20,
+    Y_AXIS_TITLE_PADDING: 7,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
     /**

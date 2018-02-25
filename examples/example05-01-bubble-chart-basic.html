@@ -171,7 +171,11 @@ var options = {
     tooltip: {
         template: function (category, items) {
             return '<div class="tui-chart-default-tooltip">' +
-                '<div class="tui-chart-tooltip-head">' + items.legend + items.label + '</div>' +
+                '<div class="tui-chart-tooltip-head">' +
+                    '<span class="tui-chart-legend-rect" style="' + items.cssText + '; width: 10px; height: 10px"></span>' +
+                    '<span>' + items.legend + '</span>' +
+                    '<span>' + items.label + '</span>' +
+                '</div>' +
                 '<table class="tui-chart-tooltip-body">' +
                 '<tr>' +
                     '<td>GDP</td>' +
@@ -186,7 +190,7 @@ var options = {
                     '<td class="tui-chart-tooltip-value">' + items.r + '</td>' +
                 '</tr>' +
                 '</table>';
-                '</div>';
+            '</div>';
         }
     }
 };

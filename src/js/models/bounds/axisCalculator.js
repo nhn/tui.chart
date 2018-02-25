@@ -24,7 +24,7 @@ var axisCalculator = {
     calculateXAxisHeight: function(options, theme) {
         var title = options.title;
         var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
-        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
+        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.X_AXIS_TITLE_PADDING) : 0;
         var labelMargin = options.labelMargin || 0;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
 
@@ -44,8 +44,6 @@ var axisCalculator = {
      * @private
      */
     calculateYAxisWidth: function(labels, options, theme) {
-        var title = options.title || '';
-        var titleAreaWidth = 0;
         var labelMargin = options.labelMargin;
         var width = 0;
 
@@ -53,10 +51,6 @@ var axisCalculator = {
 
         if (options.isCenter) {
             width += chartConst.Y_AXIS_LABEL_PADDING;
-        } else if (options.rotateTitle) {
-            titleAreaWidth = renderUtil.getRenderedLabelHeight(title.text, theme.title);
-        } else {
-            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title);
         }
 
         if (predicate.isDatetimeType(options.type)) {

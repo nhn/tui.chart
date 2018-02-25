@@ -9,6 +9,7 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var AXIS_BACKGROUND_RIGHT_PADDING = 4;
 var snippet = require('tui-code-snippet');
+var Y_AXIS_TITLE_PADDING = require('../const').Y_AXIS_TITLE_PADDING;
 
 var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
     init: function() {
@@ -157,7 +158,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             'font-weight': theme.fontWeight,
             fill: theme.color,
             'text-anchor': 'end',
-            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left + 20) + ',' + (positionTopAndLeft.top)
+            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left) + ',' + (positionTopAndLeft.top)
         });
 
         textObj.node.style.userSelect = 'none';
@@ -382,26 +383,22 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var left = layout.position.left;
         var top = layout.position.top;
 
-        var position = {};
+        var position = {
+            top: top + axisHeight - (textHeight / 2),
+            left: left
+        };
 
         if (rotationInfo.isCenter) {
             position.top = paper.height - (textHeight / 2);
             position.left = left + (axisWidth / 2);
-        } else if (rotationInfo.isDiverging && rotationInfo.isVertical) {
-            position.top = top + axisHeight - (textHeight / 2);
-            position.left = left;
-        } else if (rotationInfo.isPositionRight) {
-            position.top = top - textHeight;
-            position.left = left + axisWidth;
-        } else if (rotationInfo.isVertical) {
-            position.top = top - textHeight;
-            position.left = left;
+        } else if (rotationInfo.isVertical && !rotationInfo.isDiverging) {
+            position.top = top - (textHeight / 2) - Y_AXIS_TITLE_PADDING;
         } else if (rotationInfo.isColumnType) {
-            position.top = top + axisHeight - (textHeight / 2);
             position.left = left + (axisWidth / (data.tickCount - 1) / 2);
-        } else {
-            position.top = top + axisHeight - (textHeight / 2);
-            position.left = left;
+        }
+
+        if (rotationInfo.isPositionRight) {
+            position.left += axisWidth;
         }
 
         if (!rotationInfo.isCenter) {
