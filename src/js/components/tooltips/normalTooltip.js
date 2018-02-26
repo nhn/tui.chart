@@ -119,8 +119,16 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         var data = snippet.extend({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
         var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
             && this.dataProcessor.options.series.colorByPoint;
-        var seriesIndex = predicate.isBulletChart(this.chartType) ? groupIndex : indexes.index;
-        var color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
+        var seriesIndex = indexes.index;
+        var color;
+
+        if (predicate.isBulletChart(this.chartType)) {
+            seriesIndex = groupIndex;
+        } else if (predicate.isTreemapChart(this.chartType)) {
+            seriesIndex = data.tooltipColorIndex;
+        }
+
+        color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
 
         if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;

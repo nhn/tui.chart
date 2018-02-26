@@ -75,7 +75,8 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
             legend: this.label || '',
             value: formattedValue,
             label: label,
-            ratio: this.ratio
+            ratio: this.ratio,
+            tooltipColorIndex: this.indexes[0]
         };
 
         if (snippet.isExisty(colorValue)) {
