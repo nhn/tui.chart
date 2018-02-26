@@ -26,6 +26,8 @@ var chartConst = {
     /** @type {string} */
     CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
     /** @type {string} */
+    CLASS_NAME_ZOOM_OUT_BTN: 'tui-chart-zoom-out-btn',
+    /** @type {string} */
     CLASS_NAME_CHART_EXPORT_MENU_AREA: 'tui-chart-chartExportMenu-area',
     /** @type {string} */
     CLASS_NAME_CHART_EXPORT_MENU_ITEM: 'tui-chart-chartExportMenu-item',
