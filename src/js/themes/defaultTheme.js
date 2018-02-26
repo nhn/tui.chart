@@ -3,18 +3,19 @@
 var DEFAULT_COLOR = '#000000';
 var DEFAULT_BACKGROUND = '#ffffff';
 var DEFAULT_FONTWEIGHT = 'lighter';
+var DEFAULT_FONTFAMILY = 'Arial';
 var EMPTY = '';
 var DEFAULT_AXIS = {
     tickColor: DEFAULT_COLOR,
     title: {
         fontSize: 11,
-        fontFamily: EMPTY,
+        fontFamily: DEFAULT_FONTFAMILY,
         color: '#bbbbbb',
         fontWeight: 'bold'
     },
     label: {
         fontSize: 11,
-        fontFamily: EMPTY,
+        fontFamily: DEFAULT_FONTFAMILY,
         color: '#333',
         fontWeight: 'normal'
     }
@@ -26,11 +27,11 @@ var defaultTheme = {
             color: DEFAULT_BACKGROUND,
             opacity: 1
         },
-        fontFamily: 'Arial'
+        fontFamily: DEFAULT_FONTFAMILY
     },
     title: {
         fontSize: 18,
-        fontFamily: 'Arial',
+        fontFamily: DEFAULT_FONTFAMILY,
         color: DEFAULT_COLOR,
         fontWeight: DEFAULT_FONTWEIGHT
     },
@@ -41,14 +42,14 @@ var defaultTheme = {
         background: '#ffffff',
         label: {
             fontSize: 11,
-            fontFamily: EMPTY,
+            fontFamily: DEFAULT_FONTFAMILY,
             color: '#888'
         }
     },
     series: {
         label: {
             fontSize: 11,
-            fontFamily: EMPTY,
+            fontFamily: DEFAULT_FONTFAMILY,
             color: DEFAULT_COLOR,
             fontWeight: DEFAULT_FONTWEIGHT
         },
@@ -80,7 +81,7 @@ var defaultTheme = {
     legend: {
         label: {
             fontSize: 11,
-            fontFamily: 'Arial',
+            fontFamily: DEFAULT_FONTFAMILY,
             color: '#333',
             fontWeight: DEFAULT_FONTWEIGHT
         }

@@ -67,31 +67,34 @@ var options = {
     plot: {
         lines: [{
             value: 'May',
-            color: 'red'
+            color: '#ff5a46'
         }, {
             value: 'Aug',
-            color: 'green'
+            color: '#00a9ff'
         }],
         bands: [{
             range: [['Apr', 'June'], ['May', 'July']],
-            color: 'yellow',
-            opacity: 0.4
+            color: '#ffb840',
+            opacity: 0.15
         }, {
             range: [['Sep', 'Nov'], ['Oct', 'Dec']],
-            color: 'brown',
-            opacity: 0.4,
+            color: '#19bc9c',
+            opacity: 0.15,
             mergeOverlappingRanges: true
         }, {
             range: ['Jan', 'Mar'],
-            color: 'lightBlue',
-            opacity: 0.4
+            color: '#4b96e6',
+            opacity: 0.15
         }]
     }
 };
 
 var theme = {
     series: {
-        colors: ['#63A69F', '#F2E1AC', '#F2836B', '#F2594B']
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
     }
 };
 

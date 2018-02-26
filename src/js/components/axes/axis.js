@@ -127,6 +127,8 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
          * @type {Raphael.Element}
          */
         this._elBg = null;
+
+        this.isRightYAxis = params.name === 'rightYAxis';
     },
 
     /**
@@ -136,11 +138,6 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _renderBackground: function() {
         var dimension = snippet.extend({}, this.layout.dimension);
         var position = snippet.extend({}, this.layout.position);
-
-        if (this.isYAxis) {
-            dimension.height = this.dimensionMap.chart.height;
-            position.top = 0;
-        }
 
         if (this._elBg) {
             this._elBg.remove();
@@ -457,7 +454,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.left = labelSize + labelMargin;
             } else {
                 positionTopAndLeft.top = horizontalTop + labelMargin;
-                positionTopAndLeft.left = baseLeft + labelPosition;
+                positionTopAndLeft.left = baseLeft + labelPosition - theme.fontSize;
 
                 if (self.isLabelAxis) {
                     positionTopAndLeft.left += halfWidth;

@@ -228,7 +228,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var height = titleHeight || 0;
 
         if (height) {
-            height += (chartConst.TITLE_PADDING + chartConst.Y_AXIS_TITLE_PADDING);
+            height += (chartConst.TITLE_PADDING);
         }
 
         this._registerDimension('title', {height: height});
