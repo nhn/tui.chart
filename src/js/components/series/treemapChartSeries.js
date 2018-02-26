@@ -25,7 +25,6 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         Series.call(this, params);
 
         this.theme.borderColor = this.theme.borderColor || chartConst.TREEMAP_DEFAULT_BORDER;
-        this.theme.borderWidth = this.theme.borderWidth || chartConst.TREEMAP_DEFAULT_BORDER_WIDTH;
         this.theme.label.color = this.options.useColorValue ? '#000' : '#fff';
 
         /**

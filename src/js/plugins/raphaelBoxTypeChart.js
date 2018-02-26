@@ -8,9 +8,10 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var snippet = require('tui-code-snippet');
+var predicate = require('../helpers/predicate');
 
 var ANIMATION_DURATION = 100;
-var MIN_BORDER_WIDTH = 1;
+var MIN_BORDER_WIDTH = 0;
 var MAX_BORDER_WIDTH = 4;
 
 /**
@@ -86,6 +87,8 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
 
         this._bindGetBoundFunction();
         this._bindGetColorFunction();
+
+        this.seriesDataModel = seriesData.seriesDataModel;
 
         /**
          * boxes set
@@ -205,7 +208,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @private
      */
     _getColorFromColorsWhenZoomable: function(seriesItem, startDepth) {
-        return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : 'none';
+        return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : '#000';
     },
 
     /**
@@ -213,35 +216,32 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @param {{width: number, height: number, left: number, top: number}} bound - bound
      * @param {string} color - color
      * @param {number} strokeWidth - stroke width
-     * @param {number} fillOpacity - fill opacity
+     * @param {number} [fillOpacity] - fill opacity
      * @returns {object}
      * @private
      */
-    _renderRect: function(bound, color, strokeWidth) {
+    _renderRect: function(bound, color, strokeWidth, fillOpacity) {
         return raphaelRenderUtil.renderRect(this.paper, bound, {
             fill: color,
             stroke: this.borderColor,
-            'stroke-width': strokeWidth
+            strokeWidth: strokeWidth,
+            'stroke-width': strokeWidth,
+            'fill-opacity': fillOpacity
         });
     },
 
     /**
      * Get stroke width.
-     * @param {?number} depth - depth
-     * @param {number} startDepth - start depth
+     * @param {boolean} isFirstDepth - whether it is same to first depth or not
      * @returns {number}
      * @private
      */
-    _getStrokeWidth: function(depth, startDepth) {
+    _getStrokeWidth: function(isFirstDepth) {
         var strokeWidth;
-
-        if (depth !== startDepth) {
-            return MIN_BORDER_WIDTH;
-        }
 
         if (this.borderWidth) {
             strokeWidth = this.borderWidth;
-        } else if (snippet.isExisty(depth)) {
+        } else if (isFirstDepth) {
             strokeWidth = MAX_BORDER_WIDTH;
         } else {
             strokeWidth = MIN_BORDER_WIDTH;
@@ -261,6 +261,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      */
     _renderBoxes: function(seriesDataModel, startDepth, isPivot, seriesSet) {
         var self = this;
+        var isTreemapChart = predicate.isTreemapChart(this.chartType);
         var rectToBack;
 
         if (this.colorSpectrum || !this.zoomable) {
@@ -272,11 +273,20 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         }
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
+            var firstItem;
+
+            if (isTreemapChart && !self.colorSpectrum && seriesGroup.getSeriesItemCount()) {
+                firstItem = seriesGroup.getSeriesItem(0);
+                self._setTreeFillOpacity({
+                    id: firstItem.parent
+                }, startDepth);
+            }
+
             return seriesGroup.map(function(seriesItem, index) {
                 var result = null;
                 var depth = seriesItem.depth;
-                var strokeWidth = self.colorSpectrum ? 0 : self._getStrokeWidth(depth, startDepth);
-                var fillOpacity = 1;
+                var strokeWidth = self.colorSpectrum ? 0 : self._getStrokeWidth(depth === startDepth);
+                var fillOpacity = self.colorSpectrum ? 1 : seriesItem.fillOpacity;
                 var bound, color;
 
                 seriesItem.groupIndex = groupIndex;
@@ -300,6 +310,39 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
                 return result;
             });
         }, isPivot);
+    },
+
+    /**
+     * @param {{id: number, fillOpacity: number}} parentInfo - parent info
+     * @param {number} startDepth - start depth
+     * @private
+     */
+    _setTreeFillOpacity: function(parentInfo, startDepth) {
+        var children = this.seriesDataModel.findSeriesItemsByParent(parentInfo.id);
+
+        snippet.forEachArray(children, function(datum, index) {
+            var depth = datum.depth;
+
+            if (depth === startDepth) {
+                datum.fillOpacity = 1;
+            } else if (depth === startDepth + 1) {
+                datum.fillOpacity = 0.05 * index;
+            } else if (depth < startDepth) {
+                datum.fillOpacity = 0;
+            } else {
+                datum.fillOpacity = parentInfo.fillOpacity + (0.05 * index);
+            }
+
+            if (datum.hasChild) {
+                this._setTreeFillOpacity(
+                    {
+                        id: datum.id,
+                        fillOpacity: datum.fillOpacity
+                    },
+                    startDepth
+                );
+            }
+        }, this);
     },
 
     /**
@@ -444,12 +487,16 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         };
 
         snippet.forEach(labels, function(label, index) {
-            var seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
+            var seriesLabel;
 
-            seriesLabel.node.style.userSelect = 'none';
-            seriesLabel.node.style.cursor = 'default';
+            if (positions[index]) {
+                seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
 
-            labelSet.push(seriesLabel);
+                seriesLabel.node.style.userSelect = 'none';
+                seriesLabel.node.style.cursor = 'default';
+
+                labelSet.push(seriesLabel);
+            }
         });
 
         this.labelSet = labelSet;
