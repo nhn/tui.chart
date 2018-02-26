@@ -233,34 +233,76 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
     _renderPaginationArea: function(position, dimension) {
         var self = this;
         var BUTTON_WIDTH = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
-        var BUTTON_PADDING_LEFT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_LEFT;
-        var controllerPositionTop = position.top + dimension.height - chartConst.CHART_PADDING;
-        var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
-        var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
-        var leftButtonPositionLeft = rightButtonPositionLeft - (BUTTON_PADDING_LEFT + BUTTON_WIDTH);
-        var lowerArrowPath = ['M', rightButtonPositionLeft, ',', (controllerPositionTop + PAGINATION_POSITION_PADDING),
-            'L', (rightButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT),
-            'L', (rightButtonPositionLeft + PAGINATION_POSITION_WIDTH), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING)].join('');
-        var upperArrowPath = ['M', leftButtonPositionLeft, ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT),
-            'L', (leftButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING),
-            'L', (leftButtonPositionLeft + PAGINATION_POSITION_WIDTH), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT)].join('');
+        var BUTTON_PADDING_RIGHT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_RIGHT;
+        var controllerPositionTop = position.top + dimension.height - chartConst.LEGEND_AREA_PADDING;
+        var controllerPositionLeft = position.left - chartConst.LEGEND_AREA_PADDING;
+        var leftButtonPositionLeft = controllerPositionLeft + chartConst.LEGEND_AREA_PADDING;
+        var rightButtonPositionLeft = leftButtonPositionLeft + (BUTTON_PADDING_RIGHT + BUTTON_WIDTH);
+        var lowerArrowPath = ['M', rightButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
+            'L', (rightButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
+            'L', (rightButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4)].join('');
+        var upperArrowPath = ['M', leftButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
+            'L', (leftButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
+            'L', (leftButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4)].join('');
 
-        this.upperButton = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 3);
-        this.lowerButton = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 3);
+        var prevRect = this._renderPaginationRect({
+            top: controllerPositionTop,
+            left: leftButtonPositionLeft
+        });
+        var prevArrow = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 2);
 
-        this.upperButton.click(function() {
+        var nextRect = this._renderPaginationRect({
+            top: controllerPositionTop,
+            left: rightButtonPositionLeft
+        });
+        var nextArrow = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 2);
+
+        var prevButtonSet = this.paper.set();
+        var nextButtonSet = this.paper.set();
+
+        prevRect.className = 'tui-chart-icon';
+        prevButtonSet.push(prevRect);
+        prevButtonSet.push(prevArrow);
+
+        nextRect.className = 'tui-chart-icon';
+        nextButtonSet.push(nextRect);
+        nextButtonSet.push(nextArrow);
+
+        prevButtonSet.click(function() {
             if (self._currentPageCount > 1) {
                 self._paginateLegendAreaTo('previous');
                 self._currentPageCount -= 1;
             }
         });
 
-        this.lowerButton.click(function() {
+        nextButtonSet.click(function() {
             if (self._currentPageCount < self.availablePageCount) {
                 self._paginateLegendAreaTo('next');
                 self._currentPageCount += 1;
             }
         });
+    },
+
+    /**
+     * @param {object} position - position top, left
+     * @returns {SVGElement} - svg element
+     */
+    _renderPaginationRect: function(position) {
+        var BUTTON_SIZE = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
+        var bound = {
+            left: position.left,
+            top: position.top,
+            width: BUTTON_SIZE,
+            height: BUTTON_SIZE
+        };
+        var rect = raphaelRenderUtil.renderRect(this.paper, bound, {
+            fill: '#f4f4f4',
+            rx: '1px',
+            ry: '1px',
+            stroke: 'none'
+        });
+
+        return rect;
     },
 
     /**
