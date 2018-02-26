@@ -55,7 +55,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
         var isShowArea = data.options.showArea;
 
         var groupPaths = this._getLinesPath(groupPositions);
-        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
+        var borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         var radialSeriesSet = paper.set();
         var lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);

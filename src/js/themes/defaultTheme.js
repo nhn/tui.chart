@@ -64,8 +64,8 @@ var defaultTheme = {
             fillColor: EMPTY,
             fillOpacity: 1,
             strokeColor: EMPTY,
-            strokeOpacity: 1,
-            strokeWidth: 2,
+            strokeOpacity: EMPTY,
+            strokeWidth: 0,
             radius: 6,
             hover: {
                 fillColor: EMPTY,

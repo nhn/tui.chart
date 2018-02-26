@@ -55,11 +55,12 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         var dimension = data.dimension;
         var groupPositions = data.groupPositions;
         var theme = data.theme;
+        var dotTheme = (theme && theme.dot) || {};
         var colors = theme.colors;
         var options = data.options;
         var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 1;
         var dotOpacity = options.showDot ? 1 : 0;
-        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
+        var borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
 

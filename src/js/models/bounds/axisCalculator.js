@@ -32,7 +32,7 @@ var axisCalculator = {
             labelHeight += labelMargin;
         }
 
-        return titleAreaHeight + labelHeight + chartConst.CHART_PADDING;
+        return titleAreaHeight + labelHeight + chartConst.X_AXIS_LABEL_PADDING;
     },
 
     /**

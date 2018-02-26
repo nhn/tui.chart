@@ -19,12 +19,12 @@ describe('Test for axisCalculator', function() {
         it('calculate height for x axis', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title'}, {});
 
-            expect(actual).toBe(70);
+            expect(actual).toBe(52);
         });
 
         it('labelMargin option should increase the x-axis height.', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title', labelMargin: 30}, {});
-            expect(actual).toBe(100);
+            expect(actual).toBe(82);
         });
     });
 

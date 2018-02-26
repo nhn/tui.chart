@@ -56,7 +56,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         var opacity = options.showDot ? 1 : 0;
         var isSpline = options.spline;
         var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
-        var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
+        var borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
         var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
         var groupPaths;
 

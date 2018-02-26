@@ -234,17 +234,17 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * Make border style.
      * @param {string} borderColor border color
      * @param {number} opacity opacity
+     * @param {number} borderWidth border width
      * @returns {{stroke: string, stroke-width: number, strike-opacity: number}} border style
      */
-    makeBorderStyle: function(borderColor, opacity) {
-        var borderStyle;
+    makeBorderStyle: function(borderColor, opacity, borderWidth) {
+        var borderStyle = {
+            'stroke-width': borderWidth,
+            'stroke-opacity': opacity
+        };
 
         if (borderColor) {
-            borderStyle = {
-                stroke: borderColor,
-                'stroke-width': 2,
-                'stroke-opacity': opacity
-            };
+            borderStyle.stroke = borderColor;
         }
 
         return borderStyle;
@@ -259,7 +259,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     makeOutDotStyle: function(opacity, borderStyle) {
         var outDotStyle = {
             'fill-opacity': opacity,
-            'stroke-opacity': 1,
+            'stroke-opacity': opacity,
             r: DEFAULT_DOT_RADIUS
         };
 
