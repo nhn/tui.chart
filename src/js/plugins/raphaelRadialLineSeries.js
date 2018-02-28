@@ -88,6 +88,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
         this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
         this.dotOpacity = dotOpacity;
+        this.isShowArea = isShowArea;
 
         return radialSeriesSet;
     },

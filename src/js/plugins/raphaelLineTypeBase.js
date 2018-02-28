@@ -18,6 +18,8 @@ var DEFAULT_DOT_RADIUS = 6;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
+var CHART_HOVER_STATUS_OVER = 'over';
+var CHART_HOVER_STATUS_OUT = 'out';
 
 var concat = Array.prototype.concat;
 
@@ -431,11 +433,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var opacity = 1;
         var isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
         if (this.groupLines) {
-            if (changeType === 'over' || isSelectedLegend) {
-                opacity = DE_EMPHASIS_OPACITY;
+            if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
+                opacity = (this.chartType === 'radial' && this.isShowArea) ? 0 : DE_EMPHASIS_OPACITY;
             }
 
-            if (changeType === 'out' && isSelectedLegend) {
+            if (changeType === CHART_HOVER_STATUS_OUT && isSelectedLegend) {
                 line = this.getLine(this.selectedLegendIndex);
             }
 
@@ -451,7 +453,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     },
 
     /**
-     * getLine
+     * Get the raphael line element with groupIndex
      * @param {number} groupIndex  group index
      * @returns {object} line raphael object
      */
@@ -468,7 +470,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (this.groupAreas) {
             snippet.forEach(this.groupAreas, function(otherArea) {
                 otherArea.area.attr({
-                    'fill-opacity': (changeType === 'over') ? DE_EMPHASIS_OPACITY : 1
+                    'fill-opacity': (changeType === CHART_HOVER_STATUS_OVER) ? DE_EMPHASIS_OPACITY : 1
                 });
             });
         }
@@ -482,6 +484,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      */
     _updateLineStrokeWidth: function(line, strokeWidth) {
         line.attr({
+            stroke: line.attrs.stroke,
             'stroke-width': strokeWidth
         });
     },
@@ -504,13 +507,13 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (this.chartType === 'area') {
             strokeWidth = 5;
             startLine = line.startLine;
-            this._updateAreaOpacity('over');
+            this._updateAreaOpacity(CHART_HOVER_STATUS_OVER);
             line = line.line;
         } else {
             strokeWidth = this.lineWidth;
         }
 
-        this._updateLineStrokeOpacity('over', line);
+        this._updateLineStrokeOpacity(CHART_HOVER_STATUS_OVER, line);
         this._updateLineStrokeWidth(line, strokeWidth);
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
@@ -647,7 +650,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             strokeWidth = this.lineWidth;
             startLine = line.startLine;
             line = line.line;
-            this._updateAreaOpacity('out');
+            this._updateAreaOpacity(CHART_HOVER_STATUS_OUT);
         } else {
             strokeWidth = this.lineWidth;
         }
@@ -656,7 +659,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             opacity = DE_EMPHASIS_OPACITY;
         }
 
-        this._updateLineStrokeOpacity('out', line);
+        this._updateLineStrokeOpacity(CHART_HOVER_STATUS_OUT, line);
         this._updateLineStrokeWidth(line, strokeWidth);
 
         if (startLine) {

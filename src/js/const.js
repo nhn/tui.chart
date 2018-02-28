@@ -41,6 +41,8 @@ var chartConst = {
     CLASS_NAME_TOOLTIP_HEAD: 'tui-chart-tooltip-head',
     /** @type {string} */
     CLASS_NAME_TOOLTIP_BODY: 'tui-chart-tooltip-body',
+    /** @type {string} */
+    CLASS_NAME_SVG_AUTOSHAPE: 'auto-shape-rendering',
     /** chart type
      * @type {string}
      */

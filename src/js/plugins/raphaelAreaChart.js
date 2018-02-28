@@ -14,7 +14,9 @@ var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
-var GUIDE_AREACHART_AREAOPACITY_TYPE = require('../const.js').GUIDE_AREACHART_AREAOPACITY_TYPE;
+var chartConst = require('../const');
+var GUIDE_AREACHART_AREAOPACITY_TYPE = chartConst.GUIDE_AREACHART_AREAOPACITY_TYPE;
+var CLASS_NAME_SVG_AUTOSHAPE = chartConst.CLASS_NAME_SVG_AUTOSHAPE;
 var consoleUtil = require('../helpers/consoleUtil');
 
 var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
@@ -150,8 +152,8 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             });
             var line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth);
 
-            area.node.setAttribute('class', 'auto-shape-rendering');
-            line.node.setAttribute('class', 'auto-shape-rendering');
+            area.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
+            line.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
 
             polygons.area = area;
             polygons.line = line;
