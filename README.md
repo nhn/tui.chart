@@ -136,13 +136,13 @@ Add the container element where TOAST UI Chart will be created.
 TOAST UI Chart can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following three ways depending on your environment.
 
 ```javascript
-var Grid = tui.Grid; /* namespace */
+var chart = tui.chart; /* namespace */
 ```
 ```javascript
-var Grid = require('tui-grid'); /* CommonJS in Node.js */
+var chart = require('tui-chart'); /* CommonJS in Node.js */
 ```
 ```javascript
-import {Grid} from 'tui-grid'; /* ES6 in Node.js */
+import {chart} from 'tui-chart'; /* ES6 in Node.js */
 ```
 
 Factory function needs three paramters: container, data, options
