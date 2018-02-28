@@ -23,7 +23,7 @@ describe('PieChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstItemLabel']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstItemLabel', 'isComboDonutShowOuterLabel']);
 
         dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
         dataProcessor.getFirstItemLabel.and.returnValue('2.2');
@@ -380,6 +380,23 @@ describe('PieChartSeries', function() {
                 height: 400
             };
             series.isShowOuterLabel = true;
+
+            actual = series._calculateRadius();
+
+            expect(actual).toBe(150);
+        });
+
+        it('should calculate pie1 radius to be same to pie2', function() {
+            var actual;
+
+            series.layout.dimension = {
+                width: 500,
+                height: 400
+            };
+            series.isCombo = true;
+            series.seriesType = 'pie1';
+            series.isShowOuterLabel = false;
+            dataProcessor.isComboDonutShowOuterLabel.and.returnValue(true);
 
             actual = series._calculateRadius();
 

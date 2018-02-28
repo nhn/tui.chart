@@ -11,6 +11,7 @@ var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var snippet = require('tui-code-snippet');
 var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
+var COMBO_PIE1 = 'pie1';
 
 var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -342,8 +343,16 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
      * @private
      */
     _calculateRadius: function() {
-        var radiusRatio = this.isShowOuterLabel ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
+        var isComboPie1 = this.isCombo && (this.seriesType === COMBO_PIE1);
+        var isShowOuterLabel = this.isShowOuterLabel;
         var baseSize = this._calculateBaseSize();
+        var radiusRatio = 0;
+
+        if (isComboPie1) {
+            isShowOuterLabel = this.dataProcessor.isComboDonutShowOuterLabel();
+        }
+
+        radiusRatio = isShowOuterLabel ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
 
         return baseSize * radiusRatio * this.options.radiusRange[1] / 2;
     },
