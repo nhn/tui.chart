@@ -506,7 +506,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     _updateDimensionsWidth: function(overflowInfo) {
         var overflowLeft = Math.max(overflowInfo.overflowLeft, 0);
-        var overflowRight = Math.max(overflowInfo.overflowRight, 0);
+        var overflowRight = overflowInfo.overflowRight ? Math.max(overflowInfo.overflowRight, 0) : 0;
         var margin = overflowLeft + overflowRight;
 
         this.chartLeftPadding += overflowLeft;

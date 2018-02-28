@@ -483,10 +483,13 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @private
      */
     _updateLineStrokeWidth: function(line, strokeWidth) {
-        line.attr({
-            stroke: line.attrs.stroke,
+        var changeAttr = {
             'stroke-width': strokeWidth
-        });
+        };
+        if (line.attrs) {
+            changeAttr.stroke = line.attrs.stroke;
+        }
+        line.attr(changeAttr);
     },
 
     /**

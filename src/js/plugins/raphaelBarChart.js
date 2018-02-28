@@ -14,6 +14,7 @@ var ANIMATION_DURATION = 700;
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
+var BAR_HOVER_SPARE_SIZE = 8;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -400,9 +401,10 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
     showAnimation: function(data) {
         var bar = this.groupBars[data.groupIndex][data.index],
             bound = bar.bound;
+
         this.overlay.attr({
-            width: bound.width + 8,
-            height: bound.height + 8,
+            width: bound.width + BAR_HOVER_SPARE_SIZE,
+            height: bound.height + BAR_HOVER_SPARE_SIZE,
             stroke: '#fff',
             'stroke-width': '1',
             x: bound.left - 4,
@@ -412,6 +414,10 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
         this.resortBarIndex(data.groupIndex);
         this.overlay.toFront();
         bar.rect.toFront();
+
+        if (this.labelSet) {
+            this.labelSet.toFront();
+        }
         this.overlay.node.setAttribute('filter', 'url(#shadow)');
     },
 
@@ -428,6 +434,10 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
             y: 0,
             'fill-opacity': 0
         });
+
+        if (this.labelSet) {
+            this.labelSet.toFront();
+        }
     },
 
     /**
@@ -590,17 +600,17 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
             opacity: 0,
             'text-anchor': textAnchor
         };
-        var labelSet = paper.set();
+        var labelSet = this.labelSet = paper.set();
 
         snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
             snippet.forEach(categoryLabel, function(label, seriesIndex) {
                 var position = groupPositions[categoryIndex][seriesIndex];
                 var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
+                var enaLabelNodeStyle = endLabel.node.style;
                 var startLabel;
 
-                endLabel.node.style.userSelect = 'none';
-                endLabel.node.style.cursor = 'default';
-                endLabel.node.setAttribute('filter', 'url(#glow)');
+                enaLabelNodeStyle.userSelect = 'none';
+                enaLabelNodeStyle.cursor = 'default';
 
                 labelSet.push(endLabel);
 
@@ -608,7 +618,6 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
                     startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
-                    startLabel.node.setAttribute('filter', 'url(#glow)');
 
                     labelSet.push(startLabel);
                 }
