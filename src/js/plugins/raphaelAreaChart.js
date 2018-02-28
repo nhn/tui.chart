@@ -65,13 +65,13 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         var borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
+        var seriesSet;
 
         this.paper = paper;
         this.theme = data.theme;
         this.isSpline = options.spline;
         this.dimension = dimension;
         this.position = data.position;
-
         this.zeroTop = data.zeroTop;
         this.hasRangeData = data.hasRangeData;
 
@@ -94,14 +94,24 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
         this.dotOpacity = dotOpacity;
-
         this.pivotGroupDots = null;
 
-        if (paper.raphael.svg) {
-            this.appendShadowFilterToDefs();
-        }
+        seriesSet = paper.setFinish();
+        this._moveSeriesToFrontAll();
 
-        return paper.setFinish();
+        return seriesSet;
+    },
+
+    /**
+     * Rearrange all series sequences.
+     * @private
+     */
+    _moveSeriesToFrontAll: function() {
+        var len = this.groupPaths ? this.groupPaths.length : 0;
+        var i = 0;
+        for (; i < len; i += 1) {
+            this.moveSeriesToFront(this.groupAreas[i], this.groupDots[i]);
+        }
     },
 
     /**
@@ -385,16 +395,15 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @ignore
      */
     resetSeriesOrder: function(legendIndex) {
-        var frontSeries = (legendIndex + 1) < this.groupAreas.length ? this.groupAreas[legendIndex + 1] : null;
-        var frontLine, frontArea;
+        var frontSeries = ((legendIndex + 1) < this.groupAreas.length) ? this.groupAreas[legendIndex + 1] : null;
+        var frontArea;
 
         if (frontSeries) {
             frontArea = frontSeries.area;
-            frontLine = frontSeries.line;
             this.groupAreas[legendIndex].area.insertBefore(frontArea);
-            this.groupAreas[legendIndex].line.insertBefore(frontLine);
+            this.groupAreas[legendIndex].line.insertBefore(frontArea);
             snippet.forEachArray(this.groupDots[legendIndex], function(item) {
-                item.endDot.dot.insertBefore(frontLine);
+                item.endDot.dot.insertBefore(frontArea);
             });
         }
     },

@@ -629,6 +629,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (dot.node) {
             dot.node.setAttribute('filter', '');
         }
+
+        this.resetSeriesOrder(groupIndex);
     },
 
     /**
