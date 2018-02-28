@@ -1380,7 +1380,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
     isComboDonutShowOuterLabel: function() {
         var seriesOptions = this.options.series;
 
-        return (seriesOptions && seriesOptions.pie2 && seriesOptions.pie2.labelAlign === 'o);
+        return (seriesOptions && seriesOptions.pie2 && seriesOptions.pie2.labelAlign === 'outer');
     }
 });
 
