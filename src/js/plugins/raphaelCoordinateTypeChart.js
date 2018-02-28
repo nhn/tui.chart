@@ -108,6 +108,12 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
          */
         this.animationTimeoutId = null;
 
+        /**
+         * selected legend
+         * @type {?number}
+         */
+        this.selectedLegend = null;
+
         if (this.paper.raphael.svg) {
             this.appendShadowFilterToDefs();
         }
@@ -331,7 +337,6 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      * @param {object} indexes - indexes
      *      @param {number} indexes.groupIndex - index of circles group
      *      @param {number} indexes.index - index of circles
-     * @private
      */
     hideAnimation: function(indexes) {
         var changeOpacity = DE_EMPHASIS_OPACITY;
