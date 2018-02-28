@@ -300,13 +300,21 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
     /**
      * Register dimension for y axis.
-     * @param {{min: number, max: number}} limit - min, max
-     * @param {string} componentName - component name like yAxis, rightYAxis
-     * @param {object} options - options for y axis
-     * @param {{title: object, label: object}} theme - them for y axis
-     * @param {boolean} isVertical - whether vertical or not
+     * @param {object} dimensionInfos - options for calculate dimension
+     *     @param {{min: number, max: number}} dimensionInfos.limit - min, max
+     *     @param {string} dimensionInfos.componentName - component name like yAxis, rightYAxis
+     *     @param {object} dimensionInfos.options - options for y axis
+     *     @param {{title: object, label: object}} dimensionInfos.theme - them for y axis
+     *     @param {Array} dimensionInfos.yAxisLabels - them for y axis
+     *     @param {boolean} dimensionInfos.isVertical - whether vertical or not
      */
-    registerYAxisDimension: function(limit, componentName, options, theme, isVertical) {
+    registerYAxisDimension: function(dimensionInfos) {
+        var limit = dimensionInfos.limit;
+        var componentName = dimensionInfos.axisName;
+        var options = dimensionInfos.options;
+        var theme = dimensionInfos.theme;
+        var yAxisLabels = dimensionInfos.yAxisLabels;
+        var isVertical = dimensionInfos.isVertical;
         var categories, yAxisOptions;
 
         if (limit) {
@@ -324,7 +332,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         this._registerDimension(componentName, {
-            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme)
+            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme, yAxisLabels)
         });
     },
 

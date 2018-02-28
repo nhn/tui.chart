@@ -39,15 +39,16 @@ var axisCalculator = {
      * Calculate width for y axis.
      * @param {Array.<string | number>} labels labels
      * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
-     * @param {{title: object, label: object}} theme - them for y axis
+     * @param {{title: object, label: object}} theme - theme for y axis calculate
+     * @param {Array} yAxisLabels - yAxis labels for y axis calculate
      * @returns {number}
-     * @private
      */
-    calculateYAxisWidth: function(labels, options, theme) {
+    calculateYAxisWidth: function(labels, options, theme, yAxisLabels) {
         var labelMargin = options.labelMargin;
         var width = 0;
 
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
+        yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
 
         if (options.isCenter) {
             width += chartConst.Y_AXIS_LABEL_PADDING;
@@ -55,10 +56,12 @@ var axisCalculator = {
 
         if (predicate.isDatetimeType(options.type)) {
             labels = renderUtil.formatDates(labels, options.dateFormat);
+            yAxisLabels = renderUtil.formatDates(yAxisLabels, options.dateFormat);
         }
         if (labelMargin && labelMargin > 0) {
             width += labelMargin;
         }
+        labels = yAxisLabels.length ? yAxisLabels : labels;
 
         width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) +
             chartConst.Y_AXIS_LABEL_PADDING;

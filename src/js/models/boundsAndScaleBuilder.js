@@ -83,19 +83,26 @@ var boundsAndScaleBuilder = {
     _registerYAxisDimension: function(componentManager, boundsModel, scaleDataMap, axisName, isVertical) {
         var yAxis = componentManager.get(axisName);
         var limit = null;
+        var yAxisLabels = [];
         var scaleData;
 
         if (!yAxis) {
             return;
         }
-
         scaleData = scaleDataMap[axisName];
 
         if (scaleData) {
             limit = scaleData.limit;
+            yAxisLabels = scaleData.labels;
         }
-
-        boundsModel.registerYAxisDimension(limit, axisName, yAxis.options, yAxis.theme, isVertical);
+        boundsModel.registerYAxisDimension({
+            limit: limit,
+            axisName: axisName,
+            options: yAxis.options,
+            theme: yAxis.theme,
+            yAxisLabels: yAxisLabels,
+            isVertical: isVertical
+        });
     },
 
     /**

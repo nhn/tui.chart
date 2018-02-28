@@ -34,7 +34,7 @@ describe('Test for axisCalculator', function() {
 
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title'
-            }, {});
+            }, {}, []);
 
             expect(actual).toBe(67);
         });
@@ -45,7 +45,7 @@ describe('Test for axisCalculator', function() {
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 rotateTitle: false
-            }, {});
+            }, {}, []);
 
             expect(actual).toBe(67);
         });
@@ -56,7 +56,7 @@ describe('Test for axisCalculator', function() {
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 isCenter: true
-            }, {});
+            }, {}, []);
 
             expect(actual).toBe(84);
         });
@@ -67,7 +67,7 @@ describe('Test for axisCalculator', function() {
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 labelMargin: 30
-            }, {});
+            }, {}, []);
 
             expect(actual).toBe(97);
         });
