@@ -297,6 +297,15 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * get other side axis dimension
+     * @returns {object}
+     * @private
+     */
+    _getOtherSideDimension: function() {
+        return this.dimensionMap[this.isYAxis ? 'xAxis' : 'yAxis'];
+    },
+
+    /**
      * Title area renderer
      * @private
      */
@@ -318,6 +327,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                     isDiverging: seriesOption.diverging
                 },
                 layout: this.layout,
+                otherSideDimension: this._getOtherSideDimension(),
                 tickCount: this.data.tickCount,
                 set: this.axisSet
             });

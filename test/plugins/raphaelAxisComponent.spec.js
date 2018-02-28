@@ -24,7 +24,10 @@ describe('RaphaelAxisComponent', function() {
                 dimension: {width: 1000, height: 1000}
             },
             set: paper.set(),
-            offset: {}
+            offset: {},
+            otherSideDimension: {
+                width: 30
+            }
         };
         positionDiff = {};
     });

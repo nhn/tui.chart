@@ -54,6 +54,13 @@ describe('Test for Axis', function() {
         it('render title area', function() {
             var container = dom.create('div');
             var paper = raphael(container, 200, 200);
+
+            axis.dimensionMap = {
+                yAxis: {
+                    width: 80
+                }
+            };
+
             spyOn(axis.graphRenderer, 'renderTitle');
 
             axis._renderTitleArea(paper, 200);

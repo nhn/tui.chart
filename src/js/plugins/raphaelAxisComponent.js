@@ -377,15 +377,16 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
     calculatePosition: function(paper, data) {
         var rotationInfo = data.rotationInfo;
         var textHeight = getTextHeight(data.text, data.theme);
+        var textWidth = getTextWidth(data.text, data.theme);
         var layout = data.layout;
         var axisHeight = layout.dimension.height;
         var axisWidth = layout.dimension.width;
         var left = layout.position.left;
         var top = layout.position.top;
-
+        var adjustLeftPosition = (textWidth / 2) - data.otherSideDimension.width;
         var position = {
             top: top + axisHeight - (textHeight / 2),
-            left: left
+            left: left + ((adjustLeftPosition < 0) ? 0 : adjustLeftPosition)
         };
 
         if (rotationInfo.isCenter) {
@@ -420,6 +421,19 @@ function getTextHeight(text, theme) {
     var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
 
     return titleSize.height;
+}
+
+/**
+ * Get a text width by theme
+ * @param {string} text - text
+ * @param {object} theme - axis theme
+ * @returns {number} text width
+ * @ignore
+ */
+function getTextWidth(text, theme) {
+    var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
+
+    return titleSize.width;
 }
 
 /**
