@@ -4,10 +4,6 @@
 
 [![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
-![area chart normal stack2](https://user-images.githubusercontent.com/13758710/35846361-b9b96dd0-0b59-11e8-8e55-57995e35badc.png)
-![all](https://user-images.githubusercontent.com/13758710/35847300-6139bcec-0b5d-11e8-861f-57d8a0b1c810.png)
-
-
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
 * [Features](#-features)
@@ -30,7 +26,7 @@
 ## 🌏 Browser Support
 | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer |
 | :---------: | :---------: | :---------: | :---------: | :---------: |
-| Yes | Yes | Yes | Yes | [[8+]] |
+| Yes | Yes | Yes | Yes | 8+ |
 
 
 ## 🎨 Features
@@ -65,15 +61,15 @@ It is being maintained actively for three years and so forth.
 Yes, It's free. :)
 
 ## Examples
-#### Single Charts
+### Single Charts
 | [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)(Donut) | [Map](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map.html)<br>[Heatmap](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)<br>[Treemap](https://nhnent.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic.html) | [Boxplot](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html) | [Bullet](https://nhnent.github.io/tui.chart/latest/tutorial-example15-01-bullet-chart-basic.html)
 | --- | --- | --- | --- | --- | --- | --- |
 
-#### Combo Charts
+### Combo Charts
 | [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html) |
 | --- | --- | --- | --- |
 
-#### Other tips
+### Other tips
 
 * [Load Data from `<table>`](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/import-chart-data-from-existing-table-element.md)
 * [Add data dynamically](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
@@ -103,15 +99,15 @@ When using npm, be sure to use it in the environment [Node.js](https://nodejs.or
 #### npm
 
 ```sh
-$ npm install --save [[package name]] # Latest version
-$ npm install --save [[package name]]@<version> # Specific version
+$ npm install --save tui-chart # Latest version
+$ npm install --save tui-chart@<version> # Specific version
 ```
 
 #### bower
 
 ```sh
-$ bower install [[package name]] # Latest version
-$ bower install [[package name]]#<tag> # Specific version
+$ bower install tui-chart # Latest version
+$ bower install tui-chart#<tag> # Specific version
 ```
 
 ### Download Source Files
