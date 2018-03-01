@@ -175,13 +175,14 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
     /**
      * Get color from colorSpectrum by ratio of seriesItem.
      * @param {SeriesItem} seriesItem - seriesItem
+     * @param {number} startDepth - start depth
      * @returns {string}
      * @private
      */
-    _getColorFromSpectrum: function(seriesItem) {
+    _getColorFromSpectrum: function(seriesItem, startDepth) {
         var color;
 
-        if (!seriesItem.hasChild) {
+        if (!seriesItem.hasChild || seriesItem.depth !== startDepth) {
             color = this.colorSpectrum.getColor(seriesItem.colorRatio || seriesItem.ratio) || this.chartBackground;
         } else {
             color = 'none';
@@ -224,7 +225,6 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         return raphaelRenderUtil.renderRect(this.paper, bound, {
             fill: color,
             stroke: this.borderColor,
-            strokeWidth: strokeWidth,
             'stroke-width': strokeWidth,
             'fill-opacity': fillOpacity
         });
@@ -262,15 +262,6 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
     _renderBoxes: function(seriesDataModel, startDepth, isPivot, seriesSet) {
         var self = this;
         var isTreemapChart = predicate.isTreemapChart(this.chartType);
-        var rectToBack;
-
-        if (this.colorSpectrum || !this.zoomable) {
-            rectToBack = function(rect) {
-                rect.toBack();
-            };
-        } else {
-            rectToBack = function() {};
-        }
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             var firstItem;
@@ -300,7 +291,6 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
                         seriesItem: seriesItem,
                         color: color
                     };
-                    rectToBack(result.rect);
 
                     if (seriesSet) {
                         seriesSet.push(result.rect);
