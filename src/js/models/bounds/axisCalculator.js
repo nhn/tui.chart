@@ -38,7 +38,7 @@ var axisCalculator = {
     /**
      * Calculate width for y axis.
      * @param {Array.<string | number>} labels labels
-     * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
+     * @param {{title: ?string, isCenter: ?boolean}} options - options
      * @param {{title: object, label: object}} theme - theme for y axis calculate
      * @param {Array} yAxisLabels - yAxis labels for y axis calculate
      * @returns {number}

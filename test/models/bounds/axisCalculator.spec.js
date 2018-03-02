@@ -39,17 +39,6 @@ describe('Test for axisCalculator', function() {
             expect(actual).toBe(67);
         });
 
-        it('calculate width for y axis, when rotateTitle option is false', function() {
-            var actual;
-
-            actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
-                title: 'Axis Title',
-                rotateTitle: false
-            }, {}, []);
-
-            expect(actual).toBe(67);
-        });
-
         it('calculate width for y axis, when isCenter option is true', function() {
             var actual;
 

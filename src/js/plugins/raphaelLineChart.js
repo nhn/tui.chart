@@ -245,7 +245,9 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         if (frontLine) {
             this.groupLines[legendIndex].insertBefore(frontLine);
             snippet.forEachArray(this.groupDots[legendIndex], function(item) {
-                item.endDot.dot.insertBefore(frontLine);
+                if (item.endDot) {
+                    item.endDot.dot.insertBefore(frontLine);
+                }
             });
         }
     },
