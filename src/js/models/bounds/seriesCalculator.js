@@ -50,21 +50,23 @@ var seriesCalculator = {
      * @param {{align: ?string, visible: boolean}} legendOptions - legend options
      * @param {string} chartType - chart type
      * @param {object} seriesTheme - series theme;
+     * @param {object} yAxisTitle - title of yAxis;
      * @returns {number} series height
      */
-    calculateHeight: function(dimensionMap, legendOptions, chartType, seriesTheme) {
+    calculateHeight: function(dimensionMap, legendOptions, chartType, seriesTheme, yAxisTitle) {
         var chartHeight = dimensionMap.chart.height;
         var defaultTopAreaHeight = renderUtil.getDefaultSeriesTopAreaHeight(chartType, seriesTheme);
         var topAreaHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
         var bottomAreaHeight = dimensionMap.xAxis.height;
         var legendHeight = legendOptions.visible ? dimensionMap.legend.height : 0;
         var legendAlignment = legendOptions.align;
+        var yAxisTitlePadding = yAxisTitle ? chartConst.Y_AXIS_TITLE_PADDING * 2 : 0;
 
         bottomAreaHeight += (predicate.isLegendAlignBottom(legendAlignment) ? legendHeight : 0);
         topAreaHeight += (predicate.isLegendAlignTop(legendAlignment) ? legendHeight : 0);
         topAreaHeight = topAreaHeight || defaultTopAreaHeight;
 
-        return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight;
+        return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight - yAxisTitlePadding;
     }
 };
 

@@ -88,7 +88,7 @@ describe('Test for BoundsModel', function() {
             var actual, expected;
 
             raphaelRenderUtil.getRenderedTextSize.and.returnValue({
-                height: 20
+                height: 40
             });
             boundsModel._registerTitleDimension();
             actual = boundsModel.getDimension('title');
