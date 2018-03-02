@@ -98,6 +98,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
 
         seriesSet = paper.setFinish();
         this._moveSeriesToFrontAll();
+        this.tooltipLine.toFront();
 
         return seriesSet;
     },
