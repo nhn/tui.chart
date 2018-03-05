@@ -86,8 +86,8 @@ Yes, It's free. :)
 ### Other tips
 
 * [Load Data from `<table>`](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/import-chart-data-from-existing-table-element.md)
-* [Add data dynamically](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
-* [Apply themes](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
+* [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
+* [Apply themes](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
 
 Find more on [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html) and [wiki](https://github.com/nhnent/tui.chart/tree/production/docs/wiki#tutorial) pages.  
 
@@ -170,7 +170,7 @@ var options = {
 chart.barChart(container, data, options);
 ```
 
-See [details](https://nhnent.github.io/nhnent/tui.chart/latest) for additional informations.
+See [details](https://nhnent.github.io/tui.chart/latest) for additional informations.
 
 ## 🔧 Pull Request Steps
 
@@ -227,15 +227,15 @@ $ npm run test
 
 ## 📙 Documents
 * [Getting Started](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/getting-started.md)
-* [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/README.md)
-* [APIs](https://nhnent.github.io/tui.chart/api)
+* [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/)
+* [APIs](https://nhnent.github.io/tui.chart/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
 
 ## 💬 Contributing
-* [Code of Conduct](CODE_OF_CONDUCT.md)
-* [Contributing guideline](CONTRIBUTING.md)
-* [Issue guideline](ISSUE_TEMPLATE.md)
+* [Code of Conduct](https://github.com/nhnent/tui.chart/blob/production/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhnent/tui.chart/blob/production/CONTRIBUTING.md)
+* [Issue guideline](https://github.com/nhnent/tui.chart/blob/production/docs/ISSUE_TEMPLATE.md)
 * [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
