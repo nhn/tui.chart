@@ -2,7 +2,7 @@
 
 > 🍞🍯 Spread your data on TOAST UI Chart. TOAST UI Chart is Statistical Data Visualization library for javascript
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
@@ -40,7 +40,7 @@ With TOAST UI Chart, you don't need to think of design. A pretty chart is drawn 
 
 Of course, you can customize design easily.  
 Using options and themes, you can customize title, legend, axes, series, tooltips, and plots.  
-[Here](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md) is some some guides about customizing styles.
+[Here](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/theme.md) is some some guides about customizing styles.
 
 ### VanilaJS, SVG, IE8+
 
@@ -85,11 +85,11 @@ Yes, It's free. :)
 
 ### Other tips
 
-* [Load Data from `<table>`](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/import-chart-data-from-existing-table-element.md)
-* [Add data dynamically](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
-* [Apply themes](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
+* [Load Data from `<table>`](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/import-chart-data-from-existing-table-element.md)
+* [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
+* [Apply themes](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/theme.md)
 
-Find more on [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html) and [wiki](https://github.com/nhnent/tui.chart/tree/production/docs/wiki#tutorial) pages.  
+Find more on [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html) and [wiki](https://github.com/nhnent/tui.chart/tree/master/docs/wiki#tutorial) pages.  
 
 ## Dependencies
 
@@ -125,7 +125,7 @@ $ bower install tui-chart#<tag> # Specific version
 ```
 
 ### Download Source Files
-* [Download bundle files](https://github.com/nhnent/tui.chart/tree/production/dist)
+* [Download bundle files](https://github.com/nhnent/tui.chart/tree/master/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.chart/releases)
 
 ## 🔨 Usage
@@ -170,7 +170,7 @@ var options = {
 chart.barChart(container, data, options);
 ```
 
-See [details](https://nhnent.github.io/nhnent/tui.chart/latest) for additional informations.
+See [details](https://nhnent.github.io/tui.chart/latest) for additional informations.
 
 ## 🔧 Pull Request Steps
 
@@ -226,17 +226,17 @@ $ npm run test
 ```
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/getting-started.md)
-* [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/README.md)
-* [APIs](https://nhnent.github.io/tui.chart/api)
+* [Getting Started](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/getting-started.md)
+* [Tutorials](https://github.com/nhnent/tui.chart/blob/master/docs/)
+* [APIs](https://nhnent.github.io/tui.chart/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
 
 ## 💬 Contributing
-* [Code of Conduct](CODE_OF_CONDUCT.md)
-* [Contributing guideline](CONTRIBUTING.md)
-* [Issue guideline](ISSUE_TEMPLATE.md)
-* [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhnent/tui.chart/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhnent/tui.chart/blob/master/CONTRIBUTING.md)
+* [Issue guideline](https://github.com/nhnent/tui.chart/blob/master/ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhnent/tui.editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
 * [TOAST UI Editor](https://github.com/nhnent/tui.editor)
@@ -244,4 +244,4 @@ You can also see the older versions of API page on the [releases page](https://g
 * [TOAST UI Components](https://github.com/nhnent)
 
 ## 📜 License
-This software is licensed under the [MIT](https://github.com/nhnent/tui.chart/blob/production/LICENSE) © [NHN Entertainment](https://github.com/nhnent).
+This software is licensed under the [MIT](https://github.com/nhnent/tui.chart/blob/master/LICENSE) © [NHN Entertainment](https://github.com/nhnent).
