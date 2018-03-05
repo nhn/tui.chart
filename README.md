@@ -125,7 +125,7 @@ $ bower install tui-chart#<tag> # Specific version
 ```
 
 ### Download Source Files
-* [Download bundle files](https://github.com/nhnent/tui.chart/tree/master/dist)
+* [Download bundle files](https://github.com/nhnent/tui.chart/tree/production/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.chart/releases)
 
 ## 🔨 Usage
