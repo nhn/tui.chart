@@ -53,7 +53,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         this.colorSpectrum = seriesData.colorSpectrum;
 
         /**
-         *
+         * chart background
          */
         this.chartBackground = seriesData.chartBackground;
 
@@ -61,6 +61,11 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
          * zoomable option
          */
         this.zoomable = seriesData.zoomable;
+
+        /**
+         * options useColorValue
+         */
+        this.useColorValue = seriesData.options.useColorValue;
 
         /**
          * border color for rendering box
@@ -145,8 +150,6 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
     _bindGetColorFunction: function() {
         if (this.colorSpectrum) {
             this._getColor = this._getColorFromSpectrum;
-        } else if (this.zoomable) {
-            this._getColor = this._getColorFromColorsWhenZoomable;
         } else {
             this._getColor = this._getColorFromColors;
         }
@@ -194,21 +197,11 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
     /**
      * Get color from colors theme by group property of seriesItem.
      * @param {SeriesItem} seriesItem - seriesItem
-     * @returns {string}
-     * @private
-     */
-    _getColorFromColors: function(seriesItem) {
-        return seriesItem.hasChild ? 'none' : this.theme.colors[seriesItem.group];
-    },
-
-    /**
-     * Get color from colors theme, when zoomable option.
-     * @param {SeriesItem} seriesItem - seriesItem
      * @param {number} startDepth - start depth
      * @returns {string}
      * @private
      */
-    _getColorFromColorsWhenZoomable: function(seriesItem, startDepth) {
+    _getColorFromColors: function(seriesItem, startDepth) {
         return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : '#000';
     },
 
@@ -364,20 +357,25 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      */
     showAnimation: function(indexes) {
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
-        var rect;
+        var rect, color;
 
         if (!box) {
             return;
         }
 
+        color = box.color;
         rect = box.rect.node;
+
+        if (!this.zoomable && !this.useColorValue) {
+            color = this.theme.colors[indexes.index];
+        }
 
         this.rectOverlay.attr({
             x: rect.getAttribute('x'),
             y: rect.getAttribute('y'),
             width: rect.getAttribute('width'),
             height: rect.getAttribute('height'),
-            fill: box.color,
+            fill: color,
             'fill-opacity': 1,
             stroke: '#ffffff',
             'stroke-width': 4,
