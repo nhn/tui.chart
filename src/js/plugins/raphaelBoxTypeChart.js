@@ -366,7 +366,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         color = box.color;
         rect = box.rect.node;
 
-        if (!this.zoomable && !this.useColorValue) {
+        if (this.chartType === 'treemap' && !this.zoomable && !this.useColorValue) {
             color = this.theme.colors[indexes.index];
         }
 
