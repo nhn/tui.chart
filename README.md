@@ -7,7 +7,7 @@
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
 * [Features](#-features)
-* [Examples](#-examples)
+* [Examples](#examples)
 * [Install](#-install)
   * [Package Installs](#package-installs)
   * [Installing from source](#installing-from-source)
