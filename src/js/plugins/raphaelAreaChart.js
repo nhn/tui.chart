@@ -404,7 +404,9 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             this.groupAreas[legendIndex].area.insertBefore(frontArea);
             this.groupAreas[legendIndex].line.insertBefore(frontArea);
             snippet.forEachArray(this.groupDots[legendIndex], function(item) {
-                item.endDot.dot.insertBefore(frontArea);
+                if (item && item.endDot) {
+                    item.endDot.dot.insertBefore(frontArea);
+                }
             });
         }
     },

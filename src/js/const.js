@@ -93,6 +93,8 @@ var chartConst = {
     TEXT_PADDING: 2,
     /** series expand size */
     SERIES_EXPAND_SIZE: 10,
+    /** series area vertical padding */
+    SERIES_AREA_V_PADDING: 10,
     /** series label padding */
     SERIES_LABEL_PADDING: 5,
     /** default font size of title */
@@ -201,7 +203,7 @@ var chartConst = {
     /** map chart zoom area width */
     MAP_CHART_ZOOM_AREA_WIDTH: 24,
     /** map chart zoom area height */
-    MAP_CHART_ZOOM_AREA_HEIGHT: 53,
+    MAP_CHART_ZOOM_AREA_HEIGHT: 58,
     /** dot radius */
     DOT_RADIUS: 4,
     /** radius for circle of scatter chart*/
@@ -306,23 +308,29 @@ var chartConst = {
     TITLE_PADDING: 20,
     /** default header height */
     DEFAULT_HEADER_HEIGHT: 10,
-    /** legend area padding */
-    LEGEND_AREA_PADDING: 10,
+    /** legend area horizontal padding */
+    LEGEND_AREA_H_PADDING: 15,
+    /** legend area vertical padding */
+    LEGEND_AREA_V_PADDING: 7,
     /** legend checkbox width */
-    LEGEND_CHECKBOX_WIDTH: 14,
+    LEGEND_CHECKBOX_SIZE: 14,
     LEGEND_ICON_WIDTH: 10,
     LEGEND_ICON_HEIGHT: 10,
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 8,
     /** vertical legend right padding */
-    LEGEND_V_LABEL_RIGHT_PADDING: 18,
+    LEGEND_V_LABEL_RIGHT_PADDING: 20,
     /** horizontal legend right padding */
-    LEGEND_H_LABEL_RIGHT_PADDING: 30,
+    LEGEND_H_LABEL_RIGHT_PADDING: 25,
     /** lgend line icon svg path */
     LEGEND_LINE_ICON_PATH: 'M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1',
     MIN_LEGEND_WIDTH: 100,
+    /** map legend area padding */
+    MAP_LEGEND_AREA_PADDING_WIDE: 22,
+    /** vertical map legend area padding */
+    VERTICAL_MAP_LEGEND_AREA_TOP_PADDING: 26,
     /** map legend padding before spectrum graph area */
-    MAP_LEGEND_AREA_PADDING: 5,
+    MAP_LEGEND_AREA_PADDING_NARROW: 10,
     /** map legend tooltip vertical padding */
     MAP_LEGEND_TOOLTIP_VERTICAL_PADDING: 4,
     /** map legend tooltip horizontal padding */
@@ -331,8 +339,10 @@ var chartConst = {
     MAP_LEGEND_WEDGE_SIZE: 4,
     /** map legend padding between wedge and spectrum graph */
     MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE: 4,
-    /** map legend height */
-    MAP_LEGEND_SIZE: 400,
+    /** vertical map legend height */
+    VERTICAL_MAP_LEGEND_HEIGHT: 320,
+    /** horizontal map legend height */
+    HORIZONTAL_MAP_LEGEND_WIDTH: 400,
     /** map legend graph size */
     MAP_LEGEND_GRAPH_SIZE: 6,
     /** map legend label padding */

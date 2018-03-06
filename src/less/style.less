@@ -663,7 +663,7 @@
             width: 100%;
             border-spacing: 0;
             border-collapse: separate;
-            td {
+            tr {
                 padding-bottom: 5px;
             }
         }
@@ -701,8 +701,11 @@
           > table {
               border-spacing: 0;
               border-collapse: separate;
-              td {
+              tr {
                   padding-bottom: 5px;
+                  &:last-child {
+                    padding-bottom: 0;
+                  }
               }
           }
           > .tui-chart-tooltip-body {

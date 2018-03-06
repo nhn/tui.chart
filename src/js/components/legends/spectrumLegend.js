@@ -125,17 +125,23 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
         var dimension = this.layout.dimension;
         var scaleData = this.scaleData;
         var stepCount = scaleData.stepCount || scaleData.tickCount - 1;
+        var align = this.options.align;
         var baseData = {};
 
         baseData.position = this.layout.position;
 
         if (this.isHorizontal) {
             baseData.step = dimension.width / stepCount;
-            baseData.position.top += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+
+            if (predicate.isLegendAlignTop(align)) {
+                baseData.position.top -= chartConst.MAP_LEGEND_LABEL_PADDING;
+            } else {
+                baseData.position.top += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+            }
         } else {
             baseData.step = dimension.height / stepCount;
 
-            if (predicate.isLegendAlignLeft(this.options.align)) {
+            if (predicate.isLegendAlignLeft(align)) {
                 baseData.position.left = chartConst.CHART_PADDING;
             } else {
                 baseData.position.left += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;

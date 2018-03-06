@@ -41,11 +41,14 @@ var axisCalculator = {
      * @param {{title: ?string, isCenter: ?boolean}} options - options
      * @param {{title: object, label: object}} theme - theme for y axis calculate
      * @param {Array} yAxisLabels - yAxis labels for y axis calculate
+     * @param {boolean} isDiverging - whether is diverging chart or not
      * @returns {number}
      */
-    calculateYAxisWidth: function(labels, options, theme, yAxisLabels) {
+    calculateYAxisWidth: function(labels, options, theme, yAxisLabels, isDiverging) {
         var labelMargin = options.labelMargin;
         var width = 0;
+        var titleWidth = 0;
+        var maxLabelWidth;
 
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
         yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
@@ -62,9 +65,13 @@ var axisCalculator = {
             width += labelMargin;
         }
         labels = yAxisLabels.length ? yAxisLabels : labels;
+        maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+        if (options.title) {
+            titleWidth = renderUtil.getRenderedLabelWidth(options.title.text, theme.title);
+        }
 
-        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) +
-            chartConst.Y_AXIS_LABEL_PADDING;
+        width += ((isDiverging ? Math.max(maxLabelWidth, titleWidth) : maxLabelWidth) +
+            chartConst.Y_AXIS_LABEL_PADDING);
 
         return width;
     }

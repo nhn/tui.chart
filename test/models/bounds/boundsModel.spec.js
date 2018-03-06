@@ -133,7 +133,7 @@ describe('Test for BoundsModel', function() {
             boundsModel._registerChartExportMenuDimension();
             actual = boundsModel.getDimension('chartExportMenu');
             expected = {
-                height: 24,
+                height: 34,
                 width: 24
             };
 
@@ -342,7 +342,7 @@ describe('Test for BoundsModel', function() {
             actual = boundsModel._makeSeriesDimension();
             expected = {
                 width: 430,
-                height: 230
+                height: 270
             };
 
             expect(actual).toEqual(expected);

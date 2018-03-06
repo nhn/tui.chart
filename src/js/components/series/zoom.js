@@ -14,6 +14,7 @@ var chartConst = require('../../const');
 var dom = require('../../helpers/domHandler');
 var renderUtil = require('../../helpers/renderUtil');
 var eventListener = require('../../helpers/eventListener');
+var predicate = require('../../helpers/predicate');
 
 var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
     /**
@@ -28,6 +29,14 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
      * @private
      */
     init: function(params) {
+        var seriesTypes = params.seriesTypes;
+        var isMapChart = (seriesTypes && seriesTypes.length) ? predicate.isMapChart(seriesTypes[0]) : false;
+        var legendOption = params.dataProcessor.options.legend;
+        var isLegendTop = predicate.isLegendAlignTop(legendOption.align);
+        var isLegendVisible = legendOption.visible !== false;
+
+        this.isMapLegendTop = (isMapChart && isLegendTop && isLegendVisible);
+
         /**
          * event bus for transmitting message
          * @type {object}
@@ -70,10 +79,16 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
         var position;
 
         if (!IS_MSIE_VERSION_LTE_THAN_8) {
-            positionTop = data.positionMap.series.top - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT - 10;
+            positionTop = data.positionMap.series.top
+                - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT + chartConst.MAP_CHART_ZOOM_AREA_WIDTH;
+
+            if (this.isMapLegendTop) {
+                positionTop = data.positionMap.legend.top - chartConst.MAP_CHART_ZOOM_AREA_WIDTH;
+            }
+
             position = {
                 top: positionTop,
-                right: 0
+                right: chartConst.CHART_PADDING
             };
 
             container = dom.create('DIV', this.className);

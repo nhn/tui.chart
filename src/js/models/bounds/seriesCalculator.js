@@ -8,7 +8,6 @@
 
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
 
 /**
  * Calculator for series.
@@ -48,25 +47,29 @@ var seriesCalculator = {
      *      xAxis: {height: number}
      * }} dimensionMap - dimension map
      * @param {{align: ?string, visible: boolean}} legendOptions - legend options
-     * @param {string} chartType - chart type
-     * @param {object} seriesTheme - series theme;
-     * @param {object} yAxisTitle - title of yAxis;
+     * @param {number} yAxisTitleAreaHeight - yAxis title area height
      * @returns {number} series height
      */
-    calculateHeight: function(dimensionMap, legendOptions, chartType, seriesTheme, yAxisTitle) {
+    calculateHeight: function(dimensionMap, legendOptions, yAxisTitleAreaHeight) {
         var chartHeight = dimensionMap.chart.height;
-        var defaultTopAreaHeight = renderUtil.getDefaultSeriesTopAreaHeight(chartType, seriesTheme);
-        var topAreaHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
+        var titleHeight = dimensionMap.title.height;
+        var hasTitle = titleHeight > 0;
+        var chartExportMenuHeight = dimensionMap.chartExportMenu.height;
+        var topAreaHeight = Math.max(dimensionMap.title.height, chartExportMenuHeight);
         var bottomAreaHeight = dimensionMap.xAxis.height;
         var legendHeight = legendOptions.visible ? dimensionMap.legend.height : 0;
-        var legendAlignment = legendOptions.align;
-        var yAxisTitlePadding = yAxisTitle ? chartConst.Y_AXIS_TITLE_PADDING * 2 : 0;
+        var topLegendHeight = predicate.isLegendAlignTop(legendOptions.align) ? legendHeight : 0;
+        var topAreaExceptTitleHeight = Math.max(yAxisTitleAreaHeight, topLegendHeight);
 
-        bottomAreaHeight += (predicate.isLegendAlignBottom(legendAlignment) ? legendHeight : 0);
-        topAreaHeight += (predicate.isLegendAlignTop(legendAlignment) ? legendHeight : 0);
-        topAreaHeight = topAreaHeight || defaultTopAreaHeight;
+        if (hasTitle) {
+            topAreaHeight = titleHeight + Math.max(0, topAreaExceptTitleHeight - chartConst.TITLE_PADDING);
+        } else {
+            topAreaHeight = Math.max(chartExportMenuHeight, topAreaExceptTitleHeight);
+        }
 
-        return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight - yAxisTitlePadding;
+        bottomAreaHeight += (predicate.isLegendAlignBottom(legendOptions.align) ? legendHeight : 0);
+
+        return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight;
     }
 };
 

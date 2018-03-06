@@ -44,11 +44,6 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
          * @type {number}
          * @private
          */
-        this._iconHeight = 0;
-        /**
-         * @type {number}
-         * @private
-         */
         this._legendItemHeight = 0;
         /**
          * @type {number}
@@ -139,7 +134,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
 
         if (!this.isHorizontal && totalHeight + (positionTop * 2) > chartHeight) {
             pageHeight = chartHeight - (positionTop * 2);
-            this._legendItemHeight = Math.max(legendData[0].labelHeight, chartConst.LEGEND_ICON_HEIGHT);
+            this._legendItemHeight = Math.max(legendData[0].labelHeight, chartConst.LEGEND_CHECKBOX_SIZE);
             singleItemHeight = (this._legendItemHeight + chartConst.LINE_MARGIN_TOP);
 
             visibleItemCount = Math.floor(pageHeight / singleItemHeight);
@@ -234,9 +229,9 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         var self = this;
         var BUTTON_WIDTH = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
         var BUTTON_PADDING_RIGHT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_RIGHT;
-        var controllerPositionTop = position.top + dimension.height - chartConst.LEGEND_AREA_PADDING;
-        var controllerPositionLeft = position.left - chartConst.LEGEND_AREA_PADDING;
-        var leftButtonPositionLeft = controllerPositionLeft + chartConst.LEGEND_AREA_PADDING;
+        var controllerPositionTop = position.top + dimension.height - chartConst.LEGEND_AREA_V_PADDING;
+        var controllerPositionLeft = position.left - chartConst.LEGEND_AREA_H_PADDING;
+        var leftButtonPositionLeft = controllerPositionLeft + chartConst.LEGEND_AREA_H_PADDING;
         var rightButtonPositionLeft = leftButtonPositionLeft + (BUTTON_PADDING_RIGHT + BUTTON_WIDTH);
         var lowerArrowPath = ['M', rightButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
             'L', (rightButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
@@ -349,7 +344,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         var labelTheme = this.labelTheme;
         var pos = {
             left: position.left,
-            top: position.top + (this._iconHeight / 2)
+            top: position.top + (this._legendItemHeight / 2)
         };
         var attributes = {
             'font-size': labelTheme.fontSize,
@@ -449,7 +444,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         } else {
             icon = raphaelRenderUtil.renderRect(this.paper, {
                 left: position.left,
-                top: position.top,
+                top: position.top + ((chartConst.LEGEND_CHECKBOX_SIZE - chartConst.LEGEND_ICON_HEIGHT) / 2),
                 width: chartConst.LEGEND_ICON_WIDTH,
                 height: chartConst.LEGEND_ICON_HEIGHT
             }, {
@@ -524,11 +519,11 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      * @returns {number} - calculate single legend width
      */
     _calculateSingleLegendWidth: function(legendIndex) {
-        return chartConst.LEGEND_AREA_PADDING
+        return chartConst.LEGEND_AREA_H_PADDING
             + this._getCheckboxWidth()
             + getIconWidth()
             + this._getLabelWidth(legendIndex)
-            + chartConst.LEGEND_AREA_PADDING;
+            + chartConst.LEGEND_AREA_H_PADDING;
     },
 
     /**
@@ -536,9 +531,8 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      * @param {number} labelHeight - label height
      */
     _setComponentDimensionsBaseOnLabelHeight: function(labelHeight) {
-        this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_ICON_HEIGHT);
-        this._iconHeight = this._legendItemHeight;
-        this._checkBoxWidth = this._checkBoxHeight = chartConst.LEGEND_CHECKBOX_WIDTH;
+        this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_CHECKBOX_SIZE);
+        this._checkBoxWidth = this._checkBoxHeight = chartConst.LEGEND_CHECKBOX_SIZE;
     }
 });
 

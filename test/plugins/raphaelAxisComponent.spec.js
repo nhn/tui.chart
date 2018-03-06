@@ -27,7 +27,8 @@ describe('RaphaelAxisComponent', function() {
             offset: {},
             otherSideDimension: {
                 width: 30
-            }
+            },
+            additionalWidth: 0
         };
         positionDiff = {};
     });

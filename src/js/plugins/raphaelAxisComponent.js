@@ -381,7 +381,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var layout = data.layout;
         var axisHeight = layout.dimension.height;
         var axisWidth = layout.dimension.width;
-        var left = layout.position.left;
+        var left = layout.position.left + data.additionalWidth;
         var top = layout.position.top;
         var adjustLeftPosition = (textWidth / 2) - data.otherSideDimension.width;
         var position = {
@@ -389,13 +389,21 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             left: left + ((adjustLeftPosition < 0) ? 0 : adjustLeftPosition)
         };
 
-        if (rotationInfo.isCenter) {
-            position.top = paper.height - (textHeight / 2);
-            position.left = left + (axisWidth / 2);
-        } else if (rotationInfo.isVertical && !rotationInfo.isDiverging) {
-            position.top = top - (textHeight / 2) - Y_AXIS_TITLE_PADDING;
-        } else if (rotationInfo.isColumnType) {
-            position.left = left + (axisWidth / (data.tickCount - 1) / 2);
+        if (rotationInfo.isVertical) {
+            if (rotationInfo.isCenter) {
+                position.top += (textHeight / 2);
+                position.left = left + (axisWidth / 2);
+            } else if (!rotationInfo.isDiverging) {
+                position.top = top - (textHeight / 2) - Y_AXIS_TITLE_PADDING;
+            }
+        } else if (!rotationInfo.isVertical) {
+            if (rotationInfo.isDiverging && rotationInfo.isYAxisCenter) {
+                position.left = left + (data.areaSize / 2);
+            } else if (rotationInfo.isDiverging && !rotationInfo.isYAxisCenter) {
+                position.left = left + (axisWidth / 2);
+            } else if (rotationInfo.isColumnType) {
+                position.left = left + (axisWidth / (data.tickCount - 1) / 2);
+            }
         }
 
         if (rotationInfo.isPositionRight) {
