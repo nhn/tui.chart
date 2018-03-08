@@ -202,7 +202,7 @@ describe('Test for seriesCalculator', function() {
             var yAxisTitleAreaHeight = 20;
             var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
-            expect(actual).toBe(270);
+            expect(actual).toBe(250);
         });
 
         it('calculate height, when align option is bottom', function() {
