@@ -281,7 +281,9 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
             this._fireChangeCheckedLegendsEvent();
         }
 
-        this.graphRenderer.selectLegend(this.legendModel.getSelectedIndex(), this.legendSet);
+        this.dataProcessor.selectLegendIndex = this.legendModel.getSelectedIndex();
+
+        this.graphRenderer.selectLegend(this.dataProcessor.selectLegendIndex, this.legendSet);
 
         this._fireSelectLegendEvent(data);
         this._fireSelectLegendPublicEvent(data);

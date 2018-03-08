@@ -97,6 +97,12 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         this.originalLegendData = null;
 
         /**
+         * select legend index
+         * @type {number}
+         */
+        this.selectLegendIndex = null;
+
+        /**
          * dynamic data array for adding data.
          * @type {Array.<{category: string | number, values: Array.<number>}>}
          */
