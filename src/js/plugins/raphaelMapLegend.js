@@ -71,7 +71,6 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
             }
 
             legendSet.push(raphaelRenderUtil.renderLine(paper, path, '#ccc', 1));
-
             legendSet.push(raphaelRenderUtil.renderText(paper, pos, label));
         });
     },

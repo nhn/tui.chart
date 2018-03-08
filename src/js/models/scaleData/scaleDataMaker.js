@@ -245,17 +245,23 @@ var scaleDataMaker = {
 
     /**
      * Calculate coordinate scale.
-     * @param {Array.<number>} baseValues - base values
-     * @param {number} baseSize - base size(width or height) for calculating scale data
-     * @param {object} overflowItem - overflow item
-     * @param {boolean} isDiverging - is diverging or not
-     * @param {object} options - scale options
-     * @param {{min: ?number, max: ?number}} options.limit - limit options
+     * @param {object} makeScaleInfos - calculate scale infos
+     *     @param {Array.<number>} makeScaleInfos.baseValues - base values
+     *     @param {number} makeScaleInfos.baseSize - base size(width or height) for calculating scale data
+     *     @param {object} makeScaleInfos.overflowItem - overflow item
+     *     @param {boolean} makeScaleInfos.isDiverging - is diverging or not
+     *     @param {strint} makeScaleInfos.chartType - chartType
+     *     @param {object} makeScaleInfos.options - scale options
+     *         @param {{min: ?number, max: ?number}} makeScaleInfos.options.limit - limit options
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, options) {
-        var limit = this._getLimitSafely(baseValues);
+    _calculateCoordinateScale: function(makeScaleInfos) {
+        var options = makeScaleInfos.options;
+        var baseSize = makeScaleInfos.baseSize;
+        var overflowItem = makeScaleInfos.overflowItem;
+        var chartType = makeScaleInfos.chartType;
+        var limit = this._getLimitSafely(makeScaleInfos.baseValues);
         var limitOption = options.limitOption || {};
         var hasMinOption = snippet.isExisty(limitOption.min);
         var hasMaxOption = snippet.isExisty(limitOption.max);
@@ -283,11 +289,11 @@ var scaleDataMaker = {
 
         isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
 
-        if (isOverflowed) {
+        if (isOverflowed && !predicate.isMapTypeChart(chartType)) {
             scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);
         }
 
-        if (isDiverging) {
+        if (makeScaleInfos.isDiverging) {
             scaleData.limit = this._makeLimitForDivergingOption(scaleData.limit);
         }
 
@@ -342,7 +348,14 @@ var scaleDataMaker = {
                 options.stepCount = Math.floor(baseSize / 100);
             }
 
-            scaleData = this._calculateCoordinateScale(baseValues, baseSize, overflowItem, isDiverging, options);
+            scaleData = this._calculateCoordinateScale({
+                baseValues: baseValues,
+                baseSize: baseSize,
+                overflowItem: overflowItem,
+                isDiverging: isDiverging,
+                chartType: chartType,
+                options: options
+            });
         }
 
         return scaleData;
