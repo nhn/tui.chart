@@ -210,6 +210,12 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         this.categoriesMap = null;
 
         /**
+         * categories isDatetype true or false
+         * @type {null|object}
+         */
+        this.categoriesIsDateTime = {};
+
+        /**
          * stacks
          * @type {Array.<number>}
          */
@@ -306,16 +312,17 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         } else {
             isDateTime = options.type && predicate.isDatetimeType(options.type);
         }
-
         if (isDateTime) {
             categories = snippet.map(categories, function(value) {
-                var date = new Date(value);
+                var date = this.chageDatetypeToTimestamp(value);
 
-                return date.getTime() || value;
-            });
+                return date;
+            }, this);
         } else {
             categories = this._escapeCategories(categories);
         }
+
+        this.categoriesIsDateTime[axisName] = isDateTime;
 
         return categories;
     },
@@ -369,6 +376,31 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return foundCategories;
+    },
+
+    /**
+     * Get Category date type
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {boolean}
+     */
+    getCategorieDateType: function(isVertical) {
+        var type = isVertical ? 'y' : 'x';
+
+        return this.categoriesIsDateTime[type];
+    },
+
+    /**
+     * value to timestamp of datetype category
+     * @param {string} dateTypeValue - datetype category value
+     * @returns {boolean}
+     */
+    chageDatetypeToTimestamp: function(dateTypeValue) {
+        var date = new Date(dateTypeValue);
+        if (!(date.getTime() > 0)) {
+            date = new Date(parseInt(dateTypeValue, 10));
+        }
+
+        return date.getTime() || dateTypeValue;
     },
 
     /**
@@ -441,15 +473,20 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      */
     findCategoryIndex: function(value) {
         var categories = this.getCategories();
+        var isDateType = this.getCategorieDateType();
         var foundIndex = null;
 
         snippet.forEachArray(categories, function(category, index) {
+            if (isDateType) {
+                value = this.chageDatetypeToTimestamp(value);
+            }
+
             if (category === value) {
                 foundIndex = index;
             }
 
             return snippet.isNull(foundIndex);
-        });
+        }, this);
 
         return foundIndex;
     },
