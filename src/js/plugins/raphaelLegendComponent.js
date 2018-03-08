@@ -234,12 +234,10 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
         var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
         var leftButtonPositionLeft = rightButtonPositionLeft - (BUTTON_PADDING_LEFT + BUTTON_WIDTH);
-        var lowerArrowPath = [
-            'M', rightButtonPositionLeft, ',', (controllerPositionTop + 3),
+        var lowerArrowPath = ['M', rightButtonPositionLeft, ',', (controllerPositionTop + 3),
             'L', (rightButtonPositionLeft + 5), ',', (controllerPositionTop + 8),
             'L', (rightButtonPositionLeft + 10), ',', (controllerPositionTop + 3)].join('');
-        var upperArrowPath = [
-            'M', leftButtonPositionLeft, ',', (controllerPositionTop + 8),
+        var upperArrowPath = ['M', leftButtonPositionLeft, ',', (controllerPositionTop + 8),
             'L', (leftButtonPositionLeft + 5), ',', (controllerPositionTop + 3),
             'L', (leftButtonPositionLeft + 10), ',', (controllerPositionTop + 8)].join('');
 
