@@ -168,7 +168,10 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         }
 
         this._renderTitleArea(size, additionalWidth);
-        this._renderLabelArea(size, tickCount, categories, additionalWidth);
+
+        if (this.options.showLabel !== false) {
+            this._renderLabelArea(size, tickCount, categories, additionalWidth);
+        }
 
         if (!isYAxisLineType) {
             this._renderTickArea(size, tickCount, additionalWidth);

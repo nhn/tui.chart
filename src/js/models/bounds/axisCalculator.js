@@ -27,12 +27,17 @@ var axisCalculator = {
         var titleAreaHeight = titleHeight ? (titleHeight + chartConst.X_AXIS_TITLE_PADDING) : 0;
         var labelMargin = options.labelMargin || 0;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
+        var height = titleAreaHeight + chartConst.X_AXIS_LABEL_PADDING;
 
         if (labelMargin > 0) {
-            labelHeight += labelMargin;
+            height += labelMargin;
         }
 
-        return titleAreaHeight + labelHeight + chartConst.X_AXIS_LABEL_PADDING;
+        if (options.showLabel !== false) {
+            height += labelHeight;
+        }
+
+        return height;
     },
 
     /**
@@ -48,7 +53,7 @@ var axisCalculator = {
         var labelMargin = options.labelMargin;
         var width = 0;
         var titleWidth = 0;
-        var maxLabelWidth;
+        var maxLabelWidth = 0;
 
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
         yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
@@ -65,7 +70,9 @@ var axisCalculator = {
             width += labelMargin;
         }
         labels = yAxisLabels.length ? yAxisLabels : labels;
-        maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+        if (options.showLabel !== false) {
+            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+        }
         if (options.title) {
             titleWidth = renderUtil.getRenderedLabelWidth(options.title.text, theme.title);
         }
