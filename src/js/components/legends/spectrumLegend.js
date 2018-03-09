@@ -157,6 +157,12 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      * @private
      */
     _renderTickArea: function(legendSet) {
+        if (this.options.reversed) {
+            this.scaleData.labels.sort(function(prev, next) {
+                return next - prev;
+            });
+        }
+
         this.graphRenderer.renderTickLabels(this.paper, this._makeBaseDataToMakeTickArea(),
             this.scaleData.labels, this.options.align, legendSet);
     },
@@ -192,12 +198,18 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      */
     _renderGraph: function(legendSet) {
         var position = this.layout.position;
-        var dimension;
+        var dimension, startForSwap;
 
         if (this.isHorizontal) {
             dimension = this._makeHorizontalGraphDimension();
         } else {
             dimension = this._makeVerticalGraphDimension();
+        }
+
+        if (this.options.reversed) {
+            startForSwap = this.colorSpectrum.start;
+            this.colorSpectrum.start = this.colorSpectrum.end;
+            this.colorSpectrum.end = startForSwap;
         }
 
         this.graphRenderer.render({
@@ -274,6 +286,7 @@ var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ 
      * @param {string} label label
      */
     onShowWedge: function(ratio, label) {
+        ratio = this.options.reversed ? 1 - ratio : ratio;
         this.graphRenderer.showWedge(ratio, label);
     },
 
