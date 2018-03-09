@@ -164,13 +164,15 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         }
 
         this._renderTitleArea();
-        this._renderLabelArea(size, tickCount, categories, additionalWidth);
+
+        if (this.options.showLabel !== false) {
+            this._renderLabelArea(size, tickCount, categories, additionalWidth);
+        }
 
         if (!isYAxisLineType) {
             this._renderTickArea(size, tickCount, additionalWidth);
         }
     },
-
     /**
      * Render divided xAxis if yAxis rendered in the center.
      * @param {{width: number, height:number}} dimension axis area width and height

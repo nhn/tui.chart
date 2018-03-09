@@ -26,6 +26,11 @@ describe('Test for axisCalculator', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title', labelMargin: 30}, {});
             expect(actual).toBe(90);
         });
+
+        it('showlabel option is false, it should be reflected in the width of the label width', function() {
+            var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title', showLabel: false}, {});
+            expect(actual).toBe(40);
+        });
     });
 
     describe('calculateYAxisWidth()', function() {
@@ -70,6 +75,17 @@ describe('Test for axisCalculator', function() {
             }, {});
 
             expect(actual).toBe(117);
+        });
+
+        it('showlabel option is false, it should be reflected in the width of the label width', function() {
+            var actual;
+
+            actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
+                title: 'Axis Title',
+                showLabel: false
+            }, {});
+
+            expect(actual).toBe(37);
         });
     });
 });
