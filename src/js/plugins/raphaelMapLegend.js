@@ -87,7 +87,7 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
     _renderGradientBar: function(paper, layout, colorSpectrum, isHorizontal) {
         var rectHeight = layout.dimension.height;
         var left = layout.position.left;
-        var degree, bound;
+        var degree, bound, fill;
 
         if (isHorizontal) {
             rectHeight -= PADDING;
@@ -98,6 +98,8 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
             this._makeWedghPath = this._makeVerticalWedgePath;
         }
 
+        fill = degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end;
+
         bound = {
             left: left,
             top: layout.position.top,
@@ -106,7 +108,7 @@ var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype
         };
 
         return raphaelRenderUtil.renderRect(paper, bound, {
-            fill: degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end,
+            fill: fill,
             stroke: 'none'
         });
     },
