@@ -346,7 +346,9 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
             left: position.left,
             top: position.top + (this._legendItemHeight / 2)
         };
+
         var attributes = {
+            fill: labelTheme.color,
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,

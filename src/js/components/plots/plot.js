@@ -503,8 +503,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      */
     _renderOptionalLines: function(paper, dimension) {
         var optionalLines = [];
-        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
-        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
+        optionalLines = optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
+        optionalLines = optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
 
         this.optionalLines = optionalLines;
     },
