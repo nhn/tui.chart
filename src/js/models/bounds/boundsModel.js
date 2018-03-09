@@ -344,8 +344,14 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      * @returns {number} series width
      */
     calculateSeriesWidth: function() {
+        var seriesWidth;
+        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'series', 'value');
         var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
-        var seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
+        var maxLabelWidth = 0;
+        if (!predicate.isColumnTypeChart(this.chartType)) {
+            maxLabelWidth = renderUtil.getRenderedLabelHeight(maxLabel, this.theme.title);
+        }
+        seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend, maxLabelWidth);
 
         if (predicate.isMapChart(this.chartType) && !IS_LTE_IE8) {
             seriesWidth -= (chartConst.MAP_CHART_ZOOM_AREA_WIDTH + LEGEND_AREA_H_PADDING);

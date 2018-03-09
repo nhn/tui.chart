@@ -23,19 +23,25 @@ var seriesCalculator = {
      *      rightYAxis: ?{width: number}
      * }} dimensionMap - dimension map
      * @param {{align: ?string, visible: boolean}} legendOptions - legend options
+     * @param {number} maxLabelWidth - max label width
      * @returns {number} series width
      */
-    calculateWidth: function(dimensionMap, legendOptions) {
+    calculateWidth: function(dimensionMap, legendOptions, maxLabelWidth) {
         var chartWidth = dimensionMap.chart.width;
         var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis.width;
         var legendDimension = dimensionMap.legend;
         var legendWidth = 0;
+        var xAxisLabelPadding = 0;
 
         if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             legendWidth = legendDimension ? legendDimension.width : 0;
         }
 
-        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisAreaWidth - legendWidth;
+        if (!legendWidth && !dimensionMap.rightYAxis.width && maxLabelWidth) {
+            xAxisLabelPadding = maxLabelWidth / 2;
+        }
+
+        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisAreaWidth - legendWidth - xAxisLabelPadding;
     },
 
     /**
