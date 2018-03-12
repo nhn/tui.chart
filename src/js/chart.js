@@ -981,9 +981,6 @@ function treemapChart(container, rawData, options) {
  *              @param {string} options.tooltip.column.align - align option for tooltip
  *              @param {number} options.tooltip.column.offsetX - tooltip offset x
  *              @param {number} options.tooltip.column.offsetY - tooltip offset y
- *              @param {object} options.tooltip.column.position - (deprecated) relative position
- *                  @param {number} options.tooltip.position.left - position left
- *                  @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
