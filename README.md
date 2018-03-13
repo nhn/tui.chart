@@ -47,25 +47,25 @@
 | ![IE8](https://user-images.githubusercontent.com/35218826/37317347-aa1beb1e-26a7-11e8-860c-19274fbc1570.png) | ![CHROME](https://user-images.githubusercontent.com/35218826/37317349-aba19d08-26a7-11e8-997b-3a960c968238.png) |
 
 
-**No one like legacy. But sometimes it matters.**
+**No one like the legacy. But sometimes it matters.**
 That is why we started this project. As we couldn't find a project which supporting legacy browsers, maintained reliably, and free for commercial use.
 
 **You can see the charts in IE8 exactly as it looks in Chrome.**
-Of course, there are other projects that support legacy browser. However, They may function limited, look different or require polyfill that affect performance bad. The TOAST UI Chart gaurantees identical look on all browsers. And it draws using what browsers have natively(SVG + RVML). So, It requires no polyfill and draw faster.
+Of course, there are other projects that support the legacy browser. However, They may function limited, look different or require polyfill that affects performance badly. The TOAST UI Chart guarantees identical look on all browsers. And it draws using what browsers have natively(SVG + RVML). So, It requires no polyfill and draws faster.
 
 **The TOAST UI Chart will continue to support legacy browsers as MIT license**
-No wonder the other open source charts stop supporting legacy browsers. It's hard to find a reliably maintained open source charts. And some of decent charts ask commercial licences. The TOAST UI Chart has over 50 releases since Jun. 2015 under MIT License. The TOAST UI Chart is the answer if you have same requirements as us.
+No wonder the other open source charts stop supporting legacy browsers. It's hard to find open-source charts which reliably maintained. And some of the decent charts ask commercial licenses. The TOAST UI Chart has over 50 releases since Jun. 2015 under MIT License. The TOAST UI Chart is the answer if you have same requirements as us.
 
 ## 🎨 Features
 
-TOAST UI Chart is a chart library for JavaScript that can be used in legacy browsers including IE8.
+The TOAST UI Chart is an open source JavaScript library that can be used in legacy browsers including IE8.
 It is intuitive and easy to apply without any other learning.
 If you like, you can change the chart in detail using many options and custom themes.
 
 
 ### Single Charts
 
-The TOAST UI Chart provides many kind of charts to visualize various form of data.
+The TOAST UI Chart provides many kinds of charts to visualize the various form of data.
 
 | [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)(Donut) |
 | --- | --- | --- | --- |
@@ -105,12 +105,12 @@ Check out [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01
 
 ## 💾 Install
 
-TOAST UI products can be used by using the package manager or downloading the source directly.
+The TOAST UI products can be used by using the package manager or downloading the source directly.
 However, we highly recommend using the package manager.
 
 ### Via Package Manager
 
-TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
+The TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
 You can conveniently install it using the commands provided by each package manager.
 When using npm, be sure to use it in the environment [Node.js](https://nodejs.org) is installed.
 
@@ -144,7 +144,7 @@ Add the container element where TOAST UI Chart will be created.
 
 ### JavaScript
 #### Load
-TOAST UI Chart can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following three ways depending on your environment.
+The TOAST UI Chart can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following three ways depending on your environment.
 
 ```javascript
 var chart = tui.chart; /* namespace */
@@ -178,7 +178,7 @@ See [details](https://nhnent.github.io/tui.chart/latest) for additional informat
 
 ## 🔧 Development
 
-TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
+The TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
 Run npm scripts and develop yourself with the following process.
 
 ### Setup
