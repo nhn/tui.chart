@@ -201,46 +201,4 @@ describe('Test for renderUtil', function() {
             expect(result).toBe(expected);
         });
     });
-
-    describe('getDefaultSeriesTopAreaHeight()', function() {
-        var seriesTheme = {
-            fontSize: 11
-        };
-
-        it('should return 0, when chart type is not included in bar type or line type', function() {
-            var result = renderUtil.getDefaultSeriesTopAreaHeight('chart', seriesTheme);
-
-            expect(result).toBe(0);
-        });
-
-        it('should not return 0, when chart type is combo', function() {
-            var result = renderUtil.getDefaultSeriesTopAreaHeight('combo', seriesTheme);
-
-            expect(result).toBe(16);
-        });
-
-        it('should not return 0, when chart type is bar type', function() {
-            var result = renderUtil.getDefaultSeriesTopAreaHeight('bar', seriesTheme);
-
-            expect(result).toBe(16);
-        });
-
-        it('should not return 0, when chart type is column type', function() {
-            var result = renderUtil.getDefaultSeriesTopAreaHeight('column', seriesTheme);
-
-            expect(result).toBe(16);
-        });
-
-        it('should not return 0, when chart type is line type', function() {
-            var result = renderUtil.getDefaultSeriesTopAreaHeight('line', seriesTheme);
-
-            expect(result).toBe(16);
-        });
-
-        it('should not return 0, when chart type is area type', function() {
-            var result = renderUtil.getDefaultSeriesTopAreaHeight('area', seriesTheme);
-
-            expect(result).toBe(16);
-        });
-    });
 });

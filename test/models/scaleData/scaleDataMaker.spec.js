@@ -265,11 +265,17 @@ describe('Test for ScaleDataMaker', function() {
 
     describe('_calculateCoordinateScale()', function() {
         it('should return limitOption, if there is limitOption', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
-                limitOption: {
+            var scaleData = scaleDataMaker._calculateCoordinateScale({
+                baseValues: [10, 20, 30, 40],
+                baseSize: 100,
+                overflowItem: null,
+                isDiverging: false,
+                chartType: 'bar',
+                options: {limitOption: {
                     min: 0,
                     max: 100
-                }});
+                }}
+            });
 
             expect(scaleData.limit.max).toBe(100);
             expect(scaleData.limit.min).toBe(0);
@@ -277,11 +283,16 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('should set scale data\'s limit value by baseValues, when limit option is not set', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 39], 100, null, false, {
-                limitOption: {
+            var scaleData = scaleDataMaker._calculateCoordinateScale({
+                baseValues: [10, 20, 30, 39],
+                baseSize: 100,
+                overflowItem: null,
+                isDiverging: false,
+                chartType: 'bar',
+                options: {limitOption: {
                     min: null,
                     max: null
-                }
+                }}
             });
 
             expect(scaleData.limit.max).toBe(40);
@@ -290,11 +301,16 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('should adjust limit.max value, if no limtOption and max value is not zero', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([10, 20, 30, 40], 100, null, false, {
-                limitOption: {
+            var scaleData = scaleDataMaker._calculateCoordinateScale({
+                baseValues: [10, 20, 30, 40],
+                baseSize: 100,
+                overflowItem: null,
+                isDiverging: false,
+                chartType: 'bar',
+                options: {limitOption: {
                     min: null,
                     max: null
-                }
+                }}
             });
 
             expect(scaleData.limit.max).toBe(50);
@@ -303,11 +319,16 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('should adjust limit.min value, if no limit option and min value is not zero', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([-10, -20, -30, 0], 100, null, false, {
-                limitOption: {
+            var scaleData = scaleDataMaker._calculateCoordinateScale({
+                baseValues: [-10, -20, -30, 0],
+                baseSize: 100,
+                overflowItem: null,
+                isDiverging: false,
+                chartType: 'bar',
+                options: {limitOption: {
                     min: null,
                     max: null
-                }
+                }}
             });
 
             expect(scaleData.limit.max).toBe(0);
@@ -316,11 +337,16 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('should set limit to (min : data - step, max: 0), when base values count is 1, and the value is negative', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([-10], 100, null, false, {
-                limitOption: {
+            var scaleData = scaleDataMaker._calculateCoordinateScale({
+                baseValues: [-10],
+                baseSize: 100,
+                overflowItem: null,
+                isDiverging: false,
+                chartType: 'bar',
+                options: {limitOption: {
                     min: null,
                     max: null
-                }
+                }}
             });
 
             expect(scaleData.limit.max).toBe(0);
@@ -328,11 +354,16 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('should set limit to (min : 0, max: data + step), when baseValues count is 1, and the value is positive.', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([10], 100, null, false, {
-                limitOption: {
+            var scaleData = scaleDataMaker._calculateCoordinateScale({
+                baseValues: [10],
+                baseSize: 100,
+                overflowItem: null,
+                isDiverging: false,
+                chartType: 'bar',
+                options: {limitOption: {
                     min: null,
                     max: null
-                }
+                }}
             });
 
             expect(scaleData.limit.max).toBe(15);
@@ -340,11 +371,16 @@ describe('Test for ScaleDataMaker', function() {
         });
 
         it('should set minimum value to zero, when limit.min is zero', function() {
-            var scaleData = scaleDataMaker._calculateCoordinateScale([0.501, 0.551], 100, null, false, {
-                limitOption: {
+            var scaleData = scaleDataMaker._calculateCoordinateScale({
+                baseValues: [0.501, 0.551],
+                baseSize: 100,
+                overflowItem: null,
+                isDiverging: false,
+                chartType: 'bar',
+                options: {limitOption: {
                     min: 0,
                     max: null
-                }
+                }}
             });
 
             expect(scaleData.limit.max).toBe(0.6);

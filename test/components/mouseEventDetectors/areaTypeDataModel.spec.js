@@ -55,6 +55,10 @@ describe('Test for AreaTypeDataModel', function() {
                     bound: {
                         top: 10,
                         left: 10
+                    },
+                    indexes: {
+                        groupIndex: 0,
+                        index: 0
                     }
                 },
                 {
@@ -67,7 +71,7 @@ describe('Test for AreaTypeDataModel', function() {
             actual = dataModel.findData({
                 x: 17,
                 y: 10
-            });
+            }, null, null);
             expected = dataModel.data[0];
             expect(actual).toBe(expected);
         });

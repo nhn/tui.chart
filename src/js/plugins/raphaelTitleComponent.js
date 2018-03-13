@@ -24,8 +24,8 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
         var fontFamily = theme.fontFamily;
         var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
         var pos = {
-            left: paper.width / 2,
-            top: (titleSize.height + chartConst.TITLE_PADDING) / 2 // for renderText's baseline
+            left: chartConst.CHART_PADDING + (titleSize.width / 2),
+            top: chartConst.CHART_PADDING + (titleSize.height / 2) // for renderText's baseline
         };
         var titleSet = paper.set();
 

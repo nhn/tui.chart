@@ -211,8 +211,8 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
         var dimensionHeight = (chartConst.LINE_MARGIN_TOP + legendItemHeight) * (isHorizontal ? 1 : labelCount);
         var left = basePosition.left;
 
-        if (!predicate.isLegendAlignLeft) {
-            left += chartConst.LEGEND_AREA_PADDING;
+        if (!predicate.isLegendAlignLeft(this.options.align)) {
+            left += chartConst.LEGEND_AREA_H_PADDING;
         }
 
         return graphRenderer.render({
@@ -221,7 +221,7 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
             isHorizontal: isHorizontal,
             position: {
                 left: left,
-                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
+                top: basePosition.top
             },
             dimension: {
                 height: dimensionHeight,
@@ -281,7 +281,8 @@ var Legend = snippet.defineClass(/** @lends Legend.prototype */ {
             this._fireChangeCheckedLegendsEvent();
         }
 
-        this.graphRenderer.selectLegend(this.legendModel.getSelectedIndex(), this.legendSet);
+        this.dataProcessor.selectLegendIndex = this.legendModel.getSelectedIndex();
+        this.graphRenderer.selectLegend(this.dataProcessor.selectLegendIndex, this.legendSet);
 
         this._fireSelectLegendEvent(data);
         this._fireSelectLegendPublicEvent(data);

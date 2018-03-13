@@ -61,8 +61,7 @@ describe('Test for ComponentManager', function() {
             {
                 name: 'lineSeries',
                 componentType: 'series'
-            }
-            ];
+            }];
 
             expect(actual).toEqual(expected);
         });

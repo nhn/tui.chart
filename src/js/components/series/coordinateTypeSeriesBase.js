@@ -88,6 +88,7 @@ var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeri
 
         if (indexes && prevIndexes) {
             this.onUnselectSeries({
+                chartType: this.chartType,
                 indexes: prevIndexes
             });
             this.prevClickedIndexes = null;
@@ -100,16 +101,11 @@ var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeri
         shouldSelect = !prevIndexes ||
             (indexes.index !== prevIndexes.index) || (indexes.groupIndex !== prevIndexes.groupIndex);
 
-        if (allowSelect && !shouldSelect) {
-            return;
-        }
-
-        this.onSelectSeries({
-            chartType: this.chartType,
-            indexes: indexes
-        }, shouldSelect);
-
-        if (allowSelect) {
+        if (allowSelect && shouldSelect) {
+            this.onSelectSeries({
+                chartType: this.chartType,
+                indexes: indexes
+            }, shouldSelect);
             this.prevClickedIndexes = indexes;
         }
     },

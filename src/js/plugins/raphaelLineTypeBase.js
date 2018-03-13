@@ -14,10 +14,12 @@ var arrayUtil = require('../helpers/arrayUtil');
 var browser = snippet.browser;
 var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var ANIMATION_DURATION = 700;
-var DEFAULT_DOT_RADIUS = 3;
+var DEFAULT_DOT_RADIUS = 6;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_DURATION = 300;
+var CHART_HOVER_STATUS_OVER = 'over';
+var CHART_HOVER_STATUS_OUT = 'out';
 
 var concat = Array.prototype.concat;
 
@@ -203,21 +205,48 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
     },
 
+    appendShadowFilterToDefs: function() {
+        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+        filter.setAttributeNS(null, 'id', 'shadow');
+        filter.setAttributeNS(null, 'x', '-50%');
+        filter.setAttributeNS(null, 'y', '-50%');
+        filter.setAttributeNS(null, 'width', '180%');
+        filter.setAttributeNS(null, 'height', '180%');
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+        feOffset.setAttributeNS(null, 'dx', '0');
+        feOffset.setAttributeNS(null, 'dy', '0');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feOffset);
+        filter.appendChild(feGaussianBlur);
+        filter.appendChild(feBlend);
+        this.paper.defs.appendChild(filter);
+    },
+
     /**
      * Make border style.
      * @param {string} borderColor border color
      * @param {number} opacity opacity
+     * @param {number} borderWidth border width
      * @returns {{stroke: string, stroke-width: number, strike-opacity: number}} border style
      */
-    makeBorderStyle: function(borderColor, opacity) {
-        var borderStyle;
+    makeBorderStyle: function(borderColor, opacity, borderWidth) {
+        var borderStyle = {
+            'stroke-width': borderWidth,
+            'stroke-opacity': opacity
+        };
 
         if (borderColor) {
-            borderStyle = {
-                stroke: borderColor,
-                'stroke-width': 1,
-                'stroke-opacity': opacity
-            };
+            borderStyle.stroke = borderColor;
         }
 
         return borderStyle;
@@ -232,7 +261,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     makeOutDotStyle: function(opacity, borderStyle) {
         var outDotStyle = {
             'fill-opacity': opacity,
-            'stroke-opacity': 0,
+            'stroke-opacity': opacity,
             r: DEFAULT_DOT_RADIUS
         };
 
@@ -256,7 +285,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         var dot, dotStyle, raphaelDot;
 
         if (position) {
-            dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
+            dot = paper.circle(
+                position.left,
+                position.top,
+                (!snippet.isUndefined(dotTheme.radius)) ? dotTheme.radius : DEFAULT_DOT_RADIUS
+            );
             dotStyle = {
                 fill: dotTheme.fillColor || color,
                 'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
@@ -360,7 +393,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             stroke: hoverTheme.strokeColor || dotInformation.color,
             'stroke-opacity': hoverTheme.strokeOpacity,
             'stroke-width': hoverTheme.strokeWidth,
-            r: hoverTheme.radius
+            r: hoverTheme.radius,
+            filter: 'url(#shadow)'
         };
 
         this._setPrevDotAttributes(groupIndex, dotInformation.dot);
@@ -370,6 +404,10 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         dotInformation.dot.attr(attributes);
+        if (dotInformation.dot.node) {
+            dotInformation.dot.node.setAttribute('filter', 'url(#shadow)');
+        }
+        dotInformation.dot.toFront();
     },
 
     /**
@@ -387,14 +425,71 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
 
     /**
      * Update line stroke width.
+     * @param {string} changeType over or out
+     * @param {object} line raphael object
+     * @private
+     */
+    _updateLineStrokeOpacity: function(changeType, line) {
+        var opacity = 1;
+        var isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
+        if (this.groupLines) {
+            if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
+                opacity = (this.chartType === 'radial' && this.isShowArea) ? 0 : DE_EMPHASIS_OPACITY;
+            }
+
+            if (changeType === CHART_HOVER_STATUS_OUT && isSelectedLegend) {
+                line = this.getLine(this.selectedLegendIndex);
+            }
+
+            snippet.forEachArray(this.groupLines, function(otherLine) {
+                otherLine.attr({
+                    'stroke-opacity': opacity
+                });
+            });
+            line.attr({
+                'stroke-opacity': 1
+            });
+        }
+    },
+
+    /**
+     * Get the raphael line element with groupIndex
+     * @param {number} groupIndex  group index
+     * @returns {object} line raphael object
+     */
+    getLine: function(groupIndex) {
+        return this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
+    },
+
+    /**
+     * Update line stroke width.
+     * @param {string} changeType over or out
+     * @private
+     */
+    _updateAreaOpacity: function(changeType) {
+        if (this.groupAreas) {
+            snippet.forEach(this.groupAreas, function(otherArea) {
+                otherArea.area.attr({
+                    'fill-opacity': (changeType === CHART_HOVER_STATUS_OVER) ? DE_EMPHASIS_OPACITY : 1
+                });
+            });
+        }
+    },
+
+    /**
+     * Update line stroke width.
      * @param {object} line raphael object
      * @param {number} strokeWidth stroke width
      * @private
      */
     _updateLineStrokeWidth: function(line, strokeWidth) {
-        line.attr({
+        var changeAttr = {
             'stroke-width': strokeWidth
-        });
+        };
+        if (line.attrs) {
+            changeAttr.stroke = line.attrs.stroke;
+        }
+        line.attr(changeAttr);
     },
 
     /**
@@ -413,18 +508,20 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         }
 
         if (this.chartType === 'area') {
-            strokeWidth = this.lineWidth * 2;
+            strokeWidth = 5;
             startLine = line.startLine;
+            this._updateAreaOpacity(CHART_HOVER_STATUS_OVER);
             line = line.line;
         } else {
-            strokeWidth = this.lineWidth * 2;
+            strokeWidth = this.lineWidth;
         }
 
+        this._updateLineStrokeOpacity(CHART_HOVER_STATUS_OVER, line);
         this._updateLineStrokeWidth(line, strokeWidth);
-
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);
         }
+
         this._showDot(item.endDot, groupIndex);
 
         if (item.startDot) {
@@ -523,13 +620,17 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
                 'stroke': prev.stroke,
                 'fill': prev.fill,
                 'stroke-opacity': prev['stroke-opacity'],
-                'stroke-width': prev['stroke-width']
-            }, {
-                'fill-opacity': opacity
+                'stroke-width': prev['stroke-width'],
+                'fill-opacity': prev['fill-opacity']
             });
         }
 
         dot.attr(outDotStyle);
+        if (dot.node) {
+            dot.node.setAttribute('filter', '');
+        }
+
+        this.resetSeriesOrder(groupIndex);
     },
 
     /**
@@ -554,6 +655,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             strokeWidth = this.lineWidth;
             startLine = line.startLine;
             line = line.line;
+            this._updateAreaOpacity(CHART_HOVER_STATUS_OUT);
         } else {
             strokeWidth = this.lineWidth;
         }
@@ -562,9 +664,8 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
             opacity = DE_EMPHASIS_OPACITY;
         }
 
-        if (line) {
-            this._updateLineStrokeWidth(line, strokeWidth);
-        }
+        this._updateLineStrokeOpacity(CHART_HOVER_STATUS_OUT, line);
+        this._updateLineStrokeWidth(line, strokeWidth);
 
         if (startLine) {
             this._updateLineStrokeWidth(startLine, strokeWidth);

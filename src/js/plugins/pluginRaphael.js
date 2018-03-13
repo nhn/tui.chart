@@ -54,6 +54,7 @@ var callback = function(container, dimension) {
 
     if (paper.raphael.svg) {
         appendGlowFilterToDefs(paper);
+        appendShadowFilterToDefs(paper);
     }
 
     paper.pushDownBackgroundToBottom = function() {
@@ -135,6 +136,38 @@ function appendGlowFilterToDefs(paper) {
     feMerge.appendChild(feMergeNodeColoredBlur);
     feMerge.appendChild(feMergeNodeSourceGraphic);
 
+    paper.defs.appendChild(filter);
+}
+
+/**
+ * Append shadow filter for series label
+ * @param {object} paper Raphael paper object
+ * @ignore
+ */
+function appendShadowFilterToDefs(paper) {
+    var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+    var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+    var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+    filter.setAttributeNS(null, 'id', 'shadow');
+    filter.setAttributeNS(null, 'x', '-15%');
+    filter.setAttributeNS(null, 'y', '-15%');
+    filter.setAttributeNS(null, 'width', '180%');
+    filter.setAttributeNS(null, 'height', '180%');
+    feOffset.setAttributeNS(null, 'result', 'offOut');
+    feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+    feOffset.setAttributeNS(null, 'dx', '2');
+    feOffset.setAttributeNS(null, 'dy', '2');
+    feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+    feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+    feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+    feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+    feBlend.setAttributeNS(null, 'in2', 'blurOut');
+    feBlend.setAttributeNS(null, 'mode', 'normal');
+    filter.appendChild(feOffset);
+    filter.appendChild(feGaussianBlur);
+    filter.appendChild(feBlend);
     paper.defs.appendChild(filter);
 }
 

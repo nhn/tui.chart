@@ -74,7 +74,8 @@ describe('ColumnChartSeries', function() {
                     baseBarSize: 100,
                     basePosition: 40,
                     barSize: 20,
-                    pointInterval: 20
+                    pointInterval: 20,
+                    itemCount: 2
                 },
                 iterationData = {
                     baseLeft: 10,
@@ -141,7 +142,8 @@ describe('ColumnChartSeries', function() {
                 baseBarSize: 100,
                 basePosition: 60,
                 barSize: 20,
-                pointInterval: 20
+                pointInterval: 20,
+                itemCount: 2
             });
 
             actual = series._makeBounds();

@@ -102,8 +102,9 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      */
     _findData: function(clientX, clientY) {
         var layerPosition = this._calculateLayerPosition(clientX, clientY);
+        var selectLegendIndex = this.dataProcessor.selectLegendIndex;
 
-        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
+        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD, selectLegendIndex);
     },
 
     /**

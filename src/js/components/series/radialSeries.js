@@ -26,8 +26,8 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
         Series.apply(this, arguments);
 
         this.options = snippet.extend({
-            showDot: true,
-            showArea: true
+            showDot: false,
+            showArea: false
         }, this.options);
 
         /**

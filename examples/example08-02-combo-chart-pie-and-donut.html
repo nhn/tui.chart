@@ -116,13 +116,13 @@ var data = {
 };
 var options = {
     chart: {
-        width: 500,
-        height: 400,
+        width: 700,
+        height: 700,
         title: 'Usage share of web browsers'
     },
     series: {
         pie1: {
-            radiusRange: ['65%'],
+            radiusRange: ['57%'],
             labelAlign: 'center',
             showLegend: true
         },
@@ -144,10 +144,23 @@ var options = {
 tui.chart.registerTheme('newTheme', {
     series: {
         pie1: {
-            colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5']
+            colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c', '#989486', '#516f7d', '#29dbe3', '#dddddd'],
+            label: {
+                color: '#fff',
+                fontFamily: 'sans-serif'
+            }
         },
         pie2: {
-            colors: ['#b85e5e', '#c57a7b', '#d99661', '#dfa97d', '#e6bb99', '#f5c88a', '#f7d29e', '#a1b672', '#8ac0b7', '#80adc0']
+            colors: [
+                '#33baff', '#66ccff',
+                '#ffc666', '#ffd48c', '#FFDB9F',
+                '#ff7b6b', '#ff9c90',
+                '#33cab2',
+                '#937fff', '#f5a2a3'],
+            label: {
+                color: '#fff',
+                fontFamily: 'sans-serif'
+            }
         }
     }
 });

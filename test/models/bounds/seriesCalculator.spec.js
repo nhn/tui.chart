@@ -143,7 +143,8 @@ describe('Test for seriesCalculator', function() {
             var legendOption = {
                 visible: true
             };
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption);
+            var yAxisTitleAreaHeight = 20;
+            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(280);
         });
@@ -170,7 +171,8 @@ describe('Test for seriesCalculator', function() {
                 align: chartConst.LEGEND_ALIGN_LEFT,
                 visible: true
             };
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption);
+            var yAxisTitleAreaHeight = 20;
+            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(280);
         });
@@ -197,9 +199,10 @@ describe('Test for seriesCalculator', function() {
                 align: chartConst.LEGEND_ALIGN_TOP,
                 visible: true
             };
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption);
+            var yAxisTitleAreaHeight = 20;
+            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
-            expect(actual).toBe(230);
+            expect(actual).toBe(250);
         });
 
         it('calculate height, when align option is bottom', function() {
@@ -221,10 +224,11 @@ describe('Test for seriesCalculator', function() {
                 }
             };
             var legendOption = {
-                align: chartConst.LEGEND_ALIGN_TOP,
+                align: chartConst.LEGEND_ALIGN_BOTTOM,
                 visible: true
             };
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption);
+            var yAxisTitleAreaHeight = 20;
+            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(230);
         });
@@ -247,7 +251,8 @@ describe('Test for seriesCalculator', function() {
             var legendOption = {
                 visible: false
             };
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption);
+            var yAxisTitleAreaHeight = 20;
+            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(280);
         });

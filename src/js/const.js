@@ -26,11 +26,23 @@ var chartConst = {
     /** @type {string} */
     CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
     /** @type {string} */
+    CLASS_NAME_ZOOM_OUT_BTN: 'tui-chart-zoom-out-btn',
+    /** @type {string} */
     CLASS_NAME_CHART_EXPORT_MENU_AREA: 'tui-chart-chartExportMenu-area',
     /** @type {string} */
     CLASS_NAME_CHART_EXPORT_MENU_ITEM: 'tui-chart-chartExportMenu-item',
     /** @type {string} */
     CLASS_NAME_CHART_EXPORT_MENU_BUTTON: 'tui-chart-chartExportMenu-button',
+    /** @type {string} */
+    CLASS_NAME_CHART_EXPORT_MENU_HEAD: 'tui-chart-chartExportMenu-head',
+    CLASS_NAME_CHART_EXPORT_MENU_BODY: 'tui-chart-chartExportMenu-body',
+    CLASS_NAME_TOOLTIP_VALUE: 'tui-chart-tooltip-value',
+    /** @type {string} */
+    CLASS_NAME_TOOLTIP_HEAD: 'tui-chart-tooltip-head',
+    /** @type {string} */
+    CLASS_NAME_TOOLTIP_BODY: 'tui-chart-tooltip-body',
+    /** @type {string} */
+    CLASS_NAME_SVG_AUTOSHAPE: 'auto-shape-rendering',
     /** chart type
      * @type {string}
      */
@@ -81,6 +93,8 @@ var chartConst = {
     TEXT_PADDING: 2,
     /** series expand size */
     SERIES_EXPAND_SIZE: 10,
+    /** series area vertical padding */
+    SERIES_AREA_V_PADDING: 10,
     /** series label padding */
     SERIES_LABEL_PADDING: 5,
     /** default font size of title */
@@ -139,7 +153,8 @@ var chartConst = {
     /** default border color for treemap chart
      * @type {string}
      */
-    TREEMAP_DEFAULT_BORDER: '#ccc',
+    TREEMAP_DEFAULT_BORDER: '#ffffff',
+    TREEMAP_DEFAULT_BORDER_WIDTH: 4,
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel */
@@ -161,15 +176,19 @@ var chartConst = {
     /** @type {string} */
     LEGEND_ALIGN_LEFT: 'left',
     /** @type {number} */
-    LEGEND_PAGINATION_BUTTON_WIDTH: 10,
+    LEGEND_PAGINATION_BUTTON_WIDTH: 20,
     /** @type {number} */
-    LEGEND_PAGINATION_BUTTON_PADDING_LEFT: 5,
+    LEGEND_PAGINATION_BUTTON_PADDING_RIGHT: 6,
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default ratio for pie graph */
     PIE_GRAPH_DEFAULT_RATIO: 0.9,
     /** small ratio for pie graph */
     PIE_GRAPH_SMALL_RATIO: 0.75,
+    /** pie chart legend label size */
+    PIE_GRAPH_LEGEND_LABEL_SIZE: 16,
+    /** pie chart legend label size */
+    PIE_GRAPH_LEGEND_LABEL_INTERVAL: 20,
     /** tick count for spectrum legend */
     SPECTRUM_LEGEND_TICK_COUNT: 4,
     /** legend & lable concat separator */
@@ -181,10 +200,14 @@ var chartConst = {
         x: 0.5,
         y: 0.5
     },
+    /** map chart zoom area width */
+    MAP_CHART_ZOOM_AREA_WIDTH: 24,
+    /** map chart zoom area height */
+    MAP_CHART_ZOOM_AREA_HEIGHT: 58,
     /** dot radius */
     DOT_RADIUS: 4,
     /** radius for circle of scatter chart*/
-    SCATTER_RADIUS: 5,
+    SCATTER_RADIUS: 7,
     /**
      * theme properties
      * @type {{yAxis: Array.<string>, series: Array.<string>}}
@@ -196,6 +219,8 @@ var chartConst = {
     },
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
+    /** chart export menu width, height */
+    CHART_EXPORT_MENU_SIZE: 24,
     /** top margin of x axis label */
     XAXIS_LABEL_TOP_MARGIN: 10,
     /** right padding of vertical label */
@@ -280,27 +305,58 @@ var chartConst = {
     DATE_TYPE_MINUTE: 'minute',
     DATE_TYPE_SECOND: 'second',
     /** title add padding */
-    TITLE_PADDING: 10,
-    /** legend area padding */
-    LEGEND_AREA_PADDING: 10,
+    TITLE_PADDING: 20,
+    /** default header height */
+    DEFAULT_HEADER_HEIGHT: 10,
+    /** legend area horizontal padding */
+    LEGEND_AREA_H_PADDING: 15,
+    /** legend area vertical padding */
+    LEGEND_AREA_V_PADDING: 7,
     /** legend checkbox width */
-    LEGEND_CHECKBOX_WIDTH: 10,
-    LEGEND_ICON_WIDTH: 40,
-    LEGEND_ICON_HEIGHT: 15,
+    LEGEND_CHECKBOX_SIZE: 14,
+    LEGEND_ICON_WIDTH: 10,
+    LEGEND_ICON_HEIGHT: 10,
     /** lgend label left padding */
-    LEGEND_LABEL_LEFT_PADDING: 5,
+    LEGEND_LABEL_LEFT_PADDING: 8,
+    /** vertical legend right padding */
+    LEGEND_V_LABEL_RIGHT_PADDING: 20,
+    /** horizontal legend right padding */
+    LEGEND_H_LABEL_RIGHT_PADDING: 25,
+    /** lgend line icon svg path */
+    LEGEND_LINE_ICON_PATH: 'M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1',
     MIN_LEGEND_WIDTH: 100,
-    /** map legend height */
-    MAP_LEGEND_SIZE: 200,
+    /** map legend area padding */
+    MAP_LEGEND_AREA_PADDING_WIDE: 22,
+    /** vertical map legend area padding */
+    VERTICAL_MAP_LEGEND_AREA_TOP_PADDING: 26,
+    /** map legend padding before spectrum graph area */
+    MAP_LEGEND_AREA_PADDING_NARROW: 10,
+    /** map legend tooltip vertical padding */
+    MAP_LEGEND_TOOLTIP_VERTICAL_PADDING: 4,
+    /** map legend tooltip horizontal padding */
+    MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING: 6,
+    /** map legend wedge size */
+    MAP_LEGEND_WEDGE_SIZE: 4,
+    /** map legend padding between wedge and spectrum graph */
+    MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE: 4,
+    /** vertical map legend height */
+    VERTICAL_MAP_LEGEND_HEIGHT: 320,
+    /** horizontal map legend height */
+    HORIZONTAL_MAP_LEGEND_WIDTH: 400,
     /** map legend graph size */
-    MAP_LEGEND_GRAPH_SIZE: 25,
+    MAP_LEGEND_GRAPH_SIZE: 6,
     /** map legend label padding */
-    MAP_LEGEND_LABEL_PADDING: 10,
+    MAP_LEGEND_LABEL_PADDING: 5,
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
     CIRCLE_LEGEND_PADDING: 10,
     HALF_RATIO: 0.5,
-    /** AXIS LABEL PADDING */
-    AXIS_LABEL_PADDING: 7,
+    /** X-AXIS LABEL PADDING */
+    X_AXIS_LABEL_PADDING: 7,
+    /** X-AXIS title padding */
+    X_AXIS_TITLE_PADDING: 5,
+    /** Y-AXIS LABEL PADDING */
+    Y_AXIS_LABEL_PADDING: 17,
+    Y_AXIS_TITLE_PADDING: 7,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
     /**
@@ -326,9 +382,9 @@ var chartConst = {
      */
     AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
     /** label padding top */
-    LABEL_PADDING_TOP: 3,
+    LABEL_PADDING_TOP: 7,
     /** line margin top */
-    LINE_MARGIN_TOP: 5,
+    LINE_MARGIN_TOP: 14,
     /** tooltip gap */
     TOOLTIP_GAP: 5,
     /** tooltip direction
@@ -355,6 +411,8 @@ var chartConst = {
     SERIES_LABEL_OPACITY: 0.3,
     WHEEL_TICK: 120,
     MAX_ZOOM_MAGN: 5,
+    ZOOM_POSITION_TOP_EXIST_TITLE: 5,
+    ZOOM_POSITION_TOP_NONE_TITLE: 1,
     FF_WHEELDELTA_ADJUSTING_VALUE: -40,
     IE7_ROTATION_FILTER_STYLE_MAP: {
         25: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +

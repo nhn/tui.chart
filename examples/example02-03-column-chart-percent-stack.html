@@ -61,8 +61,8 @@ var data = {
 };
 var options = {
     chart: {
-        width: 700,
-        height: 400,
+        width: 1160,
+        height: 540,
         title: 'Monthly Revenue',
         format: '1,000'
     },
@@ -74,15 +74,21 @@ var options = {
     },
     series: {
         stackType: 'percent',
-        barWidth: 25
+        barWidth: 60
     },
     tooltip: {
         grouped: true
+    },
+    legend: {
+        align: 'bottom4000'
     }
 };
 var theme = {
     series: {
-        colors: ['#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
     }
 };
 

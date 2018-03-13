@@ -96,7 +96,7 @@ var options = {
 tui.chart.mapChart(container, rawData, options);
 ```
 
-![Map Chart](https://cloud.githubusercontent.com/assets/2888775/12806980/6abdd4b6-cb4e-11e5-8214-bf77df4069d4.png)
+![Map Chart](https://user-images.githubusercontent.com/35218826/36883608-e4f7cd02-1e1e-11e8-9987-9d412aea043d.png)
 
 ***
 

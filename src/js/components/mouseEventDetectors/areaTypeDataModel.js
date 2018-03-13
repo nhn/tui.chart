@@ -85,11 +85,13 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
      * Find Data by layer position.
      * @param {{x: number, y: number}} layerPosition - layer position
      * @param {number} [distanceLimit] distance limitation to find data
+     * @param {number} selectLegendIndex select legend sereis index
      * @returns {object}
      */
-    findData: function(layerPosition, distanceLimit) {
+    findData: function(layerPosition, distanceLimit, selectLegendIndex) {
         var min = 100000;
-        var foundData;
+        var findFoundMap = {};
+        var findFound;
 
         distanceLimit = distanceLimit || Number.MAX_VALUE;
 
@@ -98,13 +100,18 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
             var yDiff = layerPosition.y - datum.bound.top;
             var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-            if (distance < distanceLimit && distance < min) {
+            if (distance < distanceLimit && distance <= min) {
                 min = distance;
-                foundData = datum;
+                findFound = datum;
+                findFoundMap[datum.indexes.index] = datum;
             }
         });
 
-        return foundData;
+        if (!snippet.isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
+            findFound = findFoundMap[selectLegendIndex];
+        }
+
+        return findFound;
     },
 
     /**

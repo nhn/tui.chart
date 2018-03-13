@@ -407,6 +407,10 @@ var singleTooltipMixer = {
 
         elTooltip.innerHTML = this._makeSingleTooltipHtml(params.seriesType || params.chartType, indexes);
 
+        if (params.chartType === 'line') {
+            this.makeLineLegendIcon(elTooltip.querySelectorAll('.tui-chart-legend-rect.line'));
+        }
+
         elTooltip.setAttribute('data-chart-type', params.chartType);
         this._setIndexesCustomAttribute(elTooltip, indexes);
         this._setShowedCustomAttribute(elTooltip, true);

@@ -181,6 +181,22 @@ describe('Test for SeriesDataModelForTreemap', function() {
     });
 
     describe('_setTreeProperties()', function() {
+        it('set tree properties(depth, group, value) by depth and value', function() {
+            var rawSeriesData = [
+                {parent: rootId, id: 'id_0'},
+                {parent: 'id_0', id: 'id_0_0', value: 1},
+                {parent: 'id_0', id: 'id_0_1', value: 2}
+            ];
+            var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
+
+            expect(actual[0].depth).toBe(1);
+            expect(actual[1].depth).toBe(2);
+            expect(actual[2].depth).toBe(2);
+
+            expect(actual[1].value).toBe(2);
+            expect(actual[2].value).toBe(1);
+        });
+
         it('set tree properties(depth, group, value) for first and second depth', function() {
             var rawSeriesData = [
                 {parent: rootId, id: 'id_0'},
@@ -190,8 +206,8 @@ describe('Test for SeriesDataModelForTreemap', function() {
             var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
             expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 3, group: 0, hasChild: true});
-            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 1, group: 0, hasChild: false});
-            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 2, group: 0, hasChild: false});
+            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 2, group: 0, hasChild: false});
+            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 1, group: 0, hasChild: false});
         });
 
         it('set tree properties(depth, group, value) for first, second and third depth', function() {
@@ -204,8 +220,8 @@ describe('Test for SeriesDataModelForTreemap', function() {
             var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
             expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 9, group: 0, hasChild: true});
-            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 4, group: 0, hasChild: true});
-            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 5, group: 0, hasChild: false});
+            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 5, group: 0, hasChild: false});
+            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 4, group: 0, hasChild: true});
             expect(actual[3]).toEqual({parent: 'id_0_0', id: 'id_0_0_0', depth: 3, value: 4, group: 0, hasChild: false});
         });
 

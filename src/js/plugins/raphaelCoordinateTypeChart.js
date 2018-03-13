@@ -11,9 +11,9 @@ var snippet = require('tui-code-snippet');
 var raphael = require('raphael');
 
 var ANIMATION_DURATION = 700;
-var CIRCLE_OPACITY = 0.5;
-var STROKE_OPACITY = 0.3;
-var EMPHASIS_OPACITY = 0.5;
+var CIRCLE_OPACITY = 0.8;
+var STROKE_OPACITY = 1;
+var EMPHASIS_OPACITY = 0.8;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
 var OVERLAY_BORDER_WIDTH = 2;
@@ -107,6 +107,16 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
          * @type {?number}
          */
         this.animationTimeoutId = null;
+
+        /**
+         * selected legend
+         * @type {?number}
+         */
+        this.selectedLegend = null;
+
+        if (this.paper.raphael.svg) {
+            this.appendShadowFilterToDefs();
+        }
 
         return circleSet;
     },
@@ -255,6 +265,33 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
         return foundIndexes;
     },
 
+    appendShadowFilterToDefs: function() {
+        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+        filter.setAttributeNS(null, 'id', 'shadow');
+        filter.setAttributeNS(null, 'x', '-50%');
+        filter.setAttributeNS(null, 'y', '-50%');
+        filter.setAttributeNS(null, 'width', '180%');
+        filter.setAttributeNS(null, 'height', '180%');
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+        feOffset.setAttributeNS(null, 'dx', '0');
+        feOffset.setAttributeNS(null, 'dy', '0');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feOffset);
+        filter.appendChild(feGaussianBlur);
+        filter.appendChild(feBlend);
+        this.paper.defs.appendChild(filter);
+    },
+
     /**
      * Whether changed or not.
      * @param {{left: number, top: number}} prevPosition - previous position
@@ -275,26 +312,47 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
     showAnimation: function(indexes) {
         var circleInfo = this.groupCircleInfos[indexes.groupIndex][indexes.index];
         var bound = circleInfo.bound;
+        this.circle = circleInfo.circle;
 
         this.overlay.attr({
+            fill: circleInfo.color,
             cx: bound.left,
             cy: bound.top,
             r: bound.radius + OVERLAY_BORDER_WIDTH,
-            stroke: circleInfo.color,
+            stroke: '#fff',
             opacity: 1
         });
+
+        this.circle.attr({
+            opacity: 1
+        });
+
+        this.overlay.node.setAttribute('filter', 'url(#shadow)');
+        this.overlay.toFront();
+        this.circle.toFront();
     },
 
     /**
      * Hide overlay with animation.
-     * @private
+     * @param {object} indexes - indexes
+     *      @param {number} indexes.groupIndex - index of circles group
+     *      @param {number} indexes.index - index of circles
      */
-    hideAnimation: function() {
+    hideAnimation: function(indexes) {
+        var changeOpacity = DE_EMPHASIS_OPACITY;
         this.overlay.attr({
             cx: 0,
             cy: 0,
             r: 0,
             opacity: 0
+        });
+
+        if (snippet.isNull(this.selectedLegend) || indexes.index === this.selectedLegend) {
+            changeOpacity = EMPHASIS_OPACITY;
+        }
+
+        this.circle.attr({
+            opacity: changeOpacity
         });
     },
 
@@ -399,6 +457,8 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      */
     selectLegend: function(legendIndex) {
         var noneSelected = snippet.isNull(legendIndex);
+
+        this.selectedLegend = legendIndex;
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
             var opacity;

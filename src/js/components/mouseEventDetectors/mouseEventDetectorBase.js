@@ -185,6 +185,7 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
         this.positionMap = data.positionMap;
 
         dom.addClass(container, 'tui-chart-series-custom-event-area');
+        container.style.backgroundColor = 'aliceblue';
 
         if (data.axisDataMap.xAxis) {
             tickCount = this._pickTickCount(data.axisDataMap);

@@ -166,17 +166,8 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _initializeTooltipOptions: function(options) {
-        var position = options.position;
-
         options.grouped = !!options.grouped;
         this._initializeOffset(options);
-
-        if (!options.offset && position) {
-            options.offset = {
-                x: position.left,
-                y: position.top
-            };
-        }
 
         delete options.position;
     },

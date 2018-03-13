@@ -46,6 +46,8 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
     _makeTooltipHtml: function(category, items, rawCategory, groupIndex) {
         var template = tooltipTemplate.tplGroupItem;
         var cssTextTemplate = tooltipTemplate.tplGroupCssText;
+        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
+            && this.dataProcessor.options.series.colorByPoint;
         var colors = this._makeColors(this.theme, groupIndex);
         var prevType, itemsHtml;
 
@@ -67,7 +69,7 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
             }
 
             itemHtml += template(snippet.extend({
-                cssText: cssTextTemplate({color: colors[index]})
+                cssText: cssTextTemplate({color: colorByPoint ? '#aaa' : colors[index]})
             }, item));
 
             return itemHtml;
@@ -107,9 +109,7 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         var bound = this.layout;
 
         if (data.checkedLegends) {
-            this.theme = {
-                colors: this.colors
-            };
+            this.theme = this._updateLegendTheme(data.checkedLegends);
         }
 
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
@@ -423,6 +423,10 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
 
         this._fireBeforeShowTooltipPublicEvent(params.index, params.range, params.silent);
+
+        if (document.getElementsByClassName) {
+            this.makeLineLegendIcon(elTooltip.querySelectorAll('.tui-chart-legend-rect.line'));
+        }
 
         dom.addClass(elTooltip, 'show');
 

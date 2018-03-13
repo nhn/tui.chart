@@ -44,38 +44,46 @@ var data = {
     series: [
         {
             name: 'Chrome',
-            data: 46.02
+            data: 30.02
         },
         {
             name: 'IE',
-            data: 20.47
+            data: 25.47
         },
         {
             name: 'Firefox',
-            data: 17.71
+            data: 12.71
         },
         {
             name: 'Safari',
-            data: 5.45
+            data: 10.45
         },
         {
             name: 'Opera',
-            data: 3.10
+            data: 10.10
         },
         {
             name: 'Etc',
-            data: 7.25
+            data: 11.25
         }
     ]
 };
 var options = {
     chart: {
-        width: 500,
-        height: 400,
-        title: 'Usage share of web browsers'
+        width: 700,
+        height: 700,
+        title: 'Usage share of web browsers',
+        format: function(value, chartType, areaType, valuetype, legendName) {
+            if (areaType === 'makingSeriesLabel') { // formatting at series area
+                value = value + '%';
+            }
+
+            return value;
+        }
     },
     series: {
         showLegend: true,
+        showLabel: true,
         labelAlign: 'center'
     },
     tooltip: {
@@ -87,14 +95,23 @@ var options = {
 };
 var theme = {
     series: {
-        colors: ['#e6d3df', '#cfb4be', '#a9888d', '#8e6969', '#6d514b', '#55443c']
+        series: {
+            colors: [
+                '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+                '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+            ]
+        },
+        label: {
+            color: '#fff',
+            fontFamily: 'sans-serif'
+        }
     }
 };
 
 // For apply theme
 
-// tui.chart.registerTheme('myTheme', theme);
-// options.theme = 'myTheme';
+tui.chart.registerTheme('myTheme', theme);
+options.theme = 'myTheme';
 
 tui.chart.pieChart(container, data, options);
 </script>

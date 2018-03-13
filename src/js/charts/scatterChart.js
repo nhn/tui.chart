@@ -34,6 +34,8 @@ var ScatterChart = snippet.defineClass(ChartBase, /** @lends ScatterChart.protot
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
 
+        options.tooltip.grouped = false;
+
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,
