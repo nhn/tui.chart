@@ -93,6 +93,12 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
             options.overflowItem = this.dataProcessor.findOverflowItem(chartType, typeMap.valueType);
         }
 
+        if (predicate.isMapChart(chartType) ||
+            predicate.isHeatmapChart(chartType) ||
+            predicate.isTreemapChart(chartType)) {
+            options.useSpectrumLegend = true;
+        }
+
         return scaleDataMaker.makeScaleData(baseValues, baseSize, chartType, options);
     },
 

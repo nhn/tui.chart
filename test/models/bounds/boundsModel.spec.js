@@ -88,12 +88,12 @@ describe('Test for BoundsModel', function() {
             var actual, expected;
 
             raphaelRenderUtil.getRenderedTextSize.and.returnValue({
-                height: 20
+                height: 40
             });
             boundsModel._registerTitleDimension();
             actual = boundsModel.getDimension('title');
             expected = {
-                height: 30
+                height: 60
             };
 
             expect(actual).toEqual(expected);
@@ -133,8 +133,8 @@ describe('Test for BoundsModel', function() {
             boundsModel._registerChartExportMenuDimension();
             actual = boundsModel.getDimension('chartExportMenu');
             expected = {
-                height: 27,
-                width: 60
+                height: 34,
+                width: 24
             };
 
             expect(actual).toEqual(expected);
@@ -342,7 +342,7 @@ describe('Test for BoundsModel', function() {
             actual = boundsModel._makeSeriesDimension();
             expected = {
                 width: 430,
-                height: 230
+                height: 250
             };
 
             expect(actual).toEqual(expected);
@@ -416,9 +416,13 @@ describe('Test for BoundsModel', function() {
                     width: 50
                 }
             };
+            boundsModel.positionMap.series = {
+                left: 20,
+                top: 50
+            };
             actual = boundsModel._makeLegendPosition();
             expected = {
-                top: 20,
+                top: 60,
                 left: 270
             };
 
@@ -448,9 +452,13 @@ describe('Test for BoundsModel', function() {
                     width: 50
                 }
             };
+            boundsModel.positionMap.series = {
+                left: 20,
+                top: 50
+            };
             actual = boundsModel._makeLegendPosition();
             expected = {
-                top: 20,
+                top: 60,
                 left: 270
             };
 

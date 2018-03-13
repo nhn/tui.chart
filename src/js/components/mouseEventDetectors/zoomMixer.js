@@ -402,7 +402,6 @@ var zoomMixer = {
      */
     _renderResetZoomBtn: function() {
         var resetBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
-        resetBtn.innerHTML = 'Reset Zoom';
 
         return resetBtn;
     },

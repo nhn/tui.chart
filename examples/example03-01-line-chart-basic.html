@@ -60,37 +60,18 @@ var data = {
         {
             name: 'Jungfrau',
             data: [-13.2, -13.7, -13.1, -10.3, -6.1, -3.2, 0.0, -0.1, -1.8, -4.5, -9.0, -10.9]
-        },
-        {
-            name: 'Somewhere1',
-            data: [-12.2, -10.7, -3.1, -13.3, -16.1, -4.2, 4.0, -2.1, -5.8, -2.5, -5.0, -8.9]
-        },
-        {
-            name: 'Somewhere2',
-            data: [-15.2, -13.7, -5.1, -16.3, -19.1, -7.2, 1.0, -4.1, -9.8, -12.5, -15.0, -18.9]
-        },
-        {
-            name: 'Somewhere3',
-            data: [-1, -2, -3, -4, -5.1, -6.2, 7.0, -8.1, -5.8, -10.5, -11.0, -12.9]
-        },
-        {
-            name: 'Somewhere4',
-            data: [12, 11, 10, 9, 8, 7, 6, 8.1, 5.8, 3.5, 2.0, 1.9]
-        },
-        {
-            name: 'Somewhere5',
-            data: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         }
     ]
 };
 var options = {
     chart: {
-        width: 700,
-        height: 400,
+        width: 1160,
+        height: 540,
         title: '24-hr Average Temperature'
     },
     yAxis: {
-        title: 'Temperature (Celsius)'
+        title: 'Temperature (Celsius)',
+        pointOnColumn: true
     },
     xAxis: {
         title: 'Month',
@@ -98,7 +79,7 @@ var options = {
         dateFormat: 'MMM'
     },
     series: {
-        showDot: true,
+        showDot: false,
         zoomable: true
     },
     tooltip: {
@@ -107,7 +88,10 @@ var options = {
 };
 var theme = {
     series: {
-        colors: ['#D95576', '#00628C', '#00A8DA', '#1EA399', '#F7A655']
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
     }
 };
 

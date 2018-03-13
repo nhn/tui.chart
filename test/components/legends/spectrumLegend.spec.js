@@ -17,7 +17,14 @@ describe('Test for SpectrumLegend', function() {
     beforeEach(function() {
         legend = new spectrumLegendFactory.SpectrumLegend({
             eventBus: new snippet.CustomEvents(),
-            theme: {}
+            theme: {
+                label: {
+                    fontSize: 11,
+                    fontFamily: '',
+                    color: '#ffffff',
+                    fontWeight: 'normal'
+                }
+            }
         });
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
@@ -42,11 +49,12 @@ describe('Test for SpectrumLegend', function() {
                 stepCount: 4
             };
             legend.paper = paper;
+            legend.graphRenderer.theme = legend.theme.label;
 
             legend._renderTickArea(legendSet);
 
             setTimeout(function() {
-                expect(legendSet.length).toBe(10);
+                expect(legendSet.length).toBe(5);
                 done();
             });
         });
@@ -71,13 +79,13 @@ describe('Test for SpectrumLegend', function() {
             };
             legend.options.reversed = true;
             legend.paper = paper;
+            legend.graphRenderer.theme = legend.theme.label;
 
             legend._renderTickArea(legendSet);
 
             expect(legend.scaleData.labels[0]).toBe(200);
         });
     });
-
     describe('_renderGraph()', function() {
         it('reverse option is true, color should look reversed', function() {
             var paper = raphael(document.createElement('div'), 100, 100);

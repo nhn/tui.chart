@@ -7,6 +7,7 @@
 'use strict';
 
 var snippet = require('tui-code-snippet');
+var raphael = require('raphael');
 var chartConst = require('../../const'),
     dom = require('../../helpers/domHandler'),
     predicate = require('../../helpers/predicate'),
@@ -210,6 +211,29 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
+     * Render tooltip component.
+     * @param {HTMLElement} iconElement - icon element
+     */
+    makeLineLegendIcon: function(iconElement) {
+        var iconElementLength = iconElement.length;
+        var icon, strokeColor, paper, line;
+        var i = 0;
+
+        for (; i < iconElementLength; i += 1) {
+            icon = iconElement[i];
+            strokeColor = icon.style['background-color'];
+            paper = raphael(icon, 10, 10);
+            line = paper.path(chartConst.LEGEND_LINE_ICON_PATH);
+            icon.style['background-color'] = '';
+            line.attr({
+                'stroke': strokeColor,
+                'stroke-width': 2,
+                'stroke-opacity': 1
+            });
+        }
+    },
+
+    /**
      * Make tooltip data.
      * @private
      * @abstract
@@ -245,7 +269,7 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
 
         this._setDataForRendering(data);
         this.data = this.makeTooltipData();
-
+        this.tooltipColors = this.makeTooltipLegendColor(data.checkedLegends);
         renderUtil.renderPosition(el, this.layout.position);
 
         this.tooltipContainer = el;
@@ -260,8 +284,33 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
     rerender: function(data) {
         this.resize(data);
         this.data = this.makeTooltipData();
+        this.tooltipColors = this.makeTooltipLegendColor(data.checkedLegends);
     },
 
+    /**
+     * make legend color
+     * @param {object | Array.<boolean>}checkedLegends checked legends
+     * @returns {{colors: Array.<string>}} legend colors
+     * @private
+     */
+    makeTooltipLegendColor: function(checkedLegends) {
+        var colors = {};
+
+        if (checkedLegends) {
+            snippet.forEach(this.theme, function(themeItem, themeKey) {
+                if (!colors[themeKey]) {
+                    colors[themeKey] = [];
+                }
+                snippet.forEach(checkedLegends[themeKey], function(checked, index) {
+                    if (checked) {
+                        colors[themeKey].push(this.theme[themeKey].colors[index]);
+                    }
+                }, this);
+            }, this);
+        }
+
+        return colors;
+    },
     /**
      * Resize tooltip component.
      * @param {object} data - bounds data

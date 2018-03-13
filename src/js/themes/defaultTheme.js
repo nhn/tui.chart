@@ -2,21 +2,22 @@
 
 var DEFAULT_COLOR = '#000000';
 var DEFAULT_BACKGROUND = '#ffffff';
-var DEFAULT_FONTWEIGHT = 'normal';
+var DEFAULT_FONTWEIGHT = 'lighter';
+var DEFAULT_FONTFAMILY = 'Arial';
 var EMPTY = '';
 var DEFAULT_AXIS = {
     tickColor: DEFAULT_COLOR,
     title: {
-        fontSize: 12,
-        fontFamily: EMPTY,
-        color: DEFAULT_COLOR,
-        fontWeight: DEFAULT_FONTWEIGHT
+        fontSize: 11,
+        fontFamily: DEFAULT_FONTFAMILY,
+        color: '#bbbbbb',
+        fontWeight: 'bold'
     },
     label: {
-        fontSize: 12,
-        fontFamily: EMPTY,
-        color: DEFAULT_COLOR,
-        fontWeight: DEFAULT_FONTWEIGHT
+        fontSize: 11,
+        fontFamily: DEFAULT_FONTFAMILY,
+        color: '#333',
+        fontWeight: 'normal'
     }
 };
 
@@ -26,62 +27,62 @@ var defaultTheme = {
             color: DEFAULT_BACKGROUND,
             opacity: 1
         },
-        fontFamily: 'Verdana'
+        fontFamily: DEFAULT_FONTFAMILY
     },
     title: {
         fontSize: 18,
-        fontFamily: EMPTY,
+        fontFamily: DEFAULT_FONTFAMILY,
         color: DEFAULT_COLOR,
         fontWeight: DEFAULT_FONTWEIGHT
     },
     yAxis: DEFAULT_AXIS,
     xAxis: DEFAULT_AXIS,
     plot: {
-        lineColor: '#dddddd',
+        lineColor: '#000000',
         background: '#ffffff',
         label: {
             fontSize: 11,
-            fontFamily: EMPTY,
+            fontFamily: DEFAULT_FONTFAMILY,
             color: '#888'
         }
     },
     series: {
         label: {
             fontSize: 11,
-            fontFamily: EMPTY,
+            fontFamily: DEFAULT_FONTFAMILY,
             color: DEFAULT_COLOR,
             fontWeight: DEFAULT_FONTWEIGHT
         },
-        colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
+        colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c', '#989486', '#516f7d', '#29dbe3', '#dddddd'],
         borderColor: EMPTY,
         borderWidth: EMPTY,
         selectionColor: EMPTY,
-        startColor: '#F4F4F4',
-        endColor: '#345391',
-        overColor: '#F0C952',
+        startColor: '#FFE98A',
+        endColor: '#D74177',
+        overColor: EMPTY,
         dot: {
             fillColor: EMPTY,
             fillOpacity: 1,
             strokeColor: EMPTY,
-            strokeOpacity: 1,
-            strokeWidth: 2,
-            radius: 2,
+            strokeOpacity: EMPTY,
+            strokeWidth: 0,
+            radius: 6,
             hover: {
                 fillColor: EMPTY,
                 fillOpacity: 1,
-                strokeColor: EMPTY,
-                strokeOpacity: 0.8,
-                strokeWidth: 3,
-                radius: 4
+                strokeColor: '#fff',
+                strokeOpacity: 1,
+                strokeWidth: 4,
+                radius: 6
             }
         },
         ranges: []
     },
     legend: {
         label: {
-            fontSize: 12,
-            fontFamily: EMPTY,
-            color: DEFAULT_COLOR,
+            fontSize: 11,
+            fontFamily: DEFAULT_FONTFAMILY,
+            color: '#333',
             fontWeight: DEFAULT_FONTWEIGHT
         }
     },

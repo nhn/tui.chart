@@ -119,7 +119,7 @@ describe('RaphaelLineTypeBase', function() {
 
     describe('makeBorderStyle()', function() {
         it('should create border type using borderColor and opacity', function() {
-            var actual = lineTypeBase.makeBorderStyle('red', 0.5),
+            var actual = lineTypeBase.makeBorderStyle('red', 0.5, 1),
                 expected = {
                     stroke: 'red',
                     'stroke-width': 1,
@@ -134,8 +134,8 @@ describe('RaphaelLineTypeBase', function() {
             var actual = lineTypeBase.makeOutDotStyle(0.7),
                 expected = {
                     'fill-opacity': 0.7,
-                    'stroke-opacity': 0,
-                    r: 3
+                    'stroke-opacity': 0.7,
+                    r: 6
                 };
             expect(actual).toEqual(expected);
         });
@@ -148,7 +148,7 @@ describe('RaphaelLineTypeBase', function() {
                 }),
                 expected = {
                     'fill-opacity': 0.5,
-                    r: 3,
+                    r: 6,
                     stroke: 'red',
                     'stroke-width': 1,
                     'stroke-opacity': 0.7

@@ -9,6 +9,7 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 var AXIS_BACKGROUND_RIGHT_PADDING = 4;
 var snippet = require('tui-code-snippet');
+var Y_AXIS_TITLE_PADDING = require('../const').Y_AXIS_TITLE_PADDING;
 
 var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
     init: function() {
@@ -52,24 +53,39 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      */
     renderTitle: function(paper, data) {
         var theme = data.theme;
+        var textAnchor = this.getRenderTitleAnchor(data.rotationInfo);
         var attributes = {
             'dominant-baseline': 'auto',
             'font-family': theme.fontFamily,
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
             fill: theme.color,
-            'text-anchor': 'middle'
+            transform: 'none',
+            'text-anchor': textAnchor
         };
         var position = this.calculatePosition(paper, data);
-        var title;
-
-        attributes.transform = getCSSTransform(data.rotationInfo, position);
-        title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
+        var title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
 
         title.node.style.userSelect = 'none';
         title.node.style.cursor = 'default';
 
         data.set.push(title);
+    },
+
+    /**
+     * Get title anchor
+     * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
+     * @returns {string} textAnchor - middle or end or start
+     */
+    getRenderTitleAnchor: function(rotationInfo) {
+        var textAnchor = 'middle';
+        if (rotationInfo.isPositionRight) {
+            textAnchor = 'end';
+        } else if (rotationInfo.isVertical && !rotationInfo.isCenter) {
+            textAnchor = 'start';
+        }
+
+        return textAnchor;
     },
 
     /**
@@ -90,8 +106,6 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var positionTopAndLeft = data.positionTopAndLeft;
         var labelText = data.labelText;
         var paper = data.paper;
-        var isVertical = data.isVertical;
-        var isPositionRight = data.isPositionRight;
         var theme = data.theme;
         var attributes = {
             'dominant-baseline': 'central',
@@ -102,10 +116,10 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         };
         var textObj;
 
-        if (isPositionRight) {
-            attributes['text-anchor'] = 'start';
-        } else if (isVertical) {
+        if (data.isPositionRight) {
             attributes['text-anchor'] = 'end';
+        } else if (data.isVertical && !data.isCenter) {
+            attributes['text-anchor'] = 'start';
         } else {
             attributes['text-anchor'] = 'middle';
         }
@@ -144,7 +158,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             'font-weight': theme.fontWeight,
             fill: theme.color,
             'text-anchor': 'end',
-            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left + 20) + ',' + (positionTopAndLeft.top)
+            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left) + ',' + (positionTopAndLeft.top)
         });
 
         textObj.node.style.userSelect = 'none';
@@ -208,12 +222,54 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
 
             if (!isNaN(position)) {
                 tick = paper.path(pathString).attr({
-                    stroke: tickColor
+                    stroke: tickColor,
+                    opacity: 0.5
                 });
                 data.set.push(tick);
                 self.ticks.push(tick);
             }
         });
+    },
+
+    /**
+     * Render tick line  on given paper
+     * @param {number} data data for render tick line
+     * @param {number} data.areaSize area size width or height
+     * @param {object} data.paper raphael paper
+     * @param {boolean} data.isVertical boolean value of vertical axis or not
+     */
+    renderStandardLine: function(data) {
+        var lineSize = data.areaSize;
+        var paper = data.paper;
+        var layout = data.layout;
+        var isVertical = data.isVertical;
+        var pathString = 'M';
+        var baseTop = layout.position.top;
+        var baseLeft = layout.position.left;
+        var rightEdgeOfAxis = baseLeft + layout.dimension.width;
+        var lineStartYCoord, lineEndXCoord, lineEndYCoord;
+        var minAbs = Math.abs(data.axisLimit.min);
+        var maxAbs = Math.abs(data.axisLimit.max);
+        var standardRatio = 1 - (maxAbs / (minAbs + maxAbs));
+
+        if (isVertical) {
+            lineStartYCoord = baseTop;
+            rightEdgeOfAxis += data.seriesDimension.width * standardRatio;
+            pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
+            lineEndYCoord = baseTop + lineSize;
+            pathString += 'V' + lineEndYCoord;
+        } else {
+            pathString += baseLeft;
+            baseTop -= data.seriesDimension.height * standardRatio;
+            pathString += ',' + baseTop + 'H';
+            lineEndXCoord = (baseLeft + lineSize);
+            pathString += lineEndXCoord;
+        }
+
+        data.set.push(paper.path(pathString).attr({
+            'stroke-width': 1,
+            opacity: 0.5
+        }));
     },
 
     /**
@@ -234,6 +290,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var lineSize = areaSize;
         var paper = data.paper;
         var layout = data.layout;
+        var isNegativeStandard = data.isNegativeStandard;
         var isNotDividedXAxis = data.isNotDividedXAxis;
         var additionalSize = data.additionalSize;
         var isPositionRight = data.isPositionRight;
@@ -252,6 +309,10 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             pathString += 'V' + verticalTickLineEndYCoord;
         } else if (isVertical) {
             lineStartYCoord = baseTop;
+            if (isNegativeStandard) {
+                rightEdgeOfAxis += data.seriesDimension.width / 2;
+            }
+
             pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
 
             if (isCenter) {
@@ -268,6 +329,11 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             } else {
                 pathString += (baseLeft + additionalSize);
             }
+
+            if (isNegativeStandard) {
+                baseTop -= data.seriesDimension.height / 2;
+            }
+
             pathString += ',' + baseTop + 'H';
 
             lineEndXCoord = (baseLeft + lineSize);
@@ -275,12 +341,14 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             if (!isNotDividedXAxis) {
                 lineEndXCoord += additionalSize;
             }
+
             pathString += lineEndXCoord;
         }
 
         data.set.push(paper.path(pathString).attr({
             'stroke-width': 1,
-            stroke: tickColor
+            stroke: tickColor,
+            opacity: 0.5
         }));
     },
 
@@ -309,24 +377,37 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
     calculatePosition: function(paper, data) {
         var rotationInfo = data.rotationInfo;
         var textHeight = getTextHeight(data.text, data.theme);
+        var textWidth = getTextWidth(data.text, data.theme);
         var layout = data.layout;
-        var centerPosition = calculateCenterPosition(
-            rotationInfo.isVertical, layout.dimension, layout.position
-        );
-        var position = {};
+        var axisHeight = layout.dimension.height;
+        var axisWidth = layout.dimension.width;
+        var left = layout.position.left + data.additionalWidth;
+        var top = layout.position.top;
+        var adjustLeftPosition = (textWidth / 2) - data.otherSideDimension.width;
+        var position = {
+            top: top + axisHeight - (textHeight / 2),
+            left: left + ((adjustLeftPosition < 0) ? 0 : adjustLeftPosition)
+        };
 
-        if (rotationInfo.isCenter) {
-            position.top = paper.height - (textHeight / 2);
-            position.left = layout.position.left + (layout.dimension.width / 2);
-        } else if (rotationInfo.isPositionRight) {
-            position.top = centerPosition;
-            position.left = layout.position.left + layout.dimension.width;
-        } else if (rotationInfo.isVertical) {
-            position.top = centerPosition;
-            position.left = layout.position.left + (textHeight / 2);
-        } else {
-            position.top = layout.position.top + layout.dimension.height;
-            position.left = centerPosition;
+        if (rotationInfo.isVertical) {
+            if (rotationInfo.isCenter) {
+                position.top += (textHeight / 2);
+                position.left = left + (axisWidth / 2);
+            } else if (!rotationInfo.isDiverging) {
+                position.top = top - (textHeight / 2) - Y_AXIS_TITLE_PADDING;
+            }
+        } else if (!rotationInfo.isVertical) {
+            if (rotationInfo.isDiverging && rotationInfo.isYAxisCenter) {
+                position.left = left + (data.areaSize / 2);
+            } else if (rotationInfo.isDiverging && !rotationInfo.isYAxisCenter) {
+                position.left = left + (axisWidth / 2);
+            } else if (rotationInfo.isColumnType) {
+                position.left = left + (axisWidth / (data.tickCount - 1) / 2);
+            }
+        }
+
+        if (rotationInfo.isPositionRight) {
+            position.left += axisWidth;
         }
 
         if (!rotationInfo.isCenter) {
@@ -351,32 +432,16 @@ function getTextHeight(text, theme) {
 }
 
 /**
- * Test axis title need to rotate
- * @param {object} rotationInfo - rotationInfo
- * @returns {boolean} - whether it needs to rotate
+ * Get a text width by theme
+ * @param {string} text - text
+ * @param {object} theme - axis theme
+ * @returns {number} text width
  * @ignore
  */
-function doesTitleRotate(rotationInfo) {
-    if (snippet.isExisty(rotationInfo.rotateTitle)) {
-        return rotationInfo.rotateTitle === true;
-    }
+function getTextWidth(text, theme) {
+    var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
 
-    return true;
-}
-
-/**
- * Calculate center position
- * @param {boolean} isVertical - is vertical axis
- * @param {object} dimension - width, height
- * @param {object} position - top, left
- * @returns {number} - center position
- * @ignore
- */
-function calculateCenterPosition(isVertical, dimension, position) {
-    var size = isVertical ? dimension.height : dimension.width;
-    var margin = isVertical ? position.top : position.left;
-
-    return (size / 2) + margin;
+    return titleSize.width;
 }
 
 /**
@@ -396,24 +461,6 @@ function addOffset(position, offset) {
     if (offset.y) {
         position.top += offset.y;
     }
-}
-
-/**
- * Get transform by rotation info
- * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
- * @param {object} position - top, left
- * @returns {string} css transform
- * @ignore
- */
-function getCSSTransform(rotationInfo, position) {
-    var transform = 'none';
-    if (rotationInfo.isPositionRight) {
-        transform = 'r90,' + position.left + ',' + position.top;
-    } else if (rotationInfo.isVertical && doesTitleRotate(rotationInfo)) {
-        transform = 'r-90,' + position.left + ',' + position.top;
-    }
-
-    return transform;
 }
 
 module.exports = RaphaelAxisComponent;

@@ -287,7 +287,9 @@ var scaleDataMaker = {
             offsetSize: baseSize
         });
 
-        isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+        if (!options.useSpectrumLegend) {
+            isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+        }
 
         if (isOverflowed && !predicate.isMapTypeChart(chartType)) {
             scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);

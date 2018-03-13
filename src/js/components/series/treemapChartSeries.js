@@ -25,6 +25,7 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         Series.call(this, params);
 
         this.theme.borderColor = this.theme.borderColor || chartConst.TREEMAP_DEFAULT_BORDER;
+        this.theme.label.color = this.options.useColorValue ? '#000' : '#fff';
 
         /**
          * root id
@@ -306,11 +307,20 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
     onHoverSeries: function(indexes) {
+        var item, ratio;
+
         if (!predicate.isShowLabel(this.options)) {
             return;
         }
 
+        item = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
+        ratio = item.colorRatio;
+
         this.graphRenderer.showAnimation(indexes, this.options.useColorValue, 0.6);
+
+        if (ratio > -1) {
+            this.eventBus.fire('showWedge', ratio, item.colorValue);
+        }
     },
 
     /**
@@ -323,20 +333,6 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         }
 
         this.graphRenderer.hideAnimation(indexes, this.options.useColorValue);
-    },
-
-    /**
-     * On show tooltip for calling showWedge.
-     * @param {{indexes: {groupIndex: number, index: number}}} params - parameters
-     */
-    onShowTooltip: function(params) {
-        var seriesDataModel = this._getSeriesDataModel();
-        var indexes = params.indexes;
-        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).colorRatio;
-
-        if (ratio > -1) {
-            this.eventBus.fire('showWedge', ratio);
-        }
     }
 });
 

@@ -51,8 +51,8 @@ var data = {
 };
 var options = {
     chart: {
-        width: 700,
-        height: 400,
+        width: 1160,
+        height: 650,
         title: 'Population Distribution',
         format: '1,000'
     },
@@ -60,13 +60,19 @@ var options = {
         title: 'Age Group',
         align: 'center'
     },
+    xAxis: {
+        labelMargin: 10
+    },
     series: {
         diverging: true
     }
 };
 var theme = {
     series: {
-        colors: ['#63A69F', '#F2836B']
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
     }
 };
 

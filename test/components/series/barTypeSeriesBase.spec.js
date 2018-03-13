@@ -147,10 +147,11 @@ describe('BarTypeSeriesBase', function() {
             expected = {
                 baseBarSize: 60,
                 groupSize: 60,
-                barSize: 16,
+                barSize: 17,
                 pointInterval: 20,
                 firstAdditionalPosition: 20,
-                basePosition: 0
+                basePosition: 0,
+                itemCount: 2
             };
 
             expect(actual).toEqual(expected);

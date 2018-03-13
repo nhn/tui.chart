@@ -307,7 +307,7 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
         var datum = this.mapModel.getDatum(index);
 
         if (!snippet.isUndefined(datum.ratio)) {
-            this.eventBus.fire('showWedge', datum.ratio);
+            this.eventBus.fire('showWedge', datum.ratio, datum.label);
         }
     },
 

@@ -61,21 +61,23 @@ var data = {
 };
 var options = {
     chart: {
-        width: 700,
-        height: 400,
+        width: 1160,
+        height: 540,
         title: 'Monthly Revenue',
         format: '1,000'
     },
     yAxis: {
         title: 'Amount',
-        max: 24000
+        max: 24000,
+        pointOnColumn: true
     },
     xAxis: {
         title: 'Month'
     },
     series: {
         stackType: 'normal',
-        showDot: true
+        showDot: false,
+        areaOpacity: 1
     },
     tooltip: {
         grouped: true
@@ -83,7 +85,10 @@ var options = {
 };
 var theme = {
     series: {
-        colors: ['#66a89c', '#39706f', '#1b4151']
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
     }
 };
 

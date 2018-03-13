@@ -58,7 +58,8 @@ var TreemapChart = snippet.defineClass(ChartBase, /** @lends TreemapChart.protot
         }
 
         this.componentManager.register('tooltip', 'tooltip', snippet.extend({
-            labelTheme: snippet.pick(this.theme, 'series', 'label')
+            labelTheme: snippet.pick(this.theme, 'series', 'label'),
+            colorSpectrum: colorSpectrum
         }));
 
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');

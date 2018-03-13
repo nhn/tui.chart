@@ -19,17 +19,17 @@ describe('Test for axisCalculator', function() {
         it('calculate height for x axis', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title'}, {});
 
-            expect(actual).toBe(60);
+            expect(actual).toBe(52);
         });
 
         it('labelMargin option should increase the x-axis height.', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title', labelMargin: 30}, {});
-            expect(actual).toBe(90);
+            expect(actual).toBe(82);
         });
 
         it('showlabel option is false, it should be reflected in the width of the label width', function() {
             var actual = axisCalculator.calculateXAxisHeight({title: 'Axis Title', showLabel: false}, {});
-            expect(actual).toBe(40);
+            expect(actual).toBe(32);
         });
     });
 
@@ -39,20 +39,9 @@ describe('Test for axisCalculator', function() {
 
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title'
-            }, {});
+            }, {}, []);
 
-            expect(actual).toBe(87);
-        });
-
-        it('calculate width for y axis, when rotateTitle option is false', function() {
-            var actual;
-
-            actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
-                title: 'Axis Title',
-                rotateTitle: false
-            }, {});
-
-            expect(actual).toBe(117);
+            expect(actual).toBe(67);
         });
 
         it('calculate width for y axis, when isCenter option is true', function() {
@@ -61,9 +50,9 @@ describe('Test for axisCalculator', function() {
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 isCenter: true
-            }, {});
+            }, {}, []);
 
-            expect(actual).toBe(64);
+            expect(actual).toBe(84);
         });
 
         it('labelMargin option should increase the y-axis width.', function() {
@@ -72,20 +61,19 @@ describe('Test for axisCalculator', function() {
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 labelMargin: 30
-            }, {});
+            }, {}, []);
 
-            expect(actual).toBe(117);
+            expect(actual).toBe(97);
         });
 
         it('showlabel option is false, it should be reflected in the width of the label width', function() {
             var actual;
-
             actual = axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
                 showLabel: false
-            }, {});
+            }, {}, []);
 
-            expect(actual).toBe(37);
+            expect(actual).toBe(17);
         });
     });
 });

@@ -16,6 +16,9 @@ var legendCalculator = require('./legendCalculator');
 var seriesCalculator = require('./seriesCalculator');
 var spectrumLegendCalculator = require('./spectrumLegendCalculator');
 var snippet = require('tui-code-snippet');
+var browser = snippet.browser;
+var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+var LEGEND_AREA_H_PADDING = chartConst.LEGEND_AREA_H_PADDING;
 
 /**
  * Dimension.
@@ -215,14 +218,20 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     _registerTitleDimension: function() {
         var chartOptions = this.options.chart || {};
         var hasTitleOption = snippet.isExisty(chartOptions.title);
-        var titleHeight =
-            hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
-        var dimension = {
-            height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
-        };
+        var titleTheme = this.theme.title;
+        var titleHeight = hasTitleOption ?
+            raphaelRenderUtil.getRenderedTextSize(
+                chartOptions.title.text,
+                titleTheme.fontSize,
+                titleTheme.fontFamily
+            ).height : 0;
+        var height = titleHeight || 0;
 
-        this._registerDimension('title', dimension);
+        if (height) {
+            height += (chartConst.TITLE_PADDING);
+        }
+
+        this._registerDimension('title', {height: height});
     },
 
     /**
@@ -232,15 +241,15 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     _registerChartExportMenuDimension: function() {
         var dimension;
 
-        if (this.options.chartExportMenu.visible) {
-            dimension = {
-                height: 17 + chartConst.CHART_PADDING,
-                width: 60
-            };
-        } else {
+        if (this.options.chartExportMenu.visible === false) {
             dimension = {
                 width: 0,
                 height: 0
+            };
+        } else {
+            dimension = {
+                height: chartConst.CHART_EXPORT_MENU_SIZE + chartConst.SERIES_AREA_V_PADDING,
+                width: chartConst.CHART_EXPORT_MENU_SIZE
             };
         }
         this._registerDimension('chartExportMenu', dimension);
@@ -270,30 +279,45 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
     /**
      * Register dimension for spectrum legend component.
+     * @param {object} limit - min and maximum value
      */
-    registerSpectrumLegendDimension: function() {
-        var maxValue = this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+    registerSpectrumLegendDimension: function(limit) {
+        var maxValue = limit ? limit.max : this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+        var minValue = limit ? limit.min : '';
         var labelTheme = this.theme.label;
-        var dimension;
+        var align = this.options.legend.align;
+        var dimension, isBoxType, isTopLegend;
 
-        if (predicate.isHorizontalLegend(this.options.legend.align)) {
-            dimension = spectrumLegendCalculator._makeHorizontalDimension(maxValue, labelTheme);
+        if (predicate.isHorizontalLegend(align)) {
+            isBoxType = predicate.isBoxTypeChart(this.chartType);
+            isTopLegend = predicate.isLegendAlignTop(align);
+            dimension = spectrumLegendCalculator._makeHorizontalDimension(maxValue, labelTheme, isBoxType, isTopLegend);
         } else {
-            dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, labelTheme);
+            dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, minValue, labelTheme);
         }
 
         this._registerDimension('legend', dimension);
+        this.useSpectrumLegend = true;
     },
 
     /**
      * Register dimension for y axis.
-     * @param {{min: number, max: number}} limit - min, max
-     * @param {string} componentName - component name like yAxis, rightYAxis
-     * @param {object} options - options for y axis
-     * @param {{title: object, label: object}} theme - them for y axis
-     * @param {boolean} isVertical - whether vertical or not
+     * @param {object} dimensionInfos - options for calculate dimension
+     *     @param {{min: number, max: number}} dimensionInfos.limit - min, max
+     *     @param {string} dimensionInfos.componentName - component name like yAxis, rightYAxis
+     *     @param {object} dimensionInfos.options - options for y axis
+     *     @param {{title: object, label: object}} dimensionInfos.theme - them for y axis
+     *     @param {Array} dimensionInfos.yAxisLabels - them for y axis
+     *     @param {boolean} dimensionInfos.isVertical - whether vertical or not
      */
-    registerYAxisDimension: function(limit, componentName, options, theme, isVertical) {
+    registerYAxisDimension: function(dimensionInfos) {
+        var limit = dimensionInfos.limit;
+        var componentName = dimensionInfos.axisName;
+        var options = dimensionInfos.options;
+        var theme = dimensionInfos.theme;
+        var yAxisLabels = dimensionInfos.yAxisLabels;
+        var isVertical = dimensionInfos.isVertical;
+        var isDiverging = this.options.series && this.options.series.diverging;
         var categories, yAxisOptions;
 
         if (limit) {
@@ -311,7 +335,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         this._registerDimension(componentName, {
-            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme)
+            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme, yAxisLabels, isDiverging)
         });
     },
 
@@ -320,9 +344,20 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      * @returns {number} series width
      */
     calculateSeriesWidth: function() {
+        var seriesWidth;
+        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'series', 'value');
         var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
+        var maxLabelWidth = 0;
+        if (!predicate.isColumnTypeChart(this.chartType)) {
+            maxLabelWidth = renderUtil.getRenderedLabelHeight(maxLabel, this.theme.title);
+        }
+        seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend, maxLabelWidth);
 
-        return seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
+        if (predicate.isMapChart(this.chartType) && !IS_LTE_IE8) {
+            seriesWidth -= (chartConst.MAP_CHART_ZOOM_AREA_WIDTH + LEGEND_AREA_H_PADDING);
+        }
+
+        return seriesWidth;
     },
 
     /**
@@ -331,8 +366,13 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     calculateSeriesHeight: function() {
         var dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis', 'chartExportMenu']);
+        var yAxisTitleAreaHeight = 0;
 
-        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend, this.chartType, this.theme.series);
+        if (this.options.yAxis && this.options.yAxis.title) {
+            yAxisTitleAreaHeight = renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.title);
+        }
+
+        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend, yAxisTitleAreaHeight);
     },
 
     getBaseSizeForLimit: function(isVertical) {
@@ -484,7 +524,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     _updateDimensionsWidth: function(overflowInfo) {
         var overflowLeft = Math.max(overflowInfo.overflowLeft, 0);
-        var overflowRight = Math.max(overflowInfo.overflowRight, 0);
+        var overflowRight = overflowInfo.overflowRight ? Math.max(overflowInfo.overflowRight, 0) : 0;
         var margin = overflowLeft + overflowRight;
 
         this.chartLeftPadding += overflowLeft;
@@ -563,22 +603,27 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      */
     _makeLegendPosition: function() {
         var dimensionMap = this.dimensionMap;
-        var seriesDimension = this.getDimension('series');
+        var seriesDimension = dimensionMap.series;
+        var seriesPositionTop = this.getPosition('series').top;
         var legendOption = this.options.legend;
-        var top = dimensionMap.title.height || dimensionMap.chartExportMenu.height;
+        var top = 0;
         var yAxisAreaWidth, left;
-
-        if (predicate.isLegendAlignBottom(legendOption.align)) {
-            top += seriesDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
-        }
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
-        } else if (predicate.isLegendAlignLeft(legendOption.align)) {
-            left = this.chartLeftPadding;
+            if (predicate.isLegendAlignBottom(legendOption.align)) {
+                top = seriesPositionTop + seriesDimension.height + this.getDimension('xAxis').height + chartConst.SERIES_AREA_V_PADDING;
+            } else {
+                top = seriesPositionTop - dimensionMap.legend.height + chartConst.LEGEND_AREA_V_PADDING;
+            }
         } else {
-            yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
-            left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
+            if (predicate.isLegendAlignLeft(legendOption.align)) {
+                left = this.chartLeftPadding;
+            } else {
+                yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
+                left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
+            }
+            top = seriesPositionTop + chartConst.SERIES_AREA_V_PADDING;
         }
 
         return {
@@ -588,14 +633,64 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     },
 
     /**
+     * make spectrum legend position
+     * @returns {{top: number, left: number}} legend bound
+     * @private
+     */
+    _makeSpectrumLegendPosition: function() {
+        var legendOption = this.options.legend;
+        var align = this.options.legend.align;
+        var seriesPosition = this.getPosition('series');
+        var seriesDimension = this.getDimension('series');
+        var legendDimension = this.getDimension('legend');
+        var top, left, right, position;
+
+        if (predicate.isHorizontalLegend(align)) {
+            left = (this.getDimension('chart').width - legendDimension.width) / 2;
+
+            if (predicate.isLegendAlignTop(align)) {
+                top = seriesPosition.top - legendDimension.height;
+            } else {
+                top = seriesPosition.top + seriesDimension.height + this.getDimension('xAxis').height;
+            }
+        } else {
+            if (predicate.isLegendAlignLeft(legendOption.align)) {
+                left = this.chartLeftPadding;
+            } else {
+                right = this.getDimension('chart').width - this.chartLeftPadding;
+                left = right - this.getDimension('legend').width;
+            }
+
+            if (predicate.isBoxTypeChart(this.chartType)) {
+                top = seriesPosition.top;
+            } else {
+                top = seriesPosition.top + (chartConst.MAP_CHART_ZOOM_AREA_HEIGHT * 0.75);
+            }
+        }
+
+        position = {
+            top: top,
+            left: left
+        };
+
+        if (right) {
+            position.right = right;
+        }
+
+        return position;
+    },
+
+    /**
      * Make chartExportMenu position.
      * @returns {{top: number, left: number}}
      * @private
      */
     _makeChartExportMenuPosition: function() {
+        var top = this.getPosition('series').top - chartConst.SERIES_AREA_V_PADDING - chartConst.CHART_EXPORT_MENU_SIZE;
+
         return {
-            top: 1,
-            right: 20
+            top: top,
+            right: chartConst.CHART_PADDING
         };
     },
 
@@ -652,7 +747,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var tooltipPosition;
 
         this.positionMap.mouseEventDetector = snippet.extend({}, seriesPosition);
-        this.positionMap.legend = this._makeLegendPosition();
+        this.positionMap.legend
+            = this.useSpectrumLegend ? this._makeSpectrumLegendPosition() : this._makeLegendPosition();
         this.positionMap.chartExportMenu = this._makeChartExportMenuPosition();
 
         if (this.getDimension('circleLegend').width) {
@@ -682,10 +778,19 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
         var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
         var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
-        var seriesTop = titleOrExportMenuHeight + topLegendHeight;
-        var defaultSeriesTop = renderUtil.getDefaultSeriesTopAreaHeight(this.chartType, this.theme.series);
-        var seriesPosition = {
-            top: (!seriesTop ? defaultSeriesTop : seriesTop) + chartConst.CHART_PADDING,
+        var yAxisTitlePadding = (this.options.yAxis.title && !this.useSpectrumLegend) ?
+            ((renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.yAxis.title)
+                + chartConst.Y_AXIS_TITLE_PADDING)) : 0;
+        var seriesTop = (titleOrExportMenuHeight
+            + Math.max(0, (Math.max(topLegendHeight, yAxisTitlePadding) - chartConst.TITLE_PADDING)));
+        var seriesPosition = {};
+
+        if (!titleOrExportMenuHeight) {
+            seriesTop = Math.max(topLegendHeight, yAxisTitlePadding);
+        }
+
+        seriesPosition = {
+            top: seriesTop + chartConst.CHART_PADDING,
             left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
         };
 
@@ -743,6 +848,10 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
     registerBoundsData: function(xAxisData) {
         this._registerCenterComponentsDimension();
 
+        if (this.useSpectrumLegend) {
+            this._updateDimensionsForSpectrumLegend();
+        }
+
         if (this.hasAxes) {
             this._registerAxisComponentsDimension();
             this._updateDimensionsForXAxisLabel(xAxisData);
@@ -753,6 +862,27 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
         if (this.options.yAxis.isCenter) {
             this._updateBoundsForYAxisCenterOption();
+        }
+    },
+
+    /**
+     * Update spectrum legend dimension, to prevent overflow
+     * @private
+     */
+    _updateDimensionsForSpectrumLegend: function() {
+        var legendAlignOption = this.options.legend.align;
+        var legendDimension = this.getDimension('legend');
+        var seriesDimension = this.getDimension('series');
+
+        if (predicate.isHorizontalLegend(legendAlignOption) &&
+            (legendDimension.width > seriesDimension.width)) {
+            legendDimension.width = seriesDimension.width;
+        } else if (predicate.isVerticalLegend(legendAlignOption)) {
+            if (predicate.isBoxTypeChart(this.chartType)) {
+                legendDimension.height = seriesDimension.height;
+            } else if (legendDimension.height > (seriesDimension.height - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT)) {
+                legendDimension.height = seriesDimension.height - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT;
+            }
         }
     },
 

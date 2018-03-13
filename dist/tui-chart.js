@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.17.0
+ * @version 3.0.0-a
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Mar 13 2018 15:05:57 GMT+0900 (KST)"
+ * bundle created at "Mon Mar 05 2018 03:03:27 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -97,14 +97,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	var raphael = __webpack_require__(3);
 
 	var BarChart = __webpack_require__(4);
-	var Boxplot = __webpack_require__(12);
-	var Bullet = __webpack_require__(13);
-	var LineChart = __webpack_require__(14);
-	var AreaChart = __webpack_require__(16);
-	var PieChart = __webpack_require__(18);
-	var RadialLineSeries = __webpack_require__(19);
-	var CoordinateTypeChart = __webpack_require__(20);
-	var BoxTypeChart = __webpack_require__(21);
+	var Boxplot = __webpack_require__(11);
+	var Bullet = __webpack_require__(12);
+	var LineChart = __webpack_require__(13);
+	var AreaChart = __webpack_require__(15);
+	var PieChart = __webpack_require__(17);
+	var RadialLineSeries = __webpack_require__(18);
+	var CoordinateTypeChart = __webpack_require__(19);
+	var BoxTypeChart = __webpack_require__(20);
 	var MapChart = __webpack_require__(22);
 
 	var legend = __webpack_require__(23);
@@ -142,6 +142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if (paper.raphael.svg) {
 	        appendGlowFilterToDefs(paper);
+	        appendShadowFilterToDefs(paper);
 	    }
 
 	    paper.pushDownBackgroundToBottom = function() {
@@ -226,6 +227,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	    paper.defs.appendChild(filter);
 	}
 
+	/**
+	 * Append shadow filter for series label
+	 * @param {object} paper Raphael paper object
+	 * @ignore
+	 */
+	function appendShadowFilterToDefs(paper) {
+	    var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+	    var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+	    var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+	    var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+	    filter.setAttributeNS(null, 'id', 'shadow');
+	    filter.setAttributeNS(null, 'x', '-15%');
+	    filter.setAttributeNS(null, 'y', '-15%');
+	    filter.setAttributeNS(null, 'width', '180%');
+	    filter.setAttributeNS(null, 'height', '180%');
+	    feOffset.setAttributeNS(null, 'result', 'offOut');
+	    feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+	    feOffset.setAttributeNS(null, 'dx', '2');
+	    feOffset.setAttributeNS(null, 'dy', '2');
+	    feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+	    feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+	    feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+	    feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+	    feBlend.setAttributeNS(null, 'in2', 'blurOut');
+	    feBlend.setAttributeNS(null, 'mode', 'normal');
+	    filter.appendChild(feOffset);
+	    filter.appendChild(feGaussianBlur);
+	    filter.appendChild(feBlend);
+	    paper.defs.appendChild(filter);
+	}
+
 	module.exports = {
 	    name: 'Raphael',
 	    plugins: pluginRaphael,
@@ -260,6 +293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var DEFAULT_LUMINANC = 0.2;
+	var BAR_HOVER_SPARE_SIZE = 8;
 
 	/**
 	 * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -314,8 +348,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var attributes = {
 	            'fill-opacity': 0
 	        };
+	        var overlay = this._renderBar(bound, '#fff', attributes);
 
-	        return this._renderBar(bound, '#fff', attributes);
+	        overlay.node.setAttribute(
+	            'class', 'auto-shape-rendering'
+	        );
+
+	        return overlay;
 	    },
 
 	    /**
@@ -336,7 +375,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        rect = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
 	            fill: color,
 	            stroke: 'none'
-	        }, attributes));
+	        }, attributes)).toFront();
+
+	        rect.node.setAttribute(
+	            'class', 'auto-shape-rendering'
+	        );
 
 	        return rect;
 	    },
@@ -637,25 +680,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	    showAnimation: function(data) {
 	        var bar = this.groupBars[data.groupIndex][data.index],
 	            bound = bar.bound;
+
 	        this.overlay.attr({
-	            width: bound.width,
-	            height: bound.height,
-	            x: bound.left,
-	            y: bound.top,
-	            'fill-opacity': 0.3
+	            width: bound.width + BAR_HOVER_SPARE_SIZE,
+	            height: bound.height + BAR_HOVER_SPARE_SIZE,
+	            stroke: '#fff',
+	            'stroke-width': '1',
+	            x: bound.left - 4,
+	            y: bound.top - 4,
+	            'fill-opacity': 1
 	        });
+	        this.resortBarIndex(data.groupIndex);
+	        this.overlay.toFront();
+	        bar.rect.toFront();
+
+	        if (this.labelSet) {
+	            this.labelSet.toFront();
+	        }
+	        this.overlay.node.setAttribute('filter', 'url(#shadow)');
 	    },
 
 	    /**
 	     * Hide animation.
+	     * @param {{groupIndex: number, index:number}} data show info
 	     */
-	    hideAnimation: function() {
+	    hideAnimation: function(data) {
+	        this.resortBarIndex(data.groupIndex);
 	        this.overlay.attr({
 	            width: 1,
 	            height: 1,
 	            x: 0,
 	            y: 0,
 	            'fill-opacity': 0
+	        });
+
+	        if (this.labelSet) {
+	            this.labelSet.toFront();
+	        }
+	    },
+
+	    /**
+	     * reindexing bar in group
+	     * @param {number} groupIndex - group index
+	     */
+	    resortBarIndex: function(groupIndex) {
+	        snippet.forEach(this.groupBars[groupIndex], function(barItem) {
+	            barItem.rect.toFront();
 	        });
 	    },
 
@@ -809,17 +879,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            opacity: 0,
 	            'text-anchor': textAnchor
 	        };
-	        var labelSet = paper.set();
+	        var labelSet = this.labelSet = paper.set();
 
 	        snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
 	            snippet.forEach(categoryLabel, function(label, seriesIndex) {
 	                var position = groupPositions[categoryIndex][seriesIndex];
 	                var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
+	                var enaLabelNodeStyle = endLabel.node.style;
 	                var startLabel;
 
-	                endLabel.node.style.userSelect = 'none';
-	                endLabel.node.style.cursor = 'default';
-	                endLabel.node.setAttribute('filter', 'url(#glow)');
+	                enaLabelNodeStyle.userSelect = 'none';
+	                enaLabelNodeStyle.cursor = 'default';
 
 	                labelSet.push(endLabel);
 
@@ -827,7 +897,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
 	                    startLabel.node.style.userSelect = 'none';
 	                    startLabel.node.style.cursor = 'default';
-	                    startLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                    labelSet.push(startLabel);
 	                }
@@ -902,14 +971,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var line = paper.path([path]),
 	            strokeStyle = {
 	                stroke: color,
-	                'stroke-width': strokeWidth || 2
+	                'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth),
+	                'stroke-linecap': 'butt'
 	            };
-
 	        if (color === 'transparent') {
 	            strokeStyle.stroke = '#fff';
 	            strokeStyle['stroke-opacity'] = 0;
 	        }
-	        line.attr(strokeStyle);
+
+	        line.attr(strokeStyle).node.setAttribute('class', 'auto-shape-rendering');
 
 	        return line;
 	    },
@@ -1158,9 +1228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartConst = __webpack_require__(8);
 	var dom = __webpack_require__(9);
 	var arrayUtil = __webpack_require__(10);
-
 	var snippet = __webpack_require__(6);
-	var predicate = __webpack_require__(11);
 
 	var concat = Array.prototype.concat;
 
@@ -1855,25 +1923,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        lineBaseChartCount += 1;
 
 	        return id;
-	    },
-
-	    /**
-	     * get default height of series top area
-	     * @param {string} chartType - chart type
-	     * @param {object} theme - series theme
-	     * @returns {number} - default series top height
-	     */
-	    getDefaultSeriesTopAreaHeight: function(chartType, theme) {
-	        if (predicate.isBarTypeChart(chartType) ||
-	            predicate.isLineTypeChart(chartType) ||
-	            predicate.isComboChart(chartType) ||
-	            predicate.isBulletChart(chartType)
-	        ) {
-	            return this.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme) +
-	                chartConst.SERIES_LABEL_PADDING;
-	        }
-
-	        return 0;
 	    }
 	};
 
@@ -1988,11 +2037,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /** @type {string} */
 	    CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
 	    /** @type {string} */
+	    CLASS_NAME_ZOOM_OUT_BTN: 'tui-chart-zoom-out-btn',
+	    /** @type {string} */
 	    CLASS_NAME_CHART_EXPORT_MENU_AREA: 'tui-chart-chartExportMenu-area',
 	    /** @type {string} */
 	    CLASS_NAME_CHART_EXPORT_MENU_ITEM: 'tui-chart-chartExportMenu-item',
 	    /** @type {string} */
 	    CLASS_NAME_CHART_EXPORT_MENU_BUTTON: 'tui-chart-chartExportMenu-button',
+	    /** @type {string} */
+	    CLASS_NAME_CHART_EXPORT_MENU_HEAD: 'tui-chart-chartExportMenu-head',
+	    CLASS_NAME_CHART_EXPORT_MENU_BODY: 'tui-chart-chartExportMenu-body',
+	    CLASS_NAME_TOOLTIP_VALUE: 'tui-chart-tooltip-value',
+	    /** @type {string} */
+	    CLASS_NAME_TOOLTIP_HEAD: 'tui-chart-tooltip-head',
+	    /** @type {string} */
+	    CLASS_NAME_TOOLTIP_BODY: 'tui-chart-tooltip-body',
+	    /** @type {string} */
+	    CLASS_NAME_SVG_AUTOSHAPE: 'auto-shape-rendering',
 	    /** chart type
 	     * @type {string}
 	     */
@@ -2043,6 +2104,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    TEXT_PADDING: 2,
 	    /** series expand size */
 	    SERIES_EXPAND_SIZE: 10,
+	    /** series area vertical padding */
+	    SERIES_AREA_V_PADDING: 10,
 	    /** series label padding */
 	    SERIES_LABEL_PADDING: 5,
 	    /** default font size of title */
@@ -2101,7 +2164,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /** default border color for treemap chart
 	     * @type {string}
 	     */
-	    TREEMAP_DEFAULT_BORDER: '#ccc',
+	    TREEMAP_DEFAULT_BORDER: '#ffffff',
+	    TREEMAP_DEFAULT_BORDER_WIDTH: 4,
 	    /** empty axis label */
 	    EMPTY_AXIS_LABEL: '',
 	    /** angel */
@@ -2123,15 +2187,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /** @type {string} */
 	    LEGEND_ALIGN_LEFT: 'left',
 	    /** @type {number} */
-	    LEGEND_PAGINATION_BUTTON_WIDTH: 10,
+	    LEGEND_PAGINATION_BUTTON_WIDTH: 20,
 	    /** @type {number} */
-	    LEGEND_PAGINATION_BUTTON_PADDING_LEFT: 5,
+	    LEGEND_PAGINATION_BUTTON_PADDING_RIGHT: 6,
 	    /** series outer label padding */
 	    SERIES_OUTER_LABEL_PADDING: 20,
 	    /** default ratio for pie graph */
 	    PIE_GRAPH_DEFAULT_RATIO: 0.9,
 	    /** small ratio for pie graph */
 	    PIE_GRAPH_SMALL_RATIO: 0.75,
+	    /** pie chart legend label size */
+	    PIE_GRAPH_LEGEND_LABEL_SIZE: 16,
+	    /** pie chart legend label size */
+	    PIE_GRAPH_LEGEND_LABEL_INTERVAL: 20,
 	    /** tick count for spectrum legend */
 	    SPECTRUM_LEGEND_TICK_COUNT: 4,
 	    /** legend & lable concat separator */
@@ -2143,10 +2211,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        x: 0.5,
 	        y: 0.5
 	    },
+	    /** map chart zoom area width */
+	    MAP_CHART_ZOOM_AREA_WIDTH: 24,
+	    /** map chart zoom area height */
+	    MAP_CHART_ZOOM_AREA_HEIGHT: 58,
 	    /** dot radius */
 	    DOT_RADIUS: 4,
 	    /** radius for circle of scatter chart*/
-	    SCATTER_RADIUS: 5,
+	    SCATTER_RADIUS: 7,
 	    /**
 	     * theme properties
 	     * @type {{yAxis: Array.<string>, series: Array.<string>}}
@@ -2158,6 +2230,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    /** title area width padding */
 	    TITLE_AREA_WIDTH_PADDING: 20,
+	    /** chart export menu width, height */
+	    CHART_EXPORT_MENU_SIZE: 24,
 	    /** top margin of x axis label */
 	    XAXIS_LABEL_TOP_MARGIN: 10,
 	    /** right padding of vertical label */
@@ -2242,27 +2316,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	    DATE_TYPE_MINUTE: 'minute',
 	    DATE_TYPE_SECOND: 'second',
 	    /** title add padding */
-	    TITLE_PADDING: 10,
-	    /** legend area padding */
-	    LEGEND_AREA_PADDING: 10,
+	    TITLE_PADDING: 40,
+	    /** default header height */
+	    DEFAULT_HEADER_HEIGHT: 10,
+	    /** legend area horizontal padding */
+	    LEGEND_AREA_H_PADDING: 15,
+	    /** legend area vertical padding */
+	    LEGEND_AREA_V_PADDING: 7,
 	    /** legend checkbox width */
-	    LEGEND_CHECKBOX_WIDTH: 10,
-	    LEGEND_ICON_WIDTH: 40,
-	    LEGEND_ICON_HEIGHT: 15,
+	    LEGEND_CHECKBOX_SIZE: 14,
+	    LEGEND_ICON_WIDTH: 10,
+	    LEGEND_ICON_HEIGHT: 10,
 	    /** lgend label left padding */
-	    LEGEND_LABEL_LEFT_PADDING: 5,
+	    LEGEND_LABEL_LEFT_PADDING: 8,
+	    /** vertical legend right padding */
+	    LEGEND_V_LABEL_RIGHT_PADDING: 20,
+	    /** horizontal legend right padding */
+	    LEGEND_H_LABEL_RIGHT_PADDING: 25,
+	    /** lgend line icon svg path */
+	    LEGEND_LINE_ICON_PATH: 'M1,9 L1,3 C1,1.8954305 1.8954305,1 3,1 L3,1 C4.1045695,1 5,1.8954305 5,3 L5,7 C5,8.1045695 5.8954305,9 7,9 L7,9 C8.1045695,9 9,8.1045695 9,7 L9,1',
 	    MIN_LEGEND_WIDTH: 100,
-	    /** map legend height */
-	    MAP_LEGEND_SIZE: 200,
+	    /** map legend area padding */
+	    MAP_LEGEND_AREA_PADDING_WIDE: 22,
+	    /** vertical map legend area padding */
+	    VERTICAL_MAP_LEGEND_AREA_TOP_PADDING: 26,
+	    /** map legend padding before spectrum graph area */
+	    MAP_LEGEND_AREA_PADDING_NARROW: 10,
+	    /** map legend tooltip vertical padding */
+	    MAP_LEGEND_TOOLTIP_VERTICAL_PADDING: 4,
+	    /** map legend tooltip horizontal padding */
+	    MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING: 6,
+	    /** map legend wedge size */
+	    MAP_LEGEND_WEDGE_SIZE: 4,
+	    /** map legend padding between wedge and spectrum graph */
+	    MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE: 4,
+	    /** vertical map legend height */
+	    VERTICAL_MAP_LEGEND_HEIGHT: 320,
+	    /** horizontal map legend height */
+	    HORIZONTAL_MAP_LEGEND_WIDTH: 400,
 	    /** map legend graph size */
-	    MAP_LEGEND_GRAPH_SIZE: 25,
+	    MAP_LEGEND_GRAPH_SIZE: 6,
 	    /** map legend label padding */
-	    MAP_LEGEND_LABEL_PADDING: 10,
+	    MAP_LEGEND_LABEL_PADDING: 5,
 	    CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
 	    CIRCLE_LEGEND_PADDING: 10,
 	    HALF_RATIO: 0.5,
-	    /** AXIS LABEL PADDING */
-	    AXIS_LABEL_PADDING: 7,
+	    /** X-AXIS LABEL PADDING */
+	    X_AXIS_LABEL_PADDING: 7,
+	    /** X-AXIS title padding */
+	    X_AXIS_TITLE_PADDING: 5,
+	    /** Y-AXIS LABEL PADDING */
+	    Y_AXIS_LABEL_PADDING: 17,
+	    Y_AXIS_TITLE_PADDING: 7,
 	    /** rotations degree candidates */
 	    DEGREE_CANDIDATES: [25, 45, 65, 85],
 	    /**
@@ -2288,9 +2393,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
 	    /** label padding top */
-	    LABEL_PADDING_TOP: 3,
+	    LABEL_PADDING_TOP: 7,
 	    /** line margin top */
-	    LINE_MARGIN_TOP: 5,
+	    LINE_MARGIN_TOP: 14,
 	    /** tooltip gap */
 	    TOOLTIP_GAP: 5,
 	    /** tooltip direction
@@ -2317,6 +2422,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    SERIES_LABEL_OPACITY: 0.3,
 	    WHEEL_TICK: 120,
 	    MAX_ZOOM_MAGN: 5,
+	    ZOOM_POSITION_TOP_EXIST_TITLE: 5,
+	    ZOOM_POSITION_TOP_NONE_TITLE: 1,
 	    FF_WHEELDELTA_ADJUSTING_VALUE: -40,
 	    IE7_ROTATION_FILTER_STYLE_MAP: {
 	        25: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
@@ -2733,546 +2840,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Predicate.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-
-	'use strict';
-
-	var chartConst = __webpack_require__(8);
-	var arrayUtil = __webpack_require__(10);
-
-	/**
-	 * predicate.
-	 * @module predicate
-	 * @private */
-	var predicate = {
-	    /**
-	     * Whether bar chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBarChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_BAR;
-	    },
-
-	    /**
-	     * Whether column chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isColumnChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_COLUMN;
-	    },
-
-	    /**
-	     * Whether bar type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBarTypeChart: function(chartType) {
-	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
-	    },
-
-	    /**
-	     * Whether boxplot chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBoxplotChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_BOXPLOT;
-	    },
-
-	    /**
-	     * Whether bullet chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBulletChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_BULLET;
-	    },
-
-	    /**
-	     * Whether radial type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isRadialChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_RADIAL;
-	    },
-
-	    /**
-	     * Whether diverging chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {boolean} diverging - whether has diverging or not
-	     * @returns {*|boolean}
-	     */
-	    isDivergingChart: function(chartType, diverging) {
-	        return this.isBarTypeChart(chartType) && diverging;
-	    },
-
-	    /**
-	     * Whether normal stack chart or not.
-	     * @param {string} chartType - type of chart
-	     * @param {string} stackType - type of stack
-	     * @returns {boolean}
-	     * @private
-	     */
-	    isNormalStackChart: function(chartType, stackType) {
-	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-	        var isNormalStack = predicate.isNormalStack(stackType);
-
-	        return isAllowedStackOption && isNormalStack;
-	    },
-
-	    /**
-	     * Whether percent stack chart or not.
-	     * @param {string} chartType - type of chart
-	     * @param {string} stackType - type of stack
-	     * @returns {boolean}
-	     * @private
-	     */
-	    isPercentStackChart: function(chartType, stackType) {
-	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-	        var isPercentStack = predicate.isPercentStack(stackType);
-
-	        return isAllowedStackOption && isPercentStack;
-	    },
-
-	    /**
-	     * Whether combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isComboChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_COMBO;
-	    },
-
-	    /**
-	     * Whether pie and donut combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isPieDonutComboChart: function(chartType, subChartTypes) {
-	        var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
-	            return predicate.isPieChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && isAllPieType;
-	    },
-
-	    /**
-	     * Whether line chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isLineChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_LINE;
-	    },
-
-	    /**
-	     * Whether area chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isAreaChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_AREA;
-	    },
-
-	    /**
-	     * Whether line and area combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineAreaComboChart: function(chartType, subChartTypes) {
-	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
-	            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && isAllLineType;
-	    },
-
-	    /**
-	     * Whether line and area combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    hasLineChart: function(chartType, subChartTypes) {
-	        var hasLineType = arrayUtil.any(subChartTypes || [], function(subChartType) {
-	            return predicate.isLineChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && hasLineType;
-	    },
-
-	    /**
-	     * Whether line and scatter combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineScatterComboChart: function(chartType, subChartTypes) {
-	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
-	            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
-	        });
-
-	        return predicate.isComboChart(chartType) && isAllLineType;
-	    },
-
-	    /**
-	     * Whether line type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} [subChartTypes] - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineTypeChart: function(chartType, subChartTypes) {
-	        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
-	            || predicate.isLineAreaComboChart(chartType, subChartTypes);
-	    },
-
-	    /**
-	     * Whether bubble chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBubbleChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_BUBBLE;
-	    },
-
-	    /**
-	     * Whether scatter chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isScatterChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_SCATTER;
-	    },
-
-	    /**
-	     * Whether heatmap chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isHeatmapChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_HEATMAP;
-	    },
-
-	    /**
-	     * Whether treemap chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isTreemapChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_TREEMAP;
-	    },
-
-	    /**
-	     * Whether box type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isBoxTypeChart: function(chartType) {
-	        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
-	    },
-
-	    /**
-	     * Whether pie chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isPieChart: function(chartType) {
-	        // change to indexOf for handling alias
-	        return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
-	    },
-
-	    /**
-	     * Whether map chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isMapChart: function(chartType) {
-	        return chartType === chartConst.CHART_TYPE_MAP;
-	    },
-
-	    /**
-	     * Whether map type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isMapTypeChart: function(chartType) {
-	        return (this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType));
-	    },
-
-	    /**
-	     * Whether coordinate type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isCoordinateTypeChart: function(chartType) {
-	        return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
-	    },
-
-	    /**
-	     * Whether allow rendering for minus point in area of series.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    allowMinusPointRender: function(chartType) {
-	        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
-	            predicate.isBoxTypeChart(chartType) || predicate.isBulletChart(chartType);
-	    },
-
-	    /**
-	     * Whether chart to detect mouse events on series or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isChartToDetectMouseEventOnSeries: function(chartType) {
-	        return predicate.isPieChart(chartType) || predicate.isMapChart(chartType)
-	            || predicate.isCoordinateTypeChart(chartType);
-	    },
-
-	    /**
-	     * Whether align of label is outer or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLabelAlignOuter: function(align) {
-	        return align === chartConst.LABEL_ALIGN_OUTER;
-	    },
-
-	    /**
-	     * Whether show label or not.
-	     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
-	     * @returns {boolean}
-	     */
-	    isShowLabel: function(options) {
-	        return options.showLabel || options.showLegend;
-	    },
-
-	    /**
-	     * Whether show outer label or not.
-	     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
-	     * @returns {*|boolean}
-	     */
-	    isShowOuterLabel: function(options) {
-	        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
-	    },
-
-	    /**
-	     * Whether align of legend is left or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignLeft: function(align) {
-	        return align === chartConst.LEGEND_ALIGN_LEFT;
-	    },
-
-	    /**
-	     * Whether align of legend is top or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignTop: function(align) {
-	        return align === chartConst.LEGEND_ALIGN_TOP;
-	    },
-
-	    /**
-	     * Whether align of legend is bottom or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignBottom: function(align) {
-	        return align === chartConst.LEGEND_ALIGN_BOTTOM;
-	    },
-
-	    /**
-	     * Whether horizontal legend or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align option for legend
-	     * @returns {boolean}
-	     */
-	    isHorizontalLegend: function(align) {
-	        return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
-	    },
-
-	    /**
-	     * Whether vertical legend or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align option for legend
-	     * @returns {boolean}
-	     */
-	    isVerticalLegend: function(align) {
-	        return !predicate.isHorizontalLegend(align);
-	    },
-
-	    /**
-	     * Whether allowed stackType option or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isAllowedStackOption: function(chartType) {
-	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType)
-	            || predicate.isAreaChart(chartType);
-	    },
-
-	    /**
-	     * Whether normal stack type or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isNormalStack: function(stackType) {
-	        return stackType === chartConst.NORMAL_STACK_TYPE;
-	    },
-
-	    /**
-	     * Whether percent stack type or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isPercentStack: function(stackType) {
-	        return stackType === chartConst.PERCENT_STACK_TYPE;
-	    },
-
-	    /**
-	     * Whether valid stackType option or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isValidStackOption: function(stackType) {
-	        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
-	    },
-
-	    /**
-	     * Whether allow range data or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isAllowRangeData: function(chartType) {
-	        return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
-	    },
-
-	    /**
-	     * Whether align of yAxis is center or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} hasRightYAxis - whether has right yAxis.
-	     * @param {string} alignOption - align option of yAxis.
-	     * @returns {boolean} whether - align center or not.
-	     */
-	    isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
-	        return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
-	    },
-
-	    /**
-	     * Whether minus limit or not.
-	     * @memberOf module:predicate
-	     * @param {{min: number, max: number}} limit - limit
-	     * @returns {boolean}
-	     */
-	    isMinusLimit: function(limit) {
-	        return limit.min <= 0 && limit.max <= 0;
-	    },
-
-	    /**
-	     * Whether auto tick interval or not.
-	     * @param {string} [tickInterval] - tick interval option
-	     * @returns {boolean}
-	     */
-	    isAutoTickInterval: function(tickInterval) {
-	        return tickInterval === chartConst.TICK_INTERVAL_AUTO;
-	    },
-
-	    /**
-	     * Whether valid label interval or not.
-	     * @param {number} [labelInterval] - label interval option
-	     * @param {string} [tickInterval] - tick interval option
-	     * @returns {*|boolean}
-	     */
-	    isValidLabelInterval: function(labelInterval, tickInterval) {
-	        return labelInterval && labelInterval > 1 && !tickInterval;
-	    },
-
-	    /**
-	     * Whether datetime type or not.
-	     * @param {string} type - type
-	     * @returns {boolean}
-	     */
-	    isDatetimeType: function(type) {
-	        return type === chartConst.AXIS_TYPE_DATETIME;
-	    },
-
-	    /**
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean} - whether it support ChartBase#showTooltip API
-	     */
-	    isSupportPublicShowTooptipAPI: function(chartType) {
-	        return this.isBarChart(chartType) ||
-	            this.isColumnChart(chartType) ||
-	            this.isLineChart(chartType) ||
-	            this.isAreaChart(chartType) ||
-	            this.isBoxplotChart(chartType);
-	    },
-
-	    /**
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean} - whether it support ChartBase#hideTooltip API
-	     */
-	    isSupportPublicHideTooptipAPI: function(chartType) {
-	        return this.isBarChart(chartType) ||
-	            this.isColumnChart(chartType) ||
-	            this.isLineChart(chartType) ||
-	            this.isAreaChart(chartType) ||
-	            this.isBoxplotChart(chartType);
-	    }
-	};
-
-	module.exports = predicate;
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/**
 	 * @fileoverview Raphael boxplot chart renderer.
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
@@ -3288,9 +2855,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var DEFAULT_LUMINANC = 0.2;
-	var BOX_STROKE_WIDTH = 1;
-	var EDGE_LINE_WIDTH = 2;
-	var MEDIAN_LINE_WIDTH = 2;
+	var EDGE_LINE_WIDTH = 1;
+	var MEDIAN_LINE_WIDTH = 1;
 	var WHISKER_LINE_WIDTH = 1;
 
 	/**
@@ -3325,32 +2891,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.groupBoxes = this._renderBoxplots(groupBounds);
 	        this.groupBorders = this._renderBoxBorders(groupBounds);
 
-	        this.rectOverlay = this._renderRectOverlay();
 	        this.circleOverlay = this._renderCircleOverlay();
 	        this.groupBounds = groupBounds;
 
 	        return this.paper.setFinish();
-	    },
-
-	    /**
-	     * Render overlay.
-	     * @returns {object} raphael object
-	     * @private
-	     */
-	    _renderRectOverlay: function() {
-	        var bound = {
-	            width: 1,
-	            height: 1,
-	            left: 0,
-	            top: 0
-	        };
-	        var attributes = {
-	            'fill-opacity': 0
-	        };
-
-	        return raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
-	            'stroke-width': 0
-	        }, attributes));
 	    },
 
 	    /**
@@ -3388,9 +2932,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        rect = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
-	            fill: '#fff',
-	            stroke: color,
-	            'stroke-width': BOX_STROKE_WIDTH
+	            fill: color,
+	            stroke: 'none'
 	        }, attributes));
 
 	        return rect;
@@ -3503,10 +3046,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return groupWhiskers;
 	    },
 
-	    _renderMedianLine: function(bound, color) {
+	    _renderMedianLine: function(bound) {
 	        var width = bound.width;
 	        var medianLinePath = 'M' + bound.left + ',' + bound.top + 'H' + (bound.left + width);
-	        var median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, color, MEDIAN_LINE_WIDTH);
+	        var median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, '#ffffff', MEDIAN_LINE_WIDTH);
 
 	        median.attr({
 	            opacity: 0
@@ -3517,21 +3060,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    _renderMedianLines: function(groupBounds) {
 	        var self = this;
-	        var colors = this.theme.colors;
-	        var colorByPoint = this.options.colorByPoint;
 	        var groupMedians = [];
 
-	        snippet.forEach(groupBounds, function(bounds, groupIndex) {
+	        snippet.forEach(groupBounds, function(bounds) {
 	            var medians = [];
 
-	            snippet.forEach(bounds, function(bound, index) {
-	                var color = colorByPoint ? colors[groupIndex] : colors[index];
-
+	            snippet.forEach(bounds, function(bound) {
 	                if (!bound) {
 	                    return;
 	                }
 
-	                medians.push(self._renderMedianLine(bound.median, color));
+	                medians.push(self._renderMedianLine(bound.median));
 	            });
 	            groupMedians.push(medians);
 	        });
@@ -3543,8 +3082,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var outlier = raphaelRenderUtil.renderCircle(this.paper, {
 	            left: bound.left,
 	            top: bound.top
-	        }, 3, {
-	            stroke: color
+	        }, 3.5, {
+	            stroke: color,
+	            'stroke-width': 2
 	        });
 
 	        outlier.attr({
@@ -3739,17 +3279,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{groupIndex: number, index:number}} data show info
 	     */
 	    showRectAnimation: function(data) {
-	        var bar = this.groupBoxes[data.groupIndex][data.index],
-	            bound = bar.bound;
+	        var bar = this.groupBoxes[data.groupIndex][data.index];
+	        this.hoveredBar = bar.rect;
 
-	        this.rectOverlay.attr({
-	            width: bound.width,
-	            height: bound.height,
-	            x: bound.left,
-	            y: bound.top,
-	            fill: bar.color,
-	            'fill-opacity': 0.3
+	        this.hoveredBar.attr({
+	            stroke: '#ffffff',
+	            'stroke-width': 4
 	        });
+	        this.hoveredBar.node.setAttribute('filter', 'url(#shadow)');
 	    },
 
 	    /**
@@ -3764,9 +3301,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            cx: targetAttr.cx,
 	            cy: targetAttr.cy,
 	            fill: targetAttr.stroke,
-	            'fill-opacity': 0.3,
+	            'fill-opacity': 1,
 	            stroke: targetAttr.stroke,
-	            'stroke-width': 2
+	            'stroke-width': 4
 	        });
 	    },
 
@@ -3780,15 +3317,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            x: 0,
 	            y: 0,
 	            'fill-opacity': 0,
-	            'stroke-width': 0
+	            'stroke-width': 2
 	        });
-	        this.rectOverlay.attr({
-	            width: 1,
-	            height: 1,
-	            x: 0,
-	            y: 0,
-	            'fill-opacity': 0
+	        this.hoveredBar.attr({
+	            stroke: 'none'
 	        });
+	        this.hoveredBar.node.setAttribute('filter', 'none');
 	    },
 
 	    /**
@@ -3969,7 +3503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4451,7 +3985,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4462,7 +3996,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(15);
+	var RaphaelLineBase = __webpack_require__(14);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -4494,7 +4028,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * Line width
 	         * @type {number}
 	         */
-	        this.lineWidth = 2;
+	        this.lineWidth = 6;
 	    },
 
 	    /**
@@ -4512,7 +4046,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var opacity = options.showDot ? 1 : 0;
 	        var isSpline = options.spline;
 	        var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
-	        var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
+	        var borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
 	        var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
 	        var groupPaths;
 
@@ -4546,7 +4080,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.dotOpacity = opacity;
 	        delete this.pivotGroupDots;
 
+	        if (paper.raphael.svg) {
+	            this.appendShadowFilterToDefs();
+	        }
+
 	        return paper.setFinish();
+	    },
+
+	    appendShadowFilterToDefs: function() {
+	        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+	        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+	        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+	        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+	        filter.setAttributeNS(null, 'id', 'shadow');
+	        filter.setAttributeNS(null, 'x', '-50%');
+	        filter.setAttributeNS(null, 'y', '-50%');
+	        filter.setAttributeNS(null, 'width', '180%');
+	        filter.setAttributeNS(null, 'height', '180%');
+	        feOffset.setAttributeNS(null, 'result', 'offOut');
+	        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+	        feOffset.setAttributeNS(null, 'dx', '0');
+	        feOffset.setAttributeNS(null, 'dy', '0');
+	        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+	        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+	        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+	        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+	        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+	        feBlend.setAttributeNS(null, 'mode', 'normal');
+	        filter.appendChild(feOffset);
+	        filter.appendChild(feGaussianBlur);
+	        filter.appendChild(feBlend);
+	        this.paper.defs.appendChild(filter);
 	    },
 
 	    /**
@@ -4591,8 +4156,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _renderLines: function(paper, groupPaths, colors, strokeWidth) {
 	        return snippet.map(groupPaths, function(path, groupIndex) {
 	            var color = colors[groupIndex] || 'transparent';
+	            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+	            line.node.setAttribute('class', 'auto-shape-rendering');
 
-	            return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+	            return line;
 	        });
 	    },
 
@@ -4645,14 +4212,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            line.attr({'stroke-opacity': opacity});
 
-	            snippet.forEachArray(groupDots, function(item) {
-	                item.opacity = opacity;
-
-	                if (this.dotOpacity) {
-	                    item.endDot.dot.attr({'fill-opacity': opacity});
-	                }
-	            }, this);
-
 	            if (isSelectedLegend) {
 	                this.moveSeriesToFront(line, groupDots);
 	            }
@@ -4676,7 +4235,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (frontLine) {
 	            this.groupLines[legendIndex].insertBefore(frontLine);
 	            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
-	                item.endDot.dot.insertBefore(frontLine);
+	                if (item && item.endDot) {
+	                    item.endDot.dot.insertBefore(frontLine);
+	                }
 	            });
 	        }
 	    },
@@ -4776,7 +4337,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4795,10 +4356,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var browser = snippet.browser;
 	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 	var ANIMATION_DURATION = 700;
-	var DEFAULT_DOT_RADIUS = 3;
+	var DEFAULT_DOT_RADIUS = 6;
 	var SELECTION_DOT_RADIUS = 7;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var MOVING_ANIMATION_DURATION = 300;
+	var CHART_HOVER_STATUS_OVER = 'over';
+	var CHART_HOVER_STATUS_OUT = 'out';
 
 	var concat = Array.prototype.concat;
 
@@ -4984,21 +4547,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
 	    },
 
+	    appendShadowFilterToDefs: function() {
+	        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+	        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+	        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+	        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+	        filter.setAttributeNS(null, 'id', 'shadow');
+	        filter.setAttributeNS(null, 'x', '-50%');
+	        filter.setAttributeNS(null, 'y', '-50%');
+	        filter.setAttributeNS(null, 'width', '180%');
+	        filter.setAttributeNS(null, 'height', '180%');
+	        feOffset.setAttributeNS(null, 'result', 'offOut');
+	        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+	        feOffset.setAttributeNS(null, 'dx', '0');
+	        feOffset.setAttributeNS(null, 'dy', '0');
+	        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+	        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+	        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+	        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+	        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+	        feBlend.setAttributeNS(null, 'mode', 'normal');
+	        filter.appendChild(feOffset);
+	        filter.appendChild(feGaussianBlur);
+	        filter.appendChild(feBlend);
+	        this.paper.defs.appendChild(filter);
+	    },
+
 	    /**
 	     * Make border style.
 	     * @param {string} borderColor border color
 	     * @param {number} opacity opacity
+	     * @param {number} borderWidth border width
 	     * @returns {{stroke: string, stroke-width: number, strike-opacity: number}} border style
 	     */
-	    makeBorderStyle: function(borderColor, opacity) {
-	        var borderStyle;
+	    makeBorderStyle: function(borderColor, opacity, borderWidth) {
+	        var borderStyle = {
+	            'stroke-width': borderWidth,
+	            'stroke-opacity': opacity
+	        };
 
 	        if (borderColor) {
-	            borderStyle = {
-	                stroke: borderColor,
-	                'stroke-width': 1,
-	                'stroke-opacity': opacity
-	            };
+	            borderStyle.stroke = borderColor;
 	        }
 
 	        return borderStyle;
@@ -5013,7 +4603,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    makeOutDotStyle: function(opacity, borderStyle) {
 	        var outDotStyle = {
 	            'fill-opacity': opacity,
-	            'stroke-opacity': 0,
+	            'stroke-opacity': opacity,
 	            r: DEFAULT_DOT_RADIUS
 	        };
 
@@ -5037,7 +4627,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dot, dotStyle, raphaelDot;
 
 	        if (position) {
-	            dot = paper.circle(position.left, position.top, dotTheme.radius || DEFAULT_DOT_RADIUS);
+	            dot = paper.circle(
+	                position.left,
+	                position.top,
+	                (!snippet.isUndefined(dotTheme.radius)) ? dotTheme.radius : DEFAULT_DOT_RADIUS
+	            );
 	            dotStyle = {
 	                fill: dotTheme.fillColor || color,
 	                'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
@@ -5141,7 +4735,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            stroke: hoverTheme.strokeColor || dotInformation.color,
 	            'stroke-opacity': hoverTheme.strokeOpacity,
 	            'stroke-width': hoverTheme.strokeWidth,
-	            r: hoverTheme.radius
+	            r: hoverTheme.radius,
+	            filter: 'url(#shadow)'
 	        };
 
 	        this._setPrevDotAttributes(groupIndex, dotInformation.dot);
@@ -5151,6 +4746,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        dotInformation.dot.attr(attributes);
+	        if (dotInformation.dot.node) {
+	            dotInformation.dot.node.setAttribute('filter', 'url(#shadow)');
+	        }
+	        dotInformation.dot.toFront();
 	    },
 
 	    /**
@@ -5168,14 +4767,71 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Update line stroke width.
+	     * @param {string} changeType over or out
+	     * @param {object} line raphael object
+	     * @private
+	     */
+	    _updateLineStrokeOpacity: function(changeType, line) {
+	        var opacity = 1;
+	        var isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
+	        if (this.groupLines) {
+	            if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
+	                opacity = (this.chartType === 'radial' && this.isShowArea) ? 0 : DE_EMPHASIS_OPACITY;
+	            }
+
+	            if (changeType === CHART_HOVER_STATUS_OUT && isSelectedLegend) {
+	                line = this.getLine(this.selectedLegendIndex);
+	            }
+
+	            snippet.forEachArray(this.groupLines, function(otherLine) {
+	                otherLine.attr({
+	                    'stroke-opacity': opacity
+	                });
+	            });
+	            line.attr({
+	                'stroke-opacity': 1
+	            });
+	        }
+	    },
+
+	    /**
+	     * Get the raphael line element with groupIndex
+	     * @param {number} groupIndex  group index
+	     * @returns {object} line raphael object
+	     */
+	    getLine: function(groupIndex) {
+	        return this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
+	    },
+
+	    /**
+	     * Update line stroke width.
+	     * @param {string} changeType over or out
+	     * @private
+	     */
+	    _updateAreaOpacity: function(changeType) {
+	        if (this.groupAreas) {
+	            snippet.forEach(this.groupAreas, function(otherArea) {
+	                otherArea.area.attr({
+	                    'fill-opacity': (changeType === CHART_HOVER_STATUS_OVER) ? DE_EMPHASIS_OPACITY : 1
+	                });
+	            });
+	        }
+	    },
+
+	    /**
+	     * Update line stroke width.
 	     * @param {object} line raphael object
 	     * @param {number} strokeWidth stroke width
 	     * @private
 	     */
 	    _updateLineStrokeWidth: function(line, strokeWidth) {
-	        line.attr({
+	        var changeAttr = {
 	            'stroke-width': strokeWidth
-	        });
+	        };
+	        if (line.attrs) {
+	            changeAttr.stroke = line.attrs.stroke;
+	        }
+	        line.attr(changeAttr);
 	    },
 
 	    /**
@@ -5194,18 +4850,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (this.chartType === 'area') {
-	            strokeWidth = this.lineWidth * 2;
+	            strokeWidth = 5;
 	            startLine = line.startLine;
+	            this._updateAreaOpacity(CHART_HOVER_STATUS_OVER);
 	            line = line.line;
 	        } else {
-	            strokeWidth = this.lineWidth * 2;
+	            strokeWidth = this.lineWidth;
 	        }
 
+	        this._updateLineStrokeOpacity(CHART_HOVER_STATUS_OVER, line);
 	        this._updateLineStrokeWidth(line, strokeWidth);
-
 	        if (startLine) {
 	            this._updateLineStrokeWidth(startLine, strokeWidth);
 	        }
+
 	        this._showDot(item.endDot, groupIndex);
 
 	        if (item.startDot) {
@@ -5304,13 +4962,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'stroke': prev.stroke,
 	                'fill': prev.fill,
 	                'stroke-opacity': prev['stroke-opacity'],
-	                'stroke-width': prev['stroke-width']
-	            }, {
-	                'fill-opacity': opacity
+	                'stroke-width': prev['stroke-width'],
+	                'fill-opacity': prev['fill-opacity']
 	            });
 	        }
 
 	        dot.attr(outDotStyle);
+	        if (dot.node) {
+	            dot.node.setAttribute('filter', '');
+	        }
+
+	        this.resetSeriesOrder(groupIndex);
 	    },
 
 	    /**
@@ -5335,6 +4997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            strokeWidth = this.lineWidth;
 	            startLine = line.startLine;
 	            line = line.line;
+	            this._updateAreaOpacity(CHART_HOVER_STATUS_OUT);
 	        } else {
 	            strokeWidth = this.lineWidth;
 	        }
@@ -5343,9 +5006,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            opacity = DE_EMPHASIS_OPACITY;
 	        }
 
-	        if (line) {
-	            this._updateLineStrokeWidth(line, strokeWidth);
-	        }
+	        this._updateLineStrokeOpacity(CHART_HOVER_STATUS_OUT, line);
+	        this._updateLineStrokeWidth(line, strokeWidth);
 
 	        if (startLine) {
 	            this._updateLineStrokeWidth(startLine, strokeWidth);
@@ -5672,7 +5334,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5683,7 +5345,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineBase = __webpack_require__(15);
+	var RaphaelLineBase = __webpack_require__(14);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -5691,8 +5353,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DE_EMPHASIS_OPACITY = 0.3;
 
 	var concat = Array.prototype.concat;
-	var GUIDE_AREACHART_AREAOPACITY_TYPE = __webpack_require__(8).GUIDE_AREACHART_AREAOPACITY_TYPE;
-	var consoleUtil = __webpack_require__(17);
+	var chartConst = __webpack_require__(8);
+	var GUIDE_AREACHART_AREAOPACITY_TYPE = chartConst.GUIDE_AREACHART_AREAOPACITY_TYPE;
+	var CLASS_NAME_SVG_AUTOSHAPE = chartConst.CLASS_NAME_SVG_AUTOSHAPE;
+	var consoleUtil = __webpack_require__(16);
 
 	var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
 	    /**
@@ -5719,7 +5383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * Line width
 	         * @type {number}
 	         */
-	        this.lineWidth = 1;
+	        this.lineWidth = 0;
 	    },
 
 	    /**
@@ -5732,20 +5396,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dimension = data.dimension;
 	        var groupPositions = data.groupPositions;
 	        var theme = data.theme;
+	        var dotTheme = (theme && theme.dot) || {};
 	        var colors = theme.colors;
 	        var options = data.options;
-	        var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
+	        var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 1;
 	        var dotOpacity = options.showDot ? 1 : 0;
-	        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
+	        var borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
 	        var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
 	        var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
+	        var seriesSet;
 
 	        this.paper = paper;
 	        this.theme = data.theme;
 	        this.isSpline = options.spline;
 	        this.dimension = dimension;
 	        this.position = data.position;
-
 	        this.zeroTop = data.zeroTop;
 	        this.hasRangeData = data.hasRangeData;
 
@@ -5768,10 +5433,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.outDotStyle = outDotStyle;
 	        this.groupPositions = groupPositions;
 	        this.dotOpacity = dotOpacity;
-
 	        this.pivotGroupDots = null;
 
-	        return paper.setFinish();
+	        seriesSet = paper.setFinish();
+	        this._moveSeriesToFrontAll();
+	        this.tooltipLine.toFront();
+
+	        return seriesSet;
+	    },
+
+	    /**
+	     * Rearrange all series sequences.
+	     * @private
+	     */
+	    _moveSeriesToFrontAll: function() {
+	        var len = this.groupPaths ? this.groupPaths.length : 0;
+	        var i = 0;
+	        for (; i < len; i += 1) {
+	            this.moveSeriesToFront(this.groupAreas[i], this.groupDots[i]);
+	        }
 	    },
 
 	    /**
@@ -5812,19 +5492,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        groupPaths.reverse();
 
 	        groupAreas = snippet.map(groupPaths, function(path, groupIndex) {
-	            var areaColor = colors[groupIndex] || 'transparent',
-	                lineColor = areaColor,
-	                polygons = {
-	                    area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
-	                        fill: areaColor,
-	                        opacity: opacity,
-	                        stroke: areaColor
-	                    }),
-	                    line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth)
-	                };
+	            var polygons = {};
+	            var areaColor = colors[groupIndex] || 'transparent';
+	            var lineColor = areaColor;
+	            var area = raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
+	                fill: areaColor,
+	                opacity: opacity,
+	                stroke: areaColor
+	            });
+	            var line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth);
+
+	            area.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
+	            line.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
+
+	            polygons.area = area;
+	            polygons.line = line;
 
 	            if (path.startLine) {
-	                polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), lineColor, 1);
+	                polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), lineColor, 0);
 	            }
 
 	            return polygons;
@@ -6038,15 +5723,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                area.startLine.attr({'stroke-opacity': opacity});
 	            }
 
-	            snippet.forEachArray(groupDots, function(item) {
-	                if (this.dotOpacity) {
-	                    item.endDot.dot.attr({'fill-opacity': opacity});
-	                    if (item.startDot) {
-	                        item.startDot.dot.attr({'fill-opacity': opacity});
-	                    }
-	                }
-	            }, this);
-
 	            if (isSelectedLegend) {
 	                this.moveSeriesToFront(area, groupDots);
 	            }
@@ -6059,12 +5735,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @ignore
 	     */
 	    resetSeriesOrder: function(legendIndex) {
-	        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+	        var frontSeries = ((legendIndex + 1) < this.groupAreas.length) ? this.groupAreas[legendIndex + 1] : null;
+	        var frontArea;
 
-	        if (frontLine) {
-	            this.groupLines[legendIndex].insertBefore(frontLine);
+	        if (frontSeries) {
+	            frontArea = frontSeries.area;
+	            this.groupAreas[legendIndex].area.insertBefore(frontArea);
+	            this.groupAreas[legendIndex].line.insertBefore(frontArea);
 	            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
-	                item.endDot.dot.insertBefore(frontLine);
+	                if (item && item.endDot) {
+	                    item.endDot.dot.insertBefore(frontArea);
+	                }
 	            });
 	        }
 	    },
@@ -6208,7 +5889,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 	/**
@@ -6236,7 +5917,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -6257,7 +5938,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var RAD = Math.PI / DEGREE_180;
 	var LOADING_ANIMATION_DURATION = 700;
 	var EMPHASIS_OPACITY = 1;
-	var OVERLAY_OPACITY = 0.3;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var DEFAULT_LUMINANT_VALUE = 0.2;
 	var OVERLAY_ID = 'overlay';
@@ -6336,7 +6016,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._setSectorAttr();
 
 	        this.sectorInfos = this._renderPie(data.sectorData, data.theme.colors, data.additionalIndex, pieSeriesSet);
+
 	        this.overlay = this._renderOverlay();
+
+	        this.labelInfos = {
+	            value: [],
+	            legend: []
+	        };
 
 	        /**
 	         * previous mouse position
@@ -6357,7 +6043,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Clear paper.
 	     */
 	    clear: function() {
-	        this.legendLines = null;
 	        this.paper.clear();
 	    },
 
@@ -6379,7 +6064,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
 	        var y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
 	        var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
-	        var path = ['M', cx, cy,
+	        var path = [
+	            'M', cx, cy,
 	            'L', x1, y1,
 	            'A', r, r, 0, largeArcFlag, 1, x2, y2,
 	            'Z'];
@@ -6472,13 +6158,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	        var inner = this._renderSector(params);
 
+	        inner.node.setAttribute('class', 'auto-shape-rendering');
+
 	        inner.data('id', OVERLAY_ID);
 	        inner.data('chartType', this.chartType);
 
-	        return {
-	            inner: inner,
-	            outer: this._renderSector(params)
-	        };
+	        return inner;
 	    },
 
 	    /**
@@ -6527,9 +6212,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                attrs: {
 	                    fill: chartBackground.color,
 	                    stroke: chartBackground.color,
-	                    'stroke-width': 1
+	                    'stroke-width': 0
 	                }
 	            });
+
+	            sector.node.setAttribute('class', 'auto-shape-rendering');
+
 	            sector.data('index', index);
 	            sector.data('legendIndex', index + additionalIndex);
 	            sector.data('chartType', self.chartType);
@@ -6548,38 +6236,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Render legend lines.
-	     * @param {Array.<object>} outerPositions outer position
-	     */
-	    renderLegendLines: function(outerPositions) {
-	        var paper = this.paper,
-	            paths;
-
-	        if (!this.legendLines) {
-	            paths = this._makeLinePaths(outerPositions);
-	            this.legendLines = snippet.map(paths, function(path) {
-	                return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
-	            });
-	        }
-	    },
-
-	    /**
-	     * Make line paths.
-	     * @param {Array.<object>} outerPositions outer positions
-	     * @returns {Array} line paths.
-	     * @private
-	     */
-	    _makeLinePaths: function(outerPositions) {
-	        return snippet.map(outerPositions, function(positions) {
-	            return [
-	                raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
-	                raphaelRenderUtil.makeLinePath(positions.middle, positions.end),
-	                'Z'
-	            ].join('');
-	        });
-	    },
-
-	    /**
 	     * Show overlay.
 	     * @param {number} index - index
 	     * @param {number} legendIndex - legend index
@@ -6595,16 +6251,37 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        innerAttrs = {
 	            fill: '#fff',
-	            opacity: OVERLAY_OPACITY
+	            opacity: 1,
+	            'stroke-width': 7,
+	            'stroke-color': '#fff',
+	            'stroke-miterlimit': 15
 	        };
+
 	        innerAttrs[this.sectorName] = [cb.cx, cb.cy, cb.r, sa, ea, cb.r * this.holeRatio];
-	        overlay.inner.attr(innerAttrs);
-	        overlay.inner.data('index', index);
-	        overlay.inner.data('legendIndex', legendIndex);
-	        overlay.outer.attr({
-	            path: this._makeDonutSectorPath(cb.cx, cb.cy, cb.r + 10, sa, ea, cb.r).path,
-	            fill: sectorInfo.color,
-	            opacity: OVERLAY_OPACITY
+	        overlay.attr(innerAttrs);
+	        overlay.data('index', index);
+	        overlay.data('legendIndex', legendIndex);
+
+	        overlay.node.setAttribute('filter', 'url(#shadow)');
+
+	        this._indexingOverlapElement([
+	            overlay,
+	            sectorInfo.sector,
+	            this.labelInfos.legend[index],
+	            this.labelInfos.value[index]
+	        ]);
+	    },
+
+	    /**
+	     * Element indexing For overlay.
+	     * @param {Array} elements - indexing elements
+	     * @private
+	     */
+	    _indexingOverlapElement: function(elements) {
+	        snippet.forEach(elements, function(element) {
+	            if (element) {
+	                element.toFront();
+	            }
 	        });
 	    },
 
@@ -6619,8 +6296,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            opacity: 0
 	        };
 
-	        overlay.inner.attr(attrs);
-	        overlay.outer.attr(attrs);
+	        overlay.attr(attrs);
+
+	        this._indexingOverlapElement(this.labelInfos.legend);
+	        this._indexingOverlapElement(this.labelInfos.value);
 	    },
 
 	    /**
@@ -6660,24 +6339,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Animate legend lines.
 	     * @param {?number} legendIndex legend index
 	     */
-	    animateLegendLines: function(legendIndex) {
-	        var isNull;
-
-	        if (!this.legendLines) {
-	            return;
-	        }
-
-	        isNull = snippet.isNull(legendIndex);
-
-	        snippet.forEachArray(this.legendLines, function(line, index) {
-	            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
-
-	            line.animate({
-	                'stroke': 'black',
-	                'stroke-opacity': opacity
-	            });
-	        });
-	    },
 
 	    /**
 	     * Resize graph of pie chart.
@@ -6710,25 +6371,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    y: bBox.y + (bBox.height / 2)
 	                });
 	            }
-	        });
-	    },
-
-	    /**
-	     * Move legend lines.
-	     * @param {Array.<object>} outerPositions outer positions
-	     */
-	    moveLegendLines: function(outerPositions) {
-	        var paths;
-
-	        if (!this.legendLines) {
-	            return;
-	        }
-
-	        paths = this._makeLinePaths(outerPositions);
-	        snippet.forEachArray(this.legendLines, function(line, index) {
-	            line.attr({path: paths[index]});
-
-	            return line;
 	        });
 	    },
 
@@ -6852,20 +6494,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    selectLegend: function(legendIndex) {
 	        var isNull = snippet.isNull(legendIndex);
-	        var legendLines = this.legendLines;
-
 	        snippet.forEachArray(this.sectorInfos, function(sectorInfo, index) {
 	            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
 	            sectorInfo.sector.attr({
 	                'fill-opacity': opacity
 	            });
-
-	            if (legendLines) {
-	                legendLines[index].attr({
-	                    'stroke-opacity': opacity
-	                });
-	            }
 	        });
 	    },
 	    /**
@@ -6890,39 +6524,47 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Render labels and return label set
-	     * @param {object} paper Raphael paper
-	     * @param {object} positions position left, top
-	     * @param {Array.<string>} labels series labels
-	     * @param {object} theme label theme
-	     * @returns {Array.<object>}
+	     * @param {object} options label render options
+	     *      @param {dataType} dataType dataType (legend or value)
+	     *      @param {object} paper Raphael paper
+	     *      @param {Array.<object>} labelSet lableset
+	     *      @param {object} positions position left, top
+	     *      @param {Array.<string>} labels series labels
+	     *      @param {object} theme label theme
+	     *      @param {Array} colors series theme colors
 	     */
-	    renderLabels: function(paper, positions, labels, theme) {
-	        var labelSet = paper.set();
+	    renderLabels: function(options) {
+	        var theme = options.theme;
 	        var attributes = {
 	            'font-size': theme.fontSize,
-	            'font-family': theme.fontFamily,
+	            'font-family': (options.fontFamily) ? options.fontFamily : options.theme.fontFamily,
 	            'font-weight': theme.fontWeight,
 	            'text-anchor': 'middle',
-	            fill: theme.color,
+	            fill: theme.color || '#fff',
 	            opacity: 0
 	        };
 
-	        snippet.forEach(positions, function(position, index) {
+	        snippet.forEach(options.positions, function(position, index) {
 	            var label;
 
-	            if (position) {
-	                label = raphaelRenderUtil.renderText(paper, position, labels[index], attributes);
+	            if (options.colors) {
+	                attributes.fill = options.colors[index];
+	            }
 
+	            if (position) {
+	                label = raphaelRenderUtil.renderText(options.paper, position, options.labels[index], attributes);
 	                label.node.style.userSelect = 'none';
 	                label.node.style.cursor = 'default';
-	                label.node.setAttribute('filter', 'url(#glow)');
+	                label.node.setAttribute('class', 'auto-shape-rendering');
 	            }
-	            labelSet.push(label);
-	        });
 
-	        this.labelSet = labelSet;
+	            this.labelInfos[options.dataType].push(label);
+	            options.labelSet.push(label);
+	        }, this);
 
-	        return labelSet;
+	        if (!this.labelSet) {
+	            this.labelSet = options.labelSet;
+	        }
 	    }
 	});
 
@@ -6930,7 +6572,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -6941,12 +6583,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var RaphaelLineTypeBase = __webpack_require__(15);
+	var RaphaelLineTypeBase = __webpack_require__(14);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
+	var DEFAULT_LINE_WIDTH = 6;
 
 	var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
 	    /**
@@ -6971,7 +6614,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * Line width
 	         * @type {number}
 	         */
-	        this.lineWidth = 2;
+	        this.lineWidth = DEFAULT_LINE_WIDTH;
 	    },
 
 	    /**
@@ -6989,10 +6632,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isShowArea = data.options.showArea;
 
 	        var groupPaths = this._getLinesPath(groupPositions);
-	        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
+	        var borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
 	        var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
 	        var radialSeriesSet = paper.set();
 	        var lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);
+	        var dotPositions = snippet.map(groupPositions, function(positions) {
+	            positions.pop();
+
+	            return positions;
+	        });
 
 	        this.paper = paper;
 	        this.theme = data.theme;
@@ -7004,7 +6652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth, radialSeriesSet);
-	        this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity, radialSeriesSet);
+	        this.groupDots = this._renderDots(paper, dotPositions, colors, dotOpacity, radialSeriesSet);
 
 	        if (data.options.allowSelect) {
 	            this.selectionDot = this._makeSelectionDot(paper);
@@ -7017,6 +6665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.groupPositions = groupPositions;
 	        this.groupPaths = groupPaths;
 	        this.dotOpacity = dotOpacity;
+	        this.isShowArea = isShowArea;
 
 	        return radialSeriesSet;
 	    },
@@ -7071,14 +6720,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var area = raphaelRenderUtil.renderArea(paper, path, {
 	                fill: color,
 	                opacity: 0.4,
-	                'stroke-width': 0,
+	                'stroke-width': this.lineWidth,
 	                stroke: color
 	            });
 
 	            radialSeriesSet.push(area);
 
 	            return area;
-	        });
+	        }, this);
 	    },
 
 	    /**
@@ -7114,8 +6763,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {?number} legendIndex legend index
 	     */
 	    selectLegend: function(legendIndex) {
-	        var self = this,
-	            noneSelected = snippet.isNull(legendIndex);
+	        var noneSelected = snippet.isNull(legendIndex);
 
 	        this.selectedLegendIndex = legendIndex;
 
@@ -7123,14 +6771,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
 	            line.attr({'stroke-opacity': opacity});
-
-	            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
-	                item.opacity = opacity;
-
-	                if (self.dotOpacity) {
-	                    item.endDot.dot.attr({'fill-opacity': opacity});
-	                }
-	            });
 	        });
 	    }
 	});
@@ -7139,7 +6779,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7155,9 +6795,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var raphael = __webpack_require__(3);
 
 	var ANIMATION_DURATION = 700;
-	var CIRCLE_OPACITY = 0.5;
-	var STROKE_OPACITY = 0.3;
-	var EMPHASIS_OPACITY = 0.5;
+	var CIRCLE_OPACITY = 0.8;
+	var STROKE_OPACITY = 1;
+	var EMPHASIS_OPACITY = 0.8;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var DEFAULT_LUMINANC = 0.2;
 	var OVERLAY_BORDER_WIDTH = 2;
@@ -7251,6 +6891,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {?number}
 	         */
 	        this.animationTimeoutId = null;
+
+	        /**
+	         * selected legend
+	         * @type {?number}
+	         */
+	        this.selectedLegend = null;
+
+	        if (this.paper.raphael.svg) {
+	            this.appendShadowFilterToDefs();
+	        }
 
 	        return circleSet;
 	    },
@@ -7399,6 +7049,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return foundIndexes;
 	    },
 
+	    appendShadowFilterToDefs: function() {
+	        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+	        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+	        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+	        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+
+	        filter.setAttributeNS(null, 'id', 'shadow');
+	        filter.setAttributeNS(null, 'x', '-50%');
+	        filter.setAttributeNS(null, 'y', '-50%');
+	        filter.setAttributeNS(null, 'width', '180%');
+	        filter.setAttributeNS(null, 'height', '180%');
+	        feOffset.setAttributeNS(null, 'result', 'offOut');
+	        feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+	        feOffset.setAttributeNS(null, 'dx', '0');
+	        feOffset.setAttributeNS(null, 'dy', '0');
+	        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+	        feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+	        feGaussianBlur.setAttributeNS(null, 'stdDeviation', '2');
+	        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+	        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+	        feBlend.setAttributeNS(null, 'mode', 'normal');
+	        filter.appendChild(feOffset);
+	        filter.appendChild(feGaussianBlur);
+	        filter.appendChild(feBlend);
+	        this.paper.defs.appendChild(filter);
+	    },
+
 	    /**
 	     * Whether changed or not.
 	     * @param {{left: number, top: number}} prevPosition - previous position
@@ -7419,26 +7096,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	    showAnimation: function(indexes) {
 	        var circleInfo = this.groupCircleInfos[indexes.groupIndex][indexes.index];
 	        var bound = circleInfo.bound;
+	        this.circle = circleInfo.circle;
 
 	        this.overlay.attr({
+	            fill: circleInfo.color,
 	            cx: bound.left,
 	            cy: bound.top,
 	            r: bound.radius + OVERLAY_BORDER_WIDTH,
-	            stroke: circleInfo.color,
+	            stroke: '#fff',
 	            opacity: 1
 	        });
+
+	        this.circle.attr({
+	            opacity: 1
+	        });
+
+	        this.overlay.node.setAttribute('filter', 'url(#shadow)');
+	        this.overlay.toFront();
+	        this.circle.toFront();
 	    },
 
 	    /**
 	     * Hide overlay with animation.
-	     * @private
+	     * @param {object} indexes - indexes
+	     *      @param {number} indexes.groupIndex - index of circles group
+	     *      @param {number} indexes.index - index of circles
 	     */
-	    hideAnimation: function() {
+	    hideAnimation: function(indexes) {
+	        var changeOpacity = DE_EMPHASIS_OPACITY;
 	        this.overlay.attr({
 	            cx: 0,
 	            cy: 0,
 	            r: 0,
 	            opacity: 0
+	        });
+
+	        if (snippet.isNull(this.selectedLegend) || indexes.index === this.selectedLegend) {
+	            changeOpacity = EMPHASIS_OPACITY;
+	        }
+
+	        this.circle.attr({
+	            opacity: changeOpacity
 	        });
 	    },
 
@@ -7544,6 +7242,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    selectLegend: function(legendIndex) {
 	        var noneSelected = snippet.isNull(legendIndex);
 
+	        this.selectedLegend = legendIndex;
+
 	        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
 	            var opacity;
 
@@ -7562,7 +7262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7575,10 +7275,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
+	var predicate = __webpack_require__(21);
 
 	var ANIMATION_DURATION = 100;
-	var MIN_BORDER_WIDTH = 1;
-	var MAX_BORDER_WIDTH = 3;
+	var MIN_BORDER_WIDTH = 0;
+	var MAX_BORDER_WIDTH = 4;
 
 	/**
 	 * @classdesc RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
@@ -7589,7 +7290,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Render function of bar chart
 	     * @param {object} paper Raphael paper
-	     * @param {{
+	     * @param {
+	{
 	     *      dimension: {width: number, height: number},
 	     *      colorSpectrum: object,
 	     *      seriesDataModel: SeriesDataModel,
@@ -7602,6 +7304,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var seriesSet = paper.set();
 
 	        this.paper = paper;
+
+	        this.chartType = seriesData.chartType;
 
 	        /**
 	         * theme
@@ -7651,14 +7355,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._bindGetBoundFunction();
 	        this._bindGetColorFunction();
 
+	        this.seriesDataModel = seriesData.seriesDataModel;
+
 	        /**
 	         * boxes set
 	         * @type {Array.<Array.<{rect: Object, color: string}>>}
 	         */
 	        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot,
 	            seriesSet);
+	        this.rectOverlay = this._renderRectOverlay();
 
 	        return seriesSet;
+	    },
+
+	    /**
+	     * Render overlay.
+	     * @returns {object} raphael object
+	     * @private
+	     */
+	    _renderRectOverlay: function() {
+	        var bound = {
+	            width: 1,
+	            height: 1,
+	            left: 0,
+	            top: 0
+	        };
+	        var attributes = {
+	            'fill-opacity': 0
+	        };
+
+	        var rectOverlay = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
+	            'stroke-width': 0
+	        }, attributes));
+
+	        rectOverlay.node.setAttribute('filter', 'url(#shadow)');
+
+	        return rectOverlay;
 	    },
 
 	    /**
@@ -7710,13 +7442,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Get color from colorSpectrum by ratio of seriesItem.
 	     * @param {SeriesItem} seriesItem - seriesItem
+	     * @param {number} startDepth - start depth
 	     * @returns {string}
 	     * @private
 	     */
-	    _getColorFromSpectrum: function(seriesItem) {
+	    _getColorFromSpectrum: function(seriesItem, startDepth) {
 	        var color;
 
-	        if (!seriesItem.hasChild) {
+	        if (!seriesItem.hasChild || seriesItem.depth !== startDepth) {
 	            color = this.colorSpectrum.getColor(seriesItem.colorRatio || seriesItem.ratio) || this.chartBackground;
 	        } else {
 	            color = 'none';
@@ -7743,7 +7476,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _getColorFromColorsWhenZoomable: function(seriesItem, startDepth) {
-	        return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : 'none';
+	        return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : '#000';
 	    },
 
 	    /**
@@ -7751,31 +7484,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{width: number, height: number, left: number, top: number}} bound - bound
 	     * @param {string} color - color
 	     * @param {number} strokeWidth - stroke width
+	     * @param {number} [fillOpacity] - fill opacity
 	     * @returns {object}
 	     * @private
 	     */
-	    _renderRect: function(bound, color, strokeWidth) {
+	    _renderRect: function(bound, color, strokeWidth, fillOpacity) {
 	        return raphaelRenderUtil.renderRect(this.paper, bound, {
 	            fill: color,
 	            stroke: this.borderColor,
-	            'stroke-width': strokeWidth
+	            'stroke-width': strokeWidth,
+	            'fill-opacity': fillOpacity
 	        });
 	    },
 
 	    /**
 	     * Get stroke width.
-	     * @param {?number} depth - depth
-	     * @param {number} startDepth - start depth
+	     * @param {boolean} isFirstDepth - whether it is same to first depth or not
 	     * @returns {number}
 	     * @private
 	     */
-	    _getStrokeWidth: function(depth, startDepth) {
+	    _getStrokeWidth: function(isFirstDepth) {
 	        var strokeWidth;
 
 	        if (this.borderWidth) {
 	            strokeWidth = this.borderWidth;
-	        } else if (snippet.isExisty(depth)) {
-	            strokeWidth = Math.max(MIN_BORDER_WIDTH, MAX_BORDER_WIDTH - (depth - startDepth));
+	        } else if (isFirstDepth) {
+	            strokeWidth = MAX_BORDER_WIDTH;
 	        } else {
 	            strokeWidth = MIN_BORDER_WIDTH;
 	        }
@@ -7794,20 +7528,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderBoxes: function(seriesDataModel, startDepth, isPivot, seriesSet) {
 	        var self = this;
-	        var rectToBack;
-
-	        if (this.colorSpectrum || !this.zoomable) {
-	            rectToBack = function(rect) {
-	                rect.toBack();
-	            };
-	        } else {
-	            rectToBack = function() {};
-	        }
+	        var isTreemapChart = predicate.isTreemapChart(this.chartType);
 
 	        return seriesDataModel.map(function(seriesGroup, groupIndex) {
+	            var firstItem;
+
+	            if (isTreemapChart && !self.colorSpectrum && seriesGroup.getSeriesItemCount()) {
+	                firstItem = seriesGroup.getSeriesItem(0);
+	                self._setTreeFillOpacity({
+	                    id: firstItem.parent
+	                }, startDepth);
+	            }
+
 	            return seriesGroup.map(function(seriesItem, index) {
 	                var result = null;
-	                var strokeWidth = self._getStrokeWidth(seriesItem.depth, startDepth);
+	                var depth = seriesItem.depth;
+	                var strokeWidth = self.colorSpectrum ? 0 : self._getStrokeWidth(depth === startDepth);
+	                var fillOpacity = self.colorSpectrum ? 1 : seriesItem.fillOpacity;
 	                var bound, color;
 
 	                seriesItem.groupIndex = groupIndex;
@@ -7817,11 +7554,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (bound) {
 	                    color = self._getColor(seriesItem, startDepth);
 	                    result = {
-	                        rect: self._renderRect(bound, color, strokeWidth),
+	                        rect: self._renderRect(bound, color, strokeWidth, fillOpacity),
 	                        seriesItem: seriesItem,
 	                        color: color
 	                    };
-	                    rectToBack(result.rect);
 
 	                    if (seriesSet) {
 	                        seriesSet.push(result.rect);
@@ -7834,15 +7570,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * @param {{id: number, fillOpacity: number}} parentInfo - parent info
+	     * @param {number} startDepth - start depth
+	     * @private
+	     */
+	    _setTreeFillOpacity: function(parentInfo, startDepth) {
+	        var children = this.seriesDataModel.findSeriesItemsByParent(parentInfo.id);
+
+	        snippet.forEachArray(children, function(datum, index) {
+	            var depth = datum.depth;
+
+	            if (depth === startDepth) {
+	                datum.fillOpacity = 1;
+	            } else if (depth === startDepth + 1) {
+	                datum.fillOpacity = 0.05 * index;
+	            } else if (depth < startDepth) {
+	                datum.fillOpacity = 0;
+	            } else {
+	                datum.fillOpacity = parentInfo.fillOpacity + (0.05 * index);
+	            }
+
+	            if (datum.hasChild) {
+	                this._setTreeFillOpacity(
+	                    {
+	                        id: datum.id,
+	                        fillOpacity: datum.fillOpacity
+	                    },
+	                    startDepth
+	                );
+	            }
+	        }, this);
+	    },
+
+	    /**
 	     * Animate changing color of box.
 	     * @param {object} rect - raphael object
 	     * @param {string} [color] - fill color
 	     * @param {number} [opacity] - fill opacity
+	     * @param {number} [strokeColor] - stroke color
+	     * @param {number} [strokeWidth] - stroke width
 	     * @private
 	     */
-	    _animateChangingColor: function(rect, color, opacity) {
+	    _animateChangingColor: function(rect, color, opacity, strokeColor, strokeWidth) {
 	        var properties = {
-	            'fill-opacity': snippet.isExisty(opacity) ? opacity : 1
+	            'fill-opacity': snippet.isExisty(opacity) ? opacity : 1,
+	            stroke: strokeColor,
+	            'stroke-width': strokeWidth
 	        };
 
 	        if (color) {
@@ -7855,64 +7628,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Show animation.
 	     * @param {{groupIndex: number, index:number}} indexes - index info
-	     * @param {boolean} [useSpectrum] - whether use spectrum legend or not
-	     * @param {number} [opacity] - fill opacity
 	     */
-	    showAnimation: function(indexes, useSpectrum, opacity) {
+	    showAnimation: function(indexes) {
 	        var box = this.boxesSet[indexes.groupIndex][indexes.index];
-	        var color;
+	        var rect;
 
 	        if (!box) {
 	            return;
 	        }
 
-	        useSpectrum = snippet.isUndefined(useSpectrum) ? true : useSpectrum;
-	        color = useSpectrum ? this.theme.overColor : box.color;
+	        rect = box.rect.node;
 
-	        if (box.seriesItem.hasChild) {
-	            if (useSpectrum) {
-	                box.rect.attr({'fill-opacity': 0});
-	            }
-	            box.rect.toFront();
-	        }
+	        this.rectOverlay.attr({
+	            x: rect.getAttribute('x'),
+	            y: rect.getAttribute('y'),
+	            width: rect.getAttribute('width'),
+	            height: rect.getAttribute('height'),
+	            fill: box.color,
+	            'fill-opacity': 1,
+	            stroke: '#ffffff',
+	            'stroke-width': 4,
+	            'stroke-opacity': 1
+	        });
 
-	        this._animateChangingColor(box.rect, color, opacity);
+	        this.rectOverlay.toFront();
+	        this.labelSet.toFront();
 	    },
 
 	    /**
 	     * Hide animation.
 	     * @param {{groupIndex: number, index:number}} indexes - index info
-	     * @param {boolean} [useColorValue] - whether use colorValue or not
 	     */
-	    hideAnimation: function(indexes, useColorValue) {
-	        var colorSpectrum = this.colorSpectrum;
+	    hideAnimation: function(indexes) {
 	        var box = this.boxesSet[indexes.groupIndex][indexes.index];
-	        var opacity = 1;
-	        var color, paper;
 
 	        if (!box) {
 	            return;
 	        }
 
-	        paper = box.rect.paper;
-
-	        if (box.seriesItem.hasChild) {
-	            color = null;
-	            if (useColorValue) {
-	                opacity = 0;
-	            }
-	        } else {
-	            color = box.color;
-	        }
-
-	        this._animateChangingColor(box.rect, color, opacity);
-
-	        setTimeout(function() {
-	            if (!colorSpectrum && box.seriesItem.hasChild) {
-	                box.rect.toBack();
-	                paper.pushDownBackgroundToBottom();
-	            }
-	        }, ANIMATION_DURATION);
+	        this.rectOverlay.attr({
+	            width: 1,
+	            height: 1,
+	            x: 0,
+	            y: 0,
+	            'fill-opacity': 0,
+	            'stroke-opacity': 0
+	        });
 	    },
 
 	    /**
@@ -7951,7 +7712,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'font-size': labelTheme.fontSize,
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
-	            fill: labelTheme.color,
+	            fill: '#ffffff',
 	            opacity: 0
 	        };
 
@@ -7962,11 +7723,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                seriesLabel.node.style.userSelect = 'none';
 	                seriesLabel.node.style.cursor = 'default';
-	                seriesLabel.node.setAttribute('filter', 'url(#glow)');
 
 	                labelSet.push(seriesLabel);
 	            });
 	        });
+
+	        this.labelSet = labelSet;
 
 	        return labelSet;
 	    },
@@ -7982,20 +7744,584 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 
 	        snippet.forEach(labels, function(label, index) {
-	            var seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
+	            var seriesLabel;
 
-	            seriesLabel.node.style.userSelect = 'none';
-	            seriesLabel.node.style.cursor = 'default';
-	            seriesLabel.node.setAttribute('filter', 'url(#glow)');
+	            if (positions[index]) {
+	                seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
 
-	            labelSet.push(seriesLabel);
+	                seriesLabel.node.style.userSelect = 'none';
+	                seriesLabel.node.style.cursor = 'default';
+
+	                labelSet.push(seriesLabel);
+	            }
 	        });
+
+	        this.labelSet = labelSet;
 
 	        return labelSet;
 	    }
 	});
 
 	module.exports = RaphaelBoxTypeChart;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Predicate.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+
+	'use strict';
+
+	var chartConst = __webpack_require__(8);
+	var arrayUtil = __webpack_require__(10);
+
+	/**
+	 * predicate.
+	 * @module predicate
+	 * @private */
+	var predicate = {
+	    /**
+	     * Whether bar chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBarChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BAR;
+	    },
+
+	    /**
+	     * Whether column chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isColumnChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_COLUMN;
+	    },
+
+	    /**
+	     * Whether bar type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBarTypeChart: function(chartType) {
+	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
+	    },
+
+	    /**
+	     * Whether column type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} seriesTypes - type of series
+	     * @returns {boolean}
+	     */
+	    isColumnTypeChart: function(chartType, seriesTypes) {
+	        return predicate.isHeatmapChart(chartType) ||
+	            predicate.isColumnChart(chartType) ||
+	            predicate.isBoxplotChart(chartType) ||
+	            predicate.isLineColumnComboChart(chartType, seriesTypes);
+	    },
+
+	    /**
+	     * Whether boxplot chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBoxplotChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BOXPLOT;
+	    },
+
+	    /**
+	     * Whether bullet chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBulletChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BULLET;
+	    },
+
+	    /**
+	     * Whether radial type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isRadialChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_RADIAL;
+	    },
+
+	    /**
+	     * Whether diverging chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {boolean} diverging - whether has diverging or not
+	     * @returns {*|boolean}
+	     */
+	    isDivergingChart: function(chartType, diverging) {
+	        return this.isBarTypeChart(chartType) && diverging;
+	    },
+
+	    /**
+	     * Whether normal stack chart or not.
+	     * @param {string} chartType - type of chart
+	     * @param {string} stackType - type of stack
+	     * @returns {boolean}
+	     * @private
+	     */
+	    isNormalStackChart: function(chartType, stackType) {
+	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+	        var isNormalStack = predicate.isNormalStack(stackType);
+
+	        return isAllowedStackOption && isNormalStack;
+	    },
+
+	    /**
+	     * Whether percent stack chart or not.
+	     * @param {string} chartType - type of chart
+	     * @param {string} stackType - type of stack
+	     * @returns {boolean}
+	     * @private
+	     */
+	    isPercentStackChart: function(chartType, stackType) {
+	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+	        var isPercentStack = predicate.isPercentStack(stackType);
+
+	        return isAllowedStackOption && isPercentStack;
+	    },
+
+	    /**
+	     * Whether combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isComboChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_COMBO;
+	    },
+
+	    /**
+	     * Whether line and column combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineColumnComboChart: function(chartType, subChartTypes) {
+	        var isLineOrColumn = arrayUtil.all(subChartTypes || [], function(subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isColumnChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && isLineOrColumn;
+	    },
+
+	    /**
+	     * Whether pie and donut combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isPieDonutComboChart: function(chartType, subChartTypes) {
+	        var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
+	            return predicate.isPieChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && isAllPieType;
+	    },
+
+	    /**
+	     * Whether line chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isLineChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_LINE;
+	    },
+
+	    /**
+	     * Whether area chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isAreaChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_AREA;
+	    },
+
+	    /**
+	     * Whether line and area combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineAreaComboChart: function(chartType, subChartTypes) {
+	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && isAllLineType;
+	    },
+
+	    /**
+	     * Whether line and area combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    hasLineChart: function(chartType, subChartTypes) {
+	        var hasLineType = arrayUtil.any(subChartTypes || [], function(subChartType) {
+	            return predicate.isLineChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && hasLineType;
+	    },
+
+	    /**
+	     * Whether line and scatter combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineScatterComboChart: function(chartType, subChartTypes) {
+	        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
+	        });
+
+	        return predicate.isComboChart(chartType) && isAllLineType;
+	    },
+
+	    /**
+	     * Whether line type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} [subChartTypes] - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineTypeChart: function(chartType, subChartTypes) {
+	        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
+	            || predicate.isLineAreaComboChart(chartType, subChartTypes);
+	    },
+
+	    /**
+	     * Whether bubble chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBubbleChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_BUBBLE;
+	    },
+
+	    /**
+	     * Whether scatter chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isScatterChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_SCATTER;
+	    },
+
+	    /**
+	     * Whether heatmap chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isHeatmapChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_HEATMAP;
+	    },
+
+	    /**
+	     * Whether treemap chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isTreemapChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_TREEMAP;
+	    },
+
+	    /**
+	     * Whether box type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isBoxTypeChart: function(chartType) {
+	        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
+	    },
+
+	    /**
+	     * Whether pie chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isPieChart: function(chartType) {
+	        // change to indexOf for handling alias
+	        return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
+	    },
+
+	    /**
+	     * Whether map chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isMapChart: function(chartType) {
+	        return chartType === chartConst.CHART_TYPE_MAP;
+	    },
+
+	    /**
+	     * Whether coordinate type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isCoordinateTypeChart: function(chartType) {
+	        return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
+	    },
+
+	    /**
+	     * Whether allow rendering for minus point in area of series.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    allowMinusPointRender: function(chartType) {
+	        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
+	            predicate.isBoxTypeChart(chartType) || predicate.isBulletChart(chartType);
+	    },
+
+	    /**
+	     * Whether chart to detect mouse events on series or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isChartToDetectMouseEventOnSeries: function(chartType) {
+	        return predicate.isPieChart(chartType) || predicate.isMapChart(chartType)
+	            || predicate.isCoordinateTypeChart(chartType);
+	    },
+
+	    /**
+	     * Whether align of label is outer or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLabelAlignOuter: function(align) {
+	        return align === chartConst.LABEL_ALIGN_OUTER;
+	    },
+
+	    /**
+	     * Whether show label or not.
+	     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
+	     * @returns {boolean}
+	     */
+	    isShowLabel: function(options) {
+	        return options.showLabel || options.showLegend;
+	    },
+
+	    /**
+	     * Whether show outer label or not.
+	     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
+	     * @returns {*|boolean}
+	     */
+	    isShowOuterLabel: function(options) {
+	        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
+	    },
+
+	    /**
+	     * Whether align of legend is left or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignLeft: function(align) {
+	        return align === chartConst.LEGEND_ALIGN_LEFT;
+	    },
+
+	    /**
+	     * Whether align of legend is top or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignTop: function(align) {
+	        return align === chartConst.LEGEND_ALIGN_TOP;
+	    },
+
+	    /**
+	     * Whether align of legend is bottom or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignBottom: function(align) {
+	        return align === chartConst.LEGEND_ALIGN_BOTTOM;
+	    },
+
+	    /**
+	     * Whether horizontal legend or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align option for legend
+	     * @returns {boolean}
+	     */
+	    isHorizontalLegend: function(align) {
+	        return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
+	    },
+
+	    /**
+	     * Whether vertical legend or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align option for legend
+	     * @returns {boolean}
+	     */
+	    isVerticalLegend: function(align) {
+	        return !predicate.isHorizontalLegend(align);
+	    },
+
+	    /**
+	     * Whether allowed stackType option or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isAllowedStackOption: function(chartType) {
+	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType)
+	            || predicate.isAreaChart(chartType);
+	    },
+
+	    /**
+	     * Whether normal stack type or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isNormalStack: function(stackType) {
+	        return stackType === chartConst.NORMAL_STACK_TYPE;
+	    },
+
+	    /**
+	     * Whether percent stack type or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isPercentStack: function(stackType) {
+	        return stackType === chartConst.PERCENT_STACK_TYPE;
+	    },
+
+	    /**
+	     * Whether valid stackType option or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isValidStackOption: function(stackType) {
+	        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
+	    },
+
+	    /**
+	     * Whether allow range data or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isAllowRangeData: function(chartType) {
+	        return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
+	    },
+
+	    /**
+	     * Whether align of yAxis is center or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} hasRightYAxis - whether has right yAxis.
+	     * @param {string} alignOption - align option of yAxis.
+	     * @returns {boolean} whether - align center or not.
+	     */
+	    isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
+	        return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
+	    },
+
+	    /**
+	     * Whether minus limit or not.
+	     * @memberOf module:predicate
+	     * @param {{min: number, max: number}} limit - limit
+	     * @returns {boolean}
+	     */
+	    isMinusLimit: function(limit) {
+	        return limit.min <= 0 && limit.max <= 0;
+	    },
+
+	    /**
+	     * Whether auto tick interval or not.
+	     * @param {string} [tickInterval] - tick interval option
+	     * @returns {boolean}
+	     */
+	    isAutoTickInterval: function(tickInterval) {
+	        return tickInterval === chartConst.TICK_INTERVAL_AUTO;
+	    },
+
+	    /**
+	     * Whether valid label interval or not.
+	     * @param {number} [labelInterval] - label interval option
+	     * @param {string} [tickInterval] - tick interval option
+	     * @returns {*|boolean}
+	     */
+	    isValidLabelInterval: function(labelInterval, tickInterval) {
+	        return labelInterval && labelInterval > 1 && !tickInterval;
+	    },
+
+	    /**
+	     * Whether datetime type or not.
+	     * @param {string} type - type
+	     * @returns {boolean}
+	     */
+	    isDatetimeType: function(type) {
+	        return type === chartConst.AXIS_TYPE_DATETIME;
+	    },
+
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#showTooltip API
+	     */
+	    isSupportPublicShowTooptipAPI: function(chartType) {
+	        return this.isBarChart(chartType) ||
+	            this.isColumnChart(chartType) ||
+	            this.isLineChart(chartType) ||
+	            this.isAreaChart(chartType) ||
+	            this.isBoxplotChart(chartType);
+	    },
+
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#hideTooltip API
+	     */
+	    isSupportPublicHideTooptipAPI: function(chartType) {
+	        return this.isBarChart(chartType) ||
+	            this.isColumnChart(chartType) ||
+	            this.isLineChart(chartType) ||
+	            this.isAreaChart(chartType) ||
+	            this.isBoxplotChart(chartType);
+	    }
+	};
+
+	module.exports = predicate;
 
 
 /***/ }),
@@ -8019,6 +8345,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var STROKE_COLOR = 'gray';
 	var ANIMATION_DURATION = 100;
 	var G_ID = 'tui-chart-series-group';
+	var FILL_COLOR_OF_NO_DATA = '#eee';
 
 	/**
 	 * @classdesc RaphaelMapCharts is graph renderer for map chart.
@@ -8079,12 +8406,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var colorSpectrum = data.colorSpectrum;
 
 	        return snippet.map(data.mapModel.getMapData(), function(datum, index) {
-	            var ratio = datum.ratio || 0;
-	            var color = colorSpectrum.getColor(ratio);
+	            var ratio = datum.ratio;
+	            var color = ratio ? colorSpectrum.getColor(ratio) : FILL_COLOR_OF_NO_DATA;
 	            var sector = raphaelRenderUtil.renderArea(paper, datum.path, {
 	                fill: color,
 	                opacity: 1,
 	                stroke: STROKE_COLOR,
+	                'stroke-width': 0.2,
 	                'stroke-opacity': 1,
 	                transform: 's' + dimensionRatio + ',' + dimensionRatio + ',0,0'
 	                    + 't' + (position.left / dimensionRatio) + ',' + (position.top / dimensionRatio)
@@ -8097,7 +8425,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return {
 	                sector: sector,
 	                color: color,
-	                ratio: datum.ratio
+	                ratio: ratio
 	            };
 	        });
 	    },
@@ -8121,10 +8449,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    changeColor: function(index) {
 	        var sector = this.sectors[index];
+	        var attributes = {
+	            stroke: '#ffffff',
+	            'stroke-width': 4
+	        };
 
-	        sector.sector.animate({
-	            fill: this.overColor
-	        }, ANIMATION_DURATION, '>');
+	        if (this.overColor) {
+	            attributes.fill = this.overColor;
+	        }
+
+	        sector.sector.animate(attributes, ANIMATION_DURATION, '>');
+	        sector.sector.node.setAttribute('filter', 'url(#shadow)');
+	        sector.sector.toFront();
 	    },
 
 	    /**
@@ -8135,8 +8471,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var sector = this.sectors[index];
 
 	        sector.sector.animate({
-	            fill: sector.color
+	            fill: sector.color,
+	            stroke: STROKE_COLOR,
+	            'stroke-width': 0.2
 	        }, ANIMATION_DURATION, '>');
+	        sector.sector.node.setAttribute('filter', 'none');
 	    },
 
 	    /**
@@ -8331,6 +8670,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(6);
 
 	var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
+	var PAGINATION_POSITION_HEIGHT = 8;
+	var PAGINATION_POSITION_WIDTH = 10;
+	var PAGINATION_POSITION_HALP_WIDTH = PAGINATION_POSITION_WIDTH / 2;
+	var PAGINATION_POSITION_PADDING = 3;
 	var RaphaelLegendComponent;
 
 	/**
@@ -8355,11 +8698,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @private
 	         */
 	        this._checkBoxHeight = 0;
-	        /**
-	         * @type {number}
-	         * @private
-	         */
-	        this._iconHeight = 0;
 	        /**
 	         * @type {number}
 	         * @private
@@ -8431,7 +8769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 
 	            if (self.isHorizontal) {
-	                position.left += self.labelWidths[index] + labelPaddingLeft;
+	                position.left += self.labelWidths[index] + chartConst.LEGEND_H_LABEL_RIGHT_PADDING;
 	            } else {
 	                position.left = self.basePosition.left;
 	                position.top += self._legendItemHeight + chartConst.LINE_MARGIN_TOP;
@@ -8454,7 +8792,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (!this.isHorizontal && totalHeight + (positionTop * 2) > chartHeight) {
 	            pageHeight = chartHeight - (positionTop * 2);
-	            this._legendItemHeight = Math.max(legendData[0].labelHeight, chartConst.LEGEND_ICON_HEIGHT);
+	            this._legendItemHeight = Math.max(legendData[0].labelHeight, chartConst.LEGEND_CHECKBOX_SIZE);
 	            singleItemHeight = (this._legendItemHeight + chartConst.LINE_MARGIN_TOP);
 
 	            visibleItemCount = Math.floor(pageHeight / singleItemHeight);
@@ -8548,34 +8886,76 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _renderPaginationArea: function(position, dimension) {
 	        var self = this;
 	        var BUTTON_WIDTH = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
-	        var BUTTON_PADDING_LEFT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_LEFT;
-	        var controllerPositionTop = position.top + dimension.height - chartConst.CHART_PADDING;
-	        var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
-	        var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
-	        var leftButtonPositionLeft = rightButtonPositionLeft - (BUTTON_PADDING_LEFT + BUTTON_WIDTH);
-	        var lowerArrowPath = ['M', rightButtonPositionLeft, ',', (controllerPositionTop + 3),
-	            'L', (rightButtonPositionLeft + 5), ',', (controllerPositionTop + 8),
-	            'L', (rightButtonPositionLeft + 10), ',', (controllerPositionTop + 3)].join('');
-	        var upperArrowPath = ['M', leftButtonPositionLeft, ',', (controllerPositionTop + 8),
-	            'L', (leftButtonPositionLeft + 5), ',', (controllerPositionTop + 3),
-	            'L', (leftButtonPositionLeft + 10), ',', (controllerPositionTop + 8)].join('');
+	        var BUTTON_PADDING_RIGHT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_RIGHT;
+	        var controllerPositionTop = position.top + dimension.height - chartConst.LEGEND_AREA_V_PADDING;
+	        var controllerPositionLeft = position.left - chartConst.LEGEND_AREA_H_PADDING;
+	        var leftButtonPositionLeft = controllerPositionLeft + chartConst.LEGEND_AREA_H_PADDING;
+	        var rightButtonPositionLeft = leftButtonPositionLeft + (BUTTON_PADDING_RIGHT + BUTTON_WIDTH);
+	        var lowerArrowPath = ['M', rightButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
+	            'L', (rightButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
+	            'L', (rightButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4)].join('');
+	        var upperArrowPath = ['M', leftButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
+	            'L', (leftButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
+	            'L', (leftButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4)].join('');
 
-	        this.upperButton = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 3);
-	        this.lowerButton = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 3);
+	        var prevRect = this._renderPaginationRect({
+	            top: controllerPositionTop,
+	            left: leftButtonPositionLeft
+	        });
+	        var prevArrow = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 2);
 
-	        this.upperButton.click(function() {
+	        var nextRect = this._renderPaginationRect({
+	            top: controllerPositionTop,
+	            left: rightButtonPositionLeft
+	        });
+	        var nextArrow = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 2);
+
+	        var prevButtonSet = this.paper.set();
+	        var nextButtonSet = this.paper.set();
+
+	        prevRect.className = 'tui-chart-icon';
+	        prevButtonSet.push(prevRect);
+	        prevButtonSet.push(prevArrow);
+
+	        nextRect.className = 'tui-chart-icon';
+	        nextButtonSet.push(nextRect);
+	        nextButtonSet.push(nextArrow);
+
+	        prevButtonSet.click(function() {
 	            if (self._currentPageCount > 1) {
 	                self._paginateLegendAreaTo('previous');
 	                self._currentPageCount -= 1;
 	            }
 	        });
 
-	        this.lowerButton.click(function() {
+	        nextButtonSet.click(function() {
 	            if (self._currentPageCount < self.availablePageCount) {
 	                self._paginateLegendAreaTo('next');
 	                self._currentPageCount += 1;
 	            }
 	        });
+	    },
+
+	    /**
+	     * @param {object} position - position top, left
+	     * @returns {SVGElement} - svg element
+	     */
+	    _renderPaginationRect: function(position) {
+	        var BUTTON_SIZE = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
+	        var bound = {
+	            left: position.left,
+	            top: position.top,
+	            width: BUTTON_SIZE,
+	            height: BUTTON_SIZE
+	        };
+	        var rect = raphaelRenderUtil.renderRect(this.paper, bound, {
+	            fill: '#f4f4f4',
+	            rx: '1px',
+	            ry: '1px',
+	            stroke: 'none'
+	        });
+
+	        return rect;
 	    },
 
 	    /**
@@ -8622,11 +9002,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var labelTheme = this.labelTheme;
 	        var pos = {
 	            left: position.left,
-	            top: position.top + (this._iconHeight / 2)
+	            top: position.top + (this._legendItemHeight / 2)
 	        };
-
 	        var attributes = {
-	            fill: labelTheme.color,
 	            'font-size': labelTheme.fontSize,
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
@@ -8654,21 +9032,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderCheckbox: function(position, data) {
 	        var self = this;
-	        var checkboxSet;
+	        var checkboxSet, checkboxElement, checkElement;
 	        var left = position.left;
 	        var top = position.top + ((this._legendItemHeight - this._checkBoxHeight) / 2);
-	        var vPathString = 'M' + ((this._checkBoxWidth * 0.3) + left) + ',' + ((this._checkBoxHeight * 0.5) + top)
-	            + 'L' + ((this._checkBoxWidth * 0.5) + left) + ',' + ((this._checkBoxHeight * 0.7) + top)
-	            + 'L' + ((this._checkBoxWidth * 0.8) + left) + ',' + ((this._checkBoxHeight * 0.2) + top);
+	        var checkboxPathSize = this._checkBoxWidth / 3;
+	        var checkboxPathHalpSize = this._checkBoxWidth / 5.7;
+
+	        var vPathString = 'M' + ((this._checkBoxWidth * 0.25) + left) + ',' + ((this._checkBoxHeight * 0.5) + top) +
+	            'l' + checkboxPathHalpSize + ',' + checkboxPathHalpSize + ' l' + checkboxPathSize + ',-' + checkboxPathSize;
 
 	        checkboxSet = this.paper.set();
+	        checkboxElement = this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 0).attr({
+	            fill: '#fff',
+	            stroke: '#aaa',
+	            'stroke-width': 1
+	        });
+	        checkboxElement.node.setAttribute('class', 'auto-shape-rendering');
 
-	        checkboxSet.push(this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 2).attr({
-	            fill: '#fff'
-	        }));
+	        checkboxSet.push(checkboxElement);
 
 	        if (data.isChecked) {
-	            checkboxSet.push(this.paper.path(vPathString));
+	            checkElement = this.paper.path(vPathString).attr({
+	                'stroke': '#555',
+	                'stroke-width': 2
+	            });
+	            checkElement.node.setAttribute(
+	                'class', 'auto-shape-rendering'
+	            );
+	            checkboxSet.push(checkElement);
 	        }
 
 	        checkboxSet.data('index', data.legendIndex);
@@ -8695,22 +9086,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderIcon: function(position, data) {
 	        var self = this;
-	        var icon, pathString;
+	        var icon;
 
 	        this.paper.setStart();
 
-	        if (data.iconType === 'line') {
-	            pathString = 'M' + position.left + ',' + (position.top + (this._legendItemHeight / 2))
-	                + 'H' + (position.left + chartConst.LEGEND_ICON_WIDTH);
+	        if ((data.iconType === 'line' || data.iconType === 'radial') && this.paper.canvas.transform) {
+	            icon = this.paper.path(chartConst.LEGEND_LINE_ICON_PATH);
 
-	            icon = raphaelRenderUtil.renderLine(this.paper, pathString, data.legendColor, 3);
-	            icon.attr('stroke-opacity', data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1);
+	            icon.attr({
+	                'stroke': data.legendColor,
+	                'stroke-width': 2,
+	                'stroke-opacity': data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1
+	            });
+	            icon.translate(position.left, position.top);
 	        } else {
 	            icon = raphaelRenderUtil.renderRect(this.paper, {
 	                left: position.left,
-	                top: position.top,
+	                top: position.top + ((chartConst.LEGEND_CHECKBOX_SIZE - chartConst.LEGEND_ICON_HEIGHT) / 2),
 	                width: chartConst.LEGEND_ICON_WIDTH,
-	                height: this._iconHeight
+	                height: chartConst.LEGEND_ICON_HEIGHT
 	            }, {
 	                'stroke-width': 0,
 	                fill: data.legendColor,
@@ -8783,11 +9177,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number} - calculate single legend width
 	     */
 	    _calculateSingleLegendWidth: function(legendIndex) {
-	        return chartConst.LEGEND_AREA_PADDING
+	        return chartConst.LEGEND_AREA_H_PADDING
 	            + this._getCheckboxWidth()
 	            + getIconWidth()
 	            + this._getLabelWidth(legendIndex)
-	            + chartConst.LEGEND_AREA_PADDING;
+	            + chartConst.LEGEND_AREA_H_PADDING;
 	    },
 
 	    /**
@@ -8795,9 +9189,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} labelHeight - label height
 	     */
 	    _setComponentDimensionsBaseOnLabelHeight: function(labelHeight) {
-	        this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_ICON_HEIGHT);
-	        this._iconHeight = this._legendItemHeight;
-	        this._checkBoxWidth = this._checkBoxHeight = labelHeight;
+	        this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_CHECKBOX_SIZE);
+	        this._checkBoxWidth = this._checkBoxHeight = chartConst.LEGEND_CHECKBOX_SIZE;
 	    }
 	});
 
@@ -8819,13 +9212,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var raphaelRenderUtil = __webpack_require__(5);
 	var chartConst = __webpack_require__(8);
 	var snippet = __webpack_require__(6);
+	var renderUtil = __webpack_require__(7);
+	var predicate = __webpack_require__(21);
 
-	var PADDING = chartConst.LEGEND_AREA_PADDING;
 	var DEGREE_HORIZONTAL_BAR = 360;
 	var DEGREE_VERTICAL_BAR = 270;
-	var GAP_BETWEEN_LABEL_AND_LEGEND_BAR = 35;
-	var TICK_BAR_LENGTH = 15;
-	var WEDGE_BASE_HALF = 3; // half of wedge triagle base
+	var WEDGE_BASE_HALF = 2.5; // half of wedge triagle base
 	/**
 	 * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
 	 * @class RaphaelMapLegend
@@ -8834,55 +9226,114 @@ return /******/ (function(modules) { // webpackBootstrap
 	var RaphaelMapLegend = snippet.defineClass(/** @lends RaphaelMapLegend.prototype */ {
 	    /**
 	     * Render function of map chart legend.
-	     * @param {object} paper raphael paper
-	     * @param {object} layout legend layout
-	     * @param {ColorSpectrum} colorSpectrum map chart color model
-	     * @param {boolean} isHorizontal whether horizontal legend or not
-	     * @param {Array.<object>} legendSet legend set
+	     * @param {object} param - param to render spectrum legend
+	     *  @param {object} param.paper raphael paper
+	     *  @param {object} param.layout legend layout
+	     *  @param {ColorSpectrum} param.colorSpectrum map chart color model
+	     *  @param {boolean} param.isHorizontal whether horizontal legend or not
+	     *  @param {Array.<object>} param.legendSet legend set
 	     */
-	    render: function(paper, layout, colorSpectrum, isHorizontal, legendSet) {
+	    render: function(param) {
 	        var gradientBar;
 
-	        layout.position.left += (PADDING * 2);
-	        layout.position.top += PADDING;
+	        var layout = param.layout;
+	        var align = param.align;
+	        var isHorizontal = predicate.isHorizontalLegend(align);
+	        var legendSet = param.legendSet;
+	        var theme = param.theme;
+	        var labels = param.labels;
+	        var minLabel = labels[0];
+	        var maxLabel = labels[labels.length - 1];
+	        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth([minLabel, maxLabel]);
+	        var labelHeight = renderUtil.getRenderedLabelHeight(minLabel, theme);
+	        var isBoxTypeChart = predicate.isBoxTypeChart(this.chartType);
+	        var position = layout.position;
 
-	        gradientBar = this._renderGradientBar(paper, layout, colorSpectrum, isHorizontal);
+	        this.layout = layout;
+	        this.isHorizontal = isHorizontal;
+	        this.isLeftLegend = predicate.isLegendAlignLeft(align);
+	        this.isTopLegend = predicate.isLegendAlignTop(align);
+	        this.theme = theme;
+	        this.paper = param.paper;
+	        this.legendSet = param.legendSet;
+	        this.colorSpectrum = param.colorSpectrum;
+
+	        if (predicate.isLegendAlignTop(align)) {
+	            position.top += (
+	                chartConst.MAP_LEGEND_AREA_PADDING_WIDE
+	                 + labelHeight + (chartConst.MAP_LEGEND_LABEL_PADDING * 2)
+	            );
+	        } else if (predicate.isLegendAlignBottom(align)) {
+	            position.top += this._calculateHorizontalLegendTooltipHeight(labels, theme)
+	                + chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE;
+
+	            if (isBoxTypeChart) {
+	                position.top -= chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING;
+	            } else {
+	                position.top += chartConst.MAP_LEGEND_AREA_PADDING_WIDE;
+	            }
+	        } else if (predicate.isLegendAlignLeft(align)) {
+	            position.left += maxLabelWidth + chartConst.MAP_LEGEND_LABEL_PADDING;
+	        } else {
+	            position.left = (layout.position.right
+	                - maxLabelWidth - chartConst.MAP_LEGEND_LABEL_PADDING - chartConst.MAP_LEGEND_GRAPH_SIZE);
+	        }
+
+	        gradientBar = this._renderGradientBar(this.paper, layout, this.colorSpectrum, isHorizontal);
 
 	        legendSet.push(gradientBar);
 
-	        this.wedge = this._renderWedge(paper, layout.position);
+	        this.wedge = this._renderWedge(this.paper, position);
+	        this.wedgeText = this._renderWedgeText(this.paper, position, theme);
 	        legendSet.push(this.wedge);
 
 	        this.gradientBar = gradientBar;
 	    },
 
 	    /**
-	     * Render gradient bar inner tick & tick label
+	     * Render tick label
 	     * @param {object} paper Raphael paper
 	     * @param {object} baseData base data for render ticks
 	     * @param {Array.<string>} labels labels
-	     * @param {boolean} isHorizontal boolean value for is horizontal or not
+	     * @param {string} align legend align option
 	     * @param {Array.<object>} legendSet legend set
 	     */
-	    renderTicksAndLabels: function(paper, baseData, labels, isHorizontal, legendSet) {
+	    renderTickLabels: function(paper, baseData, labels, align, legendSet) {
+	        var theme = this.theme;
+	        var attribute = {
+	            'font-size': theme.fontSize,
+	            'font-family': theme.fontFamily,
+	            'font-weight': theme.fontWeight,
+	            fill: '#000'
+	        };
+	        var minLabel = labels[0];
+	        var maxLabel = labels[labels.length - 1];
+	        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth([minLabel, maxLabel]);
+	        var labelHeight = renderUtil.getRenderedLabelHeight(minLabel, theme);
+
 	        snippet.forEach(labels, function(label, labelIndex) {
 	            var offsetValue = baseData.step * labelIndex;
 	            var pos = snippet.extend({}, baseData.position);
-	            var path = 'M';
 
-	            if (isHorizontal) {
+	            if (predicate.isHorizontalLegend(align)) {
 	                pos.left += offsetValue;
-	                path += pos.left + ',' + (pos.top - GAP_BETWEEN_LABEL_AND_LEGEND_BAR)
-	                    + 'V' + (pos.top - GAP_BETWEEN_LABEL_AND_LEGEND_BAR + TICK_BAR_LENGTH);
+	                if (this.isTopLegend) {
+	                    pos.top -= (labelHeight / 2);
+	                } else {
+	                    pos.top += (labelHeight / 2);
+	                }
 	            } else {
 	                pos.top += offsetValue;
-	                path += (pos.left - GAP_BETWEEN_LABEL_AND_LEGEND_BAR) + ',' + pos.top
-	                    + 'H' + (pos.left - GAP_BETWEEN_LABEL_AND_LEGEND_BAR + TICK_BAR_LENGTH);
+	                if (this.isLeftLegend) {
+	                    attribute['text-anchor'] = 'end';
+	                    pos.left = chartConst.CHART_PADDING + maxLabelWidth;
+	                } else {
+	                    attribute['text-anchor'] = 'start';
+	                }
 	            }
 
-	            legendSet.push(raphaelRenderUtil.renderLine(paper, path, '#ccc', 1));
-	            legendSet.push(raphaelRenderUtil.renderText(paper, pos, label));
-	        });
+	            legendSet.push(raphaelRenderUtil.renderText(paper, pos, label, attribute));
+	        }, this);
 	    },
 
 	    /**
@@ -8895,31 +9346,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderGradientBar: function(paper, layout, colorSpectrum, isHorizontal) {
-	        var rectHeight = layout.dimension.height;
-	        var left = layout.position.left;
-	        var degree, bound, fill;
+	        var width, height, degree, bound;
 
 	        if (isHorizontal) {
-	            rectHeight -= PADDING;
+	            width = layout.dimension.width;
+	            height = chartConst.MAP_LEGEND_GRAPH_SIZE;
 	            degree = DEGREE_HORIZONTAL_BAR;
 	            this._makeWedghPath = this._makeHorizontalWedgePath;
 	        } else {
+	            width = chartConst.MAP_LEGEND_GRAPH_SIZE;
+	            height = layout.dimension.height;
 	            degree = DEGREE_VERTICAL_BAR;
 	            this._makeWedghPath = this._makeVerticalWedgePath;
 	        }
 
-	        fill = degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end;
-
 	        bound = {
-	            left: left,
+	            left: layout.position.left,
 	            top: layout.position.top,
-	            width: layout.dimension.width - PADDING,
-	            height: rectHeight
+	            width: width,
+	            height: height
 	        };
 
 	        return raphaelRenderUtil.renderRect(paper, bound, {
-	            fill: fill,
+	            fill: degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end,
 	            stroke: 'none'
+	        });
+	    },
+
+	    /**
+	     * Render wedge text
+	     * @param {object} paper - raphael paper
+	     * @param {object} position - position
+	     * @param {object} theme - legend label theme
+	     * @returns {SVGTextElement} - wedge text
+	     */
+	    _renderWedgeText: function(paper, position, theme) {
+	        if (this.isLeftLegend) {
+	            position.left += chartConst.MAP_LEGEND_WEDGE_SIZE + chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING;
+	        }
+
+	        return raphaelRenderUtil.renderText(paper, position, '', {
+	            'font-size': theme.fontSize,
+	            'font-family': theme.fontFamily,
+	            'font-weight': theme.fontWeight,
+	            fill: theme.color
 	        });
 	    },
 
@@ -8932,8 +9402,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderWedge: function(paper, position) {
 	        return paper.path(this.verticalBasePath).attr({
-	            'fill': 'gray',
-	            stroke: 'none',
+	            fill: 'gray',
+	            stroke: 'white',
+	            'stroke-opacity': 0.2,
 	            opacity: 0,
 	            transform: 't' + position.left + ',' + position.top
 	        });
@@ -8943,20 +9414,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Vertical base path
 	     * @type {Array}
 	     */
-	    verticalBasePath: ['M', 16, 6, 'L', 24, 3, 'L', 24, 9],
+	    verticalRightBasePath: ['M', -4, 0, 'L', -8, 2.5, 'L', -8, 12.5, 'L', -28, 12.5, 'L', -28, -12.5, 'L', -8, -12.5, 'L', -8, -2.5],
+	    verticalLeftBasePath: ['M', 10, 0, 'L', 14, 2.5, 'L', 14, 12.5, 'L', 34, 12.5, 'L', 34, -12.5, 'L', 14, -12.5, 'L', 14, -2.5],
 
 	    /**
 	     * Make vertical wedge path.
 	     * @param {number} top top
+	     * @param {object} labelDimension label width and height
 	     * @returns {Array} path
 	     * @private
 	     */
-	    _makeVerticalWedgePath: function(top) {
-	        var path = this.verticalBasePath;
+	    _makeVerticalWedgePath: function(top, labelDimension) {
+	        var isLeftLegend = this.isLeftLegend;
+	        var path = this.verticalBasePath = isLeftLegend ? this.verticalLeftBasePath : this.verticalRightBasePath;
+	        var PADDING_H = chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING;
+	        var PADDING_V = chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING;
+	        var labelWidth = labelDimension.width;
+	        var labelHeight = labelDimension.height;
 
 	        path[2] = top;
-	        path[5] = top - WEDGE_BASE_HALF;
-	        path[8] = top + WEDGE_BASE_HALF;
+	        path[5] = top + WEDGE_BASE_HALF;
+	        path[8] = path[11] = top + (labelHeight / 2) + PADDING_V;
+	        path[14] = path[17] = top - (labelHeight / 2) - PADDING_V;
+	        path[20] = top - WEDGE_BASE_HALF;
+
+	        if (isLeftLegend) {
+	            path[10] = path[13] = path[4] + labelWidth + (PADDING_H * 2);
+	        } else {
+	            path[10] = path[13] = path[4] - labelWidth - (PADDING_H * 2);
+	        }
 
 	        return path;
 	    },
@@ -8965,35 +9451,83 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Horizontal base path
 	     * @type {Array}
 	     */
-	    horizontalBasePath: ['M', 5, 16, 'L', 8, 24, 'L', 2, 24],
+	    horizontalTopBasePath: ['M', 0, 10, 'L', 2.5, 14, 'L', 12.5, 14, 'L', 12.5, 34, 'L', -12.5, 34, 'L', -12.5, 14, 'L', -2.5, 14],
+	    horizontalBottomBasePath: ['M', 0, -4, 'L', 2.5, -8, 'L', 12.5, -8, 'L', 12.5, -28, 'L', -12.5, -28, 'L', -12.5, -8, 'L', -2.5, -8],
 
 	    /**
 	     * Make horizontal wedge path.
 	     * @param {number} left left
+	     * @param {object} labelDimension label width and height
 	     * @returns {Array} path
 	     * @private
 	     */
-	    _makeHorizontalWedgePath: function(left) {
-	        var path = this.horizontalBasePath;
+	    _makeHorizontalWedgePath: function(left, labelDimension) {
+	        var path = this.horiziontalBaseBath = (this.isTopLegend ?
+	            this.horizontalTopBasePath : this.horizontalBottomBasePath);
+	        var PADDING_H = chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING;
+	        var PADDING_V = chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING;
+	        var labelWidth = labelDimension.width;
+	        var labelHeight = labelDimension.height;
 
 	        path[1] = left;
 	        path[4] = left + WEDGE_BASE_HALF;
-	        path[7] = left - WEDGE_BASE_HALF;
+	        path[7] = path[10] = left + (labelWidth / 2) + PADDING_H;
+	        path[13] = path[16] = left - (labelWidth / 2) - PADDING_H;
+	        path[19] = left - WEDGE_BASE_HALF;
+
+	        if (this.isTopLegend) {
+	            path[11] = path[14] = path[5] + labelHeight + (PADDING_V * 2);
+	        } else {
+	            path[11] = path[14] = path[5] - labelHeight - (PADDING_V * 2);
+	        }
 
 	        return path;
 	    },
 
 	    /**
 	     * Show wedge.
-	     * @param {number} positionValue top
+	     * @param {number} ratio value ratio beyond spectrum legend
+	     * @param {string} label data value
 	     */
-	    showWedge: function(positionValue) {
-	        var path = this._makeWedghPath(positionValue);
+	    showWedge: function(ratio, label) {
+	        var labelTheme = this.theme;
+	        var labelSize = raphaelRenderUtil.getRenderedTextSize(label, labelTheme.fontSize, labelTheme.fontFamily);
+	        var legendSize = this.isHorizontal ? this.layout.dimension.width : this.layout.dimension.height;
+	        var path = this._makeWedghPath(legendSize * ratio, labelSize);
+	        var wedgeBBox, wedgeTextLeft, wedgeTextTop;
 
 	        this.wedge.attr({
 	            path: path,
+	            opacity: 1,
+	            fill: this.colorSpectrum.getColor(ratio)
+	        });
+
+	        wedgeBBox = this.wedge.getBBox();
+
+	        wedgeTextLeft = wedgeBBox.x
+	            + chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING
+	            + (labelSize.width / 2);
+	        wedgeTextTop = wedgeBBox.y
+	            + chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING
+	            + (labelSize.height / 2);
+
+	        if (this.isLeftLegend) {
+	            wedgeTextLeft += chartConst.MAP_LEGEND_WEDGE_SIZE;
+	        }
+
+	        if (this.isTopLegend) {
+	            wedgeTextTop += chartConst.MAP_LEGEND_WEDGE_SIZE;
+	        }
+
+	        this.wedgeText.attr({
+	            x: wedgeTextLeft,
+	            y: wedgeTextTop,
+	            text: label,
 	            opacity: 1
 	        });
+
+	        this.wedge.toFront();
+	        this.wedgeText.toFront();
 	    },
 
 	    /**
@@ -9001,6 +9535,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    hideWedge: function() {
 	        this.wedge.attr({
+	            opacity: 0
+	        });
+
+	        this.wedgeText.attr({
 	            opacity: 0
 	        });
 	    },
@@ -9026,6 +9564,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var fillURL = gradientBar.node.getAttribute('fill');
 
 	        gradientBar.node.setAttribute('fill', fillURL.replace('#', this.locationURL + '#'));
+	    },
+
+	    /**
+	     * Calculate tooltip area height of horizontal legend
+	     * @param {Array.<string>} labels - labels
+	     * @param {object} theme - legend label theme
+	     * @returns {number} - tooltip height
+	     * @private
+	     */
+	    _calculateHorizontalLegendTooltipHeight: function(labels, theme) {
+	        var label = labels.length ? labels[labels.length - 1] : '';
+	        var labelHeight = renderUtil.getRenderedLabelHeight(label, theme);
+
+	        return (chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING * 2)
+	            + labelHeight + chartConst.MAP_LEGEND_WEDGE_SIZE;
+	    },
+
+	    /**
+	     * Calculate tooltip area width of vertical legend
+	     * @param {Array.<string>} labels - labels
+	     * @param {object} theme - legend label theme
+	     * @returns {number} - tooltip width
+	     * @private
+	     */
+	    _calculateVerticalLegendTooltipWidth: function(labels, theme) {
+	        var label = labels.length ? labels[labels.length - 1] : '';
+	        var labelWidth = renderUtil.getRenderedLabelWidth(label, theme);
+
+	        return (chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING * 2)
+	            + labelWidth + chartConst.MAP_LEGEND_WEDGE_SIZE;
 	    }
 	});
 
@@ -9126,8 +9694,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var fontFamily = theme.fontFamily;
 	        var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
 	        var pos = {
-	            left: paper.width / 2,
-	            top: (titleSize.height + chartConst.TITLE_PADDING) / 2 // for renderText's baseline
+	            left: chartConst.CHART_PADDING + (titleSize.width / 2),
+	            top: chartConst.CHART_PADDING + (titleSize.height / 2) // for renderText's baseline
 	        };
 	        var titleSet = paper.set();
 
@@ -9179,6 +9747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var raphaelRenderUtil = __webpack_require__(5);
 	var AXIS_BACKGROUND_RIGHT_PADDING = 4;
 	var snippet = __webpack_require__(6);
+	var Y_AXIS_TITLE_PADDING = __webpack_require__(8).Y_AXIS_TITLE_PADDING;
 
 	var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
 	    init: function() {
@@ -9222,24 +9791,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    renderTitle: function(paper, data) {
 	        var theme = data.theme;
+	        var textAnchor = this.getRenderTitleAnchor(data.rotationInfo);
 	        var attributes = {
 	            'dominant-baseline': 'auto',
 	            'font-family': theme.fontFamily,
 	            'font-size': theme.fontSize,
 	            'font-weight': theme.fontWeight,
 	            fill: theme.color,
-	            'text-anchor': 'middle'
+	            transform: 'none',
+	            'text-anchor': textAnchor
 	        };
 	        var position = this.calculatePosition(paper, data);
-	        var title;
-
-	        attributes.transform = getCSSTransform(data.rotationInfo, position);
-	        title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
+	        var title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
 
 	        title.node.style.userSelect = 'none';
 	        title.node.style.cursor = 'default';
 
 	        data.set.push(title);
+	    },
+
+	    /**
+	     * Get title anchor
+	     * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
+	     * @returns {string} textAnchor - middle or end or start
+	     */
+	    getRenderTitleAnchor: function(rotationInfo) {
+	        var textAnchor = 'middle';
+	        if (rotationInfo.isPositionRight) {
+	            textAnchor = 'end';
+	        } else if (rotationInfo.isVertical && !rotationInfo.isCenter) {
+	            textAnchor = 'start';
+	        }
+
+	        return textAnchor;
 	    },
 
 	    /**
@@ -9260,8 +9844,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var positionTopAndLeft = data.positionTopAndLeft;
 	        var labelText = data.labelText;
 	        var paper = data.paper;
-	        var isVertical = data.isVertical;
-	        var isPositionRight = data.isPositionRight;
 	        var theme = data.theme;
 	        var attributes = {
 	            'dominant-baseline': 'central',
@@ -9272,10 +9854,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	        var textObj;
 
-	        if (isPositionRight) {
-	            attributes['text-anchor'] = 'start';
-	        } else if (isVertical) {
+	        if (data.isPositionRight) {
 	            attributes['text-anchor'] = 'end';
+	        } else if (data.isVertical && !data.isCenter) {
+	            attributes['text-anchor'] = 'start';
 	        } else {
 	            attributes['text-anchor'] = 'middle';
 	        }
@@ -9314,7 +9896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'font-weight': theme.fontWeight,
 	            fill: theme.color,
 	            'text-anchor': 'end',
-	            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left + 20) + ',' + (positionTopAndLeft.top)
+	            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left) + ',' + (positionTopAndLeft.top)
 	        });
 
 	        textObj.node.style.userSelect = 'none';
@@ -9378,12 +9960,54 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (!isNaN(position)) {
 	                tick = paper.path(pathString).attr({
-	                    stroke: tickColor
+	                    stroke: tickColor,
+	                    opacity: 0.5
 	                });
 	                data.set.push(tick);
 	                self.ticks.push(tick);
 	            }
 	        });
+	    },
+
+	    /**
+	     * Render tick line  on given paper
+	     * @param {number} data data for render tick line
+	     * @param {number} data.areaSize area size width or height
+	     * @param {object} data.paper raphael paper
+	     * @param {boolean} data.isVertical boolean value of vertical axis or not
+	     */
+	    renderStandardLine: function(data) {
+	        var lineSize = data.areaSize;
+	        var paper = data.paper;
+	        var layout = data.layout;
+	        var isVertical = data.isVertical;
+	        var pathString = 'M';
+	        var baseTop = layout.position.top;
+	        var baseLeft = layout.position.left;
+	        var rightEdgeOfAxis = baseLeft + layout.dimension.width;
+	        var lineStartYCoord, lineEndXCoord, lineEndYCoord;
+	        var minAbs = Math.abs(data.axisLimit.min);
+	        var maxAbs = Math.abs(data.axisLimit.max);
+	        var standardRatio = 1 - (maxAbs / (minAbs + maxAbs));
+
+	        if (isVertical) {
+	            lineStartYCoord = baseTop;
+	            rightEdgeOfAxis += data.seriesDimension.width * standardRatio;
+	            pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
+	            lineEndYCoord = baseTop + lineSize;
+	            pathString += 'V' + lineEndYCoord;
+	        } else {
+	            pathString += baseLeft;
+	            baseTop -= data.seriesDimension.height * standardRatio;
+	            pathString += ',' + baseTop + 'H';
+	            lineEndXCoord = (baseLeft + lineSize);
+	            pathString += lineEndXCoord;
+	        }
+
+	        data.set.push(paper.path(pathString).attr({
+	            'stroke-width': 1,
+	            opacity: 0.5
+	        }));
 	    },
 
 	    /**
@@ -9404,6 +10028,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var lineSize = areaSize;
 	        var paper = data.paper;
 	        var layout = data.layout;
+	        var isNegativeStandard = data.isNegativeStandard;
 	        var isNotDividedXAxis = data.isNotDividedXAxis;
 	        var additionalSize = data.additionalSize;
 	        var isPositionRight = data.isPositionRight;
@@ -9422,6 +10047,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            pathString += 'V' + verticalTickLineEndYCoord;
 	        } else if (isVertical) {
 	            lineStartYCoord = baseTop;
+	            if (isNegativeStandard) {
+	                rightEdgeOfAxis += data.seriesDimension.width / 2;
+	            }
+
 	            pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
 
 	            if (isCenter) {
@@ -9438,6 +10067,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else {
 	                pathString += (baseLeft + additionalSize);
 	            }
+
+	            if (isNegativeStandard) {
+	                baseTop -= data.seriesDimension.height / 2;
+	            }
+
 	            pathString += ',' + baseTop + 'H';
 
 	            lineEndXCoord = (baseLeft + lineSize);
@@ -9445,12 +10079,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!isNotDividedXAxis) {
 	                lineEndXCoord += additionalSize;
 	            }
+
 	            pathString += lineEndXCoord;
 	        }
 
 	        data.set.push(paper.path(pathString).attr({
 	            'stroke-width': 1,
-	            stroke: tickColor
+	            stroke: tickColor,
+	            opacity: 0.5
 	        }));
 	    },
 
@@ -9479,24 +10115,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	    calculatePosition: function(paper, data) {
 	        var rotationInfo = data.rotationInfo;
 	        var textHeight = getTextHeight(data.text, data.theme);
+	        var textWidth = getTextWidth(data.text, data.theme);
 	        var layout = data.layout;
-	        var centerPosition = calculateCenterPosition(
-	            rotationInfo.isVertical, layout.dimension, layout.position
-	        );
-	        var position = {};
+	        var axisHeight = layout.dimension.height;
+	        var axisWidth = layout.dimension.width;
+	        var left = layout.position.left + data.additionalWidth;
+	        var top = layout.position.top;
+	        var adjustLeftPosition = (textWidth / 2) - data.otherSideDimension.width;
+	        var position = {
+	            top: top + axisHeight - (textHeight / 2),
+	            left: left + ((adjustLeftPosition < 0) ? 0 : adjustLeftPosition)
+	        };
 
-	        if (rotationInfo.isCenter) {
-	            position.top = paper.height - (textHeight / 2);
-	            position.left = layout.position.left + (layout.dimension.width / 2);
-	        } else if (rotationInfo.isPositionRight) {
-	            position.top = centerPosition;
-	            position.left = layout.position.left + layout.dimension.width;
-	        } else if (rotationInfo.isVertical) {
-	            position.top = centerPosition;
-	            position.left = layout.position.left + (textHeight / 2);
-	        } else {
-	            position.top = layout.position.top + layout.dimension.height;
-	            position.left = centerPosition;
+	        if (rotationInfo.isVertical) {
+	            if (rotationInfo.isCenter) {
+	                position.top += (textHeight / 2);
+	                position.left = left + (axisWidth / 2);
+	            } else if (!rotationInfo.isDiverging) {
+	                position.top = top - (textHeight / 2) - Y_AXIS_TITLE_PADDING;
+	            }
+	        } else if (!rotationInfo.isVertical) {
+	            if (rotationInfo.isDiverging && rotationInfo.isYAxisCenter) {
+	                position.left = left + (data.areaSize / 2);
+	            } else if (rotationInfo.isDiverging && !rotationInfo.isYAxisCenter) {
+	                position.left = left + (axisWidth / 2);
+	            } else if (rotationInfo.isColumnType) {
+	                position.left = left + (axisWidth / (data.tickCount - 1) / 2);
+	            }
+	        }
+
+	        if (rotationInfo.isPositionRight) {
+	            position.left += axisWidth;
 	        }
 
 	        if (!rotationInfo.isCenter) {
@@ -9521,32 +10170,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
-	 * Test axis title need to rotate
-	 * @param {object} rotationInfo - rotationInfo
-	 * @returns {boolean} - whether it needs to rotate
+	 * Get a text width by theme
+	 * @param {string} text - text
+	 * @param {object} theme - axis theme
+	 * @returns {number} text width
 	 * @ignore
 	 */
-	function doesTitleRotate(rotationInfo) {
-	    if (snippet.isExisty(rotationInfo.rotateTitle)) {
-	        return rotationInfo.rotateTitle === true;
-	    }
+	function getTextWidth(text, theme) {
+	    var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
 
-	    return true;
-	}
-
-	/**
-	 * Calculate center position
-	 * @param {boolean} isVertical - is vertical axis
-	 * @param {object} dimension - width, height
-	 * @param {object} position - top, left
-	 * @returns {number} - center position
-	 * @ignore
-	 */
-	function calculateCenterPosition(isVertical, dimension, position) {
-	    var size = isVertical ? dimension.height : dimension.width;
-	    var margin = isVertical ? position.top : position.left;
-
-	    return (size / 2) + margin;
+	    return titleSize.width;
 	}
 
 	/**
@@ -9566,24 +10199,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (offset.y) {
 	        position.top += offset.y;
 	    }
-	}
-
-	/**
-	 * Get transform by rotation info
-	 * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
-	 * @param {object} position - top, left
-	 * @returns {string} css transform
-	 * @ignore
-	 */
-	function getCSSTransform(rotationInfo, position) {
-	    var transform = 'none';
-	    if (rotationInfo.isPositionRight) {
-	        transform = 'r90,' + position.left + ',' + position.top;
-	    } else if (rotationInfo.isVertical && doesTitleRotate(rotationInfo)) {
-	        transform = 'r-90,' + position.left + ',' + position.top;
-	    }
-
-	    return transform;
 	}
 
 	module.exports = RaphaelAxisComponent;
@@ -9654,7 +10269,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._renderSpiderwebPlot(plotSet);
 	        }
 
-	        this._renderCatergoryLines(plotSet);
+	        this._renderCategoryDots(plotSet);
 	    },
 
 	    /**
@@ -9684,7 +10299,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            radius = centerPoint.top - pos.top;
 
 	            plotSet.push(raphaelRenderUtil.renderCircle(this.paper, centerPoint, radius, {
-	                stroke: strokeColor
+	                stroke: strokeColor,
+	                'stroke-opacity': 0.05
 	            }));
 	        }
 	    },
@@ -9694,10 +10310,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Array.<object>} plotSet plot set
 	     * @private
 	     */
-	    _renderCatergoryLines: function(plotSet) {
-	        var groupPaths = this._getLinesPath(arrayUtil.pivot(this.plotPositions));
+	    _renderCategoryDots: function(plotSet) {
+	        var bounds = this._makePlotDotBounds(arrayUtil.pivot(this.plotPositions));
 
-	        this._renderLines(groupPaths, this.theme.lineColor, plotSet);
+	        snippet.forEachArray(bounds, function(bound) {
+	            var squareDot = raphaelRenderUtil.renderRect(this.paper, bound, {
+	                fill: '#000000',
+	                'fill-opacity': 0.5,
+	                'stroke-width': 0
+	            });
+	            plotSet.push(squareDot);
+	        }, this);
+	    },
+
+	    _makePlotDotBounds: function(plotPositions) {
+	        var bounds = snippet.map(plotPositions, function(positions) {
+	            var outMostPlot = positions[positions.length - 1];
+	            var bound = {
+	                top: outMostPlot.top - 2,
+	                left: outMostPlot.left - 2,
+	                width: 4,
+	                height: 4
+	            };
+
+	            return bound;
+	        });
+	        bounds.pop();
+
+	        return bounds;
 	    },
 
 	    /**
@@ -9720,7 +10360,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        snippet.forEachArray(labelData.category, function(item) {
 	            var categoryAttributes = snippet.extend({}, attributes, {
-	                'text-anchor': item.position.anchor
+	                'text-anchor': item.position.anchor,
+	                fill: '#333333'
 	            });
 	            var label = raphaelRenderUtil.renderText(paper, item.position, item.text, categoryAttributes);
 
@@ -9756,6 +10397,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return snippet.map(groupPaths, function(path) {
 	            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
+	            line.node.setAttribute('stroke-opacity', 0.05);
 
 	            plotSet.push(line);
 
@@ -11436,7 +12078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var rawDataHandler = __webpack_require__(31);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 
 	var charts = {};
 	var factory = {
@@ -11518,7 +12160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -11873,7 +12515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var defaultTheme = __webpack_require__(34);
 	var snippet = __webpack_require__(6);
 
@@ -12056,8 +12698,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (rawSeriesDatum && rawSeriesDatum.length) {
 	            if (rawSeriesDatum.colorLength) {
 	                seriesCount = rawSeriesDatum.colorLength;
-	            } else if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
-	                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
 	            } else {
 	                seriesCount = rawSeriesDatum.length;
 	            }
@@ -12202,21 +12842,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var DEFAULT_COLOR = '#000000';
 	var DEFAULT_BACKGROUND = '#ffffff';
-	var DEFAULT_FONTWEIGHT = 'normal';
+	var DEFAULT_FONTWEIGHT = 'lighter';
+	var DEFAULT_FONTFAMILY = 'Arial';
 	var EMPTY = '';
 	var DEFAULT_AXIS = {
 	    tickColor: DEFAULT_COLOR,
 	    title: {
-	        fontSize: 12,
-	        fontFamily: EMPTY,
-	        color: DEFAULT_COLOR,
-	        fontWeight: DEFAULT_FONTWEIGHT
+	        fontSize: 11,
+	        fontFamily: DEFAULT_FONTFAMILY,
+	        color: '#bbbbbb',
+	        fontWeight: 'bold'
 	    },
 	    label: {
-	        fontSize: 12,
-	        fontFamily: EMPTY,
-	        color: DEFAULT_COLOR,
-	        fontWeight: DEFAULT_FONTWEIGHT
+	        fontSize: 11,
+	        fontFamily: DEFAULT_FONTFAMILY,
+	        color: '#333',
+	        fontWeight: 'normal'
 	    }
 	};
 
@@ -12226,62 +12867,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	            color: DEFAULT_BACKGROUND,
 	            opacity: 1
 	        },
-	        fontFamily: 'Verdana'
+	        fontFamily: DEFAULT_FONTFAMILY
 	    },
 	    title: {
 	        fontSize: 18,
-	        fontFamily: EMPTY,
+	        fontFamily: DEFAULT_FONTFAMILY,
 	        color: DEFAULT_COLOR,
 	        fontWeight: DEFAULT_FONTWEIGHT
 	    },
 	    yAxis: DEFAULT_AXIS,
 	    xAxis: DEFAULT_AXIS,
 	    plot: {
-	        lineColor: '#dddddd',
+	        lineColor: '#000000',
 	        background: '#ffffff',
 	        label: {
 	            fontSize: 11,
-	            fontFamily: EMPTY,
+	            fontFamily: DEFAULT_FONTFAMILY,
 	            color: '#888'
 	        }
 	    },
 	    series: {
 	        label: {
 	            fontSize: 11,
-	            fontFamily: EMPTY,
+	            fontFamily: DEFAULT_FONTFAMILY,
 	            color: DEFAULT_COLOR,
 	            fontWeight: DEFAULT_FONTWEIGHT
 	        },
-	        colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
+	        colors: ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c', '#989486', '#516f7d', '#29dbe3', '#dddddd'],
 	        borderColor: EMPTY,
 	        borderWidth: EMPTY,
 	        selectionColor: EMPTY,
-	        startColor: '#F4F4F4',
-	        endColor: '#345391',
-	        overColor: '#F0C952',
+	        startColor: '#FFE98A',
+	        endColor: '#D74177',
+	        overColor: EMPTY,
 	        dot: {
 	            fillColor: EMPTY,
 	            fillOpacity: 1,
 	            strokeColor: EMPTY,
-	            strokeOpacity: 1,
-	            strokeWidth: 2,
-	            radius: 2,
+	            strokeOpacity: EMPTY,
+	            strokeWidth: 0,
+	            radius: 6,
 	            hover: {
 	                fillColor: EMPTY,
 	                fillOpacity: 1,
-	                strokeColor: EMPTY,
-	                strokeOpacity: 0.8,
-	                strokeWidth: 3,
-	                radius: 4
+	                strokeColor: '#fff',
+	                strokeOpacity: 1,
+	                strokeWidth: 4,
+	                radius: 6
 	            }
 	        },
 	        ranges: []
 	    },
 	    legend: {
 	        label: {
-	            fontSize: 12,
-	            fontFamily: EMPTY,
-	            color: DEFAULT_COLOR,
+	            fontSize: 11,
+	            fontFamily: DEFAULT_FONTFAMILY,
+	            color: '#333',
 	            fontWeight: DEFAULT_FONTWEIGHT
 	        }
 	    },
@@ -12740,7 +13381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ChartBase = __webpack_require__(42);
 	var chartConst = __webpack_require__(8);
 	var rawDataHandler = __webpack_require__(31);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
@@ -12887,7 +13528,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
 	var boundsAndScaleBuilder = __webpack_require__(112);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
@@ -13999,7 +14640,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var pluginFactory = __webpack_require__(32);
 	var renderUtil = __webpack_require__(7);
@@ -14118,6 +14759,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {Raphael.Element}
 	         */
 	        this._elBg = null;
+
+	        this.isRightYAxis = params.name === 'rightYAxis';
 	    },
 
 	    /**
@@ -14127,11 +14770,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _renderBackground: function() {
 	        var dimension = snippet.extend({}, this.layout.dimension);
 	        var position = snippet.extend({}, this.layout.position);
-
-	        if (this.isYAxis) {
-	            dimension.height = this.dimensionMap.chart.height;
-	            position.top = 0;
-	        }
 
 	        if (this._elBg) {
 	            this._elBg.remove();
@@ -14149,21 +14787,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
 	        var isYAxisLineType = this.isYAxis && this.data.aligned;
+	        var axisLimit = this.limitMap[this.dataProcessor.chartType];
+	        var isNegativeLimitChart = !this.data.limit && axisLimit && axisLimit.min < 0;
+	        var isBarChart = predicate.isBarTypeChart(this.dataProcessor.chartType);
+	        var seriesOption = this.dataProcessor.getOption('series') || {};
+	        var isDivergingOption = seriesOption.diverging;
+
+	        additionalWidth = additionalWidth || 0;
 
 	        if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
 	            this._renderBackground();
 	        }
 
-	        this._renderTitleArea();
-
-	        if (this.options.showLabel !== false) {
-	            this._renderLabelArea(size, tickCount, categories, additionalWidth);
-	        }
+	        this._renderTitleArea(size, additionalWidth);
+	        this._renderLabelArea(size, tickCount, categories, additionalWidth);
 
 	        if (!isYAxisLineType) {
 	            this._renderTickArea(size, tickCount, additionalWidth);
 	        }
+	        if (isNegativeLimitChart && isBarChart && !isDivergingOption) {
+	            this._renderNegativeStandardsLine(size, additionalWidth, this.dimensionMap.series, axisLimit);
+	        }
 	    },
+
 	    /**
 	     * Render divided xAxis if yAxis rendered in the center.
 	     * @param {{width: number, height:number}} dimension axis area width and height
@@ -14242,6 +14888,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _setDataForRendering: function(data) {
 	        this.layout = data.layout;
 	        this.dimensionMap = data.dimensionMap;
+	        this.limitMap = data.limitMap;
 	        this.data = data.axisDataMap[this.componentName];
 	        this.options = this.data.options;
 	    },
@@ -14284,11 +14931,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Title area renderer
+	     * get other side axis dimension
+	     * @returns {object}
 	     * @private
 	     */
-	    _renderTitleArea: function() {
+	    _getOtherSideDimension: function() {
+	        return this.dimensionMap[this.isYAxis ? 'xAxis' : 'yAxis'];
+	    },
+
+	    /**
+	     * Title area renderer
+	     * @param {number} size - area size
+	     * @param {number} additionalWidth - right side xAxis position
+	     * @private
+	     */
+	    _renderTitleArea: function(size, additionalWidth) {
 	        var title = this.options.title || {};
+	        var yAxisOption = this.dataProcessor.getOption('yAxis');
+	        var seriesOption = this.dataProcessor.getOption('series') || {};
 
 	        if (title.text) {
 	            this.graphRenderer.renderTitle(this.paper, {
@@ -14299,9 +14959,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    rotateTitle: this.options.rotateTitle,
 	                    isVertical: this.isYAxis,
 	                    isPositionRight: this.data.isPositionRight,
-	                    isCenter: this.options.isCenter
+	                    isCenter: this.options.isCenter,
+	                    isColumnType: predicate.isColumnTypeChart(
+	                        this.dataProcessor.chartType, this.dataProcessor.seriesTypes
+	                    ),
+	                    isDiverging: seriesOption.diverging,
+	                    isYAxisCenter: yAxisOption && yAxisOption.align === 'center'
 	                },
 	                layout: this.layout,
+	                areaSize: size,
+	                additionalWidth: additionalWidth,
+	                otherSideDimension: this._getOtherSideDimension(),
+	                tickCount: this.data.tickCount,
 	                set: this.axisSet
 	            });
 	        }
@@ -14367,6 +15036,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    },
 
+	    _renderNegativeStandardsLine: function(size, additionalSize, seriesDimension, axisLimit) {
+	        this.graphRenderer.renderStandardLine({
+	            areaSize: size,
+	            isVertical: this.isYAxis,
+	            layout: this.layout,
+	            paper: this.paper,
+	            set: this.axisSet,
+	            seriesDimension: seriesDimension,
+	            axisLimit: axisLimit
+	        });
+	    },
+
 	    /**
 	     * Render tick area.
 	     * @param {number} size - width or height
@@ -14378,7 +15059,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isNotDividedXAxis = !this.isYAxis && !this.options.divided;
 
 	        this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0));
-
 	        this._renderTicks(size, tickCount, isNotDividedXAxis, (additionalSize || 0));
 	    },
 
@@ -14407,13 +15087,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderRotationLabels: function(positions, categories, labelSize, additionalSize) {
-	        var self = this;
 	        var renderer = this.graphRenderer;
 	        var isYAxis = this.isYAxis;
 	        var theme = this.theme.label;
 	        var degree = this.data.degree;
 	        var halfWidth = labelSize / 2;
-	        var horizontalTop = this.layout.position.top + chartConst.AXIS_LABEL_PADDING;
+	        var horizontalTop = this.layout.position.top + chartConst.X_AXIS_LABEL_PADDING;
 	        var baseLeft = this.layout.position.left;
 	        var labelMargin = this.options.labelMargin || 0;
 
@@ -14426,9 +15105,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                positionTopAndLeft.left = labelSize + labelMargin;
 	            } else {
 	                positionTopAndLeft.top = horizontalTop + labelMargin;
-	                positionTopAndLeft.left = baseLeft + labelPosition;
+	                positionTopAndLeft.left = baseLeft + labelPosition - theme.fontSize;
 
-	                if (self.isLabelAxis) {
+	                if (this.isLabelAxis) {
 	                    positionTopAndLeft.left += halfWidth;
 	                }
 	            }
@@ -14436,12 +15115,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            renderer.renderRotatedLabel({
 	                degree: degree,
 	                labelText: categories[index],
-	                paper: self.paper,
+	                paper: this.paper,
 	                positionTopAndLeft: positionTopAndLeft,
-	                set: self.axisSet,
+	                set: this.axisSet,
 	                theme: theme
 	            });
-	        });
+	        }, this);
 	    },
 
 	    /**
@@ -14453,7 +15132,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderNormalLabels: function(positions, categories, labelSize, additionalSize) {
-	        var self = this;
 	        var renderer = this.graphRenderer;
 	        var isYAxis = this.isYAxis;
 	        var isPositionRight = this.data.isPositionRight;
@@ -14469,8 +15147,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var labelPosition = position + additionalSize;
 	            var halfLabelDistance = labelSize / 2;
 	            var positionTopAndLeft = {};
-	            var labelTopPosition, labelLeftPosition;
-
 	            /*
 	             * to prevent printing `undefined` text, when category label is not set
 	             */
@@ -14479,47 +15155,91 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            if (isYAxis) {
-	                labelTopPosition = labelPosition;
-
-	                if (isCategoryLabel) {
-	                    labelTopPosition += halfLabelDistance + layout.position.top;
-	                } else {
-	                    labelTopPosition = layout.dimension.height + layout.position.top - labelTopPosition;
-	                }
-
-	                if (isPositionRight) {
-	                    labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING + labelMargin;
-	                } else {
-	                    labelLeftPosition = layout.position.left + layout.dimension.width -
-	                                        chartConst.AXIS_LABEL_PADDING - labelMargin;
-	                }
+	                positionTopAndLeft = this._getYAxisLabelPosition(layout, {
+	                    labelPosition: labelPosition,
+	                    isCategoryLabel: isCategoryLabel,
+	                    halfLabelDistance: halfLabelDistance,
+	                    isPositionRight: isPositionRight
+	                });
 	            } else {
-	                labelTopPosition = layout.position.top + chartConst.CHART_PADDING +
-	                                   chartConst.AXIS_LABEL_PADDING + labelMargin;
-
-	                labelLeftPosition = labelPosition + layout.position.left;
-
-	                if (isCategoryLabel) {
-	                    if (!isLineTypeChart || isPointOnColumn) {
-	                        labelLeftPosition += halfLabelDistance;
-	                    }
-	                }
+	                positionTopAndLeft = this._getXAxisLabelPosition(layout, {
+	                    labelMargin: labelMargin,
+	                    labelHeight: renderUtil.getRenderedLabelsMaxHeight(categories, theme),
+	                    labelPosition: labelPosition,
+	                    isCategoryLabel: isCategoryLabel,
+	                    isLineTypeChart: isLineTypeChart,
+	                    isPointOnColumn: isPointOnColumn,
+	                    halfLabelDistance: halfLabelDistance
+	                });
 	            }
 
-	            positionTopAndLeft.top = Math.round(labelTopPosition);
-	            positionTopAndLeft.left = Math.round(labelLeftPosition);
+	            positionTopAndLeft.top = Math.round(positionTopAndLeft.top);
+	            positionTopAndLeft.left = Math.round(positionTopAndLeft.left);
 
 	            renderer.renderLabel({
 	                isPositionRight: isPositionRight,
 	                isVertical: isYAxis,
+	                isCenter: this.options.isCenter,
 	                labelSize: labelSize,
 	                labelText: categories[index],
-	                paper: self.paper,
+	                paper: this.paper,
 	                positionTopAndLeft: positionTopAndLeft,
-	                set: self.axisSet,
+	                set: this.axisSet,
 	                theme: theme
 	            });
-	        });
+	        }, this);
+	    },
+
+	    /**
+	     * @param {object} layout - axis dimension, position
+	     * @param {object} params - optional data needed to render axis labels
+	     * @returns {object} top, left positon of y axis
+	     */
+	    _getYAxisLabelPosition: function(layout, params) {
+	        var labelTopPosition = params.labelPosition;
+	        var labelLeftPosition;
+
+	        if (params.isCategoryLabel) {
+	            labelTopPosition += params.halfLabelDistance + layout.position.top;
+	        } else {
+	            labelTopPosition = layout.dimension.height + layout.position.top - labelTopPosition;
+	        }
+
+	        if (params.isPositionRight) {
+	            labelLeftPosition = layout.position.left + layout.dimension.width;
+	        } else if (this.options.isCenter) {
+	            labelLeftPosition = layout.position.left + (layout.dimension.width / 2);
+	        } else {
+	            labelLeftPosition = layout.position.left;
+	        }
+
+	        return {
+	            top: labelTopPosition,
+	            left: labelLeftPosition
+	        };
+	    },
+
+	    /**
+	     * @param {object} layout - axis dimension, position
+	     * @param {object} params - optional data needed to render axis labels
+	     * @returns {object} top, left positon of y axis
+	     */
+	    _getXAxisLabelPosition: function(layout, params) {
+	        var labelTopPosition = layout.position.top
+	            + chartConst.X_AXIS_LABEL_PADDING
+	            + params.labelMargin + (params.labelHeight / 2);
+	        var labelLeftPosition = params.labelPosition + layout.position.left;
+
+	        if (params.isCategoryLabel) {
+	            if (!params.isLineTypeChart || params.isPointOnColumn) {
+	                labelLeftPosition += params.halfLabelDistance;
+	            }
+	        }
+
+	        return {
+	            top: labelTopPosition,
+	            left: labelLeftPosition
+	        };
 	    },
 
 	    /**
@@ -14900,7 +15620,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var snippet = __webpack_require__(6);
 	var map = snippet.map;
@@ -15405,15 +16125,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Maker html for vertical lines
 	     * @param {{width: number, height: number}} dimension - dimension
-	     * @param {string} lineColor - line color
 	     * @private
 	     */
-	    _renderVerticalLines: function(dimension, lineColor) {
+	    _renderVerticalLines: function(dimension) {
 	        var positions = this._makeHorizontalPositions(dimension.width);
 	        var self = this;
 	        var layout = this.layout;
 	        var left = layout.position.left;
 	        var top = layout.position.top;
+	        var lineColor = this.theme.lineColor;
 
 	        snippet.forEach(positions, function(position) {
 	            var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
@@ -15422,7 +16142,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            path.attr({
 	                stroke: lineColor,
-	                'stroke-width': 1
+	                'stroke-width': 1,
+	                'stroke-opacity': 0.05
 	            });
 
 	            self.plotSet.push(path);
@@ -15432,16 +16153,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Maker html for horizontal lines.
 	     * @param {{width: number, height: number}} dimension - dimension
-	     * @param {string} lineColor - line color
 	     * @private
 	     */
-	    _renderHorizontalLines: function(dimension, lineColor) {
+	    _renderHorizontalLines: function(dimension) {
 	        var positions = this._makeVerticalPositions(dimension.height);
 	        var self = this;
 	        var layout = this.layout;
 	        var left = layout.position.left;
 	        var top = layout.position.top;
 	        var distance = positions[1] - positions[0];
+	        var lineColor = this.theme.lineColor;
 
 	        snippet.forEach(positions, function(position, index) {
 	            var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
@@ -15449,7 +16170,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            path.attr({
 	                stroke: lineColor,
-	                'stroke-width': 1
+	                'stroke-width': 1,
+	                'stroke-opacity': 0.05
 	            });
 
 	            self.plotSet.push(path);
@@ -15463,13 +16185,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderPlotLines: function(container, dimension) {
-	        var theme = this.theme;
-
-	        if (!predicate.isLineTypeChart(this.chartType)) {
-	            this._renderVerticalLines(dimension, theme.lineColor);
+	        if (!this.options.hideLine) {
+	            this._renderVerticalLines(dimension);
+	            this._renderHorizontalLines(dimension);
 	        }
-
-	        this._renderHorizontalLines(dimension, theme.lineColor);
 	    },
 
 	    /**
@@ -16233,7 +16952,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartExporter = __webpack_require__(51);
 	var dom = __webpack_require__(9);
 	var eventListener = __webpack_require__(55);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -16353,6 +17072,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isImageExtension = chartExporter.isImageExtension;
 	        var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
 	        var menuElement = dom.create('ul', chartConst.CLASS_NAME_CHART_EXPORT_MENU);
+	        var menuHead = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_HEAD);
+	        var menuBody = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BODY);
 	        var menuStyle = menuElement.style;
 	        var menuTheme = this.theme;
 	        var menuItems = [];
@@ -16366,7 +17087,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                ) {
 	                    itemElement = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
 	                    itemElement.id = exportItemType;
-	                    itemElement.innerHTML = 'Export to .' + exportItemType;
+	                    itemElement.innerHTML = exportItemType;
 	                }
 
 	                return itemElement;
@@ -16399,7 +17120,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dom.addClass(menuElement, this.options.menuClass);
 	        }
 
-	        dom.append(menuElement, menuItems);
+	        menuHead.innerHTML = 'Export to';
+
+	        dom.append(menuBody, menuItems);
+	        dom.append(menuElement, menuHead);
+	        dom.append(menuElement, menuBody);
 
 	        this.chartExportMenu = menuElement;
 
@@ -16739,18 +17464,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var categories;
 	    var isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
 	    var isBullet = (rawData.series && snippet.isExisty(rawData.series.bullet));
-	    var return2DArrayData = false;
 
 	    if (rawData) {
 	        if (isHeatMap) {
-	            return2DArrayData = _get2DArrayFromHeatmapRawData(rawData);
+	            return _get2DArrayFromHeatmapRawData(rawData);
 	        } else if (isBullet) {
-	            return2DArrayData = _get2DArrayFromBulletRawData(rawData);
+	            return _get2DArrayFromBulletRawData(rawData);
 	        } else if (rawData.categories) {
 	            categories = rawData.categories;
-	        }
-	        if (return2DArrayData) {
-	            return return2DArrayData;
 	        }
 
 	        resultArray.push([''].concat(categories));
@@ -17490,7 +18211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartConst = __webpack_require__(8);
 	var LegendModel = __webpack_require__(57);
 	var pluginFactory = __webpack_require__(32);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
@@ -17693,7 +18414,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var left = basePosition.left;
 
 	        if (!predicate.isLegendAlignLeft(this.options.align)) {
-	            left += chartConst.LEGEND_AREA_PADDING;
+	            left += chartConst.LEGEND_AREA_H_PADDING;
 	        }
 
 	        return graphRenderer.render({
@@ -17702,7 +18423,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            isHorizontal: isHorizontal,
 	            position: {
 	                left: left,
-	                top: basePosition.top + chartConst.LEGEND_AREA_PADDING + chartConst.CHART_PADDING
+	                top: basePosition.top
 	            },
 	            dimension: {
 	                height: dimensionHeight,
@@ -17762,9 +18483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._fireChangeCheckedLegendsEvent();
 	        }
 
-	        this.dataProcessor.selectLegendIndex = this.legendModel.getSelectedIndex();
-
-	        this.graphRenderer.selectLegend(this.dataProcessor.selectLegendIndex, this.legendSet);
+	        this.graphRenderer.selectLegend(this.legendModel.getSelectedIndex(), this.legendSet);
 
 	        this._fireSelectLegendEvent(data);
 	        this._fireSelectLegendPublicEvent(data);
@@ -18235,7 +18954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var pluginFactory = __webpack_require__(32);
 	var snippet = __webpack_require__(6);
 
@@ -18263,6 +18982,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {Object}
 	         */
 	        this.theme = params.theme;
+
+	        if (!predicate.isTreemapChart(this.chartType)) {
+	            this.theme.label.color = '#fff';
+	        }
 
 	        /**
 	         * options
@@ -18349,16 +19072,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dimension = this.layout.dimension;
 	        var scaleData = this.scaleData;
 	        var stepCount = scaleData.stepCount || scaleData.tickCount - 1;
+	        var align = this.options.align;
 	        var baseData = {};
 
 	        baseData.position = this.layout.position;
 
 	        if (this.isHorizontal) {
 	            baseData.step = dimension.width / stepCount;
-	            baseData.position.top += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+
+	            if (predicate.isLegendAlignTop(align)) {
+	                baseData.position.top -= chartConst.MAP_LEGEND_LABEL_PADDING;
+	            } else {
+	                baseData.position.top += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+	            }
 	        } else {
 	            baseData.step = dimension.height / stepCount;
-	            baseData.position.left += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+
+	            if (predicate.isLegendAlignLeft(align)) {
+	                baseData.position.left = chartConst.CHART_PADDING;
+	            } else {
+	                baseData.position.left += chartConst.MAP_LEGEND_GRAPH_SIZE + chartConst.MAP_LEGEND_LABEL_PADDING;
+	            }
 	        }
 
 	        return baseData;
@@ -18370,13 +19104,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderTickArea: function(legendSet) {
-	        if (this.options.reversed) {
-	            this.scaleData.labels.sort(function(prev, next) {
-	                return next - prev;
-	            });
-	        }
-	        this.graphRenderer.renderTicksAndLabels(this.paper, this._makeBaseDataToMakeTickArea(),
-	            this.scaleData.labels, this.isHorizontal, legendSet);
+	        this.graphRenderer.renderTickLabels(this.paper, this._makeBaseDataToMakeTickArea(),
+	            this.scaleData.labels, this.options.align, legendSet);
 	    },
 
 	    /**
@@ -18398,7 +19127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _makeHorizontalGraphDimension: function() {
 	        return {
-	            width: this.layout.dimension.width + 10,
+	            width: this.layout.dimension.width,
 	            height: chartConst.MAP_LEGEND_GRAPH_SIZE
 	        };
 	    },
@@ -18409,7 +19138,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderGraph: function(legendSet) {
-	        var dimension, startForSwap;
+	        var position = this.layout.position;
+	        var dimension;
 
 	        if (this.isHorizontal) {
 	            dimension = this._makeHorizontalGraphDimension();
@@ -18417,16 +19147,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dimension = this._makeVerticalGraphDimension();
 	        }
 
-	        if (this.options.reversed) {
-	            startForSwap = this.colorSpectrum.start;
-	            this.colorSpectrum.start = this.colorSpectrum.end;
-	            this.colorSpectrum.end = startForSwap;
-	        }
-
-	        this.graphRenderer.render(this.paper, {
-	            dimension: dimension,
-	            position: this.layout.position
-	        }, this.colorSpectrum, this.isHorizontal, legendSet);
+	        this.graphRenderer.render({
+	            paper: this.paper,
+	            layout: {
+	                dimension: dimension,
+	                position: position
+	            },
+	            colorSpectrum: this.colorSpectrum,
+	            align: this.options.align,
+	            legendSet: legendSet,
+	            theme: this.theme.label,
+	            labels: this.scaleData.labels
+	        });
 	    },
 
 	    /**
@@ -18463,7 +19195,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    render: function(data) {
 	        this._setDataForRendering(data);
-	        this.legnedSet = this._renderLegendArea();
+	        this.legendSet = this._renderLegendArea();
 	    },
 
 	    /**
@@ -18471,7 +19203,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} data - scale data
 	     */
 	    rerender: function(data) {
-	        this.legnedSet.remove();
+	        this.legendSet.remove();
 	        this.render(data);
 	    },
 
@@ -18486,10 +19218,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * On show wedge.
 	     * @param {number} ratio ratio
+	     * @param {string} label label
 	     */
-	    onShowWedge: function(ratio) {
-	        ratio = this.options.reversed ? 1 - ratio : ratio;
-	        this.graphRenderer.showWedge(chartConst.MAP_LEGEND_SIZE * ratio);
+	    onShowWedge: function(ratio, label) {
+	        this.graphRenderer.showWedge(ratio, label);
 	    },
 
 	    /**
@@ -18752,7 +19484,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var normalTooltipFactory = __webpack_require__(61);
 	var groupTooltipFactory = __webpack_require__(66);
 	var mapChartTooltipFactory = __webpack_require__(68);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	/**
@@ -18838,7 +19570,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var TooltipBase = __webpack_require__(62);
 	var singleTooltipMixer = __webpack_require__(63);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var tooltipTemplate = __webpack_require__(64);
 	var snippet = __webpack_require__(6);
 
@@ -18854,7 +19586,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     * @override
 	     */
-	    init: function() {
+	    init: function(params) {
+	        /**
+	         * Color spectrum
+	         * @type {ColorSpectrum}
+	         */
+	        this.colorSpectrum = params.colorSpectrum;
+
 	        TooltipBase.apply(this, arguments);
 	    },
 
@@ -18867,7 +19605,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _makeTooltipHtml: function(category, item) {
 	        var template = this._getTooltipTemplate(item);
-
 	        return template(snippet.extend({
 	            categoryVisible: category ? 'show' : 'hide',
 	            category: category
@@ -18892,6 +19629,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            template = tooltipTemplate.tplCoordinatetypeChart;
 	        } else if (predicate.isBulletChart(this.chartType)) {
 	            template = tooltipTemplate.tplBulletChartDefault;
+	        } else if (predicate.isHeatmapChart(this.chartType)) {
+	            template = tooltipTemplate.tplHeatmapChart;
 	        }
 
 	        return template;
@@ -18925,7 +19664,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _makeHtmlForValueTypes: function(data, valueTypes) {
 	        return snippet.map(valueTypes, function(type) {
-	            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
+	            return (data[type]) ? '<tr><td>' + type + '</td><td class="' + chartConst.CLASS_NAME_TOOLTIP_VALUE + '">' + data[type] + '</td></tr>' : '';
 	        }).join('');
 	    },
 
@@ -18939,11 +19678,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _makeSingleTooltipHtml: function(chartType, indexes) {
 	        var groupIndex = indexes.groupIndex;
 	        var data = snippet.extend({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
+	        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
+	            && this.dataProcessor.options.series.colorByPoint;
+	        var seriesIndex = indexes.index;
+	        var color;
+
+	        if (predicate.isBulletChart(this.chartType)) {
+	            seriesIndex = groupIndex;
+	        } else if (predicate.isTreemapChart(this.chartType)) {
+	            seriesIndex = data.tooltipColorIndex;
+	        }
+
+	        color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
 
 	        if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
 	            data.outlierIndex = indexes.outlierIndex;
 	        }
+	        if (this.colorSpectrum) {
+	            color = this.colorSpectrum.getColor(data.colorRatio || data.ratio);
+	        }
 
+	        data.chartType = this.chartType;
+	        data.cssText = 'background-color: ' + color;
 	        data = snippet.extend({
 	            suffix: this.suffix
 	        }, data);
@@ -19012,17 +19768,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _makeTooltipDatum: function(legendLabel, category, seriesItem) {
-	        var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
 	        var tooltipLabel = seriesItem.tooltipLabel;
 	        var labelFormatter = this.labelFormatter;
 	        var tooltipDatum = {
 	            legend: legendLabel || '',
-	            label: tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : ''),
+	            label: tooltipLabel || (seriesItem.label ? seriesItem.label : ''),
 	            category: category || ''
 	        };
 
 	        if (labelFormatter) {
-	            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
+	            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, '');
 	        }
 
 	        tooltipDatum.category = category || '';
@@ -19101,9 +19856,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var snippet = __webpack_require__(6);
+	var raphael = __webpack_require__(3);
 	var chartConst = __webpack_require__(8),
 	    dom = __webpack_require__(9),
-	    predicate = __webpack_require__(11),
+	    predicate = __webpack_require__(21),
 	    renderUtil = __webpack_require__(7);
 
 	var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
@@ -19304,6 +20060,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Render tooltip component.
+	     * @param {HTMLElement} iconElement - icon element
+	     */
+	    makeLineLegendIcon: function(iconElement) {
+	        var iconElementLength = iconElement.length;
+	        var icon, strokeColor, paper, line;
+	        var i = 0;
+
+	        for (; i < iconElementLength; i += 1) {
+	            icon = iconElement[i];
+	            strokeColor = icon.style['background-color'];
+	            paper = raphael(icon, 10, 10);
+	            line = paper.path(chartConst.LEGEND_LINE_ICON_PATH);
+	            icon.style['background-color'] = '';
+	            line.attr({
+	                'stroke': strokeColor,
+	                'stroke-width': 2,
+	                'stroke-opacity': 1
+	            });
+	        }
+	    },
+
+	    /**
 	     * Make tooltip data.
 	     * @private
 	     * @abstract
@@ -19339,7 +20118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._setDataForRendering(data);
 	        this.data = this.makeTooltipData();
-
+	        this.tooltipColors = this.makeTooltipLegendColor(data.checkedLegends);
 	        renderUtil.renderPosition(el, this.layout.position);
 
 	        this.tooltipContainer = el;
@@ -19354,8 +20133,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	    rerender: function(data) {
 	        this.resize(data);
 	        this.data = this.makeTooltipData();
+	        this.tooltipColors = this.makeTooltipLegendColor(data.checkedLegends);
 	    },
 
+	    /**
+	     * make legend color
+	     * @param {object | Array.<boolean>}checkedLegends checked legends
+	     * @returns {{colors: Array.<string>}} legend colors
+	     * @private
+	     */
+	    makeTooltipLegendColor: function(checkedLegends) {
+	        var colors = {};
+
+	        if (checkedLegends) {
+	            snippet.forEach(this.theme, function(themeItem, themeKey) {
+	                if (!colors[themeKey]) {
+	                    colors[themeKey] = [];
+	                }
+	                snippet.forEach(checkedLegends[themeKey], function(checked, index) {
+	                    if (checked) {
+	                        colors[themeKey].push(this.theme[themeKey].colors[index]);
+	                    }
+	                }, this);
+	            }, this);
+	        }
+
+	        return colors;
+	    },
 	    /**
 	     * Resize tooltip component.
 	     * @param {object} data - bounds data
@@ -19595,7 +20399,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var snippet = __webpack_require__(6);
 	var chartConst = __webpack_require__(8),
-	    predicate = __webpack_require__(11),
+	    predicate = __webpack_require__(21),
 	    dom = __webpack_require__(9),
 	    renderUtil = __webpack_require__(7);
 
@@ -19994,6 +20798,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        elTooltip.innerHTML = this._makeSingleTooltipHtml(params.seriesType || params.chartType, indexes);
 
+	        if (params.chartType === 'line') {
+	            this.makeLineLegendIcon(elTooltip.querySelectorAll('.tui-chart-legend-rect.line'));
+	        }
+
 	        elTooltip.setAttribute('data-chart-type', params.chartType);
 	        this._setIndexesCustomAttribute(elTooltip, indexes);
 	        this._setShowedCustomAttribute(elTooltip, true);
@@ -20160,87 +20968,113 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var htmls = {
 	    HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-	        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-	        '<div>' +
+	        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+	        '<div class="tui-chart-tooltip-body">' +
+	            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
 	            '<span>{{ legend }}</span>' +
-	            '<span>{{ label }}</span>' +
-	            '<span>{{ suffix }}</span>' +
+	            '<span class="tui-chart-tooltip-value">{{ label }}{{ suffix }}</span>' +
 	        '</div>' +
 	    '</div>',
+
 	    HTML_PIE_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-	        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-	        '<div>' +
+	        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+	        '<div class="tui-chart-tooltip-body">' +
+	            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
 	            '<span>{{ legend }}</span>' +
-	            '<span>{{ ratioLabel }}</span>' +
-	            '<span>( {{ label }} {{ suffix }})</span>' +
+	            '<span class="tui-chart-tooltip-value">{{ ratioLabel }} ( {{ label }} {{ suffix }})</span>' +
 	        '</div>' +
 	    '</div>',
+
 	    HTML_COORDINATE_TYPE_CHART_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-	        '<div>{{ category }}</div>' +
-	        '<div>' +
+	        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">' +
+	            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
+	            '{{ category }}' +
+	        '</div>' +
+	        '<div class="tui-chart-tooltip-body">' +
+	            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
 	            '<span>{{ legend }}</span>' +
-	            '<span>{{ label }}</span>' +
-	        '</div>{{ valueTypes }}' +
+	            '<span class="tui-chart-tooltip-value">{{ label }}</span>' +
+	        '</div><table class="tui-chart-tooltip-body">{{ valueTypes }}</table>' +
 	    '</div>',
+
 	    HTML_GROUP: '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
-	        '<div>{{ category }}</div>' +
-	        '{{ items }}' +
+	        '<div class="tui-chart-tooltip-head">{{ category }}</div>' +
+	        '<table class="tui-chart-tooltip-body">' +
+	            '{{ items }}' +
+	        '</table>' +
 	    '</div>',
-	    HTML_GROUP_TYPE: '<div class="tui-chart-tooltip-type">{{ type }}</div>',
-	    HTML_GROUP_ITEM: '<div>' +
-	        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
-	        '&nbsp;<span>{{ legend }}</span>:&nbsp;<span>{{ value }}</span>' +
-	        '<span>{{ suffix }}</span>' +
-	    '</div>',
+
+	    HTML_GROUP_TYPE: '<tr>' +
+	        '<td colspan="3" class="tui-chart-tooltip-type">{{ type }}</div>' +
+	    '</tr>',
+
+	    HTML_GROUP_ITEM: '<tr>' +
+	        '<td>' +
+	            '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
+	        '</td>' +
+	        '<td>{{ legend }}</td>' +
+	        '<td class="tui-chart-tooltip-value">{{ value }} {{ suffix }}</td>' +
+	    '</tr>',
+
 	    GROUP_CSS_TEXT: 'background-color:{{ color }}',
 	    HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-	        '<div>{{ name }}: {{ value }}{{ suffix }}</div>' +
+	        '<div class="tui-chart-tooltip-body">' +
+	            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
+	            '<span>{{ name }}</span>' +
+	            '<span class="tui-chart-tooltip-value">{{ value }}{{ suffix }}</span>' +
+	        '</div>' +
 	    '</div>',
+	    HTML_HEATMAP_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+	            '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+	            '<div class="tui-chart-tooltip-body">' +
+	                '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
+	                '<span>{{ label }}{{ suffix }}</span>' +
+	            '</div>' +
+	        '</div>',
 	    HTML_BOXPLOT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-	        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-	            '<div>' +
-	                '<span>{{ legend }}</span>' +
-	            '</div>' +
-	            '<div>' +
-	                '<span>Maximum: </span>' +
-	                '<span>{{ maxLabel }}</span>' +
-	                '<span>{{ suffix }}</span>' +
-	            '</div>' +
-	            '<div>' +
-	                '<span>Upper Quartile: </span>' +
-	                '<span>{{ uqLabel }}</span>' +
-	                '<span>{{ suffix }}</span>' +
-	            '</div>' +
-	            '<div>' +
-	                '<span>Median: </span>' +
-	                '<span>{{ medianLabel }}</span>' +
-	                '<span>{{ suffix }}</span>' +
-	            '</div>' +
-	            '<div>' +
-	                '<span>Lower Quartile: </span>' +
-	                '<span>{{ lqLabel }}</span>' +
-	                '<span>{{ suffix }}</span>' +
-	            '</div>' +
-	            '<div>' +
-	                '<span>Minimum: </span>' +
-	                '<span>{{ minLabel }}</span>' +
-	                '<span>{{ suffix }}</span>' +
-	            '</div>' +
+	        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+	            '<table class="tui-chart-tooltip-body">' +
+	                '<tr>' +
+	        '<td colspan="2"><span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>{{ legend }}</td>' +
+	                '</tr>' +
+	                '<tr>' +
+	                    '<td>Maximum: </td>' +
+	                    '<td class="tui-chart-tooltip-value">{{ maxLabel }} {{ suffix }}</td>' +
+	                '</tr>' +
+	                '<tr>' +
+	                    '<td>Upper Quartile: </td>' +
+	                    '<td class="tui-chart-tooltip-value">{{ uqLabel }} {{ suffix }}</td>' +
+	                '</tr>' +
+	                '<tr>' +
+	                    '<td>Median: </td>' +
+	                    '<td class="tui-chart-tooltip-value">{{ medianLabel }} {{ suffix }}</td>' +
+	                '</tr>' +
+	                '<tr>' +
+	                    '<td>Lower Quartile: </td>' +
+	                    '<td class="tui-chart-tooltip-value">{{ lqLabel }} {{ suffix }}</td>' +
+	                '</tr>' +
+	                '<tr>' +
+	                    '<td>Minimum: </td>' +
+	                    '<td class="tui-chart-tooltip-value">{{ minLabel }} {{ suffix }}</td>' +
+	                '</tr>' +
+	            '</table>' +
 	    '</div>',
 	    HTML_BOXPLOT_OUTLIER: '<div class="tui-chart-default-tooltip">' +
-	        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
-	            '<div>' +
+	        '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
+	            '<div class="tui-chart-tooltip-body">' +
 	                '<span>{{ legend }}</span>' +
 	            '</div>' +
-	            '<div>' +
+	            '<div class="tui-chart-tooltip-body">' +
 	                '<span>Outlier: </span>' +
-	                '<span>{{ label }}</span>' +
-	                '<span>{{ suffix }}</span>' +
+	                '<span class="tui-chart-tooltip-value">{{ label }} {{ suffix }}</span>' +
 	            '</div>' +
 	    '</div>',
 	    HTML_BULLET_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-	        '<div class="{{ categoryVisible }}">{{ category }}' +
-	        '<span>{{ label }}</span><span>{{ suffix }}</span></div>' +
+	            '<div class="tui-chart-tooltip-body {{ categoryVisible }}">' +
+	            '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' +
+	            '<span>{{ category }}</span>' +
+	            '<span class="tui-chart-tooltip-value">{{ label }} {{ suffix }}</span>' +
+	        '</div>' +
 	    '</div>'
 	};
 
@@ -20253,6 +21087,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
 	    tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),
 	    tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE),
+	    tplHeatmapChart: templateMaker.template(htmls.HTML_HEATMAP_TEMPLATE),
 	    tplBoxplotChartDefault: templateMaker.template(htmls.HTML_BOXPLOT_TEMPLATE),
 	    tplBoxplotChartOutlier: templateMaker.template(htmls.HTML_BOXPLOT_OUTLIER),
 	    tplBulletChartDefault: templateMaker.template(htmls.HTML_BULLET_TEMPLATE)
@@ -20319,7 +21154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var defaultTheme = __webpack_require__(34);
 	var tooltipTemplate = __webpack_require__(64);
 	var snippet = __webpack_require__(6);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 
 	/**
 	 * @classdesc GroupTooltip component.
@@ -20351,6 +21186,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _makeTooltipHtml: function(category, items, rawCategory, groupIndex) {
 	        var template = tooltipTemplate.tplGroupItem;
 	        var cssTextTemplate = tooltipTemplate.tplGroupCssText;
+	        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
+	            && this.dataProcessor.options.series.colorByPoint;
 	        var colors = this._makeColors(this.theme, groupIndex);
 	        var prevType, itemsHtml;
 
@@ -20372,7 +21209,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            itemHtml += template(snippet.extend({
-	                cssText: cssTextTemplate({color: colors[index]})
+	                cssText: cssTextTemplate({color: colorByPoint ? '#aaa' : colors[index]})
 	            }, item));
 
 	            return itemHtml;
@@ -20412,9 +21249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var bound = this.layout;
 
 	        if (data.checkedLegends) {
-	            this.theme = {
-	                colors: this.colors
-	            };
+	            this.theme = this._updateLegendTheme(data.checkedLegends);
 	        }
 
 	        this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
@@ -20728,6 +21563,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
 
 	        this._fireBeforeShowTooltipPublicEvent(params.index, params.range, params.silent);
+
+	        if (document.getElementsByClassName) {
+	            this.makeLineLegendIcon(elTooltip.querySelectorAll('.tui-chart-legend-rect.line'));
+	        }
 
 	        dom.addClass(elTooltip, 'show');
 
@@ -21345,6 +22184,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.mapModel = params.mapModel;
 
+	        /**
+	         * Color spectrum
+	         * @type {ColorSpectrum}
+	         */
+	        this.colorSpectrum = params.colorSpectrum;
+
 	        TooltipBase.apply(this, arguments);
 	    },
 
@@ -21372,7 +22217,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.templateFunc({
 	            name: datum.name || datum.code,
 	            value: datum.label,
-	            suffix: suffix
+	            suffix: suffix,
+	            cssText: 'background-color: ' + this.colorSpectrum.getColor(datum.ratio)
 	        });
 	    },
 
@@ -21632,7 +22478,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var BoundsBaseCoordinateModel = __webpack_require__(72);
 	var chartConst = __webpack_require__(8);
 	var eventListener = __webpack_require__(55);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -21807,6 +22653,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.positionMap = data.positionMap;
 
 	        dom.addClass(container, 'tui-chart-series-custom-event-area');
+	        container.style.backgroundColor = 'aliceblue';
 
 	        if (data.axisDataMap.xAxis) {
 	            tickCount = this._pickTickCount(data.axisDataMap);
@@ -22108,7 +22955,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -22341,7 +23188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -22657,7 +23504,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var areaTypeEventDetectorFactory = __webpack_require__(74);
 	var simpleEventDetectorFactory = __webpack_require__(77);
 	var groupTypeEventDetectorFactory = __webpack_require__(78);
@@ -22819,9 +23666,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _findData: function(clientX, clientY) {
 	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
-	        var selectLegendIndex = this.dataProcessor.selectLegendIndex;
 
-	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD, selectLegendIndex);
+	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
 	    },
 
 	    /**
@@ -23363,7 +24209,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderResetZoomBtn: function() {
 	        var resetBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
-	        resetBtn.innerHTML = 'Reset Zoom';
 
 	        return resetBtn;
 	    },
@@ -23402,7 +24247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
 
@@ -23481,32 +24326,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Find Data by layer position.
 	     * @param {{x: number, y: number}} layerPosition - layer position
 	     * @param {number} [distanceLimit] distance limitation to find data
-	     * @param {?number} selectLegendIndex select legend sereis index
 	     * @returns {object}
 	     */
-	    findData: function(layerPosition, distanceLimit, selectLegendIndex) {
+	    findData: function(layerPosition, distanceLimit) {
 	        var min = 100000;
-	        var findFoundMap = {};
-	        var findFound;
+	        var foundData;
 
 	        distanceLimit = distanceLimit || Number.MAX_VALUE;
+
 	        snippet.forEach(this.data, function(datum) {
 	            var xDiff = layerPosition.x - datum.bound.left;
 	            var yDiff = layerPosition.y - datum.bound.top;
 	            var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-	            if (distance < distanceLimit && distance <= min) {
+	            if (distance < distanceLimit && distance < min) {
 	                min = distance;
-	                findFound = datum;
-	                findFoundMap[datum.indexes.index] = datum;
+	                foundData = datum;
 	            }
 	        });
 
-	        if (!snippet.isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
-	            findFound = findFoundMap[selectLegendIndex];
-	        }
-
-	        return findFound;
+	        return foundData;
 	    },
 
 	    /**
@@ -23905,7 +24744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var EventDetectorBase = __webpack_require__(70);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var dom = __webpack_require__(9);
 	var snippet = __webpack_require__(6);
 
@@ -24117,7 +24956,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    onAfterZoom: function(index) {
 	        if (!this.historyBackBtn) {
 	            this.historyBackBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
-	            this.historyBackBtn.innerHTML = '< Back';
 	            dom.append(this.mouseEventDetectorContainer, this.historyBackBtn);
 	        }
 
@@ -24152,6 +24990,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Bar chart series component.
+
 	 * @author NHN Ent.
 	 *         FE Development Lab <dl_javascript@nhnent.com>
 	 */
@@ -24161,7 +25000,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Series = __webpack_require__(81);
 	var BarTypeSeriesBase = __webpack_require__(82);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.prototype */ {
@@ -24258,10 +25097,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var startLeft = baseData.basePosition + barStartLeft + additionalLeft;
 	        var changedStack = (seriesItem.stack !== iterationData.prevStack);
 	        var pointCount, endLeft, bound, boundTop;
+	        var isOverLapBar = (baseData.barSize * baseData.itemCount > baseData.groupSize);
+	        var barInterval = isOverLapBar ? baseData.pointInterval : baseData.barSize;
 
 	        if (!isStackType || (!this.options.diverging && changedStack)) {
 	            pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
-	            iterationData.top = iterationData.baseTop + (baseData.pointInterval * pointCount);
+	            iterationData.top = iterationData.baseTop + (barInterval * pointCount);
 	            iterationData.plusLeft = 0;
 	            iterationData.minusLeft = 0;
 	        }
@@ -24275,7 +25116,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        iterationData.prevStack = seriesItem.stack;
-	        boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2);
+
+	        if (isOverLapBar) {
+	            boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2);
+	        } else {
+	            boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2)
+	                + ((baseData.pointInterval - baseData.barSize) / 2 * (baseData.itemCount - 1));
+	        }
+
 	        bound = this._makeBound(barWidth, baseData.barSize, boundTop, startLeft, endLeft);
 
 	        return bound;
@@ -24360,7 +25208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var dom = __webpack_require__(9);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var pluginFactory = __webpack_require__(32);
 	var raphaelRenderUtil = __webpack_require__(5);
@@ -24370,8 +25218,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Series component className
 	     * @type {string}
 	     */
-	    className: 'tui-chart-series-area',
-	    /**
+	    className: 'tui-chart-series-area', /**
 	     * Series base component.
 	     * @constructs Series
 	     * @private
@@ -24810,6 +25657,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!snippet.isNull(this.selectedLegendIndex)) {
 	                this.graphRenderer.selectLegend(this.selectedLegendIndex);
 	            }
+	        } else {
+	            this._clearSeriesContainer();
 	        }
 	    },
 
@@ -25169,13 +26018,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var chartConst = __webpack_require__(8);
 	var labelHelper = __webpack_require__(83);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var snippet = __webpack_require__(6);
 
-	var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
+	var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.85;
 
 	var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
 	    /**
@@ -25295,7 +26144,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                barSize: barSize,
 	                pointInterval: pointInterval,
 	                firstAdditionalPosition: pointInterval,
-	                basePosition: basePosition
+	                basePosition: basePosition,
+	                itemCount: itemCount
 	            };
 	        }
 
@@ -25757,7 +26607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Series = __webpack_require__(81);
 	var BarTypeSeriesBase = __webpack_require__(82);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -25838,10 +26688,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var startTop = baseData.basePosition + barStartTop + chartConst.SERIES_EXPAND_SIZE;
 	        var changedStack = (seriesItem.stack !== iterationData.prevStack);
 	        var pointCount, endTop, bound, boundLeft;
+	        var isOverLapBar = (baseData.barSize * baseData.itemCount > baseData.groupSize);
+	        var columnInterval = isOverLapBar ? baseData.pointInterval : baseData.barSize;
 
 	        if (!isStackType || (!this.options.diverging && changedStack)) {
 	            pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
-	            iterationData.left = iterationData.baseLeft + (baseData.pointInterval * pointCount);
+	            iterationData.left = iterationData.baseLeft + (columnInterval * pointCount);
 	            iterationData.plusTop = 0;
 	            iterationData.minusTop = 0;
 	        }
@@ -25855,7 +26707,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        iterationData.prevStack = seriesItem.stack;
-	        boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
+
+	        if (isOverLapBar) {
+	            boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
+	        } else {
+	            boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2)
+	                + ((baseData.pointInterval - baseData.barSize) / 2 * (baseData.itemCount - 1));
+	        }
+
 	        bound = this._makeBound(baseData.barSize, barHeight, boundLeft, startTop, endTop);
 
 	        return bound;
@@ -25934,6 +26793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var Series = __webpack_require__(81);
+
 	var LineTypeSeriesBase = __webpack_require__(86);
 	var snippet = __webpack_require__(6);
 
@@ -26035,7 +26895,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var arrayUtil = __webpack_require__(10);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -26452,8 +27312,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Series.apply(this, arguments);
 
 	        this.options = snippet.extend({
-	            showDot: true,
-	            showArea: true
+	            showDot: false,
+	            showArea: false
 	        }, this.options);
 
 	        /**
@@ -26593,7 +27453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Series = __webpack_require__(81);
 	var LineTypeSeriesBase = __webpack_require__(86);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
@@ -26988,6 +27848,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (indexes && prevIndexes) {
 	            this.onUnselectSeries({
+	                chartType: this.chartType,
 	                indexes: prevIndexes
 	            });
 	            this.prevClickedIndexes = null;
@@ -27000,16 +27861,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        shouldSelect = !prevIndexes ||
 	            (indexes.index !== prevIndexes.index) || (indexes.groupIndex !== prevIndexes.groupIndex);
 
-	        if (allowSelect && !shouldSelect) {
-	            return;
-	        }
-
-	        this.onSelectSeries({
-	            chartType: this.chartType,
-	            indexes: indexes
-	        }, shouldSelect);
-
-	        if (allowSelect) {
+	        if (allowSelect && shouldSelect) {
+	            this.onSelectSeries({
+	                chartType: this.chartType,
+	                indexes: indexes
+	            }, shouldSelect);
 	            this.prevClickedIndexes = indexes;
 	        }
 	    },
@@ -27431,7 +28287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var datum = this.mapModel.getDatum(index);
 
 	        if (!snippet.isUndefined(datum.ratio)) {
-	            this.eventBus.fire('showWedge', datum.ratio);
+	            this.eventBus.fire('showWedge', datum.ratio, datum.label);
 	        }
 	    },
 
@@ -27603,9 +28459,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Series = __webpack_require__(81);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 	var raphaelRenderUtil = __webpack_require__(5);
+	var COMBO_PIE1 = 'pie1';
 
 	var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {
 	    /**
@@ -27625,6 +28482,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.isShowOuterLabel = predicate.isShowOuterLabel(this.options);
 
+	        this.isLabelAlignOuter = predicate.isLabelAlignOuter(this.options.labelAlign);
+
+	        this.legendMaxWidth = params.legendMaxWidth;
+
+	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
 	        /**
 	         * range for quadrant.
 	         * @type {?number}
@@ -27637,11 +28500,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.prevClickedIndex = null;
 
-	        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+	        /**
+	         * series legend names
+	         * @type {Array}
+	         */
+	        this.legendLabels = [];
 
-	        this.legendMaxWidth = params.legendMaxWidth;
+	        /**
+	         * series values.
+	         * @type {Array}
+	         */
+	        this.valueLabels = [];
+
+	        /**
+	         * max legend width
+	         * @type {number}
+	         */
+	        this.legendLongestWidth = 0;
+
+	        /**
+	         * labelTheme
+	         * @type {object}
+	         */
+	        this.labelTheme = this.theme.label;
 
 	        this._setDefaultOptions();
+	    },
+
+	    /**
+	     * Make legendlabes
+	     * @returns {Array.<string>}
+	     * @private
+	     */
+	    _getLegendLabels: function() {
+	        return snippet.map(this.dataProcessor.getLegendLabels(this.seriesType), function(legendName) {
+	            return raphaelRenderUtil.getEllipsisText(legendName, this.legendMaxWidth, this.labelTheme);
+	        }, this);
 	    },
 
 	    /**
@@ -27724,13 +28618,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _makeSectorData: function(circleBound) {
 	        var self = this;
-	        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
 	        var cx = circleBound.cx;
 	        var cy = circleBound.cy;
 	        var r = circleBound.r;
 	        var angle = this.options.startAngle;
 	        var angleForRendering = this._calculateAngleForRendering();
-	        var delta = 10;
+	        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
 	        var holeRatio = this.options.radiusRange[0];
 	        var centerR = r * 0.5;
 	        var paths;
@@ -27747,6 +28640,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var currentAngle = angleForRendering * ratio;
 	            var endAngle = angle + currentAngle;
 	            var popupAngle = angle + (currentAngle / 2);
+
 	            var angles = {
 	                start: {
 	                    startAngle: angle,
@@ -27771,18 +28665,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	                centerPosition: self._getArcPosition(snippet.extend({
 	                    r: centerR
 	                }, positionData)),
-	                outerPosition: {
-	                    start: self._getArcPosition(snippet.extend({
-	                        r: r
-	                    }, positionData)),
-	                    middle: self._getArcPosition(snippet.extend({
-	                        r: r + delta
-	                    }, positionData))
-	                }
+	                outerPosition: self._getArcPosition(snippet.extend({
+	                    r: r + (self.legendLongestWidth / 2) + chartConst.PIE_GRAPH_LEGEND_LABEL_INTERVAL
+	                }, positionData))
 	            };
 	        });
 
 	        return paths;
+	    },
+	    /**
+	     * Make value labels
+	     * @returns {Array.<string>}
+	     * @private
+	     */
+	    _makeValueLabel: function() {
+	        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
+
+	        return seriesGroup.map(function(seriesItem) {
+	            return seriesItem.label;
+	        }, this);
 	    },
 
 	    /**
@@ -27796,8 +28697,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @override
 	     */
 	    _makeSeriesData: function() {
-	        var circleBound = this._makeCircleBound();
-	        var sectorData = this._makeSectorData(circleBound);
+	        var circleBound, sectorData;
+
+	        this.valueLabels = this._makeValueLabel();
+	        this.legendLabels = this._getLegendLabels();
+	        this.legendLongestWidth = this._getMaxLengthLegendWidth();
+
+	        circleBound = this._makeCircleBound();
+	        sectorData = this._makeSectorData(circleBound);
 
 	        return {
 	            chartBackground: this.chartBackground,
@@ -27887,8 +28794,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _calculateRadius: function() {
-	        var radiusRatio = this.isShowOuterLabel ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
+	        var isComboPie1 = this.isCombo && (this.seriesType === COMBO_PIE1);
+	        var isShowOuterLabel = this.isShowOuterLabel;
 	        var baseSize = this._calculateBaseSize();
+	        var radiusRatio = 0;
+
+	        if (isComboPie1) {
+	            isShowOuterLabel = this.dataProcessor.isComboDonutShowOuterLabel();
+	        }
+
+	        radiusRatio = isShowOuterLabel ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
 
 	        return baseSize * radiusRatio * this.options.radiusRange[1] / 2;
 	    },
@@ -28013,15 +28928,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Resize.
-	     * @override
-	     */
-	    resize: function() {
-	        Series.prototype.resize.apply(this, arguments);
-	        this._moveLegendLines();
-	    },
-
-	    /**
 	     * showTooltip is mouseover event callback on series graph.
 	     * @param {object} params parameters
 	     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
@@ -28046,6 +28952,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    hideTooltip: function() {
 	        this.eventBus.fire('hideTooltip');
 	    },
+	    /**
+	     * legendh max length width
+	     * @returns {number} max width
+	     * @private
+	     */
+	    _getMaxLengthLegendWidth: function() {
+	        var lableWidths = snippet.map(this.legendLabels, function(label) {
+	            return raphaelRenderUtil.getRenderedTextSize(
+	                label,
+	                this.labelTheme.fontSize,
+	                this.labelTheme.fontFamily
+	            ).width;
+	        }, this);
+
+	        lableWidths.sort(function(prev, next) {
+	            return prev - next;
+	        });
+
+	        return lableWidths[lableWidths.length - 1];
+	    },
 
 	    /**
 	     * Make series data by selection.
@@ -28061,36 +28987,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        };
 	    },
-	    /**
-	     * Get series label.
-	     * @param {string} legend - legend name
-	     * @param {string} label - label name
-	     * @returns {string} series label
-	     * @private
-	     */
-	    _getSeriesLabel: function(legend, label) {
-	        var seriesLabel = '';
-
-	        if (this.options.showLegend) {
-	            seriesLabel = raphaelRenderUtil.getEllipsisText(legend, this.legendMaxWidth, this.theme.label);
-	        }
-	        if (this.options.showLabel) {
-	            seriesLabel += (seriesLabel ? chartConst.LABEL_SEPARATOR : '') + label;
-	        }
-
-	        return seriesLabel;
-	    },
 
 	    /**
 	     * Pick poistions from sector data.
 	     * @param {string} positionType position type
+	     * @param {string} dataType legend or value label
 	     * @returns {Array} positions
 	     * @private
 	     */
-	    _pickPositionsFromSectorData: function(positionType) {
+	    _pickPositionsFromSectorData: function(positionType, dataType) {
+	        var options = this.options;
+	        var legendLabelHeight = raphaelRenderUtil.getRenderedTextSize(this.legendLabels[0], this.labelTheme.fontSize,
+	            this.labelTheme.fontFamily).height;
+
+	        var valueLabelHeight = raphaelRenderUtil.getRenderedTextSize(this.valueLabels[0],
+	            chartConst.PIE_GRAPH_LEGEND_LABEL_SIZE, this.labelTheme.fontFamily).height;
+
 	        return snippet.map(this.seriesData.sectorData, function(datum) {
-	            return datum.ratio ? datum[positionType] : null;
-	        });
+	            var position = datum.ratio ? snippet.extend({}, datum[positionType]) : null;
+	            if (options.showLegend && options.showLabel && !this.isLabelAlignOuter) {
+	                if (dataType === 'value') {
+	                    position.top -= valueLabelHeight / 2;
+	                } else if (dataType === 'legend') {
+	                    position.top += legendLabelHeight / 2;
+	                }
+	            }
+
+	            return position;
+	        }, this);
 	    },
 
 	    /**
@@ -28129,7 +29053,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var positionEnd = position.end;
 	        var left = positionEnd.left;
 	        var top = positionEnd.top;
-	        var OffsetX = (this.graphRenderer.getRenderedLabelWidth(label, this.theme.label) / 2)
+	        var OffsetX = (this.graphRenderer.getRenderedLabelWidth(label, this.labelTheme) / 2)
 	            + chartConst.SERIES_LABEL_PADDING;
 
 	        if (left < centerLeft) {
@@ -28141,25 +29065,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return {
 	            left: left,
 	            top: top
-	        };
-	    },
-
-	    /**
-	     * get label position infos.
-	     * @returns {{centerLeft: number, outerPositions: Array, filteredPositions: Array }} - positionInfo
-	     * @private
-	     */
-	    _getFilterInfos: function() {
-	        var centerLeft = this.getSeriesData().circleBound.cx;
-	        var outerPositions = this._pickPositionsFromSectorData('outerPosition');
-	        var filteredPositions = snippet.filter(outerPositions, function(position) {
-	            return position;
-	        });
-
-	        return {
-	            centerLeft: centerLeft,
-	            outerPositions: outerPositions,
-	            filteredPositions: filteredPositions
 	        };
 	    },
 
@@ -28196,56 +29101,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderSeriesLabel: function(paper) {
-	        var positionInfo;
+	        var legendLabelPosition;
 	        var renderOption = {};
 	        var positions = [];
-	        var dataProcessor = this.dataProcessor;
-	        var seriesDataModel = this._getSeriesDataModel();
-	        var legendLabels = dataProcessor.getLegendLabels(this.seriesType);
-	        var labels = snippet.map(legendLabels, function(legend, index) {
-	            return this._getSeriesLabel(legend, seriesDataModel.getSeriesItem(0, index).label);
+	        var labelSet = paper.set();
+	        var graphRenderLabel = snippet.bind(function(dataType, labels) {
+	            var colors;
+	            var theme = snippet.extend({}, this.theme.label);
+	            if (this.isLabelAlignOuter && dataType === 'legend') {
+	                colors = this.theme.colors;
+	                theme.fontWeight = 'bold';
+	            }
+	            theme.fontSize = (dataType === 'value') ? 16 : theme.fontSize;
+
+	            positions = this._setSeriesPosition(renderOption, labels);
+	            this.graphRenderer.renderLabels({
+	                dataType: dataType,
+	                paper: paper,
+	                labelSet: labelSet,
+	                positions: positions,
+	                labels: labels,
+	                theme: theme,
+	                colors: colors
+	            });
 	        }, this);
 
-	        if (predicate.isLabelAlignOuter(this.options.labelAlign)) {
-	            positionInfo = this._getFilterInfos();
-
-	            this._addEndPosition(positionInfo.centerLeft, positionInfo.filteredPositions);
-	            this.graphRenderer.renderLegendLines(positionInfo.filteredPositions);
-
-	            renderOption.positions = positionInfo.outerPositions;
-	            renderOption.funcMoveToPosition = snippet.bind(this._moveToOuterPosition, this, positionInfo.centerLeft);
-	        } else {
-	            renderOption.positions = this._pickPositionsFromSectorData('centerPosition');
+	        if (this.options.showLabel) {
+	            renderOption.positions = this._pickPositionsFromSectorData('centerPosition', 'value');
+	            graphRenderLabel('value', this.valueLabels);
+	        }
+	        if (this.options.showLegend) {
+	            legendLabelPosition = this.isLabelAlignOuter ? 'outerPosition' : 'centerPosition';
+	            renderOption.positions = this._pickPositionsFromSectorData(legendLabelPosition, 'legend');
+	            graphRenderLabel('legend', this.legendLabels);
 	        }
 
-	        positions = this._setSeriesPosition(renderOption, labels);
-
-	        return this.graphRenderer.renderLabels(paper, positions, labels, this.theme.label);
-	    },
-
-	    /**
-	     * Animate series label area.
-	     * @override
-	     */
-	    animateSeriesLabelArea: function() {
-	        this.graphRenderer.animateLegendLines(this.selectedLegendIndex);
-	        Series.prototype.animateSeriesLabelArea.call(this);
-	    },
-
-	    /**
-	     * Move legend lines.
-	     * @private
-	     * @override
-	     */
-	    _moveLegendLines: function() {
-	        var centerLeft = this.dimensionMap.chart.width / 2,
-	            outerPositions = this._pickPositionsFromSectorData('outerPosition'),
-	            filteredPositions = snippet.filter(outerPositions, function(position) {
-	                return position;
-	            });
-
-	        this._addEndPosition(centerLeft, filteredPositions);
-	        this.graphRenderer.moveLegendLines(filteredPositions);
+	        return labelSet;
 	    },
 
 	    /**
@@ -28451,9 +29342,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    onShowTooltip: function(params) {
 	        var seriesDataModel = this._getSeriesDataModel();
 	        var indexes = params.indexes;
-	        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index).ratio;
+	        var item = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index);
 
-	        this.eventBus.fire('showWedge', ratio);
+	        this.eventBus.fire('showWedge', item.ratio, item.label);
 	    },
 
 	    /**
@@ -28530,7 +29421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var squarifier = __webpack_require__(96);
 	var labelHelper = __webpack_require__(83);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
@@ -28545,6 +29436,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Series.call(this, params);
 
 	        this.theme.borderColor = this.theme.borderColor || chartConst.TREEMAP_DEFAULT_BORDER;
+	        this.theme.label.color = this.options.useColorValue ? '#000' : '#fff';
 
 	        /**
 	         * root id
@@ -28826,11 +29718,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{groupIndex: number, index: number}} indexes - indexes
 	     */
 	    onHoverSeries: function(indexes) {
+	        var item, ratio;
+
 	        if (!predicate.isShowLabel(this.options)) {
 	            return;
 	        }
 
+	        item = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
+	        ratio = item.colorRatio;
+
 	        this.graphRenderer.showAnimation(indexes, this.options.useColorValue, 0.6);
+
+	        if (ratio > -1) {
+	            this.eventBus.fire('showWedge', ratio, item.colorValue);
+	        }
 	    },
 
 	    /**
@@ -28843,20 +29744,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this.graphRenderer.hideAnimation(indexes, this.options.useColorValue);
-	    },
-
-	    /**
-	     * On show tooltip for calling showWedge.
-	     * @param {{indexes: {groupIndex: number, index: number}}} params - parameters
-	     */
-	    onShowTooltip: function(params) {
-	        var seriesDataModel = this._getSeriesDataModel();
-	        var indexes = params.indexes;
-	        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).colorRatio;
-
-	        if (ratio > -1) {
-	            this.eventBus.fire('showWedge', ratio);
-	        }
 	    }
 	});
 
@@ -29170,7 +30057,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Series = __webpack_require__(81);
 	var BarTypeSeriesBase = __webpack_require__(82);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -29740,6 +30627,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dom = __webpack_require__(9);
 	var renderUtil = __webpack_require__(7);
 	var eventListener = __webpack_require__(55);
+	var predicate = __webpack_require__(21);
 
 	var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
 	    /**
@@ -29754,6 +30642,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    init: function(params) {
+	        var seriesTypes = params.seriesTypes;
+	        var isMapChart = (seriesTypes && seriesTypes.length) ? predicate.isMapChart(seriesTypes[0]) : false;
+	        var legendOption = params.dataProcessor.options.legend;
+	        var isLegendTop = predicate.isLegendAlignTop(legendOption.align);
+	        var isLegendVisible = legendOption.visible !== false;
+
+	        this.isMapLegendTop = (isMapChart && isLegendTop && isLegendVisible);
+
 	        /**
 	         * event bus for transmitting message
 	         * @type {object}
@@ -29792,12 +30688,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    render: function(data) {
 	        var container;
+	        var positionTop;
+	        var position;
 
 	        if (!IS_MSIE_VERSION_LTE_THAN_8) {
+	            positionTop = data.positionMap.series.top
+	                - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT + chartConst.MAP_CHART_ZOOM_AREA_WIDTH;
+
+	            if (this.isMapLegendTop) {
+	                positionTop = data.positionMap.legend.top - chartConst.MAP_CHART_ZOOM_AREA_WIDTH;
+	            }
+
+	            position = {
+	                top: positionTop,
+	                right: chartConst.CHART_PADDING
+	            };
+
 	            container = dom.create('DIV', this.className);
 
 	            container.innerHTML += seriesTemplate.ZOOM_BUTTONS;
-	            renderUtil.renderPosition(container, data.positionMap.series);
+	            renderUtil.renderPosition(container, position);
 	            this._attachEvent(container);
 	        }
 
@@ -29931,9 +30841,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
 	    TEXT_CSS_TEXT_FOR_LINE_TYPE: 'left:{{ left }}%;top:{{ top }}%;font-family:{{ fontFamily }};' +
 	    'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
-	    HTML_ZOOM_BUTTONS: '<a class="tui-chart-zoom-btn" href="#" data-magn="1">' +
-	            '<div class="horizontal-line"></div><div class="vertical-line"></div></a>' +
-	        '<a class="tui-chart-zoom-btn" href="#" data-magn="-1"><div class="horizontal-line"></div></a>',
+	    HTML_ZOOM_BUTTONS: '<a class="tui-chart-zoom-btn zoom-in" href="#" data-magn="1"></a>' +
+	        '<a class="tui-chart-zoom-btn zoom-out" href="#" data-magn="-1"></a>',
 	    HTML_SERIES_BLOCK: '<div class="tui-chart-series-block" style="{{ cssText }}">{{ label }}</div>'
 	};
 
@@ -29968,7 +30877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var SeriesDataModelForTreemap = __webpack_require__(110);
 	var SeriesGroup = __webpack_require__(104);
 	var rawDataHandler = __webpack_require__(31);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var calculator = __webpack_require__(45);
 	var objectUtil = __webpack_require__(36);
@@ -30047,12 +30956,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {Array.<{chartType: string, label: string}>}
 	         */
 	        this.originalLegendData = null;
-
-	        /**
-	         * select legend index
-	         * @type {number}
-	         */
-	        this.selectLegendIndex = null;
 
 	        /**
 	         * dynamic data array for adding data.
@@ -30168,12 +31071,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.categoriesMap = null;
 
 	        /**
-	         * categories isDatetype true or false
-	         * @type {null|object}
-	         */
-	        this.categoriesIsDateTime = {};
-
-	        /**
 	         * stacks
 	         * @type {Array.<number>}
 	         */
@@ -30270,17 +31167,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            isDateTime = options.type && predicate.isDatetimeType(options.type);
 	        }
+
 	        if (isDateTime) {
 	            categories = snippet.map(categories, function(value) {
-	                var date = this.chageDatetypeToTimestamp(value);
+	                var date = new Date(value);
 
-	                return date;
-	            }, this);
+	                return date.getTime() || value;
+	            });
 	        } else {
 	            categories = this._escapeCategories(categories);
 	        }
-
-	        this.categoriesIsDateTime[axisName] = isDateTime;
 
 	        return categories;
 	    },
@@ -30334,31 +31230,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return foundCategories;
-	    },
-
-	    /**
-	     * Get Category date type
-	     * @param {boolean} isVertical - whether vertical or not
-	     * @returns {boolean}
-	     */
-	    getCategorieDateType: function(isVertical) {
-	        var type = isVertical ? 'y' : 'x';
-
-	        return this.categoriesIsDateTime[type];
-	    },
-
-	    /**
-	     * value to timestamp of datetype category
-	     * @param {string} dateTypeValue - datetype category value
-	     * @returns {boolean}
-	     */
-	    chageDatetypeToTimestamp: function(dateTypeValue) {
-	        var date = new Date(dateTypeValue);
-	        if (!(date.getTime() > 0)) {
-	            date = new Date(parseInt(dateTypeValue, 10));
-	        }
-
-	        return date.getTime() || dateTypeValue;
 	    },
 
 	    /**
@@ -30431,20 +31302,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    findCategoryIndex: function(value) {
 	        var categories = this.getCategories();
-	        var isDateType = this.getCategorieDateType();
 	        var foundIndex = null;
 
 	        snippet.forEachArray(categories, function(category, index) {
-	            if (isDateType) {
-	                value = this.chageDatetypeToTimestamp(value);
-	            }
-
 	            if (category === value) {
 	                foundIndex = index;
 	            }
 
 	            return snippet.isNull(foundIndex);
-	        }, this);
+	        });
 
 	        return foundIndex;
 	    },
@@ -30494,7 +31360,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return category;
 	    },
-
 	    /**
 	     * Make category for tooltip.
 	     * @param {number} categoryIndex - category index
@@ -30590,6 +31455,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return this.seriesDataModelMap[seriesType];
+	    },
+
+	    /**
+	     * Get chart option
+	     * @param {string} optionType option category
+	     * @returns {object}
+	     */
+	    getOption: function(optionType) {
+	        return this.options[optionType];
 	    },
 
 	    /**
@@ -31357,6 +32231,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getGraphColors: function() {
 	        return this.graphColors;
+	    },
+
+	    /**
+	     * Check The donut chart on pie donut combo chart has outer label align option
+	     * @returns {boolean} - whether donut chart has outer label align option or not
+	     * @ignore
+	     */
+	    isComboDonutShowOuterLabel: function() {
+	        var seriesOptions = this.options.series;
+
+	        return (seriesOptions && seriesOptions.pie2 && seriesOptions.pie2.labelAlign === 'outer');
 	    }
 	});
 
@@ -31415,6 +32300,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Get max value.
+	     * @param {?string} chartType - type of chart
+	     * @param {?string} valueType - type of value like value, x, y, r
+	     * @returns {number}
+	     */
+	    getMinValue: function(chartType, valueType) {
+	        return arrayUtil.min(this.getValues(chartType, valueType));
+	    },
+
+	    /**
 	     * Get formatted max value.
 	     * @param {?string} chartType - type of chart
 	     * @param {?string} areaType - type of area like circleLegend
@@ -31423,6 +32318,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getFormattedMaxValue: function(chartType, areaType, valueType) {
 	        var maxValue = this.getMaxValue(chartType, valueType);
+	        var formatFunctions = this.getFormatFunctions();
+
+	        return renderUtil.formatValue({
+	            value: maxValue,
+	            formatFunctions: formatFunctions,
+	            chartType: chartType,
+	            areaType: areaType,
+	            valueType: valueType
+	        });
+	    },
+
+	    /**
+	     * Get formatted max value.
+	     * @param {?string} chartType - type of chart
+	     * @param {?string} areaType - type of area like circleLegend
+	     * @param {?string} valueType - type of value like value, x, y, r
+	     * @returns {string | number}
+	     */
+	    getFormattedMinValue: function(chartType, areaType, valueType) {
+	        var maxValue = this.getMinValue(chartType, valueType);
 	        var formatFunctions = this.getFormatFunctions();
 
 	        return renderUtil.formatValue({
@@ -31612,7 +32527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var SeriesGroup = __webpack_require__(104);
 	var SeriesItem = __webpack_require__(105);
 	var SeriesItemForCoordinateType = __webpack_require__(106);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
@@ -32535,7 +33450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartConst = __webpack_require__(8);
 	var renderUtil = __webpack_require__(7);
 	var calculator = __webpack_require__(45);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
@@ -32822,7 +33737,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -33127,7 +34042,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createValues: function() {
 	        var values = [];
 	        this.map(function(seriesGroup) {
-	            return snippet.forEach(seriesGroup.items, function(group) {
+	            snippet.forEach(seriesGroup.items, function(group) {
 	                values.push(group.min);
 	                values.push(group.max);
 	                values.push(group.uq);
@@ -33724,8 +34639,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            datum.depth = depth;
 	            datum.group = snippet.isUndefined(group) ? index : group;
-
-	            descendants = self._setTreeProperties(rejected, childDepth, datum.id, datum.group);
+	            descendants = self._setTreeProperties(rejected, childDepth, datum.id, datum.group, datum.fillOpacity);
 	            children = snippet.filter(descendants, function(descendant) {
 	                return descendant.depth === childDepth;
 	            });
@@ -33735,6 +34649,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                datum.hasChild = true;
 	            } else {
 	                datum.hasChild = false;
+	            }
+
+	            if (descendants.length) {
+	                descendants.sort(function(a, b) {
+	                    return b.value - a.value;
+	                });
 	            }
 
 	            filtered = filtered.concat(descendants);
@@ -33949,6 +34869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.group = rawSeriesDatum.group;
 	        this.hasChild = !!rawSeriesDatum.hasChild;
 	        this.indexes = rawSeriesDatum.indexes;
+	        this.fillOpacity = rawSeriesDatum.fillOpacity;
 	    },
 
 	    /**
@@ -33977,11 +34898,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            chartType: chartType,
 	            areaType: 'tooltipValue'
 	        });
-	        var label = (this.label ? this.label + ': ' : '') + formattedValue;
+	        var label = formattedValue;
 	        var valueMap = {
+	            legend: this.label || '',
 	            value: formattedValue,
 	            label: label,
-	            ratio: this.ratio
+	            ratio: this.ratio,
+	            tooltipColorIndex: this.indexes[0]
 	        };
 
 	        if (snippet.isExisty(colorValue)) {
@@ -34036,7 +34959,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var BoundsModel = __webpack_require__(113);
 	var ScaleDataModel = __webpack_require__(119);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 
 	/**
 	 * Bounds and scale data builder.
@@ -34110,19 +35033,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _registerYAxisDimension: function(componentManager, boundsModel, scaleDataMap, axisName, isVertical) {
 	        var yAxis = componentManager.get(axisName);
 	        var limit = null;
+	        var yAxisLabels = [];
 	        var scaleData;
 
 	        if (!yAxis) {
 	            return;
 	        }
-
 	        scaleData = scaleDataMap[axisName];
 
 	        if (scaleData) {
 	            limit = scaleData.limit;
+	            yAxisLabels = scaleData.labels;
 	        }
-
-	        boundsModel.registerYAxisDimension(limit, axisName, yAxis.options, yAxis.theme, isVertical);
+	        boundsModel.registerYAxisDimension({
+	            limit: limit,
+	            axisName: axisName,
+	            options: yAxis.options,
+	            theme: yAxis.theme,
+	            yAxisLabels: yAxisLabels,
+	            isVertical: isVertical
+	        });
 	    },
 
 	    /**
@@ -34172,6 +35102,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        scaleDataMap = scaleDataModel.scaleDataMap;
+
+	        if (scaleDataMap.legend && componentManager.get('legend') && componentManager.get('legend').colorSpectrum) {
+	            boundsModel.registerSpectrumLegendDimension(scaleDataMap.legend.limit);
+	        }
 
 	        // 03. register y axis dimension
 	        this._registerYAxisDimension(componentManager, boundsModel, scaleDataMap, 'yAxis', isVertical);
@@ -34276,7 +35210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var raphaelRenderUtil = __webpack_require__(5);
 	var circleLegendCalculator = __webpack_require__(114);
@@ -34285,6 +35219,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var seriesCalculator = __webpack_require__(117);
 	var spectrumLegendCalculator = __webpack_require__(118);
 	var snippet = __webpack_require__(6);
+	var browser = snippet.browser;
+	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+	var LEGEND_AREA_H_PADDING = chartConst.LEGEND_AREA_H_PADDING;
 
 	/**
 	 * Dimension.
@@ -34484,14 +35421,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _registerTitleDimension: function() {
 	        var chartOptions = this.options.chart || {};
 	        var hasTitleOption = snippet.isExisty(chartOptions.title);
-	        var titleHeight =
-	            hasTitleOption ? raphaelRenderUtil.getRenderedTextSize(chartOptions.title.text,
-	                this.theme.title.fontSize, this.theme.title.fontFamily).height : 0;
-	        var dimension = {
-	            height: titleHeight ? titleHeight + chartConst.TITLE_PADDING : 0
-	        };
+	        var titleTheme = this.theme.title;
+	        var titleHeight = hasTitleOption ?
+	            raphaelRenderUtil.getRenderedTextSize(
+	                chartOptions.title.text,
+	                titleTheme.fontSize,
+	                titleTheme.fontFamily
+	            ).height : 0;
+	        var height = titleHeight || 0;
 
-	        this._registerDimension('title', dimension);
+	        if (height) {
+	            height += (chartConst.TITLE_PADDING);
+	        }
+
+	        this._registerDimension('title', {height: height});
 	    },
 
 	    /**
@@ -34501,15 +35444,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _registerChartExportMenuDimension: function() {
 	        var dimension;
 
-	        if (this.options.chartExportMenu.visible) {
-	            dimension = {
-	                height: 17 + chartConst.CHART_PADDING,
-	                width: 60
-	            };
-	        } else {
+	        if (this.options.chartExportMenu.visible === false) {
 	            dimension = {
 	                width: 0,
 	                height: 0
+	            };
+	        } else {
+	            dimension = {
+	                height: chartConst.CHART_EXPORT_MENU_SIZE + chartConst.SERIES_AREA_V_PADDING,
+	                width: chartConst.CHART_EXPORT_MENU_SIZE
 	            };
 	        }
 	        this._registerDimension('chartExportMenu', dimension);
@@ -34539,30 +35482,45 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Register dimension for spectrum legend component.
+	     * @param {object} limit - min and maximum value
 	     */
-	    registerSpectrumLegendDimension: function() {
-	        var maxValue = this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+	    registerSpectrumLegendDimension: function(limit) {
+	        var maxValue = limit ? limit.max : this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+	        var minValue = limit ? limit.min : '';
 	        var labelTheme = this.theme.label;
-	        var dimension;
+	        var align = this.options.legend.align;
+	        var dimension, isBoxType, isTopLegend;
 
-	        if (predicate.isHorizontalLegend(this.options.legend.align)) {
-	            dimension = spectrumLegendCalculator._makeHorizontalDimension(maxValue, labelTheme);
+	        if (predicate.isHorizontalLegend(align)) {
+	            isBoxType = predicate.isBoxTypeChart(this.chartType);
+	            isTopLegend = predicate.isLegendAlignTop(align);
+	            dimension = spectrumLegendCalculator._makeHorizontalDimension(maxValue, labelTheme, isBoxType, isTopLegend);
 	        } else {
-	            dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, labelTheme);
+	            dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, minValue, labelTheme);
 	        }
 
 	        this._registerDimension('legend', dimension);
+	        this.useSpectrumLegend = true;
 	    },
 
 	    /**
 	     * Register dimension for y axis.
-	     * @param {{min: number, max: number}} limit - min, max
-	     * @param {string} componentName - component name like yAxis, rightYAxis
-	     * @param {object} options - options for y axis
-	     * @param {{title: object, label: object}} theme - them for y axis
-	     * @param {boolean} isVertical - whether vertical or not
+	     * @param {object} dimensionInfos - options for calculate dimension
+	     *     @param {{min: number, max: number}} dimensionInfos.limit - min, max
+	     *     @param {string} dimensionInfos.componentName - component name like yAxis, rightYAxis
+	     *     @param {object} dimensionInfos.options - options for y axis
+	     *     @param {{title: object, label: object}} dimensionInfos.theme - them for y axis
+	     *     @param {Array} dimensionInfos.yAxisLabels - them for y axis
+	     *     @param {boolean} dimensionInfos.isVertical - whether vertical or not
 	     */
-	    registerYAxisDimension: function(limit, componentName, options, theme, isVertical) {
+	    registerYAxisDimension: function(dimensionInfos) {
+	        var limit = dimensionInfos.limit;
+	        var componentName = dimensionInfos.axisName;
+	        var options = dimensionInfos.options;
+	        var theme = dimensionInfos.theme;
+	        var yAxisLabels = dimensionInfos.yAxisLabels;
+	        var isVertical = dimensionInfos.isVertical;
+	        var isDiverging = this.options.series && this.options.series.diverging;
 	        var categories, yAxisOptions;
 
 	        if (limit) {
@@ -34580,7 +35538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this._registerDimension(componentName, {
-	            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme)
+	            width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme, yAxisLabels, isDiverging)
 	        });
 	    },
 
@@ -34590,8 +35548,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    calculateSeriesWidth: function() {
 	        var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
+	        var seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
 
-	        return seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
+	        if (predicate.isMapChart(this.chartType) && !IS_LTE_IE8) {
+	            seriesWidth -= (chartConst.MAP_CHART_ZOOM_AREA_WIDTH + LEGEND_AREA_H_PADDING);
+	        }
+
+	        return seriesWidth;
 	    },
 
 	    /**
@@ -34600,8 +35563,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    calculateSeriesHeight: function() {
 	        var dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis', 'chartExportMenu']);
+	        var yAxisTitleAreaHeight = 0;
 
-	        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend, this.chartType, this.theme.series);
+	        if (this.options.yAxis && this.options.yAxis.title) {
+	            yAxisTitleAreaHeight = renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.title);
+	        }
+
+	        return seriesCalculator.calculateHeight(dimensionMap, this.options.legend, yAxisTitleAreaHeight);
 	    },
 
 	    getBaseSizeForLimit: function(isVertical) {
@@ -34753,7 +35721,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _updateDimensionsWidth: function(overflowInfo) {
 	        var overflowLeft = Math.max(overflowInfo.overflowLeft, 0);
-	        var overflowRight = Math.max(overflowInfo.overflowRight, 0);
+	        var overflowRight = overflowInfo.overflowRight ? Math.max(overflowInfo.overflowRight, 0) : 0;
 	        var margin = overflowLeft + overflowRight;
 
 	        this.chartLeftPadding += overflowLeft;
@@ -34832,22 +35800,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _makeLegendPosition: function() {
 	        var dimensionMap = this.dimensionMap;
-	        var seriesDimension = this.getDimension('series');
+	        var seriesDimension = dimensionMap.series;
+	        var seriesPositionTop = this.getPosition('series').top;
 	        var legendOption = this.options.legend;
-	        var top = dimensionMap.title.height || dimensionMap.chartExportMenu.height;
+	        var top = 0;
 	        var yAxisAreaWidth, left;
-
-	        if (predicate.isLegendAlignBottom(legendOption.align)) {
-	            top += seriesDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
-	        }
 
 	        if (predicate.isHorizontalLegend(legendOption.align)) {
 	            left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
-	        } else if (predicate.isLegendAlignLeft(legendOption.align)) {
-	            left = this.chartLeftPadding;
+	            if (predicate.isLegendAlignBottom(legendOption.align)) {
+	                top = seriesPositionTop + seriesDimension.height + this.getDimension('xAxis').height + chartConst.SERIES_AREA_V_PADDING;
+	            } else {
+	                top = seriesPositionTop - dimensionMap.legend.height + chartConst.LEGEND_AREA_V_PADDING;
+	            }
 	        } else {
-	            yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
-	            left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
+	            if (predicate.isLegendAlignLeft(legendOption.align)) {
+	                left = this.chartLeftPadding;
+	            } else {
+	                yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
+	                left = this.chartLeftPadding + yAxisAreaWidth + seriesDimension.width;
+	            }
+	            top = seriesPositionTop + chartConst.SERIES_AREA_V_PADDING;
 	        }
 
 	        return {
@@ -34857,14 +35830,64 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * make spectrum legend position
+	     * @returns {{top: number, left: number}} legend bound
+	     * @private
+	     */
+	    _makeSpectrumLegendPosition: function() {
+	        var legendOption = this.options.legend;
+	        var align = this.options.legend.align;
+	        var seriesPosition = this.getPosition('series');
+	        var seriesDimension = this.getDimension('series');
+	        var legendDimension = this.getDimension('legend');
+	        var top, left, right, position;
+
+	        if (predicate.isHorizontalLegend(align)) {
+	            left = (this.getDimension('chart').width - legendDimension.width) / 2;
+
+	            if (predicate.isLegendAlignTop(align)) {
+	                top = seriesPosition.top - legendDimension.height;
+	            } else {
+	                top = seriesPosition.top + seriesDimension.height + this.getDimension('xAxis').height;
+	            }
+	        } else {
+	            if (predicate.isLegendAlignLeft(legendOption.align)) {
+	                left = this.chartLeftPadding;
+	            } else {
+	                right = this.getDimension('chart').width - this.chartLeftPadding;
+	                left = right - this.getDimension('legend').width;
+	            }
+
+	            if (predicate.isBoxTypeChart(this.chartType)) {
+	                top = seriesPosition.top;
+	            } else {
+	                top = seriesPosition.top + (chartConst.MAP_CHART_ZOOM_AREA_HEIGHT * 0.75);
+	            }
+	        }
+
+	        position = {
+	            top: top,
+	            left: left
+	        };
+
+	        if (right) {
+	            position.right = right;
+	        }
+
+	        return position;
+	    },
+
+	    /**
 	     * Make chartExportMenu position.
 	     * @returns {{top: number, left: number}}
 	     * @private
 	     */
 	    _makeChartExportMenuPosition: function() {
+	        var top = this.getPosition('series').top - chartConst.SERIES_AREA_V_PADDING - chartConst.CHART_EXPORT_MENU_SIZE;
+
 	        return {
-	            top: 1,
-	            right: 20
+	            top: top,
+	            right: chartConst.CHART_PADDING
 	        };
 	    },
 
@@ -34921,7 +35944,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var tooltipPosition;
 
 	        this.positionMap.mouseEventDetector = snippet.extend({}, seriesPosition);
-	        this.positionMap.legend = this._makeLegendPosition();
+	        this.positionMap.legend
+	            = this.useSpectrumLegend ? this._makeSpectrumLegendPosition() : this._makeLegendPosition();
 	        this.positionMap.chartExportMenu = this._makeChartExportMenuPosition();
 
 	        if (this.getDimension('circleLegend').width) {
@@ -34951,10 +35975,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
 	        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
 	        var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
-	        var seriesTop = titleOrExportMenuHeight + topLegendHeight;
-	        var defaultSeriesTop = renderUtil.getDefaultSeriesTopAreaHeight(this.chartType, this.theme.series);
-	        var seriesPosition = {
-	            top: (!seriesTop ? defaultSeriesTop : seriesTop) + chartConst.CHART_PADDING,
+	        var yAxisTitlePadding = (this.options.yAxis.title && !this.useSpectrumLegend) ?
+	            (renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.yAxis.title)
+	                + chartConst.Y_AXIS_TITLE_PADDING)
+	            : 0;
+	        var seriesTop = (titleOrExportMenuHeight
+	            + Math.max(0, (Math.max(topLegendHeight, yAxisTitlePadding) - chartConst.TITLE_PADDING)));
+	        var seriesPosition = {};
+
+	        if (!titleOrExportMenuHeight) {
+	            seriesTop = Math.max(topLegendHeight, yAxisTitlePadding);
+	        }
+
+	        seriesPosition = {
+	            top: seriesTop + chartConst.CHART_PADDING,
 	            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
 	        };
 
@@ -35012,6 +36046,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    registerBoundsData: function(xAxisData) {
 	        this._registerCenterComponentsDimension();
 
+	        if (this.useSpectrumLegend) {
+	            this._updateDimensionsForSpectrumLegend();
+	        }
+
 	        if (this.hasAxes) {
 	            this._registerAxisComponentsDimension();
 	            this._updateDimensionsForXAxisLabel(xAxisData);
@@ -35022,6 +36060,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (this.options.yAxis.isCenter) {
 	            this._updateBoundsForYAxisCenterOption();
+	        }
+	    },
+
+	    /**
+	     * Update spectrum legend dimension, to prevent overflow
+	     * @private
+	     */
+	    _updateDimensionsForSpectrumLegend: function() {
+	        var legendAlignOption = this.options.legend.align;
+	        var legendDimension = this.getDimension('legend');
+	        var seriesDimension = this.getDimension('series');
+
+	        if (predicate.isHorizontalLegend(legendAlignOption) &&
+	            (legendDimension.width > seriesDimension.width)) {
+	            legendDimension.width = seriesDimension.width;
+	        } else if (predicate.isVerticalLegend(legendAlignOption)) {
+	            if (predicate.isBoxTypeChart(this.chartType)) {
+	                legendDimension.height = seriesDimension.height;
+	            } else if (legendDimension.height > (seriesDimension.height - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT)) {
+	                legendDimension.height = seriesDimension.height - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT;
+	            }
 	        }
 	    },
 
@@ -35161,7 +36220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 
 	/**
@@ -35178,58 +36237,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	    calculateXAxisHeight: function(options, theme) {
 	        var title = options.title;
 	        var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
-	        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
+	        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.X_AXIS_TITLE_PADDING) : 0;
 	        var labelMargin = options.labelMargin || 0;
 	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
-	        var height = titleAreaHeight + chartConst.CHART_PADDING;
 
 	        if (labelMargin > 0) {
-	            height += labelMargin;
+	            labelHeight += labelMargin;
 	        }
 
-	        if (options.showLabel !== false) {
-	            height += labelHeight;
-	        }
-
-	        return height;
+	        return titleAreaHeight + labelHeight + chartConst.X_AXIS_LABEL_PADDING;
 	    },
 
 	    /**
 	     * Calculate width for y axis.
 	     * @param {Array.<string | number>} labels labels
 	     * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
-	     * @param {{title: object, label: object}} theme - them for y axis
+	     * @param {{title: object, label: object}} theme - theme for y axis calculate
+	     * @param {Array} yAxisLabels - yAxis labels for y axis calculate
+	     * @param {boolean} isDiverging - whether is diverging chart or not
 	     * @returns {number}
-	     * @private
 	     */
-	    calculateYAxisWidth: function(labels, options, theme) {
-	        var title = options.title || '';
-	        var titleAreaWidth = 0;
-	        var labelMargin = options.labelMargin || 0;
+	    calculateYAxisWidth: function(labels, options, theme, yAxisLabels, isDiverging) {
+	        var labelMargin = options.labelMargin;
 	        var width = 0;
+	        var titleWidth = 0;
+	        var maxLabelWidth;
 
 	        labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
+	        yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
 
 	        if (options.isCenter) {
-	            width += chartConst.AXIS_LABEL_PADDING;
-	        } else if (options.rotateTitle === false) {
-	            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title) + chartConst.TITLE_PADDING;
-	        } else {
-	            titleAreaWidth = renderUtil.getRenderedLabelHeight(title.text, theme.title) + chartConst.TITLE_PADDING;
+	            width += chartConst.Y_AXIS_LABEL_PADDING;
 	        }
 
 	        if (predicate.isDatetimeType(options.type)) {
 	            labels = renderUtil.formatDates(labels, options.dateFormat);
+	            yAxisLabels = renderUtil.formatDates(yAxisLabels, options.dateFormat);
 	        }
-	        if (labelMargin > 0) {
+	        if (labelMargin && labelMargin > 0) {
 	            width += labelMargin;
 	        }
-
-	        if (options.showLabel !== false) {
-	            width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+	        labels = yAxisLabels.length ? yAxisLabels : labels;
+	        maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+	        if (options.title) {
+	            titleWidth = renderUtil.getRenderedLabelWidth(options.title.text, theme.title);
 	        }
 
-	        width += titleAreaWidth + chartConst.AXIS_LABEL_PADDING;
+	        width += ((isDiverging ? Math.max(maxLabelWidth, titleWidth) : maxLabelWidth) +
+	            chartConst.Y_AXIS_LABEL_PADDING);
 
 	        return width;
 	    }
@@ -35252,28 +36307,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var snippet = __webpack_require__(6);
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var arrayUtil = __webpack_require__(10);
 
-	var LEGEND_CHECKBOX_WIDTH = chartConst.LEGEND_CHECKBOX_WIDTH;
+	var LEGEND_CHECKBOX_SIZE = chartConst.LEGEND_CHECKBOX_SIZE;
 	var LEGEND_ICON_WIDTH = chartConst.LEGEND_ICON_WIDTH;
-	var LEGEND_ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
 	var LEGEND_LABEL_LEFT_PADDING = chartConst.LEGEND_LABEL_LEFT_PADDING;
-	var LEGEND_AREA_PADDING = chartConst.LEGEND_AREA_PADDING;
+	var VERTICAL_LEGEND_LABEL_RIGHT_PADDING = chartConst.LEGEND_V_LABEL_RIGHT_PADDING;
+	var HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING = chartConst.LEGEND_H_LABEL_RIGHT_PADDING;
+	var LEGEND_AREA_H_PADDING = chartConst.LEGEND_AREA_H_PADDING;
 
 	/**
 	 * Calculator for dimension of legend.
 	 * @module legendCalculator
 	 * @private */
 	var legendCalculator = {
-	    /**
-	     * Legend margin.
-	     * @type {number}
-	     */
-	    legendMargin: LEGEND_LABEL_LEFT_PADDING + LEGEND_AREA_PADDING,
-
 	    /**
 	     * Calculate sum of legends width.
 	     * @param {Array.<string>} labels - legend labels
@@ -35284,11 +36334,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _calculateLegendsWidthSum: function(labels, labelTheme, checkboxWidth, maxWidth) {
-	        var restWidth = LEGEND_AREA_PADDING + checkboxWidth +
+	        var restWidth = LEGEND_AREA_H_PADDING + checkboxWidth +
 	            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
-	        var legendMargin = this.legendMargin;
-
-	        return calculator.sum(snippet.map(labels, function(label) {
+	        var legendWidth = calculator.sum(snippet.map(labels, function(label) {
 	            var labelWidth = renderUtil.getRenderedLabelWidth(label, labelTheme);
 
 	            if (maxWidth && labelWidth > maxWidth) {
@@ -35296,8 +36344,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            labelWidth += restWidth;
 
-	            return labelWidth + legendMargin;
+	            return labelWidth + HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING;
 	        }));
+
+	        legendWidth = legendWidth - HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING + LEGEND_AREA_H_PADDING;
+
+	        return legendWidth;
 	    },
 
 	    /**
@@ -35393,8 +36445,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var heightByLabel = Math.max.apply(null, snippet.map(dividedLabels, function(labels) {
 	            return renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
 	        }));
-	        var labelItemHeightWithPaddingTop = Math.max(LEGEND_ICON_HEIGHT, heightByLabel) + chartConst.LINE_MARGIN_TOP;
-	        var legendHeight = (labelItemHeightWithPaddingTop * dividedLabels.length) - chartConst.LINE_MARGIN_TOP;
+	        var labelItemHeightWithPaddingTop =
+	            Math.max(chartConst.LEGEND_CHECKBOX_SIZE, heightByLabel) + chartConst.LINE_MARGIN_TOP;
+	        var legendHeight = ((labelItemHeightWithPaddingTop * dividedLabels.length) - chartConst.LINE_MARGIN_TOP
+	             + chartConst.SERIES_AREA_V_PADDING);
 
 	        return legendHeight;
 	    },
@@ -35414,7 +36468,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            legendLabels, chartWidth, labelTheme, checkboxWidth, maxWidth
 	        );
 	        var horizontalLegendHeight = this._calculateHorizontalLegendHeight(dividedInfo.labels, labelTheme);
-	        var legendHeight = horizontalLegendHeight + (LEGEND_AREA_PADDING * 2);
+	        var legendHeight = horizontalLegendHeight + chartConst.SERIES_AREA_V_PADDING;
 
 	        return {
 	            width: Math.max(dividedInfo.maxLineWidth, chartConst.MIN_LEGEND_WIDTH),
@@ -35433,13 +36487,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _makeVerticalDimension: function(labelTheme, legendLabels, checkboxWidth, maxWidth) {
 	        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+	        var legendWidth = 0;
 	        if (maxWidth && labelWidth > maxWidth) {
 	            labelWidth = maxWidth;
 	        }
-	        labelWidth += LEGEND_AREA_PADDING + checkboxWidth + LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+	        legendWidth = (LEGEND_AREA_H_PADDING * 2) + checkboxWidth +
+	            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING + labelWidth + VERTICAL_LEGEND_LABEL_RIGHT_PADDING;
 
 	        return {
-	            width: labelWidth + this.legendMargin,
+	            width: legendWidth,
 	            height: 0
 	        };
 	    },
@@ -35453,7 +36509,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {{width: number, height: number}}
 	     */
 	    calculate: function(options, labelTheme, legendLabels, chartWidth) {
-	        var checkboxWidth = options.showCheckbox === false ? 0 : LEGEND_CHECKBOX_WIDTH + LEGEND_LABEL_LEFT_PADDING;
+	        var checkboxWidth = options.showCheckbox === false ? 0 : LEGEND_CHECKBOX_SIZE + LEGEND_LABEL_LEFT_PADDING;
 	        var maxWidth = options.maxWidth;
 	        var dimension = {};
 
@@ -35487,8 +36543,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
-	var renderUtil = __webpack_require__(7);
+	var predicate = __webpack_require__(21);
 
 	/**
 	 * Calculator for series.
@@ -35528,21 +36583,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *      xAxis: {height: number}
 	     * }} dimensionMap - dimension map
 	     * @param {{align: ?string, visible: boolean}} legendOptions - legend options
-	     * @param {string} chartType - chart type
-	     * @param {object} seriesTheme - series theme;
+	     * @param {number} yAxisTitleAreaHeight - yAxis title area height
 	     * @returns {number} series height
 	     */
-	    calculateHeight: function(dimensionMap, legendOptions, chartType, seriesTheme) {
+	    calculateHeight: function(dimensionMap, legendOptions, yAxisTitleAreaHeight) {
 	        var chartHeight = dimensionMap.chart.height;
-	        var defaultTopAreaHeight = renderUtil.getDefaultSeriesTopAreaHeight(chartType, seriesTheme);
-	        var topAreaHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
+	        var titleHeight = dimensionMap.title.height;
+	        var hasTitle = titleHeight > 0;
+	        var chartExportMenuHeight = dimensionMap.chartExportMenu.height;
+	        var topAreaHeight = Math.max(dimensionMap.title.height, chartExportMenuHeight);
 	        var bottomAreaHeight = dimensionMap.xAxis.height;
 	        var legendHeight = legendOptions.visible ? dimensionMap.legend.height : 0;
-	        var legendAlignment = legendOptions.align;
+	        var topLegendHeight = predicate.isLegendAlignTop(legendOptions.align) ? legendHeight : 0;
+	        var topAreaExceptTitleHeight = Math.max(yAxisTitleAreaHeight, topLegendHeight);
 
-	        bottomAreaHeight += (predicate.isLegendAlignBottom(legendAlignment) ? legendHeight : 0);
-	        topAreaHeight += (predicate.isLegendAlignTop(legendAlignment) ? legendHeight : 0);
-	        topAreaHeight = topAreaHeight || defaultTopAreaHeight;
+	        if (hasTitle) {
+	            topAreaHeight = titleHeight + Math.max(0, topAreaExceptTitleHeight - chartConst.TITLE_PADDING);
+	        } else {
+	            topAreaHeight = Math.max(chartExportMenuHeight, topAreaExceptTitleHeight);
+	        }
+
+	        bottomAreaHeight += (predicate.isLegendAlignBottom(legendOptions.align) ? legendHeight : 0);
 
 	        return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight;
 	    }
@@ -35574,17 +36635,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Make vertical dimension.
 	     * @param {string} maxValue - formatted max value
+	     * @param {string} minValue - formatted min value
 	     * @param {object} labelTheme - theme for label
 	     * @returns {{width: number, height: number}}
 	     * @private
 	     */
-	    _makeVerticalDimension: function(maxValue, labelTheme) {
+	    _makeVerticalDimension: function(maxValue, minValue, labelTheme) {
+	        var maxValueLabelWidth = renderUtil.getRenderedLabelWidth(maxValue, labelTheme);
+	        var minValueLabelWidth = renderUtil.getRenderedLabelWidth(minValue, labelTheme);
 	        var labelWidth = renderUtil.getRenderedLabelWidth(maxValue, labelTheme);
-	        var padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
+	        var tooltipWidth = (chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING * 2)
+	            + labelWidth + chartConst.MAP_LEGEND_WEDGE_SIZE;
 
 	        return {
-	            width: chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + padding,
-	            height: chartConst.MAP_LEGEND_SIZE
+	            width: chartConst.MAP_LEGEND_AREA_PADDING_WIDE
+	                + tooltipWidth
+	                + chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE
+	                + chartConst.MAP_LEGEND_GRAPH_SIZE
+	                + chartConst.MAP_LEGEND_LABEL_PADDING
+	                + Math.max(maxValueLabelWidth, minValueLabelWidth),
+	            height: chartConst.VERTICAL_MAP_LEGEND_HEIGHT
 	        };
 	    },
 
@@ -35592,16 +36662,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Make horizontal dimension.
 	     * @param {string} maxValue - formatted max value
 	     * @param {object} labelTheme - theme for label
+	     * @param {boolean} isBoxType - whether use narrow padding or not
+	     * @param {boolean} isTopLegend - whether use top legend or not
 	     * @returns {{width: number, height: number}}
 	     * @private
 	     */
-	    _makeHorizontalDimension: function(maxValue, labelTheme) {
+	    _makeHorizontalDimension: function(maxValue, labelTheme, isBoxType, isTopLegend) {
 	        var labelHeight = renderUtil.getRenderedLabelHeight(maxValue, labelTheme);
-	        var padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
+	        var tooltipHeight = (chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING * 2)
+	            + labelHeight + chartConst.MAP_LEGEND_WEDGE_SIZE;
+	        var padding = isBoxType ?
+	            chartConst.MAP_LEGEND_AREA_PADDING_NARROW :
+	            chartConst.MAP_LEGEND_AREA_PADDING_WIDE;
+	        var additionalTopPadding = isTopLegend ? chartConst.MAP_LEGEND_AREA_PADDING_WIDE : 0;
 
 	        return {
-	            width: chartConst.MAP_LEGEND_SIZE,
-	            height: chartConst.MAP_LEGEND_GRAPH_SIZE + labelHeight + padding
+	            width: chartConst.HORIZONTAL_MAP_LEGEND_WIDTH,
+	            height: padding
+	                + tooltipHeight
+	                + chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE
+	                + chartConst.MAP_LEGEND_GRAPH_SIZE
+	                + chartConst.MAP_LEGEND_LABEL_PADDING
+	                + labelHeight
+	                + chartConst.MAP_LEGEND_LABEL_PADDING
+	                + additionalTopPadding
 	        };
 	    }
 	};
@@ -35618,7 +36702,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var scaleDataMaker = __webpack_require__(120);
 	var scaleLabelFormatter = __webpack_require__(122);
 	var axisDataMaker = __webpack_require__(123);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
 
@@ -35706,6 +36790,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (predicate.isBubbleChart(chartType)) {
 	            options.overflowItem = this.dataProcessor.findOverflowItem(chartType, typeMap.valueType);
+	        }
+
+	        if (predicate.isMapChart(chartType) ||
+	            predicate.isHeatmapChart(chartType) ||
+	            predicate.isTreemapChart(chartType)) {
+	            options.useSpectrumLegend = true;
 	        }
 
 	        return scaleDataMaker.makeScaleData(baseValues, baseSize, chartType, options);
@@ -36063,7 +37153,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var arrayUtil = __webpack_require__(10);
 	var coordinateScaleCalculator = __webpack_require__(121);
@@ -36301,23 +37391,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Calculate coordinate scale.
-	     * @param {object} makeScaleInfos - calculate scale infos
-	     *     @param {Array.<number>} makeScaleInfos.baseValues - base values
-	     *     @param {number} makeScaleInfos.baseSize - base size(width or height) for calculating scale data
-	     *     @param {object} makeScaleInfos.overflowItem - overflow item
-	     *     @param {boolean} makeScaleInfos.isDiverging - is diverging or not
-	     *     @param {strint} makeScaleInfos.chartType - chartType
-	     *     @param {object} makeScaleInfos.options - scale options
-	     *         @param {{min: ?number, max: ?number}} makeScaleInfos.options.limit - limit options
+	     * @param {Array.<number>} baseValues - base values
+	     * @param {number} baseSize - base size(width or height) for calculating scale data
+	     * @param {object} overflowItem - overflow item
+	     * @param {boolean} isDiverging - is diverging or not
+	     * @param {object} options - scale options
+	     * @param {{min: ?number, max: ?number}} options.limit - limit options
 	     * @returns {{limit: {min:number, max:number}, step: number}}
 	     * @private
 	     */
-	    _calculateCoordinateScale: function(makeScaleInfos) {
-	        var options = makeScaleInfos.options;
-	        var baseSize = makeScaleInfos.baseSize;
-	        var overflowItem = makeScaleInfos.overflowItem;
-	        var chartType = makeScaleInfos.chartType;
-	        var limit = this._getLimitSafely(makeScaleInfos.baseValues);
+	    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, options) {
+	        var limit = this._getLimitSafely(baseValues);
 	        var limitOption = options.limitOption || {};
 	        var hasMinOption = snippet.isExisty(limitOption.min);
 	        var hasMaxOption = snippet.isExisty(limitOption.max);
@@ -36343,13 +37427,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            offsetSize: baseSize
 	        });
 
-	        isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+	        if (!options.useSpectrumLegend) {
+	            isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
+	        }
 
-	        if (isOverflowed && !predicate.isMapTypeChart(chartType)) {
+	        if (isOverflowed) {
 	            scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);
 	        }
 
-	        if (makeScaleInfos.isDiverging) {
+	        if (isDiverging) {
 	            scaleData.limit = this._makeLimitForDivergingOption(scaleData.limit);
 	        }
 
@@ -36404,14 +37490,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                options.stepCount = Math.floor(baseSize / 100);
 	            }
 
-	            scaleData = this._calculateCoordinateScale({
-	                baseValues: baseValues,
-	                baseSize: baseSize,
-	                overflowItem: overflowItem,
-	                isDiverging: isDiverging,
-	                chartType: chartType,
-	                options: options
-	            });
+	            scaleData = this._calculateCoordinateScale(baseValues, baseSize, overflowItem, isDiverging, options);
 	        }
 
 	        return scaleData;
@@ -36645,7 +37724,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var snippet = __webpack_require__(6);
@@ -36741,7 +37820,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var geomatric = __webpack_require__(49);
 	var renderUtil = __webpack_require__(7);
 	var arrayUtil = __webpack_require__(10);
@@ -36813,7 +37892,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return {
 	            labels: labels,
 	            tickCount: tickCount,
-	            validTickCount: 0,
+	            validTickCount: tickCount,
 	            isLabelAxis: true,
 	            options: options,
 	            isVertical: !!params.isVertical,
@@ -37262,8 +38341,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var seriesWidth = dimensionMap.series.width;
 	        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
 	        var additionalData = null;
+	        var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0;
 	        var degree, labelHeight, rotatedHeight, limitWidth, rotatedWidth;
-	        var contentWidth = chartConst.CHART_PADDING + dimensionMap.yAxis.width + seriesWidth;
+	        var contentWidth = (chartConst.CHART_PADDING * 2) + yAxisAreaWidth + seriesWidth;
 
 	        if (labelAreaWidth < maxLabelWidth) {
 	            labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);
@@ -37414,7 +38494,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var ChartBase = __webpack_require__(42);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var DynamicDataHelper = __webpack_require__(126);
 	var Series = __webpack_require__(85);
 	var rawDataHandler = __webpack_require__(31);
@@ -37658,7 +38738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var chartConst = __webpack_require__(8);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var snippet = __webpack_require__(6);
 
 	var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototype */ {
@@ -38139,7 +39219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ChartBase = __webpack_require__(42);
 	var rawDataHandler = __webpack_require__(31);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var validTypeMakerForYAxisOptions = __webpack_require__(129);
 	var snippet = __webpack_require__(6);
 
@@ -38575,7 +39655,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var ChartBase = __webpack_require__(42);
 	var rawDataHandler = __webpack_require__(31);
-	var predicate = __webpack_require__(11);
+	var predicate = __webpack_require__(21);
 	var validTypeMakerForYAxisOptions = __webpack_require__(129);
 	var DynamicDataHelper = __webpack_require__(126);
 	var snippet = __webpack_require__(6);
@@ -39058,6 +40138,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            options.circleLegend.visible = true;
 	        }
 
+	        options.tooltip.grouped = false;
+
 	        ChartBase.call(this, {
 	            rawData: rawData,
 	            theme: theme,
@@ -39173,6 +40255,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!options.tooltip.align) {
 	            options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
 	        }
+
+	        options.tooltip.grouped = false;
 
 	        ChartBase.call(this, {
 	            rawData: rawData,
@@ -39358,7 +40442,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.componentManager.register('yAxis', 'axis');
 
 	        this.componentManager.register('chartExportMenu', 'chartExportMenu');
-	        this.componentManager.register('tooltip', 'tooltip');
+	        this.componentManager.register('tooltip', 'tooltip', {
+	            colorSpectrum: colorSpectrum
+	        });
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
 	    }
 	});
@@ -39752,7 +40838,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this.componentManager.register('tooltip', 'tooltip', snippet.extend({
-	            labelTheme: snippet.pick(this.theme, 'series', 'label')
+	            labelTheme: snippet.pick(this.theme, 'series', 'label'),
+	            colorSpectrum: colorSpectrum
 	        }));
 
 	        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
@@ -39861,7 +40948,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        this.componentManager.register('tooltip', 'tooltip', {
-	            mapModel: mapModel
+	            mapModel: mapModel,
+	            colorSpectrum: colorSpectrum
 	        });
 
 	        this.componentManager.register('zoom', 'zoom');

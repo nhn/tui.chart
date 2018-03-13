@@ -127,6 +127,8 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
          * @type {Raphael.Element}
          */
         this._elBg = null;
+
+        this.isRightYAxis = params.name === 'rightYAxis';
     },
 
     /**
@@ -136,11 +138,6 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _renderBackground: function() {
         var dimension = snippet.extend({}, this.layout.dimension);
         var position = snippet.extend({}, this.layout.position);
-
-        if (this.isYAxis) {
-            dimension.height = this.dimensionMap.chart.height;
-            position.top = 0;
-        }
 
         if (this._elBg) {
             this._elBg.remove();
@@ -158,12 +155,19 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      */
     _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
         var isYAxisLineType = this.isYAxis && this.data.aligned;
+        var axisLimit = this.limitMap[this.dataProcessor.chartType];
+        var isNegativeLimitChart = !this.data.limit && axisLimit && axisLimit.min < 0;
+        var isBarChart = predicate.isBarTypeChart(this.dataProcessor.chartType);
+        var seriesOption = this.dataProcessor.getOption('series') || {};
+        var isDivergingOption = seriesOption.diverging;
+
+        additionalWidth = additionalWidth || 0;
 
         if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
             this._renderBackground();
         }
 
-        this._renderTitleArea();
+        this._renderTitleArea(size, additionalWidth);
 
         if (this.options.showLabel !== false) {
             this._renderLabelArea(size, tickCount, categories, additionalWidth);
@@ -172,7 +176,11 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         if (!isYAxisLineType) {
             this._renderTickArea(size, tickCount, additionalWidth);
         }
+        if (isNegativeLimitChart && isBarChart && !isDivergingOption) {
+            this._renderNegativeStandardsLine(size, additionalWidth, this.dimensionMap.series, axisLimit);
+        }
     },
+
     /**
      * Render divided xAxis if yAxis rendered in the center.
      * @param {{width: number, height:number}} dimension axis area width and height
@@ -251,6 +259,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _setDataForRendering: function(data) {
         this.layout = data.layout;
         this.dimensionMap = data.dimensionMap;
+        this.limitMap = data.limitMap;
         this.data = data.axisDataMap[this.componentName];
         this.options = this.data.options;
     },
@@ -293,11 +302,24 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Title area renderer
+     * get other side axis dimension
+     * @returns {object}
      * @private
      */
-    _renderTitleArea: function() {
+    _getOtherSideDimension: function() {
+        return this.dimensionMap[this.isYAxis ? 'xAxis' : 'yAxis'];
+    },
+
+    /**
+     * Title area renderer
+     * @param {number} size - area size
+     * @param {number} additionalWidth - right side xAxis position
+     * @private
+     */
+    _renderTitleArea: function(size, additionalWidth) {
         var title = this.options.title || {};
+        var yAxisOption = this.dataProcessor.getOption('yAxis');
+        var seriesOption = this.dataProcessor.getOption('series') || {};
 
         if (title.text) {
             this.graphRenderer.renderTitle(this.paper, {
@@ -305,12 +327,20 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 offset: title.offset,
                 theme: this.theme.title,
                 rotationInfo: {
-                    rotateTitle: this.options.rotateTitle,
                     isVertical: this.isYAxis,
                     isPositionRight: this.data.isPositionRight,
-                    isCenter: this.options.isCenter
+                    isCenter: this.options.isCenter,
+                    isColumnType: predicate.isColumnTypeChart(
+                        this.dataProcessor.chartType, this.dataProcessor.seriesTypes
+                    ),
+                    isDiverging: seriesOption.diverging,
+                    isYAxisCenter: yAxisOption && yAxisOption.align === 'center'
                 },
                 layout: this.layout,
+                areaSize: size,
+                additionalWidth: additionalWidth,
+                otherSideDimension: this._getOtherSideDimension(),
+                tickCount: this.data.tickCount,
                 set: this.axisSet
             });
         }
@@ -376,6 +406,18 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         });
     },
 
+    _renderNegativeStandardsLine: function(size, additionalSize, seriesDimension, axisLimit) {
+        this.graphRenderer.renderStandardLine({
+            areaSize: size,
+            isVertical: this.isYAxis,
+            layout: this.layout,
+            paper: this.paper,
+            set: this.axisSet,
+            seriesDimension: seriesDimension,
+            axisLimit: axisLimit
+        });
+    },
+
     /**
      * Render tick area.
      * @param {number} size - width or height
@@ -387,7 +429,6 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var isNotDividedXAxis = !this.isYAxis && !this.options.divided;
 
         this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0));
-
         this._renderTicks(size, tickCount, isNotDividedXAxis, (additionalSize || 0));
     },
 
@@ -416,13 +457,12 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderRotationLabels: function(positions, categories, labelSize, additionalSize) {
-        var self = this;
         var renderer = this.graphRenderer;
         var isYAxis = this.isYAxis;
         var theme = this.theme.label;
         var degree = this.data.degree;
         var halfWidth = labelSize / 2;
-        var horizontalTop = this.layout.position.top + chartConst.AXIS_LABEL_PADDING;
+        var horizontalTop = this.layout.position.top + chartConst.X_AXIS_LABEL_PADDING;
         var baseLeft = this.layout.position.left;
         var labelMargin = this.options.labelMargin || 0;
 
@@ -435,9 +475,9 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.left = labelSize + labelMargin;
             } else {
                 positionTopAndLeft.top = horizontalTop + labelMargin;
-                positionTopAndLeft.left = baseLeft + labelPosition;
+                positionTopAndLeft.left = baseLeft + labelPosition - theme.fontSize;
 
-                if (self.isLabelAxis) {
+                if (this.isLabelAxis) {
                     positionTopAndLeft.left += halfWidth;
                 }
             }
@@ -445,12 +485,12 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             renderer.renderRotatedLabel({
                 degree: degree,
                 labelText: categories[index],
-                paper: self.paper,
+                paper: this.paper,
                 positionTopAndLeft: positionTopAndLeft,
-                set: self.axisSet,
+                set: this.axisSet,
                 theme: theme
             });
-        });
+        }, this);
     },
 
     /**
@@ -462,7 +502,6 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderNormalLabels: function(positions, categories, labelSize, additionalSize) {
-        var self = this;
         var renderer = this.graphRenderer;
         var isYAxis = this.isYAxis;
         var isPositionRight = this.data.isPositionRight;
@@ -478,8 +517,6 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             var labelPosition = position + additionalSize;
             var halfLabelDistance = labelSize / 2;
             var positionTopAndLeft = {};
-            var labelTopPosition, labelLeftPosition;
-
             /*
              * to prevent printing `undefined` text, when category label is not set
              */
@@ -488,47 +525,91 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             }
 
             if (isYAxis) {
-                labelTopPosition = labelPosition;
-
-                if (isCategoryLabel) {
-                    labelTopPosition += halfLabelDistance + layout.position.top;
-                } else {
-                    labelTopPosition = layout.dimension.height + layout.position.top - labelTopPosition;
-                }
-
-                if (isPositionRight) {
-                    labelLeftPosition = layout.position.left + chartConst.AXIS_LABEL_PADDING + labelMargin;
-                } else {
-                    labelLeftPosition = layout.position.left + layout.dimension.width -
-                                        chartConst.AXIS_LABEL_PADDING - labelMargin;
-                }
+                positionTopAndLeft = this._getYAxisLabelPosition(layout, {
+                    labelPosition: labelPosition,
+                    isCategoryLabel: isCategoryLabel,
+                    halfLabelDistance: halfLabelDistance,
+                    isPositionRight: isPositionRight
+                });
             } else {
-                labelTopPosition = layout.position.top + chartConst.CHART_PADDING +
-                                   chartConst.AXIS_LABEL_PADDING + labelMargin;
-
-                labelLeftPosition = labelPosition + layout.position.left;
-
-                if (isCategoryLabel) {
-                    if (!isLineTypeChart || isPointOnColumn) {
-                        labelLeftPosition += halfLabelDistance;
-                    }
-                }
+                positionTopAndLeft = this._getXAxisLabelPosition(layout, {
+                    labelMargin: labelMargin,
+                    labelHeight: renderUtil.getRenderedLabelsMaxHeight(categories, theme),
+                    labelPosition: labelPosition,
+                    isCategoryLabel: isCategoryLabel,
+                    isLineTypeChart: isLineTypeChart,
+                    isPointOnColumn: isPointOnColumn,
+                    halfLabelDistance: halfLabelDistance
+                });
             }
 
-            positionTopAndLeft.top = Math.round(labelTopPosition);
-            positionTopAndLeft.left = Math.round(labelLeftPosition);
+            positionTopAndLeft.top = Math.round(positionTopAndLeft.top);
+            positionTopAndLeft.left = Math.round(positionTopAndLeft.left);
 
             renderer.renderLabel({
                 isPositionRight: isPositionRight,
                 isVertical: isYAxis,
+                isCenter: this.options.isCenter,
                 labelSize: labelSize,
                 labelText: categories[index],
-                paper: self.paper,
+                paper: this.paper,
                 positionTopAndLeft: positionTopAndLeft,
-                set: self.axisSet,
+                set: this.axisSet,
                 theme: theme
             });
-        });
+        }, this);
+    },
+
+    /**
+     * @param {object} layout - axis dimension, position
+     * @param {object} params - optional data needed to render axis labels
+     * @returns {object} top, left positon of y axis
+     */
+    _getYAxisLabelPosition: function(layout, params) {
+        var labelTopPosition = params.labelPosition;
+        var labelLeftPosition;
+
+        if (params.isCategoryLabel) {
+            labelTopPosition += params.halfLabelDistance + layout.position.top;
+        } else {
+            labelTopPosition = layout.dimension.height + layout.position.top - labelTopPosition;
+        }
+
+        if (params.isPositionRight) {
+            labelLeftPosition = layout.position.left + layout.dimension.width;
+        } else if (this.options.isCenter) {
+            labelLeftPosition = layout.position.left + (layout.dimension.width / 2);
+        } else {
+            labelLeftPosition = layout.position.left;
+        }
+
+        return {
+            top: labelTopPosition,
+            left: labelLeftPosition
+        };
+    },
+
+    /**
+     * @param {object} layout - axis dimension, position
+     * @param {object} params - optional data needed to render axis labels
+     * @returns {object} top, left positon of y axis
+     */
+    _getXAxisLabelPosition: function(layout, params) {
+        var labelTopPosition = layout.position.top
+            + chartConst.X_AXIS_LABEL_PADDING
+            + params.labelMargin + (params.labelHeight / 2);
+        var labelLeftPosition = params.labelPosition + layout.position.left;
+
+        if (params.isCategoryLabel) {
+            if (!params.isLineTypeChart || params.isPointOnColumn) {
+                labelLeftPosition += params.halfLabelDistance;
+            }
+        }
+
+        return {
+            top: labelTopPosition,
+            left: labelLeftPosition
+        };
     },
 
     /**

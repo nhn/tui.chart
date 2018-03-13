@@ -37,6 +37,8 @@ var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototyp
             options.circleLegend.visible = true;
         }
 
+        options.tooltip.grouped = false;
+
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,

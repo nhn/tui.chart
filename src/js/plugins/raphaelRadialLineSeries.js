@@ -12,6 +12,7 @@ var snippet = require('tui-code-snippet');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
+var DEFAULT_LINE_WIDTH = 6;
 
 var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
     /**
@@ -36,7 +37,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
          * Line width
          * @type {number}
          */
-        this.lineWidth = 2;
+        this.lineWidth = DEFAULT_LINE_WIDTH;
     },
 
     /**
@@ -54,10 +55,15 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
         var isShowArea = data.options.showArea;
 
         var groupPaths = this._getLinesPath(groupPositions);
-        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
+        var borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         var radialSeriesSet = paper.set();
         var lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);
+        var dotPositions = snippet.map(groupPositions, function(positions) {
+            positions.pop();
+
+            return positions;
+        });
 
         this.paper = paper;
         this.theme = data.theme;
@@ -69,7 +75,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
         }
 
         this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth, radialSeriesSet);
-        this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity, radialSeriesSet);
+        this.groupDots = this._renderDots(paper, dotPositions, colors, dotOpacity, radialSeriesSet);
 
         if (data.options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
@@ -82,6 +88,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
         this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
         this.dotOpacity = dotOpacity;
+        this.isShowArea = isShowArea;
 
         return radialSeriesSet;
     },
@@ -136,14 +143,14 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
             var area = raphaelRenderUtil.renderArea(paper, path, {
                 fill: color,
                 opacity: 0.4,
-                'stroke-width': 0,
+                'stroke-width': this.lineWidth,
                 stroke: color
             });
 
             radialSeriesSet.push(area);
 
             return area;
-        });
+        }, this);
     },
 
     /**
@@ -179,8 +186,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var self = this,
-            noneSelected = snippet.isNull(legendIndex);
+        var noneSelected = snippet.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
@@ -188,14 +194,6 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             line.attr({'stroke-opacity': opacity});
-
-            snippet.forEachArray(self.groupDots[groupIndex], function(item) {
-                item.opacity = opacity;
-
-                if (self.dotOpacity) {
-                    item.endDot.dot.attr({'fill-opacity': opacity});
-                }
-            });
         });
     }
 });

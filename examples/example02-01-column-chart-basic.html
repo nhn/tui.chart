@@ -36,36 +36,51 @@
 <script class='code-js' id='code-js'>
 var container = document.getElementById('chart-area');
 var data = {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    categories: ['June, 2015', 'July, 2015', 'August, 2015', 'September, 2015', 'October, 2015', 'November, 2015', 'December, 2015'],
     series: [
         {
-            name: 'Seoul',
-            data: [[-8.3, 0.3], [-5.8, 3.1], [-0.6, 9.1], [5.8, 16.9], [11.5, 22.6], [16.6, 26.6], [21.2, 28.8], [21.8, 30.0], [15.8, 25.6], [8.3, 19.6], [1.4, 11.1], [-5.2, 3.2]]
+            name: 'Budget',
+            data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+        },
+        {
+            name: 'Income',
+            data: [8000, 1000, 7000, 2000, 6000, 3000, 5000]
+        },
+        {
+            name: 'Expenses',
+            data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+        },
+        {
+            name: 'Debt',
+            data: [6000, 3000, 3000, 1000, 2000, 4000, 3000]
         }
     ]
 };
 var options = {
     chart: {
-        width: 700,
-        height: 400,
-        title: 'Temperature Range'
+        width: 1160,
+        height: 650,
+        title: 'Monthly Revenue',
+        format: '1,000'
     },
     yAxis: {
-        title: 'Month'
+        title: 'Amount',
+        min: 0,
+        max: 9000
     },
     xAxis: {
-        title: 'Temperature (Celsius)'
+        title: 'Month'
     },
-    series: {
-        showLabel: true
-    },
-    tooltip: {
-        suffix: '°C'
+    legend: {
+        align: 'top'
     }
 };
 var theme = {
     series: {
-        colors: ['#63A69F', '#F2E1AC', '#F2836B', '#F2594B']
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
     }
 };
 
@@ -74,7 +89,7 @@ var theme = {
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
 
-tui.chart.barChart(container, data, options);
+tui.chart.columnChart(container, data, options);
 </script>
 
 <!--For tutorial page-->

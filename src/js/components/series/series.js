@@ -24,8 +24,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * Series component className
      * @type {string}
      */
-    className: 'tui-chart-series-area',
-    /**
+    className: 'tui-chart-series-area', /**
      * Series base component.
      * @constructs Series
      * @private
@@ -464,6 +463,8 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
             if (!snippet.isNull(this.selectedLegendIndex)) {
                 this.graphRenderer.selectLegend(this.selectedLegendIndex);
             }
+        } else {
+            this._clearSeriesContainer();
         }
     },
 

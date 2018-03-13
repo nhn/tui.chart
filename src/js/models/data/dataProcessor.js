@@ -320,14 +320,11 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
         if (isDateTime) {
             categories = snippet.map(categories, function(value) {
-                var date = this.chageDatetypeToTimestamp(value);
-
-                return date;
+                return this.chageDatetypeToTimestamp(value);
             }, this);
         } else {
             categories = this._escapeCategories(categories);
         }
-
         this.categoriesIsDateTime[axisName] = isDateTime;
 
         return categories;
@@ -542,7 +539,6 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
 
         return category;
     },
-
     /**
      * Make category for tooltip.
      * @param {number} categoryIndex - category index
@@ -638,6 +634,15 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return this.seriesDataModelMap[seriesType];
+    },
+
+    /**
+     * Get chart option
+     * @param {string} optionType option category
+     * @returns {object}
+     */
+    getOption: function(optionType) {
+        return this.options[optionType];
     },
 
     /**
@@ -1405,6 +1410,17 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      */
     getGraphColors: function() {
         return this.graphColors;
+    },
+
+    /**
+     * Check The donut chart on pie donut combo chart has outer label align option
+     * @returns {boolean} - whether donut chart has outer label align option or not
+     * @ignore
+     */
+    isComboDonutShowOuterLabel: function() {
+        var seriesOptions = this.options.series;
+
+        return (seriesOptions && seriesOptions.pie2 && seriesOptions.pie2.labelAlign === 'outer');
     }
 });
 

@@ -14,7 +14,7 @@ var renderUtil = require('../../helpers/renderUtil');
 var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 var snippet = require('tui-code-snippet');
 
-var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.8;
+var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.85;
 
 var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
@@ -134,7 +134,8 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
                 barSize: barSize,
                 pointInterval: pointInterval,
                 firstAdditionalPosition: pointInterval,
-                basePosition: basePosition
+                basePosition: basePosition,
+                itemCount: itemCount
             };
         }
 

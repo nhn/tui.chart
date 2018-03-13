@@ -14,7 +14,9 @@ var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
-var GUIDE_AREACHART_AREAOPACITY_TYPE = require('../const.js').GUIDE_AREACHART_AREAOPACITY_TYPE;
+var chartConst = require('../const');
+var GUIDE_AREACHART_AREAOPACITY_TYPE = chartConst.GUIDE_AREACHART_AREAOPACITY_TYPE;
+var CLASS_NAME_SVG_AUTOSHAPE = chartConst.CLASS_NAME_SVG_AUTOSHAPE;
 var consoleUtil = require('../helpers/consoleUtil');
 
 var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
@@ -42,7 +44,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
          * Line width
          * @type {number}
          */
-        this.lineWidth = 1;
+        this.lineWidth = 0;
     },
 
     /**
@@ -55,20 +57,21 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         var dimension = data.dimension;
         var groupPositions = data.groupPositions;
         var theme = data.theme;
+        var dotTheme = (theme && theme.dot) || {};
         var colors = theme.colors;
         var options = data.options;
-        var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 0.5;
+        var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 1;
         var dotOpacity = options.showDot ? 1 : 0;
-        var borderStyle = this.makeBorderStyle(theme.borderColor, dotOpacity);
+        var borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
         var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
+        var seriesSet;
 
         this.paper = paper;
         this.theme = data.theme;
         this.isSpline = options.spline;
         this.dimension = dimension;
         this.position = data.position;
-
         this.zeroTop = data.zeroTop;
         this.hasRangeData = data.hasRangeData;
 
@@ -91,10 +94,25 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
         this.dotOpacity = dotOpacity;
-
         this.pivotGroupDots = null;
 
-        return paper.setFinish();
+        seriesSet = paper.setFinish();
+        this._moveSeriesToFrontAll();
+        this.tooltipLine.toFront();
+
+        return seriesSet;
+    },
+
+    /**
+     * Rearrange all series sequences.
+     * @private
+     */
+    _moveSeriesToFrontAll: function() {
+        var len = this.groupPaths ? this.groupPaths.length : 0;
+        var i = 0;
+        for (; i < len; i += 1) {
+            this.moveSeriesToFront(this.groupAreas[i], this.groupDots[i]);
+        }
     },
 
     /**
@@ -135,19 +153,24 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         groupPaths.reverse();
 
         groupAreas = snippet.map(groupPaths, function(path, groupIndex) {
-            var areaColor = colors[groupIndex] || 'transparent',
-                lineColor = areaColor,
-                polygons = {
-                    area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
-                        fill: areaColor,
-                        opacity: opacity,
-                        stroke: areaColor
-                    }),
-                    line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth)
-                };
+            var polygons = {};
+            var areaColor = colors[groupIndex] || 'transparent';
+            var lineColor = areaColor;
+            var area = raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
+                fill: areaColor,
+                opacity: opacity,
+                stroke: areaColor
+            });
+            var line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth);
+
+            area.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
+            line.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
+
+            polygons.area = area;
+            polygons.line = line;
 
             if (path.startLine) {
-                polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), lineColor, 1);
+                polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), lineColor, 0);
             }
 
             return polygons;
@@ -361,15 +384,6 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 area.startLine.attr({'stroke-opacity': opacity});
             }
 
-            snippet.forEachArray(groupDots, function(item) {
-                if (this.dotOpacity) {
-                    item.endDot.dot.attr({'fill-opacity': opacity});
-                    if (item.startDot) {
-                        item.startDot.dot.attr({'fill-opacity': opacity});
-                    }
-                }
-            }, this);
-
             if (isSelectedLegend) {
                 this.moveSeriesToFront(area, groupDots);
             }
@@ -382,12 +396,17 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @ignore
      */
     resetSeriesOrder: function(legendIndex) {
-        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+        var frontSeries = ((legendIndex + 1) < this.groupAreas.length) ? this.groupAreas[legendIndex + 1] : null;
+        var frontArea;
 
-        if (frontLine) {
-            this.groupLines[legendIndex].insertBefore(frontLine);
+        if (frontSeries) {
+            frontArea = frontSeries.area;
+            this.groupAreas[legendIndex].area.insertBefore(frontArea);
+            this.groupAreas[legendIndex].line.insertBefore(frontArea);
             snippet.forEachArray(this.groupDots[legendIndex], function(item) {
-                item.endDot.dot.insertBefore(frontLine);
+                if (item && item.endDot) {
+                    item.endDot.dot.insertBefore(frontArea);
+                }
             });
         }
     },
