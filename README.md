@@ -11,11 +11,15 @@
 
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
+* [True Cross Browser Charts](#-true-cross-browser-charts)
 * [Features](#-features)
-* [Demos & Examples](https://nhnent.github.io/tui.chart/latest/)
+    * [single-charts](#single-charts)
+    * [Combo Charts](#combo-charts)
+    * [Customize](#customize)
+    * [And More From Examples](#and-more-from-examples)
 * [Install](#-install)
-  * [Package Installs](#via-package-manager)
-  * [Installing from source](#download-source-files)
+  * [Via Package Manager](#via-package-manager)
+  * [Download Source Files](#download-source-files)
 * [Load](#load)
     * [namespace](#load)
     * [modules](#load)
@@ -23,10 +27,13 @@
   * [HTML](#html)
   * [JavaScript](#javascript)
 * [Development](#develop)
+  * [Setup](#setup)
+  * [Develop](#develop)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
 * [License](#-license)
+
 
 ## 🌏 Browser Support
 | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer |
@@ -73,7 +80,8 @@ The TOAST UI Chart provides many kind of charts to visualize various form of dat
 ### Combo Charts
 
 The TOAST UI Chart covers even more complex data visualization.
-  | [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html) |
+
+| [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html) |
 | --- | --- | --- | --- |
 | ![2018-03-13 11 04 48](https://user-images.githubusercontent.com/35218826/37318532-63adea7c-26ae-11e8-9033-d24f7379a0be.png) | ![2018-03-13 11 06 16](https://user-images.githubusercontent.com/35218826/37318577-980a1a3e-26ae-11e8-87d4-ff6d015839b7.png) | ![2018-03-13 11 07 44](https://user-images.githubusercontent.com/35218826/37318606-cbbf59d4-26ae-11e8-8ec8-9766279346cc.png) | ![2018-03-13 11 19 42](https://user-images.githubusercontent.com/35218826/37318993-80728378-26b0-11e8-929e-389995fd9694.png) |
 
@@ -84,7 +92,7 @@ Sometimes you may want more options to cover how to visualize data. Then try to 
 
 | Various expressions | Custom theme | Stack option  | Diverging option | Group tooltip |
 | --- | --- | --- | --- | --- |
-| ![variousexpression](https://user-images.githubusercontent.com/35218826/37189405-8ae857ea-2397-11e8-8cb6-2d5fc158108e.png) | ![customtheme](https://user-images.githubusercontent.com/35218826/37189470-f64207a2-2397-11e8-98b6-51aaea5a4cb3.png)  | ![stackoption](https://user-images.githubusercontent.com/35218826/37188991-5b5580cc-2395-11e8-83ec-4e0d8c5664e2.png) | ![diverging](https://user-images.githubusercontent.com/35218826/37189084-e6c6012c-2395-11e8-9529-bf80c8a79608.png) | ![grouptooltip](https://user-images.githubusercontent.com/35218826/37189231-93e2973a-2396-11e8-98f3-e28b6a9891fb.png) |
+| ![2018-03-13 11 43 13](https://user-images.githubusercontent.com/35218826/37319762-bfb4932a-26b3-11e8-90d3-4c87fa62b580.png) | ![2018-03-13 11 40 43](https://user-images.githubusercontent.com/35218826/37319713-9770d11c-26b3-11e8-9199-7590a8beae05.png)  | ![2018-03-13 11 44 15](https://user-images.githubusercontent.com/35218826/37319792-e9af280c-26b3-11e8-9eaf-86bccb260df5.png) |![2018-03-13 11 45 15](https://user-images.githubusercontent.com/35218826/37319832-0f181e6e-26b4-11e8-8970-87bb7c7b5928.png) | ![2018-03-13 11 46 39](https://user-images.githubusercontent.com/35218826/37319863-3a208d62-26b4-11e8-9b0c-1a9f565ba413.png) |
   
 ### And More From Examples
 
