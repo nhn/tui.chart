@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>8.3 [Combo Chart] line and area</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'></textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script class='code-js' id='code-js'>
+var container = document.getElementById('chart-area');
+var data = {
+    categories: ['2014.01', '2014.02', '2014.03', '2014.04', '2014.05', '2014.06', '2014.07', '2014.08', '2014.09', '2014.10', '2014.11', '2014.12',
+        '2015.01', '2015.02', '2015.03', '2015.04', '2015.05', '2015.06', '2015.07', '2015.08', '2015.09', '2015.10', '2015.11', '2015.12'],
+    series: {
+        area: [
+            {
+                name: 'Effective Load',
+                data: [150, 130, 100, 125, 128, 110, 134, 162, 120, 90, 98, 143,
+                    142, 124, 113, 129, 118, 120, 145, 172, 110, 70, 68, 103]
+            }
+        ],
+        line: [
+            {
+                name: 'Power Usage',
+                data: [72, 80, 110, 107, 126, 134, 148, 152, 130, 120, 114, 127,
+                    90, 72, 130, 117, 129, 137, 134, 160, 121, 110, 114, 117]
+            }
+        ]
+    }
+};
+var options = {
+    chart: {
+        width: 700,
+        height: 400,
+        title: 'Energy Usage'
+    },
+    yAxis: {
+        title: 'Energy (kWh)',
+        min: 0
+    },
+    xAxis: {
+        title: 'Month',
+        tickInterval: 'auto'
+    },
+    series: {
+        zoomable: true
+    },
+    tooltip: {
+        suffix: 'kWh'
+    },
+    theme: 'newTheme'
+};
+
+tui.chart.registerTheme('newTheme', {
+    series: {
+        area: {
+            colors: ['#5EA393', '#A4E2C5']
+        },
+        line: {
+            colors: ['#E05D64']
+        }
+    }
+});
+
+var chart = tui.chart.comboChart(container, data, options);
+</script>
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>
