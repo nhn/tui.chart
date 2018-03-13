@@ -1,6 +1,6 @@
 ## ![Toast UI Chart](https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png)
 
-> 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Statistical Data Visualization library for javascript
+> 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library
 
 [![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
@@ -40,7 +40,7 @@
 | :---------: | :---------: | :---------: | :---------: | :---------: |
 | Yes | Yes | Yes | Yes | 8+ |
 
-## 🌈 True Cross Browser Charts
+## 🌈 True Cross Browser Charts And It's Beautiful!
 
 | IE8 | CHROME |
 | --- | --- |
