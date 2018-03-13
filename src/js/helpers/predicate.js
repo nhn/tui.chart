@@ -45,6 +45,20 @@ var predicate = {
     },
 
     /**
+     * Whether column type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} seriesTypes - type of series
+     * @returns {boolean}
+     */
+    isColumnTypeChart: function(chartType, seriesTypes) {
+        return predicate.isHeatmapChart(chartType) ||
+            predicate.isColumnChart(chartType) ||
+            predicate.isBoxplotChart(chartType) ||
+            predicate.isLineColumnComboChart(chartType, seriesTypes);
+    },
+
+    /**
      * Whether boxplot chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
@@ -121,6 +135,21 @@ var predicate = {
      */
     isComboChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_COMBO;
+    },
+
+    /**
+     * Whether line and column combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} subChartTypes - types of chart
+     * @returns {boolean}
+     */
+    isLineColumnComboChart: function(chartType, subChartTypes) {
+        var isLineOrColumn = arrayUtil.all(subChartTypes || [], function(subChartType) {
+            return predicate.isLineChart(subChartType) || predicate.isColumnChart(subChartType);
+        });
+
+        return predicate.isComboChart(chartType) && isLineOrColumn;
     },
 
     /**
@@ -263,6 +292,16 @@ var predicate = {
      */
     isBoxTypeChart: function(chartType) {
         return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
+    },
+
+    /**
+     * Whether map type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isMapTypeChart: function(chartType) {
+        return (this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType));
     },
 
     /**

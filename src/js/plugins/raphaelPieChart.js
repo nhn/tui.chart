@@ -16,7 +16,6 @@ var MIN_DEGREE = 0.01;
 var RAD = Math.PI / DEGREE_180;
 var LOADING_ANIMATION_DURATION = 700;
 var EMPHASIS_OPACITY = 1;
-var OVERLAY_OPACITY = 0.3;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANT_VALUE = 0.2;
 var OVERLAY_ID = 'overlay';
@@ -95,7 +94,13 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         this._setSectorAttr();
 
         this.sectorInfos = this._renderPie(data.sectorData, data.theme.colors, data.additionalIndex, pieSeriesSet);
+
         this.overlay = this._renderOverlay();
+
+        this.labelInfos = {
+            value: [],
+            legend: []
+        };
 
         /**
          * previous mouse position
@@ -116,7 +121,6 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * Clear paper.
      */
     clear: function() {
-        this.legendLines = null;
         this.paper.clear();
     },
 
@@ -141,8 +145,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         var path = ['M', cx, cy,
             'L', x1, y1,
             'A', r, r, 0, largeArcFlag, 1, x2, y2,
-            'Z'
-        ];
+            'Z'];
 
         // see details about path
         // http://www.w3schools.com/svg/svg_path.asp
@@ -232,13 +235,12 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         };
         var inner = this._renderSector(params);
 
+        inner.node.setAttribute('class', 'auto-shape-rendering');
+
         inner.data('id', OVERLAY_ID);
         inner.data('chartType', this.chartType);
 
-        return {
-            inner: inner,
-            outer: this._renderSector(params)
-        };
+        return inner;
     },
 
     /**
@@ -287,9 +289,12 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
                 attrs: {
                     fill: chartBackground.color,
                     stroke: chartBackground.color,
-                    'stroke-width': 1
+                    'stroke-width': 0
                 }
             });
+
+            sector.node.setAttribute('class', 'auto-shape-rendering');
+
             sector.data('index', index);
             sector.data('legendIndex', index + additionalIndex);
             sector.data('chartType', self.chartType);
@@ -308,38 +313,6 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
     },
 
     /**
-     * Render legend lines.
-     * @param {Array.<object>} outerPositions outer position
-     */
-    renderLegendLines: function(outerPositions) {
-        var paper = this.paper,
-            paths;
-
-        if (!this.legendLines) {
-            paths = this._makeLinePaths(outerPositions);
-            this.legendLines = snippet.map(paths, function(path) {
-                return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
-            });
-        }
-    },
-
-    /**
-     * Make line paths.
-     * @param {Array.<object>} outerPositions outer positions
-     * @returns {Array} line paths.
-     * @private
-     */
-    _makeLinePaths: function(outerPositions) {
-        return snippet.map(outerPositions, function(positions) {
-            return [
-                raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
-                raphaelRenderUtil.makeLinePath(positions.middle, positions.end),
-                'Z'
-            ].join('');
-        });
-    },
-
-    /**
      * Show overlay.
      * @param {number} index - index
      * @param {number} legendIndex - legend index
@@ -355,16 +328,37 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
 
         innerAttrs = {
             fill: '#fff',
-            opacity: OVERLAY_OPACITY
+            opacity: 1,
+            'stroke-width': 7,
+            'stroke-color': '#fff',
+            'stroke-miterlimit': 15
         };
+
         innerAttrs[this.sectorName] = [cb.cx, cb.cy, cb.r, sa, ea, cb.r * this.holeRatio];
-        overlay.inner.attr(innerAttrs);
-        overlay.inner.data('index', index);
-        overlay.inner.data('legendIndex', legendIndex);
-        overlay.outer.attr({
-            path: this._makeDonutSectorPath(cb.cx, cb.cy, cb.r + 10, sa, ea, cb.r).path,
-            fill: sectorInfo.color,
-            opacity: OVERLAY_OPACITY
+        overlay.attr(innerAttrs);
+        overlay.data('index', index);
+        overlay.data('legendIndex', legendIndex);
+
+        overlay.node.setAttribute('filter', 'url(#shadow)');
+
+        this._indexingOverlapElement([
+            overlay,
+            sectorInfo.sector,
+            this.labelInfos.legend[index],
+            this.labelInfos.value[index]
+        ]);
+    },
+
+    /**
+     * Element indexing For overlay.
+     * @param {Array} elements - indexing elements
+     * @private
+     */
+    _indexingOverlapElement: function(elements) {
+        snippet.forEach(elements, function(element) {
+            if (element) {
+                element.toFront();
+            }
         });
     },
 
@@ -379,8 +373,10 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
             opacity: 0
         };
 
-        overlay.inner.attr(attrs);
-        overlay.outer.attr(attrs);
+        overlay.attr(attrs);
+
+        this._indexingOverlapElement(this.labelInfos.legend);
+        this._indexingOverlapElement(this.labelInfos.value);
     },
 
     /**
@@ -420,24 +416,6 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * Animate legend lines.
      * @param {?number} legendIndex legend index
      */
-    animateLegendLines: function(legendIndex) {
-        var isNull;
-
-        if (!this.legendLines) {
-            return;
-        }
-
-        isNull = snippet.isNull(legendIndex);
-
-        snippet.forEachArray(this.legendLines, function(line, index) {
-            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
-
-            line.animate({
-                'stroke': 'black',
-                'stroke-opacity': opacity
-            });
-        });
-    },
 
     /**
      * Resize graph of pie chart.
@@ -470,25 +448,6 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
                     y: bBox.y + (bBox.height / 2)
                 });
             }
-        });
-    },
-
-    /**
-     * Move legend lines.
-     * @param {Array.<object>} outerPositions outer positions
-     */
-    moveLegendLines: function(outerPositions) {
-        var paths;
-
-        if (!this.legendLines) {
-            return;
-        }
-
-        paths = this._makeLinePaths(outerPositions);
-        snippet.forEachArray(this.legendLines, function(line, index) {
-            line.attr({path: paths[index]});
-
-            return line;
         });
     },
 
@@ -612,20 +571,12 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      */
     selectLegend: function(legendIndex) {
         var isNull = snippet.isNull(legendIndex);
-        var legendLines = this.legendLines;
-
         snippet.forEachArray(this.sectorInfos, function(sectorInfo, index) {
             var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             sectorInfo.sector.attr({
                 'fill-opacity': opacity
             });
-
-            if (legendLines) {
-                legendLines[index].attr({
-                    'stroke-opacity': opacity
-                });
-            }
         });
     },
     /**
@@ -650,39 +601,47 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
 
     /**
      * Render labels and return label set
-     * @param {object} paper Raphael paper
-     * @param {object} positions position left, top
-     * @param {Array.<string>} labels series labels
-     * @param {object} theme label theme
-     * @returns {Array.<object>}
+     * @param {object} options label render options
+     *      @param {dataType} dataType dataType (legend or value)
+     *      @param {object} paper Raphael paper
+     *      @param {Array.<object>} labelSet lableset
+     *      @param {object} positions position left, top
+     *      @param {Array.<string>} labels series labels
+     *      @param {object} theme label theme
+     *      @param {Array} colors series theme colors
      */
-    renderLabels: function(paper, positions, labels, theme) {
-        var labelSet = paper.set();
+    renderLabels: function(options) {
+        var theme = options.theme;
         var attributes = {
             'font-size': theme.fontSize,
-            'font-family': theme.fontFamily,
+            'font-family': (options.fontFamily) ? options.fontFamily : options.theme.fontFamily,
             'font-weight': theme.fontWeight,
             'text-anchor': 'middle',
-            fill: theme.color,
+            fill: theme.color || '#fff',
             opacity: 0
         };
 
-        snippet.forEach(positions, function(position, index) {
+        snippet.forEach(options.positions, function(position, index) {
             var label;
 
-            if (position) {
-                label = raphaelRenderUtil.renderText(paper, position, labels[index], attributes);
+            if (options.colors) {
+                attributes.fill = options.colors[index];
+            }
 
+            if (position) {
+                label = raphaelRenderUtil.renderText(options.paper, position, options.labels[index], attributes);
                 label.node.style.userSelect = 'none';
                 label.node.style.cursor = 'default';
-                label.node.setAttribute('filter', 'url(#glow)');
+                label.node.setAttribute('class', 'auto-shape-rendering');
             }
-            labelSet.push(label);
-        });
 
-        this.labelSet = labelSet;
+            this.labelInfos[options.dataType].push(label);
+            options.labelSet.push(label);
+        }, this);
 
-        return labelSet;
+        if (!this.labelSet) {
+            this.labelSet = options.labelSet;
+        }
     }
 });
 

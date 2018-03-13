@@ -139,7 +139,6 @@ function _createChart(container, rawData, options, chartType) {
  *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {string} options.yAxis.align - align option for center y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *          @param {string} options.yAxis.type - type of axis
  *          @param {string} options.yAxis.dateFormat - date format
  *      @param {object} options.xAxis - options for x axis component
@@ -162,9 +161,6 @@ function _createChart(container, rawData, options, chartType) {
  *          @param {string} options.tooltip.align - align option for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -243,7 +239,6 @@ function barChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -266,9 +261,6 @@ function barChart(container, rawData, options) {
  *          @param {string} options.tooltip.align - align option for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -349,7 +341,6 @@ function columnChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -374,9 +365,6 @@ function columnChart(container, rawData, options) {
  *          @param {string} options.tooltip.align - align option for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -470,7 +458,6 @@ function lineChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -495,9 +482,6 @@ function lineChart(container, rawData, options) {
  *          @param {string} options.tooltip.align - align option for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -586,7 +570,6 @@ function areaChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -606,9 +589,6 @@ function areaChart(container, rawData, options) {
  *          @param {string} options.tooltip.align - align option for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -701,7 +681,6 @@ function bubbleChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -719,9 +698,6 @@ function bubbleChart(container, rawData, options) {
  *          @param {string} options.tooltip.align - align option for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -802,7 +778,6 @@ function scatterChart(container, rawData, options) {
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -817,9 +792,6 @@ function scatterChart(container, rawData, options) {
  *          @param {string} options.tooltip.align - align option for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
@@ -890,9 +862,6 @@ function heatmapChart(container, rawData, options) {
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {object} options.tooltip.offsetX - tooltip offset x
  *          @param {object} options.tooltip.offsetY - tooltip offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
@@ -973,7 +942,6 @@ function treemapChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -1013,9 +981,6 @@ function treemapChart(container, rawData, options) {
  *              @param {string} options.tooltip.column.align - align option for tooltip
  *              @param {number} options.tooltip.column.offsetX - tooltip offset x
  *              @param {number} options.tooltip.column.offsetY - tooltip offset y
- *              @param {object} options.tooltip.column.position - (deprecated) relative position
- *                  @param {number} options.tooltip.position.left - position left
- *                  @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -1125,9 +1090,6 @@ function comboChart(container, rawData, options) {
  *          @param {object} options.tooltip.offset - tooltip offset
  *              @param {number} options.tooltip.offset.x - offset x
  *              @param {number} options.tooltip.offset.y - offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -1198,9 +1160,6 @@ function pieChart(container, rawData, options) {
  *          @param {object} options.tooltip.offset - tooltip offset
  *              @param {number} options.tooltip.offset.x - offset x
  *              @param {number} options.tooltip.offset.y - offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
  *      @param {string} options.theme - theme name
@@ -1272,9 +1231,6 @@ function mapChart(container, rawData, options) {
  *          @param {object} options.tooltip.offset - tooltip offset
  *              @param {number} options.tooltip.offset.x - offset x
  *              @param {number} options.tooltip.offset.y - offset y
- *          @param {object} options.tooltip.position - (deprecated) relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)

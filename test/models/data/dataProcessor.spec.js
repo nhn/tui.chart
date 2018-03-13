@@ -313,6 +313,21 @@ describe('Test for DataProcessor', function() {
 
             expect(actual).toBeNull();
         });
+
+        it('timestamp should be properly cast and compared in both string and numeric modes', function() {
+            var actual;
+
+            dataProcessor.categoriesMap = {
+                x: [1530958121000, 1530958122000, 1530958123000]
+            };
+            dataProcessor.categoriesIsDateTime = {
+                x: true
+            };
+
+            actual = dataProcessor.findCategoryIndex('1530958122000');
+
+            expect(actual).toBe(1);
+        });
     });
 
     describe('makeTooltipCategory()', function() {

@@ -24,50 +24,61 @@ var axisCalculator = {
     calculateXAxisHeight: function(options, theme) {
         var title = options.title;
         var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
-        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
+        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.X_AXIS_TITLE_PADDING) : 0;
         var labelMargin = options.labelMargin || 0;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
+        var height = titleAreaHeight + chartConst.X_AXIS_LABEL_PADDING;
 
         if (labelMargin > 0) {
-            labelHeight += labelMargin;
+            height += labelMargin;
         }
 
-        return titleAreaHeight + labelHeight + chartConst.CHART_PADDING;
+        if (options.showLabel !== false) {
+            height += labelHeight;
+        }
+
+        return height;
     },
 
     /**
      * Calculate width for y axis.
      * @param {Array.<string | number>} labels labels
-     * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
-     * @param {{title: object, label: object}} theme - them for y axis
+     * @param {{title: ?string, isCenter: ?boolean}} options - options
+     * @param {{title: object, label: object}} theme - theme for y axis calculate
+     * @param {Array} yAxisLabels - yAxis labels for y axis calculate
+     * @param {boolean} isDiverging - whether is diverging chart or not
      * @returns {number}
-     * @private
      */
-    calculateYAxisWidth: function(labels, options, theme) {
-        var title = options.title || '';
-        var titleAreaWidth = 0;
-        var labelMargin = options.labelMargin || 0;
+    calculateYAxisWidth: function(labels, options, theme, yAxisLabels, isDiverging) {
+        var labelMargin = options.labelMargin;
         var width = 0;
+        var titleWidth = 0;
+        var maxLabelWidth = 0;
 
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
+        yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
 
         if (options.isCenter) {
-            width += chartConst.AXIS_LABEL_PADDING;
-        } else if (options.rotateTitle === false) {
-            titleAreaWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title) + chartConst.TITLE_PADDING;
-        } else {
-            titleAreaWidth = renderUtil.getRenderedLabelHeight(title.text, theme.title) + chartConst.TITLE_PADDING;
+            width += chartConst.Y_AXIS_LABEL_PADDING;
         }
 
         if (predicate.isDatetimeType(options.type)) {
             labels = renderUtil.formatDates(labels, options.dateFormat);
+            yAxisLabels = renderUtil.formatDates(yAxisLabels, options.dateFormat);
         }
-        if (labelMargin > 0) {
+        if (labelMargin && labelMargin > 0) {
             width += labelMargin;
         }
+        labels = yAxisLabels.length ? yAxisLabels : labels;
+        if (options.showLabel !== false) {
+            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+        }
+        if (options.title) {
+            titleWidth = renderUtil.getRenderedLabelWidth(options.title.text, theme.title);
+        }
 
-        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
-            chartConst.AXIS_LABEL_PADDING;
+        width += ((isDiverging ? Math.max(maxLabelWidth, titleWidth) : maxLabelWidth) +
+            chartConst.Y_AXIS_LABEL_PADDING);
 
         return width;
     }

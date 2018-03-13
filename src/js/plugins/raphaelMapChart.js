@@ -15,6 +15,7 @@ var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var STROKE_COLOR = 'gray';
 var ANIMATION_DURATION = 100;
 var G_ID = 'tui-chart-series-group';
+var FILL_COLOR_OF_NO_DATA = '#eee';
 
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
@@ -75,12 +76,13 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
         var colorSpectrum = data.colorSpectrum;
 
         return snippet.map(data.mapModel.getMapData(), function(datum, index) {
-            var ratio = datum.ratio || 0;
-            var color = colorSpectrum.getColor(ratio);
+            var ratio = datum.ratio;
+            var color = ratio ? colorSpectrum.getColor(ratio) : FILL_COLOR_OF_NO_DATA;
             var sector = raphaelRenderUtil.renderArea(paper, datum.path, {
                 fill: color,
                 opacity: 1,
                 stroke: STROKE_COLOR,
+                'stroke-width': 0.2,
                 'stroke-opacity': 1,
                 transform: 's' + dimensionRatio + ',' + dimensionRatio + ',0,0'
                     + 't' + (position.left / dimensionRatio) + ',' + (position.top / dimensionRatio)
@@ -93,7 +95,7 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
             return {
                 sector: sector,
                 color: color,
-                ratio: datum.ratio
+                ratio: ratio
             };
         });
     },
@@ -117,10 +119,18 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
      */
     changeColor: function(index) {
         var sector = this.sectors[index];
+        var attributes = {
+            stroke: '#ffffff',
+            'stroke-width': 4
+        };
 
-        sector.sector.animate({
-            fill: this.overColor
-        }, ANIMATION_DURATION, '>');
+        if (this.overColor) {
+            attributes.fill = this.overColor;
+        }
+
+        sector.sector.animate(attributes, ANIMATION_DURATION, '>');
+        sector.sector.node.setAttribute('filter', 'url(#shadow)');
+        sector.sector.toFront();
     },
 
     /**
@@ -131,8 +141,11 @@ var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype *
         var sector = this.sectors[index];
 
         sector.sector.animate({
-            fill: sector.color
+            fill: sector.color,
+            stroke: STROKE_COLOR,
+            'stroke-width': 0.2
         }, ANIMATION_DURATION, '>');
+        sector.sector.node.setAttribute('filter', 'none');
     },
 
     /**

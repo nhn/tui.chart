@@ -31,6 +31,12 @@ var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartToolti
          */
         this.mapModel = params.mapModel;
 
+        /**
+         * Color spectrum
+         * @type {ColorSpectrum}
+         */
+        this.colorSpectrum = params.colorSpectrum;
+
         TooltipBase.apply(this, arguments);
     },
 
@@ -58,7 +64,8 @@ var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartToolti
         return this.templateFunc({
             name: datum.name || datum.code,
             value: datum.label,
-            suffix: suffix
+            suffix: suffix,
+            cssText: 'background-color: ' + this.colorSpectrum.getColor(datum.ratio)
         });
     },
 

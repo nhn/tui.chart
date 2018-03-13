@@ -59,7 +59,7 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
             this._renderSpiderwebPlot(plotSet);
         }
 
-        this._renderCatergoryLines(plotSet);
+        this._renderCategoryDots(plotSet);
     },
 
     /**
@@ -89,7 +89,8 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
             radius = centerPoint.top - pos.top;
 
             plotSet.push(raphaelRenderUtil.renderCircle(this.paper, centerPoint, radius, {
-                stroke: strokeColor
+                stroke: strokeColor,
+                'stroke-opacity': 0.05
             }));
         }
     },
@@ -99,10 +100,34 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
      * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderCatergoryLines: function(plotSet) {
-        var groupPaths = this._getLinesPath(arrayUtil.pivot(this.plotPositions));
+    _renderCategoryDots: function(plotSet) {
+        var bounds = this._makePlotDotBounds(arrayUtil.pivot(this.plotPositions));
 
-        this._renderLines(groupPaths, this.theme.lineColor, plotSet);
+        snippet.forEachArray(bounds, function(bound) {
+            var squareDot = raphaelRenderUtil.renderRect(this.paper, bound, {
+                fill: '#000000',
+                'fill-opacity': 0.5,
+                'stroke-width': 0
+            });
+            plotSet.push(squareDot);
+        }, this);
+    },
+
+    _makePlotDotBounds: function(plotPositions) {
+        var bounds = snippet.map(plotPositions, function(positions) {
+            var outMostPlot = positions[positions.length - 1];
+            var bound = {
+                top: outMostPlot.top - 2,
+                left: outMostPlot.left - 2,
+                width: 4,
+                height: 4
+            };
+
+            return bound;
+        });
+        bounds.pop();
+
+        return bounds;
     },
 
     /**
@@ -125,7 +150,8 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
 
         snippet.forEachArray(labelData.category, function(item) {
             var categoryAttributes = snippet.extend({}, attributes, {
-                'text-anchor': item.position.anchor
+                'text-anchor': item.position.anchor,
+                fill: '#333333'
             });
             var label = raphaelRenderUtil.renderText(paper, item.position, item.text, categoryAttributes);
 
@@ -161,6 +187,7 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
 
         return snippet.map(groupPaths, function(path) {
             var line = raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
+            line.node.setAttribute('stroke-opacity', 0.05);
 
             plotSet.push(line);
 

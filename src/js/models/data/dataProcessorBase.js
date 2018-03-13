@@ -46,6 +46,16 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
     },
 
     /**
+     * Get max value.
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value like value, x, y, r
+     * @returns {number}
+     */
+    getMinValue: function(chartType, valueType) {
+        return arrayUtil.min(this.getValues(chartType, valueType));
+    },
+
+    /**
      * Get formatted max value.
      * @param {?string} chartType - type of chart
      * @param {?string} areaType - type of area like circleLegend
@@ -54,6 +64,26 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      */
     getFormattedMaxValue: function(chartType, areaType, valueType) {
         var maxValue = this.getMaxValue(chartType, valueType);
+        var formatFunctions = this.getFormatFunctions();
+
+        return renderUtil.formatValue({
+            value: maxValue,
+            formatFunctions: formatFunctions,
+            chartType: chartType,
+            areaType: areaType,
+            valueType: valueType
+        });
+    },
+
+    /**
+     * Get formatted max value.
+     * @param {?string} chartType - type of chart
+     * @param {?string} areaType - type of area like circleLegend
+     * @param {?string} valueType - type of value like value, x, y, r
+     * @returns {string | number}
+     */
+    getFormattedMinValue: function(chartType, areaType, valueType) {
+        var maxValue = this.getMinValue(chartType, valueType);
         var formatFunctions = this.getFormatFunctions();
 
         return renderUtil.formatValue({

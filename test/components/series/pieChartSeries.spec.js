@@ -23,7 +23,7 @@ describe('PieChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstItemLabel']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstItemLabel', 'isComboDonutShowOuterLabel']);
 
         dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
         dataProcessor.getFirstItemLabel.and.returnValue('2.2');
@@ -245,9 +245,9 @@ describe('PieChartSeries', function() {
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
 
             actual = series._makeSectorData({
-                cx: 100,
-                cy: 100,
-                r: 100
+                cx: 300,
+                cy: 300,
+                r: 150
             });
 
             expect(actual.length).toBe(5);
@@ -257,16 +257,12 @@ describe('PieChartSeries', function() {
             expect(actual[0].angles.end.startAngle).toBe(0);
             expect(actual[0].angles.end.endAngle).toBe(90);
             expect(actual[0].centerPosition).toEqual({
-                left: 135.35533905932738,
-                top: 64.64466094067262
+                left: 353.03300858899104,
+                top: 246.96699141100893
             });
-            expect(actual[0].outerPosition.start).toEqual({
-                left: 170.71067811865476,
-                top: 29.289321881345245
-            });
-            expect(actual[0].outerPosition.middle).toEqual({
-                left: 177.78174593052023,
-                top: 22.21825406947977
+            expect(actual[0].outerPosition).toEqual({
+                left: 420.2081528017131,
+                top: 179.79184719828692
             });
         });
     });
@@ -384,6 +380,23 @@ describe('PieChartSeries', function() {
                 height: 400
             };
             series.isShowOuterLabel = true;
+
+            actual = series._calculateRadius();
+
+            expect(actual).toBe(150);
+        });
+
+        it('should calculate pie1 radius to be same to pie2', function() {
+            var actual;
+
+            series.layout.dimension = {
+                width: 500,
+                height: 400
+            };
+            series.isCombo = true;
+            series.seriesType = 'pie1';
+            series.isShowOuterLabel = false;
+            dataProcessor.isComboDonutShowOuterLabel.and.returnValue(true);
 
             actual = series._calculateRadius();
 
@@ -621,20 +634,20 @@ describe('PieChartSeries', function() {
                     label: 30
                 }])
             ];
+            series.legendLabels = ['apple', 'banana', 'graph'];
+            series.valueLabels = ['10', '20', '30'];
         });
 
         it('showLabel and showLegend options are both true, they should all be displayed.', function() {
-            var expectLabelObj;
-
             series.options.showLabel = true;
             series.options.showLegend = true;
 
             dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
             series._renderSeriesLabel(this.paper, {});
 
-            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][2];
-
-            expect(expectLabelObj[0]).toBe('legend1\n10');
+            expect(series.graphRenderer.renderLabels.calls.count()).toBe(2);
+            expect(series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels[0]).toBe('10');
+            expect(series.graphRenderer.renderLabels.calls.allArgs()[1][0].labels[0]).toBe('apple');
 
             this.paper.remove();
         });
@@ -648,8 +661,9 @@ describe('PieChartSeries', function() {
             dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
             series._renderSeriesLabel(this.paper, {});
 
-            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][2];
+            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels;
 
+            expect(series.graphRenderer.renderLabels.calls.count()).toBe(1);
             expect(expectLabelObj[0]).toBe('10');
 
             this.paper.remove();
@@ -664,9 +678,10 @@ describe('PieChartSeries', function() {
             dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
             series._renderSeriesLabel(this.paper, {});
 
-            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][2];
+            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels;
 
-            expect(expectLabelObj[0]).toBe('legend1');
+            expect(series.graphRenderer.renderLabels.calls.count()).toBe(1);
+            expect(expectLabelObj[0]).toBe('apple');
 
             this.paper.remove();
         });

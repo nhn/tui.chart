@@ -75,8 +75,8 @@ var data = {
 };
 var options = {
     chart: {
-        width: 700,
-        height: 400,
+        width: 1160,
+        height: 540,
         title: 'Concurrent users'
     },
     xAxis: {
@@ -85,30 +85,34 @@ var options = {
         dateFormat: 'hh:mm'
     },
     yAxis: {
-        title: 'users'
+        title: 'users',
+        pointOnColumn: true
     },
     series: {
-        showDot: true
+        showDot: false
     },
     plot: {
         bands: [
             {
                 range: ['08/22/2016 10:40:00', '08/22/2016 11:00:00'],
                 color: 'gray',
-                opacity: 0.5
+                opacity: 0.2
             }
         ],
         lines: [
             {
                 value: '08/22/2016 10:10:00',
-                color: 'red'
+                color: '#fa2828'
             }
         ]
     }
 };
 var theme = {
     series: {
-        colors: ['#D95576', '#00628C', '#00A8DA', '#1EA399', '#F7A655']
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
     }
 };
 

@@ -90,10 +90,12 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
         var startTop = baseData.basePosition + barStartTop + chartConst.SERIES_EXPAND_SIZE;
         var changedStack = (seriesItem.stack !== iterationData.prevStack);
         var pointCount, endTop, bound, boundLeft;
+        var isOverLapBar = (baseData.barSize * baseData.itemCount > baseData.groupSize);
+        var columnInterval = isOverLapBar ? baseData.pointInterval : baseData.barSize;
 
         if (!isStackType || (!this.options.diverging && changedStack)) {
             pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
-            iterationData.left = iterationData.baseLeft + (baseData.pointInterval * pointCount);
+            iterationData.left = iterationData.baseLeft + (columnInterval * pointCount);
             iterationData.plusTop = 0;
             iterationData.minusTop = 0;
         }
@@ -107,7 +109,14 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
         }
 
         iterationData.prevStack = seriesItem.stack;
-        boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
+
+        if (isOverLapBar) {
+            boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
+        } else {
+            boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2)
+                + ((baseData.pointInterval - baseData.barSize) / 2 * (baseData.itemCount - 1));
+        }
+
         bound = this._makeBound(baseData.barSize, barHeight, boundLeft, startTop, endTop);
 
         return bound;

@@ -503,8 +503,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      */
     _renderOptionalLines: function(paper, dimension) {
         var optionalLines = [];
-        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
-        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
+        optionalLines = optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
+        optionalLines = optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
 
         this.optionalLines = optionalLines;
     },
@@ -512,15 +512,15 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
     /**
      * Maker html for vertical lines
      * @param {{width: number, height: number}} dimension - dimension
-     * @param {string} lineColor - line color
      * @private
      */
-    _renderVerticalLines: function(dimension, lineColor) {
+    _renderVerticalLines: function(dimension) {
         var positions = this._makeHorizontalPositions(dimension.width);
         var self = this;
         var layout = this.layout;
         var left = layout.position.left;
         var top = layout.position.top;
+        var lineColor = this.theme.lineColor;
 
         snippet.forEach(positions, function(position) {
             var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
@@ -529,7 +529,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
 
             path.attr({
                 stroke: lineColor,
-                'stroke-width': 1
+                'stroke-width': 1,
+                'stroke-opacity': 0.05
             });
 
             self.plotSet.push(path);
@@ -539,16 +540,16 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
     /**
      * Maker html for horizontal lines.
      * @param {{width: number, height: number}} dimension - dimension
-     * @param {string} lineColor - line color
      * @private
      */
-    _renderHorizontalLines: function(dimension, lineColor) {
+    _renderHorizontalLines: function(dimension) {
         var positions = this._makeVerticalPositions(dimension.height);
         var self = this;
         var layout = this.layout;
         var left = layout.position.left;
         var top = layout.position.top;
         var distance = positions[1] - positions[0];
+        var lineColor = this.theme.lineColor;
 
         snippet.forEach(positions, function(position, index) {
             var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
@@ -556,7 +557,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
 
             path.attr({
                 stroke: lineColor,
-                'stroke-width': 1
+                'stroke-width': 1,
+                'stroke-opacity': 0.05
             });
 
             self.plotSet.push(path);
@@ -570,13 +572,10 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _renderPlotLines: function(container, dimension) {
-        var theme = this.theme;
-
-        if (!predicate.isLineTypeChart(this.chartType)) {
-            this._renderVerticalLines(dimension, theme.lineColor);
+        if (!this.options.hideLine) {
+            this._renderVerticalLines(dimension);
+            this._renderHorizontalLines(dimension);
         }
-
-        this._renderHorizontalLines(dimension, theme.lineColor);
     },
 
     /**

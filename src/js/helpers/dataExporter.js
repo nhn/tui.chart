@@ -55,14 +55,18 @@ function _get2DArrayFromRawData(rawData) {
     var categories;
     var isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
     var isBullet = (rawData.series && snippet.isExisty(rawData.series.bullet));
+    var return2DArrayData = false;
 
     if (rawData) {
         if (isHeatMap) {
-            return _get2DArrayFromHeatmapRawData(rawData);
+            return2DArrayData = _get2DArrayFromHeatmapRawData(rawData);
         } else if (isBullet) {
-            return _get2DArrayFromBulletRawData(rawData);
+            return2DArrayData = _get2DArrayFromBulletRawData(rawData);
         } else if (rawData.categories) {
             categories = rawData.categories;
+        }
+        if (return2DArrayData) {
+            return return2DArrayData;
         }
 
         resultArray.push([''].concat(categories));

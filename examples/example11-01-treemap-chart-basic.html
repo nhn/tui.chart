@@ -95,14 +95,14 @@ var data = {
 };
 var options = {
     chart: {
-        width: 500,
-        height: 400,
+        width: 900,
+        height: 500,
         title: 'Used disk space'
     },
     series: {
         showLabel: true,
-        zoomable: true,
-        useLeafLabel: false
+        zoomable: false,
+        useLeafLabel: true
     },
     tooltip: {
         suffix: 'GB'
@@ -110,7 +110,10 @@ var options = {
 };
 var theme = {
     series: {
-        colors: ['#63A69F', '#F2E1AC', '#F2836B'],
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ],
         borderColor: '#cccccc',
         borderWidth: 5
     }

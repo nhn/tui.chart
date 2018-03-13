@@ -14,7 +14,12 @@ describe('Zoom', function() {
 
     beforeEach(function() {
         zoom = new Zoom({
-            eventBus: new snippet.CustomEvents()
+            eventBus: new snippet.CustomEvents(),
+            dataProcessor: {
+                options: {
+                    legend: {}
+                }
+            }
         });
 
         spyOn(zoom.eventBus, 'fire');

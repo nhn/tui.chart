@@ -25,7 +25,13 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @private
      * @override
      */
-    init: function() {
+    init: function(params) {
+        /**
+         * Color spectrum
+         * @type {ColorSpectrum}
+         */
+        this.colorSpectrum = params.colorSpectrum;
+
         TooltipBase.apply(this, arguments);
     },
 
@@ -38,7 +44,6 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      */
     _makeTooltipHtml: function(category, item) {
         var template = this._getTooltipTemplate(item);
-
         return template(snippet.extend({
             categoryVisible: category ? 'show' : 'hide',
             category: category
@@ -63,6 +68,8 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
             template = tooltipTemplate.tplCoordinatetypeChart;
         } else if (predicate.isBulletChart(this.chartType)) {
             template = tooltipTemplate.tplBulletChartDefault;
+        } else if (predicate.isHeatmapChart(this.chartType)) {
+            template = tooltipTemplate.tplHeatmapChart;
         }
 
         return template;
@@ -96,7 +103,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
         return snippet.map(valueTypes, function(type) {
-            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
+            return (data[type]) ? '<tr><td>' + type + '</td><td class="' + chartConst.CLASS_NAME_TOOLTIP_VALUE + '">' + data[type] + '</td></tr>' : '';
         }).join('');
     },
 
@@ -110,11 +117,28 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
     _makeSingleTooltipHtml: function(chartType, indexes) {
         var groupIndex = indexes.groupIndex;
         var data = snippet.extend({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
+        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
+            && this.dataProcessor.options.series.colorByPoint;
+        var seriesIndex = indexes.index;
+        var color;
+
+        if (predicate.isBulletChart(this.chartType)) {
+            seriesIndex = groupIndex;
+        } else if (predicate.isTreemapChart(this.chartType)) {
+            seriesIndex = data.tooltipColorIndex;
+        }
+
+        color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
 
         if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;
         }
+        if (this.colorSpectrum) {
+            color = this.colorSpectrum.getColor(data.colorRatio || data.ratio);
+        }
 
+        data.chartType = this.chartType;
+        data.cssText = 'background-color: ' + color;
         data = snippet.extend({
             suffix: this.suffix
         }, data);
@@ -183,17 +207,16 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @private
      */
     _makeTooltipDatum: function(legendLabel, category, seriesItem) {
-        var labelPrefix = (legendLabel && seriesItem.label) ? ':&nbsp;' : '';
         var tooltipLabel = seriesItem.tooltipLabel;
         var labelFormatter = this.labelFormatter;
         var tooltipDatum = {
             legend: legendLabel || '',
-            label: tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : ''),
+            label: tooltipLabel || (seriesItem.label ? seriesItem.label : ''),
             category: category || ''
         };
 
         if (labelFormatter) {
-            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, labelPrefix);
+            tooltipDatum = labelFormatter(seriesItem, tooltipDatum, '');
         }
 
         tooltipDatum.category = category || '';

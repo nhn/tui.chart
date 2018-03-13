@@ -190,8 +190,6 @@ module.exports = {
         if (rawSeriesDatum && rawSeriesDatum.length) {
             if (rawSeriesDatum.colorLength) {
                 seriesCount = rawSeriesDatum.colorLength;
-            } else if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
-                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
             } else {
                 seriesCount = rawSeriesDatum.length;
             }

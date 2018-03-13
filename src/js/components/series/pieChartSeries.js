@@ -11,6 +11,7 @@ var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var snippet = require('tui-code-snippet');
 var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
+var COMBO_PIE1 = 'pie1';
 
 var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -30,6 +31,12 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
 
         this.isShowOuterLabel = predicate.isShowOuterLabel(this.options);
 
+        this.isLabelAlignOuter = predicate.isLabelAlignOuter(this.options.labelAlign);
+
+        this.legendMaxWidth = params.legendMaxWidth;
+
+        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+
         /**
          * range for quadrant.
          * @type {?number}
@@ -42,11 +49,42 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
          */
         this.prevClickedIndex = null;
 
-        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+        /**
+         * series legend names
+         * @type {Array}
+         */
+        this.legendLabels = [];
 
-        this.legendMaxWidth = params.legendMaxWidth;
+        /**
+         * series values.
+         * @type {Array}
+         */
+        this.valueLabels = [];
+
+        /**
+         * max legend width
+         * @type {number}
+         */
+        this.legendLongestWidth = 0;
+
+        /**
+         * labelTheme
+         * @type {object}
+         */
+        this.labelTheme = this.theme.label;
 
         this._setDefaultOptions();
+    },
+
+    /**
+     * Make legendlabes
+     * @returns {Array.<string>}
+     * @private
+     */
+    _getLegendLabels: function() {
+        return snippet.map(this.dataProcessor.getLegendLabels(this.seriesType), function(legendName) {
+            return raphaelRenderUtil.getEllipsisText(legendName, this.legendMaxWidth, this.labelTheme);
+        }, this);
     },
 
     /**
@@ -129,13 +167,12 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
      */
     _makeSectorData: function(circleBound) {
         var self = this;
-        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
         var cx = circleBound.cx;
         var cy = circleBound.cy;
         var r = circleBound.r;
         var angle = this.options.startAngle;
         var angleForRendering = this._calculateAngleForRendering();
-        var delta = 10;
+        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
         var holeRatio = this.options.radiusRange[0];
         var centerR = r * 0.5;
         var paths;
@@ -152,6 +189,7 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
             var currentAngle = angleForRendering * ratio;
             var endAngle = angle + currentAngle;
             var popupAngle = angle + (currentAngle / 2);
+
             var angles = {
                 start: {
                     startAngle: angle,
@@ -176,18 +214,25 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
                 centerPosition: self._getArcPosition(snippet.extend({
                     r: centerR
                 }, positionData)),
-                outerPosition: {
-                    start: self._getArcPosition(snippet.extend({
-                        r: r
-                    }, positionData)),
-                    middle: self._getArcPosition(snippet.extend({
-                        r: r + delta
-                    }, positionData))
-                }
+                outerPosition: self._getArcPosition(snippet.extend({
+                    r: r + (self.legendLongestWidth / 2) + chartConst.PIE_GRAPH_LEGEND_LABEL_INTERVAL
+                }, positionData))
             };
         });
 
         return paths;
+    },
+    /**
+     * Make value labels
+     * @returns {Array.<string>}
+     * @private
+     */
+    _makeValueLabel: function() {
+        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
+
+        return seriesGroup.map(function(seriesItem) {
+            return seriesItem.label;
+        }, this);
     },
 
     /**
@@ -201,8 +246,14 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
      * @override
      */
     _makeSeriesData: function() {
-        var circleBound = this._makeCircleBound();
-        var sectorData = this._makeSectorData(circleBound);
+        var circleBound, sectorData;
+
+        this.valueLabels = this._makeValueLabel();
+        this.legendLabels = this._getLegendLabels();
+        this.legendLongestWidth = this._getMaxLengthLegendWidth();
+
+        circleBound = this._makeCircleBound();
+        sectorData = this._makeSectorData(circleBound);
 
         return {
             chartBackground: this.chartBackground,
@@ -292,8 +343,16 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
      * @private
      */
     _calculateRadius: function() {
-        var radiusRatio = this.isShowOuterLabel ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
+        var isComboPie1 = this.isCombo && (this.seriesType === COMBO_PIE1);
+        var isShowOuterLabel = this.isShowOuterLabel;
         var baseSize = this._calculateBaseSize();
+        var radiusRatio = 0;
+
+        if (isComboPie1) {
+            isShowOuterLabel = this.dataProcessor.isComboDonutShowOuterLabel();
+        }
+
+        radiusRatio = isShowOuterLabel ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
 
         return baseSize * radiusRatio * this.options.radiusRange[1] / 2;
     },
@@ -418,15 +477,6 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
     },
 
     /**
-     * Resize.
-     * @override
-     */
-    resize: function() {
-        Series.prototype.resize.apply(this, arguments);
-        this._moveLegendLines();
-    },
-
-    /**
      * showTooltip is mouseover event callback on series graph.
      * @param {object} params parameters
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
@@ -451,6 +501,26 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
     hideTooltip: function() {
         this.eventBus.fire('hideTooltip');
     },
+    /**
+     * legendh max length width
+     * @returns {number} max width
+     * @private
+     */
+    _getMaxLengthLegendWidth: function() {
+        var lableWidths = snippet.map(this.legendLabels, function(label) {
+            return raphaelRenderUtil.getRenderedTextSize(
+                label,
+                this.labelTheme.fontSize,
+                this.labelTheme.fontFamily
+            ).width;
+        }, this);
+
+        lableWidths.sort(function(prev, next) {
+            return prev - next;
+        });
+
+        return lableWidths[lableWidths.length - 1];
+    },
 
     /**
      * Make series data by selection.
@@ -466,36 +536,34 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
             }
         };
     },
-    /**
-     * Get series label.
-     * @param {string} legend - legend name
-     * @param {string} label - label name
-     * @returns {string} series label
-     * @private
-     */
-    _getSeriesLabel: function(legend, label) {
-        var seriesLabel = '';
-
-        if (this.options.showLegend) {
-            seriesLabel = raphaelRenderUtil.getEllipsisText(legend, this.legendMaxWidth, this.theme.label);
-        }
-        if (this.options.showLabel) {
-            seriesLabel += (seriesLabel ? chartConst.LABEL_SEPARATOR : '') + label;
-        }
-
-        return seriesLabel;
-    },
 
     /**
      * Pick poistions from sector data.
      * @param {string} positionType position type
+     * @param {string} dataType legend or value label
      * @returns {Array} positions
      * @private
      */
-    _pickPositionsFromSectorData: function(positionType) {
+    _pickPositionsFromSectorData: function(positionType, dataType) {
+        var options = this.options;
+        var legendLabelHeight = raphaelRenderUtil.getRenderedTextSize(this.legendLabels[0], this.labelTheme.fontSize,
+            this.labelTheme.fontFamily).height;
+
+        var valueLabelHeight = raphaelRenderUtil.getRenderedTextSize(this.valueLabels[0],
+            chartConst.PIE_GRAPH_LEGEND_LABEL_SIZE, this.labelTheme.fontFamily).height;
+
         return snippet.map(this.seriesData.sectorData, function(datum) {
-            return datum.ratio ? datum[positionType] : null;
-        });
+            var position = datum.ratio ? snippet.extend({}, datum[positionType]) : null;
+            if (options.showLegend && options.showLabel && !this.isLabelAlignOuter) {
+                if (dataType === 'value') {
+                    position.top -= valueLabelHeight / 2;
+                } else if (dataType === 'legend') {
+                    position.top += legendLabelHeight / 2;
+                }
+            }
+
+            return position;
+        }, this);
     },
 
     /**
@@ -534,7 +602,7 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
         var positionEnd = position.end;
         var left = positionEnd.left;
         var top = positionEnd.top;
-        var OffsetX = (this.graphRenderer.getRenderedLabelWidth(label, this.theme.label) / 2)
+        var OffsetX = (this.graphRenderer.getRenderedLabelWidth(label, this.labelTheme) / 2)
             + chartConst.SERIES_LABEL_PADDING;
 
         if (left < centerLeft) {
@@ -546,25 +614,6 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
         return {
             left: left,
             top: top
-        };
-    },
-
-    /**
-     * get label position infos.
-     * @returns {{centerLeft: number, outerPositions: Array, filteredPositions: Array }} - positionInfo
-     * @private
-     */
-    _getFilterInfos: function() {
-        var centerLeft = this.getSeriesData().circleBound.cx;
-        var outerPositions = this._pickPositionsFromSectorData('outerPosition');
-        var filteredPositions = snippet.filter(outerPositions, function(position) {
-            return position;
-        });
-
-        return {
-            centerLeft: centerLeft,
-            outerPositions: outerPositions,
-            filteredPositions: filteredPositions
         };
     },
 
@@ -601,56 +650,42 @@ var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.proto
      * @private
      */
     _renderSeriesLabel: function(paper) {
-        var positionInfo;
+        var legendLabelPosition;
         var renderOption = {};
         var positions = [];
-        var dataProcessor = this.dataProcessor;
-        var seriesDataModel = this._getSeriesDataModel();
-        var legendLabels = dataProcessor.getLegendLabels(this.seriesType);
-        var labels = snippet.map(legendLabels, function(legend, index) {
-            return this._getSeriesLabel(legend, seriesDataModel.getSeriesItem(0, index).label);
+        var labelSet = paper.set();
+        var graphRenderLabel = snippet.bind(function(dataType, labels) {
+            var colors;
+            var theme = snippet.extend({}, this.theme.label);
+            if (this.isLabelAlignOuter && dataType === 'legend') {
+                colors = this.theme.colors;
+                theme.fontWeight = 'bold';
+            }
+            theme.fontSize = (dataType === 'value') ? 16 : theme.fontSize;
+
+            positions = this._setSeriesPosition(renderOption, labels);
+            this.graphRenderer.renderLabels({
+                dataType: dataType,
+                paper: paper,
+                labelSet: labelSet,
+                positions: positions,
+                labels: labels,
+                theme: theme,
+                colors: colors
+            });
         }, this);
 
-        if (predicate.isLabelAlignOuter(this.options.labelAlign)) {
-            positionInfo = this._getFilterInfos();
-
-            this._addEndPosition(positionInfo.centerLeft, positionInfo.filteredPositions);
-            this.graphRenderer.renderLegendLines(positionInfo.filteredPositions);
-
-            renderOption.positions = positionInfo.outerPositions;
-            renderOption.funcMoveToPosition = snippet.bind(this._moveToOuterPosition, this, positionInfo.centerLeft);
-        } else {
-            renderOption.positions = this._pickPositionsFromSectorData('centerPosition');
+        if (this.options.showLabel) {
+            renderOption.positions = this._pickPositionsFromSectorData('centerPosition', 'value');
+            graphRenderLabel('value', this.valueLabels);
+        }
+        if (this.options.showLegend) {
+            legendLabelPosition = this.isLabelAlignOuter ? 'outerPosition' : 'centerPosition';
+            renderOption.positions = this._pickPositionsFromSectorData(legendLabelPosition, 'legend');
+            graphRenderLabel('legend', this.legendLabels);
         }
 
-        positions = this._setSeriesPosition(renderOption, labels);
-
-        return this.graphRenderer.renderLabels(paper, positions, labels, this.theme.label);
-    },
-
-    /**
-     * Animate series label area.
-     * @override
-     */
-    animateSeriesLabelArea: function() {
-        this.graphRenderer.animateLegendLines(this.selectedLegendIndex);
-        Series.prototype.animateSeriesLabelArea.call(this);
-    },
-
-    /**
-     * Move legend lines.
-     * @private
-     * @override
-     */
-    _moveLegendLines: function() {
-        var centerLeft = this.dimensionMap.chart.width / 2,
-            outerPositions = this._pickPositionsFromSectorData('outerPosition'),
-            filteredPositions = snippet.filter(outerPositions, function(position) {
-                return position;
-            });
-
-        this._addEndPosition(centerLeft, filteredPositions);
-        this.graphRenderer.moveLegendLines(filteredPositions);
+        return labelSet;
     },
 
     /**

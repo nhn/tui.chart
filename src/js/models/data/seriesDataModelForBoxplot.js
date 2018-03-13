@@ -132,7 +132,7 @@ var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends 
     _createValues: function() {
         var values = [];
         this.map(function(seriesGroup) {
-            snippet.forEach(seriesGroup.items, function(group) {
+            return snippet.forEach(seriesGroup.items, function(group) {
                 values.push(group.min);
                 values.push(group.max);
                 values.push(group.uq);

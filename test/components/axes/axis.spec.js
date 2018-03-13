@@ -23,7 +23,7 @@ describe('Test for Axis', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType']);
+            ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType', 'getOption']);
 
         axis = new axisFactory.Axis({
             theme: {
@@ -54,6 +54,13 @@ describe('Test for Axis', function() {
         it('render title area', function() {
             var container = dom.create('div');
             var paper = raphael(container, 200, 200);
+
+            axis.dimensionMap = {
+                yAxis: {
+                    width: 80
+                }
+            };
+
             spyOn(axis.graphRenderer, 'renderTitle');
 
             axis._renderTitleArea(paper, 200);
@@ -137,6 +144,51 @@ describe('Test for Axis', function() {
 
             expect(axis._renderNotDividedAxis).toHaveBeenCalled();
             expect(axis._renderDividedAxis).not.toHaveBeenCalled();
+        });
+
+        it('bar chart with min minus should draw a standard line.', function() {
+            var container = dom.create('DIV');
+
+            spyOn(axis.graphRenderer, 'renderTitle');
+            spyOn(axis.graphRenderer, 'renderTickLine');
+            spyOn(axis, '_renderNegativeStandardsLine');
+
+            axis.componentName = 'xAxis';
+            axis.dataProcessor = {
+                chartType: 'bar',
+                getOption: function() {}
+            };
+            axis.layout = {
+                dimension: {
+                    width: 300,
+                    height: 50
+                },
+                position: {
+                    top: 20
+                }
+            };
+            axis.dimensionMap = {
+                yAxis: {
+                    width: 80
+                }
+            };
+            axis.data = {
+                limit: 0,
+                labels: [],
+                tickCount: 0,
+                options: {
+                    isCenter: false
+                }
+            };
+            axis.limitMap = {
+                bar: {
+                    min: -1000
+                }
+            };
+
+            axis._renderAxisArea(container);
+
+            expect(axis._renderNegativeStandardsLine).toHaveBeenCalled();
         });
     });
 

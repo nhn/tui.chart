@@ -222,25 +222,6 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('(deprecated) initialize tooltip options, when has position property', function() {
-            var options = {
-                position: {
-                    left: 20,
-                    top: 30
-                }
-            };
-
-            chartBase._initializeTooltipOptions(options);
-
-            expect(options).toEqual({
-                grouped: false,
-                offset: {
-                    x: 20,
-                    y: 30
-                }
-            });
-        });
-
         it('(deprecated) initialize tooltip options, when has both (offsetX or offsetY) and position', function() {
             var options = {
                 offsetX: 50,
