@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.0.0-a
+ * @version 3.0.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Mar 05 2018 03:03:27 GMT+0900 (KST)"
+ * bundle created at "Tue Mar 13 2018 16:11:03 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2316,7 +2316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    DATE_TYPE_MINUTE: 'minute',
 	    DATE_TYPE_SECOND: 'second',
 	    /** title add padding */
-	    TITLE_PADDING: 40,
+	    TITLE_PADDING: 20,
 	    /** default header height */
 	    DEFAULT_HEADER_HEIGHT: 10,
 	    /** legend area horizontal padding */
@@ -6064,8 +6064,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
 	        var y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
 	        var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
-	        var path = [
-	            'M', cx, cy,
+	        var path = ['M', cx, cy,
 	            'L', x1, y1,
 	            'A', r, r, 0, largeArcFlag, 1, x2, y2,
 	            'Z'];
@@ -7320,7 +7319,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.colorSpectrum = seriesData.colorSpectrum;
 
 	        /**
-	         *
+	         * chart background
 	         */
 	        this.chartBackground = seriesData.chartBackground;
 
@@ -7328,6 +7327,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * zoomable option
 	         */
 	        this.zoomable = seriesData.zoomable;
+
+	        /**
+	         * options useColorValue
+	         */
+	        this.useColorValue = seriesData.options.useColorValue;
 
 	        /**
 	         * border color for rendering box
@@ -7412,8 +7416,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _bindGetColorFunction: function() {
 	        if (this.colorSpectrum) {
 	            this._getColor = this._getColorFromSpectrum;
-	        } else if (this.zoomable) {
-	            this._getColor = this._getColorFromColorsWhenZoomable;
 	        } else {
 	            this._getColor = this._getColorFromColors;
 	        }
@@ -7461,21 +7463,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Get color from colors theme by group property of seriesItem.
 	     * @param {SeriesItem} seriesItem - seriesItem
-	     * @returns {string}
-	     * @private
-	     */
-	    _getColorFromColors: function(seriesItem) {
-	        return seriesItem.hasChild ? 'none' : this.theme.colors[seriesItem.group];
-	    },
-
-	    /**
-	     * Get color from colors theme, when zoomable option.
-	     * @param {SeriesItem} seriesItem - seriesItem
 	     * @param {number} startDepth - start depth
 	     * @returns {string}
 	     * @private
 	     */
-	    _getColorFromColorsWhenZoomable: function(seriesItem, startDepth) {
+	    _getColorFromColors: function(seriesItem, startDepth) {
 	        return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : '#000';
 	    },
 
@@ -7631,20 +7623,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    showAnimation: function(indexes) {
 	        var box = this.boxesSet[indexes.groupIndex][indexes.index];
-	        var rect;
+	        var rect, color;
 
 	        if (!box) {
 	            return;
 	        }
 
+	        color = box.color;
 	        rect = box.rect.node;
+
+	        if (this.chartType === 'treemap' && !this.zoomable && !this.useColorValue) {
+	            color = this.theme.colors[indexes.index];
+	        }
 
 	        this.rectOverlay.attr({
 	            x: rect.getAttribute('x'),
 	            y: rect.getAttribute('y'),
 	            width: rect.getAttribute('width'),
 	            height: rect.getAttribute('height'),
-	            fill: box.color,
+	            fill: color,
 	            'fill-opacity': 1,
 	            stroke: '#ffffff',
 	            'stroke-width': 4,
@@ -8063,6 +8060,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    isBoxTypeChart: function(chartType) {
 	        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
+	    },
+
+	    /**
+	     * Whether map type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isMapTypeChart: function(chartType) {
+	        return (this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType));
 	    },
 
 	    /**
@@ -9004,7 +9011,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            left: position.left,
 	            top: position.top + (this._legendItemHeight / 2)
 	        };
+
 	        var attributes = {
+	            fill: labelTheme.color,
 	            'font-size': labelTheme.fontSize,
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
@@ -10603,7 +10612,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {number} options.yAxis.title.offsetY - title offset y
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {string} options.yAxis.align - align option for center y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *          @param {string} options.yAxis.type - type of axis
 	 *          @param {string} options.yAxis.dateFormat - date format
 	 *      @param {object} options.xAxis - options for x axis component
@@ -10626,9 +10634,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.tooltip.align - align option for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -10707,7 +10712,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {number} options.yAxis.min - minimum value for y axis
 	 *          @param {number} options.yAxis.max - maximum value for y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -10730,9 +10734,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.tooltip.align - align option for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -10813,7 +10814,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {number} options.yAxis.min - minimum value for y axis
 	 *          @param {number} options.yAxis.max - maximum value for y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -10838,9 +10838,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.tooltip.align - align option for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -10934,7 +10931,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {number} options.yAxis.min - minimum value for y axis
 	 *          @param {number} options.yAxis.max - maximum value for y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -10959,9 +10955,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.tooltip.align - align option for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -11050,7 +11043,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {number} options.yAxis.min - minimum value for y axis
 	 *          @param {number} options.yAxis.max - maximum value for y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -11070,9 +11062,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.tooltip.align - align option for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -11165,7 +11154,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {number} options.yAxis.min - minimum value for y axis
 	 *          @param {number} options.yAxis.max - maximum value for y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -11183,9 +11171,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.tooltip.align - align option for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -11266,7 +11251,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {number} options.yAxis.title.offsetX - title offset x
 	 *              @param {number} options.yAxis.title.offsetY - title offset y
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -11281,9 +11265,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.tooltip.align - align option for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
@@ -11354,9 +11335,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {function} [options.tooltip.template] - template for tooltip
 	 *          @param {object} options.tooltip.offsetX - tooltip offset x
 	 *          @param {object} options.tooltip.offsetY - tooltip offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
 	 *          @param {boolean} options.legend.visible - whether visible or not (default: true)
@@ -11437,7 +11415,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {number} options.yAxis.min - minimum value for y axis
 	 *          @param {number} options.yAxis.max - maximum value for y axis
-	 *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -11477,9 +11454,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.tooltip.column.align - align option for tooltip
 	 *              @param {number} options.tooltip.column.offsetX - tooltip offset x
 	 *              @param {number} options.tooltip.column.offsetY - tooltip offset y
-	 *              @param {object} options.tooltip.column.position - (deprecated) relative position
-	 *                  @param {number} options.tooltip.position.left - position left
-	 *                  @param {number} options.tooltip.position.top - position top
 	 *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -11589,9 +11563,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {object} options.tooltip.offset - tooltip offset
 	 *              @param {number} options.tooltip.offset.x - offset x
 	 *              @param {number} options.tooltip.offset.y - offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -11662,9 +11633,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {object} options.tooltip.offset - tooltip offset
 	 *              @param {number} options.tooltip.offset.x - offset x
 	 *              @param {number} options.tooltip.offset.y - offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
 	 *      @param {string} options.theme - theme name
@@ -11736,9 +11704,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {object} options.tooltip.offset - tooltip offset
 	 *              @param {number} options.tooltip.offset.x - offset x
 	 *              @param {number} options.tooltip.offset.y - offset y
-	 *          @param {object} options.tooltip.position - (deprecated) relative position
-	 *              @param {number} options.tooltip.position.left - position left
-	 *              @param {number} options.tooltip.position.top - position top
 	 *      @param {object} options.legend - options for legend component
 	 *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
 	 *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -13681,17 +13646,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _initializeTooltipOptions: function(options) {
-	        var position = options.position;
-
 	        options.grouped = !!options.grouped;
 	        this._initializeOffset(options);
-
-	        if (!options.offset && position) {
-	            options.offset = {
-	                x: position.left,
-	                y: position.top
-	            };
-	        }
 
 	        delete options.position;
 	    },
@@ -14800,7 +14756,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this._renderTitleArea(size, additionalWidth);
-	        this._renderLabelArea(size, tickCount, categories, additionalWidth);
+
+	        if (this.options.showLabel !== false) {
+	            this._renderLabelArea(size, tickCount, categories, additionalWidth);
+	        }
 
 	        if (!isYAxisLineType) {
 	            this._renderTickArea(size, tickCount, additionalWidth);
@@ -14956,7 +14915,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                offset: title.offset,
 	                theme: this.theme.title,
 	                rotationInfo: {
-	                    rotateTitle: this.options.rotateTitle,
 	                    isVertical: this.isYAxis,
 	                    isPositionRight: this.data.isPositionRight,
 	                    isCenter: this.options.isCenter,
@@ -16116,8 +16074,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderOptionalLines: function(paper, dimension) {
 	        var optionalLines = [];
-	        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
-	        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
+	        optionalLines = optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
+	        optionalLines = optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
 
 	        this.optionalLines = optionalLines;
 	    },
@@ -17464,14 +17422,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var categories;
 	    var isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
 	    var isBullet = (rawData.series && snippet.isExisty(rawData.series.bullet));
+	    var return2DArrayData = false;
 
 	    if (rawData) {
 	        if (isHeatMap) {
-	            return _get2DArrayFromHeatmapRawData(rawData);
+	            return2DArrayData = _get2DArrayFromHeatmapRawData(rawData);
 	        } else if (isBullet) {
-	            return _get2DArrayFromBulletRawData(rawData);
+	            return2DArrayData = _get2DArrayFromBulletRawData(rawData);
 	        } else if (rawData.categories) {
 	            categories = rawData.categories;
+	        }
+	        if (return2DArrayData) {
+	            return return2DArrayData;
 	        }
 
 	        resultArray.push([''].concat(categories));
@@ -18483,7 +18445,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._fireChangeCheckedLegendsEvent();
 	        }
 
-	        this.graphRenderer.selectLegend(this.legendModel.getSelectedIndex(), this.legendSet);
+	        this.dataProcessor.selectLegendIndex = this.legendModel.getSelectedIndex();
+	        this.graphRenderer.selectLegend(this.dataProcessor.selectLegendIndex, this.legendSet);
 
 	        this._fireSelectLegendEvent(data);
 	        this._fireSelectLegendPublicEvent(data);
@@ -19104,6 +19067,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderTickArea: function(legendSet) {
+	        if (this.options.reversed) {
+	            this.scaleData.labels.sort(function(prev, next) {
+	                return next - prev;
+	            });
+	        }
+
 	        this.graphRenderer.renderTickLabels(this.paper, this._makeBaseDataToMakeTickArea(),
 	            this.scaleData.labels, this.options.align, legendSet);
 	    },
@@ -19139,12 +19108,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderGraph: function(legendSet) {
 	        var position = this.layout.position;
-	        var dimension;
+	        var dimension, startForSwap;
 
 	        if (this.isHorizontal) {
 	            dimension = this._makeHorizontalGraphDimension();
 	        } else {
 	            dimension = this._makeVerticalGraphDimension();
+	        }
+
+	        if (this.options.reversed) {
+	            startForSwap = this.colorSpectrum.start;
+	            this.colorSpectrum.start = this.colorSpectrum.end;
+	            this.colorSpectrum.end = startForSwap;
 	        }
 
 	        this.graphRenderer.render({
@@ -19221,6 +19196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {string} label label
 	     */
 	    onShowWedge: function(ratio, label) {
+	        ratio = this.options.reversed ? 1 - ratio : ratio;
 	        this.graphRenderer.showWedge(ratio, label);
 	    },
 
@@ -23666,8 +23642,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _findData: function(clientX, clientY) {
 	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+	        var selectLegendIndex = this.dataProcessor.selectLegendIndex;
 
-	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
+	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD, selectLegendIndex);
 	    },
 
 	    /**
@@ -24326,11 +24303,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Find Data by layer position.
 	     * @param {{x: number, y: number}} layerPosition - layer position
 	     * @param {number} [distanceLimit] distance limitation to find data
+	     * @param {number} selectLegendIndex select legend sereis index
 	     * @returns {object}
 	     */
-	    findData: function(layerPosition, distanceLimit) {
+	    findData: function(layerPosition, distanceLimit, selectLegendIndex) {
 	        var min = 100000;
-	        var foundData;
+	        var findFoundMap = {};
+	        var findFound;
 
 	        distanceLimit = distanceLimit || Number.MAX_VALUE;
 
@@ -24339,13 +24318,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var yDiff = layerPosition.y - datum.bound.top;
 	            var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-	            if (distance < distanceLimit && distance < min) {
+	            if (distance < distanceLimit && distance <= min) {
 	                min = distance;
-	                foundData = datum;
+	                findFound = datum;
+	                findFoundMap[datum.indexes.index] = datum;
 	            }
 	        });
 
-	        return foundData;
+	        if (!snippet.isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
+	            findFound = findFoundMap[selectLegendIndex];
+	        }
+
+	        return findFound;
 	    },
 
 	    /**
@@ -30958,6 +30942,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.originalLegendData = null;
 
 	        /**
+	         * select legend index
+	         * @type {number}
+	         */
+	        this.selectLegendIndex = null;
+
+	        /**
 	         * dynamic data array for adding data.
 	         * @type {Array.<{category: string | number, values: Array.<number>}>}
 	         */
@@ -31071,6 +31061,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.categoriesMap = null;
 
 	        /**
+	         * categories isDatetype true or false
+	         * @type {null|object}
+	         */
+	        this.categoriesIsDateTime = {};
+
+	        /**
 	         * stacks
 	         * @type {Array.<number>}
 	         */
@@ -31167,16 +31163,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            isDateTime = options.type && predicate.isDatetimeType(options.type);
 	        }
-
 	        if (isDateTime) {
 	            categories = snippet.map(categories, function(value) {
-	                var date = new Date(value);
-
-	                return date.getTime() || value;
-	            });
+	                return this.chageDatetypeToTimestamp(value);
+	            }, this);
 	        } else {
 	            categories = this._escapeCategories(categories);
 	        }
+	        this.categoriesIsDateTime[axisName] = isDateTime;
 
 	        return categories;
 	    },
@@ -31230,6 +31224,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return foundCategories;
+	    },
+
+	    /**
+	     * Get Category date type
+	     * @param {boolean} isVertical - whether vertical or not
+	     * @returns {boolean}
+	     */
+	    getCategorieDateType: function(isVertical) {
+	        var type = isVertical ? 'y' : 'x';
+
+	        return this.categoriesIsDateTime[type];
+	    },
+
+	    /**
+	     * value to timestamp of datetype category
+	     * @param {string} dateTypeValue - datetype category value
+	     * @returns {boolean}
+	     */
+	    chageDatetypeToTimestamp: function(dateTypeValue) {
+	        var date = new Date(dateTypeValue);
+	        if (!(date.getTime() > 0)) {
+	            date = new Date(parseInt(dateTypeValue, 10));
+	        }
+
+	        return date.getTime() || dateTypeValue;
 	    },
 
 	    /**
@@ -31302,15 +31321,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    findCategoryIndex: function(value) {
 	        var categories = this.getCategories();
+	        var isDateType = this.getCategorieDateType();
 	        var foundIndex = null;
 
 	        snippet.forEachArray(categories, function(category, index) {
+	            if (isDateType) {
+	                value = this.chageDatetypeToTimestamp(value);
+	            }
+
 	            if (category === value) {
 	                foundIndex = index;
 	            }
 
 	            return snippet.isNull(foundIndex);
-	        });
+	        }, this);
 
 	        return foundIndex;
 	    },
@@ -34042,7 +34066,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createValues: function() {
 	        var values = [];
 	        this.map(function(seriesGroup) {
-	            snippet.forEach(seriesGroup.items, function(group) {
+	            return snippet.forEach(seriesGroup.items, function(group) {
 	                values.push(group.min);
 	                values.push(group.max);
 	                values.push(group.uq);
@@ -35547,8 +35571,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number} series width
 	     */
 	    calculateSeriesWidth: function() {
+	        var seriesWidth;
+	        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'series', 'value');
 	        var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
-	        var seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend);
+	        var maxLabelWidth = 0;
+	        if (!predicate.isColumnTypeChart(this.chartType)) {
+	            maxLabelWidth = renderUtil.getRenderedLabelHeight(maxLabel, this.theme.title);
+	        }
+	        seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend, maxLabelWidth);
 
 	        if (predicate.isMapChart(this.chartType) && !IS_LTE_IE8) {
 	            seriesWidth -= (chartConst.MAP_CHART_ZOOM_AREA_WIDTH + LEGEND_AREA_H_PADDING);
@@ -35976,9 +36006,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
 	        var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
 	        var yAxisTitlePadding = (this.options.yAxis.title && !this.useSpectrumLegend) ?
-	            (renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.yAxis.title)
-	                + chartConst.Y_AXIS_TITLE_PADDING)
-	            : 0;
+	            ((renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.yAxis.title)
+	                + chartConst.Y_AXIS_TITLE_PADDING)) : 0;
 	        var seriesTop = (titleOrExportMenuHeight
 	            + Math.max(0, (Math.max(topLegendHeight, yAxisTitlePadding) - chartConst.TITLE_PADDING)));
 	        var seriesPosition = {};
@@ -36240,18 +36269,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.X_AXIS_TITLE_PADDING) : 0;
 	        var labelMargin = options.labelMargin || 0;
 	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
+	        var height = titleAreaHeight + chartConst.X_AXIS_LABEL_PADDING;
 
 	        if (labelMargin > 0) {
-	            labelHeight += labelMargin;
+	            height += labelMargin;
 	        }
 
-	        return titleAreaHeight + labelHeight + chartConst.X_AXIS_LABEL_PADDING;
+	        if (options.showLabel !== false) {
+	            height += labelHeight;
+	        }
+
+	        return height;
 	    },
 
 	    /**
 	     * Calculate width for y axis.
 	     * @param {Array.<string | number>} labels labels
-	     * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
+	     * @param {{title: ?string, isCenter: ?boolean}} options - options
 	     * @param {{title: object, label: object}} theme - theme for y axis calculate
 	     * @param {Array} yAxisLabels - yAxis labels for y axis calculate
 	     * @param {boolean} isDiverging - whether is diverging chart or not
@@ -36261,7 +36295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var labelMargin = options.labelMargin;
 	        var width = 0;
 	        var titleWidth = 0;
-	        var maxLabelWidth;
+	        var maxLabelWidth = 0;
 
 	        labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
 	        yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
@@ -36278,7 +36312,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            width += labelMargin;
 	        }
 	        labels = yAxisLabels.length ? yAxisLabels : labels;
-	        maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+	        if (options.showLabel !== false) {
+	            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+	        }
 	        if (options.title) {
 	            titleWidth = renderUtil.getRenderedLabelWidth(options.title.text, theme.title);
 	        }
@@ -36559,19 +36595,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *      rightYAxis: ?{width: number}
 	     * }} dimensionMap - dimension map
 	     * @param {{align: ?string, visible: boolean}} legendOptions - legend options
+	     * @param {number} maxLabelWidth - max label width
 	     * @returns {number} series width
 	     */
-	    calculateWidth: function(dimensionMap, legendOptions) {
+	    calculateWidth: function(dimensionMap, legendOptions, maxLabelWidth) {
 	        var chartWidth = dimensionMap.chart.width;
 	        var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis.width;
 	        var legendDimension = dimensionMap.legend;
 	        var legendWidth = 0;
+	        var xAxisLabelPadding = 0;
 
 	        if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
 	            legendWidth = legendDimension ? legendDimension.width : 0;
 	        }
 
-	        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisAreaWidth - legendWidth;
+	        if (!legendWidth && !dimensionMap.rightYAxis.width && maxLabelWidth) {
+	            xAxisLabelPadding = maxLabelWidth / 2;
+	        }
+
+	        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisAreaWidth - legendWidth - xAxisLabelPadding;
 	    },
 
 	    /**
@@ -37391,17 +37433,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Calculate coordinate scale.
-	     * @param {Array.<number>} baseValues - base values
-	     * @param {number} baseSize - base size(width or height) for calculating scale data
-	     * @param {object} overflowItem - overflow item
-	     * @param {boolean} isDiverging - is diverging or not
-	     * @param {object} options - scale options
-	     * @param {{min: ?number, max: ?number}} options.limit - limit options
+	     * @param {object} makeScaleInfos - calculate scale infos
+	     *     @param {Array.<number>} makeScaleInfos.baseValues - base values
+	     *     @param {number} makeScaleInfos.baseSize - base size(width or height) for calculating scale data
+	     *     @param {object} makeScaleInfos.overflowItem - overflow item
+	     *     @param {boolean} makeScaleInfos.isDiverging - is diverging or not
+	     *     @param {strint} makeScaleInfos.chartType - chartType
+	     *     @param {object} makeScaleInfos.options - scale options
+	     *         @param {{min: ?number, max: ?number}} makeScaleInfos.options.limit - limit options
 	     * @returns {{limit: {min:number, max:number}, step: number}}
 	     * @private
 	     */
-	    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, options) {
-	        var limit = this._getLimitSafely(baseValues);
+	    _calculateCoordinateScale: function(makeScaleInfos) {
+	        var options = makeScaleInfos.options;
+	        var baseSize = makeScaleInfos.baseSize;
+	        var overflowItem = makeScaleInfos.overflowItem;
+	        var chartType = makeScaleInfos.chartType;
+	        var limit = this._getLimitSafely(makeScaleInfos.baseValues);
 	        var limitOption = options.limitOption || {};
 	        var hasMinOption = snippet.isExisty(limitOption.min);
 	        var hasMaxOption = snippet.isExisty(limitOption.max);
@@ -37431,11 +37479,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
 	        }
 
-	        if (isOverflowed) {
+	        if (isOverflowed && !predicate.isMapTypeChart(chartType)) {
 	            scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);
 	        }
 
-	        if (isDiverging) {
+	        if (makeScaleInfos.isDiverging) {
 	            scaleData.limit = this._makeLimitForDivergingOption(scaleData.limit);
 	        }
 
@@ -37490,7 +37538,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                options.stepCount = Math.floor(baseSize / 100);
 	            }
 
-	            scaleData = this._calculateCoordinateScale(baseValues, baseSize, overflowItem, isDiverging, options);
+	            scaleData = this._calculateCoordinateScale({
+	                baseValues: baseValues,
+	                baseSize: baseSize,
+	                overflowItem: overflowItem,
+	                isDiverging: isDiverging,
+	                chartType: chartType,
+	                options: options
+	            });
 	        }
 
 	        return scaleData;

@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.0.0-a
+ * @version 3.0.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Mar 05 2018 03:03:27 GMT+0900 (KST)"
+ * bundle created at "Tue Mar 13 2018 16:11:03 GMT+0900 (KST)"
  */
 .tui-chart {
   position: relative;
@@ -442,7 +442,7 @@
   position: absolute;
   font-family: Verdana;
   margin: 0;
-  z-index: 500;
+  z-index: 1001;
 }
 .tui-chart .tui-chart-chartExportMenu-area .tui-chart-chartExportMenu-button {
   position: absolute;
