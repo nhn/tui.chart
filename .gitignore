@@ -8,7 +8,7 @@ pids
 *.seed
 
 # Compiled files
-dist
+# dist
 
 # Coverage directory used by tools like istanbul
 coverage
@@ -17,7 +17,7 @@ coverage
 build/Release
 
 # Distribution directory
-dist
+# dist
 
 # Dependency directory
 node_modules
