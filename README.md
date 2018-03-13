@@ -1,4 +1,4 @@
-## ![Toast UI Chart](https://cloud.githubusercontent.com/assets/7088720/21300155/e52f31ae-c5e4-11e6-8d6a-d660a48d0d50.png)
+## ![Toast UI Chart](https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png)
 
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Statistical Data Visualization library for javascript
 
