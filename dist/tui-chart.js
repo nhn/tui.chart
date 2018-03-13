@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.16.0
+ * @version 2.17.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Feb 13 2018 10:52:22 GMT+0900 (KST)"
+ * bundle created at "Tue Mar 13 2018 15:05:57 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3018,6 +3018,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    isMapChart: function(chartType) {
 	        return chartType === chartConst.CHART_TYPE_MAP;
+	    },
+
+	    /**
+	     * Whether map type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isMapTypeChart: function(chartType) {
+	        return (this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType));
 	    },
 
 	    /**
@@ -6372,8 +6382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var path = ['M', cx, cy,
 	            'L', x1, y1,
 	            'A', r, r, 0, largeArcFlag, 1, x2, y2,
-	            'Z'
-	        ];
+	            'Z'];
 
 	        // see details about path
 	        // http://www.w3schools.com/svg/svg_path.asp
@@ -8544,12 +8553,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var controllerPositionLeft = position.left - chartConst.CHART_PADDING;
 	        var rightButtonPositionLeft = controllerPositionLeft + dimension.width - BUTTON_WIDTH;
 	        var leftButtonPositionLeft = rightButtonPositionLeft - (BUTTON_PADDING_LEFT + BUTTON_WIDTH);
-	        var lowerArrowPath = [
-	            'M', rightButtonPositionLeft, ',', (controllerPositionTop + 3),
+	        var lowerArrowPath = ['M', rightButtonPositionLeft, ',', (controllerPositionTop + 3),
 	            'L', (rightButtonPositionLeft + 5), ',', (controllerPositionTop + 8),
 	            'L', (rightButtonPositionLeft + 10), ',', (controllerPositionTop + 3)].join('');
-	        var upperArrowPath = [
-	            'M', leftButtonPositionLeft, ',', (controllerPositionTop + 8),
+	        var upperArrowPath = ['M', leftButtonPositionLeft, ',', (controllerPositionTop + 8),
 	            'L', (leftButtonPositionLeft + 5), ',', (controllerPositionTop + 3),
 	            'L', (leftButtonPositionLeft + 10), ',', (controllerPositionTop + 8)].join('');
 
@@ -8617,7 +8624,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            left: position.left,
 	            top: position.top + (this._iconHeight / 2)
 	        };
+
 	        var attributes = {
+	            fill: labelTheme.color,
 	            'font-size': labelTheme.fontSize,
 	            'font-family': labelTheme.fontFamily,
 	            'font-weight': labelTheme.fontWeight,
@@ -8872,7 +8881,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            legendSet.push(raphaelRenderUtil.renderLine(paper, path, '#ccc', 1));
-
 	            legendSet.push(raphaelRenderUtil.renderText(paper, pos, label));
 	        });
 	    },
@@ -8889,7 +8897,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _renderGradientBar: function(paper, layout, colorSpectrum, isHorizontal) {
 	        var rectHeight = layout.dimension.height;
 	        var left = layout.position.left;
-	        var degree, bound;
+	        var degree, bound, fill;
 
 	        if (isHorizontal) {
 	            rectHeight -= PADDING;
@@ -8900,6 +8908,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._makeWedghPath = this._makeVerticalWedgePath;
 	        }
 
+	        fill = degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end;
+
 	        bound = {
 	            left: left,
 	            top: layout.position.top,
@@ -8908,7 +8918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 
 	        return raphaelRenderUtil.renderRect(paper, bound, {
-	            fill: degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end,
+	            fill: fill,
 	            stroke: 'none'
 	        });
 	    },
@@ -14145,13 +14155,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this._renderTitleArea();
-	        this._renderLabelArea(size, tickCount, categories, additionalWidth);
+
+	        if (this.options.showLabel !== false) {
+	            this._renderLabelArea(size, tickCount, categories, additionalWidth);
+	        }
 
 	        if (!isYAxisLineType) {
 	            this._renderTickArea(size, tickCount, additionalWidth);
 	        }
 	    },
-
 	    /**
 	     * Render divided xAxis if yAxis rendered in the center.
 	     * @param {{width: number, height:number}} dimension axis area width and height
@@ -16727,14 +16739,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var categories;
 	    var isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
 	    var isBullet = (rawData.series && snippet.isExisty(rawData.series.bullet));
+	    var return2DArrayData = false;
 
 	    if (rawData) {
 	        if (isHeatMap) {
-	            return _get2DArrayFromHeatmapRawData(rawData);
+	            return2DArrayData = _get2DArrayFromHeatmapRawData(rawData);
 	        } else if (isBullet) {
-	            return _get2DArrayFromBulletRawData(rawData);
+	            return2DArrayData = _get2DArrayFromBulletRawData(rawData);
 	        } else if (rawData.categories) {
 	            categories = rawData.categories;
+	        }
+	        if (return2DArrayData) {
+	            return return2DArrayData;
 	        }
 
 	        resultArray.push([''].concat(categories));
@@ -17676,7 +17692,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dimensionHeight = (chartConst.LINE_MARGIN_TOP + legendItemHeight) * (isHorizontal ? 1 : labelCount);
 	        var left = basePosition.left;
 
-	        if (!predicate.isLegendAlignLeft) {
+	        if (!predicate.isLegendAlignLeft(this.options.align)) {
 	            left += chartConst.LEGEND_AREA_PADDING;
 	        }
 
@@ -17746,7 +17762,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._fireChangeCheckedLegendsEvent();
 	        }
 
-	        this.graphRenderer.selectLegend(this.legendModel.getSelectedIndex(), this.legendSet);
+	        this.dataProcessor.selectLegendIndex = this.legendModel.getSelectedIndex();
+
+	        this.graphRenderer.selectLegend(this.dataProcessor.selectLegendIndex, this.legendSet);
 
 	        this._fireSelectLegendEvent(data);
 	        this._fireSelectLegendPublicEvent(data);
@@ -18352,6 +18370,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderTickArea: function(legendSet) {
+	        if (this.options.reversed) {
+	            this.scaleData.labels.sort(function(prev, next) {
+	                return next - prev;
+	            });
+	        }
 	        this.graphRenderer.renderTicksAndLabels(this.paper, this._makeBaseDataToMakeTickArea(),
 	            this.scaleData.labels, this.isHorizontal, legendSet);
 	    },
@@ -18386,12 +18409,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderGraph: function(legendSet) {
-	        var dimension;
+	        var dimension, startForSwap;
 
 	        if (this.isHorizontal) {
 	            dimension = this._makeHorizontalGraphDimension();
 	        } else {
 	            dimension = this._makeVerticalGraphDimension();
+	        }
+
+	        if (this.options.reversed) {
+	            startForSwap = this.colorSpectrum.start;
+	            this.colorSpectrum.start = this.colorSpectrum.end;
+	            this.colorSpectrum.end = startForSwap;
 	        }
 
 	        this.graphRenderer.render(this.paper, {
@@ -18459,6 +18488,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} ratio ratio
 	     */
 	    onShowWedge: function(ratio) {
+	        ratio = this.options.reversed ? 1 - ratio : ratio;
 	        this.graphRenderer.showWedge(chartConst.MAP_LEGEND_SIZE * ratio);
 	    },
 
@@ -22789,8 +22819,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _findData: function(clientX, clientY) {
 	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+	        var selectLegendIndex = this.dataProcessor.selectLegendIndex;
 
-	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD);
+	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD, selectLegendIndex);
 	    },
 
 	    /**
@@ -23450,26 +23481,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Find Data by layer position.
 	     * @param {{x: number, y: number}} layerPosition - layer position
 	     * @param {number} [distanceLimit] distance limitation to find data
+	     * @param {?number} selectLegendIndex select legend sereis index
 	     * @returns {object}
 	     */
-	    findData: function(layerPosition, distanceLimit) {
+	    findData: function(layerPosition, distanceLimit, selectLegendIndex) {
 	        var min = 100000;
-	        var foundData;
+	        var findFoundMap = {};
+	        var findFound;
 
 	        distanceLimit = distanceLimit || Number.MAX_VALUE;
-
 	        snippet.forEach(this.data, function(datum) {
 	            var xDiff = layerPosition.x - datum.bound.left;
 	            var yDiff = layerPosition.y - datum.bound.top;
 	            var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-	            if (distance < distanceLimit && distance < min) {
+	            if (distance < distanceLimit && distance <= min) {
 	                min = distance;
-	                foundData = datum;
+	                findFound = datum;
+	                findFoundMap[datum.indexes.index] = datum;
 	            }
 	        });
 
-	        return foundData;
+	        if (!snippet.isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
+	            findFound = findFoundMap[selectLegendIndex];
+	        }
+
+	        return findFound;
 	    },
 
 	    /**
@@ -30012,6 +30049,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.originalLegendData = null;
 
 	        /**
+	         * select legend index
+	         * @type {number}
+	         */
+	        this.selectLegendIndex = null;
+
+	        /**
 	         * dynamic data array for adding data.
 	         * @type {Array.<{category: string | number, values: Array.<number>}>}
 	         */
@@ -30125,6 +30168,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.categoriesMap = null;
 
 	        /**
+	         * categories isDatetype true or false
+	         * @type {null|object}
+	         */
+	        this.categoriesIsDateTime = {};
+
+	        /**
 	         * stacks
 	         * @type {Array.<number>}
 	         */
@@ -30221,16 +30270,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            isDateTime = options.type && predicate.isDatetimeType(options.type);
 	        }
-
 	        if (isDateTime) {
 	            categories = snippet.map(categories, function(value) {
-	                var date = new Date(value);
+	                var date = this.chageDatetypeToTimestamp(value);
 
-	                return date.getTime() || value;
-	            });
+	                return date;
+	            }, this);
 	        } else {
 	            categories = this._escapeCategories(categories);
 	        }
+
+	        this.categoriesIsDateTime[axisName] = isDateTime;
 
 	        return categories;
 	    },
@@ -30284,6 +30334,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return foundCategories;
+	    },
+
+	    /**
+	     * Get Category date type
+	     * @param {boolean} isVertical - whether vertical or not
+	     * @returns {boolean}
+	     */
+	    getCategorieDateType: function(isVertical) {
+	        var type = isVertical ? 'y' : 'x';
+
+	        return this.categoriesIsDateTime[type];
+	    },
+
+	    /**
+	     * value to timestamp of datetype category
+	     * @param {string} dateTypeValue - datetype category value
+	     * @returns {boolean}
+	     */
+	    chageDatetypeToTimestamp: function(dateTypeValue) {
+	        var date = new Date(dateTypeValue);
+	        if (!(date.getTime() > 0)) {
+	            date = new Date(parseInt(dateTypeValue, 10));
+	        }
+
+	        return date.getTime() || dateTypeValue;
 	    },
 
 	    /**
@@ -30356,15 +30431,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    findCategoryIndex: function(value) {
 	        var categories = this.getCategories();
+	        var isDateType = this.getCategorieDateType();
 	        var foundIndex = null;
 
 	        snippet.forEachArray(categories, function(category, index) {
+	            if (isDateType) {
+	                value = this.chageDatetypeToTimestamp(value);
+	            }
+
 	            if (category === value) {
 	                foundIndex = index;
 	            }
 
 	            return snippet.isNull(foundIndex);
-	        });
+	        }, this);
 
 	        return foundIndex;
 	    },
@@ -33047,7 +33127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createValues: function() {
 	        var values = [];
 	        this.map(function(seriesGroup) {
-	            snippet.forEach(seriesGroup.items, function(group) {
+	            return snippet.forEach(seriesGroup.items, function(group) {
 	                values.push(group.min);
 	                values.push(group.max);
 	                values.push(group.uq);
@@ -35101,12 +35181,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
 	        var labelMargin = options.labelMargin || 0;
 	        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
+	        var height = titleAreaHeight + chartConst.CHART_PADDING;
 
 	        if (labelMargin > 0) {
-	            labelHeight += labelMargin;
+	            height += labelMargin;
 	        }
 
-	        return titleAreaHeight + labelHeight + chartConst.CHART_PADDING;
+	        if (options.showLabel !== false) {
+	            height += labelHeight;
+	        }
+
+	        return height;
 	    },
 
 	    /**
@@ -35140,8 +35225,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            width += labelMargin;
 	        }
 
-	        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
-	            chartConst.AXIS_LABEL_PADDING;
+	        if (options.showLabel !== false) {
+	            width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+	        }
+
+	        width += titleAreaWidth + chartConst.AXIS_LABEL_PADDING;
 
 	        return width;
 	    }
@@ -36213,17 +36301,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Calculate coordinate scale.
-	     * @param {Array.<number>} baseValues - base values
-	     * @param {number} baseSize - base size(width or height) for calculating scale data
-	     * @param {object} overflowItem - overflow item
-	     * @param {boolean} isDiverging - is diverging or not
-	     * @param {object} options - scale options
-	     * @param {{min: ?number, max: ?number}} options.limit - limit options
+	     * @param {object} makeScaleInfos - calculate scale infos
+	     *     @param {Array.<number>} makeScaleInfos.baseValues - base values
+	     *     @param {number} makeScaleInfos.baseSize - base size(width or height) for calculating scale data
+	     *     @param {object} makeScaleInfos.overflowItem - overflow item
+	     *     @param {boolean} makeScaleInfos.isDiverging - is diverging or not
+	     *     @param {strint} makeScaleInfos.chartType - chartType
+	     *     @param {object} makeScaleInfos.options - scale options
+	     *         @param {{min: ?number, max: ?number}} makeScaleInfos.options.limit - limit options
 	     * @returns {{limit: {min:number, max:number}, step: number}}
 	     * @private
 	     */
-	    _calculateCoordinateScale: function(baseValues, baseSize, overflowItem, isDiverging, options) {
-	        var limit = this._getLimitSafely(baseValues);
+	    _calculateCoordinateScale: function(makeScaleInfos) {
+	        var options = makeScaleInfos.options;
+	        var baseSize = makeScaleInfos.baseSize;
+	        var overflowItem = makeScaleInfos.overflowItem;
+	        var chartType = makeScaleInfos.chartType;
+	        var limit = this._getLimitSafely(makeScaleInfos.baseValues);
 	        var limitOption = options.limitOption || {};
 	        var hasMinOption = snippet.isExisty(limitOption.min);
 	        var hasMaxOption = snippet.isExisty(limitOption.max);
@@ -36251,11 +36345,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
 
-	        if (isOverflowed) {
+	        if (isOverflowed && !predicate.isMapTypeChart(chartType)) {
 	            scaleData.limit = this._adjustLimitForOverflow(scaleData.limit, scaleData.step, isOverflowed);
 	        }
 
-	        if (isDiverging) {
+	        if (makeScaleInfos.isDiverging) {
 	            scaleData.limit = this._makeLimitForDivergingOption(scaleData.limit);
 	        }
 
@@ -36310,7 +36404,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                options.stepCount = Math.floor(baseSize / 100);
 	            }
 
-	            scaleData = this._calculateCoordinateScale(baseValues, baseSize, overflowItem, isDiverging, options);
+	            scaleData = this._calculateCoordinateScale({
+	                baseValues: baseValues,
+	                baseSize: baseSize,
+	                overflowItem: overflowItem,
+	                isDiverging: isDiverging,
+	                chartType: chartType,
+	                options: options
+	            });
 	        }
 
 	        return scaleData;

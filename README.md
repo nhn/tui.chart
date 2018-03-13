@@ -62,32 +62,18 @@ Yes, It's free. :)
 
 ## Examples
 ### Single Charts
-* [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)
-* [Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html)
-* [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)
-* [Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)
-* [Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)
-* [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)
-* [Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html)
-* [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)(General)
-* [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)(Donut)
-* [Map](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map.html)
-* [Heatmap](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)
-* [Treemap](https://nhnent.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic.html)
-* [Boxplot](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html)
-* [Bullet](https://nhnent.github.io/tui.chart/latest/tutorial-example15-01-bullet-chart-basic.html)
+| [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)(Donut) | [Map](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map.html)<br>[Heatmap](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)<br>[Treemap](https://nhnent.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic.html) | [Boxplot](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html) | [Bullet](https://nhnent.github.io/tui.chart/latest/tutorial-example15-01-bullet-chart-basic.html)
+| --- | --- | --- | --- | --- | --- | --- |
 
 ### Combo Charts
-* [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html)
-* [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html)
-* [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html)
-* [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html)
+| [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html) |
+| --- | --- | --- | --- |
 
 ### Other tips
 
 * [Load Data from `<table>`](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/import-chart-data-from-existing-table-element.md)
-* [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
-* [Apply themes](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
+* [Add data dynamically](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
+* [Apply themes](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
 
 Find more on [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html) and [wiki](https://github.com/nhnent/tui.chart/tree/production/docs/wiki#tutorial) pages.  
 
@@ -170,7 +156,7 @@ var options = {
 chart.barChart(container, data, options);
 ```
 
-See [details](https://nhnent.github.io/tui.chart/latest) for additional informations.
+See [details](https://nhnent.github.io/nhnent/tui.chart/latest) for additional informations.
 
 ## 🔧 Pull Request Steps
 
@@ -227,15 +213,15 @@ $ npm run test
 
 ## 📙 Documents
 * [Getting Started](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/getting-started.md)
-* [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/)
-* [APIs](https://nhnent.github.io/tui.chart/latest)
+* [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/README.md)
+* [APIs](https://nhnent.github.io/tui.chart/api)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/tui.chart/blob/production/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/tui.chart/blob/production/CONTRIBUTING.md)
-* [Issue guideline](https://github.com/nhnent/tui.chart/blob/production/docs/ISSUE_TEMPLATE.md)
+* [Code of Conduct](CODE_OF_CONDUCT.md)
+* [Contributing guideline](CONTRIBUTING.md)
+* [Issue guideline](ISSUE_TEMPLATE.md)
 * [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family

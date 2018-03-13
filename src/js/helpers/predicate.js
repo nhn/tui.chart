@@ -287,6 +287,16 @@ var predicate = {
     },
 
     /**
+     * Whether map type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isMapTypeChart: function(chartType) {
+        return (this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType));
+    },
+
+    /**
      * Whether coordinate type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - chart type
