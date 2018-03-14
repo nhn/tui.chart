@@ -117,15 +117,15 @@ When using npm, be sure to use it in the environment [Node.js](https://nodejs.or
 #### npm
 
 ```sh
-$ npm install --save [[package name]] # Latest version
-$ npm install --save [[package name]]@<version> # Specific version
+$ npm install --save tui-chart # Latest version
+$ npm install --save tui-chart@<version> # Specific version
 ```
 
 #### bower
 
 ```sh
-$ bower install [[package name]] # Latest version
-$ bower install [[package name]]#<tag> # Specific version
+$ bower install tui-chart # Latest version
+$ bower install tui-chart#<tag> # Specific version
 ```
 
 ### Download Source Files
