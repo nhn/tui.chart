@@ -463,6 +463,8 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      */
     resize: function(dimension) {
         var updated, boundsAndScale, chartDimension;
+        var dataProcessor = this.dataProcessor;
+        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
 
         if (!dimension) {
             return;
@@ -480,7 +482,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderDimension(this.chartContainer, chartDimension);
         this.paper.resizeBackground(chartDimension.width, chartDimension.height);
 
-        this.componentManager.render('resize', boundsAndScale);
+        this.componentManager.render('resize', boundsAndScale, {
+            checkedLegends: seriesVisibilityMap
+        });
     },
 
     /**

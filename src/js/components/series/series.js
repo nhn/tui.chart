@@ -501,6 +501,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         this._clearSeriesContainer();
         this._setDataForRendering(data);
         this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
+        this.rerender(data);
     },
 
     /**

@@ -147,7 +147,16 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      */
     render: function(data) {
         Series.prototype.render.call(this, data);
+        this.seriesSet = this.graphRenderer.sectorSet;
         this._setMapRatio();
+    },
+
+    /**
+     * Resize series component.
+     * @param {object} data data for rendering
+     */
+    resize: function(data) {
+        this.render(data);
     },
 
     /**
