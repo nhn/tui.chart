@@ -52,9 +52,10 @@ var calculator = {
      * @param {number} size area width or height
      * @param {number} count tick count
      * @param {?number} additionalPosition additional position
+     * @param {?number} fixedLastBlockInterval fixedLastBlockInterval
      * @returns {Array.<number>} positions
      */
-    makeTickPixelPositions: function(size, count, additionalPosition) {
+    makeTickPixelPositions: function(size, count, additionalPosition, fixedLastBlockInterval) {
         var positions = [];
 
         additionalPosition = additionalPosition || 0;
@@ -62,6 +63,10 @@ var calculator = {
         if (count > 0) {
             positions = snippet.map(snippet.range(0, count), function(index) {
                 var ratio = index === 0 ? 0 : (index / (count - 1));
+
+                if (fixedLastBlockInterval && count - 1 === index) {
+                    // console.log("SIZE", size);
+                }
 
                 return (ratio * size) + additionalPosition;
             });

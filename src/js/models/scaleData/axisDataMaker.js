@@ -190,6 +190,7 @@ var axisDataMaker = {
         var newBlockCount = parseInt(seriesWidth / blockSize, 10);
         // interval : number of previous blocks in a new block(spaces between tick and tick)
         var interval = parseInt(beforeBlockCount / newBlockCount, 10);
+
         var intervalInfo = null;
         var remainCount;
 
@@ -199,6 +200,7 @@ var axisDataMaker = {
             // |     |     |     |      - new block interval
             //                   |*|*|  - remaining block
             remainCount = beforeBlockCount - (interval * newBlockCount);
+            console.log(beforeBlockCount, interval * newBlockCount, remainCount);
 
             if (remainCount >= interval) {
                 newBlockCount += parseInt(remainCount / interval, 0);
@@ -214,7 +216,24 @@ var axisDataMaker = {
 
         return intervalInfo;
     },
+    divisors: function(x) {
+        var result = [];
+        var a = 2, b;
+        for (; a * a <= x; a += 1) {
+            if (x % a === 0) {
+                b = x / a;
+                result.push(a);
+                if (b !== a) {
+                    result.push(b);
+                }
+            }
+        }
+        result.sort(function(prev, next) {
+            return prev - next;
+        });
 
+        return result;
+    },
     /**
      * Make candidate for adjusting tick interval.
      * @param {number} beforeBlockCount - before block count
@@ -224,10 +243,26 @@ var axisDataMaker = {
      */
     _makeCandidatesForAdjustingInterval: function(beforeBlockCount, seriesWidth) {
         var self = this;
-        var blockSizeRange = snippet.range(90, 121, 5); // [90, 95, 100, 105, 110, 115, 120]
-        var candidates = snippet.map(blockSizeRange, function(blockSize) {
-            return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
+        var blockSizeRange;
+        var candidates = [];
+        var candidateInterval = this.divisors(beforeBlockCount);
+        snippet.forEach(candidateInterval, function(interval) {
+            var intervalWidth = (interval / beforeBlockCount) * seriesWidth;
+            if (intervalWidth >= 70 && intervalWidth <= 140) {
+                candidates.push({
+                    blockCount: beforeBlockCount / interval,
+                    interval: interval,
+                    beforeRemainBlockCount: 0
+                });
+            }
         });
+
+        if (candidates.length === 0) {
+            blockSizeRange = snippet.range(70, 140, 10);
+            candidates = snippet.map(blockSizeRange, function(blockSize) {
+                return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
+            });
+        }
 
         return snippet.filter(candidates, function(info) {
             return !!info;
@@ -246,7 +281,7 @@ var axisDataMaker = {
         var intervalInfo = null;
 
         if (candidates.length) {
-            intervalInfo = arrayUtil.min(candidates, function(candidate) {
+            intervalInfo = arrayUtil.max(candidates, function(candidate) {
                 return candidate.blockCount;
             });
         }
@@ -276,7 +311,7 @@ var axisDataMaker = {
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
     updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount, addingDataMode) {
-        var beforeBlockCount, intervalInfo;
+        var beforeBlockCount, intervalInfo, lastLabelValue;
         var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex;
 
         if (addingDataMode) {
@@ -285,6 +320,7 @@ var axisDataMaker = {
         }
 
         beforeBlockCount = axisData.tickCount - 1;
+
         intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
 
         if (!intervalInfo) {
@@ -300,20 +336,26 @@ var axisDataMaker = {
         // |     |     |     |*|*|*|    - * remaing block
         // |*|*|O    |     |     |*|    - tick is not moved (O startIndex = 2)
         // |*|O    |     |     |*|*|    - tick moved 1 (O startIndex = 1)
-        startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
+        // startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
+        // if (startIndex < 0) {
+        //     startIndex += interval;
+        // }
 
-        if (startIndex < 0) {
-            startIndex += interval;
-        }
-
+        startIndex = 0;
+        lastLabelValue = axisData.labels[axisData.labels.length - 1];
         axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
+
+        if (beforeRemainBlockCount > 0) {
+            axisData.labels[axisData.labels.length - 1] = lastLabelValue;
+        }
 
         snippet.extend(axisData, {
             startIndex: startIndex,
             tickCount: adjustingBlockCount + 1,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            interval: interval
+            interval: interval,
+            fixedLastBlockInterval: beforeRemainBlockCount
         });
     },
 

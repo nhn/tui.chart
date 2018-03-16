@@ -381,11 +381,12 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _renderTicks: function(size, tickCount, isNotDividedXAxis, additionalSize) {
         var tickColor = this.theme.tickColor;
         var axisData = this.data;
+        var fixedLastBlockInterval = axisData.fixedLastBlockInterval;
         var sizeRatio = axisData.sizeRatio || 1;
         var isYAxis = this.isYAxis;
         var isCenter = this.data.options.isCenter;
         var isPositionRight = this.data.isPositionRight;
-        var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
+        var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount, 0, fixedLastBlockInterval);
         var additionalHeight = this.paperAdditionalHeight + 1;
         var additionalWidth = this.paperAdditionalWidth;
 
@@ -402,6 +403,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             additionalHeight: additionalHeight,
             isPositionRight: isPositionRight,
             tickColor: tickColor,
+            fixedLastBlockInterval: fixedLastBlockInterval,
             set: this.axisSet
         });
     },
