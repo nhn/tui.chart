@@ -9,6 +9,7 @@
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var geomatric = require('../../helpers/geometric');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
 var snippet = require('tui-code-snippet');
@@ -200,7 +201,6 @@ var axisDataMaker = {
             // |     |     |     |      - new block interval
             //                   |*|*|  - remaining block
             remainCount = beforeBlockCount - (interval * newBlockCount);
-            console.log(beforeBlockCount, interval * newBlockCount, remainCount);
 
             if (remainCount >= interval) {
                 newBlockCount += parseInt(remainCount / interval, 0);
@@ -216,24 +216,7 @@ var axisDataMaker = {
 
         return intervalInfo;
     },
-    divisors: function(x) {
-        var result = [];
-        var a = 2, b;
-        for (; a * a <= x; a += 1) {
-            if (x % a === 0) {
-                b = x / a;
-                result.push(a);
-                if (b !== a) {
-                    result.push(b);
-                }
-            }
-        }
-        result.sort(function(prev, next) {
-            return prev - next;
-        });
 
-        return result;
-    },
     /**
      * Make candidate for adjusting tick interval.
      * @param {number} beforeBlockCount - before block count
@@ -245,10 +228,10 @@ var axisDataMaker = {
         var self = this;
         var blockSizeRange;
         var candidates = [];
-        var candidateInterval = this.divisors(beforeBlockCount);
+        var candidateInterval = calculator.divisors(beforeBlockCount);
         snippet.forEach(candidateInterval, function(interval) {
             var intervalWidth = (interval / beforeBlockCount) * seriesWidth;
-            if (intervalWidth >= 70 && intervalWidth <= 140) {
+            if (intervalWidth >= 90 && intervalWidth <= 121) {
                 candidates.push({
                     blockCount: beforeBlockCount / interval,
                     interval: interval,
@@ -258,7 +241,7 @@ var axisDataMaker = {
         });
 
         if (candidates.length === 0) {
-            blockSizeRange = snippet.range(70, 140, 10);
+            blockSizeRange = snippet.range(90, 121, 5);
             candidates = snippet.map(blockSizeRange, function(blockSize) {
                 return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
             });
@@ -312,7 +295,7 @@ var axisDataMaker = {
      */
     updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount, addingDataMode) {
         var beforeBlockCount, intervalInfo, lastLabelValue;
-        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex;
+        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex, tickCount;
 
         if (addingDataMode) {
             axisData.tickCount -= 1;
@@ -331,6 +314,7 @@ var axisDataMaker = {
         interval = intervalInfo.interval;
         beforeRemainBlockCount = intervalInfo.beforeRemainBlockCount;
         axisData.eventTickCount = axisData.tickCount;
+        tickCount = adjustingBlockCount + 1;
 
         // startIndex: (remaing block count / 2) - current moved tick index
         // |     |     |     |*|*|*|    - * remaing block
@@ -340,18 +324,18 @@ var axisDataMaker = {
         // if (startIndex < 0) {
         //     startIndex += interval;
         // }
-
+        // Fixed to 0 due to issues. (https://github.com/nhnent/tui.chart/issues/56)
         startIndex = 0;
         lastLabelValue = axisData.labels[axisData.labels.length - 1];
         axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
 
         if (beforeRemainBlockCount > 0) {
-            axisData.labels[axisData.labels.length - 1] = lastLabelValue;
+            axisData.labels.push(lastLabelValue);
         }
 
         snippet.extend(axisData, {
             startIndex: startIndex,
-            tickCount: adjustingBlockCount + 1,
+            tickCount: tickCount,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
             interval: interval,
