@@ -74,6 +74,7 @@ function getNormalizedStep(step) {
  * @param {number} min min
  * @param {number} max max
  * @param {number} step step
+ * @param {number} [showLabel] showLabel option
  * @private
  * @returns {{
  *     min: number,
@@ -81,13 +82,18 @@ function getNormalizedStep(step) {
  * }}
  * max = 155 and step = 10 ---> max = 160
  */
-function getNormalizedLimit(min, max, step) {
+function getNormalizedLimit(min, max, step, showLabel) {
     var minNumber = Math.min(getDigits(max), getDigits(step));
     var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
     var fixedStep = (step * placeNumber);
+    var noExtraMax = max;
 
     // ceil max value step digits
     max = Math.ceil((max * placeNumber) / fixedStep) * fixedStep / placeNumber;
+
+    if (showLabel && (fixedStep / 2) > (max - noExtraMax)) {
+        max += fixedStep;
+    }
 
     if (min > step) {
         // floor min value to multiples of step
@@ -121,13 +127,14 @@ function getNormalizedStepCount(limitSize, step) {
 /**
  * Get normalized scale data
  * @param {object} scale scale
+ * @param {number} [showLabel] showLabel option
  * @private
  * @returns {object}
  * @ignore
  */
-function getNormalizedScale(scale) {
+function getNormalizedScale(scale, showLabel) {
     var step = getNormalizedStep(scale.step);
-    var edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step);
+    var edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step, showLabel);
     var limitSize = Math.abs(edge.max - edge.min);
     var stepCount = getNormalizedStepCount(limitSize, step);
 
@@ -196,9 +203,10 @@ function coordinateScaleCalculator(options) {
     var offsetSize = options.offsetSize;
     var stepCount = options.stepCount;
     var minimumStepSize = options.minimumStepSize;
+    var showLabel = options.showLabel;
 
     var scale = getRoughScale(min, max, offsetSize, stepCount, minimumStepSize);
-    scale = getNormalizedScale(scale);
+    scale = getNormalizedScale(scale, showLabel);
 
     return scale;
 }
