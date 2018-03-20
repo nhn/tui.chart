@@ -381,7 +381,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _renderTicks: function(size, tickCount, isNotDividedXAxis, additionalSize) {
         var tickColor = this.theme.tickColor;
         var axisData = this.data;
-        var fixedLastBlockIntervalPosition = (axisData.fixedLastBlockInterval) ? size : 0;
+        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
         var sizeRatio = axisData.sizeRatio || 1;
         var isYAxis = this.isYAxis;
         var isCenter = this.data.options.isCenter;
@@ -390,11 +390,11 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             (size * sizeRatio),
             tickCount,
             0,
-            fixedLastBlockIntervalPosition
+            remainLastBlockIntervalPosition
         );
         var additionalHeight = this.paperAdditionalHeight + 1;
         var additionalWidth = this.paperAdditionalWidth;
-        var positionLength = (fixedLastBlockIntervalPosition) ? axisData.tickCount + 1 : axisData.tickCount;
+        var positionLength = remainLastBlockIntervalPosition ? axisData.tickCount + 1 : axisData.tickCount;
 
         positions.length = positionLength;
 
@@ -450,10 +450,12 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _renderLabelArea: function(size, tickCount, categories, additionalSize) {
         var sizeRatio = this.data.sizeRatio || 1;
         var axisData = this.data;
-        var fixedLastBlockIntervalPosition = (axisData.fixedLastBlockInterval) ? size : 0;
+        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
         var tickPixelPositions = calculator.makeTickPixelPositions(
-            (size * sizeRatio), tickCount,
-            0, fixedLastBlockIntervalPosition
+            (size * sizeRatio),
+            tickCount,
+            0,
+            remainLastBlockIntervalPosition
         );
         var labelDistance = tickPixelPositions[1] - tickPixelPositions[0];
 

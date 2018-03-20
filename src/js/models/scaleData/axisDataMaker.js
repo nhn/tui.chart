@@ -13,6 +13,9 @@ var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
 var snippet = require('tui-code-snippet');
+var AUTO_INTERVAL_MIN_WIDTH = 90;
+var AUTO_INTERVAL_MAX_WIDTH = 121;
+var AUTO_INTERVAL_RANGE_STEP = 5;
 
 /**
  * Axis data maker.
@@ -191,7 +194,6 @@ var axisDataMaker = {
         var newBlockCount = parseInt(seriesWidth / blockSize, 10);
         // interval : number of previous blocks in a new block(spaces between tick and tick)
         var interval = parseInt(beforeBlockCount / newBlockCount, 10);
-
         var intervalInfo = null;
         var remainCount;
 
@@ -225,13 +227,13 @@ var axisDataMaker = {
      * @private
      */
     _makeCandidatesForAdjustingInterval: function(beforeBlockCount, seriesWidth) {
-        var self = this;
         var blockSizeRange;
+        var self = this;
         var candidates = [];
         var candidateInterval = calculator.divisors(beforeBlockCount);
         snippet.forEach(candidateInterval, function(interval) {
             var intervalWidth = (interval / beforeBlockCount) * seriesWidth;
-            if (intervalWidth >= 90 && intervalWidth <= 121) {
+            if (intervalWidth >= AUTO_INTERVAL_MIN_WIDTH && intervalWidth <= AUTO_INTERVAL_MAX_WIDTH) {
                 candidates.push({
                     blockCount: beforeBlockCount / interval,
                     interval: interval,
@@ -241,7 +243,7 @@ var axisDataMaker = {
         });
 
         if (candidates.length === 0) {
-            blockSizeRange = snippet.range(90, 121, 5);
+            blockSizeRange = snippet.range(AUTO_INTERVAL_MIN_WIDTH, AUTO_INTERVAL_MAX_WIDTH, AUTO_INTERVAL_RANGE_STEP);
             candidates = snippet.map(blockSizeRange, function(blockSize) {
                 return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
             });
@@ -339,7 +341,7 @@ var axisDataMaker = {
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
             interval: interval,
-            fixedLastBlockInterval: beforeRemainBlockCount
+            remainLastBlockInterval: beforeRemainBlockCount
         });
     },
 

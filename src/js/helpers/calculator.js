@@ -52,10 +52,10 @@ var calculator = {
      * @param {number} size area width or height
      * @param {number} count tick count
      * @param {?number} additionalPosition additional position
-     * @param {?number} fixedLastBlockIntervalPosition fixedLastBlockInterval position
+     * @param {?number} remainLastBlockIntervalPosition remainLastBlockInterval position
      * @returns {Array.<number>} positions
      */
-    makeTickPixelPositions: function(size, count, additionalPosition, fixedLastBlockIntervalPosition) {
+    makeTickPixelPositions: function(size, count, additionalPosition, remainLastBlockIntervalPosition) {
         var positions = [];
 
         additionalPosition = additionalPosition || 0;
@@ -69,8 +69,8 @@ var calculator = {
             positions[positions.length - 1] -= 1;
         }
 
-        if (fixedLastBlockIntervalPosition) {
-            positions.push(fixedLastBlockIntervalPosition);
+        if (remainLastBlockIntervalPosition) {
+            positions.push(remainLastBlockIntervalPosition);
         }
 
         return positions;
@@ -277,7 +277,8 @@ var sum = function(values) {
  */
 var divisors = function(value) {
     var result = [];
-    var a = 2, b;
+    var a = 2;
+    var b;
     for (; a * a <= value; a += 1) {
         if (value % a === 0) {
             b = value / a;
