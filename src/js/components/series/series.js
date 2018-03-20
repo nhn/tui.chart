@@ -440,7 +440,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
     rerender: function(data) {
         var checkedLegends;
 
-        if (this.dataProcessor.getGroupCount(this.seriesType)) {
+        if (this.seriesType === 'map' || this.dataProcessor.getGroupCount(this.seriesType)) {
             if (data.checkedLegends) {
                 checkedLegends = data.checkedLegends[this.seriesType];
                 this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);

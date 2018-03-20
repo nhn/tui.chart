@@ -462,9 +462,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resize: function(dimension) {
-        var updated, boundsAndScale, chartDimension;
         var dataProcessor = this.dataProcessor;
         var seriesVisibilityMap = dataProcessor.getLegendVisibility();
+        var updated, boundsAndScale, chartDimension;
 
         if (!dimension) {
             return;
