@@ -40,6 +40,12 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
         this.offset = params.offset;
 
         /**
+         * title align option
+         * @type {object}
+         */
+        this.align = params.align;
+
+        /**
          * Graph renderer
          * @type {object}
          */
@@ -57,7 +63,10 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
      * @param {object} data data for render title
      */
     render: function(data) {
-        this.titleSet = this._renderTitleArea(data.paper);
+        var dimensionMap = data.dimensionMap;
+        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
+        var width = dimensionMap.series.width + legendWidth;
+        this.titleSet = this._renderTitleArea(data.paper, width);
     },
 
     /**
@@ -84,11 +93,19 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
     /**
      * Render title on given paper
      * @param {object} paper paper object
+     * @param {number} chartWidth chart width
      * @returns {object} raphael paper
      * @private
      */
-    _renderTitleArea: function(paper) {
-        return this.graphRenderer.render(paper, this.titleText, this.offset, this.theme);
+    _renderTitleArea: function(paper, chartWidth) {
+        return this.graphRenderer.render({
+            paper: paper,
+            titleText: this.titleText,
+            offset: this.offset,
+            theme: this.theme,
+            align: this.align,
+            chartWidth: chartWidth
+        });
     }
 });
 
@@ -105,6 +122,7 @@ function titleFactory(param) {
     if (options.title && options.title.text) {
         param.text = options.title.text;
         param.offset = options.title.offset;
+        param.align = options.title.align;
 
         title = new Title(param);
     }

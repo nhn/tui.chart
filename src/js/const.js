@@ -306,6 +306,10 @@ var chartConst = {
     DATE_TYPE_SECOND: 'second',
     /** title add padding */
     TITLE_PADDING: 20,
+    /** @type {string} */
+    TITLE_ALIGN_CENTER: 'center',
+    /** @type {string} */
+    TITLE_ALIGN_RIGHT: 'right',
     /** default header height */
     DEFAULT_HEADER_HEIGHT: 10,
     /** legend area horizontal padding */
