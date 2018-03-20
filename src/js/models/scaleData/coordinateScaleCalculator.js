@@ -87,11 +87,13 @@ function getNormalizedLimit(min, max, step, showLabel) {
     var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
     var fixedStep = (step * placeNumber);
     var noExtraMax = max;
+    var isNotEnoughSize = false;
 
     // ceil max value step digits
     max = Math.ceil((max * placeNumber) / fixedStep) * fixedStep / placeNumber;
+    isNotEnoughSize = fixedStep / 2 > max - noExtraMax;
 
-    if (showLabel && (fixedStep / 2) > (max - noExtraMax)) {
+    if (showLabel && isNotEnoughSize) {
         max += fixedStep;
     }
 
