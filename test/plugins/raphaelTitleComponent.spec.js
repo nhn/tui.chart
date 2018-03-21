@@ -6,7 +6,7 @@ describe('RaphaelTitleComponent', function() {
     var raphaelTitleComponent = new RaphaelTitleComponent();
 
     describe('getTitlePosition() ', function() {
-        it('center', function() {
+        it('position should have a value with the align center state applied.', function() {
             var offset = {x: 0, y: 0};
             var titleSize = {
                 width: 40,
@@ -17,7 +17,7 @@ describe('RaphaelTitleComponent', function() {
             expect(actual).toBe(150);
         });
 
-        it('right', function() {
+        it('position should have a value with the align right state applied.', function() {
             var offset = {x: 0, y: 0};
             var titleSize = {
                 width: 40,
@@ -28,7 +28,7 @@ describe('RaphaelTitleComponent', function() {
             expect(actual).toBe(240);
         });
 
-        it('left', function() {
+        it('position should have a value with the align left state applied.', function() {
             var offset = {x: 0, y: 0};
             var titleSize = {
                 width: 40,
