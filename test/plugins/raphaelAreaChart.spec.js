@@ -95,21 +95,6 @@ describe('RaphaelAreaChart', function() {
         });
     });
 
-    describe('_makeSplineAreaBottomPath()', function() {
-        it('should create spline chart\'s bottom path by position', function() {
-            var actual, expected;
-
-            areaChart.zeroTop = 50;
-            actual = areaChart._makeSplineAreaBottomPath([{
-                left: 10
-            }, {
-                left: 30
-            }]);
-            expected = [['L', 30, 50], ['L', 10, 50]];
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_makeSplineAreaChartPath()', function() {
         it('should creat area, line path', function() {
             var actual, expected;
@@ -125,7 +110,7 @@ describe('RaphaelAreaChart', function() {
                 startTop: 50
             }]]);
             expected = [{
-                area: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40], ['L', 30, 40], ['L', 30, 50], ['L', 30, 50], ['L', 10, 50]],
+                area: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40], ['K', 30, 40], ['L', 30, 50], ['C', 30, 50], [10, 50, 10, 50], ['K', 10, 50], ['L', 10, 50]],
                 line: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40]]
             }];
             expect(actual).toEqual(expected);
@@ -146,7 +131,7 @@ describe('RaphaelAreaChart', function() {
                 startTop: 50
             }]], hasExtraPath);
             expected = [{
-                area: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40], ['L', 30, 50], ['L', 10, 50]],
+                area: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40], ['C', 30, 50], [10, 50, 10, 50]],
                 line: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40]]
             }];
             expect(actual).toEqual(expected);

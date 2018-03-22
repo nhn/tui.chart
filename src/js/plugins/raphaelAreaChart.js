@@ -79,6 +79,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
 
         this.groupPaths = this._getAreaChartPath(groupPositions, null, options.connectNulls);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors, lineWidth, areaOpacity);
+
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity);
 
@@ -273,20 +274,6 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
     },
 
     /**
-     * Make spline area bottom path.
-     * @param {Array.<{left: number, top: number}>} positions positions
-     * @returns {Array.<string | number>} spline area path
-     * @private
-     */
-    _makeSplineAreaBottomPath: function(positions) {
-        var self = this;
-
-        return snippet.map(positions, function(position) {
-            return ['L', position.left, self.zeroTop];
-        }).reverse();
-    },
-
-    /**
      * Make spline path for area chart.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
      * @param {boolean} [hasExtraPath] - whether has extra path or not
@@ -297,19 +284,37 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         var self = this;
 
         return snippet.map(groupPositions, function(positions) {
+            var reversePosition = snippet.map(positions.concat().reverse(), function(position) {
+                return {
+                    left: position.left,
+                    top: position.startTop
+                };
+            });
+
             var linesPath = self._makeSplineLinesPath(positions);
+            var reverseLinesPath = self._makeSplineLinesPath(reversePosition, {
+                isReverseDirection: true,
+                isBeConnected: true
+            });
+
             var areaPath = JSON.parse(JSON.stringify(linesPath));
-            var areasBottomPath = self._makeSplineAreaBottomPath(positions);
-            var lastPosition;
+            var reverseAreaPath = JSON.parse(JSON.stringify(reverseLinesPath));
+
+            var lastPosition, lastReversePosition;
 
             if (hasExtraPath !== false) {
                 lastPosition = positions[positions.length - 1];
-                areaPath.push(['L', lastPosition.left, lastPosition.top]);
-                areasBottomPath.unshift(['L', lastPosition.left, self.zeroTop]);
+                lastReversePosition = reversePosition[reversePosition.length - 1];
+
+                areaPath.push(['K', lastPosition.left, lastPosition.top]);
+                areaPath.push(['L', lastPosition.left, lastPosition.startTop]);
+
+                reverseAreaPath.push(['K', lastReversePosition.left, lastReversePosition.top]);
+                reverseAreaPath.push(['L', lastReversePosition.left, lastReversePosition.top]);
             }
 
             return {
-                area: areaPath.concat(areasBottomPath),
+                area: areaPath.concat(reverseAreaPath),
                 line: linesPath
             };
         });
@@ -420,6 +425,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
     moveSeriesToFront: function(areaSurface, dots) {
         areaSurface.line.toFront();
         areaSurface.area.toFront();
+
         if (areaSurface.startLine) {
             areaSurface.startLine.toFront();
         }
