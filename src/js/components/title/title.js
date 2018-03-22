@@ -63,10 +63,7 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
      * @param {object} data data for render title
      */
     render: function(data) {
-        var dimensionMap = data.dimensionMap;
-        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
-        var width = dimensionMap.series.width + legendWidth;
-        this.titleSet = this._renderTitleArea(data.paper, width);
+        this.titleSet = this._renderTitleArea(data);
     },
 
     /**
@@ -92,12 +89,16 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
 
     /**
      * Render title on given paper
-     * @param {object} paper paper object
-     * @param {number} chartWidth chart width
+     * @param {object} data data for render title
      * @returns {object} raphael paper
      * @private
      */
-    _renderTitleArea: function(paper, chartWidth) {
+    _renderTitleArea: function(data) {
+        var paper = data.paper;
+        var dimensionMap = data.dimensionMap;
+        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
+        var chartWidth = dimensionMap.series.width + legendWidth;
+
         return this.graphRenderer.render({
             paper: paper,
             titleText: this.titleText,
