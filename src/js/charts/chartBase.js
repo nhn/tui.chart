@@ -82,6 +82,39 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         this.addComponents();
 
         this._attachToEventBus();
+
+        if (this.options.usageStatistics) {
+            this._sendHostName();
+        }
+    },
+
+    /**
+     * Image ping for ga tracking
+     * @private
+     */
+    _sendHostName: function() {
+        var trackingUrl = 'https://www.google-analytics.com/collect';
+        var trackingID = 'UA-115377265-4';
+        var hitType = 'event';
+        var hostname = location.hostname;
+        var params = {
+            v: 1,
+            t: hitType,
+            tid: trackingID,
+            cid: hostname,
+            dp: hostname,
+            dh: hostname
+        };
+        var queryString = snippet.map(snippet.keys(params), function(key, index) {
+            var startWith = index === 0 ? '' : '&';
+
+            return startWith + key + '=' + params[key];
+        }).join('');
+        var trackingElement = dom.create('img', 'ga-tracking');
+        trackingElement.src = trackingUrl + '?' + queryString;
+        trackingElement.style.display = 'none';
+
+        document.body.appendChild(trackingElement);
     },
 
     /**
@@ -195,6 +228,10 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
         if (snippet.isUndefined(options.chartExportMenu.visible)) {
             options.chartExportMenu.visible = true;
+        }
+
+        if (snippet.isUndefined(options.usageStatistics)) {
+            options.usageStatistics = true;
         }
 
         this._initializeTooltipOptions(options.tooltip);
