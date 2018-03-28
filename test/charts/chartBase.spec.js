@@ -326,19 +326,15 @@ describe('Test for ChartBase', function() {
     });
 
     describe('_sendHostName()', function() {
-        beforeEach(function() {
-            document.body.innerHTML = '';
-        });
-
         it('without usageStatistics option, image ping should occur.', function() {
             chartBase = new ChartBase(chartBaseOption);
-            expect(document.querySelector('.ga-tracking')).not.toBeNull();
+            expect(chartBase.isSendHostName).toBe(true);
         });
 
         it('usageStatistics is false, then image ping should not occur.', function() {
             chartBaseOption.options.usageStatistics = false;
             chartBase = new ChartBase(chartBaseOption);
-            expect(document.querySelector('.ga-tracking')).toBeNull();
+            expect(chartBase.isSendHostName).toBe(false);
         });
     });
 });

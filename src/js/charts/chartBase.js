@@ -83,38 +83,26 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
         this._attachToEventBus();
 
-        if (this.options.usageStatistics) {
-            this._sendHostName();
-        }
+        this.isSendHostName = (this.options.usageStatistics) ? this._sendHostName() : false;
     },
 
     /**
      * Image ping for ga tracking
+     * @returns {Boolean}
      * @private
      */
     _sendHostName: function() {
-        var trackingUrl = 'https://www.google-analytics.com/collect';
-        var trackingID = 'UA-115377265-4';
-        var hitType = 'event';
         var hostname = location.hostname;
-        var params = {
+        var imgElement = snippet.imagePing('https://www.google-analytics.com/collect', {
             v: 1,
-            t: hitType,
-            tid: trackingID,
+            t: 'event',
+            tid: 'UA-115377265-4',
             cid: hostname,
             dp: hostname,
             dh: hostname
-        };
-        var queryString = snippet.map(snippet.keys(params), function(key, index) {
-            var startWith = index === 0 ? '' : '&';
+        });
 
-            return startWith + key + '=' + params[key];
-        }).join('');
-        var trackingElement = dom.create('img', 'ga-tracking');
-        trackingElement.src = trackingUrl + '?' + queryString;
-        trackingElement.style.display = 'none';
-
-        document.body.appendChild(trackingElement);
+        return !!imgElement;
     },
 
     /**
@@ -211,6 +199,16 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _initializeOptions: function(options) {
+        var defaultOption = {
+            usageStatistics: true,
+            chartExportMenu: {
+                visible: true
+            },
+            legend: {
+                visible: true
+            }
+        };
+
         options.chartTypes = this.charTypes;
         options.xAxis = options.xAxis || {};
         options.series = options.series || {};
@@ -222,17 +220,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         this._initializeTitleOptions(options.xAxis);
         this._initializeTitleOptions(options.yAxis);
 
-        if (snippet.isUndefined(options.legend.visible)) {
-            options.legend.visible = true;
-        }
-
-        if (snippet.isUndefined(options.chartExportMenu.visible)) {
-            options.chartExportMenu.visible = true;
-        }
-
-        if (snippet.isUndefined(options.usageStatistics)) {
-            options.usageStatistics = true;
-        }
+        options = snippet.extend({}, defaultOption, options);
+        options.legend = snippet.extend({}, defaultOption.legend, options.legend);
+        options.chartExportMenu = snippet.extend({}, defaultOption.chartExportMenu, options.chartExportMenu);
 
         this._initializeTooltipOptions(options.tooltip);
 
