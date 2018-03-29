@@ -368,8 +368,6 @@ var chartConst = {
      * @type {string}
      */
     YAXIS_ALIGN_CENTER: 'center',
-    /** xAxis label compare margin */
-    XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */
     XAXIS_LABEL_GUTTER: 2,
     /**

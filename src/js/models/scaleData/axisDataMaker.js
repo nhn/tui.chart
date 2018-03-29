@@ -463,10 +463,9 @@ var axisDataMaker = {
 
         snippet.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
             var compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
-
             foundDegree = degree;
 
-            if (compareWidth <= labelAreaWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN) {
+            if (compareWidth <= labelAreaWidth) {
                 return false;
             }
 

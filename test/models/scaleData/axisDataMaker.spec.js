@@ -375,7 +375,7 @@ describe('Test for axisDataMaker', function() {
         it('find rotation degree', function() {
             var actual = maker._findRotationDegree(50, 60, 20);
 
-            expect(actual).toBe(25);
+            expect(actual).toBe(65);
         });
 
         it('max degree is 85', function() {
@@ -431,7 +431,7 @@ describe('Test for axisDataMaker', function() {
             );
 
             expect(actual).toEqual({
-                degree: 25,
+                degree: 45,
                 overflowHeight: 10,
                 overflowLeft: -40,
                 overflowRight: -70
