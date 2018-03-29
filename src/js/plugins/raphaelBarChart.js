@@ -15,7 +15,7 @@ var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
 var BAR_HOVER_SPARE_SIZE = 8;
-var SERIES_EXTRA_VISUAL_AREA_FOR_ZERO = 1;
+var SERIES_EXTRA_VISUAL_AREA_FOR_ZERO = 2;
 var SERIES_EXTRA_VISUAL_OPACITY_FOR_ZERO = 0.4;
 
 /**
@@ -344,8 +344,8 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
      */
     _animateRect: function(rect, bound) {
         rect.animate({
-            x: bound.width ? bound.left : bound.left - SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
-            y: bound.height ? bound.top : bound.top - SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
+            x: bound.width ? bound.left : bound.left - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
+            y: bound.height ? bound.top : bound.top - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
             width: bound.width ? bound.width : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
             height: bound.height ? bound.height : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
             opacity: (bound.height && bound.width) ? 1 : SERIES_EXTRA_VISUAL_OPACITY_FOR_ZERO

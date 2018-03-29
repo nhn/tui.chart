@@ -234,7 +234,7 @@ describe('RaphaelBarChart', function() {
     });
 
     describe('_animateRect()', function() {
-        it('should draw 1px even if width is 0.', function() {
+        it('should draw 2px even if width is 0.', function() {
             var rect = {
                 animate: function() {}
             };
@@ -248,10 +248,10 @@ describe('RaphaelBarChart', function() {
 
             barChart._animateRect(rect, bound);
 
-            expect(rect.animate.calls.mostRecent().args[0].width).toBe(1);
+            expect(rect.animate.calls.mostRecent().args[0].width).toBe(2);
         });
 
-        it('should draw 1px even if height is 0.', function() {
+        it('should draw 2px even if height is 0.', function() {
             var rect = {
                 animate: function() {}
             };
@@ -265,7 +265,7 @@ describe('RaphaelBarChart', function() {
 
             barChart._animateRect(rect, bound);
 
-            expect(rect.animate.calls.mostRecent().args[0].height).toBe(1);
+            expect(rect.animate.calls.mostRecent().args[0].height).toBe(2);
         });
     });
 });
