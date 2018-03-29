@@ -384,6 +384,42 @@ describe('Test for BoundsBaseCoordinateModel', function() {
 
             expect(actual).toEqual(expected);
         });
+
+        it('top and bottom are the same, there should be an empty event space.', function() {
+            var data = [
+                {
+                    bound: {
+                        left: 10,
+                        top: 25,
+                        right: 20,
+                        bottom: 25
+                    }
+                }
+            ];
+            var layerX = 15;
+            var layerY = 23;
+            var actual = coordinateModel._findCandidates(data, layerX, layerY).length;
+
+            expect(actual).toBe(1);
+        });
+
+        it('left and right are the same, there should be an empty event space.', function() {
+            var data = [
+                {
+                    bound: {
+                        left: 10,
+                        top: 20,
+                        right: 10,
+                        bottom: 30
+                    }
+                }
+            ];
+            var layerX = 8;
+            var layerY = 25;
+            var actual = coordinateModel._findCandidates(data, layerX, layerY).length;
+
+            expect(actual).toBe(1);
+        });
     });
 
     describe('findData()', function() {

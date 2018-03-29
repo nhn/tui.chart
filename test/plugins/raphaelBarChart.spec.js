@@ -232,4 +232,40 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
     });
+
+    describe('_animateRect()', function() {
+        it('should draw 1px even if width is 0.', function() {
+            var rect = {
+                animate: function() {}
+            };
+            var bound = {
+                left: 10,
+                top: 10,
+                width: 0,
+                height: 10
+            };
+            spyOn(rect, 'animate');
+
+            barChart._animateRect(rect, bound);
+
+            expect(rect.animate.calls.mostRecent().args[0].width).toBe(1);
+        });
+
+        it('should draw 1px even if height is 0.', function() {
+            var rect = {
+                animate: function() {}
+            };
+            var bound = {
+                left: 10,
+                top: 10,
+                width: 10,
+                height: 0
+            };
+            spyOn(rect, 'animate');
+
+            barChart._animateRect(rect, bound);
+
+            expect(rect.animate.calls.mostRecent().args[0].height).toBe(1);
+        });
+    });
 });
