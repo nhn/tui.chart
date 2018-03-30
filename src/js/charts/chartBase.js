@@ -83,7 +83,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
         this._attachToEventBus();
 
-        this.isSendHostName = (this.options.usageStatistics) ? this._sendHostName() : false;
+        if (this.options.usageStatistics) {
+            this._sendHostName();
+        }
     },
 
     /**
@@ -96,10 +98,10 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         var imgElement = snippet.imagePing('https://www.google-analytics.com/collect', {
             v: 1,
             t: 'event',
-            tid: 'UA-115377265-4',
+            tid: 'UA-115377265-9',
             cid: hostname,
             dp: hostname,
-            dh: hostname
+            dh: 'chart'
         });
 
         return !!imgElement;

@@ -6,6 +6,7 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var ChartBase = require('../../src/js/charts/chartBase'),
     DataProcessor = require('../../src/js/models/data/dataProcessor');
 
@@ -327,14 +328,16 @@ describe('Test for ChartBase', function() {
 
     describe('_sendHostName()', function() {
         it('without usageStatistics option, image ping should occur.', function() {
+            spyOn(snippet, 'imagePing');
             chartBase = new ChartBase(chartBaseOption);
-            expect(chartBase.isSendHostName).toBe(true);
+            expect(snippet.imagePing).toHaveBeenCalled();
         });
 
         it('usageStatistics is false, then image ping should not occur.', function() {
+            spyOn(snippet, 'imagePing');
             chartBaseOption.options.usageStatistics = false;
             chartBase = new ChartBase(chartBaseOption);
-            expect(chartBase.isSendHostName).toBe(false);
+            expect(snippet.imagePing).not.toHaveBeenCalled();
         });
     });
 });
