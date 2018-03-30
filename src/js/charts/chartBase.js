@@ -90,12 +90,11 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Image ping for ga tracking
-     * @returns {Boolean}
      * @private
      */
     _sendHostName: function() {
         var hostname = location.hostname;
-        var imgElement = snippet.imagePing('https://www.google-analytics.com/collect', {
+        snippet.imagePing('https://www.google-analytics.com/collect', {
             v: 1,
             t: 'event',
             tid: 'UA-115377265-9',
@@ -103,8 +102,6 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
             dp: hostname,
             dh: 'chart'
         });
-
-        return !!imgElement;
     },
 
     /**
