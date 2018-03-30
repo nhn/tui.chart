@@ -153,7 +153,7 @@ var chart = tui.chart; /* namespace */
 var chart = require('tui-chart'); /* CommonJS in Node.js */
 ```
 ```javascript
-import {chart} from 'tui-chart'; /* ES6 in Node.js */
+import chart from 'tui-chart'; /* ES6 in Node.js */
 ```
 
 Factory function needs three parameters: container, data, options
