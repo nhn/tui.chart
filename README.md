@@ -132,6 +132,31 @@ $ bower install tui-chart#<tag> # Specific version
 * [Download bundle files](https://github.com/nhnent/tui.chart/tree/production/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.chart/releases)
 
+
+### Via Contents Delivery Network (CDN)
+The TOAST UI Chart is available over a CDN.
+
+- You can use cdn as below.
+
+```html
+<script src="http://uicdn.toast.com/tui-chart/latest/tui-chart.min.js"></script>
+<script src="http://uicdn.toast.com/tui-chart/latest/tui-chart.min.css"></script>
+```
+
+- Within the download you'll find the following directories
+
+```
+tui-chart/
+├─ latest
+│  ├─ tui-chart.js
+│  ├─ tui-chart.min.js
+│  ├─ tui-chart.css
+│  ├─ tui-chart.min.css
+│  ├─ maps/
+│  │  ├── (china | japan | singapore | south-korea | taiwan | thailand | use | world).js
+```
+
+
 ## 🔨 Usage
 
 ### HTML
