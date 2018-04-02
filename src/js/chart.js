@@ -129,6 +129,7 @@ function _createChart(container, rawData, options, chartType) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -228,6 +229,7 @@ function barChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -330,6 +332,7 @@ function columnChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -447,6 +450,7 @@ function lineChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -559,6 +563,7 @@ function areaChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -670,6 +675,7 @@ function bubbleChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -769,6 +775,7 @@ function scatterChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -849,6 +856,7 @@ function heatmapChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -931,6 +939,7 @@ function treemapChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -1074,6 +1083,7 @@ function comboChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -1148,6 +1158,7 @@ function pieChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
@@ -1213,6 +1224,7 @@ function mapChart(container, rawData, options) {
  *          @param {number} options.chart.height - chart height
  *          @param {string | object} options.chart.title - title text or title object
  *              @param {string} options.chart.title.text - title text
+ *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
