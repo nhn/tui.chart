@@ -69,15 +69,22 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} pos position
      * @param {{left: number, top: number}} nextPos next position
+     * @param {?boolean} [isReverseDirection] - True when the line is drawn from right to left
      * @returns {{x1: number, y1: number, x2: number, y2: number}} anchor
      * @private
      */
-    _getAnchor: function(fromPos, pos, nextPos) {
+    _getAnchor: function(fromPos, pos, nextPos, isReverseDirection) {
         var l1 = (pos.left - fromPos.left) / 2,
             l2 = (nextPos.left - pos.left) / 2,
-            a = Math.atan((pos.left - fromPos.left) / Math.abs(pos.top - fromPos.top)),
-            b = Math.atan((nextPos.left - pos.left) / Math.abs(pos.top - nextPos.top)),
-            alpha, dx1, dy1, dx2, dy2;
+            a, b, alpha, dx1, dy1, dx2, dy2, result;
+
+        if (isReverseDirection) {
+            a = Math.atan((fromPos.left - pos.left) / Math.abs(fromPos.top - pos.top));
+            b = Math.atan((pos.left - nextPos.left) / Math.abs(nextPos.top - pos.top));
+        } else {
+            a = Math.atan((pos.left - fromPos.left) / Math.abs(pos.top - fromPos.top));
+            b = Math.atan((nextPos.left - pos.left) / Math.abs(pos.top - nextPos.top));
+        }
 
         a = fromPos.top < pos.top ? Math.PI - a : a;
         b = nextPos.top < pos.top ? Math.PI - b : b;
@@ -87,12 +94,19 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
         dx2 = l2 * Math.sin(alpha + b);
         dy2 = l2 * Math.cos(alpha + b);
 
-        return {
+        result = {
             x1: pos.left - dx1,
             y1: pos.top + dy1,
             x2: pos.left + dx2,
             y2: pos.top + dy2
         };
+
+        if (isReverseDirection) {
+            result.y1 = pos.top - dy1;
+            result.y2 = pos.top - dy2;
+        }
+
+        return result;
     },
 
     /**
@@ -100,7 +114,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
      * If series has not divided positions, it returns only one positions group.
      * @param {Array.<object>} positions positions array
      * @param {boolean} connectNulls option of connect line of both null data's side
-     * @returns {Array.<Array.<object>>}
+     * @Returns {Array.<Array.<object>>}
      * @private
      */
     _getSplinePositionsGroups: function(positions, connectNulls) {
@@ -125,10 +139,11 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     /**
      * Get spline partial paths
      * @param {Array.<Array.<object>>} positionsGroups positions groups
+     * @param {?boolean} [isReverseDirection] - True when the line is drawn from right to left
      * @returns {Array.<Array.<Array>>}
      * @private
      */
-    _getSplinePartialPaths: function(positionsGroups) {
+    _getSplinePartialPaths: function(positionsGroups, isReverseDirection) {
         var self = this;
         var paths = [];
         var firstPos, lastPos, positionsLen, fromPos, middlePositions, path, prevPos;
@@ -142,7 +157,7 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
 
             path = snippet.map(middlePositions, function(position, index) {
                 var nextPos = dataPositions[index + 2];
-                var anchor = self._getAnchor(fromPos, position, nextPos);
+                var anchor = self._getAnchor(fromPos, position, nextPos, isReverseDirection);
 
                 fromPos = position;
 
@@ -170,18 +185,28 @@ var RaphaelLineTypeBase = snippet.defineClass(/** @lends RaphaelLineTypeBase.pro
     /**
      * Make spline lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
-     * @param {boolean} [connectNulls] - boolean value connect nulls or not
+     * @param {?object} [makeLineOptions] - options for make spline line
+     *   @param {?boolean} [makeLineOptions.connectNulls] - boolean value connect nulls or not
+     *   @param {?boolean} [makeLineOptions.isReverseDirection] - True when the line is drawn from right to left
+     *   @param {?boolean} [makeLineOptions.isBeConnected] - True when part of another line.
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeSplineLinesPath: function(positions, connectNulls) {
-        var path = [];
-        var positionsGroups = this._getSplinePositionsGroups(positions, connectNulls);
-        var partialPaths = this._getSplinePartialPaths(positionsGroups);
+    _makeSplineLinesPath: function(positions, makeLineOptions) {
+        var path, positionsGroups, partialPaths;
+
+        makeLineOptions = makeLineOptions || {};
+        path = [];
+        positionsGroups = this._getSplinePositionsGroups(positions, makeLineOptions.connectNulls);
+        partialPaths = this._getSplinePartialPaths(positionsGroups, makeLineOptions.isReverseDirection);
 
         snippet.forEach(partialPaths, function(partialPath) {
             path = path.concat(partialPath);
         });
+
+        if (makeLineOptions.isBeConnected) {
+            path[0] = path[0].slice(3);
+        }
 
         return path;
     },
