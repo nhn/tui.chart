@@ -172,6 +172,7 @@ function _createChart(container, rawData, options, chartType) {
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example
@@ -275,6 +276,7 @@ function barChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} column chart
  * @api
  * @example
@@ -390,6 +392,7 @@ function columnChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example
@@ -506,6 +509,7 @@ function lineChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example
@@ -607,6 +611,7 @@ function areaChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bubble chart
  * @api
  * @example
@@ -715,6 +720,7 @@ function bubbleChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} scatter chart
  * @api
  * @example
@@ -807,6 +813,7 @@ function scatterChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} scatter chart
  * @api
  * @example
@@ -878,6 +885,7 @@ function heatmapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} scatter chart
  * @api
  * @example
@@ -1010,6 +1018,7 @@ function treemapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example
@@ -1109,6 +1118,7 @@ function comboChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example
@@ -1178,6 +1188,7 @@ function pieChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example
@@ -1252,6 +1263,7 @@ function mapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *      @param {number} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example

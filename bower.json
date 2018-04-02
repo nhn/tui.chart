@@ -24,8 +24,8 @@
     "package.json"
   ],
   "dependencies": {
-    "raphael": "https://github.com/nhnent/raphael.git#2.2.0b",
-    "tui-code-snippet": "^1.2.5"
+    "raphael": "https://github.com/nhnent/raphael.git#2.2.0-c",
+    "tui-code-snippet": "^1.3.0"
   },
   "devDependencies": {
     "codemirror": "5.24.0"

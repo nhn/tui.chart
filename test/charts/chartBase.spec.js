@@ -6,11 +6,12 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
 var ChartBase = require('../../src/js/charts/chartBase'),
     DataProcessor = require('../../src/js/models/data/dataProcessor');
 
 describe('Test for ChartBase', function() {
-    var chartBase, componentManager, boundsModel;
+    var chartBase, chartBaseOption, componentManager, boundsModel;
 
     beforeAll(function() {
         componentManager = jasmine.createSpyObj('componentManager', ['where']);
@@ -18,7 +19,7 @@ describe('Test for ChartBase', function() {
     });
 
     beforeEach(function() {
-        chartBase = new ChartBase({
+        chartBaseOption = {
             chartType: 'chartType',
             rawData: {
                 categories: ['cate1', 'cate2', 'cate3'],
@@ -53,7 +54,9 @@ describe('Test for ChartBase', function() {
                     title: 'Chart Title'
                 }
             }
-        });
+        };
+
+        chartBase = new ChartBase(chartBaseOption);
         chartBase.componentManager = componentManager;
         chartBase.boundsModel = boundsModel;
     });
@@ -320,6 +323,21 @@ describe('Test for ChartBase', function() {
             var actual = chartBase._findSeriesIndexByLabel('chartType', 'legend2');
 
             expect(actual).toBe(-1);
+        });
+    });
+
+    describe('_sendHostName()', function() {
+        it('without usageStatistics option, image ping should occur.', function() {
+            spyOn(snippet, 'imagePing');
+            chartBase = new ChartBase(chartBaseOption);
+            expect(snippet.imagePing).toHaveBeenCalled();
+        });
+
+        it('usageStatistics is false, then image ping should not occur.', function() {
+            spyOn(snippet, 'imagePing');
+            chartBaseOption.options.usageStatistics = false;
+            chartBase = new ChartBase(chartBaseOption);
+            expect(snippet.imagePing).not.toHaveBeenCalled();
         });
     });
 });
