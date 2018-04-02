@@ -52,9 +52,10 @@ var calculator = {
      * @param {number} size area width or height
      * @param {number} count tick count
      * @param {?number} additionalPosition additional position
+     * @param {?number} remainLastBlockIntervalPosition remainLastBlockInterval position
      * @returns {Array.<number>} positions
      */
-    makeTickPixelPositions: function(size, count, additionalPosition) {
+    makeTickPixelPositions: function(size, count, additionalPosition, remainLastBlockIntervalPosition) {
         var positions = [];
 
         additionalPosition = additionalPosition || 0;
@@ -66,6 +67,10 @@ var calculator = {
                 return (ratio * size) + additionalPosition;
             });
             positions[positions.length - 1] -= 1;
+        }
+
+        if (remainLastBlockIntervalPosition) {
+            positions.push(remainLastBlockIntervalPosition);
         }
 
         return positions;
@@ -264,6 +269,32 @@ var sum = function(values) {
     });
 };
 
+/**
+ * Obtain the number of divisors.
+ * @memberOf module:calculator
+ * @param {Array.<number>} value target value
+ * @returns {number} result value
+ */
+var divisors = function(value) {
+    var result = [];
+    var a = 2;
+    var b;
+    for (; a * a <= value; a += 1) {
+        if (value % a === 0) {
+            b = value / a;
+            result.push(a);
+            if (b !== a) {
+                result.push(b);
+            }
+        }
+    }
+    result.sort(function(prev, next) {
+        return prev - next;
+    });
+
+    return result;
+};
+
 calculator.getDecimalLength = getDecimalLength;
 calculator.findMultipleNum = findMultipleNum;
 calculator.mod = mod;
@@ -271,6 +302,7 @@ calculator.add = add;
 calculator.subtract = subtract;
 calculator.multiply = multiply;
 calculator.divide = divide;
+calculator.divisors = divisors;
 calculator.sum = sum;
 
 module.exports = calculator;

@@ -9,9 +9,13 @@
 var chartConst = require('../../const');
 var predicate = require('../../helpers/predicate');
 var geomatric = require('../../helpers/geometric');
+var calculator = require('../../helpers/calculator');
 var renderUtil = require('../../helpers/renderUtil');
 var arrayUtil = require('../../helpers/arrayUtil');
 var snippet = require('tui-code-snippet');
+var AUTO_INTERVAL_MIN_WIDTH = 90;
+var AUTO_INTERVAL_MAX_WIDTH = 121;
+var AUTO_INTERVAL_RANGE_STEP = 5;
 
 /**
  * Axis data maker.
@@ -223,11 +227,27 @@ var axisDataMaker = {
      * @private
      */
     _makeCandidatesForAdjustingInterval: function(beforeBlockCount, seriesWidth) {
+        var blockSizeRange;
         var self = this;
-        var blockSizeRange = snippet.range(90, 121, 5); // [90, 95, 100, 105, 110, 115, 120]
-        var candidates = snippet.map(blockSizeRange, function(blockSize) {
-            return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
+        var candidates = [];
+        var candidateInterval = calculator.divisors(beforeBlockCount);
+        snippet.forEach(candidateInterval, function(interval) {
+            var intervalWidth = (interval / beforeBlockCount) * seriesWidth;
+            if (intervalWidth >= AUTO_INTERVAL_MIN_WIDTH && intervalWidth <= AUTO_INTERVAL_MAX_WIDTH) {
+                candidates.push({
+                    blockCount: beforeBlockCount / interval,
+                    interval: interval,
+                    beforeRemainBlockCount: 0
+                });
+            }
         });
+
+        if (candidates.length === 0) {
+            blockSizeRange = snippet.range(AUTO_INTERVAL_MIN_WIDTH, AUTO_INTERVAL_MAX_WIDTH, AUTO_INTERVAL_RANGE_STEP);
+            candidates = snippet.map(blockSizeRange, function(blockSize) {
+                return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
+            });
+        }
 
         return snippet.filter(candidates, function(info) {
             return !!info;
@@ -246,7 +266,7 @@ var axisDataMaker = {
         var intervalInfo = null;
 
         if (candidates.length) {
-            intervalInfo = arrayUtil.min(candidates, function(candidate) {
+            intervalInfo = arrayUtil.max(candidates, function(candidate) {
                 return candidate.blockCount;
             });
         }
@@ -276,8 +296,8 @@ var axisDataMaker = {
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
     updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount, addingDataMode) {
-        var beforeBlockCount, intervalInfo;
-        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex;
+        var beforeBlockCount, intervalInfo, lastLabelValue;
+        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex, tickCount;
 
         if (addingDataMode) {
             axisData.tickCount -= 1;
@@ -285,6 +305,7 @@ var axisDataMaker = {
         }
 
         beforeBlockCount = axisData.tickCount - 1;
+
         intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
 
         if (!intervalInfo) {
@@ -295,25 +316,32 @@ var axisDataMaker = {
         interval = intervalInfo.interval;
         beforeRemainBlockCount = intervalInfo.beforeRemainBlockCount;
         axisData.eventTickCount = axisData.tickCount;
+        tickCount = adjustingBlockCount + 1;
 
         // startIndex: (remaing block count / 2) - current moved tick index
         // |     |     |     |*|*|*|    - * remaing block
         // |*|*|O    |     |     |*|    - tick is not moved (O startIndex = 2)
         // |*|O    |     |     |*|*|    - tick moved 1 (O startIndex = 1)
-        startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
-
-        if (startIndex < 0) {
-            startIndex += interval;
-        }
-
+        // startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
+        // if (startIndex < 0) {
+        //     startIndex += interval;
+        // }
+        // Fixed to 0 due to issues. (https://github.com/nhnent/tui.chart/issues/56)
+        startIndex = 0;
+        lastLabelValue = axisData.labels[axisData.labels.length - 1];
         axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
+
+        if (beforeRemainBlockCount > 0) {
+            axisData.labels.push(lastLabelValue);
+        }
 
         snippet.extend(axisData, {
             startIndex: startIndex,
-            tickCount: adjustingBlockCount + 1,
+            tickCount: tickCount,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            interval: interval
+            interval: interval,
+            remainLastBlockInterval: beforeRemainBlockCount
         });
     },
 
