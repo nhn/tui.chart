@@ -115,6 +115,20 @@ describe('GroupTooltip', function() {
         });
     });
 
+    describe('_updateLegendTheme()', function() {
+        it('should return the theme colors reflecting the checkedLegends state.', function() {
+            var actual = {};
+            tooltip.originalTheme = {
+                line: {
+                    colors: ['red', 'blue', 'green', 'yellow']
+                }
+            };
+
+            actual = tooltip._updateLegendTheme([false, true, true, true]).colors;
+            expect(actual).toEqual(['blue', 'green', 'yellow']);
+        });
+    });
+
     describe('_makeItemRenderingData()', function() {
         it('should make series item model for series rendering.', function() {
             var actual, expected;

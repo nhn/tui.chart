@@ -147,13 +147,17 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      */
     _updateLegendTheme: function(checkedLegends) {
         var colors = [];
+        var chartTypes = snippet.keys(this.originalTheme);
 
-        snippet.forEachArray(this.dataProcessor.getOriginalLegendData(), function(item) {
-            var _checkedLegends = checkedLegends[item.chartType] || checkedLegends;
-            if (_checkedLegends[item.index]) {
-                colors.push(item.theme.color);
-            }
-        });
+        snippet.forEachArray(chartTypes, function(chartType) {
+            var chartColors = this.originalTheme[chartType].colors;
+            snippet.forEachArray(chartColors, function(color, index) {
+                var _checkedLegends = checkedLegends[chartType] || checkedLegends;
+                if (_checkedLegends[index]) {
+                    colors.push(color);
+                }
+            }, this);
+        }, this);
 
         return {
             colors: colors
