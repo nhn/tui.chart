@@ -378,7 +378,7 @@ describe('Test for axisDataMaker', function() {
             expect(actual).toBe(65);
         });
 
-        it('max degree is 85', function() {
+        it('labelAreaWidth is too short to represent the label, the angle must be a maximum value of 85 degrees', function() {
             var actual = maker._findRotationDegree(5, 120, 20);
 
             expect(actual).toBe(85);

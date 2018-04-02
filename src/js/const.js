@@ -379,6 +379,7 @@ var chartConst = {
      * Last standard multiple num of axis
      */
     AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
+    AXIS_EDGE_RATIO: 8,
     /** label padding top */
     LABEL_PADDING_TOP: 7,
     /** line margin top */
