@@ -32,6 +32,7 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
         var fontSize = theme.fontSize;
         var fontFamily = theme.fontFamily;
         var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
+
         var titleSet = paper.set();
         var pos = this.getTitlePosition(titleSize, align, chartWidth, offset);
 
@@ -40,7 +41,7 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
             fill: theme.color,
-            'text-anchor': 'middle'
+            'text-anchor': 'start'
         }));
 
         return titleSet;
@@ -88,7 +89,7 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
      */
     resize: function(chartWidth, titleSet) {
         titleSet.attr({
-            x: chartWidth / 2
+            left: chartConst.CHART_PADDING
         });
     }
 });

@@ -51,10 +51,10 @@
 That is why we started this project. As we couldn't find a project which supporting legacy browsers, maintained reliably, and free for commercial use.
 
 **You can see the charts in IE8 exactly as it looks in Chrome.**
-Of course, there are other projects that support the legacy browser. However, They may function limited, look different or require polyfill that affects performance badly. The TOAST UI Chart guarantees identical look on all browsers. And it draws using what browsers have natively(SVG + RVML). So, It requires no polyfill and draws faster.
+Of course, there are other projects that support the legacy browser. However, They may have limited functions, look different or require polyfill that negatively affects performance. The TOAST UI Chart guarantees an identical look for all browsers. ToastUI uses the native browser formats, such as SVG and RVML. So, it requires no polyfill and draws faster.
 
 **The TOAST UI Chart will continue to support legacy browsers as MIT license**
-No wonder the other open source charts stop supporting legacy browsers. It's hard to find open-source charts which reliably maintained. And some of the decent charts ask commercial licenses. The TOAST UI Chart has over 50 releases since Jun. 2015 under MIT License. The TOAST UI Chart is the answer if you have same requirements as us.
+No wonder the other open source charts stop supporting legacy browsers. It's hard to find open-source charts which are reliably maintained. And some of the decent charts ask commercial licenses. The TOAST UI Chart has over 50 releases since Jun. 2015 under MIT License. The TOAST UI Chart is the answer if you have same requirements as us.
 
 ## 🎨 Features
 
@@ -153,10 +153,10 @@ var chart = tui.chart; /* namespace */
 var chart = require('tui-chart'); /* CommonJS in Node.js */
 ```
 ```javascript
-import {chart} from 'tui-chart'; /* ES6 in Node.js */
+import chart from 'tui-chart'; /* ES6 in Node.js */
 ```
 
-Factory function needs three paramters: container, data, options
+Factory function needs three parameters: container, data, options
 
 * Container: Wrapper HTMLElements that will contain charts as a child
 * data: numeric data need to make charts

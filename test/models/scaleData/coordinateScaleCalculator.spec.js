@@ -111,5 +111,16 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.limit.min).toEqual(0);
             expect(scale.step).toEqual(0.2);
         });
+
+        it('using the showLabel option, the max value of sereis must be considered to the height of the label.', function() {
+            var scale = csc({
+                min: 0.01,
+                max: 0.47,
+                offsetSize: 196,
+                showLabel: true
+            });
+
+            expect(scale.limit.max).toEqual(2.6);
+        });
     });
 });

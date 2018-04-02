@@ -284,7 +284,8 @@ var scaleDataMaker = {
             min: min,
             max: max,
             stepCount: stepCount,
-            offsetSize: baseSize
+            offsetSize: baseSize,
+            showLabel: options.showLabel
         });
 
         if (!options.useSpectrumLegend) {
