@@ -140,7 +140,7 @@ The TOAST UI Chart is available over a CDN.
 
 ```html
 <script src="https://uicdn.toast.com/tui.chart/latest/tui-chart.min.js"></script>
-<script src="https://uicdn.toast.com/tui.chart/latest/tui-chart.min.css"></script>
+<link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/latest/tui-chart.min.css">
 ```
 
 - Within the download you'll find the following directories
