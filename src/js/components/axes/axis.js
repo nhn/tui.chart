@@ -476,6 +476,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var theme = this.theme.label;
         var degree = this.data.degree;
         var halfWidth = labelSize / 2;
+        var edgeAlignWidth = labelSize / chartConst.AXIS_EDGE_RATIO;
         var horizontalTop = this.layout.position.top + chartConst.X_AXIS_LABEL_PADDING;
         var baseLeft = this.layout.position.left;
         var labelMargin = this.options.labelMargin || 0;
@@ -489,11 +490,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.left = labelSize + labelMargin;
             } else {
                 positionTopAndLeft.top = horizontalTop + labelMargin;
-                positionTopAndLeft.left = baseLeft + labelPosition - theme.fontSize;
-
-                if (this.isLabelAxis) {
-                    positionTopAndLeft.left += halfWidth;
-                }
+                positionTopAndLeft.left = baseLeft + labelPosition + edgeAlignWidth;
             }
 
             renderer.renderRotatedLabel({
