@@ -161,6 +161,7 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
 
         return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
     }
+
 });
 
 BarTypeSeriesBase.mixin(ColumnChartSeries);
