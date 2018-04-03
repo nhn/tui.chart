@@ -63,7 +63,7 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
         } else if (align === chartConst.TITLE_ALIGN_RIGHT) {
             left = chartWidth - titleSize.width - (titleSize.width / 2);
         } else {
-            left = chartConst.CHART_PADDING + (titleSize.width / 2);
+            left = chartConst.CHART_PADDING;
         }
 
         pos = {
