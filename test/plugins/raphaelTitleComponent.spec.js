@@ -36,7 +36,7 @@ describe('RaphaelTitleComponent', function() {
             };
             var actual = raphaelTitleComponent.getTitlePosition(titleSize, 'left', 300, offset).left;
 
-            expect(actual).toBe(30);
+            expect(actual).toBe(10);
         });
     });
 });
