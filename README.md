@@ -113,7 +113,7 @@ However, we highly recommend using the package manager.
 
 The TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
 Install by using the commands provided by each package manager.
-When using npm, be sure [Node.js](https://nodejs.org) is installedin the environment.
+When using npm, be sure [Node.js](https://nodejs.org) is installed in the environment.
 
 #### npm
 
