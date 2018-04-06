@@ -385,6 +385,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var sizeRatio = axisData.sizeRatio || 1;
         var isYAxis = this.isYAxis;
         var isCenter = this.data.options.isCenter;
+        var isDivided = this.data.options.divided;
         var isPositionRight = this.data.isPositionRight;
         var positions = calculator.makeTickPixelPositions(
             (size * sizeRatio),
@@ -404,9 +405,11 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             positions: positions,
             isVertical: isYAxis,
             isCenter: isCenter,
+            isDivided: isDivided,
             additionalSize: additionalSize,
             additionalWidth: additionalWidth,
             additionalHeight: additionalHeight,
+            otherSideDimension: this._getOtherSideDimension(),
             isPositionRight: isPositionRight,
             tickColor: tickColor,
             set: this.axisSet
