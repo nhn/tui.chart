@@ -4,30 +4,25 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+const raphael = require('raphael');
+const BarChart = require('./raphaelBarChart');
+const Boxplot = require('./raphaelBoxplotChart');
+const Bullet = require('./raphaelBulletChart');
+const LineChart = require('./raphaelLineChart');
+const AreaChart = require('./raphaelAreaChart');
+const PieChart = require('./raphaelPieChart');
+const RadialLineSeries = require('./raphaelRadialLineSeries');
+const CoordinateTypeChart = require('./raphaelCoordinateTypeChart');
+const BoxTypeChart = require('./raphaelBoxTypeChart');
+const MapChart = require('./raphaelMapChart');
+const legend = require('./raphaelLegendComponent');
+const MapLegend = require('./raphaelMapLegend');
+const CircleLegend = require('./raphaelCircleLegend');
+const title = require('./raphaelTitleComponent');
+const axis = require('./raphaelAxisComponent');
+const RadialPlot = require('./raphaelRadialPlot');
 
-var raphael = require('raphael');
-
-var BarChart = require('./raphaelBarChart');
-var Boxplot = require('./raphaelBoxplotChart');
-var Bullet = require('./raphaelBulletChart');
-var LineChart = require('./raphaelLineChart');
-var AreaChart = require('./raphaelAreaChart');
-var PieChart = require('./raphaelPieChart');
-var RadialLineSeries = require('./raphaelRadialLineSeries');
-var CoordinateTypeChart = require('./raphaelCoordinateTypeChart');
-var BoxTypeChart = require('./raphaelBoxTypeChart');
-var MapChart = require('./raphaelMapChart');
-
-var legend = require('./raphaelLegendComponent');
-var MapLegend = require('./raphaelMapLegend');
-var CircleLegend = require('./raphaelCircleLegend');
-var title = require('./raphaelTitleComponent');
-var axis = require('./raphaelAxisComponent');
-
-var RadialPlot = require('./raphaelRadialPlot');
-
-var pluginRaphael = {
+export const pluginRaphael = {
     bar: BarChart,
     boxplot: Boxplot,
     bullet: Bullet,
@@ -41,16 +36,17 @@ var pluginRaphael = {
     treemap: BoxTypeChart,
     map: MapChart,
     radial: RadialLineSeries,
-    legend: legend,
+    legend,
     mapLegend: MapLegend,
     circleLegend: CircleLegend,
     radialPlot: RadialPlot,
-    title: title,
-    axis: axis
+    title,
+    axis
 };
-var callback = function(container, dimension) {
-    var paper = raphael(container, dimension.width, dimension.height);
-    var rect = paper.rect(0, 0, dimension.width, dimension.height);
+
+export const callback = function(container, dimension) {
+    const paper = raphael(container, dimension.width, dimension.height);
+    const rect = paper.rect(0, 0, dimension.width, dimension.height);
 
     if (paper.raphael.svg) {
         appendGlowFilterToDefs(paper);
@@ -75,8 +71,8 @@ var callback = function(container, dimension) {
 
     paper.resizeBackground = function(width, height) {
         rect.attr({
-            width: width,
-            height: height
+            width,
+            height
         });
     };
 
@@ -94,14 +90,14 @@ var callback = function(container, dimension) {
  * @ignore
  */
 function appendGlowFilterToDefs(paper) {
-    var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-    var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-    var feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
-    var feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
-    var feMorphology = document.createElementNS('http://www.w3.org/2000/svg', 'feMorphology');
-    var feMerge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
-    var feMergeNodeColoredBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
-    var feMergeNodeSourceGraphic = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+    const feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
+    const feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
+    const feMorphology = document.createElementNS('http://www.w3.org/2000/svg', 'feMorphology');
+    const feMerge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
+    const feMergeNodeColoredBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+    const feMergeNodeSourceGraphic = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
 
     filter.id = 'glow';
 
@@ -145,10 +141,10 @@ function appendGlowFilterToDefs(paper) {
  * @ignore
  */
 function appendShadowFilterToDefs(paper) {
-    var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-    var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
-    var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-    var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    const feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+    const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+    const feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
 
     filter.setAttributeNS(null, 'id', 'shadow');
     filter.setAttributeNS(null, 'x', '-15%');
@@ -170,10 +166,4 @@ function appendShadowFilterToDefs(paper) {
     filter.appendChild(feBlend);
     paper.defs.appendChild(filter);
 }
-
-module.exports = {
-    name: 'Raphael',
-    plugins: pluginRaphael,
-    callback: callback
-};
 

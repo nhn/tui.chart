@@ -4,9 +4,8 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('./const');
+// var chartConst = require('./const');
+import chartConst from './const';
 var chartFactory = require('./factories/chartFactory');
 var pluginFactory = require('./factories/pluginFactory');
 var themeManager = require('./themes/themeManager');

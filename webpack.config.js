@@ -64,10 +64,17 @@ module.exports = (function() {
                 exclude: /(node_modules|bower_components)/,
                 loader: 'eslint'
             }],
-            loaders: [{
-                test: /\.less$/,
-                loader: ExtractTextPlugin.extract('css-loader!less?paths=src/less/')
-            }]
+            loaders: [
+                {
+                    test: /\.js$/,
+                    exclude: /(node_modules|bower_components)/,
+                    loader: 'babel-loader'
+                },
+                {
+                    test: /\.less$/,
+                    loader: ExtractTextPlugin.extract('css-loader!less?paths=src/less/')
+                }
+            ]
         },
         plugins: [
             new SafeUmdPlugin(),

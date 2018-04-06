@@ -1,10 +1,9 @@
-'use strict';
+import {pluginRaphael, callback} from './plugins/pluginRaphael';
+import chart from './chart';
 
-var pluginRaphael = require('./plugins/pluginRaphael');
-var chart = require('./chart');
 require('../less/style.less');
 
-chart.registerPlugin(pluginRaphael.name, pluginRaphael.plugins, pluginRaphael.callback);
+chart.registerPlugin('Raphael', pluginRaphael, callback);
 chart.renderUtil = require('./helpers/renderUtil');
 chart.arrayUtil = require('./helpers/arrayUtil');
 chart.colorutil = require('./helpers/colorutil');

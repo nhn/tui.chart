@@ -5,9 +5,7 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
+const chartConst = require('../const');
 
 var plugins = {},
     factory = {

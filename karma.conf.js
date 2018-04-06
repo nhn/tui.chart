@@ -4,16 +4,14 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var webdriverConfig = {
+const webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
 };
 
 module.exports = function(config) {
-    var defaultConfig = {
+    const defaultConfig = {
         basePath: './',
         frameworks: [
             'jasmine'
@@ -30,17 +28,27 @@ module.exports = function(config) {
                 preLoaders: [{
                     test: /\.js$/,
                     exclude: /(test|bower_components|node_modules)/,
-                    loader: 'istanbul-instrumenter'
+                    loader: 'istanbul-instrumenter',
+                    query: {
+                        esModules: true
+                    }
                 },
                 {
                     test: /\.js$/,
                     exclude: /(bower_components|node_modules)/,
                     loader: 'eslint-loader'
                 }],
-                loaders: [{
-                    test: /\.less$/,
-                    loader: 'style-loader!css-loader!less-loader?paths=src/less/'
-                }]
+                loaders: [
+                    {
+                        test: /\.less$/,
+                        loader: 'style-loader!css-loader!less-loader?paths=src/less/'
+                    },
+                    {
+                        test: /\.js$/,
+                        exclude: /(node_modules|bower_components)/,
+                        loader: 'babel-loader'
+                    }
+                ]
             }
         },
         port: 9876,

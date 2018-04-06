@@ -4,22 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+const RaphaelLineBase = require('./raphaelLineTypeBase');
+const raphaelRenderUtil = require('./raphaelRenderUtil');
+const snippet = require('tui-code-snippet');
+const EMPHASIS_OPACITY = 1;
+const DE_EMPHASIS_OPACITY = 0.3;
+const concat = Array.prototype.concat;
+const chartConst = require('../const');
+const GUIDE_AREACHART_AREAOPACITY_TYPE = chartConst.GUIDE_AREACHART_AREAOPACITY_TYPE;
+const CLASS_NAME_SVG_AUTOSHAPE = chartConst.CLASS_NAME_SVG_AUTOSHAPE;
+const consoleUtil = require('../helpers/consoleUtil');
 
-var RaphaelLineBase = require('./raphaelLineTypeBase');
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
-
-var EMPHASIS_OPACITY = 1;
-var DE_EMPHASIS_OPACITY = 0.3;
-
-var concat = Array.prototype.concat;
-var chartConst = require('../const');
-var GUIDE_AREACHART_AREAOPACITY_TYPE = chartConst.GUIDE_AREACHART_AREAOPACITY_TYPE;
-var CLASS_NAME_SVG_AUTOSHAPE = chartConst.CLASS_NAME_SVG_AUTOSHAPE;
-var consoleUtil = require('../helpers/consoleUtil');
-
-var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
+const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
     /**
      * RaphaelAreaChart is graph renderer for area chart.
      * @constructs RaphaelAreaChart
