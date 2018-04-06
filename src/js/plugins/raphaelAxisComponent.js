@@ -179,17 +179,19 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         var additionalSize = data.additionalSize;
         var isVertical = data.isVertical;
         var isCenter = data.isCenter;
+        var isDivided = data.isDivided;
         var isPositionRight = data.isPositionRight;
         var tickColor = data.tickColor;
         var layout = data.layout;
         var rightEdgeOfAxis = layout.position.left + layout.dimension.width;
         var baseTop = layout.position.top;
         var baseLeft = layout.position.left;
+        var centerAxisWidth = isDivided ? data.otherSideDimension.width : 0;
         var tick;
         var isContainDivensionArea = function(position) {
             var compareType = isVertical ? 'height' : 'width';
 
-            return (position > layout.dimension[compareType]);
+            return (position > layout.dimension[compareType] + centerAxisWidth);
         };
 
         snippet.forEach(positions, function(position) {
