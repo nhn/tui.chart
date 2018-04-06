@@ -502,11 +502,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _renderOptionalLines: function(paper, dimension) {
-        var optionalLines = [];
-        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
-        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
-
-        this.optionalLines = optionalLines;
+        this.optionalBands = this._makeOptionalBands(this.options.bands, dimension);
+        this.optionalLines = this._makeOptionalLines(this.options.lines, dimension);
     },
 
     /**
@@ -685,28 +682,48 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {{tickSize: number, shifting: boolean}} data - data for animation
      */
     animateForAddingData: function(data) {
-        var self = this;
+        var optionLines = this.options.lines;
+        var optionBands = this.options.bands;
 
         if (!this.dataProcessor.isCoordinateType()) {
             if (data.shifting) {
-                snippet.forEach(this.optionalLines, function(line) {
-                    var bbox = line.getBBox();
-
-                    if (bbox.x - data.tickSize < self.layout.position.left) {
-                        line.animate({
-                            transform: 'T' + data.tickSize + ',' + bbox.y,
-                            opacity: 0
-                        }, 300, 'linear', function() {
-                            line.remove();
-                        });
-                    } else {
-                        line.animate({
-                            transform: 'T' + data.tickSize + ',' + bbox.y
-                        }, 300);
-                    }
+                this._animateItemForAddingData(this.optionalLines, data, function(itemIdx) {
+                    optionLines.splice(itemIdx, 1);
                 });
+                snippet.forEach(this.optionalBands, function(bandRanges, bandIdx) {
+                    this._animateItemForAddingData(bandRanges, data, function(itemIdx) {
+                        optionBands[bandIdx].range.splice(itemIdx, 1);
+                    });
+                }, this);
             }
         }
+    },
+
+    /**
+     * Animate Item for adding data.
+     * @private
+     * @param {Array.<object>} optionalItems - svg rect elements for animate
+     * @param {{tickSize: number, shifting: boolean}} data - data for animation
+     * @param {function} removePlotItem - function for optional plot delete
+     */
+    _animateItemForAddingData: function(optionalItems, data, removePlotItem) {
+        snippet.forEach(optionalItems, function(item, lineIdx) {
+            var bbox = item.getBBox();
+
+            if (bbox.x - data.tickSize < this.layout.position.left) {
+                item.animate({
+                    transform: 'T-' + data.tickSize + ',0',
+                    opacity: 0
+                }, 300, 'linear', function() {
+                    removePlotItem(lineIdx);
+                    item.remove();
+                });
+            } else {
+                item.animate({
+                    transform: 'T-' + data.tickSize + ',0'
+                }, 300);
+            }
+        }, this);
     },
 
     /**

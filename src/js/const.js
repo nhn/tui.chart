@@ -83,6 +83,8 @@ var chartConst = {
     SERIES_EXPAND_SIZE: 10,
     /** series label padding */
     SERIES_LABEL_PADDING: 5,
+    /** series event margins for the value zero */
+    SERIES_EXTRA_EVENT_AREA_FOR_ZERO: 2,
     /** default font size of title */
     DEFAULT_TITLE_FONT_SIZE: 14,
     /** default font size of axis title */

@@ -14,6 +14,7 @@ var ANIMATION_DURATION = 700;
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
+var SERIES_EXTRA_VISUAL_AREA_FOR_ZERO = 2;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -332,10 +333,10 @@ var RaphaelBarChart = snippet.defineClass(/** @lends RaphaelBarChart.prototype *
      */
     _animateRect: function(rect, bound) {
         rect.animate({
-            x: bound.left,
-            y: bound.top,
-            width: bound.width,
-            height: bound.height
+            x: bound.width ? bound.left : bound.left - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
+            y: bound.height ? bound.top : bound.top - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
+            width: bound.width ? bound.width : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
+            height: bound.height ? bound.height : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO
         }, ANIMATION_DURATION, '>');
     },
 
