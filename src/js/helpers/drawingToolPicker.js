@@ -1,7 +1,5 @@
-'use strict';
-
-var dom = require('../helpers/domHandler');
-var snippet = require('tui-code-snippet');
+import dom from '../helpers/domHandler';
+import snippet from 'tui-code-snippet';
 
 /**
  * Get raphael paper
@@ -16,24 +14,24 @@ var snippet = require('tui-code-snippet');
  * @type {object}
  * @ignore
  */
-var renderers = {
-    DOM: function(container) {
-        var paper = dom.create('DIV');
+const renderers = {
+    DOM(container) {
+        const paper = dom.create('DIV');
         dom.append(container, paper);
 
         return paper;
     }
 };
 
-var DrawingToolPicker = snippet.defineClass({
+class DrawingToolPicker {
     /**
      * DrawingToolPicker initializer
      * @param {{width:number, height:number}} dimension dimension
      * @ignore
      */
-    initDimension: function(dimension) {
+    initDimension(dimension) {
         this.dimension = dimension;
-    },
+    }
 
     /**
      * Get drawing tool paper
@@ -42,30 +40,30 @@ var DrawingToolPicker = snippet.defineClass({
      * @returns {HTMLElement|object}
      * @ignore
      */
-    getPaper: function(container, rendererType) {
-        var paper = this[rendererType + 'Paper'];
-        var isNeedCreateNewPaper = snippet.isExisty(container)
+    getPaper(container, rendererType) {
+        let paper = this[`${rendererType}Paper`];
+        const isNeedCreateNewPaper = snippet.isExisty(container)
             && paper && dom.findParentByClass(paper.canvas, 'tui-chart') !== container;
 
         if (!paper || isNeedCreateNewPaper) {
             paper = renderers[rendererType].call(this, container, this.dimension);
 
             if (rendererType !== 'DOM') {
-                this[rendererType + 'Paper'] = paper;
+                this[`${rendererType}Paper`] = paper;
             }
         }
 
         return paper;
     }
-});
 
-/**
- * Add renderer type
- * @param {string} componentType component renderer type
- * @param {function} callback callback function for get renderer's paper
- */
-DrawingToolPicker.addRendererType = function(componentType, callback) {
-    renderers[componentType] = callback;
-};
+    /**
+     * Add renderer type
+     * @param {string} componentType component renderer type
+     * @param {function} callback callback function for get renderer's paper
+     */
+    static addRendererType(componentType, callback) {
+        renderers[componentType] = callback;
+    }
+}
 
-module.exports = DrawingToolPicker;
+export default DrawingToolPicker;

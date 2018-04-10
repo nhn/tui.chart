@@ -4,36 +4,29 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('./../const');
-var dom = require('./domHandler');
-var arrayUtil = require('./arrayUtil');
-var snippet = require('tui-code-snippet');
-
-var concat = Array.prototype.concat;
-
-var browser = snippet.browser,
-    isIE7 = browser.msie && browser.version === 7,
-    isOldBrowser = browser.msie && browser.version <= 8;
-var hasComputedStyle = window.getComputedStyle || false;
-
-var lineBaseChartCount = 0;
-var CLIP_RECT_ID = 'clipRectForAnimation';
+import chartConst from './../const';
+import dom from './domHandler';
+import arrayUtil from './arrayUtil';
+import snippet from 'tui-code-snippet';
+const {browser} = snippet;
+const isOldBrowser = browser.msie && browser.version <= 8;
+const hasComputedStyle = window.getComputedStyle || false;
+const CLIP_RECT_ID = 'clipRectForAnimation';
+let lineBaseChartCount = 0;
 
 /**
  * Util for rendering.
  * @module renderUtil
  * @private */
-var renderUtil = {
+const renderUtil = {
     /**
      * Concat string.
      * @params {...string} target strings
      * @returns {string} concat string
      * @memberof module:renderUtil
      */
-    concatStr: function() {
-        return String.prototype.concat.apply('', arguments);
+    concatStr(...args) {
+        return String.prototype.concat.apply('', args);
     },
 
     /**
@@ -42,12 +35,8 @@ var renderUtil = {
      * @returns {string} cssText
      * @memberof module:renderUtil
      */
-    makeFontCssText: function(theme) {
-        var cssTexts = [];
-
-        if (!theme) {
-            return '';
-        }
+    makeFontCssText(theme = {}) {
+        const cssTexts = [];
 
         if (theme.fontSize) {
             cssTexts.push(this.concatStr('font-size:', theme.fontSize, 'px'));
@@ -65,28 +54,7 @@ var renderUtil = {
             cssTexts.push(this.concatStr('font-weight:', theme.fontWeight));
         }
 
-        return cssTexts.join(';');
-    },
-
-    checkEl: null,
-    /**
-     * Create element for size check.
-     * @memberof module:renderUtil
-     * @returns {HTMLElement} element
-     * @private
-     */
-    _createSizeCheckEl: function() {
-        var div, span;
-        if (!this.checkEl) {
-            div = dom.create('DIV', 'tui-chart-size-check-element');
-            span = dom.create('SPAN');
-            div.appendChild(span);
-            this.checkEl = div;
-        } else {
-            this.checkEl.style.cssText = '';
-        }
-
-        return this.checkEl;
+        return cssTexts.length ? cssTexts.join(';') : '';
     },
 
     /**
@@ -97,10 +65,10 @@ var renderUtil = {
      * @returns {string} key
      * @private
      */
-    _makeCachingKey: function(label, theme, offsetType) {
-        var keys = [label, offsetType];
+    _makeCachingKey(label, theme, offsetType) {
+        const keys = [label, offsetType];
 
-        snippet.forEach(theme, function(key, value) {
+        snippet.forEach(theme, (key, value) => {
             keys.push(key + value);
         });
 
@@ -113,19 +81,19 @@ var renderUtil = {
      * @param {{fontSize: number, fontFamily: string, cssText: string}} theme theme
      * @private
      */
-    _addCssStyle: function(div, theme) {
-        div.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+    _addCssStyle(div, {fontSize, fontFamily, fontWeight, cssText} = {}) {
+        div.style.fontSize = `${(fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE)}px`;
 
-        if (theme.fontFamily) {
-            div.style.fontFamily = theme.fontFamily;
+        if (fontFamily) {
+            div.style.fontFamily = fontFamily;
         }
 
-        if (theme.fontWeight) {
-            div.style.fontWeight = theme.fontWeight;
+        if (fontWeight) {
+            div.style.fontWeight = fontWeight;
         }
 
-        if (theme.cssText) {
-            div.style.cssText += theme.cssText;
+        if (cssText) {
+            div.style.cssText += cssText;
         }
     },
 
@@ -145,23 +113,19 @@ var renderUtil = {
      * @returns {number} size
      * @private
      */
-    _getRenderedLabelSize: function(label, theme, offsetType) {
-        var key, div, span, labelSize;
-
-        theme = theme || {};
-
-        label = snippet.isExisty(label) ? String(label) : '';
+    _getRenderedLabelSize(label = '', theme = {}, offsetType) {
+        label = String(label);
 
         if (!label) {
             return 0;
         }
 
-        key = this._makeCachingKey(label, theme, offsetType);
-        labelSize = this.sizeCache[key];
+        const key = this._makeCachingKey(label, theme, offsetType);
+        let labelSize = this.sizeCache[key];
 
         if (!labelSize) {
-            div = this._createSizeCheckEl();
-            span = div.firstChild;
+            const div = this._createSizeCheckEl();
+            const span = div.firstChild;
 
             span.innerHTML = label;
 
@@ -177,6 +141,26 @@ var renderUtil = {
         return labelSize;
     },
 
+    checkEl: null,
+    /**
+     * Create element for size check.
+     * @memberof module:renderUtil
+     * @returns {HTMLElement} element
+     * @private
+     */
+    _createSizeCheckEl() {
+        if (!this.checkEl) {
+            const div = dom.create('DIV', 'tui-chart-size-check-element');
+            const span = dom.create('SPAN');
+            div.appendChild(span);
+            this.checkEl = div;
+        } else {
+            this.checkEl.style.cssText = '';
+        }
+
+        return this.checkEl;
+    },
+
     /**
      * Get rendered label width.
      * @memberof module:renderUtil
@@ -184,10 +168,8 @@ var renderUtil = {
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} width
      */
-    getRenderedLabelWidth: function(label, theme) {
-        var labelWidth = this._getRenderedLabelSize(label, theme, 'offsetWidth');
-
-        return labelWidth;
+    getRenderedLabelWidth(label, theme) {
+        return this._getRenderedLabelSize(label, theme, 'offsetWidth');
     },
 
     /**
@@ -197,10 +179,8 @@ var renderUtil = {
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} height
      */
-    getRenderedLabelHeight: function(label, theme) {
-        var labelHeight = this._getRenderedLabelSize(label, theme, 'offsetHeight');
-
-        return labelHeight;
+    getRenderedLabelHeight(label, theme) {
+        return this._getRenderedLabelSize(label, theme, 'offsetHeight');
     },
 
     /**
@@ -212,14 +192,11 @@ var renderUtil = {
      * @returns {number} max size (width or height)
      * @private
      */
-    _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
-        var maxSize = 0,
-            sizes;
+    _getRenderedLabelsMaxSize(labels, theme, iteratee) {
+        let maxSize = 0;
 
         if (labels && labels.length) {
-            sizes = snippet.map(labels, function(label) {
-                return iteratee(label, theme);
-            });
+            const sizes = snippet.map(labels, label => iteratee(label, theme));
             maxSize = arrayUtil.max(sizes);
         }
 
@@ -234,9 +211,9 @@ var renderUtil = {
      * @returns {number} max width
      * @private
      */
-    getRenderedLabelsMaxWidth: function(labels, theme) {
-        var iteratee = snippet.bind(this.getRenderedLabelWidth, this);
-        var maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+    getRenderedLabelsMaxWidth(labels, theme) {
+        const iteratee = snippet.bind(this.getRenderedLabelWidth, this);
+        const maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
         return maxWidth;
     },
@@ -248,9 +225,9 @@ var renderUtil = {
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max height
      */
-    getRenderedLabelsMaxHeight: function(labels, theme) {
-        var iteratee = snippet.bind(this.getRenderedLabelHeight, this);
-        var maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+    getRenderedLabelsMaxHeight(labels, theme) {
+        const iteratee = snippet.bind(this.getRenderedLabelHeight, this);
+        const maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
         return maxHeight;
     },
@@ -261,10 +238,10 @@ var renderUtil = {
      * @param {HTMLElement} el target element
      * @param {{width: number, height: number}} dimension dimension
      */
-    renderDimension: function(el, dimension) {
+    renderDimension(el, {width = 0, height = 0}) {
         el.style.cssText = [
-            this.concatStr('width:', dimension.width, 'px'),
-            this.concatStr('height:', dimension.height, 'px')
+            this.concatStr('width:', width, 'px'),
+            this.concatStr('height:', height, 'px')
         ].join(';');
     },
 
@@ -274,16 +251,16 @@ var renderUtil = {
      * @param {HTMLElement} el target element
      * @param {{top: number, left: number, right: number}} position position
      */
-    renderPosition: function(el, position) {
+    renderPosition(el, position) {
         if (snippet.isUndefined(position)) {
             return;
         }
 
-        snippet.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
-            var value = position[key];
+        snippet.forEachArray(['top', 'bottom', 'left', 'right'], key => {
+            const value = position[key];
 
             if (snippet.isNumber(value)) {
-                el.style[key] = position[key] + 'px';
+                el.style[key] = `${value}px`;
             }
         });
     },
@@ -294,12 +271,10 @@ var renderUtil = {
      * @param {HTMLElement} el target element
      * @param {string} background background option
      */
-    renderBackground: function(el, background) {
-        if (!background) {
-            return;
+    renderBackground(el, background) {
+        if (background) {
+            el.style.background = background;
         }
-
-        el.style.background = background;
     },
 
     /**
@@ -308,7 +283,7 @@ var renderUtil = {
      * @param {HTMLElement} el target element
      * @param {string} fontFamily font family option
      */
-    renderFontFamily: function(el, fontFamily) {
+    renderFontFamily(el, fontFamily) {
         if (!fontFamily) {
             return;
         }
@@ -324,20 +299,17 @@ var renderUtil = {
      * @param {string} className css class name
      * @returns {HTMLElement} title element
      */
-    renderTitle: function(title, theme, className) {
-        var elTitle, cssText;
-
+    renderTitle(title, theme, className) {
         if (!title) {
             return null;
         }
 
-        elTitle = dom.create('DIV', className);
+        let cssText = renderUtil.makeFontCssText(theme);
+        const elTitle = dom.create('DIV', className);
         elTitle.innerHTML = title;
 
-        cssText = renderUtil.makeFontCssText(theme);
-
         if (theme.background) {
-            cssText += ';' + this.concatStr('background:', theme.background);
+            cssText += `;${this.concatStr('background:', theme.background)}`;
         }
 
         elTitle.style.cssText = cssText;
@@ -357,10 +329,7 @@ var renderUtil = {
      * }} expended bound
      * @memberof module:renderUtil
      */
-    expandBound: function(bound) {
-        var dimension = bound.dimension;
-        var position = bound.position;
-
+    expandBound({dimension, position}) {
         return {
             dimension: {
                 width: dimension.width + (chartConst.SERIES_EXPAND_SIZE * 2),
@@ -378,7 +347,7 @@ var renderUtil = {
      * @param {string} value - string value
      * @returns {string}
      */
-    _properCase: function(value) {
+    _properCase(value) {
         return value.substring(0, 1).toUpperCase() + value.substring(1);
     },
 
@@ -390,7 +359,7 @@ var renderUtil = {
      * @returns {string} mouse event detector name
      * @memberof module:renderUtil
      */
-    makeMouseEventDetectorName: function(prefix, value, suffix) {
+    makeMouseEventDetectorName(prefix, value, suffix) {
         return prefix + this._properCase(value) + this._properCase(suffix);
     },
 
@@ -406,48 +375,45 @@ var renderUtil = {
      * @returns {string} formatted value
      * @memberof module:renderUtil
      */
-    formatValue: function(params) {
-        var value = params.value;
-        var formatFunctions = params.formatFunctions;
-        var valueType = params.valueType || 'value';
-        var areaType = params.areaType;
-        var chartType = params.chartType;
-        var legendName = params.legendName;
+    formatValue(params) {
+        const {
+            value,
+            formatFunctions,
+            valueType = 'value',
+            areaType,
+            legendName,
+            chartType
+        } = params;
+        const fns = [String(value), ...formatFunctions || []];
+        // const fns = [String(value)];
 
-        var fns = [String(value)].concat(formatFunctions || []);
-
-        return snippet.reduce(fns, function(stored, fn) {
-            return fn(stored, chartType, areaType, valueType, legendName);
-        });
+        return snippet.reduce(fns, (stored, fn) => fn(stored, chartType, areaType, valueType, legendName));
     },
     /**
      * Format values.
      * @param {Array.<number>} values values
      * @param {Array.<function>} formatFunctions functions for format
-     * @param {string} chartType - type of chart
-     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
-     * @param {string} valueType - type of value
+     * @param {object} typeInfos - type of chart
+     *     @param {string} typeInfos.chartType - type of chart
+     *     @param {string} typeInfos.areaType - type of area like yAxis, xAxis, series, circleLegend
+     *     @param {string} typeInfos.valueType - type of value
      * @returns {Array.<string>}
      * @memberof module:renderUtil
      */
-    formatValues: function(values, formatFunctions, chartType, areaType, valueType) {
-        var formatedValues;
+    formatValues(values, formatFunctions, typeInfos) {
+        const {chartType, areaType, valueType} = typeInfos;
 
         if (!formatFunctions || !formatFunctions.length) {
             return values;
         }
 
-        formatedValues = snippet.map(values, function(label) {
-            return renderUtil.formatValue({
-                value: label,
-                formatFunctions: formatFunctions,
-                chartType: chartType,
-                areaType: areaType,
-                valueType: valueType
-            });
-        });
-
-        return formatedValues;
+        return snippet.map(values, value => renderUtil.formatValue({
+            value,
+            formatFunctions,
+            chartType,
+            areaType,
+            valueType
+        }));
     },
 
     /**
@@ -457,9 +423,8 @@ var renderUtil = {
      * @returns {string}
      * @memberof module:renderUtil
      */
-    formatDate: function(value, format) {
-        var date = snippet.isDate(value) ? value : (new Date(value));
-        format = format || chartConst.DEFAULT_DATE_FORMAT;
+    formatDate(value, format = chartConst.DEFAULT_DATE_FORMAT) {
+        const date = snippet.isDate(value) ? value : (new Date(value));
 
         return snippet.formatDate(format, date) || value;
     },
@@ -471,14 +436,8 @@ var renderUtil = {
      * @returns {Array}
      * @memberof module:renderUtil
      */
-    formatDates: function(values, format) {
-        var formatDate = this.formatDate;
-
-        format = format || chartConst.DEFAULT_DATE_FORMAT;
-
-        return snippet.map(values, function(value) {
-            return formatDate(value, format);
-        });
+    formatDates(values, format = chartConst.DEFAULT_DATE_FORMAT) {
+        return snippet.map(values, value => this.formatDate(value, format));
     },
 
     /**
@@ -486,7 +445,7 @@ var renderUtil = {
      * @param {{id: number}} animation animaion object
      * @memberof module:renderUtil
      */
-    cancelAnimation: function(animation) {
+    cancelAnimation(animation) {
         if (animation && animation.id) {
             cancelAnimationFrame(animation.id);
             delete animation.id;
@@ -501,16 +460,16 @@ var renderUtil = {
      * @returns {{id: number}} requestAnimationFrame id
      * @memberof module:renderUtil
      */
-    startAnimation: function(animationTime, onAnimation, onCompleted) {
-        var animation = {},
-            startTime;
+    startAnimation(animationTime, onAnimation, onCompleted) {
+        const animation = {};
+        const startTime = (new Date()).getTime();
 
         /**
          * Animate.
          */
         function animate() {
-            var diffTime = (new Date()).getTime() - startTime,
-                ratio = Math.min((diffTime / animationTime), 1);
+            const diffTime = (new Date()).getTime() - startTime;
+            const ratio = Math.min((diffTime / animationTime), 1);
 
             onAnimation(ratio);
 
@@ -524,18 +483,9 @@ var renderUtil = {
             }
         }
 
-        startTime = (new Date()).getTime();
         animation.id = requestAnimationFrame(animate);
 
         return animation;
-    },
-
-    /**
-     * Whether IE7 or not.
-     * @returns {boolean} result boolean
-     */
-    isIE7: function() {
-        return isIE7;
     },
 
     /**
@@ -543,7 +493,7 @@ var renderUtil = {
      * @memberof module:renderUtil
      * @returns {boolean} result boolean
      */
-    isOldBrowser: function() {
+    isOldBrowser() {
         return isOldBrowser;
     },
 
@@ -554,8 +504,8 @@ var renderUtil = {
      * @returns {string} formatted value
      * @private
      */
-    formatToZeroFill: function(value, len) {
-        var zero = '0';
+    formatToZeroFill(value, len) {
+        const zero = '0';
 
         value = String(value);
 
@@ -577,15 +527,14 @@ var renderUtil = {
      * @returns {string} formatted value
      * @memberof module:renderUtil
      */
-    formatToDecimal: function(value, len) {
-        var DECIMAL = 10;
-        var pow;
+    formatToDecimal(value, len) {
+        const DECIMAL = 10;
+        const pow = Math.pow(DECIMAL, len);
 
         if (len === 0) {
             return Math.round(value);
         }
 
-        pow = Math.pow(DECIMAL, len);
         value = Math.round(value * pow) / pow;
         value = parseFloat(value).toFixed(len);
 
@@ -598,20 +547,22 @@ var renderUtil = {
      * @returns {string} formatted value
      * @private
      */
-    formatToComma: function(value) {
-        var comma = ',',
-            underPointValue = '',
-            betweenLen = 3,
-            orgValue = value,
-            sign, values, lastIndex, formattedValue;
+    formatToComma(value) {
+        const comma = ',';
+        const betweenLen = 3;
+        const orgValue = value;
+        const sign = value.indexOf('-') > -1 ? '-' : '';
+        let underPointValue = '';
+        let values;
+        let lastIndex;
+        let formattedValue;
 
         value = String(value);
-        sign = value.indexOf('-') > -1 ? '-' : '';
 
         if (value.indexOf('.') > -1) {
             values = value.split('.');
             value = String(Math.abs(values[0]));
-            underPointValue = '.' + values[1];
+            underPointValue = `.${values[1]}`;
         } else {
             value = String(Math.abs(value));
         }
@@ -621,15 +572,15 @@ var renderUtil = {
         } else {
             values = (value).split('').reverse();
             lastIndex = values.length - 1;
-            values = snippet.map(values, function(char, index) {
-                var result = [char];
+            values = snippet.map(values, (char, index) => {
+                const result = [char];
                 if (index < lastIndex && (index + 1) % betweenLen === 0) {
                     result.push(comma);
                 }
 
                 return result;
             });
-            formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;
+            formattedValue = sign + [].concat(...values).reverse().join('') + underPointValue;
         }
 
         return formattedValue;
@@ -641,10 +592,8 @@ var renderUtil = {
      * @returns {string}
      * @memberof module:renderUtil
      */
-    makeCssTextFromMap: function(cssMap) {
-        return snippet.map(cssMap, function(value, name) {
-            return renderUtil.concatStr(name, ':', value);
-        }).join(';');
+    makeCssTextFromMap(cssMap) {
+        return snippet.map(cssMap, (value, name) => renderUtil.concatStr(name, ':', value)).join(';');
     },
 
     /**
@@ -652,7 +601,7 @@ var renderUtil = {
      * @param {string} value - string
      * @returns {string}
      */
-    _perseString: function(value) {
+    _perseString(value) {
         return typeof value === 'string' || typeof value === 'number' ? String(value) : '';
     },
 
@@ -664,14 +613,12 @@ var renderUtil = {
      * @returns {array}
      * @memberof module:renderUtil
      */
-    addPrefixSuffix: function(labels, prefix, suffix) {
+    addPrefixSuffix(labels, prefix, suffix) {
         prefix = this._perseString(prefix);
         suffix = this._perseString(suffix);
 
         if (!(prefix === '' && suffix === '')) {
-            return snippet.map(labels, function(label) {
-                return prefix + label + suffix;
-            });
+            return snippet.map(labels, label => prefix + label + suffix);
         }
 
         return labels;
@@ -683,8 +630,8 @@ var renderUtil = {
      * @returns {Object} Style object of element
      * @memberof module:renderUtil
      */
-    getStyle: function(target) {
-        var computedObj;
+    getStyle(target) {
+        let computedObj;
 
         if (hasComputedStyle) {
             computedObj = window.getComputedStyle(target, '');
@@ -699,8 +646,8 @@ var renderUtil = {
      * Get clip rect id
      * @returns {string} create unique id by line base chart count
      */
-    generateClipRectId: function() {
-        var id = CLIP_RECT_ID + lineBaseChartCount;
+    generateClipRectId() {
+        const id = CLIP_RECT_ID + lineBaseChartCount;
         lineBaseChartCount += 1;
 
         return id;
@@ -725,7 +672,7 @@ function setOpacity(elements, iteratee) {
  * @ignore
  */
 function makeCssFilterOpacityString(opacity) {
-    return 'alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
+    return `alpha(opacity=${opacity * chartConst.OLD_BROWSER_OPACITY_100})`;
 }
 
 if (isOldBrowser) {
@@ -735,10 +682,11 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        var cssText = '';
+        let cssText = '';
 
         if (snippet.isExisty(opacity)) {
-            cssText = ';filter:' + makeCssFilterOpacityString(opacity);
+            const cssOpacityString = makeCssFilterOpacityString(opacity);
+            cssText = `;filter:${cssOpacityString}`;
         }
 
         return cssText;
@@ -750,8 +698,8 @@ if (isOldBrowser) {
      * @param {number} opacity - opacity
      */
     renderUtil.setOpacity = function(elements, opacity) {
-        var filter = makeCssFilterOpacityString(opacity);
-        setOpacity(elements, function(element) {
+        const filter = makeCssFilterOpacityString(opacity);
+        setOpacity(elements, element => {
             element.style.filter = filter;
         });
     };
@@ -762,10 +710,10 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        var cssText = '';
+        let cssText = '';
 
         if (snippet.isExisty(opacity)) {
-            cssText = ';opacity:' + opacity;
+            cssText = `;opacity:${opacity}`;
         }
 
         return cssText;
@@ -777,10 +725,10 @@ if (isOldBrowser) {
      * @param {number} opacity - opacity
      */
     renderUtil.setOpacity = function(elements, opacity) {
-        setOpacity(elements, function(element) {
+        setOpacity(elements, element => {
             element.style.opacity = opacity;
         });
     };
 }
 
-module.exports = renderUtil;
+export default renderUtil;

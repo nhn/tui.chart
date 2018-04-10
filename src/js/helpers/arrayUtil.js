@@ -3,10 +3,7 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var snippet = require('tui-code-snippet');
+import snippet from 'tui-code-snippet';
 
 /**
  * Pick minimum value from value array.
@@ -16,17 +13,18 @@ var snippet = require('tui-code-snippet');
  * @param {?object} context target context
  * @returns {*} minimum value
  */
-var min = function(arr, condition, context) {
-    var result, minValue, rest;
+const min = function(arr, condition, context) {
+    let result;
 
     if (!condition) {
-        result = Math.min.apply(null, arr);
+        result = Math.min(...arr);
     } else {
-        result = arr[0];
-        minValue = condition.call(context, result, 0);
-        rest = arr.slice(1);
-        snippet.forEachArray(rest, function(item, index) {
-            var compareValue = condition.call(context, item, index + 1);
+        ({result} = arr);
+        const rest = arr.slice(1);
+        let minValue = condition.call(context, result, 0);
+
+        rest.forEach((item, index) => {
+            const compareValue = condition.call(context, item, index + 1);
             if (compareValue < minValue) {
                 minValue = compareValue;
                 result = item;
@@ -45,17 +43,17 @@ var min = function(arr, condition, context) {
  * @param {?object} [context] target context
  * @returns {*} maximum value
  */
-var max = function(arr, condition, context) {
-    var result, maxValue, rest;
+const max = function(arr, condition, context) {
+    let result;
 
     if (!condition) {
-        result = Math.max.apply(null, arr);
+        result = Math.max(...arr);
     } else {
-        result = arr[0];
-        maxValue = condition.call(context, result, 0);
-        rest = arr.slice(1);
-        snippet.forEachArray(rest, function(item, index) {
-            var compareValue = condition.call(context, item, index + 1);
+        ({result} = arr);
+        const rest = arr.slice(1);
+        let maxValue = condition.call(context, result, 0);
+        snippet.forEachArray(rest, (item, index) => {
+            const compareValue = condition.call(context, item, index + 1);
             if (compareValue > maxValue) {
                 maxValue = compareValue;
                 result = item;
@@ -74,9 +72,9 @@ var max = function(arr, condition, context) {
  * @param {?object} context target context
  * @returns {boolean} result boolean
  */
-var any = function(collection, condition, context) {
-    var result = false;
-    snippet.forEach(collection, function(item, key) {
+const any = function(collection, condition, context) {
+    let result = false;
+    snippet.forEach(collection, (item, key) => {
         if (condition.call(context, item, key, collection)) {
             result = true;
         }
@@ -95,9 +93,9 @@ var any = function(collection, condition, context) {
  * @param {?object} context target context
  * @returns {boolean} result boolean
  */
-var all = function(collection, condition, context) {
-    var result = !!(collection || []).length;
-    snippet.forEach(collection, function(item, key) {
+const all = function(collection, condition, context) {
+    let result = !!(collection || []).length;
+    snippet.forEach(collection, (item, key) => {
         if (!condition.call(context, item, key, collection)) {
             result = false;
         }
@@ -117,9 +115,8 @@ var all = function(collection, condition, context) {
  * @param {?object} context target context
  * @returns {Array} unique values
  */
-var unique = function(arr, sorted, iteratee, context) {
-    var result = [],
-        prevValue;
+const unique = function(arr, sorted, iteratee, context) {
+    const result = [];
 
     if (!snippet.isBoolean(sorted)) {
         context = iteratee;
@@ -132,7 +129,8 @@ var unique = function(arr, sorted, iteratee, context) {
     };
 
     if (sorted) {
-        snippet.forEachArray(arr, function(value, index) {
+        let prevValue;
+        snippet.forEachArray(arr, (value, index) => {
             value = iteratee.call(context, value, index, arr);
             if (!index || prevValue !== value) {
                 result.push(value);
@@ -140,7 +138,7 @@ var unique = function(arr, sorted, iteratee, context) {
             prevValue = value;
         });
     } else {
-        snippet.forEachArray(arr, function(value, index) {
+        snippet.forEachArray(arr, (value, index) => {
             value = iteratee.call(context, value, index, arr);
             if (snippet.inArray(value, result) === -1) {
                 result.push(value);
@@ -157,15 +155,12 @@ var unique = function(arr, sorted, iteratee, context) {
  * @param {Array.<Array>} arr2d target 2d array
  * @returns {Array.<Array>} pivoted 2d array
  */
-var pivot = function(arr2d) {
-    var result = [];
-    var len = max(snippet.map(arr2d, function(arr) {
-        return arr.length;
-    }));
-    var index;
+const pivot = function(arr2d) {
+    const result = [];
+    const len = max(arr2d.map(arr => arr.length));
 
-    snippet.forEachArray(arr2d, function(arr) {
-        for (index = 0; index < len; index += 1) {
+    arr2d.forEach(arr => {
+        for (let index = 0; index < len; index += 1) {
             if (!result[index]) {
                 result[index] = [];
             }
@@ -176,13 +171,13 @@ var pivot = function(arr2d) {
     return result;
 };
 
-var arrayUtil = {
-    min: min,
-    max: max,
-    any: any,
-    all: all,
-    unique: unique,
-    pivot: pivot
+const arrayUtil = {
+    min,
+    max,
+    any,
+    all,
+    unique,
+    pivot
 };
 
-module.exports = arrayUtil;
+export default arrayUtil;

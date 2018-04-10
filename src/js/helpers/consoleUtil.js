@@ -4,15 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-module.exports = {
+const consoleUtil = {
     /**
      * check if window.console exists
      * @param {string} message - message
      * @param {string} status - print function of window.console
      */
-    print: function(message, status) {
+    print(message, status) {
         status = status || 'log';
 
         if (window.console) {
@@ -20,3 +18,5 @@ module.exports = {
         }
     }
 };
+
+export default consoleUtil;

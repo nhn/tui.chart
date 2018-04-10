@@ -4,17 +4,15 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-var arrayUtil = require('./arrayUtil');
-var PERCENT_DIVISOR = 100;
+import snippet from 'tui-code-snippet';
+import arrayUtil from './arrayUtil';
+const PERCENT_DIVISOR = 100;
 
 /**
  * Calculator.
  * @module calculator
  * @private */
-var calculator = {
+const calculator = {
     /**
      * Calculate limit from chart min, max data.
      *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
@@ -23,10 +21,9 @@ var calculator = {
      * @param {number} max max maximum value of user data
      * @returns {{min: number, max: number}} limit axis limit
      */
-    calculateLimit: function(min, max) {
-        var saveMin = 0,
-            limit = {},
-            iodValue; // increase or decrease value;
+    calculateLimit(min, max) {
+        const limit = {};
+        let saveMin = 0;
 
         if (min < 0) {
             saveMin = min;
@@ -34,7 +31,8 @@ var calculator = {
             min = 0;
         }
 
-        iodValue = (max - min) / 20;
+        const iodValue = (max - min) / 20;
+
         limit.max = max + iodValue + saveMin;
 
         if (max / 6 > min) {
@@ -55,14 +53,14 @@ var calculator = {
      * @param {?number} remainLastBlockIntervalPosition remainLastBlockInterval position
      * @returns {Array.<number>} positions
      */
-    makeTickPixelPositions: function(size, count, additionalPosition, remainLastBlockIntervalPosition) {
-        var positions = [];
+    makeTickPixelPositions(size, count, additionalPosition, remainLastBlockIntervalPosition) {
+        let positions = [];
 
         additionalPosition = additionalPosition || 0;
 
         if (count > 0) {
-            positions = snippet.map(snippet.range(0, count), function(index) {
-                var ratio = index === 0 ? 0 : (index / (count - 1));
+            positions = snippet.range(0, count).map(index => {
+                const ratio = index === 0 ? 0 : (index / (count - 1));
 
                 return (ratio * size) + additionalPosition;
             });
@@ -84,15 +82,13 @@ var calculator = {
      * @returns {string[]} labels
      * @private
      */
-    makeLabelsFromLimit: function(limit, step) {
-        var multipleNum = calculator.findMultipleNum(step);
-        var min = Math.round(limit.min * multipleNum);
-        var max = Math.round(limit.max * multipleNum);
-        var labels = snippet.range(min, max + 1, step * multipleNum);
+    makeLabelsFromLimit(limit, step) {
+        const multipleNum = calculator.findMultipleNum(step);
+        const min = Math.round(limit.min * multipleNum);
+        const max = Math.round(limit.max * multipleNum);
+        const labels = snippet.range(min, max + 1, step * multipleNum);
 
-        return snippet.map(labels, function(label) {
-            return label / multipleNum;
-        });
+        return labels.map(label => label / multipleNum);
     },
 
     /**
@@ -102,7 +98,7 @@ var calculator = {
      * @param {number} count value count
      * @returns {number} step
      */
-    calculateStepFromLimit: function(limit, count) {
+    calculateStepFromLimit(limit, count) {
         return calculator.divide(calculator.subtract(limit.max, limit.min), (count - 1));
     },
 
@@ -111,10 +107,8 @@ var calculator = {
      * @param {Array.<number>} values values
      * @returns {number} sum
      */
-    sumPlusValues: function(values) {
-        var plusValues = snippet.filter(values, function(value) {
-            return value > 0;
-        });
+    sumPlusValues(values) {
+        const plusValues = snippet.filter(values, value => value > 0);
 
         return calculator.sum(plusValues);
     },
@@ -124,10 +118,8 @@ var calculator = {
      * @param {Array.<number>} values values
      * @returns {number} sum
      */
-    sumMinusValues: function(values) {
-        var minusValues = snippet.filter(values, function(value) {
-            return value < 0;
-        });
+    sumMinusValues(values) {
+        const minusValues = snippet.filter(values, value => value < 0);
 
         return calculator.sum(minusValues);
     },
@@ -138,7 +130,7 @@ var calculator = {
      * @param {number} totalValue - total value
      * @returns {number}
      */
-    makePercentageValue: function(value, totalValue) {
+    makePercentageValue(value, totalValue) {
         return value / totalValue * PERCENT_DIVISOR;
     },
 
@@ -150,7 +142,7 @@ var calculator = {
      * @param {number} baseRatio - base ratio
      * @returns {number}
      */
-    calculateRatio: function(value, divNumber, subNumber, baseRatio) {
+    calculateRatio(value, divNumber, subNumber, baseRatio) {
         return ((value - subNumber) / divNumber) * baseRatio;
     }
 };
@@ -161,8 +153,8 @@ var calculator = {
  * @param {string | number} value target value
  * @returns {number} result length
  */
-var getDecimalLength = function(value) {
-    var valueArr = String(value).split('.');
+const getDecimalLength = function(value) {
+    const valueArr = String(value).split('.');
 
     return valueArr.length === 2 ? valueArr[1].length : 0;
 };
@@ -173,12 +165,9 @@ var getDecimalLength = function(value) {
  * @param {...Array} target values
  * @returns {number} multiple num
  */
-var findMultipleNum = function() {
-    var args = [].slice.call(arguments);
-    var underPointLens = snippet.map(args, function(value) {
-        return calculator.getDecimalLength(value);
-    });
-    var underPointLen = arrayUtil.max(underPointLens);
+const findMultipleNum = function(...args) {
+    const underPointLens = args.map(value => calculator.getDecimalLength(value));
+    const underPointLen = arrayUtil.max(underPointLens);
 
     return Math.pow(10, underPointLen);
 };
@@ -190,9 +179,9 @@ var findMultipleNum = function() {
  * @param {number} modNum mod num
  * @returns {number} result mod
  */
-var mod = function(target, modNum) {
-    var multipleNum = calculator.findMultipleNum(modNum);
-    var result;
+const mod = function(target, modNum) {
+    const multipleNum = calculator.findMultipleNum(modNum);
+    let result;
 
     if (multipleNum === 1) {
         result = target % modNum;
@@ -210,8 +199,8 @@ var mod = function(target, modNum) {
  * @param {number} b target b
  * @returns {number}
  */
-var add = function(a, b) {
-    var multipleNum = calculator.findMultipleNum(a, b);
+const add = function(a, b) {
+    const multipleNum = calculator.findMultipleNum(a, b);
 
     return ((a * multipleNum) + (b * multipleNum)) / multipleNum;
 };
@@ -223,8 +212,8 @@ var add = function(a, b) {
  * @param {number} b target b
  * @returns {number}
  */
-var subtract = function(a, b) {
-    var multipleNum = calculator.findMultipleNum(a, b);
+const subtract = function(a, b) {
+    const multipleNum = calculator.findMultipleNum(a, b);
 
     return ((a * multipleNum) - (b * multipleNum)) / multipleNum;
 };
@@ -235,8 +224,8 @@ var subtract = function(a, b) {
  * @param {number} b target b
  * @returns {number}
  */
-var multiply = function(a, b) {
-    var multipleNum = calculator.findMultipleNum(a, b);
+const multiply = function(a, b) {
+    const multipleNum = calculator.findMultipleNum(a, b);
 
     return ((a * multipleNum) * (b * multipleNum)) / (multipleNum * multipleNum);
 };
@@ -248,8 +237,8 @@ var multiply = function(a, b) {
  * @param {number} b target b
  * @returns {number}
  */
-var divide = function(a, b) {
-    var multipleNum = calculator.findMultipleNum(a, b);
+const divide = function(a, b) {
+    const multipleNum = calculator.findMultipleNum(a, b);
 
     return (a * multipleNum) / (b * multipleNum);
 };
@@ -260,13 +249,11 @@ var divide = function(a, b) {
  * @param {Array.<number>} values target values
  * @returns {number} result value
  */
-var sum = function(values) {
-    var copyArr = values.slice();
+const sum = function(values) {
+    const copyArr = values.slice();
     copyArr.unshift(0);
 
-    return snippet.reduce(copyArr, function(base, value) {
-        return calculator.add(parseFloat(base), parseFloat(value));
-    });
+    return snippet.reduce(copyArr, (base, value) => calculator.add(parseFloat(base), parseFloat(value)));
 };
 
 /**
@@ -275,11 +262,9 @@ var sum = function(values) {
  * @param {Array.<number>} value target value
  * @returns {number} result value
  */
-var divisors = function(value) {
-    var result = [];
-    var a = 2;
-    var b;
-    for (; a * a <= value; a += 1) {
+const divisors = function(value) {
+    const result = [];
+    for (let a = 2, b; a * a <= value; a += 1) {
         if (value % a === 0) {
             b = value / a;
             result.push(a);
@@ -288,9 +273,7 @@ var divisors = function(value) {
             }
         }
     }
-    result.sort(function(prev, next) {
-        return prev - next;
-    });
+    result.sort((prev, next) => prev - next);
 
     return result;
 };
@@ -305,4 +288,4 @@ calculator.divide = divide;
 calculator.divisors = divisors;
 calculator.sum = sum;
 
-module.exports = calculator;
+export default calculator;

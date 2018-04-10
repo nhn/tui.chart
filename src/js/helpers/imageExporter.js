@@ -4,16 +4,14 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import downloader from './downloader';
+import chartConst from '../const';
+import snippet from 'tui-code-snippet';
 
-var downloader = require('./downloader');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
-
-var browser = snippet.browser;
-var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
-var DOMURL = window.URL || window.webkitURL || window;
-var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
+const {browser} = snippet;
+const isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
+const DOMURL = window.URL || window.webkitURL || window;
+const imageExtensions = [...chartConst.IMAGE_EXTENSIONS];
 
 /**
  * Return svg outerHTML string
@@ -22,12 +20,13 @@ var imageExtensions = [].concat([], chartConst.IMAGE_EXTENSIONS);
  * @ignore
  */
 function getSvgString(svgElement) {
-    var svgParent = svgElement.parentNode;
-    var tempWrapper = document.createElement('DIV');
-    var svgString;
+    let svgParent = svgElement.parentNode;
+    let tempWrapper = document.createElement('DIV');
 
     tempWrapper.appendChild(svgElement);
-    svgString = tempWrapper.innerHTML;
+
+    const svgString = tempWrapper.innerHTML;
+
     svgParent.appendChild(svgElement);
 
     tempWrapper = null;
@@ -45,7 +44,7 @@ function getSvgString(svgElement) {
  * @ignore
  */
 function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
-    var ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
 
     // remove name space for IE
     if (isIE10OrIE11) {
@@ -57,7 +56,7 @@ function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
 
     ctx.drawSvg(svgString, 0, 0);
 
-    downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+    downloader.execDownload(fileName, extension, canvas.toDataURL(`image/${extension}`, 1));
 }
 
 /**
@@ -69,15 +68,15 @@ function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
  * @ignore
  */
 function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
-    var ctx = canvas.getContext('2d');
-    var blob = new Blob([svgString], {type: 'image/svg+xml'});
-    var url = DOMURL.createObjectURL(blob);
-    var img = new Image();
+    const ctx = canvas.getContext('2d');
+    const blob = new Blob([svgString], {type: 'image/svg+xml'});
+    const url = DOMURL.createObjectURL(blob);
+    const img = new Image();
 
     img.onload = function() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+        downloader.execDownload(fileName, extension, canvas.toDataURL(`image/${extension}`, 1));
 
         DOMURL.revokeObjectURL(url);
     };
@@ -85,25 +84,24 @@ function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
     img.src = url;
 }
 
-module.exports = {
+const imageExporter = {
     /**
      * Download image with png format
      * @param {string} fileName - file name to save
      * @param {string} extension - extension type
      * @param {HTMLElement} imageSourceElement - image source element
      */
-    downloadImage: function(fileName, extension, imageSourceElement) {
-        var svgString, parentNode, canvas;
+    downloadImage(fileName, extension, imageSourceElement) {
+        let canvas;
 
         if (imageSourceElement.tagName === 'svg') {
-            parentNode = imageSourceElement.parentNode;
+            const {parentNode} = imageSourceElement;
+            const svgString = getSvgString(imageSourceElement);
 
             canvas = document.createElement('canvas');
 
             canvas.width = parentNode.offsetWidth;
             canvas.height = parentNode.offsetHeight;
-
-            svgString = getSvgString(imageSourceElement);
 
             if (isIE10OrIE11) {
                 downloadSvgWithCanvg(canvas, svgString, fileName, extension);
@@ -113,7 +111,7 @@ module.exports = {
         } else if (imageSourceElement.tagName === 'canvas') {
             canvas = imageSourceElement;
 
-            downloader.execDownload(fileName, extension, canvas.toDataURL('image/' + extension, 1));
+            downloader.execDownload(fileName, extension, canvas.toDataURL(`image/${extension}`, 1));
         }
     },
 
@@ -121,7 +119,9 @@ module.exports = {
      * Returns data extensions
      * @returns {Array.<string>}
      */
-    getExtensions: function() {
+    getExtensions() {
         return imageExtensions;
     }
 };
+
+export default imageExporter;
