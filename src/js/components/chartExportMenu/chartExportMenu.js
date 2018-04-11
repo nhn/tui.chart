@@ -4,15 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var chartExporter = require('../../helpers/chartExporter');
-var dom = require('../../helpers/domHandler');
-var eventListener = require('../../helpers/eventListener');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import chartExporter from '../../helpers/chartExporter';
+import dom from '../../helpers/domHandler';
+import eventListener from '../../helpers/eventListener';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
 var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';

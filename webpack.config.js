@@ -3,21 +3,23 @@
  * @fileoverview webpack configuration file
  */
 
-'use strict';
-
 var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
-
+var pkg = require('./package.json');
 var SafeUmdPlugin = require('safe-umd-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var BUNDLE_PATH = path.join(__dirname, 'dist/');
-
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
+var babelPolyfill = require('babel-polyfill');
+var PolyfillsPlugin = require('webpack-polyfills-plugin');
+var es3ifyPlugin = require('es3ify-webpack-plugin');
+
 
 var FILENAME = pkg.name + (isProduction && isMinified ? '.min' : '');
+
 
 module.exports = (function() {
     var readableTimestamp = (new Date()).toString();
@@ -34,7 +36,7 @@ module.exports = (function() {
         eslint: {
             failOnError: isProduction
         },
-        entry: './src/js/index.js',
+        entry: ['babel-polyfill', './src/js/index.js'],
         debug: false,
         output: {
             library: ['tui', 'chart'],
@@ -79,7 +81,8 @@ module.exports = (function() {
         plugins: [
             new SafeUmdPlugin(),
             new webpack.BannerPlugin(BANNER, {entryOnly: true}),
-            new ExtractTextPlugin(FILENAME + '.css')
+            new ExtractTextPlugin(FILENAME + '.css'),
+            new es3ifyPlugin()
         ],
         cache: false
     };

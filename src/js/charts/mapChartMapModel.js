@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
-var arrayUtil = require('../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
+import chartConst from '../const';
+import arrayUtil from '../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
 var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype */ {
     /**

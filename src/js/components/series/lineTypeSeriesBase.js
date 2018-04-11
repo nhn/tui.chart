@@ -4,14 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var arrayUtil = require('../../helpers/arrayUtil');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import arrayUtil from '../../helpers/arrayUtil';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.

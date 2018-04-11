@@ -4,17 +4,15 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
-var ComponentManager = require('./componentManager');
-var DefaultDataProcessor = require('../models/data/dataProcessor');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var dom = require('../helpers/domHandler');
-var renderUtil = require('../helpers/renderUtil');
-var boundsAndScaleBuilder = require('../models/boundsAndScaleBuilder.js');
-var predicate = require('../helpers/predicate');
-var snippet = require('tui-code-snippet');
+import chartConst from '../const';
+import ComponentManager from './componentManager';
+import DefaultDataProcessor from '../models/data/dataProcessor';
+import rawDataHandler from '../models/data/rawDataHandler';
+import dom from '../helpers/domHandler';
+import renderUtil from '../helpers/renderUtil';
+import boundsAndScaleBuilder from '../models/boundsAndScaleBuilder.js';
+import predicate from '../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
 var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -248,7 +246,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         DataProcessor = params.DataProcessor || DefaultDataProcessor;
         dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, this.seriesTypes);
 
-        return dataProcessor;
+        return dataProcessor
     },
 
     /**

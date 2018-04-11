@@ -4,10 +4,8 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 var raphaelRenderUtil = require('./raphaelRenderUtil');
-var arrayUtil = require('../helpers/arrayUtil');
+import arrayUtil from '../helpers/arrayUtil';
 var snippet = require('tui-code-snippet');
 
 var STEP_TOP_ADJUSTMENT = 8;

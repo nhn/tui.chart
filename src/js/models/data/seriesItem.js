@@ -5,13 +5,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import renderUtil from '../../helpers/renderUtil';
+import calculator from '../../helpers/calculator';
+import predicate from '../../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
 var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
     /**

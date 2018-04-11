@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var TooltipBase = require('./tooltipBase');
-var singleTooltipMixer = require('./singleTooltipMixer');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var tooltipTemplate = require('./tooltipTemplate');
-var snippet = require('tui-code-snippet');
+import TooltipBase from './tooltipBase';
+import singleTooltipMixer from './singleTooltipMixer';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import tooltipTemplate from './tooltipTemplate';
+import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc NormalTooltip component.

@@ -4,14 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var MouseEventDetectorBase = require('./mouseEventDetectorBase');
-var chartConst = require('../../const');
-var eventListener = require('../../helpers/eventListener');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import MouseEventDetectorBase from './mouseEventDetectorBase';
+import chartConst from '../../const';
+import eventListener from '../../helpers/eventListener';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
     /**

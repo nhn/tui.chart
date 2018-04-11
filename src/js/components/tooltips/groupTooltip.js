@@ -4,17 +4,15 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var TooltipBase = require('./tooltipBase');
-var GroupTooltipPositionModel = require('./groupTooltipPositionModel');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var defaultTheme = require('../../themes/defaultTheme');
-var tooltipTemplate = require('./tooltipTemplate');
-var snippet = require('tui-code-snippet');
-var predicate = require('../../helpers/predicate');
+import TooltipBase from './tooltipBase';
+import GroupTooltipPositionModel from './groupTooltipPositionModel';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import defaultTheme from '../../themes/defaultTheme';
+import tooltipTemplate from './tooltipTemplate';
+import snippet from 'tui-code-snippet';
+import predicate from '../../helpers/predicate';
 
 /**
  * @classdesc GroupTooltip component.

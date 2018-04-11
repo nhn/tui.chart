@@ -5,12 +5,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var ColorSpectrum = require('./colorSpectrum');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import ColorSpectrum from './colorSpectrum';
+import chartConst from '../const';
+import snippet from 'tui-code-snippet';
 
 var HeatmapChart = snippet.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
     /**

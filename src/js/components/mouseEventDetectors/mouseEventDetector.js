@@ -3,14 +3,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var predicate = require('../../helpers/predicate');
-var areaTypeEventDetectorFactory = require('./areaTypeEventDetector');
-var simpleEventDetectorFactory = require('./simpleEventDetector');
-var groupTypeEventDetectorFactory = require('./groupTypeEventDetector');
-var boundsTypeEventDetectorFactory = require('./boundsTypeEventDetector');
-var mapChartEventDetectorFactory = require('./mapChartEventDetector');
+import predicate from '../../helpers/predicate';
+import areaTypeEventDetectorFactory from './areaTypeEventDetector';
+import simpleEventDetectorFactory from './simpleEventDetector';
+import groupTypeEventDetectorFactory from './groupTypeEventDetector';
+import boundsTypeEventDetectorFactory from './boundsTypeEventDetector';
+import mapChartEventDetectorFactory from './mapChartEventDetector';
 
 /**
  * Factory for MouseEventDetector

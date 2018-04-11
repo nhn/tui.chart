@@ -5,11 +5,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var predicate = require('../helpers/predicate');
+import chartConst from '../const';
+import rawDataHandler from '../models/data/rawDataHandler';
+import predicate from '../helpers/predicate';
 
 var charts = {};
 var factory = {

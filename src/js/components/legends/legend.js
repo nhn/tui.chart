@@ -4,14 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var LegendModel = require('./legendModel');
-var pluginFactory = require('../../factories/pluginFactory');
-var predicate = require('../../helpers/predicate');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import LegendModel from './legendModel';
+import pluginFactory from '../../factories/pluginFactory';
+import predicate from '../../helpers/predicate';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
 
 var ICON_HEIGHT = chartConst.LEGEND_ICON_HEIGHT;
 

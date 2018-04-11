@@ -4,15 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-var raphael = require('raphael');
-var objectUtil = require('../../helpers/objectUtil');
-var chartConst = require('../../const'),
-    dom = require('../../helpers/domHandler'),
-    predicate = require('../../helpers/predicate'),
-    renderUtil = require('../../helpers/renderUtil');
+import snippet from 'tui-code-snippet';
+import raphael from 'raphael';
+import objectUtil from '../../helpers/objectUtil';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
 
 var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
     /**

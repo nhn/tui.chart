@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import chartConst from '../const';
+import snippet from 'tui-code-snippet';
 
 var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
     /**

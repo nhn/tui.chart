@@ -3,13 +3,10 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var chartConst = require('../../const');
-var EventDetectorBase = require('./mouseEventDetectorBase');
-var zoomMixer = require('./zoomMixer');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import EventDetectorBase from './mouseEventDetectorBase';
+import zoomMixer from './zoomMixer';
+import snippet from 'tui-code-snippet';
 
 var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
     /**

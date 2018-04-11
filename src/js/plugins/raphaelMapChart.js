@@ -6,9 +6,9 @@
 
 'use strict';
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var dom = require('../helpers/domHandler');
-var snippet = require('tui-code-snippet');
+import raphaelRenderUtil from './raphaelRenderUtil';
+import dom from '../helpers/domHandler';
+import snippet from 'tui-code-snippet';
 var browser = snippet.browser;
 
 var IS_LTE_IE8 = browser.msie && browser.version <= 8;

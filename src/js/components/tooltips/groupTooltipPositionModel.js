@@ -3,11 +3,8 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import snippet from 'tui-code-snippet';
 
 var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPositionModel.prototype */ {
     /**

@@ -4,14 +4,12 @@
  *       FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var arrayUtil = require('../../helpers/arrayUtil');
-var coordinateScaleCalculator = require('./coordinateScaleCalculator.js');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import arrayUtil from '../../helpers/arrayUtil';
+import coordinateScaleCalculator from './coordinateScaleCalculator.js';
+import snippet from 'tui-code-snippet';
 
 var abs = Math.abs;
 

@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var MouseEventDetectorBase = require('./mouseEventDetectorBase');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var eventListener = require('../../helpers/eventListener');
-var snippet = require('tui-code-snippet');
+import MouseEventDetectorBase from './mouseEventDetectorBase';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import eventListener from '../../helpers/eventListener';
+import snippet from 'tui-code-snippet';
 
 /**
  * Mixer for zoom event of area type mouse event detector.

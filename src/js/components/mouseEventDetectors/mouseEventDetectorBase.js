@@ -4,16 +4,14 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var TickBaseCoordinateModel = require('./tickBaseCoordinateModel');
-var BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel');
-var chartConst = require('../../const');
-var eventListener = require('../../helpers/eventListener');
-var predicate = require('../../helpers/predicate');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import TickBaseCoordinateModel from './tickBaseCoordinateModel';
+import BoundsBaseCoordinateModel from './boundsBaseCoordinateModel';
+import chartConst from '../../const';
+import eventListener from '../../helpers/eventListener';
+import predicate from '../../helpers/predicate';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
     /**

@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var Series = require('./series');
-var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
+import Series from './series';
+import CoordinateTypeSeriesBase from './coordinateTypeSeriesBase';
+import chartConst from '../../const';
+import snippet from 'tui-code-snippet';
 
 var ScatterChartSeries = snippet.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
     /**

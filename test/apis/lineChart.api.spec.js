@@ -4,8 +4,6 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 var raphael = require('raphael');
 var dom = require('../../src/js/helpers/domHandler');
 var lineChartFactory = require('../../src/js/index').lineChart;

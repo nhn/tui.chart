@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var TooltipBase = require('./tooltipBase');
-var singleTooltipMixer = require('./singleTooltipMixer');
-var tooltipTemplate = require('./tooltipTemplate');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import TooltipBase from './tooltipBase';
+import singleTooltipMixer from './singleTooltipMixer';
+import tooltipTemplate from './tooltipTemplate';
+import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc MapChartTooltip component.

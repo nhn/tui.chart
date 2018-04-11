@@ -4,13 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var chartConst = require('./../const');
-var snippet = require('tui-code-snippet');
-
-var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
+import raphaelRenderUtil from './raphaelRenderUtil';
+import chartConst from './../const';
+class RaphaelTitleComponent {
     /**
      * Render title
      * @param {object} renderInfo infos for render
@@ -22,19 +18,19 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
      *   @param {number} renderInfo.chartWidth chart width
      * @returns {Array.<object>} title set
      */
-    render: function(renderInfo) {
-        var paper = renderInfo.paper;
-        var titleText = renderInfo.titleText;
-        var offset = renderInfo.offset;
-        var theme = renderInfo.theme;
-        var align = renderInfo.align || chartConst.TITLE_ALIGN_LEFT;
-        var chartWidth = renderInfo.chartWidth;
-        var fontSize = theme.fontSize;
-        var fontFamily = theme.fontFamily;
-        var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
-
-        var titleSet = paper.set();
-        var pos = this.getTitlePosition(titleSize, align, chartWidth, offset);
+    render(renderInfo) {
+        const {
+            paper,
+            titleText,
+            offset,
+            theme,
+            align = chartConst.TITLE_ALIGN_LEFT,
+            chartWidth
+        } = renderInfo;
+        const {fontSize, fontFamily} = theme.fontSize;
+        const titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
+        const titleSet = paper.set();
+        const pos = this.getTitlePosition(titleSize, align, chartWidth, offset);
 
         titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
             'font-family': theme.fontFamily,
@@ -45,7 +41,7 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
         }));
 
         return titleSet;
-    },
+    }
 
     /**
      * calculate position of title
@@ -55,8 +51,8 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
      * @param {{x: number, y: number}} offset - title offset x, y
      * @returns {{top: number, left: number}} position of title
      */
-    getTitlePosition: function(titleSize, align, chartWidth, offset) {
-        var pos, left;
+    getTitlePosition(titleSize, align, chartWidth, offset) {
+        let left;
 
         if (align === chartConst.TITLE_ALIGN_CENTER) {
             left = chartWidth / 2;
@@ -66,8 +62,8 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
             left = chartConst.CHART_PADDING;
         }
 
-        pos = {
-            left: left,
+        const pos = {
+            left,
             top: chartConst.CHART_PADDING + (titleSize.height / 2) // for renderText's baseline
         };
 
@@ -80,18 +76,18 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
         }
 
         return pos;
-    },
+    }
 
     /**
      * Resize title component
      * @param {number} chartWidth chart width
      * @param {Array.<object>} titleSet title set
      */
-    resize: function(chartWidth, titleSet) {
+    resize(chartWidth, titleSet) {
         titleSet.attr({
             left: chartConst.CHART_PADDING
         });
     }
-});
+}
 
 module.exports = RaphaelTitleComponent;

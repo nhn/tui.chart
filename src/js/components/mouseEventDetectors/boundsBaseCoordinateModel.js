@@ -4,8 +4,6 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 /**
  * position
  * @typedef {{left: number, top: number}} position
@@ -46,10 +44,10 @@
  * @private
  */
 
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
 var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
     /**

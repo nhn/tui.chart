@@ -7,7 +7,7 @@
 
 'use strict';
 
-var renderUtil = require('../../helpers/renderUtil');
+import renderUtil from '../../helpers/renderUtil';
 var calculator = require('../../helpers/calculator');
 var snippet = require('tui-code-snippet');
 

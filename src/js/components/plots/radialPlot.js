@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var geom = require('../../helpers/geometric');
-var chartConst = require('../../const');
-var pluginFactory = require('../../factories/pluginFactory');
-var snippet = require('tui-code-snippet');
+import geom from '../../helpers/geometric';
+import chartConst from '../../const';
+import pluginFactory from '../../factories/pluginFactory';
+import snippet from 'tui-code-snippet';
 
 var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
     /**

@@ -5,13 +5,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories/pluginFactory');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import pluginFactory from '../../factories/pluginFactory';
+import snippet from 'tui-code-snippet';
 
 var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
     /**

@@ -33,13 +33,13 @@
  * SeriesItem has processed terminal data like value, ratio, etc.
  */
 
-var SeriesGroup = require('./seriesGroup');
-var SeriesItem = require('./seriesItem');
-var SeriesItemForCoordinateType = require('./seriesItemForCoordinateType');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
+import SeriesGroup from './seriesGroup';
+import SeriesItem from './seriesItem';
+import SeriesItemForCoordinateType from './seriesItemForCoordinateType';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
 var concat = Array.prototype.concat;
 

@@ -253,7 +253,7 @@ const sum = function(values) {
     const copyArr = values.slice();
     copyArr.unshift(0);
 
-    return snippet.reduce(copyArr, (base, value) => calculator.add(parseFloat(base), parseFloat(value)));
+    return copyArr.reduce((base, value) => calculator.add(parseFloat(base), parseFloat(value)));
 };
 
 /**

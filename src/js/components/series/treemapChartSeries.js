@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var Series = require('./series');
-var squarifier = require('./squarifier');
-var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
+import Series from './series';
+import squarifier from './squarifier';
+import labelHelper from './renderingLabelHelper';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
 var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
     /**

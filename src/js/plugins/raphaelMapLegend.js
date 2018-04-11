@@ -4,17 +4,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import chartConst from '../const';
+import snippet from 'tui-code-snippet';
+import renderUtil from '../helpers/renderUtil';
+import predicate from '../helpers/predicate';
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
-var renderUtil = require('../helpers/renderUtil');
-var predicate = require('../helpers/predicate');
+const DEGREE_HORIZONTAL_BAR = 360;
+const DEGREE_VERTICAL_BAR = 270;
+const WEDGE_BASE_HALF = 2.5; // half of wedge triagle base
 
-var DEGREE_HORIZONTAL_BAR = 360;
-var DEGREE_VERTICAL_BAR = 270;
-var WEDGE_BASE_HALF = 2.5; // half of wedge triagle base
 /**
  * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
  * @class RaphaelMapLegend

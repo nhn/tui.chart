@@ -4,20 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import chartConst from '../const';
+import snippet from 'tui-code-snippet';
+import renderUtil from '../helpers/renderUtil';
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
-var renderUtil = require('../helpers/renderUtil');
-
-var browser = snippet.browser;
-var IS_LTE_IE8 = browser.msie && browser.version <= 8;
-var ANIMATION_DURATION = 700;
-var ANIMATION_DELAY = 700;
-var EMPHASIS_OPACITY = 1;
-var DE_EMPHASIS_OPACITY = 0.3;
-var EVENT_DETECTOR_PADDING = 20;
+const {browser} = snippet;
+const IS_LTE_IE8 = browser.msie && browser.version <= 8;
+const ANIMATION_DURATION = 700;
+const ANIMATION_DELAY = 700;
+const EMPHASIS_OPACITY = 1;
+const DE_EMPHASIS_OPACITY = 0.3;
+const EVENT_DETECTOR_PADDING = 20;
 
 /**
  * @classdesc RaphaelBulletChart is graph renderer for bullet chart.

@@ -7,7 +7,7 @@
 'use strict';
 
 var DataProcessorBase = require('./dataProcessorBase');
-var renderUtil = require('../../helpers/renderUtil');
+import renderUtil from '../../helpers/renderUtil';
 var snippet = require('tui-code-snippet');
 
 /**

@@ -1,8 +1,6 @@
-'use strict';
-
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
-var snippet = require('tui-code-snippet');
+import chartConst from '../const';
+import predicate from '../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
 var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototype */ {
     init: function(chart) {

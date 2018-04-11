@@ -5,13 +5,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var SeriesDataModel = require('./seriesDataModel');
-var SeriesItem = require('./seriesItemForTreemap');
-var chartConst = require('../../const');
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
+import SeriesDataModel from './seriesDataModel';
+import SeriesItem from './seriesItemForTreemap';
+import chartConst from '../../const';
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 
 var aps = Array.prototype.slice;
 

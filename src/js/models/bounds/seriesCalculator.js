@@ -4,10 +4,8 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
 
 /**
  * Calculator for series.

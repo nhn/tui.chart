@@ -4,18 +4,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var geomatric = require('../../helpers/geometric');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
-var AUTO_INTERVAL_MIN_WIDTH = 90;
-var AUTO_INTERVAL_MAX_WIDTH = 121;
-var AUTO_INTERVAL_RANGE_STEP = 5;
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import geomatric from '../../helpers/geometric';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
+const AUTO_INTERVAL_MIN_WIDTH = 90;
+const AUTO_INTERVAL_MAX_WIDTH = 121;
+const AUTO_INTERVAL_RANGE_STEP = 5;
 
 /**
  * Axis data maker.
@@ -265,8 +263,11 @@ var axisDataMaker = {
         var candidates = this._makeCandidatesForAdjustingInterval(curBlockCount, seriesWidth);
         var intervalInfo = null;
 
+        console.log(candidates);
+
         if (candidates.length) {
             intervalInfo = arrayUtil.max(candidates, function(candidate) {
+                console.log("mm", candidate);
                 return candidate.blockCount;
             });
         }

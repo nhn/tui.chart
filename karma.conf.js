@@ -32,12 +32,15 @@ module.exports = function(config) {
                     query: {
                         esModules: true
                     }
-                },
+                }
+                /*
                 {
                     test: /\.js$/,
                     exclude: /(bower_components|node_modules)/,
                     loader: 'eslint-loader'
-                }],
+                }
+                */
+                ],
                 loaders: [
                     {
                         test: /\.less$/,

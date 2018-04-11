@@ -4,17 +4,15 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import seriesTemplate from './seriesTemplate';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import eventListener from '../../helpers/eventListener';
+import predicate from '../../helpers/predicate';
 
-var snippet = require('tui-code-snippet');
-var IS_MSIE_VERSION_LTE_THAN_8 = snippet.browser.msie && snippet.browser.version <= 8;
-
-var seriesTemplate = require('./seriesTemplate');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var eventListener = require('../../helpers/eventListener');
-var predicate = require('../../helpers/predicate');
+const IS_MSIE_VERSION_LTE_THAN_8 = snippet.browser.msie && snippet.browser.version <= 8;
 
 var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
     /**

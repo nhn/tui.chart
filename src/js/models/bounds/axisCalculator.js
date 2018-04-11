@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
 
 /**
  * Calculator for dimension of axis.

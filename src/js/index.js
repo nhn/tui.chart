@@ -1,12 +1,16 @@
 import {pluginRaphael, callback} from './plugins/pluginRaphael';
 import chart from './chart';
+import renderUtil from './helpers/renderUtil';
+import arrayUtil from './helpers/arrayUtil';
+import colorUtil from './helpers/colorUtil';
 
 require('../less/style.less');
 
 chart.registerPlugin('Raphael', pluginRaphael, callback);
-chart.renderUtil = require('./helpers/renderUtil');
-chart.arrayUtil = require('./helpers/arrayUtil');
-chart.colorutil = require('./helpers/colorutil');
+
+chart.renderUtil = renderUtil;
+chart.arrayUtil = arrayUtil;
+chart.colorutil = colorUtil;
 
 /**
  * NHN Entertainment Toast UI Chart.

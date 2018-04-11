@@ -4,23 +4,23 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-const raphael = require('raphael');
-const BarChart = require('./raphaelBarChart');
-const Boxplot = require('./raphaelBoxplotChart');
-const Bullet = require('./raphaelBulletChart');
-const LineChart = require('./raphaelLineChart');
-const AreaChart = require('./raphaelAreaChart');
-const PieChart = require('./raphaelPieChart');
-const RadialLineSeries = require('./raphaelRadialLineSeries');
-const CoordinateTypeChart = require('./raphaelCoordinateTypeChart');
-const BoxTypeChart = require('./raphaelBoxTypeChart');
-const MapChart = require('./raphaelMapChart');
-const legend = require('./raphaelLegendComponent');
-const MapLegend = require('./raphaelMapLegend');
-const CircleLegend = require('./raphaelCircleLegend');
-const title = require('./raphaelTitleComponent');
-const axis = require('./raphaelAxisComponent');
-const RadialPlot = require('./raphaelRadialPlot');
+import raphael from 'raphael';
+import BarChart from './raphaelBarChart';
+import Boxplot from './raphaelBoxplotChart';
+import Bullet from './raphaelBulletChart';
+import LineChart from './raphaelLineChart';
+import AreaChart from './raphaelAreaChart';
+import PieChart from './raphaelPieChart';
+import RadialLineSeries from './raphaelRadialLineSeries';
+import CoordinateTypeChart from './raphaelCoordinateTypeChart';
+import BoxTypeChart from './raphaelBoxTypeChart';
+import MapChart from './raphaelMapChart';
+import legend from './raphaelLegendComponent';
+import MapLegend from './raphaelMapLegend';
+import CircleLegend from './raphaelCircleLegend';
+import title from './raphaelTitleComponent';
+import axis from './raphaelAxisComponent';
+import RadialPlot from './raphaelRadialPlot';
 
 export const pluginRaphael = {
     bar: BarChart,

@@ -4,49 +4,45 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
-var dom = require('../helpers/domHandler');
-var Axis = require('../components/axes/axis');
-var Plot = require('../components/plots/plot');
-var title = require('../components/title/title');
-var RadialPlot = require('../components/plots/radialPlot');
-var ChartExportMenu = require('../components/chartExportMenu/chartExportMenu');
-var DrawingToolPicker = require('../helpers/drawingToolPicker');
+import chartConst from '../const';
+import dom from '../helpers/domHandler';
+import Axis from '../components/axes/axis';
+import Plot from '../components/plots/plot';
+import title from '../components/title/title';
+import RadialPlot from '../components/plots/radialPlot';
+import ChartExportMenu from '../components/chartExportMenu/chartExportMenu';
+import DrawingToolPicker from '../helpers/drawingToolPicker';
 
 // legends
-var Legend = require('../components/legends/legend');
-var SpectrumLegend = require('../components/legends/spectrumLegend');
-var CircleLegend = require('../components/legends/circleLegend');
+import Legend from '../components/legends/legend';
+import SpectrumLegend from '../components/legends/spectrumLegend';
+import CircleLegend from '../components/legends/circleLegend';
 
 // tooltips
-var Tooltip = require('../components/tooltips/tooltip');
-var GroupTooltip = require('../components/tooltips/groupTooltip');
-var MapChartTooltip = require('../components/tooltips/mapChartTooltip');
+import Tooltip from '../components/tooltips/tooltip';
+import GroupTooltip from '../components/tooltips/groupTooltip';
+import MapChartTooltip from '../components/tooltips/mapChartTooltip';
 
 // mouse event detectors
-var MapChartEventDetector = require('../components/mouseEventDetectors/mapChartEventDetector');
-var mouseEventDetector = require('../components/mouseEventDetectors/mouseEventDetector');
+import MapChartEventDetector from '../components/mouseEventDetectors/mapChartEventDetector';
+import mouseEventDetector from '../components/mouseEventDetectors/mouseEventDetector';
 
 // series
-var BarSeries = require('../components/series/barChartSeries');
-var ColumnSeries = require('../components/series/columnChartSeries');
-var LineSeries = require('../components/series/lineChartSeries');
-var RadialSeries = require('../components/series/radialSeries');
-var AreaSeries = require('../components/series/areaChartSeries');
-var BubbleSeries = require('../components/series/bubbleChartSeries');
-var ScatterSeries = require('../components/series/scatterChartSeries');
-var MapSeries = require('../components/series/mapChartSeries');
-var PieSeries = require('../components/series/pieChartSeries');
-var HeatmapSeries = require('../components/series/heatmapChartSeries');
-var TreemapSeries = require('../components/series/treemapChartSeries');
-var BoxplotSeries = require('../components/series/boxPlotChartSeries');
-var BulletSeries = require('../components/series/bulletChartSeries');
-
-var Zoom = require('../components/series/zoom');
-
-var snippet = require('tui-code-snippet');
+import BarSeries from '../components/series/barChartSeries';
+import ColumnSeries from '../components/series/columnChartSeries';
+import LineSeries from '../components/series/lineChartSeries';
+import RadialSeries from '../components/series/radialSeries';
+import AreaSeries from '../components/series/areaChartSeries';
+import BubbleSeries from '../components/series/bubbleChartSeries';
+import ScatterSeries from '../components/series/scatterChartSeries';
+import MapSeries from '../components/series/mapChartSeries';
+import PieSeries from '../components/series/pieChartSeries';
+import HeatmapSeries from '../components/series/heatmapChartSeries';
+import TreemapSeries from '../components/series/treemapChartSeries';
+import BoxplotSeries from '../components/series/boxPlotChartSeries';
+import BulletSeries from '../components/series/bulletChartSeries';
+import Zoom from '../components/series/zoom';
+import snippet from 'tui-code-snippet';
 
 var COMPONENT_FACTORY_MAP = {
     axis: Axis,

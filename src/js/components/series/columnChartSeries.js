@@ -4,14 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var Series = require('./series');
-var BarTypeSeriesBase = require('./barTypeSeriesBase');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import Series from './series';
+import BarTypeSeriesBase from './barTypeSeriesBase';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**

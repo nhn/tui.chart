@@ -6,10 +6,10 @@
 
 'use strict';
 
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 var map = snippet.map;
 
 var Plot = snippet.defineClass(/** @lends Plot.prototype */ {

@@ -4,10 +4,8 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var colorutil = require('../helpers/colorutil');
-var snippet = require('tui-code-snippet');
+import colorutil from '../helpers/colorutil';
+import snippet from 'tui-code-snippet';
 
 var ColorSpectrum = snippet.defineClass(/** @lends ColorSpectrum.prototype */ {
     /**

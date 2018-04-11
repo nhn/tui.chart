@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
-var defaultTheme = require('./defaultTheme');
-var snippet = require('tui-code-snippet');
+import chartConst from '../const';
+import predicate from '../helpers/predicate';
+import defaultTheme from './defaultTheme';
+import snippet from 'tui-code-snippet';
 
 var themes = {};
 

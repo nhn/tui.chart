@@ -5,13 +5,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var EventDetectorBase = require('./mouseEventDetectorBase');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var dom = require('../../helpers/domHandler');
-var snippet = require('tui-code-snippet');
+import EventDetectorBase from './mouseEventDetectorBase';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import dom from '../../helpers/domHandler';
+import snippet from 'tui-code-snippet';
 
 var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends BoundsTypeEventDetector.prototype */ {
     /**

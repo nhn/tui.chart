@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-var chartConst = require('../../const'),
-    predicate = require('../../helpers/predicate'),
-    dom = require('../../helpers/domHandler'),
-    renderUtil = require('../../helpers/renderUtil');
+import snippet from 'tui-code-snippet';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
 
 /**
  * singleTooltipMixer is single tooltip mixer of map chart.

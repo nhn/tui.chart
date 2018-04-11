@@ -4,17 +4,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-// var chartConst = require('./const');
 import chartConst from './const';
-var chartFactory = require('./factories/chartFactory');
-var pluginFactory = require('./factories/pluginFactory');
-var themeManager = require('./themes/themeManager');
-var mapManager = require('./factories/mapManager');
-var objectUtil = require('./helpers/objectUtil');
-var seriesDataImporter = require('./helpers/seriesDataImporter');
-var drawingToolPicker = require('./helpers/drawingToolPicker');
+import chartFactory from './factories/chartFactory';
+import pluginFactory from './factories/pluginFactory';
+import themeManager from './themes/themeManager';
+import mapManager from './factories/mapManager';
+import objectUtil from './helpers/objectUtil';
+import seriesDataImporter from './helpers/seriesDataImporter';
+import drawingToolPicker from './helpers/drawingToolPicker';
 
-require('./polyfill');
+// require('./polyfill');
 require('./charts/chartsRegistration');
 require('./themes/defaultThemesRegistration');
 

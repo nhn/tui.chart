@@ -3,13 +3,10 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var SeriesItem = require('./seriesItem');
-var SeriesDataModel = require('./seriesDataModel');
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
+import SeriesItem from './seriesItem';
+import SeriesDataModel from './seriesDataModel';
+import chartConst from '../../const';
+import snippet from 'tui-code-snippet';
 
 var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBullet.prototype */ {
     /**

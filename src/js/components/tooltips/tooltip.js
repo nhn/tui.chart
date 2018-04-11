@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var normalTooltipFactory = require('./normalTooltip');
-var groupTooltipFactory = require('./groupTooltip');
-var mapChartTooltipFactory = require('./mapChartTooltip');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
+import normalTooltipFactory from './normalTooltip';
+import groupTooltipFactory from './groupTooltip';
+import mapChartTooltipFactory from './mapChartTooltip';
+import predicate from '../../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
 /**
  * Label formatter function for pie chart

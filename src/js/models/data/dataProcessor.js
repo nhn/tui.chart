@@ -6,21 +6,20 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import DataProcessorBase from './dataProcessorBase';
 
-var chartConst = require('../../const');
-var DataProcessorBase = require('./dataProcessorBase');
-var SeriesDataModel = require('../data/seriesDataModel');
-var SeriesDataModelForBoxplot = require('../data/seriesDataModelForBoxplot');
-var SeriesDataModelForBullet = require('../data/seriesDataModelForBullet');
-var SeriesDataModelForTreemap = require('../data/seriesDataModelForTreemap');
-var SeriesGroup = require('./seriesGroup');
-var rawDataHandler = require('../../models/data/rawDataHandler');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
-var objectUtil = require('../../helpers/objectUtil');
-var snippet = require('tui-code-snippet');
+import SeriesDataModel from '../data/seriesDataModel';
+import SeriesDataModelForBoxplot from '../data/seriesDataModelForBoxplot';
+import SeriesDataModelForBullet from '../data/seriesDataModelForBullet';
+import SeriesDataModelForTreemap from '../data/seriesDataModelForTreemap';
+import SeriesGroup from './seriesGroup';
+import rawDataHandler from '../../models/data/rawDataHandler';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import calculator from '../../helpers/calculator';
+import objectUtil from '../../helpers/objectUtil';
+import snippet from 'tui-code-snippet';
 
 var concat = Array.prototype.concat;
 

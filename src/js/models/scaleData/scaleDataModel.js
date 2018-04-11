@@ -1,11 +1,9 @@
-'use strict';
-
-var scaleDataMaker = require('./scaleDataMaker');
-var scaleLabelFormatter = require('./scaleLabelFormatter');
-var axisDataMaker = require('./axisDataMaker');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import scaleDataMaker from './scaleDataMaker';
+import scaleLabelFormatter from './scaleLabelFormatter';
+import axisDataMaker from './axisDataMaker';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
     /**

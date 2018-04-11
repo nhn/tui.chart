@@ -6,16 +6,16 @@
 
 'use strict';
 
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
-var circleLegendCalculator = require('./circleLegendCalculator');
-var axisCalculator = require('./axisCalculator');
-var legendCalculator = require('./legendCalculator');
-var seriesCalculator = require('./seriesCalculator');
-var spectrumLegendCalculator = require('./spectrumLegendCalculator');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
+import circleLegendCalculator from './circleLegendCalculator';
+import axisCalculator from './axisCalculator';
+import legendCalculator from './legendCalculator';
+import seriesCalculator from './seriesCalculator';
+import spectrumLegendCalculator from './spectrumLegendCalculator';
+import snippet from 'tui-code-snippet';
 var browser = snippet.browser;
 var IS_LTE_IE8 = browser.msie && browser.version <= 8;
 var LEGEND_AREA_H_PADDING = chartConst.LEGEND_AREA_H_PADDING;

@@ -4,20 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
+import snippet from 'tui-code-snippet';
 
 var LABEL_FADE_IN_DURATION = 600;
 var browser = snippet.browser;
 var IS_IE7 = browser.msie && browser.version === 7;
 
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories/pluginFactory');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import pluginFactory from '../../factories/pluginFactory';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
 var Series = snippet.defineClass(/** @lends Series.prototype */ {
     /**

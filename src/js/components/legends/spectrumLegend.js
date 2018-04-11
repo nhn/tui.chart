@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var pluginFactory = require('../../factories/pluginFactory');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import pluginFactory from '../../factories/pluginFactory';
+import snippet from 'tui-code-snippet';
 
 var SpectrumLegend = snippet.defineClass(/** @lends SpectrumLegend.prototype */ {
     /**

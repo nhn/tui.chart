@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var Series = require('./series');
-var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import Series from './series';
+import CoordinateTypeSeriesBase from './coordinateTypeSeriesBase';
+import snippet from 'tui-code-snippet';
 
 var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
     /**

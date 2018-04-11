@@ -49,7 +49,7 @@ const max = function(arr, condition, context) {
     if (!condition) {
         result = Math.max(...arr);
     } else {
-        ({result} = arr);
+        ([result] = arr);
         const rest = arr.slice(1);
         let maxValue = condition.call(context, result, 0);
         snippet.forEachArray(rest, (item, index) => {

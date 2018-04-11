@@ -4,13 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import snippet from 'tui-code-snippet';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
-var Series = require('./series');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
 var COMBO_PIE1 = 'pie1';
 
 var PieChartSeries = snippet.defineClass(Series, /** @lends PieChartSeries.prototype */ {

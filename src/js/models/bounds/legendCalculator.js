@@ -4,21 +4,21 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import arrayUtil from '../../helpers/arrayUtil';
 
-var snippet = require('tui-code-snippet');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var arrayUtil = require('../../helpers/arrayUtil');
-
-var LEGEND_CHECKBOX_SIZE = chartConst.LEGEND_CHECKBOX_SIZE;
-var LEGEND_ICON_WIDTH = chartConst.LEGEND_ICON_WIDTH;
-var LEGEND_LABEL_LEFT_PADDING = chartConst.LEGEND_LABEL_LEFT_PADDING;
-var VERTICAL_LEGEND_LABEL_RIGHT_PADDING = chartConst.LEGEND_V_LABEL_RIGHT_PADDING;
-var HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING = chartConst.LEGEND_H_LABEL_RIGHT_PADDING;
-var LEGEND_AREA_H_PADDING = chartConst.LEGEND_AREA_H_PADDING;
+const {
+    LEGEND_CHECKBOX_SIZE,
+    LEGEND_ICON_WIDTH,
+    LEGEND_LABEL_LEFT_PADDING,
+    LEGEND_V_LABEL_RIGHT_PADDING,
+    LEGEND_H_LABEL_RIGHT_PADDING,
+    LEGEND_AREA_H_PADDING
+} = chartConst;
 
 /**
  * Calculator for dimension of legend.
@@ -45,10 +45,10 @@ var legendCalculator = {
             }
             labelWidth += restWidth;
 
-            return labelWidth + HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING;
+            return labelWidth + LEGEND_H_LABEL_RIGHT_PADDING;
         }));
 
-        legendWidth = legendWidth - HORIZONTAL_LEGEND_LABEL_RIGHT_PADDING + LEGEND_AREA_H_PADDING;
+        legendWidth = legendWidth - LEGEND_H_LABEL_RIGHT_PADDING + LEGEND_AREA_H_PADDING;
 
         return legendWidth;
     },
@@ -193,7 +193,7 @@ var legendCalculator = {
             labelWidth = maxWidth;
         }
         legendWidth = (LEGEND_AREA_H_PADDING * 2) + checkboxWidth +
-            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING + labelWidth + VERTICAL_LEGEND_LABEL_RIGHT_PADDING;
+            LEGEND_ICON_WIDTH + LEGEND_LABEL_LEFT_PADDING + labelWidth + LEGEND_V_LABEL_RIGHT_PADDING;
 
         return {
             width: legendWidth,

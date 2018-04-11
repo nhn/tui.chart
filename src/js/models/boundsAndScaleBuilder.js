@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var BoundsModel = require('../models/bounds/boundsModel');
-var ScaleDataModel = require('../models/scaleData/scaleDataModel');
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
+import BoundsModel from '../models/bounds/boundsModel';
+import ScaleDataModel from '../models/scaleData/scaleDataModel';
+import chartConst from '../const';
+import predicate from '../helpers/predicate';
 
 /**
  * Bounds and scale data builder.

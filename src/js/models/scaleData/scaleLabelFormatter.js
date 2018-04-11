@@ -4,12 +4,10 @@
  *       FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 var abs = Math.abs;
 
@@ -69,17 +67,20 @@ var scaleLabelFormatter = {
      * @returns {Array.<string|number>|*}
      */
     createFormattedLabels: function(scale, typeMap, options, formatFunctions) {
-        var chartType = typeMap.chartType;
-        var areaType = typeMap.areaType;
-        var valueType = typeMap.valueType;
-        var values = this._createScaleValues(scale, chartType, options.diverging);
-        var formattedValues;
+        const {chartType, areaType, valueType} = typeMap;
+        const {diverging, type, dateFormat, stackType} = options;
+        const values = this._createScaleValues(scale, chartType, diverging);
+        let formattedValues;
 
-        if (predicate.isDatetimeType(options.type)) {
-            formattedValues = renderUtil.formatDates(values, options.dateFormat);
+        if (predicate.isDatetimeType(type)) {
+            formattedValues = renderUtil.formatDates(values, dateFormat);
         } else {
-            formatFunctions = this._getFormatFunctions(chartType, options.stackType, formatFunctions);
-            formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+            formatFunctions = this._getFormatFunctions(chartType, stackType, formatFunctions);
+            formattedValues = renderUtil.formatValues(values, formatFunctions, {
+                chartType,
+                areaType,
+                valueType
+            });
         }
 
         return formattedValues;

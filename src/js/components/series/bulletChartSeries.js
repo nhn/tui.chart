@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var Series = require('./series');
-var renderUtil = require('../../helpers/renderUtil');
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
+import Series from './series';
+import renderUtil from '../../helpers/renderUtil';
+import chartConst from '../../const';
+import snippet from 'tui-code-snippet';
 
 var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries.prototype */ {
     /**

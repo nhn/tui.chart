@@ -4,15 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var labelHelper = require('./renderingLabelHelper');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import labelHelper from './renderingLabelHelper';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
 
 var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.85;
 

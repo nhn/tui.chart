@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var Series = require('./series');
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
+import Series from './series';
+import chartConst from '../../const';
+import snippet from 'tui-code-snippet';
 
 var browser = snippet.browser;
 var IS_LTE_IE8 = browser.msie && browser.version <= 8;

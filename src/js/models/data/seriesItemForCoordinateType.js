@@ -5,11 +5,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
 var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
     /**

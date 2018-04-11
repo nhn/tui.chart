@@ -4,8 +4,7 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-const chartConst = require('../const');
+import chartConst from '../const';
 
 var plugins = {},
     factory = {

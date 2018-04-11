@@ -7,7 +7,7 @@
 'use strict';
 
 var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
+import renderUtil from '../../helpers/renderUtil';
 var snippet = require('tui-code-snippet');
 
 var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.prototype */{

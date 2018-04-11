@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var Series = require('./series');
-var LineTypeSeriesBase = require('./lineTypeSeriesBase');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
+import Series from './series';
+import LineTypeSeriesBase from './lineTypeSeriesBase';
+import predicate from '../../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
 var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**

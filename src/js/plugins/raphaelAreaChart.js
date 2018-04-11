@@ -4,18 +4,17 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-const RaphaelLineBase = require('./raphaelLineTypeBase');
-const raphaelRenderUtil = require('./raphaelRenderUtil');
-const snippet = require('tui-code-snippet');
+import RaphaelLineBase from './raphaelLineTypeBase';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
+import chartConst from '../const';
+import consoleUtil from '../helpers/consoleUtil';
+const {GUIDE_AREACHART_AREAOPACITY_TYPE, CLASS_NAME_SVG_AUTOSHAPE} = chartConst;
 const concat = Array.prototype.concat;
-const chartConst = require('../const');
-const GUIDE_AREACHART_AREAOPACITY_TYPE = chartConst.GUIDE_AREACHART_AREAOPACITY_TYPE;
-const CLASS_NAME_SVG_AUTOSHAPE = chartConst.CLASS_NAME_SVG_AUTOSHAPE;
-const consoleUtil = require('../helpers/consoleUtil');
 
-const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
+class RaphaelAreaChart extends RaphaelLineBase {
     /**
      * RaphaelAreaChart is graph renderer for area chart.
      * @constructs RaphaelAreaChart
@@ -23,7 +22,9 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @private
      * @extends RaphaelLineTypeBase
      */
-    init: function() {
+    constructor() {
+        super();
+
         /**
          * selected legend index
          * @type {?number}
@@ -41,7 +42,8 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
          * @type {number}
          */
         this.lineWidth = 0;
-    },
+
+    }
 
     /**
      * Render function of area chart.
@@ -49,7 +51,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @returns {object}
      */
-    render: function(paper, data) {
+    render(paper, data) {
         var dimension = data.dimension;
         var groupPositions = data.groupPositions;
         var theme = data.theme;
@@ -98,19 +100,19 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
         this.tooltipLine.toFront();
 
         return seriesSet;
-    },
+    }
 
     /**
      * Rearrange all series sequences.
      * @private
      */
-    _moveSeriesToFrontAll: function() {
+    _moveSeriesToFrontAll() {
         var len = this.groupPaths ? this.groupPaths.length : 0;
         var i = 0;
         for (; i < len; i += 1) {
             this.moveSeriesToFront(this.groupAreas[i], this.groupDots[i]);
         }
-    },
+    }
 
     /**
      * Get path for area chart.
@@ -120,7 +122,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @returns {*}
      * @private
      */
-    _getAreaChartPath: function(groupPositions, hasExtraPath, connectNulls) {
+    _getAreaChartPath(groupPositions, hasExtraPath, connectNulls) {
         var path;
 
         if (this.isSpline) {
@@ -130,7 +132,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
         }
 
         return path;
-    },
+    }
 
     /**
      * Render area graphs.
@@ -142,7 +144,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @returns {Array} raphael objects
      * @private
      */
-    _renderAreas: function(paper, groupPaths, colors, lineWidth, opacity) {
+    _renderAreas(paper, groupPaths, colors, lineWidth, opacity) {
         var groupAreas;
 
         colors = colors.slice(0, groupPaths.length);
@@ -174,7 +176,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
         });
 
         return groupAreas.reverse();
-    },
+    }
 
     /**
      * Make height.
@@ -183,9 +185,9 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @returns {number} height
      * @private
      */
-    _makeHeight: function(top, startTop) {
+    _makeHeight(top, startTop) {
         return Math.abs(top - startTop);
-    },
+    }
 
     /**
      * Make areas path.
@@ -194,7 +196,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @returns {Array.<string | number>} path
      * @private
      */
-    _makeAreasPath: function(positions, hasExtraPath) {
+    _makeAreasPath(positions, hasExtraPath) {
         var path = [];
         var paths = [];
         var prevNull = false;
@@ -227,7 +229,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
             }
         });
 
-        snippet.forEachArray(paths, function(partialPath) {
+        snippet.forEachArray(paths, partialPath => {
             path = path.concat(partialPath);
         });
 
@@ -236,11 +238,11 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
             path.splice(targetIndex + 1, 0, path[targetIndex], path[targetIndex + 1]);
         }
 
-        path = concat.apply([], path);
+        path = [].concat(...path);
         path[0] = 'M';
 
         return path;
-    },
+    }
 
     /**
      * Make path for area chart.
@@ -250,7 +252,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _makeAreaChartPath: function(groupPositions, hasExtraPath, connectNulls) {
+    _makeAreaChartPath(groupPositions, hasExtraPath, connectNulls) {
         var self = this;
 
         return snippet.map(groupPositions, function(positions) {
@@ -267,7 +269,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
 
             return paths;
         });
-    },
+    }
 
     /**
      * Make spline path for area chart.
@@ -276,7 +278,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _makeSplineAreaChartPath: function(groupPositions, hasExtraPath) {
+    _makeSplineAreaChartPath(groupPositions, hasExtraPath) {
         var self = this;
 
         return snippet.map(groupPositions, function(positions) {
@@ -314,7 +316,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
                 line: linesPath
             };
         });
-    },
+    }
 
     /**
      * Resize graph of area chart.
@@ -322,7 +324,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
-    resize: function(params) {
+    resize(params) {
         var self = this,
             dimension = params.dimension,
             groupPositions = params.groupPositions;
@@ -358,13 +360,13 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
                 }
             });
         });
-    },
+    }
 
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
      */
-    selectLegend: function(legendIndex) {
+    selectLegend(legendIndex) {
         var noneSelected = snippet.isNull(legendIndex);
 
         if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
@@ -389,14 +391,14 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
                 this.moveSeriesToFront(area, groupDots);
             }
         }, this);
-    },
+    }
 
     /**
      * Reset series order after selected to be same to when it is first rendered
      * @param {number} legendIndex - legend index to reset series order
      * @ignore
      */
-    resetSeriesOrder: function(legendIndex) {
+    resetSeriesOrder(legendIndex) {
         var frontSeries = ((legendIndex + 1) < this.groupAreas.length) ? this.groupAreas[legendIndex + 1] : null;
         var frontArea;
 
@@ -410,7 +412,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
                 }
             });
         }
-    },
+    }
 
     /**
      * @param {{area: {SVGElement}, line: {SVGElement}, startLine: {SVGElement}}} areaSurface - line or plane to represent area chart
@@ -418,7 +420,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @ignore
      * @override
      */
-    moveSeriesToFront: function(areaSurface, dots) {
+    moveSeriesToFront(areaSurface, dots) {
         areaSurface.line.toFront();
         areaSurface.area.toFront();
 
@@ -432,7 +434,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
                 item.startDot.dot.toFront();
             }
         });
-    },
+    }
 
     /**
      * Animate for adding data.
@@ -442,7 +444,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @param {boolean} [shiftingOption] - shifting option
      * @param {number} zeroTop - position top value for zero point
      */
-    animateForAddingData: function(data, tickSize, groupPositions, shiftingOption, zeroTop) {
+    animateForAddingData(data, tickSize, groupPositions, shiftingOption, zeroTop) {
         var self = this;
         var groupPaths = this._getAreaChartPath(groupPositions, false);
         var additionalIndex = 0;
@@ -485,9 +487,9 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
                 self._animateByPath(area.startLine, pathMap.startLine, tickSize);
             }
         });
-    },
+    }
 
-    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme) {
+    renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme) {
         var attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
@@ -523,7 +525,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
         });
 
         return set;
-    },
+    }
 
     /**
      * Test areaOpacity is a number, and return the result.
@@ -533,7 +535,7 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
      * @returns {boolean} - whether areaOpacity is a number.
      * @private
      */
-    _isAreaOpacityNumber: function(areaOpacity) {
+    _isAreaOpacityNumber(areaOpacity) {
         var isNumber = snippet.isNumber(areaOpacity);
 
         if (isNumber) {
@@ -546,6 +548,6 @@ const RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends Raphael
 
         return isNumber;
     }
-});
+}
 
-module.exports = RaphaelAreaChart;
+export default RaphaelAreaChart;

@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var Series = require('./series');
-var chartConst = require('../../const');
-var geom = require('../../helpers/geometric');
-var snippet = require('tui-code-snippet');
+import Series from './series';
+import chartConst from '../../const';
+import geom from '../../helpers/geometric';
+import snippet from 'tui-code-snippet';
 
 var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries.prototype */ {
     /**

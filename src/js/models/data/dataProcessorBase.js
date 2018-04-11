@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var arrayUtil = require('../../helpers/arrayUtil');
-var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
+import arrayUtil from '../../helpers/arrayUtil';
+import renderUtil from '../../helpers/renderUtil';
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc data processor base.
