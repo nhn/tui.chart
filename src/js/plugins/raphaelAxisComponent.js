@@ -3,18 +3,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import raphaelRenderUtil from './raphaelRenderUtil';
+import chartConst from '../const';
+const {Y_AXIS_TITLE_PADDING, AXIS_BACKGROUND_RIGHT_PADDING} = chartConst;
 
-'use strict';
-
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var AXIS_BACKGROUND_RIGHT_PADDING = 4;
-var snippet = require('tui-code-snippet');
-var Y_AXIS_TITLE_PADDING = require('../const').Y_AXIS_TITLE_PADDING;
-
-var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.prototype */ {
-    init: function() {
+class RaphaelAxisComponent {
+    constructor() {
         this.ticks = [];
-    },
+    }
 
     /**
      * Render background with plot background color
@@ -25,10 +21,9 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      * @returns {Element} - raphael <rect> element
      * @private
      */
-    renderBackground: function(paper, position, dimension, theme) {
-        var background = ((theme && theme.background) || {});
-        var fillColor = (background.color || '#fff');
-        var opacity = (background.opacity || 1);
+    renderBackground(paper, position, dimension, theme) {
+        const background = ((theme && theme.background) || {});
+        const {color = '#fff', opacity = 1} = background;
 
         return raphaelRenderUtil.renderRect(paper, {
             left: 0,
@@ -36,11 +31,11 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             width: dimension.width + position.left - AXIS_BACKGROUND_RIGHT_PADDING,
             height: dimension.height
         }, {
-            fill: fillColor,
-            opacity: opacity,
+            fill: color,
+            opacity,
             'stroke-width': 0
         });
-    },
+    }
 
     /**
      * Render title
@@ -51,34 +46,35 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      * @param {object} data.rotationInfo object
      * @param {object} data.layout dimension and position
      */
-    renderTitle: function(paper, data) {
-        var theme = data.theme;
-        var textAnchor = this.getRenderTitleAnchor(data.rotationInfo);
-        var attributes = {
+    renderTitle(paper, data) {
+        const {theme, rotationInfo} = data;
+        const {fontFamily, fontSize, fontWeight, color} = theme;
+        const textAnchor = this.getRenderTitleAnchor(rotationInfo);
+        const attributes = {
             'dominant-baseline': 'auto',
-            'font-family': theme.fontFamily,
-            'font-size': theme.fontSize,
-            'font-weight': theme.fontWeight,
-            fill: theme.color,
+            'font-family': fontFamily,
+            'font-size': fontSize,
+            'font-weight': fontWeight,
+            fill: color,
             transform: 'none',
             'text-anchor': textAnchor
         };
-        var position = this.calculatePosition(paper, data);
-        var title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
+        const position = this.calculatePosition(paper, data);
+        const title = raphaelRenderUtil.renderText(paper, position, data.text, attributes);
 
         title.node.style.userSelect = 'none';
         title.node.style.cursor = 'default';
 
         data.set.push(title);
-    },
+    }
 
     /**
      * Get title anchor
      * @param {object} rotationInfo - isCenter, isVertical, isPositionRight
      * @returns {string} textAnchor - middle or end or start
      */
-    getRenderTitleAnchor: function(rotationInfo) {
-        var textAnchor = 'middle';
+    getRenderTitleAnchor(rotationInfo) {
+        let textAnchor = 'middle';
         if (rotationInfo.isPositionRight) {
             textAnchor = 'end';
         } else if (rotationInfo.isVertical && !rotationInfo.isCenter) {
@@ -86,7 +82,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
         }
 
         return textAnchor;
-    },
+    }
 
     /**
      * Render Axis label
@@ -102,36 +98,32 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      *       @param {boolean} data.isPositionRight boolean value of axis is right yAxis
      *       @param {object} data.theme theme of label
      */
-    renderLabel: function(data) {
-        var positionTopAndLeft = data.positionTopAndLeft;
-        var labelText = data.labelText;
-        var paper = data.paper;
-        var theme = data.theme;
-        var attributes = {
+    renderLabel(data) {
+        const {positionTopAndLeft, labelText, paper, theme, isVertical, isCenter} = data;
+        const attributes = {
             'dominant-baseline': 'central',
             'font-family': theme.fontFamily,
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
             fill: theme.color
         };
-        var textObj;
 
         if (data.isPositionRight) {
             attributes['text-anchor'] = 'end';
-        } else if (data.isVertical && !data.isCenter) {
+        } else if (isVertical && !isCenter) {
             attributes['text-anchor'] = 'start';
         } else {
             attributes['text-anchor'] = 'middle';
         }
 
-        textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, attributes);
+        const textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, attributes);
 
         textObj.node.style.userSelect = 'none';
         textObj.node.style.cursor = 'default';
 
         data.set.push(textObj);
         this.ticks.push(textObj);
-    },
+    }
 
     /**
      * Render rotated Axis label
@@ -146,19 +138,16 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      *       @param {object} data.theme theme of label
      *       @param {number} data.degree rotation degree
      */
-    renderRotatedLabel: function(data) {
-        var positionTopAndLeft = data.positionTopAndLeft;
-        var labelText = data.labelText;
-        var paper = data.paper;
-        var theme = data.theme;
-        var textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, {
+    renderRotatedLabel(data) {
+        const {positionTopAndLeft, labelText, paper, theme} = data;
+        const textObj = raphaelRenderUtil.renderText(paper, positionTopAndLeft, labelText, {
             'dominant-baseline': 'central',
             'font-family': theme.fontFamily,
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
             fill: theme.color,
             'text-anchor': 'end',
-            transform: 'r' + (-data.degree) + ',' + (positionTopAndLeft.left) + ',' + (positionTopAndLeft.top)
+            transform: `r${-data.degree},${positionTopAndLeft.left},${positionTopAndLeft.top}`
         });
 
         textObj.node.style.userSelect = 'none';
@@ -166,36 +155,37 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
 
         data.set.push(textObj);
         this.ticks.push(textObj);
-    },
+    }
 
     /**
      * Render ticks on given paper
      * @param {object} data data for rendering ticks
      */
-    renderTicks: function(data) {
-        var self = this;
-        var paper = data.paper;
-        var positions = data.positions;
-        var additionalSize = data.additionalSize;
-        var isVertical = data.isVertical;
-        var isCenter = data.isCenter;
-        var isDivided = data.isDivided;
-        var isPositionRight = data.isPositionRight;
-        var tickColor = data.tickColor;
-        var layout = data.layout;
-        var rightEdgeOfAxis = layout.position.left + layout.dimension.width;
-        var baseTop = layout.position.top;
-        var baseLeft = layout.position.left;
-        var centerAxisWidth = isDivided ? data.otherSideDimension.width : 0;
-        var tick;
-        var isContainDivensionArea = function(position) {
-            var compareType = isVertical ? 'height' : 'width';
+    renderTicks(data) {
+        const {
+            paper,
+            positions,
+            additionalSize,
+            isVertical,
+            isCenter,
+            isDivided,
+            isPositionRight,
+            tickColor,
+            layout
+        } = data;
 
+        const rightEdgeOfAxis = layout.position.left + layout.dimension.width;
+        const baseTop = layout.position.top;
+        const baseLeft = layout.position.left;
+        const centerAxisWidth = isDivided ? data.otherSideDimension.width : 0;
+        const isContainDivensionArea = position => {
+            const compareType = isVertical ? 'height' : 'width';
             return (position > layout.dimension[compareType] + centerAxisWidth);
         };
+        let tick;
 
-        snippet.forEach(positions, function(position) {
-            var pathString = 'M';
+        positions.forEach(position => {
+            let pathString = 'M';
 
             position += additionalSize;
 
@@ -205,21 +195,21 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
 
             if (isVertical) {
                 if (isCenter) {
-                    pathString += baseLeft + ',' + (baseTop + position);
-                    pathString += 'H' + (baseLeft + 5);
+                    pathString += `${baseLeft},${(baseTop + position)}`;
+                    pathString += `H${(baseLeft + 5)}`;
 
-                    pathString += 'M' + rightEdgeOfAxis + ',' + (baseTop + position);
-                    pathString += 'H' + (rightEdgeOfAxis - 5);
+                    pathString += `M${rightEdgeOfAxis},${(baseTop + position)}`;
+                    pathString += `H${(rightEdgeOfAxis - 5)}`;
                 } else if (isPositionRight) {
-                    pathString += baseLeft + ',' + (baseTop + position);
-                    pathString += 'H' + (baseLeft + 5);
+                    pathString += `${baseLeft},${(baseTop + position)}`;
+                    pathString += `H${(baseLeft + 5)}`;
                 } else {
-                    pathString += rightEdgeOfAxis + ',' + (baseTop + position);
-                    pathString += 'H' + (rightEdgeOfAxis - 5);
+                    pathString += `${rightEdgeOfAxis},${(baseTop + position)}`;
+                    pathString += `H${(rightEdgeOfAxis - 5)}`;
                 }
             } else {
-                pathString += (baseLeft + position) + ',' + baseTop;
-                pathString += 'V' + (baseTop + 5);
+                pathString += `${(baseLeft + position)},${baseTop}`;
+                pathString += `V${(baseTop + 5)}`;
             }
 
             if (!isNaN(position)) {
@@ -228,10 +218,10 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
                     opacity: 0.5
                 });
                 data.set.push(tick);
-                self.ticks.push(tick);
+                this.ticks.push(tick);
             }
         });
-    },
+    }
 
     /**
      * Render tick line  on given paper
@@ -240,39 +230,34 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      * @param {object} data.paper raphael paper
      * @param {boolean} data.isVertical boolean value of vertical axis or not
      */
-    renderStandardLine: function(data) {
-        var lineSize = data.areaSize;
-        var paper = data.paper;
-        var layout = data.layout;
-        var isVertical = data.isVertical;
-        var pathString = 'M';
-        var baseTop = layout.position.top;
-        var baseLeft = layout.position.left;
-        var rightEdgeOfAxis = baseLeft + layout.dimension.width;
-        var lineStartYCoord, lineEndXCoord, lineEndYCoord;
-        var minAbs = Math.abs(data.axisLimit.min);
-        var maxAbs = Math.abs(data.axisLimit.max);
-        var standardRatio = 1 - (maxAbs / (minAbs + maxAbs));
+    renderStandardLine(data) {
+        const {lineSize, paper, layout, isVertical, axisLimit, seriesDimension, set} = data;
+
+        const baseLeft = layout.position.left;
+        const minAbs = Math.abs(axisLimit.min);
+        const maxAbs = Math.abs(axisLimit.max);
+        const standardRatio = 1 - (maxAbs / (minAbs + maxAbs));
+        let baseTop = layout.position.top;
+        let pathString = 'M';
+        let rightEdgeOfAxis = baseLeft + layout.dimension.width;
 
         if (isVertical) {
-            lineStartYCoord = baseTop;
-            rightEdgeOfAxis += data.seriesDimension.width * standardRatio;
-            pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
-            lineEndYCoord = baseTop + lineSize;
-            pathString += 'V' + lineEndYCoord;
+            const lineStartYCoord = baseTop;
+            rightEdgeOfAxis += seriesDimension.width * standardRatio;
+            pathString += `${rightEdgeOfAxis},${lineStartYCoord}`;
+            pathString += `V${(baseTop + lineSize)}`;
         } else {
             pathString += baseLeft;
-            baseTop -= data.seriesDimension.height * standardRatio;
-            pathString += ',' + baseTop + 'H';
-            lineEndXCoord = (baseLeft + lineSize);
-            pathString += lineEndXCoord;
+            baseTop -= seriesDimension.height * standardRatio;
+            pathString += `,${baseTop}H`;
+            pathString += baseLeft + lineSize;
         }
 
-        data.set.push(paper.path(pathString).attr({
+        set.push(paper.path(pathString).attr({
             'stroke-width': 1,
             opacity: 0.5
         }));
-    },
+    }
 
     /**
      * Render tick line  on given paper
@@ -287,43 +272,44 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      * @param {boolean} data.isCenter boolean value of center yAxis or not
      * @param {boolean} data.isVertical boolean value of vertical axis or not
      */
-    renderTickLine: function(data) {
-        var areaSize = data.areaSize;
-        var lineSize = areaSize;
-        var paper = data.paper;
-        var layout = data.layout;
-        var isNegativeStandard = data.isNegativeStandard;
-        var isNotDividedXAxis = data.isNotDividedXAxis;
-        var additionalSize = data.additionalSize;
-        var isPositionRight = data.isPositionRight;
-        var isCenter = data.isCenter;
-        var isVertical = data.isVertical;
-        var tickColor = data.tickColor;
-        var pathString = 'M';
-        var baseTop = layout.position.top;
-        var baseLeft = layout.position.left;
-        var verticalTickLineEndYCoord = layout.dimension.height + baseTop;
-        var rightEdgeOfAxis = baseLeft + layout.dimension.width;
-        var lineStartYCoord, lineEndXCoord, lineEndYCoord;
+    renderTickLine(data) {
+        const {
+            areaSize,
+            paper,
+            layout,
+            isNegativeStandard,
+            isNotDividedXAxis,
+            additionalSize,
+            isPositionRight,
+            isCenter,
+            isVertical,
+            tickColor
+        } = data;
+        const lineSize = areaSize;
+        const baseLeft = layout.position.left;
+        const verticalTickLineEndYCoord = layout.dimension.height + layout.position.top;
+        let baseTop = layout.position.top;
+        let rightEdgeOfAxis = baseLeft + layout.dimension.width;
+        let pathString = 'M';
+        let lineStartYCoord, lineEndXCoord, lineEndYCoord;
 
         if (isPositionRight) {
-            pathString += baseLeft + ',' + baseTop;
-            pathString += 'V' + verticalTickLineEndYCoord;
+            pathString += `${baseLeft},${baseTop}`;
+            pathString += `V${verticalTickLineEndYCoord}`;
         } else if (isVertical) {
             lineStartYCoord = baseTop;
             if (isNegativeStandard) {
                 rightEdgeOfAxis += data.seriesDimension.width / 2;
             }
-
-            pathString += rightEdgeOfAxis + ',' + lineStartYCoord;
+            pathString += `${rightEdgeOfAxis},${lineStartYCoord}`;
 
             if (isCenter) {
-                pathString += 'V' + verticalTickLineEndYCoord;
-                pathString += 'M' + baseLeft + ',' + lineStartYCoord;
-                pathString += 'V' + verticalTickLineEndYCoord;
+                pathString += `V${verticalTickLineEndYCoord}`;
+                pathString += `M${baseLeft},${lineStartYCoord}`;
+                pathString += `V${verticalTickLineEndYCoord}`;
             } else {
                 lineEndYCoord = baseTop + lineSize;
-                pathString += 'V' + lineEndYCoord;
+                pathString += `V${lineEndYCoord}`;
             }
         } else {
             if (isNotDividedXAxis) {
@@ -336,7 +322,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
                 baseTop -= data.seriesDimension.height / 2;
             }
 
-            pathString += ',' + baseTop + 'H';
+            pathString += `,${baseTop}H`;
 
             lineEndXCoord = (baseLeft + lineSize);
 
@@ -352,19 +338,19 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             stroke: tickColor,
             opacity: 0.5
         }));
-    },
+    }
 
     /**
      * Animate ticks for adding data
      * @param {number} tickSize tick size of moving
      */
-    animateForAddingData: function(tickSize) {
-        snippet.forEach(this.ticks, function(tick) {
+    animateForAddingData(tickSize) {
+        this.ticks.forEach(tick => {
             tick.animate({
-                transform: 't-' + tickSize + ',0'
+                transform: `t-${tickSize},0`
             }, 300);
         });
-    },
+    }
 
     /**
      * Calculate axis title position, and transforma
@@ -376,17 +362,16 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
      *  @param {object} data.layout - layout
      * @returns {object} position - top, left
      */
-    calculatePosition: function(paper, data) {
-        var rotationInfo = data.rotationInfo;
-        var textHeight = getTextHeight(data.text, data.theme);
-        var textWidth = getTextWidth(data.text, data.theme);
-        var layout = data.layout;
-        var axisHeight = layout.dimension.height;
-        var axisWidth = layout.dimension.width;
-        var left = layout.position.left + data.additionalWidth;
-        var top = layout.position.top;
-        var adjustLeftPosition = (textWidth / 2) - data.otherSideDimension.width;
-        var position = {
+    calculatePosition(paper, data) {
+        const {rotationInfo, text, theme, additionalWidth, otherSideDimension, areaSize, tickCount, layout} = data;
+        const textHeight = getTextHeight(text, theme);
+        const textWidth = getTextWidth(text, theme);
+        const axisHeight = layout.dimension.height;
+        const axisWidth = layout.dimension.width;
+        const {top} = layout.position;
+        const left = layout.position.left + additionalWidth;
+        const adjustLeftPosition = (textWidth / 2) - otherSideDimension.width;
+        const position = {
             top: top + axisHeight - (textHeight / 2),
             left: left + ((adjustLeftPosition < 0) ? 0 : adjustLeftPosition)
         };
@@ -400,11 +385,11 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
             }
         } else if (!rotationInfo.isVertical) {
             if (rotationInfo.isDiverging && rotationInfo.isYAxisCenter) {
-                position.left = left + (data.areaSize / 2);
+                position.left = left + (areaSize / 2);
             } else if (rotationInfo.isDiverging && !rotationInfo.isYAxisCenter) {
                 position.left = left + (axisWidth / 2);
             } else if (rotationInfo.isColumnType) {
-                position.left = left + (axisWidth / (data.tickCount - 1) / 2);
+                position.left = left + (axisWidth / (tickCount - 1) / 2);
             }
         }
 
@@ -418,7 +403,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
 
         return position;
     }
-});
+}
 
 /**
  * Get a text height by theme
@@ -428,7 +413,7 @@ var RaphaelAxisComponent = snippet.defineClass(/** @lends RaphaelAxisComponent.p
  * @ignore
  */
 function getTextHeight(text, theme) {
-    var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
+    const titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
 
     return titleSize.height;
 }
@@ -441,7 +426,7 @@ function getTextHeight(text, theme) {
  * @ignore
  */
 function getTextWidth(text, theme) {
-    var titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
+    const titleSize = raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
 
     return titleSize.width;
 }
@@ -465,4 +450,4 @@ function addOffset(position, offset) {
     }
 }
 
-module.exports = RaphaelAxisComponent;
+export default RaphaelAxisComponent;

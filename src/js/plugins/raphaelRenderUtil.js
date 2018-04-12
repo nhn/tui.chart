@@ -4,18 +4,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-var renderUtil = require('../helpers/renderUtil');
-var raphael = require('raphael');
+import snippet from 'tui-code-snippet';
+import renderUtil from '../helpers/renderUtil';
+import raphael from 'raphael';
 
 /**
  * Util for raphael rendering.
  * @module raphaelRenderUtil
  * @private
  */
-var raphaelRenderUtil = {
+const raphaelRenderUtil = {
 
     /**
      * Make line path.
@@ -25,21 +23,18 @@ var raphaelRenderUtil = {
      * @param {number} width width
      * @returns {string} path
      */
-    makeLinePath: function(fromPos, toPos, width) {
-        var fromPoint = [fromPos.left, fromPos.top];
-        var toPoint = [toPos.left, toPos.top];
-        var additionalPoint;
+    makeLinePath(fromPos, toPos, width = 1) {
+        const fromPoint = [fromPos.left, fromPos.top];
+        const toPoint = [toPos.left, toPos.top];
+        const additionalPoint = (width % 2 / 2);
 
-        width = width || 1;
-        additionalPoint = (width % 2 / 2);
-
-        snippet.forEachArray(fromPoint, function(from, index) {
+        fromPoint.forEach((from, index) => {
             if (from === toPoint[index]) {
                 fromPoint[index] = toPoint[index] = Math.round(from) - additionalPoint;
             }
         });
 
-        return ['M'].concat(fromPoint).concat('L').concat(toPoint);
+        return ['M', ...fromPoint, 'L', ...toPoint];
     },
 
     /**
@@ -51,13 +46,13 @@ var raphaelRenderUtil = {
      * @param {number} strokeWidth stroke width
      * @returns {object} raphael line
      */
-    renderLine: function(paper, path, color, strokeWidth) {
-        var line = paper.path([path]),
-            strokeStyle = {
-                stroke: color,
-                'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth),
-                'stroke-linecap': 'butt'
-            };
+    renderLine(paper, path, color, strokeWidth) {
+        const line = paper.path([path]);
+        const strokeStyle = {
+            stroke: color,
+            'stroke-width': (snippet.isUndefined(strokeWidth) ? 2 : strokeWidth),
+            'stroke-linecap': 'butt'
+        };
         if (color === 'transparent') {
             strokeStyle.stroke = '#fff';
             strokeStyle['stroke-opacity'] = 0;
@@ -75,15 +70,14 @@ var raphaelRenderUtil = {
      * @param {object} theme - lable theme
      * @returns {string}
      */
-    getEllipsisText: function(text, fixedWidth, theme) {
-        var textArray = text.split('');
-        var textLength = textArray.length;
-        var dotWidth = this.getRenderedTextSize('.', theme.fontSize, theme.fontFamily).width;
-        var textWidth = dotWidth * 2;
-        var newString = '';
-        var i = 0;
+    getEllipsisText(text, fixedWidth, theme) {
+        const textArray = text.split('');
+        const textLength = textArray.length;
+        const dotWidth = this.getRenderedTextSize('.', theme.fontSize, theme.fontFamily).width;
+        let newString = '';
+        let textWidth = dotWidth * 2;
 
-        for (; i < textLength; i += 1) {
+        for (let i = 0; i < textLength; i += 1) {
             textWidth += this.getRenderedTextSize(textArray[i], theme.fontSize, theme.fontFamily).width;
             if (textWidth >= fixedWidth) {
                 newString += '..';
@@ -103,8 +97,8 @@ var raphaelRenderUtil = {
      * @param {object} [attributes] - text object's attributes
      * @returns {object}
      */
-    renderText: function(paper, pos, text, attributes) {
-        var textObj = paper.text(pos.left, pos.top, snippet.decodeHTMLEntity(String(text)));
+    renderText(paper, pos, text, attributes) {
+        const textObj = paper.text(pos.left, pos.top, snippet.decodeHTMLEntity(String(text)));
 
         if (attributes) {
             if (attributes['dominant-baseline']) {
@@ -130,10 +124,10 @@ var raphaelRenderUtil = {
      *      @param {?number} fillStyle.stroke-opacity stroke opacity
      * @returns {Array.<object>} raphael object
      */
-    renderArea: function(paper, path, fillStyle) {
-        var area = paper.path(path);
+    renderArea(paper, path, fillStyle) {
+        const area = paper.path(path);
 
-        fillStyle = snippet.extend({
+        fillStyle = Object.assign({
             'stroke-opacity': 0
         }, fillStyle);
         area.attr(fillStyle);
@@ -149,8 +143,8 @@ var raphaelRenderUtil = {
      * @param {object} attributes - attributes
      * @returns {object}
      */
-    renderCircle: function(paper, position, radius, attributes) {
-        var circle = paper.circle(position.left, position.top, radius);
+    renderCircle(paper, position, radius, attributes) {
+        const circle = paper.circle(position.left, position.top, radius);
 
         if (attributes) {
             circle.attr(attributes);
@@ -166,8 +160,8 @@ var raphaelRenderUtil = {
      * @param {object} attributes - attributes
      * @returns {*}
      */
-    renderRect: function(paper, bound, attributes) {
-        var rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
+    renderRect(paper, bound, attributes) {
+        const rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
 
         if (attributes) {
             rect.attr(attributes);
@@ -181,7 +175,7 @@ var raphaelRenderUtil = {
      * @param {object} rect raphael object
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      */
-    updateRectBound: function(rect, bound) {
+    updateRectBound(rect, bound) {
         rect.attr({
             x: bound.left,
             y: bound.top,
@@ -195,10 +189,10 @@ var raphaelRenderUtil = {
      * @param {Array.<Array.<object>>} groupItems group items
      * @param {function} funcRenderItem function
      */
-    forEach2dArray: function(groupItems, funcRenderItem) {
+    forEach2dArray(groupItems, funcRenderItem) {
         if (groupItems) {
-            snippet.forEachArray(groupItems, function(items, groupIndex) {
-                snippet.forEachArray(items, function(item, index) {
+            groupItems.forEach((items, groupIndex) => {
+                items.forEach((item, index) => {
                     funcRenderItem(item, groupIndex, index);
                 });
             });
@@ -211,22 +205,20 @@ var raphaelRenderUtil = {
      * @param {number} lum luminance
      * @returns {string} changed color
      */
-    makeChangedLuminanceColor: function(hex, lum) {
-        var changedHex;
-
+    makeChangedLuminanceColor(hex, lum) {
         hex = hex.replace('#', '');
         lum = lum || 0;
 
-        changedHex = snippet.map(snippet.range(3), function(index) {
-            var hd = parseInt(hex.substr(index * 2, 2), 16);
-            var newHd = hd + (hd * lum);
+        const changedHex = snippet.range(3).map(index => {
+            const hd = parseInt(hex.substr(index * 2, 2), 16);
+            let newHd = hd + (hd * lum);
 
             newHd = Math.round(Math.min(Math.max(0, newHd), 255)).toString(16);
 
             return renderUtil.formatToZeroFill(newHd, 2);
         }).join('');
 
-        return '#' + changedHex;
+        return `#${changedHex}`;
     },
 
     /**
@@ -239,13 +231,13 @@ var raphaelRenderUtil = {
      *     height: number
      * }}
      */
-    getRenderedTextSize: function(text, fontSize, fontFamily) {
-        var paper = raphael(document.body, 100, 100);
-        var textElement = paper.text(0, 0, text).attr({
+    getRenderedTextSize(text, fontSize, fontFamily) {
+        const paper = raphael(document.body, 100, 100);
+        const textElement = paper.text(0, 0, text).attr({
             'font-size': fontSize,
             'font-family': fontFamily
         });
-        var bBox = textElement.getBBox();
+        const bBox = textElement.getBBox();
 
         textElement.remove();
         paper.remove();
@@ -263,11 +255,11 @@ var raphaelRenderUtil = {
      * @param {number} endOpacity endOpacity default is '1'
      * @param {number} duration endOpacity default is '600'
      */
-    animateOpacity: function(element, startOpacity, endOpacity, duration) {
-        var animationDuration = isNumber(duration) ? duration : 600;
-        var animationStartOpacity = isNumber(startOpacity) ? startOpacity : 0;
-        var animationEndOpacity = isNumber(endOpacity) ? endOpacity : 1;
-        var animation = raphael.animation({
+    animateOpacity(element, startOpacity, endOpacity, duration) {
+        const animationDuration = isNumber(duration) ? duration : 600;
+        const animationStartOpacity = isNumber(startOpacity) ? startOpacity : 0;
+        const animationEndOpacity = isNumber(endOpacity) ? endOpacity : 1;
+        const animation = raphael.animation({
             opacity: animationEndOpacity
         }, animationDuration);
 
@@ -288,4 +280,4 @@ function isNumber(numberSuspect) {
     return snippet.isExisty(numberSuspect) && typeof numberSuspect === 'number';
 }
 
-module.exports = raphaelRenderUtil;
+export default raphaelRenderUtil;

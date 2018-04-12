@@ -4,9 +4,7 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
+import chartConst from '../const';
 
 /**
  * Rotate a point around the origin with an angle.
@@ -19,10 +17,9 @@ var chartConst = require('../const');
  * @ignore
  */
 function rotatePointAroundOrigin(centerX, centerY, pointX, pointY, angle) {
-    var rad = angle * (Math.PI / 180);
-
-    var newX = ((pointX - centerX) * Math.cos(rad)) - ((pointY - centerY) * Math.sin(rad));
-    var newY = ((pointX - centerX) * Math.sin(rad)) + ((pointY - centerY) * Math.cos(rad));
+    const rad = angle * (Math.PI / 180);
+    let newX = ((pointX - centerX) * Math.cos(rad)) - ((pointY - centerY) * Math.sin(rad));
+    let newY = ((pointX - centerX) * Math.sin(rad)) + ((pointY - centerY) * Math.cos(rad));
 
     newX += centerX;
     newY += centerY;
@@ -76,8 +73,8 @@ function calculateOpposite(degree, hypotenuse) {
  * @ignore
  */
 function calculateRotatedWidth(degree, width, height) {
-    var centerHalf = calculateAdjacent(degree, width / 2);
-    var sideHalf = calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
+    const centerHalf = calculateAdjacent(degree, width / 2);
+    const sideHalf = calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
 
     return (centerHalf + sideHalf) * 2;
 }
@@ -91,16 +88,18 @@ function calculateRotatedWidth(degree, width, height) {
  * @ignore
  */
 function calculateRotatedHeight(degree, width, height) {
-    var centerHalf = calculateOpposite(degree, width / 2);
-    var sideHalf = calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
+    const centerHalf = calculateOpposite(degree, width / 2);
+    const sideHalf = calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
 
     return (centerHalf + sideHalf) * 2;
 }
 
-module.exports = {
-    rotatePointAroundOrigin: rotatePointAroundOrigin,
-    calculateAdjacent: calculateAdjacent,
-    calculateRotatedHeight: calculateRotatedHeight,
-    calculateRotatedWidth: calculateRotatedWidth,
-    calculateOpposite: calculateOpposite
+const geometric = {
+    rotatePointAroundOrigin,
+    calculateAdjacent,
+    calculateRotatedHeight,
+    calculateRotatedWidth,
+    calculateOpposite
 };
+
+export default geometric;

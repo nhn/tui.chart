@@ -4,16 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-var aps = Array.prototype.slice;
+import snippet from 'tui-code-snippet';
 
 /**
  * DOM Handler.
  * @module domHandler
  * @private */
-var domHandler = {
+const domHandler = {
     /**
      * Create element.
      * @memberOf module:domHandler
@@ -21,8 +18,8 @@ var domHandler = {
      * @param {string} newClass class name
      * @returns {HTMLElement} created element
      */
-    create: function(tag, newClass) {
-        var el = document.createElement(tag);
+    create(tag, newClass) {
+        const el = document.createElement(tag);
 
         if (newClass) {
             this.addClass(el, newClass);
@@ -38,11 +35,12 @@ var domHandler = {
      * @returns {Array} names
      * @private
      */
-    _getClassNames: function(el) {
-        var className, classNames;
+    _getClassNames(el) {
+        let className;
+        let classNames;
 
         if (el.classList) {
-            classNames = aps.call(el.classList);
+            classNames = [...el.classList];
         } else {
             className = el.className || '';
             classNames = className && snippet.isString(className) ? className.split(' ') : [];
@@ -57,15 +55,13 @@ var domHandler = {
      * @param {HTMLElement} el target element
      * @param {string} newClass add class name
      */
-    addClass: function(el, newClass) {
-        var classNames, index;
-
+    addClass(el, newClass) {
         if (!el || !newClass) {
             return;
         }
 
-        classNames = this._getClassNames(el);
-        index = snippet.inArray(newClass, classNames);
+        const classNames = this._getClassNames(el);
+        const index = snippet.inArray(newClass, classNames);
 
         if (index > -1) {
             return;
@@ -81,9 +77,9 @@ var domHandler = {
      * @param {HTMLElement} el target element
      * @param {string} rmClass remove class name
      */
-    removeClass: function(el, rmClass) {
-        var classNames = this._getClassNames(el),
-            index = snippet.inArray(rmClass, classNames);
+    removeClass(el, rmClass) {
+        const classNames = this._getClassNames(el);
+        const index = snippet.inArray(rmClass, classNames);
 
         if (index === -1) {
             return;
@@ -100,9 +96,9 @@ var domHandler = {
      * @param {string} findClass target css class
      * @returns {boolean} has class
      */
-    hasClass: function(el, findClass) {
-        var classNames = this._getClassNames(el);
-        var index = snippet.inArray(findClass, classNames);
+    hasClass(el, findClass) {
+        const classNames = this._getClassNames(el);
+        const index = snippet.inArray(findClass, classNames);
 
         return index > -1;
     },
@@ -115,9 +111,9 @@ var domHandler = {
      * @param {string} lastClass last css class
      * @returns {HTMLElement} result element
      */
-    findParentByClass: function(el, className, lastClass) {
-        var parent = el.parentNode,
-            result;
+    findParentByClass(el, className, lastClass) {
+        const parent = el.parentNode;
+        let result;
 
         if (!parent) {
             result = null;
@@ -138,13 +134,13 @@ var domHandler = {
      * @param {HTMLElement} container container element
      * @param {HTMLElement} children child element
      */
-    append: function(container, children) {
+    append(container, children) {
         if (!container || !children) {
             return;
         }
         children = snippet.isArray(children) ? children : [children];
 
-        snippet.forEachArray(children, function(child) {
+        snippet.forEachArray(children, child => {
             if (!child) {
                 return;
             }
@@ -153,4 +149,4 @@ var domHandler = {
     }
 };
 
-module.exports = domHandler;
+export default domHandler;
