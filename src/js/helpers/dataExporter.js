@@ -30,7 +30,7 @@ const dataExporter = {
         const chartData2DArray = _get2DArrayFromRawData(rawData);
         const content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
 
-        downloader.execDownload(fileName, extension, content);
+        downloader(fileName, extension, content);
     },
 
     /**

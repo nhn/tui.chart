@@ -13,13 +13,13 @@ import snippet from 'tui-code-snippet';
  * @param {?object} context target context
  * @returns {*} minimum value
  */
-const min = function(arr, condition, context) {
+function min(arr, condition, context) {
     let result;
 
     if (!condition) {
         result = Math.min(...arr);
     } else {
-        ({result} = arr);
+        ([result] = arr);
         const rest = arr.slice(1);
         let minValue = condition.call(context, result, 0);
 
@@ -33,7 +33,7 @@ const min = function(arr, condition, context) {
     }
 
     return result;
-};
+}
 
 /**
  * Pick maximum value from value array.
@@ -43,7 +43,7 @@ const min = function(arr, condition, context) {
  * @param {?object} [context] target context
  * @returns {*} maximum value
  */
-const max = function(arr, condition, context) {
+function max(arr, condition, context) {
     let result;
 
     if (!condition) {
@@ -62,7 +62,7 @@ const max = function(arr, condition, context) {
     }
 
     return result;
-};
+}
 
 /**
  * Whether one of them is true or not.
@@ -72,7 +72,7 @@ const max = function(arr, condition, context) {
  * @param {?object} context target context
  * @returns {boolean} result boolean
  */
-const any = function(collection, condition, context) {
+function any(collection, condition, context) {
     let result = false;
     snippet.forEach(collection, (item, key) => {
         if (condition.call(context, item, key, collection)) {
@@ -83,7 +83,7 @@ const any = function(collection, condition, context) {
     });
 
     return result;
-};
+}
 
 /**
  * All of them is true or not.
@@ -93,7 +93,7 @@ const any = function(collection, condition, context) {
  * @param {?object} context target context
  * @returns {boolean} result boolean
  */
-const all = function(collection, condition, context) {
+function all(collection, condition, context) {
     let result = !!(collection || []).length;
     snippet.forEach(collection, (item, key) => {
         if (!condition.call(context, item, key, collection)) {
@@ -104,7 +104,7 @@ const all = function(collection, condition, context) {
     });
 
     return result;
-};
+}
 
 /**
  * Make unique values.
@@ -115,7 +115,7 @@ const all = function(collection, condition, context) {
  * @param {?object} context target context
  * @returns {Array} unique values
  */
-const unique = function(arr, sorted, iteratee, context) {
+function unique(arr, sorted, iteratee, context) {
     const result = [];
 
     if (!snippet.isBoolean(sorted)) {
@@ -147,7 +147,7 @@ const unique = function(arr, sorted, iteratee, context) {
     }
 
     return result;
-};
+}
 
 /**
  * Array pivot.
@@ -155,7 +155,7 @@ const unique = function(arr, sorted, iteratee, context) {
  * @param {Array.<Array>} arr2d target 2d array
  * @returns {Array.<Array>} pivoted 2d array
  */
-const pivot = function(arr2d) {
+function pivot(arr2d) {
     const result = [];
     const len = max(arr2d.map(arr => arr.length));
 
@@ -169,7 +169,7 @@ const pivot = function(arr2d) {
     });
 
     return result;
-};
+}
 
 const arrayUtil = {
     min,

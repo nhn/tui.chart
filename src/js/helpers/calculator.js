@@ -153,7 +153,7 @@ const calculator = {
  * @param {string | number} value target value
  * @returns {number} result length
  */
-const getDecimalLength = function(value) {
+const getDecimalLength = value => {
     const valueArr = String(value).split('.');
 
     return valueArr.length === 2 ? valueArr[1].length : 0;
@@ -165,7 +165,7 @@ const getDecimalLength = function(value) {
  * @param {...Array} target values
  * @returns {number} multiple num
  */
-const findMultipleNum = function(...args) {
+const findMultipleNum = (...args) => {
     const underPointLens = args.map(value => calculator.getDecimalLength(value));
     const underPointLen = arrayUtil.max(underPointLens);
 
@@ -179,7 +179,7 @@ const findMultipleNum = function(...args) {
  * @param {number} modNum mod num
  * @returns {number} result mod
  */
-const mod = function(target, modNum) {
+const mod = (target, modNum) => {
     const multipleNum = calculator.findMultipleNum(modNum);
     let result;
 
@@ -199,7 +199,7 @@ const mod = function(target, modNum) {
  * @param {number} b target b
  * @returns {number}
  */
-const add = function(a, b) {
+const add = (a, b) => {
     const multipleNum = calculator.findMultipleNum(a, b);
 
     return ((a * multipleNum) + (b * multipleNum)) / multipleNum;
@@ -212,7 +212,7 @@ const add = function(a, b) {
  * @param {number} b target b
  * @returns {number}
  */
-const subtract = function(a, b) {
+const subtract = (a, b) => {
     const multipleNum = calculator.findMultipleNum(a, b);
 
     return ((a * multipleNum) - (b * multipleNum)) / multipleNum;
@@ -224,7 +224,7 @@ const subtract = function(a, b) {
  * @param {number} b target b
  * @returns {number}
  */
-const multiply = function(a, b) {
+const multiply = (a, b) => {
     const multipleNum = calculator.findMultipleNum(a, b);
 
     return ((a * multipleNum) * (b * multipleNum)) / (multipleNum * multipleNum);
@@ -237,7 +237,7 @@ const multiply = function(a, b) {
  * @param {number} b target b
  * @returns {number}
  */
-const divide = function(a, b) {
+const divide = (a, b) => {
     const multipleNum = calculator.findMultipleNum(a, b);
 
     return (a * multipleNum) / (b * multipleNum);
@@ -249,7 +249,7 @@ const divide = function(a, b) {
  * @param {Array.<number>} values target values
  * @returns {number} result value
  */
-const sum = function(values) {
+const sum = values => {
     const copyArr = values.slice();
     copyArr.unshift(0);
 
@@ -262,7 +262,7 @@ const sum = function(values) {
  * @param {Array.<number>} value target value
  * @returns {number} result value
  */
-const divisors = function(value) {
+const divisors = value => {
     const result = [];
     for (let a = 2, b; a * a <= value; a += 1) {
         if (value % a === 0) {
