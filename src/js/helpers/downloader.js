@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import arrayUtil from '../helpers/arrayUtil';
+import chartConst from '../const';
 
-var snippet = require('tui-code-snippet');
-var arrayUtil = require('../helpers/arrayUtil');
-var chartConst = require('../const');
-
-var DOWNLOAD_HANDLERS = {
+const DOWNLOAD_HANDLERS = {
     downloadAttribute: downloadWithAnchorElementDownloadAttribute,
     msSaveOrOpenBlob: downloadWithMsSaveOrOpenBlob
 };
@@ -21,9 +19,9 @@ var DOWNLOAD_HANDLERS = {
  * @ignore
  */
 function getDownloadMethod() {
-    var isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
-    var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
-    var method;
+    const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+    const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+    let method;
 
     if (isMsSaveOrOpenBlobSupported) {
         method = 'msSaveOrOpenBlob';
@@ -43,27 +41,25 @@ function getDownloadMethod() {
  * @ignore
  */
 function base64toBlob(base64String) {
-    var contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
-    var sliceSize = 1024;
-    var byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
-    var byteArrays = [];
-    var offset, slice, byteNumbers, i, byteArray, resultBlob;
+    const contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
+    const sliceSize = 1024;
+    const byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
+    const byteArrays = [];
 
-    for (offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        slice = byteCharacters.slice(offset, offset + sliceSize);
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
 
-        byteNumbers = new Array(slice.length);
-
-        for (i = 0; i < slice.length; i += 1) {
+        for (let i = 0; i < slice.length; i += 1) {
             byteNumbers[i] = slice.charCodeAt(i);
         }
 
-        byteArray = new window.Uint8Array(byteNumbers);
+        const byteArray = new window.Uint8Array(byteNumbers);
 
         byteArrays.push(byteArray);
     }
 
-    resultBlob = new Blob(byteArrays, {type: contentType});
+    const resultBlob = new Blob(byteArrays, {type: contentType});
 
     return resultBlob;
 }
@@ -75,9 +71,7 @@ function base64toBlob(base64String) {
  * @ignore
  */
 function isImageExtension(extension) {
-    return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, function(imageExtension) {
-        return extension === imageExtension;
-    });
+    return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, imageExtension => extension === imageExtension);
 }
 
 /**
@@ -88,9 +82,9 @@ function isImageExtension(extension) {
  * @ignore
  */
 function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
-    var blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
+    const blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
 
-    window.navigator.msSaveOrOpenBlob(blobObject, fileName + '.' + extension);
+    window.navigator.msSaveOrOpenBlob(blobObject, `${fileName}.${extension}`);
 }
 
 /**
@@ -101,14 +95,12 @@ function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
  * @ignore
  */
 function downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
-    var anchorElement;
-
     if (content) {
-        anchorElement = document.createElement('a');
+        const anchorElement = document.createElement('a');
 
         anchorElement.href = content;
         anchorElement.target = '_blank';
-        anchorElement.download = fileName + '.' + extension;
+        anchorElement.download = `${fileName}.${extension}`;
 
         document.body.appendChild(anchorElement);
 
@@ -125,13 +117,13 @@ function downloadWithAnchorElementDownloadAttribute(fileName, extension, content
  * @ignore
  */
 function execDownload(fileName, extension, content) {
-    var downloadMethod = getDownloadMethod();
+    const downloadMethod = getDownloadMethod();
 
     if (downloadMethod && snippet.isString(content)) {
         DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content);
     }
 }
 
-module.exports = {
-    execDownload: execDownload
+export default {
+    execDownload
 };

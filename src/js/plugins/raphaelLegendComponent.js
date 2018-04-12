@@ -4,19 +4,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
-var raphaelRenderUtil = require('../plugins/raphaelRenderUtil');
-var arrayUtil = require('../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
-
-var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
-var PAGINATION_POSITION_HEIGHT = 8;
-var PAGINATION_POSITION_WIDTH = 10;
-var PAGINATION_POSITION_HALP_WIDTH = PAGINATION_POSITION_WIDTH / 2;
-var PAGINATION_POSITION_PADDING = 3;
-var RaphaelLegendComponent;
+import chartConst from '../const';
+import raphaelRenderUtil from '../plugins/raphaelRenderUtil';
+import arrayUtil from '../helpers/arrayUtil';
+import calculator from '../helpers/calculator';
+import snippet from 'tui-code-snippet';
+const UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
+const PAGINATION_POSITION_HEIGHT = 8;
+const PAGINATION_POSITION_WIDTH = 10;
+const PAGINATION_POSITION_HALP_WIDTH = PAGINATION_POSITION_WIDTH / 2;
+const PAGINATION_POSITION_PADDING = 3;
 
 /**
  * Get sum of icon and left padding width
@@ -27,9 +24,9 @@ function getIconWidth() {
     return chartConst.LEGEND_ICON_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING;
 }
 
-RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
-
-    init: function() {
+// const RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
+class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */ 
+    constructor() {
         /**
          * @type {number}
          * @private
@@ -55,69 +52,70 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
          * @private
          */
         this._showCheckbox = true;
-    },
+    }
 
     /**
      * @param {Array.<object>} legendData Array of legend item data
      * @private
      */
-    _renderLegendItems: function(legendData) {
-        var self = this;
-        var labelPaddingLeft = chartConst.LEGEND_LABEL_LEFT_PADDING;
-        var position = snippet.extend({}, this.basePosition);
+    _renderLegendItems(legendData) {
+        const labelPaddingLeft = chartConst.LEGEND_LABEL_LEFT_PADDING;
+        const position = Object.assign({}, this.basePosition);
 
-        snippet.forEach(legendData, function(legendDatum, index) {
-            var iconType = legendDatum.iconType;
-            var legendIndex = legendDatum.index;
-            var legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
-            var isUnselected = legendDatum.isUnselected;
-            var labelHeight = legendDatum.labelHeight;
-            var checkboxData = legendDatum.checkbox;
-            var predicatedLegendWidth = position.left + self._calculateSingleLegendWidth(legendIndex, iconType);
-            var isNeedBreakLine = (predicatedLegendWidth >= self.paper.width);
+        legendData.forEach((legendDatum, index) => {
+            const {
+                iconType,
+                index: legendIndex,
+                isUnselected,
+                labelHeight,
+                checkbox: checkboxData
+            } = legendDatum;
+            const legendColor = legendDatum.colorByPoint ? '#aaa' : legendDatum.theme.color;
+            const predicatedLegendWidth = position.left + this._calculateSingleLegendWidth(legendIndex, iconType);
+            const isNeedBreakLine = (predicatedLegendWidth >= this.paper.width);
 
-            if (self.isHorizontal && isNeedBreakLine) {
-                position.top += (self._legendItemHeight + chartConst.LABEL_PADDING_TOP);
-                position.left = self.basePosition.left;
+            if (this.isHorizontal && isNeedBreakLine) {
+                position.top += (this._legendItemHeight + chartConst.LABEL_PADDING_TOP);
+                position.left = this.basePosition.left;
             }
 
-            if (self._showCheckbox) {
-                self._renderCheckbox(position, {
+            if (this._showCheckbox) {
+                this._renderCheckbox(position, {
                     isChecked: checkboxData.checked,
-                    legendIndex: legendIndex,
-                    legendSet: self.legendSet
+                    legendIndex,
+                    legendSet: this.legendSet
                 });
 
-                position.left += (self._checkBoxWidth + labelPaddingLeft);
+                position.left += (this._checkBoxWidth + labelPaddingLeft);
             }
 
-            self._renderIcon(position, {
-                legendColor: legendColor,
-                iconType: iconType,
-                labelHeight: labelHeight,
-                isUnselected: isUnselected,
-                legendIndex: legendIndex,
-                legendSet: self.legendSet
+            this._renderIcon(position, {
+                legendColor,
+                iconType,
+                labelHeight,
+                isUnselected,
+                legendIndex,
+                legendSet: this.legendSet
             });
 
             position.left += chartConst.LEGEND_ICON_WIDTH + labelPaddingLeft;
 
-            self._renderLabel(position, {
+            this._renderLabel(position, {
                 labelText: legendDatum.label,
-                labelHeight: labelHeight,
-                isUnselected: isUnselected,
-                legendIndex: legendIndex,
-                legendSet: self.legendSet
+                labelHeight,
+                isUnselected,
+                legendIndex,
+                legendSet: this.legendSet
             });
 
-            if (self.isHorizontal) {
-                position.left += self.labelWidths[index] + chartConst.LEGEND_H_LABEL_RIGHT_PADDING;
+            if (this.isHorizontal) {
+                position.left += this.labelWidths[index] + chartConst.LEGEND_H_LABEL_RIGHT_PADDING;
             } else {
-                position.left = self.basePosition.left;
-                position.top += self._legendItemHeight + chartConst.LINE_MARGIN_TOP;
+                position.left = this.basePosition.left;
+                position.top += this._legendItemHeight + chartConst.LINE_MARGIN_TOP;
             }
         });
-    },
+    }
 
     /**
      * @param {Array.<object>} legendData Array of legend item data
@@ -125,25 +123,23 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      * @returns {Array.<object>}
      * @private
      */
-    _getLegendData: function(legendData, sliceIndex) {
-        var positionTop = this.basePosition.top;
-        var totalHeight = this.dimension.height;
-        var chartHeight = this.paper.height;
-        var resultLegendData = legendData;
-        var pageHeight, singleItemHeight, visibleItemCount;
+    _getLegendData(legendData, sliceIndex) {
+        const positionTop = this.basePosition.top;
+        const totalHeight = this.dimension.height;
+        const chartHeight = this.paper.height;
+        let resultLegendData = legendData;
 
         if (!this.isHorizontal && totalHeight + (positionTop * 2) > chartHeight) {
-            pageHeight = chartHeight - (positionTop * 2);
             this._legendItemHeight = Math.max(legendData[0].labelHeight, chartConst.LEGEND_CHECKBOX_SIZE);
-            singleItemHeight = (this._legendItemHeight + chartConst.LINE_MARGIN_TOP);
-
-            visibleItemCount = Math.floor(pageHeight / singleItemHeight);
+            const pageHeight = chartHeight - (positionTop * 2);
+            const singleItemHeight = (this._legendItemHeight + chartConst.LINE_MARGIN_TOP);
+            const visibleItemCount = Math.floor(pageHeight / singleItemHeight);
 
             resultLegendData = legendData.slice((sliceIndex - 1) * visibleItemCount, sliceIndex * visibleItemCount);
         }
 
         return resultLegendData;
-    },
+    }
 
     /**
      * Render legend
@@ -157,9 +153,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      *     @param {object} data.eventBus event bus
      * @returns {object} paper
      */
-    render: function(data) {
-        var legendData, legendHeight;
-
+    render(data) {
         this.eventBus = data.eventBus;
         this.paper = data.paper;
         this.dimension = data.dimension;
@@ -174,12 +168,12 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
             this._showCheckbox = snippet.isExisty(data.legendData[0].checkbox);
             this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
 
-            legendData = this._getLegendData(data.legendData, this._currentPageCount);
+            const legendData = this._getLegendData(data.legendData, this._currentPageCount);
 
             this._renderLegendItems(legendData);
 
             if (!this.isHorizontal && legendData && legendData.length < data.legendData.length) {
-                legendHeight = this.paper.height - (this.basePosition.top * 2);
+                const legendHeight = this.paper.height - (this.basePosition.top * 2);
 
                 this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
 
@@ -191,14 +185,14 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         }
 
         return this.legendSet;
-    },
+    }
 
     /**
      * @param {string} direction direction string of paginate 'next' or 'previous'
      * @private
      */
-    _paginateLegendAreaTo: function(direction) {
-        var pageNumber = this._currentPageCount;
+    _paginateLegendAreaTo(direction) {
+        let pageNumber = this._currentPageCount;
 
         this._removeLegendItems();
 
@@ -209,51 +203,62 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         }
 
         this._renderLegendItems(this._getLegendData(this.originalLegendData, pageNumber));
-    },
+    }
 
-    _removeLegendItems: function() {
-        this.legendSet.forEach(function(legendItem) {
-            snippet.forEach(legendItem.events, function(event) {
+    _removeLegendItems() {
+        this.legendSet.forEach(legendItem => {
+            const events = legendItem.events || [];
+            events.forEach(event => {
                 event.unbind();
             });
             legendItem.remove();
         });
-    },
+    }
 
     /**
      * @param {{top: number, left: number}} position legend area position
      * @param {{height: number, width: number}} dimension legend area dimension
      * @private
      */
-    _renderPaginationArea: function(position, dimension) {
-        var self = this;
-        var BUTTON_WIDTH = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
-        var BUTTON_PADDING_RIGHT = chartConst.LEGEND_PAGINATION_BUTTON_PADDING_RIGHT;
-        var controllerPositionTop = position.top + dimension.height - chartConst.LEGEND_AREA_V_PADDING;
-        var controllerPositionLeft = position.left - chartConst.LEGEND_AREA_H_PADDING;
-        var leftButtonPositionLeft = controllerPositionLeft + chartConst.LEGEND_AREA_H_PADDING;
-        var rightButtonPositionLeft = leftButtonPositionLeft + (BUTTON_PADDING_RIGHT + BUTTON_WIDTH);
-        var lowerArrowPath = ['M', rightButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
+    _renderPaginationArea(position, dimension) {
+        const {
+            LEGEND_PAGINATION_BUTTON_WIDTH,
+            LEGEND_PAGINATION_BUTTON_PADDING_RIGHT,
+            LEGEND_AREA_V_PADDING,
+            LEGEND_AREA_H_PADDING
+        } = chartConst;
+        const controllerPositionTop = position.top + dimension.height - LEGEND_AREA_V_PADDING;
+        const controllerPositionLeft = position.left - LEGEND_AREA_H_PADDING;
+        const leftButtonPositionLeft = controllerPositionLeft + LEGEND_AREA_H_PADDING;
+        const rightButtonPositionLeft = calculator.sum([
+            leftButtonPositionLeft,
+            LEGEND_PAGINATION_BUTTON_PADDING_RIGHT,
+            LEGEND_PAGINATION_BUTTON_WIDTH
+        ]);
+        const lowerArrowPath = [
+            'M', rightButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
             'L', (rightButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
-            'L', (rightButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4)].join('');
-        var upperArrowPath = ['M', leftButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
+            'L', (rightButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4)
+        ].join('');
+        const upperArrowPath = [
+            'M', leftButtonPositionLeft + 5, ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4),
             'L', (leftButtonPositionLeft + PAGINATION_POSITION_HALP_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_PADDING + 4),
-            'L', (leftButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4)].join('');
+            'L', (leftButtonPositionLeft + PAGINATION_POSITION_WIDTH + 5), ',', (controllerPositionTop + PAGINATION_POSITION_HEIGHT + 4)
+        ].join('');
 
-        var prevRect = this._renderPaginationRect({
+        const prevRect = this._renderPaginationRect({
             top: controllerPositionTop,
             left: leftButtonPositionLeft
         });
-        var prevArrow = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 2);
+        const prevArrow = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 2);
 
-        var nextRect = this._renderPaginationRect({
+        const nextRect = this._renderPaginationRect({
             top: controllerPositionTop,
             left: rightButtonPositionLeft
         });
-        var nextArrow = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 2);
-
-        var prevButtonSet = this.paper.set();
-        var nextButtonSet = this.paper.set();
+        const nextArrow = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 2);
+        const prevButtonSet = this.paper.set();
+        const nextButtonSet = this.paper.set();
 
         prevRect.className = 'tui-chart-icon';
         prevButtonSet.push(prevRect);
@@ -263,34 +268,34 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         nextButtonSet.push(nextRect);
         nextButtonSet.push(nextArrow);
 
-        prevButtonSet.click(function() {
-            if (self._currentPageCount > 1) {
-                self._paginateLegendAreaTo('previous');
-                self._currentPageCount -= 1;
+        prevButtonSet.click(() => {
+            if (this._currentPageCount > 1) {
+                this._paginateLegendAreaTo('previous');
+                this._currentPageCount -= 1;
             }
         });
 
-        nextButtonSet.click(function() {
-            if (self._currentPageCount < self.availablePageCount) {
-                self._paginateLegendAreaTo('next');
-                self._currentPageCount += 1;
+        nextButtonSet.click(() => {
+            if (this._currentPageCount < this.availablePageCount) {
+                this._paginateLegendAreaTo('next');
+                this._currentPageCount += 1;
             }
         });
-    },
+    }
 
     /**
      * @param {object} position - position top, left
      * @returns {SVGElement} - svg element
      */
-    _renderPaginationRect: function(position) {
-        var BUTTON_SIZE = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
-        var bound = {
+    _renderPaginationRect(position) {
+        const BUTTON_SIZE = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
+        const bound = {
             left: position.left,
             top: position.top,
             width: BUTTON_SIZE,
             height: BUTTON_SIZE
         };
-        var rect = raphaelRenderUtil.renderRect(this.paper, bound, {
+        const rect = raphaelRenderUtil.renderRect(this.paper, bound, {
             fill: '#f4f4f4',
             rx: '1px',
             ry: '1px',
@@ -298,7 +303,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         });
 
         return rect;
-    },
+    }
 
     /**
      * Make labels width.
@@ -307,16 +312,16 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      * @param {number} maxWidth user option legend max width size
      * @returns {Array.<number>} label widths
      */
-    makeLabelWidths: function(legendData, theme, maxWidth) {
-        return snippet.map(legendData, function(item) {
-            var labelWidth = raphaelRenderUtil.getRenderedTextSize(item.label, theme.fontSize, theme.fontFamily).width;
+    makeLabelWidths(legendData, theme, maxWidth) {
+        return snippet.map(legendData, item => {
+            let labelWidth = raphaelRenderUtil.getRenderedTextSize(item.label, theme.fontSize, theme.fontFamily).width;
             if (maxWidth && labelWidth > maxWidth) {
                 labelWidth = maxWidth;
             }
 
             return labelWidth + chartConst.LEGEND_LABEL_LEFT_PADDING;
         });
-    },
+    }
 
     /**
      * Get rendered label height
@@ -324,9 +329,9 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      * @param {object} theme theme object
      * @returns {number}
      */
-    getRenderedLabelHeight: function(labelText, theme) {
+    getRenderedLabelHeight(labelText, theme) {
         return raphaelRenderUtil.getRenderedTextSize(labelText, theme.fontSize, theme.fontFamily).height;
-    },
+    }
 
     /**
      * Render label text and attach event
@@ -339,15 +344,13 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      *     @param {Array.<object>} data.legendSet legend set
      * @private
      */
-    _renderLabel: function(position, data) {
-        var eventBus = this.eventBus;
-        var labelTheme = this.labelTheme;
-        var pos = {
+    _renderLabel(position, data) {
+        const {eventBus, labelTheme} = this;
+        const pos = {
             left: position.left,
             top: position.top + (this._legendItemHeight / 2)
         };
-
-        var attributes = {
+        const attributes = {
             fill: labelTheme.color,
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
@@ -355,7 +358,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
             opacity: data.isUnselected ? UNSELECTED_LEGEND_LABEL_OPACITY : 1,
             'text-anchor': 'start'
         };
-        var label = raphaelRenderUtil.renderText(this.paper, pos, data.labelText, attributes);
+        const label = raphaelRenderUtil.renderText(this.paper, pos, data.labelText, attributes);
 
         label.data('index', data.legendIndex);
 
@@ -364,29 +367,32 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
 
         data.legendSet.push(label);
 
-        label.click(function() {
+        label.click(() => {
             eventBus.fire('labelClicked', data.legendIndex);
         });
-    },
+    }
 
     /**
      * Render checkbox
      * @param {object} position left, top
      * @param {object} data rendering data
      */
-    _renderCheckbox: function(position, data) {
-        var self = this;
-        var checkboxSet, checkboxElement, checkElement;
-        var left = position.left;
-        var top = position.top + ((this._legendItemHeight - this._checkBoxHeight) / 2);
-        var checkboxPathSize = this._checkBoxWidth / 3;
-        var checkboxPathHalpSize = this._checkBoxWidth / 5.7;
+    _renderCheckbox(position, data) {
+        const {left} = position;
+        const top = position.top + ((this._legendItemHeight - this._checkBoxHeight) / 2);
+        const checkboxPathSize = this._checkBoxWidth / 3;
+        const checkboxPathHalpSize = this._checkBoxWidth / 5.7;
+        const vPathString = `
+            M${((this._checkBoxWidth * 0.25) + left)}
+            ,${((this._checkBoxHeight * 0.5) + top)}
+            l${checkboxPathHalpSize}
+            ,${checkboxPathHalpSize}
+            l${checkboxPathSize}
+            ,-${checkboxPathSize}
+        `.replace(/\n/g, '');
 
-        var vPathString = 'M' + ((this._checkBoxWidth * 0.25) + left) + ',' + ((this._checkBoxHeight * 0.5) + top) +
-            'l' + checkboxPathHalpSize + ',' + checkboxPathHalpSize + ' l' + checkboxPathSize + ',-' + checkboxPathSize;
-
-        checkboxSet = this.paper.set();
-        checkboxElement = this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 0).attr({
+        const checkboxSet = this.paper.set();
+        const checkboxElement = this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 0).attr({
             fill: '#fff',
             stroke: '#aaa',
             'stroke-width': 1
@@ -396,7 +402,7 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         checkboxSet.push(checkboxElement);
 
         if (data.isChecked) {
-            checkElement = this.paper.path(vPathString).attr({
+            const checkElement = this.paper.path(vPathString).attr({
                 'stroke': '#555',
                 'stroke-width': 2
             });
@@ -407,14 +413,14 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         }
 
         checkboxSet.data('index', data.legendIndex);
-        checkboxSet.click(function() {
-            self.eventBus.fire('checkboxClicked', data.legendIndex);
+        checkboxSet.click(() => {
+            this.eventBus.fire('checkboxClicked', data.legendIndex);
         });
 
-        checkboxSet.forEach(function(checkbox) {
+        checkboxSet.forEach(checkbox => {
             data.legendSet.push(checkbox);
         });
-    },
+    }
 
     /**
      * Render legend icon and attach event
@@ -428,10 +434,8 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      *     @param {Array.<object>} data.legendSet legend set
      * @private
      */
-    _renderIcon: function(position, data) {
-        var self = this;
-        var icon;
-
+    _renderIcon(position, data) {
+        let icon;
         this.paper.setStart();
 
         if ((data.iconType === 'line' || data.iconType === 'radial') && this.paper.canvas.transform) {
@@ -458,17 +462,17 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
 
         icon.data('icon', data.iconType);
         icon.data('index', data.legendIndex);
-        icon.click(function() {
-            self.eventBus.fire('labelClicked', data.legendIndex);
+        icon.click(() => {
+            this.eventBus.fire('labelClicked', data.legendIndex);
         });
 
         data.legendSet.push(icon);
-    },
+    }
 
-    selectLegend: function(index, legendSet) {
-        legendSet.forEach(function(element) {
-            var indexData = element.data('index');
-            var attributeName = element.data('icon') === 'line' ? 'stroke-opacity' : 'opacity';
+    selectLegend(index, legendSet) {
+        legendSet.forEach(element => {
+            const indexData = element.data('index');
+            const attributeName = element.data('icon') === 'line' ? 'stroke-opacity' : 'opacity';
 
             if (snippet.isNull(indexData) || snippet.isUndefined(indexData)) {
                 element.attr(attributeName, 1);
@@ -480,15 +484,15 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
                 }
             }
         });
-    },
+    }
 
     /**
      * get checkbox area's width depends on checkbox visibility
      * @returns {number} - checkbox region's width
      */
-    _getCheckboxWidth: function() {
+    _getCheckboxWidth() {
         return this._showCheckbox ? (this._checkBoxWidth + chartConst.LEGEND_LABEL_LEFT_PADDING) : 0;
-    },
+    }
 
     /**
      * Get width of a label when parameter is given.
@@ -496,8 +500,8 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
      * @param {number} [index] - legend index
      * @returns {number} - maximum label width  label width
      */
-    _getLabelWidth: function(index) {
-        var labelWidth;
+    _getLabelWidth(index) {
+        let labelWidth;
         if (index) {
             labelWidth = this.labelWidths[index] || 0;
         } else {
@@ -505,37 +509,37 @@ RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.p
         }
 
         return labelWidth;
-    },
+    }
 
     /**
      * calulate a whole legend width before start rendering
      * @returns {number} - calculate label
      */
-    _calculateLegendWidth: function() {
+    _calculateLegendWidth() {
         return this._calculateSingleLegendWidth();
-    },
+    }
 
     /**
      * calculate a single legend width of index `legendIndex`
      * @param {number} legendIndex - index of legend label
      * @returns {number} - calculate single legend width
      */
-    _calculateSingleLegendWidth: function(legendIndex) {
+    _calculateSingleLegendWidth(legendIndex) {
         return chartConst.LEGEND_AREA_H_PADDING
             + this._getCheckboxWidth()
             + getIconWidth()
             + this._getLabelWidth(legendIndex)
             + chartConst.LEGEND_AREA_H_PADDING;
-    },
+    }
 
     /**
      * set component dimension by comparaing label height and icon height
      * @param {number} labelHeight - label height
      */
-    _setComponentDimensionsBaseOnLabelHeight: function(labelHeight) {
+    _setComponentDimensionsBaseOnLabelHeight(labelHeight) {
         this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_CHECKBOX_SIZE);
         this._checkBoxWidth = this._checkBoxHeight = chartConst.LEGEND_CHECKBOX_SIZE;
     }
-});
+}
 
-module.exports = RaphaelLegendComponent;
+export default RaphaelLegendComponent;

@@ -3,18 +3,15 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-
-var bindHandlerMap = {};
+const bindHandlerMap = {};
 
 /**
  * Event listener.
  * @module eventListener
  * @private */
-var eventListener = {
+const eventListener = {
     /**
      * Add event listener for IE.
      * @memberOf module:eventListener
@@ -24,17 +21,17 @@ var eventListener = {
      * @param {?object} context context for callback
      * @private
      */
-    _attachEvent: function(target, type, handler, context) {
-        var bindHandler;
+    _attachEvent(target, type, handler, context) {
+        let bindHandler;
 
         if (context) {
-            bindHandler = snippet.bind(handler, context);
+            bindHandler = handler.bind(context);
         } else {
             bindHandler = handler;
         }
 
         bindHandlerMap[type + handler] = bindHandler;
-        target.attachEvent('on' + type, bindHandler);
+        target.attachEvent(`on${type}`, bindHandler);
     },
 
     /**
@@ -46,8 +43,8 @@ var eventListener = {
      * @param {object} [context] - context for handler
      * @private
      */
-    _addEventListener: function(target, type, handler, context) {
-        var bindHandler;
+    _addEventListener(target, type, handler, context) {
+        let bindHandler;
 
         if (context) {
             bindHandler = snippet.bind(handler, context);
@@ -69,8 +66,8 @@ var eventListener = {
      * @param {object} [context] - context for handler
      * @private
      */
-    _bindEvent: function(target, type, handler, context) {
-        var bindEvent;
+    _bindEvent(target, type, handler, context) {
+        let bindEvent;
 
         if ('addEventListener' in target) {
             bindEvent = this._addEventListener;
@@ -90,8 +87,8 @@ var eventListener = {
      * @param {function | object} [handler] - handler or context
      * @param {object} [context] - context
      */
-    on: function(target, types, handler, context) {
-        var handlerMap = {};
+    on(target, types, handler, context) {
+        let handlerMap = {};
         if (snippet.isString(types)) {
             handlerMap[types] = handler;
         } else {
@@ -99,7 +96,7 @@ var eventListener = {
             context = handler;
         }
 
-        snippet.forEach(handlerMap, function(_handler, type) {
+        snippet.forEach(handlerMap, (_handler, type) => {
             eventListener._bindEvent(target, type, _handler, context);
         });
     },
@@ -112,9 +109,9 @@ var eventListener = {
      * @param {function} handler - handler
      * @private
      */
-    _detachEvent: function(target, type, handler) {
+    _detachEvent(target, type, handler) {
         if (bindHandlerMap[type + handler]) {
-            target.detachEvent('on' + type, bindHandlerMap[type + handler]);
+            target.detachEvent(`on${type}`, bindHandlerMap[type + handler]);
             delete bindHandlerMap[type + handler];
         }
     },
@@ -127,7 +124,7 @@ var eventListener = {
      * @param {function} handler - handler
      * @private
      */
-    _removeEventListener: function(target, type, handler) {
+    _removeEventListener(target, type, handler) {
         target.removeEventListener(type, bindHandlerMap[type + handler]);
         delete bindHandlerMap[type + handler];
     },
@@ -140,8 +137,8 @@ var eventListener = {
      * @param {function} handler - handler
      * @private
      */
-    _unbindEvent: function(target, type, handler) {
-        var unbindEvent;
+    _unbindEvent(target, type, handler) {
+        let unbindEvent;
         if ('removeEventListener' in target) {
             unbindEvent = eventListener._removeEventListener;
         } else if ('detachEvent' in target) {
@@ -159,18 +156,18 @@ var eventListener = {
      * @param {string | object} types - type or map of type and handler
      * @param {function} [handler] - handler
      */
-    off: function(target, types, handler) {
-        var handlerMap = {};
+    off(target, types, handler) {
+        let handlerMap = {};
         if (snippet.isString(types)) {
             handlerMap[types] = handler;
         } else {
             handlerMap = types;
         }
 
-        snippet.forEach(handlerMap, function(_handler, type) {
+        snippet.forEach(handlerMap, (_handler, type) => {
             eventListener._unbindEvent(target, type, _handler);
         });
     }
 };
 
-module.exports = eventListener;
+export default eventListener;

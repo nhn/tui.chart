@@ -4,10 +4,6 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-
 module.exports = {
     /**
      * This is template maker.
@@ -20,11 +16,12 @@ module.exports = {
      *   console.log(result); // <span>John</span>
      *
      */
-    template: function(html) {
+    template(html) {
         return function(data) {
-            var result = html;
-            snippet.forEach(data, function(value, key) {
-                var regExp = new RegExp('{{\\s*' + key + '\\s*}}', 'g');
+            let result = html;
+
+            Object.entries(data).forEach(([key, value]) => {
+                const regExp = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
                 result = result.replace(regExp, String(value).replace('$', '＄'));
             });
 
