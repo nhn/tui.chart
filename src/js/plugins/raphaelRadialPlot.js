@@ -4,19 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
+import raphaelRenderUtil from './raphaelRenderUtil';
 import arrayUtil from '../helpers/arrayUtil';
-var snippet = require('tui-code-snippet');
 
-var STEP_TOP_ADJUSTMENT = 8;
-var STEP_LEFT_ADJUSTMENT = 3;
+const STEP_TOP_ADJUSTMENT = 8;
+const STEP_LEFT_ADJUSTMENT = 3;
 
 /**
  * @classdesc RaphaelRadialPlot is graph renderer for radial plot.
  * @class RaphaelRadialPlot
  * @private
  */
-var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototype */ {
+class RaphaelRadialPlot {
     /**
      * Render function of map chart legend.
      * @param {object} params parameters
@@ -26,8 +25,8 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
      * @param {object} params.labelData label data
      * @returns {object} paper raphael paper
      */
-    render: function(params) {
-        var plotSet = params.paper.set();
+    render(params) {
+        const plotSet = params.paper.set();
 
         this.paper = params.paper;
         this.layout = params.layout;
@@ -43,14 +42,14 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
         this.paper.pushDownBackgroundToBottom();
 
         return plotSet;
-    },
+    }
 
     /**
      * Render plot component
      * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderPlot: function(plotSet) {
+    _renderPlot(plotSet) {
         if (this.options.type === 'circle') {
             this._renderCirclePlot(plotSet);
         } else {
@@ -58,63 +57,61 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
         }
 
         this._renderCategoryDots(plotSet);
-    },
+    }
 
     /**
      * Render spider web plot
      * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderSpiderwebPlot: function(plotSet) {
-        var groupPaths = this._getLinesPath(this.plotPositions);
+    _renderSpiderwebPlot(plotSet) {
+        const groupPaths = this._getLinesPath(this.plotPositions);
 
         this._renderLines(groupPaths, this.theme.lineColor, plotSet);
-    },
+    }
 
     /**
      * Render circle plot
      * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderCirclePlot: function(plotSet) {
-        var i, pos, radius;
-        var plotPositions = this.plotPositions;
-        var centerPoint = plotPositions[0][0];
-        var strokeColor = this.theme.lineColor;
+    _renderCirclePlot(plotSet) {
+        const {plotPositions} = this;
+        const [[centerPoint]] = plotPositions;
+        const strokeColor = this.theme.lineColor;
 
-        for (i = 1; i < plotPositions.length; i += 1) {
-            pos = plotPositions[i][0];
-            radius = centerPoint.top - pos.top;
+        for (let i = 1; i < plotPositions.length; i += 1) {
+            const [pos] = plotPositions[i];
+            const radius = centerPoint.top - pos.top;
 
             plotSet.push(raphaelRenderUtil.renderCircle(this.paper, centerPoint, radius, {
                 stroke: strokeColor,
                 'stroke-opacity': 0.05
             }));
         }
-    },
+    }
 
     /**
      * Render category lines
      * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderCategoryDots: function(plotSet) {
-        var bounds = this._makePlotDotBounds(arrayUtil.pivot(this.plotPositions));
-
-        snippet.forEachArray(bounds, function(bound) {
-            var squareDot = raphaelRenderUtil.renderRect(this.paper, bound, {
+    _renderCategoryDots(plotSet) {
+        const bounds = this._makePlotDotBounds(arrayUtil.pivot(this.plotPositions));
+        bounds.forEach(bound => {
+            const squareDot = raphaelRenderUtil.renderRect(this.paper, bound, {
                 fill: '#000000',
                 'fill-opacity': 0.5,
                 'stroke-width': 0
             });
             plotSet.push(squareDot);
         }, this);
-    },
+    }
 
-    _makePlotDotBounds: function(plotPositions) {
-        var bounds = snippet.map(plotPositions, function(positions) {
-            var outMostPlot = positions[positions.length - 1];
-            var bound = {
+    _makePlotDotBounds(plotPositions) {
+        const bounds = plotPositions.map(positions => {
+            const outMostPlot = positions[positions.length - 1];
+            const bound = {
                 top: outMostPlot.top - 2,
                 left: outMostPlot.left - 2,
                 width: 4,
@@ -126,18 +123,16 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
         bounds.pop();
 
         return bounds;
-    },
+    }
 
     /**
      * Render labels
      * @param {Array.<object>} plotSet plot set
      * @private
      */
-    _renderLabels: function(plotSet) {
-        var paper = this.paper;
-        var theme = this.theme;
-        var labelData = this.labelData;
-        var attributes = {
+    _renderLabels(plotSet) {
+        const {paper, theme, labelData} = this;
+        const attributes = {
             fill: theme.lineColor,
             'font-size': theme.label.fontSize,
             'font-family': theme.label.fontFamily,
@@ -146,12 +141,12 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
             'dominant-baseline': 'middle'
         };
 
-        snippet.forEachArray(labelData.category, function(item) {
-            var categoryAttributes = snippet.extend({}, attributes, {
+        labelData.category.forEach(item => {
+            const categoryAttributes = Object.assign({}, attributes, {
                 'text-anchor': item.position.anchor,
                 fill: '#333333'
             });
-            var label = raphaelRenderUtil.renderText(paper, item.position, item.text, categoryAttributes);
+            const label = raphaelRenderUtil.renderText(paper, item.position, item.text, categoryAttributes);
 
             label.node.style.userSelect = 'none';
             label.node.style.cursor = 'default';
@@ -159,8 +154,8 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
             plotSet.push(label);
         });
 
-        snippet.forEachArray(labelData.step, function(item) {
-            var stepLabel = raphaelRenderUtil.renderText(paper, item.position, item.text, attributes);
+        labelData.step.forEach(item => {
+            const stepLabel = raphaelRenderUtil.renderText(paper, item.position, item.text, attributes);
 
             item.position.top -= STEP_TOP_ADJUSTMENT;
             item.position.left -= STEP_LEFT_ADJUSTMENT;
@@ -170,7 +165,7 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
 
             plotSet.push(stepLabel);
         });
-    },
+    }
 
     /**
      * Render lines.
@@ -180,18 +175,18 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderLines: function(groupPaths, lineColor, plotSet) {
-        var paper = this.paper;
+    _renderLines(groupPaths, lineColor, plotSet) {
+        const {paper} = this;
 
-        return snippet.map(groupPaths, function(path) {
-            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
+        return groupPaths.map(path => {
+            const line = raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
             line.node.setAttribute('stroke-opacity', 0.05);
 
             plotSet.push(line);
 
             return line;
         });
-    },
+    }
 
     /**
      * Get lines path.
@@ -200,13 +195,9 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
      * @returns {Array.<Array.<string>>} path
      * @private
      */
-    _getLinesPath: function(groupPositions) {
-        var self = this;
-
-        return snippet.map(groupPositions, function(positions) {
-            return self._makeLinesPath(positions);
-        });
-    },
+    _getLinesPath(groupPositions) {
+        return groupPositions.map(positions => this._makeLinesPath(positions));
+    }
 
     /**
      * Make lines path.
@@ -217,14 +208,14 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeLinesPath: function(positions, posTopType, connectNulls) {
-        var path = [];
-        var prevMissing = false;
+    _makeLinesPath(positions, posTopType, connectNulls) {
+        let path = [];
+        let prevMissing = false;
 
         posTopType = posTopType || 'top';
 
-        snippet.map(positions, function(position) {
-            var pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
+        positions.forEach(position => {
+            const pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
 
             if (position) {
                 path.push([pathCommand, position.left, position[posTopType]]);
@@ -241,6 +232,6 @@ var RaphaelRadialPlot = snippet.defineClass(/** @lends RaphaelRadialPlot.prototy
 
         return path;
     }
-});
+}
 
-module.exports = RaphaelRadialPlot;
+export default RaphaelRadialPlot;

@@ -8,16 +8,15 @@ import renderUtil from '../helpers/renderUtil';
 import arrayUtil from '../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
 
-var browser = snippet.browser;
-var IS_LTE_IE8 = browser.msie && browser.version <= 8;
-var ANIMATION_DURATION = 700;
-var DEFAULT_DOT_RADIUS = 6;
-var SELECTION_DOT_RADIUS = 7;
-var DE_EMPHASIS_OPACITY = 0.3;
-var MOVING_ANIMATION_DURATION = 300;
-var CHART_HOVER_STATUS_OVER = 'over';
-var CHART_HOVER_STATUS_OUT = 'out';
-
+const {browser} = snippet;
+const IS_LTE_IE8 = browser.msie && browser.version <= 8;
+const ANIMATION_DURATION = 700;
+const DEFAULT_DOT_RADIUS = 6;
+const SELECTION_DOT_RADIUS = 7;
+const DE_EMPHASIS_OPACITY = 0.3;
+const MOVING_ANIMATION_DURATION = 300;
+const CHART_HOVER_STATUS_OVER = 'over';
+const CHART_HOVER_STATUS_OUT = 'out';
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -34,12 +33,12 @@ class RaphaelLineTypeBase {
      * @private
      */
     _makeLinesPath(positions, posTopType, connectNulls) {
-        var path = [];
-        var prevMissing = false;
+        let path = [];
+        let prevMissing = false;
 
         posTopType = posTopType || 'top';
-        snippet.map(positions, function(position) {
-            var pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
+        positions.forEach(position => {
+            const pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
 
             if (position) {
                 path.push([pathCommand, position.left, position[posTopType]]);
@@ -70,9 +69,9 @@ class RaphaelLineTypeBase {
      * @private
      */
     _getAnchor(fromPos, pos, nextPos, isReverseDirection) {
-        var l1 = (pos.left - fromPos.left) / 2,
-            l2 = (nextPos.left - pos.left) / 2,
-            a, b, alpha, dx1, dy1, dx2, dy2, result;
+        const l1 = (pos.left - fromPos.left) / 2;
+        const l2 = (nextPos.left - pos.left) / 2;
+        let a, b;
 
         if (isReverseDirection) {
             a = Math.atan((fromPos.left - pos.left) / Math.abs(fromPos.top - pos.top));
@@ -84,13 +83,12 @@ class RaphaelLineTypeBase {
 
         a = fromPos.top < pos.top ? Math.PI - a : a;
         b = nextPos.top < pos.top ? Math.PI - b : b;
-        alpha = (Math.PI / 2) - (((a + b) % (Math.PI * 2)) / 2);
-        dx1 = l1 * Math.sin(alpha + a);
-        dy1 = l1 * Math.cos(alpha + a);
-        dx2 = l2 * Math.sin(alpha + b);
-        dy2 = l2 * Math.cos(alpha + b);
-
-        result = {
+        const alpha = (Math.PI / 2) - (((a + b) % (Math.PI * 2)) / 2);
+        const dx1 = l1 * Math.sin(alpha + a);
+        const dy1 = l1 * Math.cos(alpha + a);
+        const dx2 = l2 * Math.sin(alpha + b);
+        const dy2 = l2 * Math.cos(alpha + b);
+        const result = {
             x1: pos.left - dx1,
             y1: pos.top + dy1,
             x2: pos.left + dx2,
@@ -114,10 +112,10 @@ class RaphaelLineTypeBase {
      * @private
      */
     _getSplinePositionsGroups(positions, connectNulls) {
-        var positionsGroups = [];
-        var positionsGroup = [];
-        snippet.forEach(positions, function(position, index) {
-            var isLastIndex = index === positions.length - 1;
+        const positionsGroups = [];
+        let positionsGroup = [];
+        positions.forEach((position, index) => {
+            const isLastIndex = index === positions.length - 1;
 
             if (position) {
                 positionsGroup.push(position);
@@ -140,20 +138,20 @@ class RaphaelLineTypeBase {
      * @private
      */
     _getSplinePartialPaths(positionsGroups, isReverseDirection) {
-        var self = this;
-        var paths = [];
-        var firstPos, lastPos, positionsLen, fromPos, middlePositions, path, prevPos;
+        const paths = [];
+        let lastPos, positionsLen, fromPos, middlePositions, path;
 
-        snippet.forEach(positionsGroups, function(dataPositions) {
-            prevPos = firstPos = dataPositions[0];
+        positionsGroups.forEach(dataPositions => {
+            let [prevPos] = dataPositions;
+            const firstPos = prevPos;
             positionsLen = dataPositions.length;
             fromPos = firstPos;
             lastPos = dataPositions[positionsLen - 1];
             middlePositions = dataPositions.slice(1).slice(0, positionsLen - 2);
 
-            path = snippet.map(middlePositions, function(position, index) {
-                var nextPos = dataPositions[index + 2];
-                var anchor = self._getAnchor(fromPos, position, nextPos, isReverseDirection);
+            path = middlePositions.map((position, index) => {
+                const nextPos = dataPositions[index + 2];
+                const anchor = this._getAnchor(fromPos, position, nextPos, isReverseDirection);
 
                 fromPos = position;
 
@@ -188,15 +186,12 @@ class RaphaelLineTypeBase {
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeSplineLinesPath(positions, makeLineOptions) {
-        var path, positionsGroups, partialPaths;
+    _makeSplineLinesPath(positions, makeLineOptions = {}) {
+        const positionsGroups = this._getSplinePositionsGroups(positions, makeLineOptions.connectNulls);
+        const partialPaths = this._getSplinePartialPaths(positionsGroups, makeLineOptions.isReverseDirection);
+        let path = [];
 
-        makeLineOptions = makeLineOptions || {};
-        path = [];
-        positionsGroups = this._getSplinePositionsGroups(positions, makeLineOptions.connectNulls);
-        partialPaths = this._getSplinePartialPaths(positionsGroups, makeLineOptions.isReverseDirection);
-
-        snippet.forEach(partialPaths, function(partialPath) {
+        partialPaths.forEach(partialPath => {
             path = path.concat(partialPath);
         });
 
@@ -215,7 +210,7 @@ class RaphaelLineTypeBase {
      * @private
      */
     _renderTooltipLine(paper, height) {
-        var linePath = raphaelRenderUtil.makeLinePath({
+        const linePath = raphaelRenderUtil.makeLinePath({
             left: 10,
             top: height
         }, {
@@ -227,10 +222,10 @@ class RaphaelLineTypeBase {
     }
 
     appendShadowFilterToDefs() {
-        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
-        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+        const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        const feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        const feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
 
         filter.setAttributeNS(null, 'id', 'shadow');
         filter.setAttributeNS(null, 'x', '-50%');
@@ -261,7 +256,7 @@ class RaphaelLineTypeBase {
      * @returns {{stroke: string, stroke-width: number, strike-opacity: number}} border style
      */
     makeBorderStyle(borderColor, opacity, borderWidth) {
-        var borderStyle = {
+        const borderStyle = {
             'stroke-width': borderWidth,
             'stroke-opacity': opacity
         };
@@ -280,7 +275,7 @@ class RaphaelLineTypeBase {
      * @returns {{fill-opacity: number, stroke-opacity: number, r: number}} style
      */
     makeOutDotStyle(opacity, borderStyle) {
-        var outDotStyle = {
+        const outDotStyle = {
             'fill-opacity': opacity,
             'stroke-opacity': opacity,
             r: DEFAULT_DOT_RADIUS
@@ -302,16 +297,16 @@ class RaphaelLineTypeBase {
      * @returns {object} raphael dot
      */
     renderDot(paper, position, color, opacity) {
-        var dotTheme = (this.theme && this.theme.dot) || {dot: {}};
-        var dot, dotStyle, raphaelDot;
+        const dotTheme = (this.theme && this.theme.dot) || {dot: {}};
+        let raphaelDot;
 
         if (position) {
-            dot = paper.circle(
+            const dot = paper.circle(
                 position.left,
                 position.top,
                 (!snippet.isUndefined(dotTheme.radius)) ? dotTheme.radius : DEFAULT_DOT_RADIUS
             );
-            dotStyle = {
+            const dotStyle = {
                 fill: dotTheme.fillColor || color,
                 'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
                 stroke: dotTheme.strokeColor || color,
@@ -322,8 +317,8 @@ class RaphaelLineTypeBase {
             dot.attr(dotStyle);
 
             raphaelDot = {
-                dot: dot,
-                color: color
+                dot,
+                color
             };
         }
 
@@ -336,7 +331,7 @@ class RaphaelLineTypeBase {
      * @private
      */
     _moveDotsToFront(dots) {
-        raphaelRenderUtil.forEach2dArray(dots, function(dotInfo) {
+        raphaelRenderUtil.forEach2dArray(dots, dotInfo => {
             dotInfo.endDot.dot.toFront();
             if (dotInfo.startDot) {
                 dotInfo.startDot.dot.toFront();
@@ -355,22 +350,18 @@ class RaphaelLineTypeBase {
      * @private
      */
     _renderDots(paper, groupPositions, colors, opacity, seriesSet) {
-        var self = this;
-        var dots;
+        const dots = groupPositions.map((positions, groupIndex) => {
+            const color = colors[groupIndex];
 
-        dots = snippet.map(groupPositions, function(positions, groupIndex) {
-            var color = colors[groupIndex];
-
-            return snippet.map(positions, function(position) {
-                var dotMap = {
-                    endDot: self.renderDot(paper, position, color, opacity)
+            return positions.map(position => {
+                const dotMap = {
+                    endDot: this.renderDot(paper, position, color, opacity)
                 };
-                var startPosition;
 
-                if (self.hasRangeData) {
-                    startPosition = snippet.extend({}, position);
+                if (this.hasRangeData) {
+                    const startPosition = snippet.extend({}, position);
                     startPosition.top = startPosition.startTop;
-                    dotMap.startDot = self.renderDot(paper, startPosition, color, opacity);
+                    dotMap.startDot = this.renderDot(paper, startPosition, color, opacity);
                 }
 
                 if (seriesSet) {
@@ -408,8 +399,8 @@ class RaphaelLineTypeBase {
      * @private
      */
     _showDot(dotInformation, groupIndex) {
-        var hoverTheme = this.theme.dot.hover;
-        var attributes = {
+        const hoverTheme = this.theme.dot.hover;
+        const attributes = {
             'fill-opacity': hoverTheme.fillOpacity,
             stroke: hoverTheme.strokeColor || dotInformation.color,
             'stroke-opacity': hoverTheme.strokeOpacity,
@@ -451,8 +442,8 @@ class RaphaelLineTypeBase {
      * @private
      */
     _updateLineStrokeOpacity(changeType, line) {
-        var opacity = 1;
-        var isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
+        let opacity = 1;
+        const isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
         if (this.groupLines) {
             if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
                 opacity = (this.chartType === 'radial' && this.isShowArea) ? 0 : DE_EMPHASIS_OPACITY;
@@ -462,7 +453,7 @@ class RaphaelLineTypeBase {
                 line = this.getLine(this.selectedLegendIndex);
             }
 
-            snippet.forEachArray(this.groupLines, function(otherLine) {
+            this.groupLines.forEach(otherLine => {
                 otherLine.attr({
                     'stroke-opacity': opacity
                 });
@@ -489,7 +480,7 @@ class RaphaelLineTypeBase {
      */
     _updateAreaOpacity(changeType) {
         if (this.groupAreas) {
-            snippet.forEach(this.groupAreas, function(otherArea) {
+            this.groupAreas.forEach(otherArea => {
                 otherArea.area.attr({
                     'fill-opacity': (changeType === CHART_HOVER_STATUS_OVER) ? DE_EMPHASIS_OPACITY : 1
                 });
@@ -504,7 +495,7 @@ class RaphaelLineTypeBase {
      * @private
      */
     _updateLineStrokeWidth(line, strokeWidth) {
-        var changeAttr = {
+        const changeAttr = {
             'stroke-width': strokeWidth
         };
         if (line.attrs) {
@@ -518,21 +509,20 @@ class RaphaelLineTypeBase {
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation(data) {
-        var index = data.groupIndex; // Line chart has pivot values.
-        var groupIndex = data.index;
-        var line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
-        var item = this.groupDots[groupIndex][index];
-        var strokeWidth, startLine;
+        const index = data.groupIndex;
+        const groupIndex = data.index;
+        const item = this.groupDots[groupIndex][index];
+        let line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
+        let strokeWidth, startLine;
 
         if (!item) {
             return;
         }
 
         if (this.chartType === 'area') {
+            ({startLine, line} = line);
             strokeWidth = 5;
-            startLine = line.startLine;
             this._updateAreaOpacity(CHART_HOVER_STATUS_OVER);
-            line = line.line;
         } else {
             strokeWidth = this.lineWidth;
         }
@@ -569,20 +559,19 @@ class RaphaelLineTypeBase {
      * @private
      */
     _showGroupDots(index) {
-        var self = this;
-        var groupDots = this._getPivotGroupDots();
+        const groupDots = this._getPivotGroupDots();
 
         if (!groupDots || !groupDots[index]) {
             return;
         }
 
-        snippet.forEachArray(groupDots[index], function(item, groupIndex) {
+        groupDots[index].forEach((item, groupIndex) => {
             if (item.endDot) {
-                self._showDot(item.endDot, groupIndex);
+                this._showDot(item.endDot, groupIndex);
             }
 
             if (item.startDot) {
-                self._showDot(item.startDot, groupIndex);
+                this._showDot(item.startDot, groupIndex);
             }
         });
     }
@@ -596,12 +585,12 @@ class RaphaelLineTypeBase {
      * @param {object} layout layout
      */
     showGroupTooltipLine(bound, layout) {
-        var left = Math.max(bound.position.left, 11);
-        var linePath = raphaelRenderUtil.makeLinePath({
-            left: left,
+        const left = Math.max(bound.position.left, 11);
+        const linePath = raphaelRenderUtil.makeLinePath({
+            left,
             top: layout.position.top + bound.dimension.height
         }, {
-            left: left,
+            left,
             top: layout.position.top
         });
 
@@ -630,8 +619,8 @@ class RaphaelLineTypeBase {
      * @private
      */
     _hideDot(dot, groupIndex, opacity) {
-        var prev = this._prevDotAttributes[groupIndex];
-        var outDotStyle = this.outDotStyle;
+        const prev = this._prevDotAttributes[groupIndex];
+        let {outDotStyle} = this;
 
         // if prev data exists, use prev.r
         // there is dot disappearing issue, when hideDot
@@ -659,23 +648,23 @@ class RaphaelLineTypeBase {
      * @param {{groupIndex: number, index:number}} data hide info
      */
     hideAnimation(data) {
-        var index = data.groupIndex; // Line chart has pivot values.
-        var groupIndex = data.index;
-        var opacity = this.dotOpacity;
-        var groupDot = this.groupDots[groupIndex];
-        var line, item, strokeWidth, startLine;
+        const index = data.groupIndex; // Line chart has pivot values.
+        const groupIndex = data.index;
+        const groupDot = this.groupDots[groupIndex];
+        let line, strokeWidth, startLine;
+        let opacity = this.dotOpacity;
 
         if (!groupDot || !groupDot[index]) {
             return;
         }
 
+        const item = groupDot[index];
+
         line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
-        item = groupDot[index];
 
         if (this.chartType === 'area') {
             strokeWidth = this.lineWidth;
-            startLine = line.startLine;
-            line = line.line;
+            ({startLine, line} = line);
             this._updateAreaOpacity(CHART_HOVER_STATUS_OUT);
         } else {
             strokeWidth = this.lineWidth;
@@ -707,28 +696,27 @@ class RaphaelLineTypeBase {
      * @private
      */
     _hideGroupDots(index) {
-        var self = this;
-        var hasSelectedIndex = !snippet.isNull(this.selectedLegendIndex);
-        var baseOpacity = this.dotOpacity;
-        var groupDots = this._getPivotGroupDots();
+        const hasSelectedIndex = !snippet.isNull(this.selectedLegendIndex);
+        const baseOpacity = this.dotOpacity;
+        const groupDots = this._getPivotGroupDots();
 
         if (!groupDots || !groupDots[index]) {
             return;
         }
 
-        snippet.forEachArray(groupDots[index], function(item, groupIndex) {
-            var opacity = baseOpacity;
+        groupDots[index].forEach((item, groupIndex) => {
+            let opacity = baseOpacity;
 
-            if (opacity && hasSelectedIndex && self.selectedLegendIndex !== groupIndex) {
+            if (opacity && hasSelectedIndex && this.selectedLegendIndex !== groupIndex) {
                 opacity = DE_EMPHASIS_OPACITY;
             }
 
             if (item.endDot) {
-                self._hideDot(item.endDot.dot, groupIndex, opacity);
+                this._hideDot(item.endDot.dot, groupIndex, opacity);
             }
 
             if (item.startDot) {
-                self._hideDot(item.startDot.dot, groupIndex, opacity);
+                this._hideDot(item.startDot.dot, groupIndex, opacity);
             }
         });
     }
@@ -757,7 +745,7 @@ class RaphaelLineTypeBase {
      * @private
      */
     _moveDot(dot, position) {
-        var dotAttrs = {
+        let dotAttrs = {
             cx: position.left,
             cy: position.top
         };
@@ -775,11 +763,9 @@ class RaphaelLineTypeBase {
      * @param {Array.<object>} seriesSet series set
      */
     animate(onFinish, seriesSet) {
-        var paper = this.paper;
-        var dimension = this.dimension;
-        var position = this.position;
-        var clipRect = this.clipRect;
-        var clipRectId = this._getClipRectId();
+        const {paper, dimension, position} = this;
+        const clipRectId = this._getClipRectId();
+        let {clipRect} = this;
 
         if (!IS_LTE_IE8 && dimension) {
             if (!clipRect) {
@@ -792,8 +778,8 @@ class RaphaelLineTypeBase {
                 });
             }
 
-            seriesSet.forEach(function(seriesElement) {
-                seriesElement.node.setAttribute('clip-path', 'url(#' + clipRectId + ')');
+            seriesSet.forEach(seriesElement => {
+                seriesElement.node.setAttribute('clip-path', `url(#${clipRectId})`);
             });
 
             clipRect.animate({
@@ -809,7 +795,7 @@ class RaphaelLineTypeBase {
      * @private
      */
     _makeSelectionDot(paper) {
-        var selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIUS);
+        const selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIUS);
 
         selectionDot.attr({
             'fill': '#ffffff',
@@ -826,8 +812,8 @@ class RaphaelLineTypeBase {
      * @param {{groupIndex: number, index: number}} indexes indexes
      */
     selectSeries(indexes) {
-        var item = this.groupDots[indexes.index][indexes.groupIndex],
-            position = this.groupPositions[indexes.index][indexes.groupIndex];
+        const item = this.groupDots[indexes.index][indexes.groupIndex];
+        const position = this.groupPositions[indexes.index][indexes.groupIndex];
 
         this.selectedItem = item;
         this.selectionDot.attr({
@@ -854,7 +840,7 @@ class RaphaelLineTypeBase {
      * @param {{groupIndex: number, index: number}} indexes indexes
      */
     unselectSeries(indexes) {
-        var item = this.groupDots[indexes.index][indexes.groupIndex];
+        const item = this.groupDots[indexes.index][indexes.groupIndex];
 
         if (this.selectedItem === item) {
             this.selectionDot.attr({
@@ -890,13 +876,13 @@ class RaphaelLineTypeBase {
      * @private
      */
     _animateByPosition(raphaelObj, position, tickSize) {
-        var attr = {
+        const attr = {
             cx: position.left,
             cy: position.top
         };
 
         if (snippet.isExisty(tickSize)) {
-            attr.transform = 't-' + tickSize + ',0';
+            attr.transform = `t-${tickSize},0`;
         }
 
         raphaelObj.animate(attr, MOVING_ANIMATION_DURATION);
@@ -910,12 +896,12 @@ class RaphaelLineTypeBase {
      * @private
      */
     _animateByPath(raphaelObj, paths, tickSize) {
-        var attr = {
+        const attr = {
             path: paths.join(' ')
         };
 
         if (snippet.isExisty(tickSize)) {
-            attr.transform = 't-' + tickSize + ',0';
+            attr.transform = `t-${tickSize},0`;
         }
 
         raphaelObj.animate(attr, MOVING_ANIMATION_DURATION);
@@ -927,7 +913,7 @@ class RaphaelLineTypeBase {
      * @private
      */
     _removeFirstDot(dots) {
-        var firstDot = dots.shift();
+        const firstDot = dots.shift();
 
         firstDot.endDot.dot.remove();
 
@@ -950,11 +936,11 @@ class RaphaelLineTypeBase {
      * @param {number} height series height
      */
     resizeClipRect(width, height) {
-        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
+        const clipRect = this.paper.getById(`${this._getClipRectId()}_rect`);
 
         clipRect.attr({
-            width: width,
-            height: height
+            width,
+            height
         });
     }
 
@@ -997,10 +983,10 @@ class RaphaelLineTypeBase {
  * @ignore
  */
 function createClipPathRectWithLayout(paper, position, dimension, id) {
-    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-    var rect = paper.rect((position.left - 10), (position.top - 10), 0, dimension.height);
+    const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+    const rect = paper.rect((position.left - 10), (position.top - 10), 0, dimension.height);
 
-    rect.id = id + '_rect';
+    rect.id = `${id}_rect`;
     clipPath.id = id;
 
     clipPath.appendChild(rect.node);
@@ -1009,4 +995,4 @@ function createClipPathRectWithLayout(paper, position, dimension, id) {
     return rect;
 }
 
-module.exports = RaphaelLineTypeBase;
+export default RaphaelLineTypeBase;

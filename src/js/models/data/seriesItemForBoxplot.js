@@ -5,11 +5,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 import renderUtil from '../../helpers/renderUtil';
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 
 var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
     /**

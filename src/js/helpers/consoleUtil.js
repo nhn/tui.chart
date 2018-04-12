@@ -10,9 +10,7 @@ const consoleUtil = {
      * @param {string} message - message
      * @param {string} status - print function of window.console
      */
-    print(message, status) {
-        status = status || 'log';
-
+    print(message, status = 'log') {
         if (window.console) {
             window.console[status](message);
         }

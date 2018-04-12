@@ -4,29 +4,27 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
+import raphael from 'raphael';
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
-var raphael = require('raphael');
-
-var DEGREE_180 = 180;
-var DEGREE_360 = 360;
-var MIN_DEGREE = 0.01;
-var RAD = Math.PI / DEGREE_180;
-var LOADING_ANIMATION_DURATION = 700;
-var EMPHASIS_OPACITY = 1;
-var DE_EMPHASIS_OPACITY = 0.3;
-var DEFAULT_LUMINANT_VALUE = 0.2;
-var OVERLAY_ID = 'overlay';
-var TOOLTIP_OFFSET_VALUE = 20;
+const DEGREE_180 = 180;
+const DEGREE_360 = 360;
+const MIN_DEGREE = 0.01;
+const RAD = Math.PI / DEGREE_180;
+const LOADING_ANIMATION_DURATION = 700;
+const EMPHASIS_OPACITY = 1;
+const DE_EMPHASIS_OPACITY = 0.3;
+const DEFAULT_LUMINANT_VALUE = 0.2;
+const OVERLAY_ID = 'overlay';
+const TOOLTIP_OFFSET_VALUE = 20;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
  * @class RaphaelPieChart
  * @private
  */
-var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype */ {
+class RaphaelPieChart {
     /**
      * Render function of pie chart.
      * @param {object} paper Raphael paper
@@ -40,8 +38,8 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      *      @param {function} callbacks.hideTooltip hide tooltip function
      * @returns {object} paper raphael paper
      */
-    render: function(paper, data, callbacks) {
-        var pieSeriesSet = paper.set();
+    render(paper, data, callbacks) {
+        const pieSeriesSet = paper.set();
 
         /**
          * raphael object
@@ -53,7 +51,8 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
          * ratio for hole
          * @type {number}
          */
-        this.holeRatio = data.options.radiusRange[0];
+        // this.holeRatio = data.options.radiusRange[0];
+        ([this.holeRatio] = data.options.radiusRange);
 
         /**
          * base background
@@ -89,7 +88,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
          * sector attr's name for draw graph
          * @type {string}
          */
-        this.sectorName = 'sector_' + this.chartType;
+        this.sectorName = `sector_${this.chartType}`;
 
         this._setSectorAttr();
 
@@ -115,14 +114,14 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         this.prevHoverSector = null;
 
         return pieSeriesSet;
-    },
+    }
 
     /**
      * Clear paper.
      */
-    clear: function() {
+    clear() {
         this.paper.clear();
-    },
+    }
 
     /**
      * Make sector path.
@@ -134,24 +133,26 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @returns {{path: Array}} sector path
      * @private
      */
-    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
-        var startRadian = startAngle * RAD;
-        var endRadian = endAngle * RAD;
-        var x1 = cx + (r * Math.sin(startRadian)); // x point of start radian
-        var y1 = cy - (r * Math.cos(startRadian)); // y posint of start radian
-        var x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
-        var y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
-        var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
-        var path = ['M', cx, cy,
+    _makeSectorPath(cx, cy, r, startAngle, endAngle) {
+        const startRadian = startAngle * RAD;
+        const endRadian = endAngle * RAD;
+        const x1 = cx + (r * Math.sin(startRadian)); // x point of start radian
+        const y1 = cy - (r * Math.cos(startRadian)); // y posint of start radian
+        const x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
+        const y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
+        const largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
+        const path = [
+            'M', cx, cy,
             'L', x1, y1,
             'A', r, r, 0, largeArcFlag, 1, x2, y2,
-            'Z'];
+            'Z'
+        ];
 
         // see details about path
         // http://www.w3schools.com/svg/svg_path.asp
         // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d
-        return {path: path};
-    },
+        return {path};
+    }
 
     /**
      * Make sector path for donut chart.
@@ -164,21 +165,21 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @returns {{path: Array}} sector path
      * @private
      */
-    _makeDonutSectorPath: function(cx, cy, r, startAngle, endAngle, holeRadius) {
+    _makeDonutSectorPath(cx, cy, r, startAngle, endAngle, holeRadius) {
         /* eslint max-params: [2, 6]*/
-        var startRadian = startAngle * RAD;
-        var endRadian = endAngle * RAD;
-        var r2 = holeRadius || (r * this.holeRatio); // radius of donut hole
-        var x1 = cx + (r * Math.sin(startRadian));
-        var y1 = cy - (r * Math.cos(startRadian));
-        var x2 = cx + (r2 * Math.sin(startRadian));
-        var y2 = cy - (r2 * Math.cos(startRadian));
-        var x3 = cx + (r * Math.sin(endRadian));
-        var y3 = cy - (r * Math.cos(endRadian));
-        var x4 = cx + (r2 * Math.sin(endRadian));
-        var y4 = cy - (r2 * Math.cos(endRadian));
-        var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
-        var path = [
+        const startRadian = startAngle * RAD;
+        const endRadian = endAngle * RAD;
+        const r2 = holeRadius || (r * this.holeRatio); // radius of donut hole
+        const x1 = cx + (r * Math.sin(startRadian));
+        const y1 = cy - (r * Math.cos(startRadian));
+        const x2 = cx + (r2 * Math.sin(startRadian));
+        const y2 = cy - (r2 * Math.cos(startRadian));
+        const x3 = cx + (r * Math.sin(endRadian));
+        const y3 = cy - (r * Math.cos(endRadian));
+        const x4 = cx + (r2 * Math.sin(endRadian));
+        const y4 = cy - (r2 * Math.cos(endRadian));
+        const largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
+        const path = [
             'M', x1, y1,
             'A', r, r, 0, largeArcFlag, 1, x3, y3,
             'L', x4, y4,
@@ -186,15 +187,15 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
             'Z'
         ];
 
-        return {path: path};
-    },
+        return {path};
+    }
 
     /**
      * Set sector attribute for raphael paper.
      * @private
      */
-    _setSectorAttr: function() {
-        var makeSectorPath;
+    _setSectorAttr() {
+        let makeSectorPath;
 
         if (this.paper.customAttributes[this.sectorName]) {
             return;
@@ -206,16 +207,16 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
             makeSectorPath = this._makeSectorPath;
         }
 
-        this.paper.customAttributes[this.sectorName] = snippet.bind(makeSectorPath, this);
-    },
+        this.paper.customAttributes[this.sectorName] = makeSectorPath.bind(this);
+    }
 
     /**
      * Render overlay.
      * @returns {object} raphael object
      * @private
      */
-    _renderOverlay: function() {
-        var params = {
+    _renderOverlay() {
+        const params = {
             paper: this.paper,
             circleBound: {
                 cx: 0,
@@ -233,7 +234,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
                 'stroke-width': 1
             }
         };
-        var inner = this._renderSector(params);
+        const inner = this._renderSector(params);
 
         inner.node.setAttribute('class', 'auto-shape-rendering');
 
@@ -241,7 +242,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         inner.data('chartType', this.chartType);
 
         return inner;
-    },
+    }
 
     /**
      * Render sector
@@ -254,15 +255,13 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @returns {object} raphael object
      * @private
      */
-    _renderSector: function(params) {
-        var circleBound = params.circleBound;
-        var angles = params.angles;
-        var attrs = params.attrs;
+    _renderSector(params) {
+        const {circleBound, angles, attrs} = params;
 
         attrs[this.sectorName] = [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle];
 
         return params.paper.path().attr(attrs);
-    },
+    }
 
     /**
      * Render pie graph.
@@ -273,18 +272,16 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @returns {Array.<object>}
      * @private
      */
-    _renderPie: function(sectorData, colors, additionalIndex, pieSeriesSet) {
-        var self = this;
-        var circleBound = this.circleBound;
-        var chartBackground = this.chartBackground;
-        var sectorInfos = [];
+    _renderPie(sectorData, colors, additionalIndex, pieSeriesSet) {
+        const {circleBound, chartBackground} = this;
+        const sectorInfos = [];
 
-        snippet.forEachArray(sectorData, function(sectorDatum, index) {
-            var ratio = sectorDatum.ratio;
-            var color = colors[index];
-            var sector = self._renderSector({
-                paper: self.paper,
-                circleBound: circleBound,
+        sectorData.forEach((sectorDatum, index) => {
+            const {ratio} = sectorDatum;
+            const color = colors[index];
+            const sector = this._renderSector({
+                paper: this.paper,
+                circleBound,
                 angles: sectorDatum.angles.start,
                 attrs: {
                     fill: chartBackground.color,
@@ -297,20 +294,20 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
 
             sector.data('index', index);
             sector.data('legendIndex', index + additionalIndex);
-            sector.data('chartType', self.chartType);
+            sector.data('chartType', this.chartType);
 
             sectorInfos.push({
-                sector: sector,
-                color: color,
+                sector,
+                color,
                 angles: sectorDatum.angles.end,
-                ratio: ratio
+                ratio
             });
 
             pieSeriesSet.push(sector);
         });
 
         return sectorInfos;
-    },
+    }
 
     /**
      * Show overlay.
@@ -318,15 +315,13 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {number} legendIndex - legend index
      * @private
      */
-    _showOverlay: function(index, legendIndex) {
-        var overlay = this.overlay;
-        var sectorInfo = this.sectorInfos[index];
-        var sa = sectorInfo.angles.startAngle;
-        var ea = sectorInfo.angles.endAngle;
-        var cb = this.circleBound;
-        var innerAttrs;
-
-        innerAttrs = {
+    _showOverlay(index, legendIndex) {
+        const {overlay} = this;
+        const sectorInfo = this.sectorInfos[index];
+        const sa = sectorInfo.angles.startAngle;
+        const ea = sectorInfo.angles.endAngle;
+        const cb = this.circleBound;
+        const innerAttrs = {
             fill: '#fff',
             opacity: 1,
             'stroke-width': 7,
@@ -347,28 +342,28 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
             this.labelInfos.legend[index],
             this.labelInfos.value[index]
         ]);
-    },
+    }
 
     /**
      * Element indexing For overlay.
      * @param {Array} elements - indexing elements
      * @private
      */
-    _indexingOverlapElement: function(elements) {
-        snippet.forEach(elements, function(element) {
+    _indexingOverlapElement(elements) {
+        elements.forEach(element => {
             if (element) {
                 element.toFront();
             }
         });
-    },
+    }
 
     /**
      * Hide overlay.
      * @private
      */
-    _hideOverlay: function() {
-        var overlay = this.overlay;
-        var attrs = {
+    _hideOverlay() {
+        const {overlay} = this;
+        const attrs = {
             fill: 'none',
             opacity: 0
         };
@@ -377,32 +372,30 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
 
         this._indexingOverlapElement(this.labelInfos.legend);
         this._indexingOverlapElement(this.labelInfos.value);
-    },
+    }
 
     /**
      * Animate.
      * @param {function} callback callback
      */
-    animate: function(callback) {
-        var delayTime = 0;
-        var sectorName = this.sectorName;
-        var circleBound = this.circleBound;
-        var sectorArgs = [circleBound.cx, circleBound.cy, circleBound.r];
+    animate(callback) {
+        const {sectorName, circleBound} = this;
+        const sectorArgs = [circleBound.cx, circleBound.cy, circleBound.r];
+        let delayTime = 0;
 
-        snippet.forEachArray(this.sectorInfos, function(sectorInfo) {
-            var angles = sectorInfo.angles;
-            var attrMap = {
+        this.sectorInfos.forEach(sectorInfo => {
+            const {angles} = sectorInfo;
+            const attrMap = {
                 fill: sectorInfo.color
             };
-            var animationTime = LOADING_ANIMATION_DURATION * sectorInfo.ratio;
-            var anim;
+            const animationTime = LOADING_ANIMATION_DURATION * sectorInfo.ratio;
 
             if ((angles.startAngle === 0) && (angles.endAngle === DEGREE_360)) {
                 angles.endAngle = DEGREE_360 - MIN_DEGREE;
             }
-
             attrMap[sectorName] = sectorArgs.concat([angles.startAngle, angles.endAngle]);
-            anim = raphael.animation(attrMap, animationTime, '>');
+
+            const anim = raphael.animation(attrMap, animationTime, '>');
             sectorInfo.sector.animate(anim.delay(delayTime));
             delayTime += animationTime;
         });
@@ -410,12 +403,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         if (callback) {
             setTimeout(callback, delayTime);
         }
-    },
-
-    /**
-     * Animate legend lines.
-     * @param {?number} legendIndex legend index
-     */
+    }
 
     /**
      * Resize graph of pie chart.
@@ -423,25 +411,22 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {{cx:number, cy:number, r: number}} params.circleBound circle bound
      */
-    resize: function(params) {
-        var dimension = params.dimension;
-        var circleBound = params.circleBound;
-        var sectorName = this.sectorName;
-        var labelSet = this.labelSet;
+    resize(params) {
+        const {dimension, circleBound} = params;
+        const {sectorName, labelSet} = this;
 
         this.circleBound = circleBound;
         this.paper.setSize(dimension.width, dimension.height);
 
-        snippet.forEachArray(this.sectorInfos, function(sectorInfo, index) {
-            var angles = sectorInfo.angles;
-            var attrs = {};
-            var bBox;
+        this.sectorInfos.forEach((sectorInfo, index) => {
+            const {angles} = sectorInfo;
+            const attrs = {};
 
             attrs[sectorName] = [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle];
             sectorInfo.sector.attr(attrs);
 
             if (labelSet && labelSet.length) {
-                bBox = sectorInfo.sector.getBBox();
+                const bBox = sectorInfo.sector.getBBox();
 
                 labelSet[index].attr({
                     x: bBox.x + (bBox.width / 2),
@@ -449,11 +434,11 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
                 });
             }
         });
-    },
+    }
 
-    findSectorInfo: function(position) {
-        var sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
-        var info = null;
+    findSectorInfo(position) {
+        const sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
+        let info = null;
 
         if (sector) {
             info = {
@@ -464,7 +449,7 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         }
 
         return info;
-    },
+    }
 
     /**
      * Whether changed or not.
@@ -473,9 +458,9 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @returns {boolean} result boolean
      * @private
      */
-    _isChangedPosition: function(prevPosition, position) {
+    _isChangedPosition(prevPosition, position) {
         return !prevPosition || prevPosition.left !== position.left || prevPosition.top !== position.top;
-    },
+    }
 
     /**
      * Show tooltip.
@@ -483,14 +468,14 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {{left: number, top: number}} position - mouse position
      * @private
      */
-    _showTooltip: function(sector, position) {
-        var args = [{}, 0, sector.data('index'), {
+    _showTooltip(sector, position) {
+        const args = [{}, 0, sector.data('index'), {
             left: position.left - TOOLTIP_OFFSET_VALUE,
             top: position.top - TOOLTIP_OFFSET_VALUE
         }];
 
         this.callbacks.showTooltip.apply(null, args);
-    },
+    }
 
     /**
      * Whether valid sector or not.
@@ -498,16 +483,16 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @returns {boolean}
      * @private
      */
-    _isValidSector: function(sector) {
+    _isValidSector(sector) {
         return sector && sector.data('chartType') === this.chartType;
-    },
+    }
 
     /**
      * Move mouse on series.
      * @param {{left: number, top: number}} position mouse position
      */
-    moveMouseOnSeries: function(position) {
-        var sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
+    moveMouseOnSeries(position) {
+        const sector = this.paper && this.paper.getElementByPoint(position.left, position.top);
 
         if (this._isValidSector(sector)) {
             if (this.prevHoverSector !== sector) {
@@ -525,36 +510,34 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         }
 
         this.prevPosition = position;
-    },
+    }
 
     /**
      * Select series.
      * @param {{index: number}} indexes - index map
      */
-    selectSeries: function(indexes) {
-        var sectorInfo = this.sectorInfos[indexes.index];
-        var luminanceColor, objColor, color;
+    selectSeries(indexes) {
+        const sectorInfo = this.sectorInfos[indexes.index];
 
         if (!sectorInfo) {
             return;
         }
 
-        objColor = raphael.color(sectorInfo.color);
-        luminanceColor = raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANT_VALUE);
-
-        color = this.selectionColor || luminanceColor;
+        const objColor = raphael.color(sectorInfo.color);
+        const luminanceColor = raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANT_VALUE);
+        const color = this.selectionColor || luminanceColor;
 
         sectorInfo.sector.attr({
             fill: color
         });
-    },
+    }
 
     /**
      * Unelect series.
      * @param {{index: number}} indexes - index map
      */
-    unselectSeries: function(indexes) {
-        var sectorInfo = this.sectorInfos[indexes.index];
+    unselectSeries(indexes) {
+        const sectorInfo = this.sectorInfos[indexes.index];
 
         if (!sectorInfo) {
             return;
@@ -563,31 +546,32 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
         sectorInfo.sector.attr({
             fill: sectorInfo.color
         });
-    },
+    }
 
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
      */
-    selectLegend: function(legendIndex) {
-        var isNull = snippet.isNull(legendIndex);
-        snippet.forEachArray(this.sectorInfos, function(sectorInfo, index) {
-            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+    selectLegend(legendIndex) {
+        const isNull = snippet.isNull(legendIndex);
+        this.sectorInfos.forEach((sectorInfo, index) => {
+            const opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             sectorInfo.sector.attr({
                 'fill-opacity': opacity
             });
         });
-    },
+    }
+
     /**
      * Get rendered label width
      * @param {string} text - text content
      * @param {object} theme - label theme
      * @returns {number}
      */
-    getRenderedLabelWidth: function(text, theme) {
+    getRenderedLabelWidth(text, theme) {
         return raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily).width;
-    },
+    }
 
     /**
      * Get rendered label height
@@ -595,9 +579,9 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {object} theme - label theme
      * @returns {number}
      */
-    getRenderedLabelHeight: function(text, theme) {
+    getRenderedLabelHeight(text, theme) {
         return raphaelRenderUtil.getRenderedTextSize(text, theme.fontSize, theme.fontFamily).height;
-    },
+    }
 
     /**
      * Render labels and return label set
@@ -610,9 +594,9 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
      *      @param {object} theme label theme
      *      @param {Array} colors series theme colors
      */
-    renderLabels: function(options) {
-        var theme = options.theme;
-        var attributes = {
+    renderLabels(options) {
+        const {theme} = options;
+        const attributes = {
             'font-size': theme.fontSize,
             'font-family': (options.fontFamily) ? options.fontFamily : options.theme.fontFamily,
             'font-weight': theme.fontWeight,
@@ -621,8 +605,8 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
             opacity: 0
         };
 
-        snippet.forEach(options.positions, function(position, index) {
-            var label;
+        options.positions.forEach((position, index) => {
+            let label;
 
             if (options.colors) {
                 attributes.fill = options.colors[index];
@@ -643,6 +627,6 @@ var RaphaelPieChart = snippet.defineClass(/** @lends RaphaelPieChart.prototype *
             this.labelSet = options.labelSet;
         }
     }
-});
+}
 
-module.exports = RaphaelPieChart;
+export default RaphaelPieChart;

@@ -4,20 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
+import raphael from 'raphael';
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
-var raphael = require('raphael');
-
-var ANIMATION_DURATION = 700;
-var CIRCLE_OPACITY = 0.8;
-var STROKE_OPACITY = 1;
-var EMPHASIS_OPACITY = 0.8;
-var DE_EMPHASIS_OPACITY = 0.3;
-var DEFAULT_LUMINANC = 0.2;
-var OVERLAY_BORDER_WIDTH = 2;
-var TOOLTIP_OFFSET_VALUE = 20;
+const ANIMATION_DURATION = 700;
+const CIRCLE_OPACITY = 0.8;
+const STROKE_OPACITY = 1;
+const EMPHASIS_OPACITY = 0.8;
+const DE_EMPHASIS_OPACITY = 0.3;
+const DEFAULT_LUMINANC = 0.2;
+const OVERLAY_BORDER_WIDTH = 2;
+const TOOLTIP_OFFSET_VALUE = 20;
 
 /**
  * bound for circle
@@ -36,7 +34,7 @@ var TOOLTIP_OFFSET_VALUE = 20;
  * @class RaphaelBubbleChart
  * @private
  */
-var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.prototype */ {
+class RaphaelBubbleChart {
     /**
      * Render function of bubble chart
      * @param {object} paper - Raphael paper
@@ -49,8 +47,8 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      * @param {{showTooltip: function, hideTooltip: function}} callbacks - callbacks for toggle of tooltip.
      * @returns {object}
      */
-    render: function(paper, data, callbacks) {
-        var circleSet = paper.set();
+    render(paper, data, callbacks) {
+        const circleSet = paper.set();
 
         this.paper = paper;
 
@@ -119,28 +117,28 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
         }
 
         return circleSet;
-    },
+    }
 
     /**
      * Render overlay.
      * @returns {object}
      * @private
      */
-    _renderOverlay: function() {
-        var position = {
+    _renderOverlay() {
+        const position = {
             left: 0,
             top: 0
         };
-        var attribute = {
+        const attribute = {
             fill: 'none',
             stroke: '#fff',
             'stroke-opacity': STROKE_OPACITY,
             'stroke-width': 2
         };
-        var circle = raphaelRenderUtil.renderCircle(this.paper, position, 0, attribute);
+        const circle = raphaelRenderUtil.renderCircle(this.paper, position, 0, attribute);
 
         return circle;
-    },
+    }
 
     /**
      * Render circles.
@@ -148,18 +146,16 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      * @returns {Array.<Array.<circleInfo>>}
      * @private
      */
-    _renderCircles: function(circleSet) {
-        var self = this;
-        var colors = this.theme.colors;
+    _renderCircles(circleSet) {
+        const {colors} = this.theme;
 
-        return snippet.map(this.groupBounds, function(bounds, groupIndex) {
-            return snippet.map(bounds, function(bound, index) {
-                var circleInfo = null;
-                var color, circle;
+        return this.groupBounds.map((bounds, groupIndex) => (
+            bounds.map((bound, index) => {
+                let circleInfo = null;
 
                 if (bound) {
-                    color = colors[index];
-                    circle = raphaelRenderUtil.renderCircle(self.paper, bound, 0, {
+                    const color = colors[index];
+                    const circle = raphaelRenderUtil.renderCircle(this.paper, bound, 0, {
                         fill: color,
                         opacity: 0,
                         stroke: 'none'
@@ -171,16 +167,16 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
                     circle.data('index', index);
 
                     circleInfo = {
-                        circle: circle,
-                        color: color,
-                        bound: bound
+                        circle,
+                        color,
+                        bound
                     };
                 }
 
                 return circleInfo;
-            });
-        });
-    },
+            })
+        ));
+    }
 
     /**
      * Animate circle
@@ -188,26 +184,24 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      * @param {number} radius - radius of circle
      * @private
      */
-    _animateCircle: function(circle, radius) {
+    _animateCircle(circle, radius) {
         circle.animate({
             r: radius,
             opacity: CIRCLE_OPACITY
         }, ANIMATION_DURATION, '>');
-    },
+    }
 
     /**
      * Animate.
      */
-    animate: function() {
-        var self = this;
-
-        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo) {
+    animate() {
+        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, circleInfo => {
             if (!circleInfo) {
                 return;
             }
-            self._animateCircle(circleInfo.circle, circleInfo.bound.radius);
+            this._animateCircle(circleInfo.circle, circleInfo.bound.radius);
         });
-    },
+    }
 
     /**
      * Update circle bound
@@ -215,13 +209,13 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      * @param {{left: number, top: number}} bound - bound
      * @private
      */
-    _updatePosition: function(circle, bound) {
+    _updatePosition(circle, bound) {
         circle.attr({
             cx: bound.left,
             cy: bound.top,
             r: bound.radius
         });
-    },
+    }
 
     /**
      * Resize graph of bubble type chart.
@@ -229,31 +223,29 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      *      @param {{width: number, height:number}} params.dimension - dimension
      *      @param {Array.<Array.<bound>>} params.groupBounds - group bounds
      */
-    resize: function(params) {
-        var self = this;
-        var dimension = params.dimension;
-        var groupBounds = params.groupBounds;
+    resize(params) {
+        const {dimension, groupBounds} = params;
 
         this.groupBounds = groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 
-        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
-            var bound = groupBounds[groupIndex][index];
+        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, (circleInfo, groupIndex, index) => {
+            const bound = groupBounds[groupIndex][index];
             if (circleInfo) {
                 circleInfo.bound = bound;
-                self._updatePosition(circleInfo.circle, bound);
+                this._updatePosition(circleInfo.circle, bound);
             }
         });
-    },
+    }
 
     /**
      * Find data indexes of rendered circle by position.
      * @param {{left: number, top: number}} position - mouse position
      * @returns {{index: number, groupIndex: number}}
      */
-    findIndexes: function(position) {
-        var circle = this.paper.getElementByPoint(position.left, position.top);
-        var foundIndexes = null;
+    findIndexes(position) {
+        const circle = this.paper.getElementByPoint(position.left, position.top);
+        let foundIndexes = null;
 
         if (circle) {
             foundIndexes = {
@@ -263,13 +255,13 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
         }
 
         return foundIndexes;
-    },
+    }
 
-    appendShadowFilterToDefs: function() {
-        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
-        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+    appendShadowFilterToDefs() {
+        const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        const feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        const feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
 
         filter.setAttributeNS(null, 'id', 'shadow');
         filter.setAttributeNS(null, 'x', '-50%');
@@ -290,7 +282,7 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
         filter.appendChild(feGaussianBlur);
         filter.appendChild(feBlend);
         this.paper.defs.appendChild(filter);
-    },
+    }
 
     /**
      * Whether changed or not.
@@ -299,9 +291,9 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      * @returns {boolean} result boolean
      * @private
      */
-    _isChangedPosition: function(prevPosition, position) {
+    _isChangedPosition(prevPosition, position) {
         return !prevPosition || prevPosition.left !== position.left || prevPosition.top !== position.top;
-    },
+    }
 
     /**
      * Show overlay with animation.
@@ -309,9 +301,9 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      *      @param {number} indexes.groupIndex - index of circles group
      *      @param {number} indexes.index - index of circles
      */
-    showAnimation: function(indexes) {
-        var circleInfo = this.groupCircleInfos[indexes.groupIndex][indexes.index];
-        var bound = circleInfo.bound;
+    showAnimation(indexes) {
+        const circleInfo = this.groupCircleInfos[indexes.groupIndex][indexes.index];
+        const {bound} = circleInfo;
         this.circle = circleInfo.circle;
 
         this.overlay.attr({
@@ -330,7 +322,7 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
         this.overlay.node.setAttribute('filter', 'url(#shadow)');
         this.overlay.toFront();
         this.circle.toFront();
-    },
+    }
 
     /**
      * Hide overlay with animation.
@@ -338,8 +330,8 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      *      @param {number} indexes.groupIndex - index of circles group
      *      @param {number} indexes.index - index of circles
      */
-    hideAnimation: function(indexes) {
-        var changeOpacity = DE_EMPHASIS_OPACITY;
+    hideAnimation(indexes) {
+        let changeOpacity = DE_EMPHASIS_OPACITY;
         this.overlay.attr({
             cx: 0,
             cy: 0,
@@ -354,7 +346,7 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
         this.circle.attr({
             opacity: changeOpacity
         });
-    },
+    }
 
     /**
      * Find circle.
@@ -362,13 +354,13 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
      * @returns {?object}
      * @private
      */
-    _findCircle: function(position) {
-        var circles = [];
-        var paper = this.paper;
-        var foundCircle, circle;
+    _findCircle(position) {
+        const circles = [];
+        const {paper} = this;
+        let foundCircle;
 
         while (snippet.isUndefined(foundCircle)) {
-            circle = paper.getElementByPoint(position.left, position.top);
+            const circle = paper.getElementByPoint(position.left, position.top);
 
             if (circle) {
                 if (circle.attrs.opacity > DE_EMPHASIS_OPACITY) {
@@ -383,28 +375,27 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
         }
 
         if (!foundCircle) {
-            foundCircle = circles[0];
+            ([foundCircle] = circles);
         }
 
-        snippet.forEachArray(circles, function(_circle) {
+        circles.forEach(_circle => {
             _circle.show();
         });
 
         return foundCircle;
-    },
+    }
 
     /**
      * Move mouse on series.
      * @param {{left: number, top: number}} position - mouse position
      */
-    moveMouseOnSeries: function(position) {
-        var circle = this._findCircle(position);
-        var groupIndex, index, args;
+    moveMouseOnSeries(position) {
+        const circle = this._findCircle(position);
 
         if (circle && snippet.isExisty(circle.data('groupIndex'))) {
-            groupIndex = circle.data('groupIndex');
-            index = circle.data('index');
-            args = [{}, groupIndex, index, {
+            const groupIndex = circle.data('groupIndex');
+            const index = circle.data('index');
+            const args = [{}, groupIndex, index, {
                 left: position.left - TOOLTIP_OFFSET_VALUE,
                 top: position.top - TOOLTIP_OFFSET_VALUE
             }];
@@ -418,60 +409,56 @@ var RaphaelBubbleChart = snippet.defineClass(/** @lends RaphaelBubbleChart.proto
             this.prevOverCircle = null;
         }
         this.prevPosition = position;
-    },
+    }
 
     /**
      * Select series.
      * @param {{index: number, groupIndex: number}} indexes - index map
      */
-    selectSeries: function(indexes) {
-        var groupIndex = indexes.groupIndex;
-        var index = indexes.index;
-        var circleInfo = this.groupCircleInfos[groupIndex][index];
-        var objColor = raphael.color(circleInfo.color);
-        var themeColor = this.theme.selectionColor;
-        var color = themeColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC);
+    selectSeries(indexes) {
+        const {groupIndex, index} = indexes;
+        const circleInfo = this.groupCircleInfos[groupIndex][index];
+        const objColor = raphael.color(circleInfo.color);
+        const themeColor = this.theme.selectionColor;
+        const color = themeColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC);
 
         circleInfo.circle.attr({
             fill: color
         });
-    },
+    }
 
     /**
      * Unselect series.
      * @param {{index: number, groupIndex: number}} indexes - index map
      */
-    unselectSeries: function(indexes) {
-        var groupIndex = indexes.groupIndex;
-        var index = indexes.index;
-        var circleInfo = this.groupCircleInfos[groupIndex][index];
+    unselectSeries(indexes) {
+        const {groupIndex, index} = indexes;
+        const circleInfo = this.groupCircleInfos[groupIndex][index];
 
         circleInfo.circle.attr({
             fill: circleInfo.color
         });
-    },
+    }
 
     /**
      * Select legend.
      * @param {?number} legendIndex - index of legend
      */
-    selectLegend: function(legendIndex) {
-        var noneSelected = snippet.isNull(legendIndex);
+    selectLegend(legendIndex) {
+        const noneSelected = snippet.isNull(legendIndex);
 
         this.selectedLegend = legendIndex;
 
-        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
-            var opacity;
-
+        raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, (circleInfo, groupIndex, index) => {
             if (!circleInfo) {
                 return;
             }
 
-            opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            const opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
-            circleInfo.circle.attr({opacity: opacity});
+            circleInfo.circle.attr({opacity});
         });
     }
-});
+}
 
-module.exports = RaphaelBubbleChart;
+export default RaphaelBubbleChart;
