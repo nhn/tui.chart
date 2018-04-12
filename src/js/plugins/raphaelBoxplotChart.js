@@ -4,34 +4,32 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
+import raphael from 'raphael';
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
-var raphael = require('raphael');
-
-var ANIMATION_DURATION = 700;
-var EMPHASIS_OPACITY = 1;
-var DE_EMPHASIS_OPACITY = 0.3;
-var DEFAULT_LUMINANC = 0.2;
-var EDGE_LINE_WIDTH = 1;
-var MEDIAN_LINE_WIDTH = 1;
-var WHISKER_LINE_WIDTH = 1;
+const ANIMATION_DURATION = 700;
+const EMPHASIS_OPACITY = 1;
+const DE_EMPHASIS_OPACITY = 0.3;
+const DEFAULT_LUMINANC = 0.2;
+const EDGE_LINE_WIDTH = 1;
+const MEDIAN_LINE_WIDTH = 1;
+const WHISKER_LINE_WIDTH = 1;
 
 /**
  * @classdesc RaphaelBoxplotChart is graph renderer for bar, column chart.
  * @class RaphaelBoxplotChart
  * @private
  */
-var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.prototype */ {
+class RaphaelBoxplotChart {
     /**
      * Render function of bar chart
      * @param {object} paper paper object
      * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
      * @returns {Array.<object>} seriesSet
      */
-    render: function(paper, data) {
-        var groupBounds = data.groupBounds;
+    render(paper, data) {
+        const {groupBounds} = data;
 
         if (!groupBounds) {
             return null;
@@ -54,26 +52,26 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         this.groupBounds = groupBounds;
 
         return this.paper.setFinish();
-    },
+    }
 
     /**
      * Render overlay.
      * @returns {object} raphael object
      * @private
      */
-    _renderCircleOverlay: function() {
-        var position = {
+    _renderCircleOverlay() {
+        const position = {
             left: 0,
             top: 0
         };
-        var attributes = {
+        const attributes = {
             'fill-opacity': 0
         };
 
         return raphaelRenderUtil.renderCircle(this.paper, position, 0, snippet.extend({
             'stroke-width': 0
         }, attributes));
-    },
+    }
 
     /**
      * Render rect
@@ -83,20 +81,18 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @returns {object} bar rect
      * @private
      */
-    _renderBox: function(bound, color, attributes) {
-        var rect;
-
+    _renderBox(bound, color, attributes) {
         if (bound.width < 0 || bound.height < 0) {
             return null;
         }
 
-        rect = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
+        const rect = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
             fill: color,
             stroke: 'none'
         }, attributes));
 
         return rect;
-    },
+    }
 
     /**
      * Render boxes.
@@ -104,38 +100,35 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @returns {Array.<Array.<object>>} bars
      * @private
      */
-    _renderBoxes: function(groupBounds) {
-        var self = this;
-        var colors = this.theme.colors;
-        var colorByPoint = this.options.colorByPoint;
+    _renderBoxes(groupBounds) {
+        const {colors} = this.theme;
+        const {colorByPoint} = this.options;
 
-        return snippet.map(groupBounds, function(bounds, groupIndex) {
-            return snippet.map(bounds, function(bound, index) {
-                var color, rect, item;
-
+        return groupBounds.map((bounds, groupIndex) => (
+            bounds.map((bound, index) => {
                 if (!bound) {
                     return null;
                 }
 
-                item = self.seriesDataModel.getSeriesItem(groupIndex, index);
-
-                color = colorByPoint ? colors[groupIndex] : colors[index];
+                const item = this.seriesDataModel.getSeriesItem(groupIndex, index);
+                const color = colorByPoint ? colors[groupIndex] : colors[index];
+                let rect;
 
                 if (bound.start) {
-                    rect = self._renderBox(bound.start, color);
+                    rect = this._renderBox(bound.start, color);
                 }
 
                 return {
-                    rect: rect,
-                    color: color,
+                    rect,
+                    color,
                     bound: bound.end,
-                    item: item,
-                    groupIndex: groupIndex,
-                    index: index
+                    item,
+                    groupIndex,
+                    index
                 };
-            });
-        });
-    },
+            })
+        ));
+    }
 
     /**
      * Render boxplots.
@@ -143,28 +136,31 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @returns {Array.<Array.<object>>} bars
      * @private
      */
-    _renderBoxplots: function(groupBounds) {
-        var groupBoxes = this._renderBoxes(groupBounds);
+    _renderBoxplots(groupBounds) {
+        const groupBoxes = this._renderBoxes(groupBounds);
 
         this.groupWhiskers = this._renderWhiskers(groupBounds);
         this.groupMedians = this._renderMedianLines(groupBounds);
         this.groupOutliers = this._renderOutliers(groupBounds);
 
         return groupBoxes;
-    },
+    }
 
-    _renderWhisker: function(end, start, color) {
-        var paper = this.paper;
-        var topDistance = start.top - end.top;
-        var whiskerDirection = topDistance > 0 ? 1 : -1;
-        var width = end.width;
-        var left = end.left;
-        var quartileWidth = width / 4;
-        var edgePath = 'M' + (left + quartileWidth) + ',' + end.top + 'H' + (left + (quartileWidth * 3));
-        var whiskerPath = 'M' + (left + (quartileWidth * 2)) + ',' + end.top + 'V' + (end.top + (Math.abs(topDistance) * whiskerDirection));
-        var edge = raphaelRenderUtil.renderLine(paper, edgePath, color, EDGE_LINE_WIDTH);
-        var whisker = raphaelRenderUtil.renderLine(paper, whiskerPath, color, WHISKER_LINE_WIDTH);
-        var whiskers = [];
+    _renderWhisker(end, start, color) {
+        const {paper} = this;
+        const topDistance = start.top - end.top;
+        const whiskerDirection = topDistance > 0 ? 1 : -1;
+        const {left, width} = end;
+        const quartileWidth = width / 4;
+        const edgePath = `M${(left + quartileWidth)},${end.top}H${(left + (quartileWidth * 3))}`;
+        const whiskerPath = `
+            M${(left + (quartileWidth * 2))},${end.top}
+            V${(end.top + (Math.abs(topDistance) * whiskerDirection))}
+        `.replace(/\s/g, '');
+
+        const edge = raphaelRenderUtil.renderLine(paper, edgePath, color, EDGE_LINE_WIDTH);
+        const whisker = raphaelRenderUtil.renderLine(paper, whiskerPath, color, WHISKER_LINE_WIDTH);
+        const whiskers = [];
 
         edge.attr({
             opacity: 0
@@ -177,68 +173,66 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         whiskers.push(whisker);
 
         return whiskers;
-    },
+    }
 
-    _renderWhiskers: function(groupBounds) {
-        var self = this;
-        var colors = this.theme.colors;
-        var colorByPoint = this.options.colorByPoint;
-        var groupWhiskers = [];
+    _renderWhiskers(groupBounds) {
+        const {colors} = this.theme;
+        const {colorByPoint} = this.options;
+        const groupWhiskers = [];
 
-        snippet.forEach(groupBounds, function(bounds, groupIndex) {
-            var whiskers = [];
+        groupBounds.forEach((bounds, groupIndex) => {
+            let whiskers = [];
 
-            snippet.forEach(bounds, function(bound, index) {
-                var color = colorByPoint ? colors[groupIndex] : colors[index];
+            bounds.forEach((bound, index) => {
+                const color = colorByPoint ? colors[groupIndex] : colors[index];
 
                 if (!bound) {
                     return;
                 }
 
-                whiskers = whiskers.concat(self._renderWhisker(bound.min, bound.start, color));
-                whiskers = whiskers.concat(self._renderWhisker(bound.max, bound.end, color));
+                whiskers = whiskers.concat(this._renderWhisker(bound.min, bound.start, color));
+                whiskers = whiskers.concat(this._renderWhisker(bound.max, bound.end, color));
             });
 
             groupWhiskers.push(whiskers);
         });
 
         return groupWhiskers;
-    },
+    }
 
-    _renderMedianLine: function(bound) {
-        var width = bound.width;
-        var medianLinePath = 'M' + bound.left + ',' + bound.top + 'H' + (bound.left + width);
-        var median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, '#ffffff', MEDIAN_LINE_WIDTH);
+    _renderMedianLine(bound) {
+        const {width} = bound;
+        const medianLinePath = `M${bound.left},${bound.top},H${(bound.left + width)}`;
+        const median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, '#ffffff', MEDIAN_LINE_WIDTH);
 
         median.attr({
             opacity: 0
         });
 
         return median;
-    },
+    }
 
-    _renderMedianLines: function(groupBounds) {
-        var self = this;
-        var groupMedians = [];
+    _renderMedianLines(groupBounds) {
+        const groupMedians = [];
 
-        snippet.forEach(groupBounds, function(bounds) {
-            var medians = [];
+        groupBounds.forEach(bounds => {
+            const medians = [];
 
-            snippet.forEach(bounds, function(bound) {
+            bounds.forEach(bound => {
                 if (!bound) {
                     return;
                 }
 
-                medians.push(self._renderMedianLine(bound.median));
+                medians.push(this._renderMedianLine(bound.median));
             });
             groupMedians.push(medians);
         });
 
         return groupMedians;
-    },
+    }
 
-    _renderOutlier: function(bound, color) {
-        var outlier = raphaelRenderUtil.renderCircle(this.paper, {
+    _renderOutlier(bound, color) {
+        const outlier = raphaelRenderUtil.renderCircle(this.paper, {
             left: bound.left,
             top: bound.top
         }, 3.5, {
@@ -251,27 +245,26 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         });
 
         return outlier;
-    },
+    }
 
-    _renderOutliers: function(groupBounds) {
-        var self = this;
-        var colors = this.theme.colors;
-        var colorByPoint = this.options.colorByPoint;
-        var groupOutliers = [];
+    _renderOutliers(groupBounds) {
+        const {colors} = this.theme;
+        const {colorByPoint} = this.options;
+        const groupOutliers = [];
 
-        snippet.forEach(groupBounds, function(bounds, groupIndex) {
-            var outliers = [];
-            snippet.forEach(bounds, function(bound, index) {
-                var color = colorByPoint ? colors[groupIndex] : colors[index];
-                var seriesOutliers = [];
+        groupBounds.forEach((bounds, groupIndex) => {
+            const outliers = [];
+            bounds.forEach((bound, index) => {
+                const color = colorByPoint ? colors[groupIndex] : colors[index];
+                const seriesOutliers = [];
 
                 if (!bound) {
                     return;
                 }
 
                 if (bound.outliers.length) {
-                    snippet.forEach(bound.outliers, function(outlier) {
-                        seriesOutliers.push(self._renderOutlier(outlier, color));
+                    bound.outliers.forEach(outlier => {
+                        seriesOutliers.push(this._renderOutlier(outlier, color));
                     });
                 }
                 outliers.push(seriesOutliers);
@@ -280,7 +273,7 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
         });
 
         return groupOutliers;
-    },
+    }
 
     /**
      * Make rect points.
@@ -293,7 +286,7 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * }} rect points
      * @private
      */
-    _makeRectPoints: function(bound) {
+    _makeRectPoints(bound) {
         return {
             leftTop: {
                 left: Math.ceil(bound.left),
@@ -312,7 +305,7 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
                 top: Math.ceil(bound.top + bound.height)
             }
         };
-    },
+    }
 
     /**
      * Render border lines;
@@ -323,17 +316,16 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @returns {object} raphael object
      * @private
      */
-    _renderBorderLines: function(bound, borderColor, chartType, item) {
-        var self = this;
-        var borderLinePaths = this._makeBorderLinesPaths(bound, chartType, item);
-        var lines = {};
+    _renderBorderLines(bound, borderColor, chartType, item) {
+        const borderLinePaths = this._makeBorderLinesPaths(bound, chartType, item);
+        const lines = {};
 
-        snippet.forEach(borderLinePaths, function(path, name) {
-            lines[name] = raphaelRenderUtil.renderLine(self.paper, path, borderColor, 1);
+        Object.entries(borderLinePaths).forEach(([name, path]) => {
+            lines[name] = raphaelRenderUtil.renderLine(this.paper, path, borderColor, 1);
         });
 
         return lines;
-    },
+    }
 
     /**
      * Render bar borders.
@@ -341,31 +333,26 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @returns {Array.<Array.<object>>} borders
      * @private
      */
-    _renderBoxBorders: function(groupBounds) {
-        var self = this,
-            borderColor = this.theme.borderColor,
-            groupBorders;
+    _renderBoxBorders(groupBounds) {
+        const {borderColor} = this.theme;
 
         if (!borderColor) {
             return null;
         }
 
-        groupBorders = snippet.map(groupBounds, function(bounds, groupIndex) {
-            return snippet.map(bounds, function(bound, index) {
-                var seriesItem;
-
+        const groupBorders = groupBounds.map((bounds, groupIndex) => (
+            bounds.map((bound, index) => {
                 if (!bound) {
                     return null;
                 }
+                const seriesItem = this.seriesDataModel.getSeriesItem(groupIndex, index);
 
-                seriesItem = self.seriesDataModel.getSeriesItem(groupIndex, index);
-
-                return self._renderBorderLines(bound.start, borderColor, self.chartType, seriesItem);
-            });
-        });
+                return this._renderBorderLines(bound.start, borderColor, this.chartType, seriesItem);
+            })
+        ));
 
         return groupBorders;
-    },
+    }
 
     /**
      * Animate rect.
@@ -373,72 +360,71 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @private
      */
-    _animateRect: function(rect, bound) {
+    _animateRect(rect, bound) {
         rect.animate({
             x: bound.left,
             y: bound.top,
             width: bound.width,
             height: bound.height
         }, ANIMATION_DURATION, '>');
-    },
+    }
 
     /**
      * Animate.
      * @param {function} onFinish finish callback function
      */
-    animate: function(onFinish) {
-        var self = this;
-        var animation = raphael.animation({
+    animate(onFinish) {
+        const animation = raphael.animation({
             opacity: 1
         }, ANIMATION_DURATION);
 
-        raphaelRenderUtil.forEach2dArray(this.groupBoxes, function(box) {
+        raphaelRenderUtil.forEach2dArray(this.groupBoxes, box => {
             if (!box) {
                 return;
             }
-            self._animateRect(box.rect, box.bound);
+            this._animateRect(box.rect, box.bound);
         });
 
-        raphaelRenderUtil.forEach2dArray(self.groupWhiskers, function(whisker) {
+        raphaelRenderUtil.forEach2dArray(this.groupWhiskers, whisker => {
             whisker.animate(animation.delay(ANIMATION_DURATION));
         });
 
-        raphaelRenderUtil.forEach2dArray(self.groupMedians, function(median) {
+        raphaelRenderUtil.forEach2dArray(this.groupMedians, median => {
             median.animate(animation.delay(ANIMATION_DURATION));
         });
 
-        raphaelRenderUtil.forEach2dArray(self.groupOutliers, function(outliers) {
-            snippet.forEach(outliers, function(outlier) {
+        raphaelRenderUtil.forEach2dArray(this.groupOutliers, outliers => {
+            outliers.forEach(outlier => {
                 outlier.animate(animation.delay(ANIMATION_DURATION));
             });
         });
 
         if (onFinish) {
-            this.callbackTimeout = setTimeout(function() {
+            this.callbackTimeout = setTimeout(() => {
                 onFinish();
-                delete self.callbackTimeout;
+                delete this.callbackTimeout;
             }, ANIMATION_DURATION);
         }
-    },
+    }
 
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} data show info
      */
-    showAnimation: function(data) {
+    showAnimation(data) {
         if (snippet.isNumber(data.outlierIndex)) {
             this.showOutlierAnimation(data);
         } else {
             this.showRectAnimation(data);
         }
-    },
+    }
 
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} data show info
      */
-    showRectAnimation: function(data) {
-        var bar = this.groupBoxes[data.groupIndex][data.index];
+    showRectAnimation(data) {
+        const bar = this.groupBoxes[data.groupIndex][data.index];
         this.hoveredBar = bar.rect;
 
         this.hoveredBar.attr({
@@ -446,14 +432,14 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
             'stroke-width': 4
         });
         this.hoveredBar.node.setAttribute('filter', 'url(#shadow)');
-    },
+    }
 
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} data show info
      */
-    showOutlierAnimation: function(data) {
-        var targetAttr = this.groupOutliers[data.groupIndex][data.index][data.outlierIndex].attr();
+    showOutlierAnimation(data) {
+        const targetAttr = this.groupOutliers[data.groupIndex][data.index][data.outlierIndex].attr();
 
         this.circleOverlay.attr({
             r: targetAttr.r,
@@ -464,12 +450,12 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
             stroke: targetAttr.stroke,
             'stroke-width': 4
         });
-    },
+    }
 
     /**
      * Hide animation.
      */
-    hideAnimation: function() {
+    hideAnimation() {
         this.circleOverlay.attr({
             width: 1,
             height: 1,
@@ -482,7 +468,7 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
             stroke: 'none'
         });
         this.hoveredBar.node.setAttribute('filter', 'none');
-    },
+    }
 
     /**
      * Update rect bound
@@ -490,14 +476,14 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @private
      */
-    _updateRectBound: function(rect, bound) {
+    _updateRectBound(rect, bound) {
         rect.attr({
             x: bound.left,
             y: bound.top,
             width: bound.width,
             height: bound.height
         });
-    },
+    }
 
     /**
      * Resize graph of bar type chart.
@@ -507,25 +493,22 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      *                  left:number, top:number, width: number, height: number
      *              }>>} params.groupBounds group bounds
      */
-    resize: function(params) {
-        var dimension = params.dimension;
-        var groupBounds = params.groupBounds;
+    resize(params) {
+        const {dimension, groupBounds} = params;
 
         this.groupBounds = groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 
-        raphaelRenderUtil.forEach2dArray(this.groupBoxes, function(bar, groupIndex, index) {
-            var bound;
-
+        raphaelRenderUtil.forEach2dArray(this.groupBoxes, (bar, groupIndex, index) => {
             if (!bar) {
                 return;
             }
 
-            bound = groupBounds[groupIndex][index].end;
+            const bound = groupBounds[groupIndex][index].end;
             bar.bound = bound;
             raphaelRenderUtil.updateRectBound(bar.rect, bound);
         });
-    },
+    }
 
     /**
      * Change borders color.
@@ -533,11 +516,11 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @param {borderColor} borderColor border color
      * @private
      */
-    _changeBordersColor: function(lines, borderColor) {
-        snippet.forEach(lines, function(line) {
+    _changeBordersColor(lines, borderColor) {
+        lines.forEach(line => {
             line.attr({stroke: borderColor});
         });
-    },
+    }
 
     /**
      * Change bar color.
@@ -546,82 +529,79 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
      * @param {?string} borderColor stroke color
      * @private
      */
-    _changeBoxColor: function(indexes, color, borderColor) {
-        var bar = this.groupBoxes[indexes.groupIndex][indexes.index];
-        var lines;
+    _changeBoxColor(indexes, color, borderColor) {
+        const bar = this.groupBoxes[indexes.groupIndex][indexes.index];
 
         bar.rect.attr({
             stroke: color
         });
 
         if (borderColor) {
-            lines = this.groupBorders[indexes.groupIndex][indexes.index];
+            const lines = this.groupBorders[indexes.groupIndex][indexes.index];
             this._changeBordersColor(lines, borderColor);
         }
-    },
+    }
 
     /**
      * Select series.
      * @param {{groupIndex: number, index: number}} indexes indexes
      */
-    selectSeries: function(indexes) {
-        var bar = this.groupBoxes[indexes.groupIndex][indexes.index],
-            objColor = raphael.color(bar.color),
-            selectionColorTheme = this.theme.selectionColor,
-            color = selectionColorTheme || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC),
-            borderColor = this.theme.borderColor,
-            objBorderColor;
+    selectSeries(indexes) {
+        const bar = this.groupBoxes[indexes.groupIndex][indexes.index];
+        const objColor = raphael.color(bar.color);
+        const selectionColorTheme = this.theme.selectionColor;
+        const makeColor = raphaelRenderUtil.makeChangedLuminanceColor;
+        const color = selectionColorTheme || makeColor(objColor.hex, DEFAULT_LUMINANC);
+        let {borderColor} = this.theme;
 
         if (borderColor) {
-            objBorderColor = raphael.color(borderColor);
+            const objBorderColor = raphael.color(borderColor);
             borderColor = raphaelRenderUtil.makeChangedLuminanceColor(objBorderColor.hex, DEFAULT_LUMINANC);
         }
 
         this._changeBoxColor(indexes, color, borderColor);
-    },
+    }
 
     /**
      * Unselect series.
      * @param {{groupIndex: number, index: number}} indexes indexes
      */
-    unselectSeries: function(indexes) {
-        var bar = this.groupBoxes[indexes.groupIndex][indexes.index],
-            borderColor = this.theme.borderColor;
+    unselectSeries(indexes) {
+        const bar = this.groupBoxes[indexes.groupIndex][indexes.index];
+        const {borderColor} = this.theme;
         this._changeBoxColor(indexes, bar.color, borderColor);
-    },
+    }
 
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
      */
-    selectLegend: function(legendIndex) {
-        var noneSelected = snippet.isNull(legendIndex);
+    selectLegend(legendIndex) {
+        const noneSelected = snippet.isNull(legendIndex);
 
-        raphaelRenderUtil.forEach2dArray(this.groupBoxes, function(box, groupIndex, index) {
-            var opacity;
-
+        raphaelRenderUtil.forEach2dArray(this.groupBoxes, (box, groupIndex, index) => {
             if (!box) {
                 return;
             }
 
-            opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            const opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             box.rect.attr({'stroke-opacity': opacity});
         });
-        raphaelRenderUtil.forEach2dArray(this.groupWhiskers, function(whisker, groupIndex, index) {
-            var opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+        raphaelRenderUtil.forEach2dArray(this.groupWhiskers, (whisker, groupIndex, index) => {
+            const opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             whisker.attr({'stroke-opacity': opacity});
         });
-        raphaelRenderUtil.forEach2dArray(this.groupMedians, function(median, groupIndex, index) {
-            var opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+        raphaelRenderUtil.forEach2dArray(this.groupMedians, (median, groupIndex, index) => {
+            const opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             median.attr({'stroke-opacity': opacity});
         });
-    },
+    }
 
-    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme, isStacked) {
-        var attributes = {
+    renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme, isStacked) {
+        const attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
@@ -629,13 +609,12 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
             opacity: 0,
             'text-anchor': isStacked ? 'middle' : 'start'
         };
-        var labelSet = paper.set();
+        const labelSet = paper.set();
 
-        snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
-            snippet.forEach(categoryLabel, function(label, seriesIndex) {
-                var position = groupPositions[categoryIndex][seriesIndex];
-                var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
-                var startLabel;
+        groupLabels.forEach((categoryLabel, categoryIndex) => {
+            categoryLabel.forEach((label, seriesIndex) => {
+                const position = groupPositions[categoryIndex][seriesIndex];
+                const endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
 
                 endLabel.node.style.userSelect = 'none';
                 endLabel.node.style.cursor = 'default';
@@ -644,7 +623,7 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
                 labelSet.push(endLabel);
 
                 if (position.start) {
-                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
+                    const startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
                     startLabel.node.setAttribute('filter', 'url(#glow)');
@@ -656,6 +635,6 @@ var RaphaelBoxplotChart = snippet.defineClass(/** @lends RaphaelBoxplotChart.pro
 
         return labelSet;
     }
-});
+}
 
-module.exports = RaphaelBoxplotChart;
+export default RaphaelBoxplotChart;

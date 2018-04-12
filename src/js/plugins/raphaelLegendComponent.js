@@ -389,7 +389,7 @@ class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */
             ,${checkboxPathHalpSize}
             l${checkboxPathSize}
             ,-${checkboxPathSize}
-        `.replace(/\n/g, '');
+        `.replace(/\s/g, '');
 
         const checkboxSet = this.paper.set();
         const checkboxElement = this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 0).attr({

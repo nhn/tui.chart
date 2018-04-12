@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var RaphaelLineBase = require('./raphaelLineTypeBase');
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
+import RaphaelLineBase from './raphaelLineTypeBase';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;

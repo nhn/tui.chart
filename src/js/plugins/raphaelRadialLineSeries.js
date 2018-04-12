@@ -4,23 +4,23 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import RaphaelLineTypeBase from './raphaelLineTypeBase';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
 
-var RaphaelLineTypeBase = require('./raphaelLineTypeBase');
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
+const EMPHASIS_OPACITY = 1;
+const DE_EMPHASIS_OPACITY = 0.3;
+const DEFAULT_LINE_WIDTH = 6;
 
-var EMPHASIS_OPACITY = 1;
-var DE_EMPHASIS_OPACITY = 0.3;
-var DEFAULT_LINE_WIDTH = 6;
-
-var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
+// var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
+class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelRadialLineSeries
      * @extends RaphaelLineTypeBase
      */
-    init: function() {
+    constructor() {
+        super();
         /**
          * selected legend index
          * @type {?number}
@@ -38,7 +38,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
          * @type {number}
          */
         this.lineWidth = DEFAULT_LINE_WIDTH;
-    },
+    }
 
     /**
      * Render function of line chart.
@@ -46,27 +46,25 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @returns {object} paper raphael paper
      */
-    render: function(paper, data) {
-        var dimension = data.dimension;
-        var groupPositions = data.groupPositions;
-        var theme = data.theme;
-        var colors = theme.colors;
-        var dotOpacity = data.options.showDot ? 1 : 0;
-        var isShowArea = data.options.showArea;
+    render(paper, data) {
+        const {dimension, groupPositions, theme} = data;
+        const {colors} = theme;
+        const dotOpacity = data.options.showDot ? 1 : 0;
+        const {isShowArea} = data.options;
 
-        var groupPaths = this._getLinesPath(groupPositions);
-        var borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
-        var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
-        var radialSeriesSet = paper.set();
-        var lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);
-        var dotPositions = snippet.map(groupPositions, function(positions) {
+        const groupPaths = this._getLinesPath(groupPositions);
+        const borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
+        const outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
+        const radialSeriesSet = paper.set();
+        const lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);
+        const dotPositions = groupPositions.map(positions => {
             positions.pop();
 
             return positions;
         });
 
         this.paper = paper;
-        this.theme = data.theme;
+        this.theme = theme;
         this.dimension = dimension;
         this.position = data.position;
 
@@ -91,7 +89,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
         this.isShowArea = isShowArea;
 
         return radialSeriesSet;
-    },
+    }
 
     /**
      * Get lines path.
@@ -99,13 +97,9 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
      * @returns {Array.<Array.<string>>} path
      * @private
      */
-    _getLinesPath: function(groupPositions) {
-        var self = this;
-
-        return snippet.map(groupPositions, function(positions) {
-            return self._makeLinesPath(positions);
-        });
-    },
+    _getLinesPath(groupPositions) {
+        return groupPositions.map(positions => this._makeLinesPath(positions));
+    }
 
     /**
      * Render lines.
@@ -117,16 +111,16 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderLines: function(paper, groupPaths, colors, strokeWidth, radialSeriesSet) {
-        return snippet.map(groupPaths, function(path, groupIndex) {
-            var color = colors[groupIndex] || 'transparent';
-            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+    _renderLines(paper, groupPaths, colors, strokeWidth, radialSeriesSet) {
+        return groupPaths.map((path, groupIndex) => {
+            const color = colors[groupIndex] || 'transparent';
+            const line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
 
             radialSeriesSet.push(line);
 
             return line;
         });
-    },
+    }
 
     /**
      * Render area.
@@ -137,10 +131,10 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderArea: function(paper, groupPaths, colors, radialSeriesSet) {
-        return snippet.map(groupPaths, function(path, groupIndex) {
-            var color = colors[groupIndex] || 'transparent';
-            var area = raphaelRenderUtil.renderArea(paper, path, {
+    _renderArea(paper, groupPaths, colors, radialSeriesSet) {
+        return groupPaths.map((path, groupIndex) => {
+            const color = colors[groupIndex] || 'transparent';
+            const area = raphaelRenderUtil.renderArea(paper, path, {
                 fill: color,
                 opacity: 0.4,
                 'stroke-width': this.lineWidth,
@@ -151,7 +145,7 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
 
             return area;
         }, this);
-    },
+    }
 
     /**
      * Resize graph of line chart.
@@ -161,41 +155,39 @@ var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lend
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
-    resize: function(params) {
-        var self = this,
-            dimension = params.dimension,
-            groupPositions = params.groupPositions;
+    resize(params) {
+        const {dimension, groupPositions} = params;
 
         this.groupPositions = groupPositions;
         this.groupPaths = this._getLinesPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
 
-        snippet.forEachArray(this.groupPaths, function(path, groupIndex) {
-            self.groupLines[groupIndex].attr({path: path.join(' ')});
-            self.groupAreas[groupIndex].attr({path: path.join(' ')});
+        this.groupPaths.forEach((path, groupIndex) => {
+            this.groupLines[groupIndex].attr({path: path.join(' ')});
+            this.groupAreas[groupIndex].attr({path: path.join(' ')});
 
-            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
-                self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+            this.groupDots[groupIndex].forEach((item, index) => {
+                this._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
             });
         });
-    },
+    }
 
     /**
      * Select legend.
      * /todo copied at raphaelLineCharts, should remove duplication
      * @param {?number} legendIndex legend index
      */
-    selectLegend: function(legendIndex) {
-        var noneSelected = snippet.isNull(legendIndex);
+    selectLegend(legendIndex) {
+        const noneSelected = snippet.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
-        snippet.forEachArray(this.groupLines, function(line, groupIndex) {
-            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+        this.groupLines.forEach((line, groupIndex) => {
+            const opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             line.attr({'stroke-opacity': opacity});
         });
     }
-});
+}
 
-module.exports = RaphaelRadialLineSeries;
+export default RaphaelRadialLineSeries;
