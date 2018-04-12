@@ -47,25 +47,26 @@
 | ![IE8](https://user-images.githubusercontent.com/35218826/37317347-aa1beb1e-26a7-11e8-860c-19274fbc1570.png) | ![CHROME](https://user-images.githubusercontent.com/35218826/37317349-aba19d08-26a7-11e8-997b-3a960c968238.png) |
 
 
-**No one like the legacy. But sometimes it matters.**
-That is why we started this project. As we couldn't find a project which supporting legacy browsers, maintained reliably, and free for commercial use.
+**No one likes legacy, but sometimes it matters.**  
+We started TOAST UI Chart because we could not find a project supporting legacy browsers, maintained reliably, and free for commercial use.
 
-**You can see the charts in IE8 exactly as it looks in Chrome.**
-Of course, there are other projects that support the legacy browser. However, They may have limited functions, look different or require polyfill that negatively affects performance. The TOAST UI Chart guarantees an identical look for all browsers. ToastUI uses the native browser formats, such as SVG and RVML. So, it requires no polyfill and draws faster.
+**The visuals of the charts in IE8 are exactly as it looks in Chrome.**  
+The TOAST UI Chart guarantees an identical look for all browsers. Draws fast and requires no polyfill, ToastUI uses of the native browser formats, such as SVG and RVML.
 
-**The TOAST UI Chart will continue to support legacy browsers as MIT license**
-No wonder the other open source charts stop supporting legacy browsers. It's hard to find open-source charts which are reliably maintained. And some of the decent charts ask commercial licenses. The TOAST UI Chart has over 50 releases since Jun. 2015 under MIT License. The TOAST UI Chart is the answer if you have same requirements as us.
+**The TOAST UI Chart will continue to support legacy browsers under the MIT license**  
+With over 50 releases since June 2015 under MIT License, the TOAST UI Chart is the answer if you have the same requirements as us.
 
 ## 🎨 Features
 
-The TOAST UI Chart is an open source JavaScript library that can be used in legacy browsers including IE8.
-It is intuitive and easy to apply without any other learning.
-If you like, you can change the chart in detail using many options and custom themes.
+- Intuitive and easy to apply.  
+- Is an open-source JavaScript library.  
+- Can be used in legacy browsers including IE8.  
+- Change the chart in detail using many options and custom themes.
 
 
 ### Single Charts
 
-The TOAST UI Chart provides many kinds of charts to visualize the various form of data.
+The TOAST UI Chart provides many types of charts to visualize the various forms of data.
 
 | [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)(Donut) |
 | --- | --- | --- | --- |
@@ -79,7 +80,7 @@ The TOAST UI Chart provides many kinds of charts to visualize the various form o
 
 ### Combo Charts
 
-The TOAST UI Chart covers even more complex data visualization.
+The TOAST UI Chart covers complex data visualization.
 
 | [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html) |
 | --- | --- | --- | --- |
@@ -88,7 +89,7 @@ The TOAST UI Chart covers even more complex data visualization.
 
 ### Customize
 
-Sometimes you may want more options to cover how to visualize data. Then try to customize the detail of the charts. You can change almost everything you see.
+Visualize the data in different styles by customizing the details of the charts.
 
 | Various expressions | Custom theme | Stack option  | Diverging option | Group tooltip |
 | --- | --- | --- | --- | --- |
@@ -105,14 +106,14 @@ Check out [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01
 
 ## 💾 Install
 
-The TOAST UI products can be used by using the package manager or downloading the source directly.
+The TOAST UI products can be installed by using the package manager or downloading the source directly.
 However, we highly recommend using the package manager.
 
 ### Via Package Manager
 
 The TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
-You can conveniently install it using the commands provided by each package manager.
-When using npm, be sure to use it in the environment [Node.js](https://nodejs.org) is installed.
+Install by using the commands provided by each package manager.
+When using npm, be sure [Node.js](https://nodejs.org) is installed in the environment.
 
 #### npm
 
@@ -144,7 +145,7 @@ Add the container element where TOAST UI Chart will be created.
 
 ### JavaScript
 #### Load
-The TOAST UI Chart can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following three ways depending on your environment.
+The TOAST UI Chart can be used by creating an instance with the constructor function. To get the constructor function, import the module using one of the following three ways depending on your environment.
 
 ```javascript
 var chart = tui.chart; /* namespace */
@@ -178,14 +179,16 @@ See [details](https://nhnent.github.io/tui.chart/latest) for additional informat
 
 ## 🔧 Development
 
-The TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
-Run npm scripts and develop yourself with the following process.
+The TOAST UI products are open-source.
+After fixing issues, create a pull request(PR).
+Run npm scripts and develop with the following process.
 
 ### Setup
 
 Fork `develop` branch into your personal repository.
-Clone it to local computer. Install node modules.
-Before starting development, you should check to haveany errors.
+Clone to local computer. 
+Install node modules.
+Before starting development, check for any errors.
 
 ```sh
 $ git clone https://github.com/{username}/tui.chart.git
@@ -197,8 +200,8 @@ $ npm run test
 ### Develop
 
 Let's start development!
-You can see your code is reflected as soon as you saving the codes by running a server.
-Don't miss adding test cases and then make green rights.
+Run a server and see the code reflected.
+Add test cases and then make them green.
 
 #### Run webpack-dev-server
 
@@ -215,15 +218,11 @@ $ npm run test
 
 ### Pull Request
 
-Before PR, check to test lastly and then check any errors.
-If it has no error, commit and then push it!
+Before creating a PR, test and check for any errors.
+If there are no errors, then commit and push!
 
-For more information on PR's step, please see links of Contributing section.
+For more information, please refer to the Contributing section.
 
-
-### Pull requests
-Before PR, check build lastly and then check any errors.
-If it has no error, commit and then push it!
 ```sh
 $ npm run deploy
 $ npm run test
@@ -234,7 +233,7 @@ $ npm run test
 * [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/README.md)
 * [APIs](https://nhnent.github.io/tui.chart/latest/)
 
-You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
+See the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
 
 ## 💬 Contributing
 * [Code of Conduct](CODE_OF_CONDUCT.md)
