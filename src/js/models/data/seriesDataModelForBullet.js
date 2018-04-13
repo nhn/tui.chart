@@ -8,7 +8,7 @@ import SeriesDataModel from './seriesDataModel';
 import chartConst from '../../const';
 import snippet from 'tui-code-snippet';
 
-var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBullet.prototype */ {
+class SeriesDataModelForBullet extends SeriesDataModel {
     /**
      * SeriesDataModelForBullet is series model for boxplot chart
      * SeriesDataModel.groups has SeriesGroups.
@@ -18,9 +18,6 @@ var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends S
      * @param {object} options - options
      * @param {Array.<function>} formatFunctions - format functions
      */
-    init: function(rawSeriesData, chartType, options, formatFunctions) {
-        SeriesDataModel.call(this, rawSeriesData, chartType, options, formatFunctions);
-    },
 
     /**
      * Create base groups.
@@ -29,12 +26,12 @@ var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends S
      * @private
      * @override
      */
-    _createBaseGroups: function() {
-        var chartType = this.chartType;
-        var formatFunctions = this.formatFunctions;
-        var maxRangeCount = 0;
-        var maxMarkerCount = 0;
-        var baseGroups = snippet.map(this.rawSeriesData, function(rawDatum) {
+    _createBaseGroups() {
+        const {chartType} = this;
+        const formatFunctions = this.formatFunctions;
+        const maxRangeCount = 0;
+        const maxMarkerCount = 0;
+        const baseGroups = snippet.map(this.rawSeriesData, function(rawDatum) {
             var items = [];
             var data = rawDatum.data;
             var markers = rawDatum.markers;
@@ -82,16 +79,16 @@ var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends S
         this.maxRangeCount = maxRangeCount;
 
         return baseGroups;
-    },
+    }
 
     /**
      * Create SeriesGroups from rawData.series.
      * @returns {Array.<SeriesGroup>}
      * @private
      */
-    _createSeriesGroupsFromRawData: function() {
+    _createSeriesGroupsFromRawData() {
         return SeriesDataModel.prototype._createSeriesGroupsFromRawData.call(this);
     }
-});
+}
 
-module.exports = SeriesDataModelForBullet;
+export default SeriesDataModelForBullet;

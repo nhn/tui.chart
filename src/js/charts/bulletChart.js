@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import rawDataHandler from '../models/data/rawDataHandler';
+import snippet from 'tui-code-snippet';
 
 var BulletChart = snippet.defineClass(ChartBase, /** @lends BulletChart.prototype */ {
     /**

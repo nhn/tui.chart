@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var calculator = require('../../helpers/calculator');
+import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
-var snippet = require('tui-code-snippet');
+import snippet from 'tui-code-snippet';
 
 var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.prototype */{
     /**

@@ -263,11 +263,8 @@ var axisDataMaker = {
         var candidates = this._makeCandidatesForAdjustingInterval(curBlockCount, seriesWidth);
         var intervalInfo = null;
 
-        console.log(candidates);
-
         if (candidates.length) {
             intervalInfo = arrayUtil.max(candidates, function(candidate) {
-                console.log("mm", candidate);
                 return candidate.blockCount;
             });
         }

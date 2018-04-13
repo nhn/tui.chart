@@ -285,7 +285,7 @@ class RaphaelLineChart extends RaphaelLineBase {
                 this._animateByPosition(item.endDot.dot, position, tickSize);
             });
 
-            self._animateByPath(line, groupPaths[groupIndex], tickSize);
+            this._animateByPath(line, groupPaths[groupIndex], tickSize);
         });
     }
 

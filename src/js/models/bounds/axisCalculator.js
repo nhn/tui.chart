@@ -12,20 +12,20 @@ import renderUtil from '../../helpers/renderUtil';
  * Calculator for dimension of axis.
  * @module axisCalculator
  * @private */
-var axisCalculator = {
+const axisCalculator = {
     /**
      * Calculate height for x axis.
      * @param {{title: string, labelMargin: number}} options - title and label margin option for x axis
      * @param {{title: object, label: object}} theme - theme for x axis
      * @returns {*}
      */
-    calculateXAxisHeight: function(options, theme) {
-        var title = options.title;
-        var titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
-        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.X_AXIS_TITLE_PADDING) : 0;
-        var labelMargin = options.labelMargin || 0;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
-        var height = titleAreaHeight + chartConst.X_AXIS_LABEL_PADDING;
+    calculateXAxisHeight(options, theme) {
+        const {title} = options;
+        const titleHeight = title ? renderUtil.getRenderedLabelHeight(title.text, theme.title) : 0;
+        const titleAreaHeight = titleHeight ? (titleHeight + chartConst.X_AXIS_TITLE_PADDING) : 0;
+        const labelMargin = options.labelMargin || 0;
+        const labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme.label);
+        let height = titleAreaHeight + chartConst.X_AXIS_LABEL_PADDING;
 
         if (labelMargin > 0) {
             height += labelMargin;
@@ -47,11 +47,11 @@ var axisCalculator = {
      * @param {boolean} isDiverging - whether is diverging chart or not
      * @returns {number}
      */
-    calculateYAxisWidth: function(labels, options, theme, yAxisLabels, isDiverging) {
-        var labelMargin = options.labelMargin;
-        var width = 0;
-        var titleWidth = 0;
-        var maxLabelWidth = 0;
+    calculateYAxisWidth(labels, options, theme, yAxisLabels, isDiverging) {
+        const {labelMargin} = options;
+        let titleWidth = 0;
+        let maxLabelWidth = 0;
+        let width = 0;
 
         labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
         yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
@@ -82,4 +82,4 @@ var axisCalculator = {
     }
 };
 
-module.exports = axisCalculator;
+export default axisCalculator;
