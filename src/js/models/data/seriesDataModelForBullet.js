@@ -6,7 +6,6 @@
 import SeriesItem from './seriesItem';
 import SeriesDataModel from './seriesDataModel';
 import chartConst from '../../const';
-import snippet from 'tui-code-snippet';
 
 class SeriesDataModelForBullet extends SeriesDataModel {
     /**
@@ -27,24 +26,21 @@ class SeriesDataModelForBullet extends SeriesDataModel {
      * @override
      */
     _createBaseGroups() {
-        const {chartType} = this;
-        const formatFunctions = this.formatFunctions;
-        const maxRangeCount = 0;
-        const maxMarkerCount = 0;
-        const baseGroups = snippet.map(this.rawSeriesData, function(rawDatum) {
-            var items = [];
-            var data = rawDatum.data;
-            var markers = rawDatum.markers;
-            var markerCount = markers.length;
-            var ranges = rawDatum.ranges;
-            var rangeCount = ranges.length;
+        const {chartType, formatFunctions} = this;
+        let maxRangeCount = 0;
+        let maxMarkerCount = 0;
+        const baseGroups = this.rawSeriesData.map(rawDatum => {
+            const items = [];
+            const {data, markers, ranges} = rawDatum;
+            const markerCount = markers.length;
+            const rangeCount = ranges.length;
 
             if (ranges && rangeCount) {
-                snippet.map(ranges, function(range) {
+                ranges.map(range => {
                     items.push(new SeriesItem({
                         datum: range,
-                        chartType: chartType,
-                        formatFunctions: formatFunctions,
+                        chartType,
+                        formatFunctions,
                         type: chartConst.BULLET_TYPE_RANGE
                     }));
                 });
@@ -54,17 +50,17 @@ class SeriesDataModelForBullet extends SeriesDataModel {
             if (data) {
                 items.push(new SeriesItem({
                     datum: data,
-                    chartType: chartType,
-                    formatFunctions: formatFunctions,
+                    chartType,
+                    formatFunctions,
                     type: chartConst.BULLET_TYPE_ACTUAL
                 }));
             }
 
             if (markers && markerCount) {
-                snippet.map(markers, function(marker) {
+                markers.map(marker => {
                     items.push(new SeriesItem({
                         datum: marker,
-                        chartType: chartType,
+                        chartType,
                         formabutFunctions: formatFunctions,
                         type: chartConst.BULLET_TYPE_MARKER
                     }));

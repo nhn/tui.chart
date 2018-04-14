@@ -9,14 +9,12 @@ import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 
-var abs = Math.abs;
-
 /**
  * Format scale data labels
  * @module scaleLabelFormatter
  * @private
  */
-var scaleLabelFormatter = {
+const scaleLabelFormatter = {
     /**
      * Get functions for formatting value.
      * @param {string} chartType - chart type
@@ -25,10 +23,10 @@ var scaleLabelFormatter = {
      * @returns {Array.<function>}
      * @private
      */
-    _getFormatFunctions: function(chartType, stackType, formatFunctions) {
+    _getFormatFunctions(chartType, stackType, formatFunctions) {
         if (predicate.isPercentStackChart(chartType, stackType)) {
             formatFunctions = [function(value) {
-                return value + '%';
+                return `${value}%`;
             }];
         }
 
@@ -43,10 +41,10 @@ var scaleLabelFormatter = {
      * @returns {Array.<number>}
      * @private
      */
-    _createScaleValues: function(scale, chartType, diverging) {
-        var values = calculator.makeLabelsFromLimit(scale.limit, scale.step);
+    _createScaleValues(scale, chartType, diverging) {
+        const values = calculator.makeLabelsFromLimit(scale.limit, scale.step);
 
-        return predicate.isDivergingChart(chartType, diverging) ? snippet.map(values, abs) : values;
+        return predicate.isDivergingChart(chartType, diverging) ? snippet.map(values, Math.abs) : values;
     },
 
     /**
@@ -66,7 +64,7 @@ var scaleLabelFormatter = {
      * @param {?Array.<function>} formatFunctions - format functions
      * @returns {Array.<string|number>|*}
      */
-    createFormattedLabels: function(scale, typeMap, options, formatFunctions) {
+    createFormattedLabels(scale, typeMap, options, formatFunctions) {
         const {chartType, areaType, valueType} = typeMap;
         const {diverging, type, dateFormat, stackType} = options;
         const values = this._createScaleValues(scale, chartType, diverging);
@@ -87,4 +85,4 @@ var scaleLabelFormatter = {
     }
 };
 
-module.exports = scaleLabelFormatter;
+export default scaleLabelFormatter;

@@ -9,8 +9,8 @@ import chartConst from '../const';
 import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
 
-var charts = {};
-var factory = {
+const charts = {};
+const factory = {
     /**
      * Find key for getting chart.
      * @param {string} chartType - type of chart
@@ -18,12 +18,10 @@ var factory = {
      * @returns {string}
      * @private
      */
-    _findKey: function(chartType, rawData) {
-        var key = null;
-        var chartTypeMap;
-
+    _findKey(chartType, rawData) {
+        let key = null;
         if (predicate.isComboChart(chartType)) {
-            chartTypeMap = rawDataHandler.getChartTypeMap(rawData);
+            const chartTypeMap = rawDataHandler.getChartTypeMap(rawData);
 
             if (chartTypeMap[chartConst.CHART_TYPE_COLUMN] && chartTypeMap[chartConst.CHART_TYPE_LINE]) {
                 key = chartConst.CHART_TYPE_COLUMN_LINE_COMBO;
@@ -49,18 +47,15 @@ var factory = {
      * @param {object} options chart options
      * @returns {object} chart instance;
      */
-    get: function(chartType, rawData, theme, options) {
-        var key = this._findKey(chartType, rawData);
-        var Chart = charts[key];
-        var chart;
+    get(chartType, rawData, theme, options) {
+        const key = this._findKey(chartType, rawData);
+        const Chart = charts[key];
 
         if (!Chart) {
-            throw new Error('Not exist ' + chartType + ' chart.');
+            throw new Error(`Not exist ${chartType} chart.`);
         }
 
-        chart = new Chart(rawData, theme, options);
-
-        return chart;
+        return new Chart(rawData, theme, options);
     },
 
     /**
@@ -68,9 +63,9 @@ var factory = {
      * @param {string} chartType char type
      * @param {class} ChartClass chart class
      */
-    register: function(chartType, ChartClass) {
+    register(chartType, ChartClass) {
         charts[chartType] = ChartClass;
     }
 };
 
-module.exports = factory;
+export default factory;

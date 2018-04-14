@@ -9,7 +9,7 @@ import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 
-var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
+class SeriesItemForCoordinateType {
     /**
      * SeriesItemForCoordinateType is a element of SeriesGroup.items.
      * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
@@ -21,7 +21,7 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
      *      @param {?Array.<function>} params.formatFunctions - format functions
      *      @param {number} params.index - raw data index
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * type of chart
          * @type {string}
@@ -53,7 +53,7 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
         this.ratioMap = {};
 
         this._initData(params.datum, params.index);
-    },
+    }
 
     /**
      * Initialize data of item.
@@ -61,17 +61,16 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
      * @param {number} index - raw data index
      * @private
      */
-    _initData: function(rawSeriesDatum, index) {
-        var date;
+    _initData(rawSeriesDatum, index) {
+        let date;
 
         if (snippet.isArray(rawSeriesDatum)) {
             this.x = rawSeriesDatum[0] || 0;
             this.y = rawSeriesDatum[1] || 0;
             if (predicate.isBubbleChart(this.chartType)) {
-                this.r = rawSeriesDatum[2];
-                this.label = rawSeriesDatum[3] || '';
+                ([,, this.r, this.label = ''] = rawSeriesDatum);
             } else {
-                this.label = rawSeriesDatum[2] || '';
+                ([,, this.label = ''] = rawSeriesDatum);
             }
         } else {
             this.x = rawSeriesDatum.x;
@@ -98,23 +97,26 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
                     areaType: 'series'
                 });
             }
-            this.label += ',&nbsp;' + renderUtil.formatValue({
+
+            const labelItem = renderUtil.formatValue({
                 value: this.y,
                 formatFunctions: this.formatFunctions,
                 chartType: this.chartType,
                 areaType: 'series'
             });
+
+            this.label += `,&nbsp;${labelItem}`;
         }
-    },
+    }
 
     /**
      * Add start.
      * @param {number} value - value
      * @private
      */
-    addStart: function(value) {
+    addStart(value) {
         this.start = value;
-    },
+    }
 
     /**
      * Add ratio.
@@ -122,11 +124,11 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
      * @param {?number} divNumber - number for division
      * @param {?number} subNumber - number for subtraction
      */
-    addRatio: function(valueType, divNumber, subNumber) {
+    addRatio(valueType, divNumber, subNumber) {
         if (!snippet.isExisty(this.ratioMap[valueType]) && divNumber) {
             this.ratioMap[valueType] = (this[valueType] - subNumber) / divNumber;
         }
-    },
+    }
 
     /**
      * Get formatted value for tooltip.
@@ -134,26 +136,26 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
      * @returns {string}
      * @private
      */
-    _getFormattedValueForTooltip: function(valueType) {
-        var ratio = this.ratioMap[valueType];
-        var value = this[valueType];
-        var formattedValue = renderUtil.formatValue({
-            value: value,
+    _getFormattedValueForTooltip(valueType) {
+        const ratio = this.ratioMap[valueType];
+        const value = this[valueType];
+        const formattedValue = renderUtil.formatValue({
+            value,
             formatFunctions: this.formatFunctions,
             chartType: this.chartType,
             areaType: 'tooltip',
-            valueType: valueType
+            valueType
         });
 
         return snippet.isNumber(ratio) ? formattedValue : value;
-    },
+    }
 
     /**
      * Pick value map for tooltip.
      * @returns {{x: (number | null), y: (number | null), r: (number | null)}}
      */
-    pickValueMapForTooltip: function() {
-        var valueMap = {
+    pickValueMapForTooltip() {
+        const valueMap = {
             x: this._getFormattedValueForTooltip('x'),
             y: this._getFormattedValueForTooltip('y'),
             xRatio: this.ratioMap.x,
@@ -167,6 +169,6 @@ var SeriesItemForCoordinateType = snippet.defineClass(/** @lends SeriesItemForCo
 
         return valueMap;
     }
-});
+}
 
-module.exports = SeriesItemForCoordinateType;
+export default SeriesItemForCoordinateType;

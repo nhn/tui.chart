@@ -3,14 +3,11 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var ChartBase = require('./chartBase');
-var DynamicDataHelper = require('./dynamicDataHelper');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var Series = require('../components/series/areaChartSeries');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import DynamicDataHelper from './dynamicDataHelper';
+import rawDataHandler from '../models/data/rawDataHandler';
+import Series from '../components/series/areaChartSeries';
+import snippet from 'tui-code-snippet';
 
 var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
     /**

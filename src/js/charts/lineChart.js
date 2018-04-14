@@ -4,14 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var predicate = require('../helpers/predicate');
-var DynamicDataHelper = require('./dynamicDataHelper');
-var Series = require('../components/series/lineChartSeries');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import predicate from '../helpers/predicate';
+import DynamicDataHelper from './dynamicDataHelper';
+import Series from '../components/series/lineChartSeries';
+import rawDataHandler from '../models/data/rawDataHandler';
+import snippet from 'tui-code-snippet';
 
 var LineChart = snippet.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
