@@ -50,13 +50,13 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
         const {dimension, groupPositions, theme} = data;
         const {colors} = theme;
         const dotOpacity = data.options.showDot ? 1 : 0;
-        const {isShowArea} = data.options;
+        const {isShowArea, pointWidth} = data.options;
 
         const groupPaths = this._getLinesPath(groupPositions);
         const borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
         const outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         const radialSeriesSet = paper.set();
-        const lineWidth = this.lineWidth = (data.options.pointWidth ? data.options.pointWidth : this.lineWidth);
+        const lineWidth = this.lineWidth = (pointWidth ? pointWidth : this.lineWidth);
         const dotPositions = groupPositions.map(positions => {
             positions.pop();
 

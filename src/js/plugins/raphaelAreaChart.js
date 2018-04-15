@@ -50,19 +50,18 @@ class RaphaelAreaChart extends RaphaelLineBase {
      * @returns {object}
      */
     render(paper, data) {
-        const {dimension, groupPositions, theme, position, zeroTop, hasRangeData, options} = data;
-        const dotTheme = (theme && theme.dot) || {};
-        const {colors} = theme;
-        const {allowSelect, connectNulls, pointWidth} = options;
-        const areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 1;
-        const dotOpacity = options.showDot ? 1 : 0;
+        const {dimension, groupPositions, theme = {}, position, zeroTop, hasRangeData, options} = data;
+        const {dot: dotTheme, colors} = theme;
+        const {spline, allowSelect, connectNulls, pointWidth, showDot, areaOpacity: areaOpacityOptions} = options;
+        const areaOpacity = this._isAreaOpacityNumber(areaOpacityOptions) ? areaOpacityOptions : 1;
+        const dotOpacity = showDot ? 1 : 0;
         const borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
         const outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
         const lineWidth = this.lineWidth = (snippet.isNumber(pointWidth) ? pointWidth : this.lineWidth);
 
         this.paper = paper;
         this.theme = theme;
-        this.isSpline = options.spline;
+        this.isSpline = spline;
         this.dimension = dimension;
         this.position = position;
         this.zeroTop = zeroTop;
@@ -117,15 +116,11 @@ class RaphaelAreaChart extends RaphaelLineBase {
      * @private
      */
     _getAreaChartPath(groupPositions, hasExtraPath, connectNulls) {
-        let path;
-
         if (this.isSpline) {
-            path = this._makeSplineAreaChartPath(groupPositions, hasExtraPath);
-        } else {
-            path = this._makeAreaChartPath(groupPositions, hasExtraPath, connectNulls);
+            return this._makeSplineAreaChartPath(groupPositions, hasExtraPath);
         }
 
-        return path;
+        return this._makeAreaChartPath(groupPositions, hasExtraPath, connectNulls);
     }
 
     /**
@@ -305,12 +300,10 @@ class RaphaelAreaChart extends RaphaelLineBase {
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
-    resize(params) {
-        const {dimension, groupPositions} = params;
-
+    resize({dimension, groupPositions, zeroTop}) {
         this.resizeClipRect(dimension.width, dimension.height);
 
-        this.zeroTop = params.zeroTop;
+        this.zeroTop = zeroTop;
         this.groupPositions = groupPositions;
         this.groupPaths = this._getAreaChartPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);

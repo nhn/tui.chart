@@ -4,14 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var mapManager = require('../factories/mapManager');
-var MapChartMapModel = require('./mapChartMapModel');
-var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
-var ColorSpectrum = require('./colorSpectrum');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import mapManager from '../factories/mapManager';
+import MapChartMapModel from './mapChartMapModel';
+import MapChartDataProcessor from '../models/data/mapChartDataProcessor';
+import ColorSpectrum from './colorSpectrum';
+import snippet from 'tui-code-snippet';
 
 var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**

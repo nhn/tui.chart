@@ -5,6 +5,7 @@
  */
 
 import raphaelRenderUtil from './raphaelRenderUtil';
+import renderUtil from '../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 
@@ -153,10 +154,10 @@ class RaphaelBoxplotChart {
         const {left, width} = end;
         const quartileWidth = width / 4;
         const edgePath = `M${(left + quartileWidth)},${end.top}H${(left + (quartileWidth * 3))}`;
-        const whiskerPath = `
+        const whiskerPath = renderUtil.oneLineTrim`
             M${(left + (quartileWidth * 2))},${end.top}
             V${(end.top + (Math.abs(topDistance) * whiskerDirection))}
-        `.replace(/\s/g, '');
+        `;
 
         const edge = raphaelRenderUtil.renderLine(paper, edgePath, color, EDGE_LINE_WIDTH);
         const whisker = raphaelRenderUtil.renderLine(paper, whiskerPath, color, WHISKER_LINE_WIDTH);

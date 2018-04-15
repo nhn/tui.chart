@@ -30,6 +30,20 @@ const renderUtil = {
     },
 
     /**
+     * oneline trim tag for template literal
+     * @params {...string} target strings
+     * @returns {string} templating string
+     * @memberof module:renderUtil
+     */
+    oneLineTrim(...args) {
+        const normalTag = (template, ...expressions) => (
+            template.reduce((accumulator, part, i) => accumulator + expressions[i - 1] + part)
+        );
+
+        return normalTag(...args).replace(/[\r\n]/g, '');
+    },
+
+    /**
      * Make cssText for font.
      * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
      * @returns {string} cssText
