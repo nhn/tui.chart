@@ -4,18 +4,14 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
+import raphaelRenderUtil from './raphaelRenderUtil';
 
 /**
  * @classdesc RaphaelCircleLegend is graph renderer for circleLegend.
  * @class RaphaelCircleLegend
  * @private
  */
-var RaphaelCircleLegend = snippet.defineClass(/** @lends RaphaelCircleLegend.prototype */ {
-
+class RaphaelCircleLegend {
     /**
      * Render circle and label.
      * @param {object} paper paper object
@@ -26,16 +22,16 @@ var RaphaelCircleLegend = snippet.defineClass(/** @lends RaphaelCircleLegend.pro
      * @returns {Array.<object>}
      * @private
      */
-    render: function(paper, layout, maxRadius, radiusRatios, labels) {
-        var left = layout.position.left + (layout.dimension.width / 2);
-        var circleLegendSet = paper.set();
+    render(paper, layout, maxRadius, radiusRatios, labels) {
+        const left = layout.position.left + (layout.dimension.width / 2);
+        const circleLegendSet = paper.set();
 
-        snippet.forEachArray(radiusRatios, function(ratio, index) {
-            var radius = maxRadius * ratio;
-            var top = layout.position.top + layout.dimension.height - radius;
-            var circle = raphaelRenderUtil.renderCircle(paper, {
-                left: left,
-                top: top
+        radiusRatios.forEach((ratio, index) => {
+            const radius = maxRadius * ratio;
+            const top = layout.position.top + layout.dimension.height - radius;
+            const circle = raphaelRenderUtil.renderCircle(paper, {
+                left,
+                top
             }, radius, {
                 fill: 'none',
                 opacity: 1,
@@ -46,13 +42,13 @@ var RaphaelCircleLegend = snippet.defineClass(/** @lends RaphaelCircleLegend.pro
             circleLegendSet.push(circle);
 
             circleLegendSet.push(raphaelRenderUtil.renderText(paper, {
-                left: left,
+                left,
                 top: top - radius - 5
             }, labels[index]));
         });
 
         return circleLegendSet;
     }
-});
+}
 
-module.exports = RaphaelCircleLegend;
+export default RaphaelCircleLegend;

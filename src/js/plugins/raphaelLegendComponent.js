@@ -7,6 +7,7 @@
 import chartConst from '../const';
 import raphaelRenderUtil from '../plugins/raphaelRenderUtil';
 import arrayUtil from '../helpers/arrayUtil';
+import renderUtil from '../helpers/renderUtil';
 import calculator from '../helpers/calculator';
 import snippet from 'tui-code-snippet';
 const UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
@@ -382,14 +383,14 @@ class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */
         const top = position.top + ((this._legendItemHeight - this._checkBoxHeight) / 2);
         const checkboxPathSize = this._checkBoxWidth / 3;
         const checkboxPathHalpSize = this._checkBoxWidth / 5.7;
-        const vPathString = `
+        const vPathString = renderUtil.oneLineTrim`
             M${((this._checkBoxWidth * 0.25) + left)}
             ,${((this._checkBoxHeight * 0.5) + top)}
             l${checkboxPathHalpSize}
             ,${checkboxPathHalpSize}
             l${checkboxPathSize}
             ,-${checkboxPathSize}
-        `.replace(/\n/g, '');
+        `;
 
         const checkboxSet = this.paper.set();
         const checkboxElement = this.paper.rect(left, top, this._checkBoxWidth, this._checkBoxHeight, 0).attr({

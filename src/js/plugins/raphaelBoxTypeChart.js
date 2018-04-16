@@ -4,27 +4,24 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
+import {isTreemapChart} from '../helpers/predicate';
 
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
-var predicate = require('../helpers/predicate');
-
-var ANIMATION_DURATION = 100;
-var MIN_BORDER_WIDTH = 0;
-var MAX_BORDER_WIDTH = 4;
+const ANIMATION_DURATION = 100;
+const MIN_BORDER_WIDTH = 0;
+const MAX_BORDER_WIDTH = 4;
 
 /**
  * @classdesc RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
  * @class RaphaelBarChart
  * @private
  */
-var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.prototype */ {
+class RaphaelBoxTypeChart {
     /**
      * Render function of bar chart
      * @param {object} paper Raphael paper
-     * @param {
-{
+     * @param {{
      *      dimension: {width: number, height: number},
      *      colorSpectrum: object,
      *      seriesDataModel: SeriesDataModel,
@@ -33,8 +30,8 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * }} seriesData - data for graph rendering
      * @returns {object}
      */
-    render: function(paper, seriesData) {
-        var seriesSet = paper.set();
+    render(paper, seriesData) {
+        const seriesSet = paper.set();
 
         this.paper = paper;
 
@@ -104,56 +101,56 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         this.rectOverlay = this._renderRectOverlay();
 
         return seriesSet;
-    },
+    }
 
     /**
      * Render overlay.
      * @returns {object} raphael object
      * @private
      */
-    _renderRectOverlay: function() {
-        var bound = {
+    _renderRectOverlay() {
+        const bound = {
             width: 1,
             height: 1,
             left: 0,
             top: 0
         };
-        var attributes = {
+        const attributes = {
             'fill-opacity': 0
         };
 
-        var rectOverlay = raphaelRenderUtil.renderRect(this.paper, bound, snippet.extend({
+        const rectOverlay = raphaelRenderUtil.renderRect(this.paper, bound, Object.assign({
             'stroke-width': 0
         }, attributes));
 
         rectOverlay.node.setAttribute('filter', 'url(#shadow)');
 
         return rectOverlay;
-    },
+    }
 
     /**
      * Bind _getBound private function.
      * @private
      */
-    _bindGetBoundFunction: function() {
+    _bindGetBoundFunction() {
         if (this.boundMap) {
             this._getBound = this._getBoundFromBoundMap;
         } else {
             this._getBound = this._getBoundFromGroupBounds;
         }
-    },
+    }
 
     /**
      * Bind _bindGetColorFunction private function.
      * @private
      */
-    _bindGetColorFunction: function() {
+    _bindGetColorFunction() {
         if (this.colorSpectrum) {
             this._getColor = this._getColorFromSpectrum;
         } else {
             this._getColor = this._getColorFromColors;
         }
-    },
+    }
 
     /**
      * Get bound from groupBounds by indexes(groupIndex, index) of seriesItem.
@@ -161,9 +158,9 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @returns {{width: number, height: number, left: number, top: number}}
      * @private
      */
-    _getBoundFromGroupBounds: function(seriesItem) {
+    _getBoundFromGroupBounds(seriesItem) {
         return this.groupBounds[seriesItem.groupIndex][seriesItem.index].end;
-    },
+    }
 
     /**
      * Get bound from boundMap by id of seriesItem.
@@ -171,9 +168,9 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @returns {{width: number, height: number, left: number, top: number}}
      * @private
      */
-    _getBoundFromBoundMap: function(seriesItem) {
+    _getBoundFromBoundMap(seriesItem) {
         return this.boundMap[seriesItem.id];
-    },
+    }
 
     /**
      * Get color from colorSpectrum by ratio of seriesItem.
@@ -182,8 +179,8 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @returns {string}
      * @private
      */
-    _getColorFromSpectrum: function(seriesItem, startDepth) {
-        var color;
+    _getColorFromSpectrum(seriesItem, startDepth) {
+        let color;
 
         if (!seriesItem.hasChild || seriesItem.depth !== startDepth) {
             color = this.colorSpectrum.getColor(seriesItem.colorRatio || seriesItem.ratio) || this.chartBackground;
@@ -192,7 +189,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         }
 
         return color;
-    },
+    }
 
     /**
      * Get color from colors theme by group property of seriesItem.
@@ -201,9 +198,9 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @returns {string}
      * @private
      */
-    _getColorFromColors: function(seriesItem, startDepth) {
+    _getColorFromColors(seriesItem, startDepth) {
         return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : '#000';
-    },
+    }
 
     /**
      * Render rect.
@@ -214,14 +211,14 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @returns {object}
      * @private
      */
-    _renderRect: function(bound, color, strokeWidth, fillOpacity) {
+    _renderRect(bound, color, strokeWidth, fillOpacity) {
         return raphaelRenderUtil.renderRect(this.paper, bound, {
             fill: color,
             stroke: this.borderColor,
             'stroke-width': strokeWidth,
             'fill-opacity': fillOpacity
         });
-    },
+    }
 
     /**
      * Get stroke width.
@@ -229,8 +226,8 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @returns {number}
      * @private
      */
-    _getStrokeWidth: function(isFirstDepth) {
-        var strokeWidth;
+    _getStrokeWidth(isFirstDepth) {
+        let strokeWidth;
 
         if (this.borderWidth) {
             strokeWidth = this.borderWidth;
@@ -241,7 +238,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         }
 
         return strokeWidth;
-    },
+    }
 
     /**
      * Render boxes.
@@ -252,37 +249,33 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @returns {Array.<Array.<{rect: object, color: string}>>}
      * @private
      */
-    _renderBoxes: function(seriesDataModel, startDepth, isPivot, seriesSet) {
-        var self = this;
-        var isTreemapChart = predicate.isTreemapChart(this.chartType);
+    _renderBoxes(seriesDataModel, startDepth, isPivot, seriesSet) {
+        const isTreemap = isTreemapChart(this.chartType);
 
-        return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var firstItem;
-
-            if (isTreemapChart && !self.colorSpectrum && seriesGroup.getSeriesItemCount()) {
-                firstItem = seriesGroup.getSeriesItem(0);
-                self._setTreeFillOpacity({
+        return seriesDataModel.map((seriesGroup, groupIndex) => {
+            if (isTreemap && !this.colorSpectrum && seriesGroup.getSeriesItemCount()) {
+                const firstItem = seriesGroup.getSeriesItem(0);
+                this._setTreeFillOpacity({
                     id: firstItem.parent
                 }, startDepth);
             }
 
-            return seriesGroup.map(function(seriesItem, index) {
-                var result = null;
-                var depth = seriesItem.depth;
-                var strokeWidth = self.colorSpectrum ? 0 : self._getStrokeWidth(depth === startDepth);
-                var fillOpacity = self.colorSpectrum ? 1 : seriesItem.fillOpacity;
-                var bound, color;
+            return seriesGroup.map((seriesItem, index) => {
+                let result = null;
+                const {depth} = seriesItem;
+                const strokeWidth = this.colorSpectrum ? 0 : this._getStrokeWidth(depth === startDepth);
+                const fillOpacity = this.colorSpectrum ? 1 : seriesItem.fillOpacity;
 
                 seriesItem.groupIndex = groupIndex;
                 seriesItem.index = index;
-                bound = self._getBound(seriesItem);
+                const bound = this._getBound(seriesItem);
 
                 if (bound) {
-                    color = self._getColor(seriesItem, startDepth);
+                    const color = this._getColor(seriesItem, startDepth);
                     result = {
-                        rect: self._renderRect(bound, color, strokeWidth, fillOpacity),
-                        seriesItem: seriesItem,
-                        color: color
+                        rect: this._renderRect(bound, color, strokeWidth, fillOpacity),
+                        seriesItem,
+                        color
                     };
 
                     if (seriesSet) {
@@ -293,40 +286,38 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
                 return result;
             });
         }, isPivot);
-    },
+    }
 
     /**
      * @param {{id: number, fillOpacity: number}} parentInfo - parent info
      * @param {number} startDepth - start depth
      * @private
      */
-    _setTreeFillOpacity: function(parentInfo, startDepth) {
-        var children = this.seriesDataModel.findSeriesItemsByParent(parentInfo.id);
+    _setTreeFillOpacity(parentInfo, startDepth) {
+        const children = this.seriesDataModel.findSeriesItemsByParent(parentInfo.id);
 
-        snippet.forEachArray(children, function(datum, index) {
-            var depth = datum.depth;
-
+        children.forEach(({depth, fillOpacity, id, hasChild}, index) => {
             if (depth === startDepth) {
-                datum.fillOpacity = 1;
+                fillOpacity = 1;
             } else if (depth === startDepth + 1) {
-                datum.fillOpacity = 0.05 * index;
+                fillOpacity = 0.05 * index;
             } else if (depth < startDepth) {
-                datum.fillOpacity = 0;
+                fillOpacity = 0;
             } else {
-                datum.fillOpacity = parentInfo.fillOpacity + (0.05 * index);
+                fillOpacity = parentInfo.fillOpacity + (0.05 * index);
             }
 
-            if (datum.hasChild) {
+            if (hasChild) {
                 this._setTreeFillOpacity(
                     {
-                        id: datum.id,
-                        fillOpacity: datum.fillOpacity
+                        id,
+                        fillOpacity
                     },
                     startDepth
                 );
             }
-        }, this);
-    },
+        });
+    }
 
     /**
      * Animate changing color of box.
@@ -337,8 +328,8 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      * @param {number} [strokeWidth] - stroke width
      * @private
      */
-    _animateChangingColor: function(rect, color, opacity, strokeColor, strokeWidth) {
-        var properties = {
+    _animateChangingColor(rect, color, opacity, strokeColor, strokeWidth) {
+        const properties = {
             'fill-opacity': snippet.isExisty(opacity) ? opacity : 1,
             stroke: strokeColor,
             'stroke-width': strokeWidth
@@ -349,22 +340,21 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         }
 
         rect.animate(properties, ANIMATION_DURATION, '>');
-    },
+    }
 
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
      */
-    showAnimation: function(indexes) {
-        var box = this.boxesSet[indexes.groupIndex][indexes.index];
-        var rect, color;
+    showAnimation(indexes) {
+        const box = this.boxesSet[indexes.groupIndex][indexes.index];
 
         if (!box) {
             return;
         }
 
-        color = box.color;
-        rect = box.rect.node;
+        const rect = box.rect.node;
+        let {color} = box;
 
         if (this.chartType === 'treemap' && !this.zoomable && !this.useColorValue) {
             color = this.theme.colors[indexes.index];
@@ -384,14 +374,14 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
 
         this.rectOverlay.toFront();
         this.labelSet.toFront();
-    },
+    }
 
     /**
      * Hide animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
      */
-    hideAnimation: function(indexes) {
-        var box = this.boxesSet[indexes.groupIndex][indexes.index];
+    hideAnimation(indexes) {
+        const box = this.boxesSet[indexes.groupIndex][indexes.index];
 
         if (!box) {
             return;
@@ -405,7 +395,7 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
             'fill-opacity': 0,
             'stroke-opacity': 0
         });
-    },
+    }
 
     /**
      * Resize.
@@ -414,32 +404,29 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
      *      groupBounds: (Array.<Array.<object>>|object.<string, object>)
      * }} seriesData - data for graph rendering
      */
-    resize: function(seriesData) {
-        var self = this;
-        var dimension = seriesData.dimension;
+    resize(seriesData) {
+        const {dimension} = seriesData;
 
         this.boundMap = seriesData.boundMap;
         this.groupBounds = seriesData.groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 
-        raphaelRenderUtil.forEach2dArray(this.boxesSet, function(box, groupIndex, index) {
-            var bound;
-
+        raphaelRenderUtil.forEach2dArray(this.boxesSet, (box, groupIndex, index) => {
             if (!box) {
                 return;
             }
 
-            bound = self._getBound(box.seriesItem, groupIndex, index);
+            const bound = this._getBound(box.seriesItem, groupIndex, index);
 
             if (bound) {
                 raphaelRenderUtil.updateRectBound(box.rect, bound);
             }
         });
-    },
+    }
 
-    renderSeriesLabel: function(paper, positionSet, labels, labelTheme) {
-        var labelSet = paper.set();
-        var attributes = {
+    renderSeriesLabel(paper, positionSet, labels, labelTheme) {
+        const labelSet = paper.set();
+        const attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
@@ -447,10 +434,13 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
             opacity: 0
         };
 
-        snippet.forEach(labels, function(categoryLabel, categoryIndex) {
-            snippet.forEach(categoryLabel, function(label, seriesIndex) {
-                var seriesLabel = raphaelRenderUtil.renderText(paper, positionSet[categoryIndex][seriesIndex].end,
-                    label, attributes);
+        labels.forEach((categoryLabel, categoryIndex) => {
+            categoryLabel.forEach((label, seriesIndex) => {
+                const seriesLabel = raphaelRenderUtil.renderText(
+                    paper,
+                    positionSet[categoryIndex][seriesIndex].end,
+                    label, attributes
+                );
 
                 seriesLabel.node.style.userSelect = 'none';
                 seriesLabel.node.style.cursor = 'default';
@@ -462,11 +452,11 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         this.labelSet = labelSet;
 
         return labelSet;
-    },
+    }
 
-    renderSeriesLabelForTreemap: function(paper, positions, labels, labelTheme) {
-        var labelSet = paper.set();
-        var attributes = {
+    renderSeriesLabelForTreemap(paper, positions, labels, labelTheme) {
+        const labelSet = paper.set();
+        const attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
@@ -474,11 +464,9 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
             opacity: 0
         };
 
-        snippet.forEach(labels, function(label, index) {
-            var seriesLabel;
-
+        labels.forEach((label, index) => {
             if (positions[index]) {
-                seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
+                const seriesLabel = raphaelRenderUtil.renderText(paper, positions[index], label, attributes);
 
                 seriesLabel.node.style.userSelect = 'none';
                 seriesLabel.node.style.cursor = 'default';
@@ -491,6 +479,6 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
 
         return labelSet;
     }
-});
+}
 
-module.exports = RaphaelBoxTypeChart;
+export default RaphaelBoxTypeChart;

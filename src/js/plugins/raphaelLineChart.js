@@ -4,16 +4,14 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import RaphaelLineBase from './raphaelLineTypeBase';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
 
-var RaphaelLineBase = require('./raphaelLineTypeBase');
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
+const EMPHASIS_OPACITY = 1;
+const DE_EMPHASIS_OPACITY = 0.3;
 
-var EMPHASIS_OPACITY = 1;
-var DE_EMPHASIS_OPACITY = 0.3;
-
-var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
+class RaphaelLineChart extends RaphaelLineBase {
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelLineChart
@@ -21,7 +19,8 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @private
      * @extends RaphaelLineTypeBase
      */
-    init: function() {
+    constructor() {
+        super();
         /**
          * selected legend index
          * @type {?number}
@@ -39,7 +38,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
          * @type {number}
          */
         this.lineWidth = 6;
-    },
+    }
 
     /**
      * Render function of line chart.
@@ -47,18 +46,15 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @returns {object} paper raphael paper
      */
-    render: function(paper, data) {
-        var dimension = data.dimension;
-        var groupPositions = data.groupPositions;
-        var theme = data.theme;
-        var colors = theme.colors;
-        var options = data.options;
-        var opacity = options.showDot ? 1 : 0;
-        var isSpline = options.spline;
-        var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
-        var borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
-        var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
-        var groupPaths;
+    render(paper, data) {
+        const {dimension, groupPositions, theme, options, position} = data;
+        const {colors} = theme;
+        const opacity = options.showDot ? 1 : 0;
+        const isSpline = options.spline;
+        const lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
+        const borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
+        const outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
+        let groupPaths;
 
         if (isSpline) {
             groupPaths = this._getSplineLinesPath(groupPositions, options.connectNulls);
@@ -67,10 +63,10 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         }
 
         this.paper = paper;
-        this.theme = data.theme;
+        this.theme = theme;
         this.isSpline = isSpline;
         this.dimension = dimension;
-        this.position = data.position;
+        this.position = position;
 
         paper.setStart();
 
@@ -95,13 +91,13 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         }
 
         return paper.setFinish();
-    },
+    }
 
-    appendShadowFilterToDefs: function() {
-        var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-        var feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
-        var feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-        var feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
+    appendShadowFilterToDefs() {
+        const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+        const feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+        const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+        const feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
 
         filter.setAttributeNS(null, 'id', 'shadow');
         filter.setAttributeNS(null, 'x', '-50%');
@@ -122,7 +118,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         filter.appendChild(feGaussianBlur);
         filter.appendChild(feBlend);
         this.paper.defs.appendChild(filter);
-    },
+    }
 
     /**
      * Get lines path.
@@ -131,13 +127,9 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @returns {Array.<Array.<string>>} path
      * @private
      */
-    _getLinesPath: function(groupPositions, connectNulls) {
-        var self = this;
-
-        return snippet.map(groupPositions, function(positions) {
-            return self._makeLinesPath(positions, null, connectNulls);
-        });
-    },
+    _getLinesPath(groupPositions, connectNulls) {
+        return groupPositions.map(positions => this._makeLinesPath(positions, null, connectNulls));
+    }
 
     /**
      * Get spline lines path.
@@ -146,15 +138,9 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @returns {Array} path
      * @private
      */
-    _getSplineLinesPath: function(groupPositions, connectNulls) {
-        var self = this;
-
-        return snippet.map(groupPositions, function(positions) {
-            return self._makeSplineLinesPath(positions, {
-                connectNulls: connectNulls
-            });
-        });
-    },
+    _getSplineLinesPath(groupPositions, connectNulls) {
+        return groupPositions.map(positions => this._makeSplineLinesPath(positions, {connectNulls}));
+    }
 
     /**
      * Render lines.
@@ -165,15 +151,15 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
-    _renderLines: function(paper, groupPaths, colors, strokeWidth) {
-        return snippet.map(groupPaths, function(path, groupIndex) {
-            var color = colors[groupIndex] || 'transparent';
-            var line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+    _renderLines(paper, groupPaths, colors, strokeWidth) {
+        return groupPaths.map((path, groupIndex) => {
+            const color = colors[groupIndex] || 'transparent';
+            const line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
             line.node.setAttribute('class', 'auto-shape-rendering');
 
             return line;
         });
-    },
+    }
 
     /**
      * Resize graph of line chart.
@@ -181,10 +167,8 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
-    resize: function(params) {
-        var self = this,
-            dimension = params.dimension,
-            groupPositions = params.groupPositions;
+    resize(params) {
+        const {dimension, groupPositions} = params;
 
         this.resizeClipRect(dimension.width, dimension.height);
 
@@ -193,23 +177,23 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        snippet.forEachArray(this.groupPaths, function(path, groupIndex) {
-            self.groupLines[groupIndex].attr({path: path.join(' ')});
+        this.groupPaths.forEach((path, groupIndex) => {
+            this.groupLines[groupIndex].attr({path: path.join(' ')});
 
-            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
+            this.groupDots[groupIndex].forEach((item, index) => {
                 if (item.endDot) {
-                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+                    this._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
                 }
             });
         });
-    },
+    }
 
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
      */
-    selectLegend: function(legendIndex) {
-        var noneSelected = snippet.isNull(legendIndex);
+    selectLegend(legendIndex) {
+        const noneSelected = snippet.isNull(legendIndex);
 
         if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
             this.resetSeriesOrder(this.selectedLegendIndex);
@@ -217,42 +201,42 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
 
         this.selectedLegendIndex = legendIndex;
 
-        snippet.forEachArray(this.groupLines, function(line, groupIndex) {
-            var isSelectedLegend = legendIndex === groupIndex;
-            var opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
-            var groupDots = this.groupDots[groupIndex];
+        this.groupLines.forEach((line, groupIndex) => {
+            const isSelectedLegend = legendIndex === groupIndex;
+            const opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            const groupDots = this.groupDots[groupIndex];
 
             line.attr({'stroke-opacity': opacity});
 
             if (isSelectedLegend) {
                 this.moveSeriesToFront(line, groupDots);
             }
-        }, this);
+        });
 
         if (noneSelected) {
-            snippet.forEachArray(this.groupLines, function(line, groupIndex) {
+            this.groupLines.forEach((line, groupIndex) => {
                 this.moveSeriesToFront(line, this.groupDots[groupIndex]);
-            }, this);
+            });
         }
-    },
+    }
 
     /**
      * Reset series order after selected to be same to when it is first rendered
      * @param {number} legendIndex - legend index to reset series order
      * @ignore
      */
-    resetSeriesOrder: function(legendIndex) {
-        var frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
+    resetSeriesOrder(legendIndex) {
+        const frontLine = legendIndex + 1 < this.groupLines.length ? this.groupLines[legendIndex + 1] : null;
 
         if (frontLine) {
             this.groupLines[legendIndex].insertBefore(frontLine);
-            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
+            this.groupDots[legendIndex].forEach(item => {
                 if (item && item.endDot) {
                     item.endDot.dot.insertBefore(frontLine);
                 }
             });
         }
-    },
+    }
 
     /**
      * @param {SVGElement} lineType - line or area graph
@@ -260,13 +244,13 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @ignore
      * @override
      */
-    moveSeriesToFront: function(lineType, dots) {
+    moveSeriesToFront(lineType, dots) {
         lineType.toFront();
 
-        snippet.forEachArray(dots, function(item) {
+        dots.forEach(item => {
             item.endDot.dot.toFront();
         });
-    },
+    }
 
     /**
      * Animate for adding data.
@@ -275,11 +259,10 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @param {Array.<Array.<object>>} groupPositions - group positions
      * @param {boolean} [shiftingOption] - shifting option
      */
-    animateForAddingData: function(data, tickSize, groupPositions, shiftingOption) {
-        var self = this;
-        var isSpline = data.options.spline;
-        var groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
-        var additionalIndex = 0;
+    animateForAddingData(data, tickSize, groupPositions, shiftingOption) {
+        const isSpline = data.options.spline;
+        const groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
+        let additionalIndex = 0;
 
         if (!groupPositions.length) {
             return;
@@ -289,25 +272,25 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
             additionalIndex = 1;
         }
 
-        snippet.forEachArray(this.groupLines, function(line, groupIndex) {
-            var dots = self.groupDots[groupIndex];
-            var groupPosition = groupPositions[groupIndex];
+        this.groupLines.forEach((line, groupIndex) => {
+            const dots = this.groupDots[groupIndex];
+            const groupPosition = groupPositions[groupIndex];
 
             if (shiftingOption) {
-                self._removeFirstDot(dots);
+                this._removeFirstDot(dots);
             }
 
-            snippet.forEachArray(dots, function(item, index) {
-                var position = groupPosition[index + additionalIndex];
-                self._animateByPosition(item.endDot.dot, position, tickSize);
+            dots.forEach((item, index) => {
+                const position = groupPosition[index + additionalIndex];
+                this._animateByPosition(item.endDot.dot, position, tickSize);
             });
 
-            self._animateByPath(line, groupPaths[groupIndex], tickSize);
+            this._animateByPath(line, groupPaths[groupIndex], tickSize);
         });
-    },
+    }
 
-    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme) {
-        var attributes = {
+    renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme) {
+        const attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
@@ -315,13 +298,12 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
             'text-anchor': 'middle',
             opacity: 0
         };
-        var set = paper.set();
+        const set = paper.set();
 
-        snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
-            snippet.forEach(categoryLabel, function(label, seriesIndex) {
-                var position = groupPositions[categoryIndex][seriesIndex];
-                var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
-                var startLabel;
+        groupLabels.forEach((categoryLabel, categoryIndex) => {
+            categoryLabel.forEach((label, seriesIndex) => {
+                const position = groupPositions[categoryIndex][seriesIndex];
+                const endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
 
                 set.push(endLabel);
 
@@ -330,7 +312,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
                 endLabel.node.setAttribute('filter', 'url(#glow)');
 
                 if (position.start) {
-                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
+                    const startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
 
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
@@ -343,6 +325,6 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
 
         return set;
     }
-});
+}
 
-module.exports = RaphaelLineChart;
+export default RaphaelLineChart;
