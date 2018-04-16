@@ -6,6 +6,7 @@
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import dom from '../helpers/domHandler';
+import renderUtil from '../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 
 const {browser} = snippet;
@@ -82,10 +83,10 @@ class RaphaelMapChart {
                 stroke: STROKE_COLOR,
                 'stroke-width': 0.2,
                 'stroke-opacity': 1,
-                transform: `
+                transform: renderUtil.oneLineTrim`
                   s${dimensionRatio},${dimensionRatio},0,0
                   t${(position.left / dimensionRatio)},${(position.top / dimensionRatio)}
-                `.replace(/\s/g, '')
+                `
             });
 
             sector.data('index', index);
@@ -272,10 +273,10 @@ class RaphaelMapChart {
             fill: labelTheme.color,
             'text-anchor': 'middle',
             opacity: 0,
-            transform: `
+            transform: renderUtil.oneLineTrim`
                 s${this.ratio},${this.ratio},0,0
                 t${(this.position.left / this.ratio)},${(this.position.top / this.ratio)}
-            `.replace(/\s/g, '')
+            `
         };
         const set = paper.set();
 

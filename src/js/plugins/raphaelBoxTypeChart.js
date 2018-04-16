@@ -6,7 +6,7 @@
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
-import predicate from '../helpers/predicate';
+import {isTreemapChart} from '../helpers/predicate';
 
 const ANIMATION_DURATION = 100;
 const MIN_BORDER_WIDTH = 0;
@@ -250,10 +250,10 @@ class RaphaelBoxTypeChart {
      * @private
      */
     _renderBoxes(seriesDataModel, startDepth, isPivot, seriesSet) {
-        const isTreemapChart = predicate.isTreemapChart(this.chartType);
+        const isTreemap = isTreemapChart(this.chartType);
 
         return seriesDataModel.map((seriesGroup, groupIndex) => {
-            if (isTreemapChart && !this.colorSpectrum && seriesGroup.getSeriesItemCount()) {
+            if (isTreemap && !this.colorSpectrum && seriesGroup.getSeriesItemCount()) {
                 const firstItem = seriesGroup.getSeriesItem(0);
                 this._setTreeFillOpacity({
                     id: firstItem.parent
@@ -296,24 +296,22 @@ class RaphaelBoxTypeChart {
     _setTreeFillOpacity(parentInfo, startDepth) {
         const children = this.seriesDataModel.findSeriesItemsByParent(parentInfo.id);
 
-        children.forEach((datum, index) => {
-            const {depth} = datum;
-
+        children.forEach(({depth, fillOpacity, id, hasChild}, index) => {
             if (depth === startDepth) {
-                datum.fillOpacity = 1;
+                fillOpacity = 1;
             } else if (depth === startDepth + 1) {
-                datum.fillOpacity = 0.05 * index;
+                fillOpacity = 0.05 * index;
             } else if (depth < startDepth) {
-                datum.fillOpacity = 0;
+                fillOpacity = 0;
             } else {
-                datum.fillOpacity = parentInfo.fillOpacity + (0.05 * index);
+                fillOpacity = parentInfo.fillOpacity + (0.05 * index);
             }
 
-            if (datum.hasChild) {
+            if (hasChild) {
                 this._setTreeFillOpacity(
                     {
-                        id: datum.id,
-                        fillOpacity: datum.fillOpacity
+                        id,
+                        fillOpacity
                     },
                     startDepth
                 );
