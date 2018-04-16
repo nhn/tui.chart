@@ -16,12 +16,10 @@ import mapChartEventDetectorFactory from './mapChartEventDetector';
  * @returns {object}
  * @ignore
  */
-function mouseEventDetectorFactory(params) {
-    var chartType = params.chartOptions.chartType;
-    var seriesTypes = params.seriesTypes;
-    var zoomable = params.chartOptions.series.zoomable;
-    var seriesAllowSelect = params.chartOptions.series.allowSelect;
-    var factory;
+export default function mouseEventDetectorFactory(params) {
+    const {chartOptions, seriesTypes} = params;
+    const {chartType, series: {zoomable, allowSelect: seriesAllowSelect}} = chartOptions;
+    let factory;
 
     if (params.chartOptions.tooltip.grouped) {
         factory = groupTypeEventDetectorFactory;
@@ -54,4 +52,3 @@ function mouseEventDetectorFactory(params) {
 
 mouseEventDetectorFactory.componentType = 'mouseEventDetector';
 
-module.exports = mouseEventDetectorFactory;
