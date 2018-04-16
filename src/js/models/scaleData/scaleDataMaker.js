@@ -247,19 +247,13 @@ const scaleDataMaker = {
      * @private
      */
     _calculateCoordinateScale(makeScaleInfos) {
-        const {
-            options,
-            baseSize,
-            overflowItem,
-            chartType,
-            limitOption = {}
-        } = makeScaleInfos;
+        const {options: {limitOption = {}, useSpectrumLegend}, baseSize, overflowItem, chartType} = makeScaleInfos;
         const limit = this._getLimitSafely(makeScaleInfos.baseValues);
         const hasMinOption = snippet.isExisty(limitOption.min);
         const hasMaxOption = snippet.isExisty(limitOption.max);
-        let {stepCount} = options;
         let {min, max} = limit;
         let isOverflowed;
+        let {stepCount} = makeScaleInfos.options;
 
         if (hasMinOption) {
             ({min} = limitOption);
@@ -275,11 +269,10 @@ const scaleDataMaker = {
             min,
             max,
             stepCount,
-            offsetSize: baseSize,
-            showLabel: options.showLabel
+            offsetSize: baseSize
         });
 
-        if (!options.useSpectrumLegend) {
+        if (!useSpectrumLegend) {
             isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
         }
 

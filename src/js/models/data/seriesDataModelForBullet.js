@@ -36,7 +36,7 @@ class SeriesDataModelForBullet extends SeriesDataModel {
             const rangeCount = ranges.length;
 
             if (ranges && rangeCount) {
-                ranges.map(range => {
+                ranges.forEach(range => {
                     items.push(new SeriesItem({
                         datum: range,
                         chartType,

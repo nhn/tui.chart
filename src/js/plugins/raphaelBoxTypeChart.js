@@ -6,8 +6,9 @@
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
-import {isTreemapChart} from '../helpers/predicate';
+import predicate from '../helpers/predicate';
 
+const {isTreemapChart} = predicate;
 const ANIMATION_DURATION = 100;
 const MIN_BORDER_WIDTH = 0;
 const MAX_BORDER_WIDTH = 4;
