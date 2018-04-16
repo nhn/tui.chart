@@ -11,6 +11,7 @@ import eventListener from '../../helpers/eventListener';
 import predicate from '../../helpers/predicate';
 import dom from '../../helpers/domHandler';
 import renderUtil from '../../helpers/renderUtil';
+
 import snippet from 'tui-code-snippet';
 
 export default class MouseEventDetectorBase {
@@ -171,7 +172,7 @@ export default class MouseEventDetectorBase {
             return axisDataMap.xAxis.eventTickCount || axisDataMap.xAxis.tickCount;
         }
 
-        return axisDataMap.yAxis;
+        return axisDataMap.yAxis.tickCount;
     }
 
     /**
