@@ -150,7 +150,9 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         var self = this;
 
         return snippet.map(groupPositions, function(positions) {
-            return self._makeSplineLinesPath(positions, connectNulls);
+            return self._makeSplineLinesPath(positions, {
+                connectNulls: connectNulls
+            });
         });
     },
 
@@ -196,7 +198,7 @@ var RaphaelLineChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelLi
 
             snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
                 if (item.endDot) {
-                    self.moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
                 }
             });
         });

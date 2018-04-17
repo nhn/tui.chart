@@ -86,7 +86,8 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
         var options = snippet.extend(baseOptions, {
             isVertical: isVertical,
             limitOption: this._pickLimitOption(axisOptions),
-            tickCounts: additionalOptions.tickCounts
+            tickCounts: additionalOptions.tickCounts,
+            showLabel: this.options.series.showLabel
         });
 
         if (predicate.isBubbleChart(chartType)) {

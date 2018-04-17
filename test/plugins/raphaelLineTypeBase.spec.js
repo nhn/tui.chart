@@ -115,6 +115,61 @@ describe('RaphaelLineTypeBase', function() {
 
             expect(actual).toEqual(expected);
         });
+
+        it('"M" command should be removed if it is not the first line to start.', function() {
+            var actual = lineTypeBase._makeSplineLinesPath([
+                    {
+                        left: 87,
+                        top: 346,
+                        startTop: 346
+                    },
+                    {
+                        left: 334.5,
+                        top: 344.48,
+                        startTop: 346
+                    },
+                    {
+                        left: 582,
+                        top: 42,
+                        startTop: 346
+                    }
+                ], {
+                    isBeConnected: true
+                }),
+                expected = [['C', 87, 346],
+                    [222.8332650202649, 344.48, 334.5, 344.48, 446.1667349797351, 291.14518211369244],
+                    [582, 42, 582, 42]];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('control values of the curve should be considered together with the direction in which the lines are drawn.', function() {
+            var actual = lineTypeBase._makeSplineLinesPath([
+                    {
+                        left: 582,
+                        top: 42,
+                        startTop: 346
+                    },
+                    {
+                        left: 87,
+                        top: 346,
+                        startTop: 346
+                    },
+                    {
+                        left: 334.5,
+                        top: 344.48,
+                        startTop: 346
+                    }
+                ], {
+                    isReverseDirection: true
+                }),
+                expected = [
+                    ['M', 582, 42, 'C', 582, 42],
+                    [18.97144613109832, 108.03284710173563, 87, 346, 52.985723065549166, 346],
+                    [334.5, 344.48, 334.5, 344.48]
+                ];
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('makeBorderStyle()', function() {

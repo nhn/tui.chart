@@ -82,6 +82,26 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         this.addComponents();
 
         this._attachToEventBus();
+
+        if (this.options.usageStatistics) {
+            this._sendHostName();
+        }
+    },
+
+    /**
+     * Image ping for ga tracking
+     * @private
+     */
+    _sendHostName: function() {
+        var hostname = location.hostname;
+        snippet.imagePing('https://www.google-analytics.com/collect', {
+            v: 1,
+            t: 'event',
+            tid: 'UA-115377265-9',
+            cid: hostname,
+            dp: hostname,
+            dh: 'chart'
+        });
     },
 
     /**
@@ -178,6 +198,16 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _initializeOptions: function(options) {
+        var defaultOption = {
+            usageStatistics: true,
+            chartExportMenu: {
+                visible: true
+            },
+            legend: {
+                visible: true
+            }
+        };
+
         options.chartTypes = this.charTypes;
         options.xAxis = options.xAxis || {};
         options.series = options.series || {};
@@ -189,13 +219,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         this._initializeTitleOptions(options.xAxis);
         this._initializeTitleOptions(options.yAxis);
 
-        if (snippet.isUndefined(options.legend.visible)) {
-            options.legend.visible = true;
-        }
-
-        if (snippet.isUndefined(options.chartExportMenu.visible)) {
-            options.chartExportMenu.visible = true;
-        }
+        options = snippet.extend({}, defaultOption, options);
+        options.legend = snippet.extend({}, defaultOption.legend, options.legend);
+        options.chartExportMenu = snippet.extend({}, defaultOption.chartExportMenu, options.chartExportMenu);
 
         this._initializeTooltipOptions(options.tooltip);
 
@@ -462,6 +488,8 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resize: function(dimension) {
+        var dataProcessor = this.dataProcessor;
+        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
         var updated, boundsAndScale, chartDimension;
 
         if (!dimension) {
@@ -480,7 +508,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderDimension(this.chartContainer, chartDimension);
         this.paper.resizeBackground(chartDimension.width, chartDimension.height);
 
-        this.componentManager.render('resize', boundsAndScale);
+        this.componentManager.render('resize', boundsAndScale, {
+            checkedLegends: seriesVisibilityMap
+        });
     },
 
     /**

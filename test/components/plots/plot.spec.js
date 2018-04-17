@@ -90,6 +90,18 @@ describe('Test for Plot', function() {
         });
     });
 
+    describe('animateForAddingData()', function() {
+        it('Animate must occur three times, including the line and bands options.', function() {
+            plot.optionalLines = [{}];
+            plot.optionalBands = [[{}], [{}]];
+            spyOn(plot.dataProcessor, 'isCoordinateType').and.returnValue(false);
+            spyOn(plot, '_animateItemForAddingData');
+            plot.animateForAddingData({shifting: true});
+
+            expect(plot._animateItemForAddingData.calls.count()).toBe(3);
+        });
+    });
+
     describe('_createOptionalLineValueRange()', function() {
         it('create value range for optional line, when optionalLineData has range property', function() {
             var optionalLineData = {

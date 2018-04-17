@@ -34,7 +34,7 @@
     </div>
 </div>
 <!--Import chart.js and dependencies-->
-<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.3.0/dist/tui-code-snippet.js'></script>
 <script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
 <script src='../dist/tui-chart.js'></script>
 <script class='code-js' id='code-js'>
@@ -44,27 +44,27 @@ var data = {
     series: [
         {
             name: 'Chrome',
-            data: 30.02
+            data: 300.02
         },
         {
             name: 'IE',
-            data: 25.47
+            data: 250.47
         },
         {
             name: 'Firefox',
-            data: 12.71
+            data: 120.71
         },
         {
             name: 'Safari',
-            data: 10.45
+            data: 100.45
         },
         {
             name: 'Opera',
-            data: 10.10
+            data: 100.10
         },
         {
             name: 'Etc',
-            data: 11.25
+            data: 110.25
         }
     ]
 };
@@ -72,22 +72,12 @@ var options = {
     chart: {
         width: 700,
         height: 700,
-        title: 'Usage share of web browsers',
-        format: function(value, chartType, areaType, valuetype, legendName) {
-            if (areaType === 'makingSeriesLabel') { // formatting at series area
-                value = value + '%';
-            }
-
-            return value;
-        }
+        title: 'Usage share of web browsers'
     },
     series: {
         showLegend: true,
         showLabel: true,
         labelAlign: 'center'
-    },
-    tooltip: {
-        suffix: '%'
     },
     legend: {
         visible: false

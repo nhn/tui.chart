@@ -266,6 +266,15 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
                 includedX, includedY;
 
             if (bound) {
+                if (bound.top === bound.bottom) {
+                    bound.top -= chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+                    bound.bottom += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+                }
+                if (bound.left === bound.right) {
+                    bound.left -= chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+                    bound.right += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+                }
+
                 includedX = bound.left <= layerX && bound.right >= layerX;
                 includedY = bound.top <= layerY && bound.bottom >= layerY;
                 included = includedX && includedY;
