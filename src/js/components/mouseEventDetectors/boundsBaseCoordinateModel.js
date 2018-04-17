@@ -210,7 +210,7 @@ export default class BoundsBaseCoordinateModel {
                     results[index] = data;
                 } else {
                     additionalIndex = results[index].length;
-                    data.forEach(data, datum => {
+                    data.forEach(datum => {
                         if (datum) {
                             datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + additionalIndex;
                         }

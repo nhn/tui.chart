@@ -9,7 +9,7 @@ import LineTypeSeriesBase from './lineTypeSeriesBase';
 import predicate from '../../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
-var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
+class AreaChartSeries extends Series {
     /**
      * Area chart series component.
      * @constructs AreaChartSeries
@@ -17,33 +17,36 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
      * @extends Series
      * @mixes LineTypeSeriesBase
      */
-    init: function() {
-        Series.apply(this, arguments);
+    constructor(...args) {
+        super(...args);
 
         /**
          * object for requestAnimationFrame
          * @type {null | {id: number}}
          */
         this.movingAnimation = null;
-    },
+    }
 
     /**
      * Make position top of zero point.
      * @returns {number} position top
      * @private
      */
-    _makePositionTopOfZeroPoint: function() {
-        var dimension = this.layout.dimension;
-        var limit = this.axisDataMap.yAxis.limit;
-        var baseTop = this.layout.position.top;
-        var top = this._getLimitDistanceFromZeroPoint(dimension.height, limit).toMax + baseTop;
+    _makePositionTopOfZeroPoint() {
+        const {
+            dimension: {height},
+            position: {top: baseTop}
+        } = this.layout;
+
+        const {limit} = this.axisDataMap.yAxis;
+        let top = this._getLimitDistanceFromZeroPoint(height, limit).toMax + baseTop;
 
         if (limit.min >= 0 && !top) {
-            top = dimension.height;
+            top = height;
         }
 
         return top;
-    },
+    }
 
     /**
      * Make positions, when has stackType option.
@@ -51,7 +54,7 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private
      */
-    _makeStackedPositions: function(groupPositions) {
+    _makeStackedPositions(groupPositions) {
         var height = this.layout.dimension.height;
         var baseTop = this.layout.position.top;
         var firstStartTop = this._makePositionTopOfZeroPoint();
@@ -74,7 +77,7 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
                 return position;
             });
         });
-    },
+    }
 
     /**
      * Make series positions.
@@ -82,7 +85,7 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private
      */
-    _makePositions: function(seriesWidth) {
+    _makePositions(seriesWidth) {
         var groupPositions = this._makeBasicPositions(seriesWidth);
 
         if (predicate.isValidStackOption(this.options.stackType)) {
@@ -90,7 +93,7 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
         }
 
         return groupPositions;
-    },
+    }
 
     /**
      * Make series data.
@@ -98,7 +101,7 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
      * @private
      * @override
      */
-    _makeSeriesData: function() {
+    _makeSeriesData() {
         var dimension = this.layout.dimension;
         var baseTop = this.layout.position.top;
         var zeroTop = this._getLimitDistanceFromZeroPoint(dimension.height, this.limit).toMax + baseTop;
@@ -113,14 +116,14 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
                 return groupPositions && groupPositions.length > 0;
             }
         };
-    },
+    }
 
     /**
      * Rerender.
      * @param {object} data - data for rerendering
      * @override
      */
-    rerender: function(data) {
+    rerender(data) {
         var paper;
 
         this._cancelMovingAnimation();
@@ -129,11 +132,11 @@ var AreaChartSeries = snippet.defineClass(Series, /** @lends AreaChartSeries.pro
 
         return paper;
     }
-});
+}
 
 LineTypeSeriesBase.mixin(AreaChartSeries);
 
-function areaSeriesFactory(params) {
+export default function areaSeriesFactory(params) {
     var libType = params.chartOptions.libType;
     var chartTheme = params.chartTheme;
 
@@ -146,5 +149,3 @@ function areaSeriesFactory(params) {
 
 areaSeriesFactory.componentType = 'series';
 areaSeriesFactory.AreaChartSeries = AreaChartSeries;
-
-module.exports = areaSeriesFactory;
