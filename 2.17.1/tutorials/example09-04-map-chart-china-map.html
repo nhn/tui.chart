@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>9.4 [Map chart] china map</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'></textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script src='../dist/maps/china.js'></script>
+<script class='code-js' id='code-js'>
+var container = document.getElementById('chart-area'),
+    data = {
+        series: [
+            {
+                code: 'CN-AH',
+                data: 975
+            },
+            {
+                code: 'CN-BJ',
+                data: 577
+            },
+            {
+                code: 'CN-CQ',
+                data: 1138
+            },
+            {
+                code: 'CN-FJ',
+                data: 1347
+            },
+            {
+                code: 'CN-GD',
+                data: 1682
+            },
+            {
+                code: 'CN-GA',
+                data: 316
+            },
+            {
+                code: 'CN-GZ',
+                data: 1854
+            },
+            {
+                code: 'CN-GH',
+                data: 1109
+            },
+            {
+                code: 'CN-HN',
+                data: 1625
+            },
+            {
+                code: 'CN-HB',
+                data: 528
+            },
+            {
+                code: 'CN-HE',
+                data: 645
+            },
+            {
+                code: 'CN-HK',
+                data: 2215
+            },
+            {
+                code: 'CN-HL',
+                data: 521
+            },
+            {
+                code: 'CN-HN',
+                data: 1377
+            },
+            {
+                code: 'CN-HU',
+                data: 1222
+            },
+            {
+                code: 'CN-JL',
+                data: 578
+            },
+            {
+                code: 'CN-JS',
+                data: 1036
+            },
+            {
+                code: 'CN-JX',
+                data: 1521
+            },
+            {
+                code: 'CN-LN',
+                data: 684
+            },
+            {
+                code: 'CN-NM',
+                data: 402
+            },
+            {
+                code: 'CN-NH',
+                data: 194
+            },
+            {
+                code: 'CN-QH',
+                data: 368
+            },
+            {
+                code: 'CN-SA',
+                data: 573
+            },
+            {
+                code: 'CN-SH',
+                data: 921
+            },
+            {
+                code: 'CN-SD',
+                data: 720
+            },
+            {
+                code: 'CN-SI',
+                data: 1111
+            },
+            {
+                code: 'CN-SX',
+                data: 457
+            },
+            {
+                code: 'CN-TJ',
+                data: 561
+            },
+            {
+                code: 'CN-TW',
+                data: 1714
+            },
+            {
+                code: 'CN-XY',
+                data: 236
+            },
+            {
+                code: 'CN-TB',
+                data: 420
+            },
+            {
+                code: 'CN-YN',
+                data: 1007
+            },
+            {
+                code: 'CN-ZJ',
+                data: 1376
+            }
+        ]
+    };
+var options = {
+    chart: {
+        width: 550,
+        height: 500,
+        title: 'Average annual precipitation of China (mm)',
+        format: '1,000'
+    },
+    map: 'china',
+    legend: {
+        align: 'top'
+    },
+    tooltip: {
+        suffix: 'mm'
+    }
+};
+var theme = {
+    series: {
+        startColor: '#ffefef',
+        endColor: '#ac4142',
+        overColor: '#75b5aa'
+    }
+};
+
+// For apply theme
+
+// tui.chart.registerTheme('myTheme', theme);
+// options.theme = 'myTheme';
+
+tui.chart.mapChart(container, data, options);
+</script>
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>11.2 [Treemap chart] useColorValue option</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+</div>
+<div class='custom-area'>
+    <div id='error-dim'>
+        <span id='error-text'></span>
+        <div id='error-stack'></div>
+        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    </div>
+    <div style='border: 0.2px solid #aaa;'>
+        <textarea id='code'></textarea>
+    </div>
+
+    <div class='apply-btn-area' style='width: 600px;'>
+        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
+        </button>
+        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
+        </button>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js'></script>
+<script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script class='code-js' id='code-js'>
+var container = document.getElementById('chart-area');
+var data = {
+    series: [
+        {
+            label: 'Asia',
+            children: [
+                {
+                    label: 'South Korea',
+                    value: 99909,
+                    colorValue: 499.81
+                },
+                {
+                    label: 'Japan',
+                    value: 364485,
+                    colorValue: 335.61
+                },
+                {
+                    label: 'Jordan',
+                    value: 88802,
+                    colorValue: 86.07
+                },
+                {
+                    label: 'Iraq',
+                    value: 437367,
+                    colorValue: 81.60
+                }
+            ]
+        }, {
+            label: 'Europe',
+            children: [
+                {
+                    label: 'UK',
+                    value: 241930,
+                    colorValue: 262.84
+                },
+                {
+                    label: 'France',
+                    value: 640427,
+                    colorValue: 117.83
+                },
+                {
+                    label: 'Hungary',
+                    value: 89608,
+                    colorValue: 106.54
+                },
+                {
+                    label: 'Portugal',
+                    value: 91470,
+                    colorValue: 115.35
+                }
+            ]
+        }, {
+            label: 'America',
+            children: [
+                {
+                    label: 'Panama',
+                    value: 74340,
+                    colorValue: 52.81
+                },
+                {
+                    label: 'Honduras',
+                    value: 111890,
+                    colorValue: 75.15
+                },
+                {
+                    label: 'Uruguay',
+                    value: 175015,
+                    colorValue: 19.60
+                },
+                {
+                    label: 'Cuba',
+                    value: 109820,
+                    colorValue: 101.47
+                }
+            ]
+        }, {
+            label: 'Africa',
+            children: [
+                {
+                    label: 'Malawi',
+                    value: 94080,
+                    colorValue: 146.09
+                },
+                {
+                    label: 'Ghana',
+                    value: 227533,
+                    colorValue: 113.13
+                },
+                {
+                    label: 'Togo',
+                    value: 54385,
+                    colorValue: 126.28
+                },
+                {
+                    label: 'Benin',
+                    value: 114305,
+                    colorValue: 96.61
+                }
+            ]
+        }
+    ]
+};
+var options = {
+    chart: {
+        width: 500,
+        height: 400,
+        title: 'Population density of World',
+        format: '1,000'
+    },
+    series: {
+        showLabel: true,
+        useColorValue: true,
+        zoomable: false,
+        useLeafLabel: true
+    },
+    tooltip: {
+        suffix: '㎢'
+    },
+    legend: {
+        align: 'top'
+    }
+};
+var theme = {
+    series: {
+        startColor: '#ffefef',
+        endColor: '#ac4142',
+        overColor: '#75b5aa',
+        borderColor: '#F4511E'
+    }
+};
+
+// For apply theme
+
+// tui.chart.registerTheme('myTheme', theme);
+// options.theme = 'myTheme';
+
+tui.chart.treemapChart(container, data, options);
+</script>
+
+<!--For tutorial page-->
+<script src='../node_modules/codemirror/lib/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
+<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
+<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
+<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
+<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>
