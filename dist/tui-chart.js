@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.17.0
+ * @version 2.17.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Mar 13 2018 14:13:16 GMT+0900 (KST)"
+ * bundle created at "Tue Apr 17 2018 10:21:01 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -260,6 +260,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var DEFAULT_LUMINANC = 0.2;
+	var SERIES_EXTRA_VISUAL_AREA_FOR_ZERO = 2;
 
 	/**
 	 * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -578,10 +579,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _animateRect: function(rect, bound) {
 	        rect.animate({
-	            x: bound.left,
-	            y: bound.top,
-	            width: bound.width,
-	            height: bound.height
+	            x: bound.width ? bound.left : bound.left - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
+	            y: bound.height ? bound.top : bound.top - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
+	            width: bound.width ? bound.width : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
+	            height: bound.height ? bound.height : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO
 	        }, ANIMATION_DURATION, '>');
 	    },
 
@@ -2045,6 +2046,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    SERIES_EXPAND_SIZE: 10,
 	    /** series label padding */
 	    SERIES_LABEL_PADDING: 5,
+	    /** series event margins for the value zero */
+	    SERIES_EXTRA_EVENT_AREA_FOR_ZERO: 2,
 	    /** default font size of title */
 	    DEFAULT_TITLE_FONT_SIZE: 14,
 	    /** default font size of axis title */
@@ -15395,11 +15398,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderOptionalLines: function(paper, dimension) {
-	        var optionalLines = [];
-	        optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
-	        optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
-
-	        this.optionalLines = optionalLines;
+	        this.optionalBands = this._makeOptionalBands(this.options.bands, dimension);
+	        this.optionalLines = this._makeOptionalLines(this.options.lines, dimension);
 	    },
 
 	    /**
@@ -15578,28 +15578,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{tickSize: number, shifting: boolean}} data - data for animation
 	     */
 	    animateForAddingData: function(data) {
-	        var self = this;
+	        var optionLines = this.options.lines;
+	        var optionBands = this.options.bands;
 
 	        if (!this.dataProcessor.isCoordinateType()) {
 	            if (data.shifting) {
-	                snippet.forEach(this.optionalLines, function(line) {
-	                    var bbox = line.getBBox();
-
-	                    if (bbox.x - data.tickSize < self.layout.position.left) {
-	                        line.animate({
-	                            transform: 'T' + data.tickSize + ',' + bbox.y,
-	                            opacity: 0
-	                        }, 300, 'linear', function() {
-	                            line.remove();
-	                        });
-	                    } else {
-	                        line.animate({
-	                            transform: 'T' + data.tickSize + ',' + bbox.y
-	                        }, 300);
-	                    }
+	                this._animateItemForAddingData(this.optionalLines, data, function(itemIdx) {
+	                    optionLines.splice(itemIdx, 1);
 	                });
+	                snippet.forEach(this.optionalBands, function(bandRanges, bandIdx) {
+	                    this._animateItemForAddingData(bandRanges, data, function(itemIdx) {
+	                        optionBands[bandIdx].range.splice(itemIdx, 1);
+	                    });
+	                }, this);
 	            }
 	        }
+	    },
+
+	    /**
+	     * Animate Item for adding data.
+	     * @private
+	     * @param {Array.<object>} optionalItems - svg rect elements for animate
+	     * @param {{tickSize: number, shifting: boolean}} data - data for animation
+	     * @param {function} removePlotItem - function for optional plot delete
+	     */
+	    _animateItemForAddingData: function(optionalItems, data, removePlotItem) {
+	        snippet.forEach(optionalItems, function(item, lineIdx) {
+	            var bbox = item.getBBox();
+
+	            if (bbox.x - data.tickSize < this.layout.position.left) {
+	                item.animate({
+	                    transform: 'T-' + data.tickSize + ',0',
+	                    opacity: 0
+	                }, 300, 'linear', function() {
+	                    removePlotItem(lineIdx);
+	                    item.remove();
+	                });
+	            } else {
+	                item.animate({
+	                    transform: 'T-' + data.tickSize + ',0'
+	                }, 300);
+	            }
+	        }, this);
 	    },
 
 	    /**
@@ -22560,6 +22580,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                includedX, includedY;
 
 	            if (bound) {
+	                if (bound.top === bound.bottom) {
+	                    bound.top -= chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                    bound.bottom += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                }
+	                if (bound.left === bound.right) {
+	                    bound.left -= chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                    bound.right += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                }
+
 	                includedX = bound.left <= layerX && bound.right >= layerX;
 	                includedY = bound.top <= layerY && bound.bottom >= layerY;
 	                included = includedX && includedY;
