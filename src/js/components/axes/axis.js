@@ -381,15 +381,23 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
     _renderTicks: function(size, tickCount, isNotDividedXAxis, additionalSize) {
         var tickColor = this.theme.tickColor;
         var axisData = this.data;
+        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
         var sizeRatio = axisData.sizeRatio || 1;
         var isYAxis = this.isYAxis;
         var isCenter = this.data.options.isCenter;
+        var isDivided = this.data.options.divided;
         var isPositionRight = this.data.isPositionRight;
-        var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
+        var positions = calculator.makeTickPixelPositions(
+            (size * sizeRatio),
+            tickCount,
+            0,
+            remainLastBlockIntervalPosition
+        );
         var additionalHeight = this.paperAdditionalHeight + 1;
         var additionalWidth = this.paperAdditionalWidth;
+        var positionLength = remainLastBlockIntervalPosition ? axisData.tickCount + 1 : axisData.tickCount;
 
-        positions.length = axisData.tickCount;
+        positions.length = positionLength;
 
         this.graphRenderer.renderTicks({
             paper: this.paper,
@@ -397,9 +405,11 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             positions: positions,
             isVertical: isYAxis,
             isCenter: isCenter,
+            isDivided: isDivided,
             additionalSize: additionalSize,
             additionalWidth: additionalWidth,
             additionalHeight: additionalHeight,
+            otherSideDimension: this._getOtherSideDimension(),
             isPositionRight: isPositionRight,
             tickColor: tickColor,
             set: this.axisSet
@@ -442,7 +452,14 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      */
     _renderLabelArea: function(size, tickCount, categories, additionalSize) {
         var sizeRatio = this.data.sizeRatio || 1;
-        var tickPixelPositions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount, 0);
+        var axisData = this.data;
+        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
+        var tickPixelPositions = calculator.makeTickPixelPositions(
+            (size * sizeRatio),
+            tickCount,
+            0,
+            remainLastBlockIntervalPosition
+        );
         var labelDistance = tickPixelPositions[1] - tickPixelPositions[0];
 
         this._renderLabels(tickPixelPositions, categories, labelDistance, (additionalSize || 0));
@@ -462,6 +479,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         var theme = this.theme.label;
         var degree = this.data.degree;
         var halfWidth = labelSize / 2;
+        var edgeAlignWidth = labelSize / chartConst.AXIS_EDGE_RATIO;
         var horizontalTop = this.layout.position.top + chartConst.X_AXIS_LABEL_PADDING;
         var baseLeft = this.layout.position.left;
         var labelMargin = this.options.labelMargin || 0;
@@ -475,11 +493,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 positionTopAndLeft.left = labelSize + labelMargin;
             } else {
                 positionTopAndLeft.top = horizontalTop + labelMargin;
-                positionTopAndLeft.left = baseLeft + labelPosition - theme.fontSize;
-
-                if (this.isLabelAxis) {
-                    positionTopAndLeft.left += halfWidth;
-                }
+                positionTopAndLeft.left = baseLeft + labelPosition + edgeAlignWidth;
             }
 
             renderer.renderRotatedLabel({

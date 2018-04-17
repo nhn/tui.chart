@@ -60,6 +60,13 @@ describe('RaphaelAxisComponent', function() {
 
             expect(raphaelAxisComponent.ticks.length).toBe(5);
         });
+        it('tick count should be calculated taking into account the width of the axis where the y-axis is centered', function() {
+            data.positions = [200, 400, 800, 900, 1000, 1200];
+            data.isDivided = true;
+            raphaelAxisComponent.renderTicks(data);
+
+            expect(raphaelAxisComponent.ticks.length).toBe(5);
+        });
     });
 
     describe('calculatePosition() ', function() {

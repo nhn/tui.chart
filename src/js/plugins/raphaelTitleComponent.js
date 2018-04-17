@@ -13,21 +13,63 @@ var snippet = require('tui-code-snippet');
 var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
     /**
      * Render title
-     * @param {object} paper - paper
-     * @param {string} titleText - title text
-     * @param {{x: number, y: number}} offset - title offset x, y
-     * @param {object} theme - theme object
+     * @param {object} renderInfo infos for render
+     *   @param {object} renderInfo.paper - paper
+     *   @param {string} renderInfo.titleText - title text
+     *   @param {{x: number, y: number}} renderInfo.offset - title offset x, y
+     *   @param {object} renderInfo.theme - theme object
+     *   @param {string} [renderInfo.align] - title align option
+     *   @param {number} renderInfo.chartWidth chart width
      * @returns {Array.<object>} title set
      */
-    render: function(paper, titleText, offset, theme) {
+    render: function(renderInfo) {
+        var paper = renderInfo.paper;
+        var titleText = renderInfo.titleText;
+        var offset = renderInfo.offset;
+        var theme = renderInfo.theme;
+        var align = renderInfo.align || chartConst.TITLE_ALIGN_LEFT;
+        var chartWidth = renderInfo.chartWidth;
         var fontSize = theme.fontSize;
         var fontFamily = theme.fontFamily;
         var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
-        var pos = {
-            left: chartConst.CHART_PADDING + (titleSize.width / 2),
+
+        var titleSet = paper.set();
+        var pos = this.getTitlePosition(titleSize, align, chartWidth, offset);
+
+        titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
+            'font-family': theme.fontFamily,
+            'font-size': theme.fontSize,
+            'font-weight': theme.fontWeight,
+            fill: theme.color,
+            'text-anchor': 'start'
+        }));
+
+        return titleSet;
+    },
+
+    /**
+     * calculate position of title
+     * @param {{width: number, height: number}} titleSize - size of title
+     * @param {string} [align] - title align option
+     * @param {number} chartWidth chart width
+     * @param {{x: number, y: number}} offset - title offset x, y
+     * @returns {{top: number, left: number}} position of title
+     */
+    getTitlePosition: function(titleSize, align, chartWidth, offset) {
+        var pos, left;
+
+        if (align === chartConst.TITLE_ALIGN_CENTER) {
+            left = chartWidth / 2;
+        } else if (align === chartConst.TITLE_ALIGN_RIGHT) {
+            left = chartWidth - titleSize.width - (titleSize.width / 2);
+        } else {
+            left = chartConst.CHART_PADDING;
+        }
+
+        pos = {
+            left: left,
             top: chartConst.CHART_PADDING + (titleSize.height / 2) // for renderText's baseline
         };
-        var titleSet = paper.set();
 
         if (offset) {
             if (offset.x) {
@@ -37,16 +79,9 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
             }
         }
 
-        titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
-            'font-family': theme.fontFamily,
-            'font-size': theme.fontSize,
-            'font-weight': theme.fontWeight,
-            fill: theme.color,
-            'text-anchor': 'middle'
-        }));
-
-        return titleSet;
+        return pos;
     },
+
     /**
      * Resize title component
      * @param {number} chartWidth chart width
@@ -54,7 +89,7 @@ var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent
      */
     resize: function(chartWidth, titleSet) {
         titleSet.attr({
-            x: chartWidth / 2
+            left: chartConst.CHART_PADDING
         });
     }
 });

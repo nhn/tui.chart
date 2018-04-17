@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.0.1
+ * @version 3.1.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Mar 13 2018 16:15:39 GMT+0900 (KST)"
+ * bundle created at "Tue Apr 17 2018 12:47:38 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -294,6 +294,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var DEFAULT_LUMINANC = 0.2;
 	var BAR_HOVER_SPARE_SIZE = 8;
+	var SERIES_EXTRA_VISUAL_AREA_FOR_ZERO = 2;
+	var SERIES_EXTRA_VISUAL_OPACITY_FOR_ZERO = 0.4;
 
 	/**
 	 * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -621,10 +623,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _animateRect: function(rect, bound) {
 	        rect.animate({
-	            x: bound.left,
-	            y: bound.top,
-	            width: bound.width,
-	            height: bound.height
+	            x: bound.width ? bound.left : bound.left - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
+	            y: bound.height ? bound.top : bound.top - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
+	            width: bound.width ? bound.width : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
+	            height: bound.height ? bound.height : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
+	            opacity: (bound.height && bound.width) ? 1 : SERIES_EXTRA_VISUAL_OPACITY_FOR_ZERO
 	        }, ANIMATION_DURATION, '>');
 	    },
 
@@ -2108,6 +2111,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    SERIES_AREA_V_PADDING: 10,
 	    /** series label padding */
 	    SERIES_LABEL_PADDING: 5,
+	    /** series event margins for the value zero */
+	    SERIES_EXTRA_EVENT_AREA_FOR_ZERO: 2,
 	    /** default font size of title */
 	    DEFAULT_TITLE_FONT_SIZE: 14,
 	    /** default font size of axis title */
@@ -2317,6 +2322,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    DATE_TYPE_SECOND: 'second',
 	    /** title add padding */
 	    TITLE_PADDING: 20,
+	    TITLE_ALIGN_CENTER: 'center',
+	    TITLE_ALIGN_RIGHT: 'right',
+	    TITLE_ALIGN_LEFT: 'left',
 	    /** default header height */
 	    DEFAULT_HEADER_HEIGHT: 10,
 	    /** legend area horizontal padding */
@@ -2379,8 +2387,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @type {string}
 	     */
 	    YAXIS_ALIGN_CENTER: 'center',
-	    /** xAxis label compare margin */
-	    XAXIS_LABEL_COMPARE_MARGIN: 20,
 	    /** xAxis label gutter */
 	    XAXIS_LABEL_GUTTER: 2,
 	    /**
@@ -2392,6 +2398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Last standard multiple num of axis
 	     */
 	    AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
+	    AXIS_EDGE_RATIO: 8,
 	    /** label padding top */
 	    LABEL_PADDING_TOP: 7,
 	    /** line margin top */
@@ -4140,7 +4147,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var self = this;
 
 	        return snippet.map(groupPositions, function(positions) {
-	            return self._makeSplineLinesPath(positions, connectNulls);
+	            return self._makeSplineLinesPath(positions, {
+	                connectNulls: connectNulls
+	            });
 	        });
 	    },
 
@@ -4186,7 +4195,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
 	                if (item.endDot) {
-	                    self.moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
+	                    self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
 	                }
 	            });
 	        });
@@ -4411,15 +4420,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{left: number, top: number}} fromPos from position
 	     * @param {{left: number, top: number}} pos position
 	     * @param {{left: number, top: number}} nextPos next position
+	     * @param {?boolean} [isReverseDirection] - True when the line is drawn from right to left
 	     * @returns {{x1: number, y1: number, x2: number, y2: number}} anchor
 	     * @private
 	     */
-	    _getAnchor: function(fromPos, pos, nextPos) {
+	    _getAnchor: function(fromPos, pos, nextPos, isReverseDirection) {
 	        var l1 = (pos.left - fromPos.left) / 2,
 	            l2 = (nextPos.left - pos.left) / 2,
-	            a = Math.atan((pos.left - fromPos.left) / Math.abs(pos.top - fromPos.top)),
-	            b = Math.atan((nextPos.left - pos.left) / Math.abs(pos.top - nextPos.top)),
-	            alpha, dx1, dy1, dx2, dy2;
+	            a, b, alpha, dx1, dy1, dx2, dy2, result;
+
+	        if (isReverseDirection) {
+	            a = Math.atan((fromPos.left - pos.left) / Math.abs(fromPos.top - pos.top));
+	            b = Math.atan((pos.left - nextPos.left) / Math.abs(nextPos.top - pos.top));
+	        } else {
+	            a = Math.atan((pos.left - fromPos.left) / Math.abs(pos.top - fromPos.top));
+	            b = Math.atan((nextPos.left - pos.left) / Math.abs(pos.top - nextPos.top));
+	        }
 
 	        a = fromPos.top < pos.top ? Math.PI - a : a;
 	        b = nextPos.top < pos.top ? Math.PI - b : b;
@@ -4429,12 +4445,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        dx2 = l2 * Math.sin(alpha + b);
 	        dy2 = l2 * Math.cos(alpha + b);
 
-	        return {
+	        result = {
 	            x1: pos.left - dx1,
 	            y1: pos.top + dy1,
 	            x2: pos.left + dx2,
 	            y2: pos.top + dy2
 	        };
+
+	        if (isReverseDirection) {
+	            result.y1 = pos.top - dy1;
+	            result.y2 = pos.top - dy2;
+	        }
+
+	        return result;
 	    },
 
 	    /**
@@ -4442,7 +4465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * If series has not divided positions, it returns only one positions group.
 	     * @param {Array.<object>} positions positions array
 	     * @param {boolean} connectNulls option of connect line of both null data's side
-	     * @returns {Array.<Array.<object>>}
+	     * @Returns {Array.<Array.<object>>}
 	     * @private
 	     */
 	    _getSplinePositionsGroups: function(positions, connectNulls) {
@@ -4467,10 +4490,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Get spline partial paths
 	     * @param {Array.<Array.<object>>} positionsGroups positions groups
+	     * @param {?boolean} [isReverseDirection] - True when the line is drawn from right to left
 	     * @returns {Array.<Array.<Array>>}
 	     * @private
 	     */
-	    _getSplinePartialPaths: function(positionsGroups) {
+	    _getSplinePartialPaths: function(positionsGroups, isReverseDirection) {
 	        var self = this;
 	        var paths = [];
 	        var firstPos, lastPos, positionsLen, fromPos, middlePositions, path, prevPos;
@@ -4484,7 +4508,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            path = snippet.map(middlePositions, function(position, index) {
 	                var nextPos = dataPositions[index + 2];
-	                var anchor = self._getAnchor(fromPos, position, nextPos);
+	                var anchor = self._getAnchor(fromPos, position, nextPos, isReverseDirection);
 
 	                fromPos = position;
 
@@ -4512,18 +4536,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Make spline lines path.
 	     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
-	     * @param {boolean} [connectNulls] - boolean value connect nulls or not
+	     * @param {?object} [makeLineOptions] - options for make spline line
+	     *   @param {?boolean} [makeLineOptions.connectNulls] - boolean value connect nulls or not
+	     *   @param {?boolean} [makeLineOptions.isReverseDirection] - True when the line is drawn from right to left
+	     *   @param {?boolean} [makeLineOptions.isBeConnected] - True when part of another line.
 	     * @returns {Array.<string | number>} paths
 	     * @private
 	     */
-	    _makeSplineLinesPath: function(positions, connectNulls) {
-	        var path = [];
-	        var positionsGroups = this._getSplinePositionsGroups(positions, connectNulls);
-	        var partialPaths = this._getSplinePartialPaths(positionsGroups);
+	    _makeSplineLinesPath: function(positions, makeLineOptions) {
+	        var path, positionsGroups, partialPaths;
+
+	        makeLineOptions = makeLineOptions || {};
+	        path = [];
+	        positionsGroups = this._getSplinePositionsGroups(positions, makeLineOptions.connectNulls);
+	        partialPaths = this._getSplinePartialPaths(positionsGroups, makeLineOptions.isReverseDirection);
 
 	        snippet.forEach(partialPaths, function(partialPath) {
 	            path = path.concat(partialPath);
 	        });
+
+	        if (makeLineOptions.isBeConnected) {
+	            path[0] = path[0].slice(3);
+	        }
 
 	        return path;
 	    },
@@ -5418,6 +5452,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.groupPaths = this._getAreaChartPath(groupPositions, null, options.connectNulls);
 	        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors, lineWidth, areaOpacity);
+
 	        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
 	        this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity);
 
@@ -5612,20 +5647,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Make spline area bottom path.
-	     * @param {Array.<{left: number, top: number}>} positions positions
-	     * @returns {Array.<string | number>} spline area path
-	     * @private
-	     */
-	    _makeSplineAreaBottomPath: function(positions) {
-	        var self = this;
-
-	        return snippet.map(positions, function(position) {
-	            return ['L', position.left, self.zeroTop];
-	        }).reverse();
-	    },
-
-	    /**
 	     * Make spline path for area chart.
 	     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
 	     * @param {boolean} [hasExtraPath] - whether has extra path or not
@@ -5636,19 +5657,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var self = this;
 
 	        return snippet.map(groupPositions, function(positions) {
+	            var reversePosition = snippet.map(positions.concat().reverse(), function(position) {
+	                return {
+	                    left: position.left,
+	                    top: position.startTop
+	                };
+	            });
+
 	            var linesPath = self._makeSplineLinesPath(positions);
+	            var reverseLinesPath = self._makeSplineLinesPath(reversePosition, {
+	                isReverseDirection: true,
+	                isBeConnected: true
+	            });
+
 	            var areaPath = JSON.parse(JSON.stringify(linesPath));
-	            var areasBottomPath = self._makeSplineAreaBottomPath(positions);
-	            var lastPosition;
+	            var reverseAreaPath = JSON.parse(JSON.stringify(reverseLinesPath));
+
+	            var lastPosition, lastReversePosition;
 
 	            if (hasExtraPath !== false) {
 	                lastPosition = positions[positions.length - 1];
-	                areaPath.push(['L', lastPosition.left, lastPosition.top]);
-	                areasBottomPath.unshift(['L', lastPosition.left, self.zeroTop]);
+	                lastReversePosition = reversePosition[reversePosition.length - 1];
+
+	                areaPath.push(['K', lastPosition.left, lastPosition.top]);
+	                areaPath.push(['L', lastPosition.left, lastPosition.startTop]);
+
+	                reverseAreaPath.push(['K', lastReversePosition.left, lastReversePosition.top]);
+	                reverseAreaPath.push(['L', lastReversePosition.left, lastReversePosition.top]);
 	            }
 
 	            return {
-	                area: areaPath.concat(areasBottomPath),
+	                area: areaPath.concat(reverseAreaPath),
 	                line: linesPath
 	            };
 	        });
@@ -5759,6 +5798,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    moveSeriesToFront: function(areaSurface, dots) {
 	        areaSurface.line.toFront();
 	        areaSurface.area.toFront();
+
 	        if (areaSurface.startLine) {
 	            areaSurface.startLine.toFront();
 	        }
@@ -9692,21 +9732,63 @@ return /******/ (function(modules) { // webpackBootstrap
 	var RaphaelTitleComponent = snippet.defineClass(/** @lends RaphaelTitleComponent.prototype */ {
 	    /**
 	     * Render title
-	     * @param {object} paper - paper
-	     * @param {string} titleText - title text
-	     * @param {{x: number, y: number}} offset - title offset x, y
-	     * @param {object} theme - theme object
+	     * @param {object} renderInfo infos for render
+	     *   @param {object} renderInfo.paper - paper
+	     *   @param {string} renderInfo.titleText - title text
+	     *   @param {{x: number, y: number}} renderInfo.offset - title offset x, y
+	     *   @param {object} renderInfo.theme - theme object
+	     *   @param {string} [renderInfo.align] - title align option
+	     *   @param {number} renderInfo.chartWidth chart width
 	     * @returns {Array.<object>} title set
 	     */
-	    render: function(paper, titleText, offset, theme) {
+	    render: function(renderInfo) {
+	        var paper = renderInfo.paper;
+	        var titleText = renderInfo.titleText;
+	        var offset = renderInfo.offset;
+	        var theme = renderInfo.theme;
+	        var align = renderInfo.align || chartConst.TITLE_ALIGN_LEFT;
+	        var chartWidth = renderInfo.chartWidth;
 	        var fontSize = theme.fontSize;
 	        var fontFamily = theme.fontFamily;
 	        var titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
-	        var pos = {
-	            left: chartConst.CHART_PADDING + (titleSize.width / 2),
+
+	        var titleSet = paper.set();
+	        var pos = this.getTitlePosition(titleSize, align, chartWidth, offset);
+
+	        titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
+	            'font-family': theme.fontFamily,
+	            'font-size': theme.fontSize,
+	            'font-weight': theme.fontWeight,
+	            fill: theme.color,
+	            'text-anchor': 'start'
+	        }));
+
+	        return titleSet;
+	    },
+
+	    /**
+	     * calculate position of title
+	     * @param {{width: number, height: number}} titleSize - size of title
+	     * @param {string} [align] - title align option
+	     * @param {number} chartWidth chart width
+	     * @param {{x: number, y: number}} offset - title offset x, y
+	     * @returns {{top: number, left: number}} position of title
+	     */
+	    getTitlePosition: function(titleSize, align, chartWidth, offset) {
+	        var pos, left;
+
+	        if (align === chartConst.TITLE_ALIGN_CENTER) {
+	            left = chartWidth / 2;
+	        } else if (align === chartConst.TITLE_ALIGN_RIGHT) {
+	            left = chartWidth - titleSize.width - (titleSize.width / 2);
+	        } else {
+	            left = chartConst.CHART_PADDING;
+	        }
+
+	        pos = {
+	            left: left,
 	            top: chartConst.CHART_PADDING + (titleSize.height / 2) // for renderText's baseline
 	        };
-	        var titleSet = paper.set();
 
 	        if (offset) {
 	            if (offset.x) {
@@ -9716,16 +9798,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 
-	        titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
-	            'font-family': theme.fontFamily,
-	            'font-size': theme.fontSize,
-	            'font-weight': theme.fontWeight,
-	            fill: theme.color,
-	            'text-anchor': 'middle'
-	        }));
-
-	        return titleSet;
+	        return pos;
 	    },
+
 	    /**
 	     * Resize title component
 	     * @param {number} chartWidth chart width
@@ -9733,7 +9808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    resize: function(chartWidth, titleSet) {
 	        titleSet.attr({
-	            x: chartWidth / 2
+	            left: chartConst.CHART_PADDING
 	        });
 	    }
 	});
@@ -9926,17 +10001,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var additionalSize = data.additionalSize;
 	        var isVertical = data.isVertical;
 	        var isCenter = data.isCenter;
+	        var isDivided = data.isDivided;
 	        var isPositionRight = data.isPositionRight;
 	        var tickColor = data.tickColor;
 	        var layout = data.layout;
 	        var rightEdgeOfAxis = layout.position.left + layout.dimension.width;
 	        var baseTop = layout.position.top;
 	        var baseLeft = layout.position.left;
+	        var centerAxisWidth = isDivided ? data.otherSideDimension.width : 0;
 	        var tick;
 	        var isContainDivensionArea = function(position) {
 	            var compareType = isVertical ? 'height' : 'width';
 
-	            return (position > layout.dimension[compareType]);
+	            return (position > layout.dimension[compareType] + centerAxisWidth);
 	        };
 
 	        snippet.forEach(positions, function(position) {
@@ -10602,6 +10679,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -10644,6 +10722,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
 	 *      @param {string} options.theme - theme name
 	 *      @param {string} options.libType - type of graph library
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -10701,6 +10780,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -10746,6 +10826,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} column chart
 	 * @api
 	 * @example
@@ -10803,6 +10884,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -10860,6 +10942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -10920,6 +11003,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -10975,6 +11059,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -11032,6 +11117,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11075,6 +11161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bubble chart
 	 * @api
 	 * @example
@@ -11143,6 +11230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11182,6 +11270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} scatter chart
 	 * @api
 	 * @example
@@ -11242,6 +11331,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11273,6 +11363,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} scatter chart
 	 * @api
 	 * @example
@@ -11322,6 +11413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11343,6 +11435,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} scatter chart
 	 * @api
 	 * @example
@@ -11404,6 +11497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11474,6 +11568,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -11547,6 +11642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11572,6 +11668,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -11621,6 +11718,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11640,6 +11738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -11686,6 +11785,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.chart.height - chart height
 	 *          @param {string | object} options.chart.title - title text or title object
 	 *              @param {string} options.chart.title.text - title text
+	 *              @param {string} options.chart.title.align - align option for chart title (left|center|right)
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
@@ -11713,6 +11813,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} options.libType - type of graph library
 	 *      @param {object} options.chartExportMenu - options for exporting
 	 *          @param {string} options.chartExportMenu.filename - export file name
+	 *      @param {number} options.usageStatistics - send hostname to google analytics
 	 * @returns {object} bar chart
 	 * @api
 	 * @example
@@ -13562,6 +13663,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addComponents();
 
 	        this._attachToEventBus();
+
+	        if (this.options.usageStatistics) {
+	            this._sendHostName();
+	        }
+	    },
+
+	    /**
+	     * Image ping for ga tracking
+	     * @private
+	     */
+	    _sendHostName: function() {
+	        var hostname = location.hostname;
+	        snippet.imagePing('https://www.google-analytics.com/collect', {
+	            v: 1,
+	            t: 'event',
+	            tid: 'UA-115377265-9',
+	            cid: hostname,
+	            dp: hostname,
+	            dh: 'chart'
+	        });
 	    },
 
 	    /**
@@ -13658,6 +13779,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _initializeOptions: function(options) {
+	        var defaultOption = {
+	            usageStatistics: true,
+	            chartExportMenu: {
+	                visible: true
+	            },
+	            legend: {
+	                visible: true
+	            }
+	        };
+
 	        options.chartTypes = this.charTypes;
 	        options.xAxis = options.xAxis || {};
 	        options.series = options.series || {};
@@ -13669,13 +13800,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._initializeTitleOptions(options.xAxis);
 	        this._initializeTitleOptions(options.yAxis);
 
-	        if (snippet.isUndefined(options.legend.visible)) {
-	            options.legend.visible = true;
-	        }
-
-	        if (snippet.isUndefined(options.chartExportMenu.visible)) {
-	            options.chartExportMenu.visible = true;
-	        }
+	        options = snippet.extend({}, defaultOption, options);
+	        options.legend = snippet.extend({}, defaultOption.legend, options.legend);
+	        options.chartExportMenu = snippet.extend({}, defaultOption.chartExportMenu, options.chartExportMenu);
 
 	        this._initializeTooltipOptions(options.tooltip);
 
@@ -13942,6 +14069,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @api
 	     */
 	    resize: function(dimension) {
+	        var dataProcessor = this.dataProcessor;
+	        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
 	        var updated, boundsAndScale, chartDimension;
 
 	        if (!dimension) {
@@ -13960,7 +14089,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        renderUtil.renderDimension(this.chartContainer, chartDimension);
 	        this.paper.resizeBackground(chartDimension.width, chartDimension.height);
 
-	        this.componentManager.render('resize', boundsAndScale);
+	        this.componentManager.render('resize', boundsAndScale, {
+	            checkedLegends: seriesVisibilityMap
+	        });
 	    },
 
 	    /**
@@ -14969,15 +15100,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _renderTicks: function(size, tickCount, isNotDividedXAxis, additionalSize) {
 	        var tickColor = this.theme.tickColor;
 	        var axisData = this.data;
+	        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
 	        var sizeRatio = axisData.sizeRatio || 1;
 	        var isYAxis = this.isYAxis;
 	        var isCenter = this.data.options.isCenter;
+	        var isDivided = this.data.options.divided;
 	        var isPositionRight = this.data.isPositionRight;
-	        var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
+	        var positions = calculator.makeTickPixelPositions(
+	            (size * sizeRatio),
+	            tickCount,
+	            0,
+	            remainLastBlockIntervalPosition
+	        );
 	        var additionalHeight = this.paperAdditionalHeight + 1;
 	        var additionalWidth = this.paperAdditionalWidth;
+	        var positionLength = remainLastBlockIntervalPosition ? axisData.tickCount + 1 : axisData.tickCount;
 
-	        positions.length = axisData.tickCount;
+	        positions.length = positionLength;
 
 	        this.graphRenderer.renderTicks({
 	            paper: this.paper,
@@ -14985,9 +15124,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            positions: positions,
 	            isVertical: isYAxis,
 	            isCenter: isCenter,
+	            isDivided: isDivided,
 	            additionalSize: additionalSize,
 	            additionalWidth: additionalWidth,
 	            additionalHeight: additionalHeight,
+	            otherSideDimension: this._getOtherSideDimension(),
 	            isPositionRight: isPositionRight,
 	            tickColor: tickColor,
 	            set: this.axisSet
@@ -15030,7 +15171,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _renderLabelArea: function(size, tickCount, categories, additionalSize) {
 	        var sizeRatio = this.data.sizeRatio || 1;
-	        var tickPixelPositions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount, 0);
+	        var axisData = this.data;
+	        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
+	        var tickPixelPositions = calculator.makeTickPixelPositions(
+	            (size * sizeRatio),
+	            tickCount,
+	            0,
+	            remainLastBlockIntervalPosition
+	        );
 	        var labelDistance = tickPixelPositions[1] - tickPixelPositions[0];
 
 	        this._renderLabels(tickPixelPositions, categories, labelDistance, (additionalSize || 0));
@@ -15050,6 +15198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var theme = this.theme.label;
 	        var degree = this.data.degree;
 	        var halfWidth = labelSize / 2;
+	        var edgeAlignWidth = labelSize / chartConst.AXIS_EDGE_RATIO;
 	        var horizontalTop = this.layout.position.top + chartConst.X_AXIS_LABEL_PADDING;
 	        var baseLeft = this.layout.position.left;
 	        var labelMargin = this.options.labelMargin || 0;
@@ -15063,11 +15212,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                positionTopAndLeft.left = labelSize + labelMargin;
 	            } else {
 	                positionTopAndLeft.top = horizontalTop + labelMargin;
-	                positionTopAndLeft.left = baseLeft + labelPosition - theme.fontSize;
-
-	                if (this.isLabelAxis) {
-	                    positionTopAndLeft.left += halfWidth;
-	                }
+	                positionTopAndLeft.left = baseLeft + labelPosition + edgeAlignWidth;
 	            }
 
 	            renderer.renderRotatedLabel({
@@ -15341,9 +15486,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} size area width or height
 	     * @param {number} count tick count
 	     * @param {?number} additionalPosition additional position
+	     * @param {?number} remainLastBlockIntervalPosition remainLastBlockInterval position
 	     * @returns {Array.<number>} positions
 	     */
-	    makeTickPixelPositions: function(size, count, additionalPosition) {
+	    makeTickPixelPositions: function(size, count, additionalPosition, remainLastBlockIntervalPosition) {
 	        var positions = [];
 
 	        additionalPosition = additionalPosition || 0;
@@ -15355,6 +15501,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return (ratio * size) + additionalPosition;
 	            });
 	            positions[positions.length - 1] -= 1;
+	        }
+
+	        if (remainLastBlockIntervalPosition) {
+	            positions.push(remainLastBlockIntervalPosition);
 	        }
 
 	        return positions;
@@ -15553,6 +15703,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	};
 
+	/**
+	 * Obtain the number of divisors.
+	 * @memberOf module:calculator
+	 * @param {Array.<number>} value target value
+	 * @returns {number} result value
+	 */
+	var divisors = function(value) {
+	    var result = [];
+	    var a = 2;
+	    var b;
+	    for (; a * a <= value; a += 1) {
+	        if (value % a === 0) {
+	            b = value / a;
+	            result.push(a);
+	            if (b !== a) {
+	                result.push(b);
+	            }
+	        }
+	    }
+	    result.sort(function(prev, next) {
+	        return prev - next;
+	    });
+
+	    return result;
+	};
+
 	calculator.getDecimalLength = getDecimalLength;
 	calculator.findMultipleNum = findMultipleNum;
 	calculator.mod = mod;
@@ -15560,6 +15736,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	calculator.subtract = subtract;
 	calculator.multiply = multiply;
 	calculator.divide = divide;
+	calculator.divisors = divisors;
 	calculator.sum = sum;
 
 	module.exports = calculator;
@@ -16073,11 +16250,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _renderOptionalLines: function(paper, dimension) {
-	        var optionalLines = [];
-	        optionalLines = optionalLines.concat(this._makeOptionalBands(this.options.bands, dimension));
-	        optionalLines = optionalLines.concat(this._makeOptionalLines(this.options.lines, dimension));
-
-	        this.optionalLines = optionalLines;
+	        this.optionalBands = this._makeOptionalBands(this.options.bands, dimension);
+	        this.optionalLines = this._makeOptionalLines(this.options.lines, dimension);
 	    },
 
 	    /**
@@ -16255,28 +16429,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{tickSize: number, shifting: boolean}} data - data for animation
 	     */
 	    animateForAddingData: function(data) {
-	        var self = this;
+	        var optionLines = this.options.lines;
+	        var optionBands = this.options.bands;
 
 	        if (!this.dataProcessor.isCoordinateType()) {
 	            if (data.shifting) {
-	                snippet.forEach(this.optionalLines, function(line) {
-	                    var bbox = line.getBBox();
-
-	                    if (bbox.x - data.tickSize < self.layout.position.left) {
-	                        line.animate({
-	                            transform: 'T' + data.tickSize + ',' + bbox.y,
-	                            opacity: 0
-	                        }, 300, 'linear', function() {
-	                            line.remove();
-	                        });
-	                    } else {
-	                        line.animate({
-	                            transform: 'T' + data.tickSize + ',' + bbox.y
-	                        }, 300);
-	                    }
+	                this._animateItemForAddingData(this.optionalLines, data, function(itemIdx) {
+	                    optionLines.splice(itemIdx, 1);
 	                });
+
+	                snippet.forEach(this.optionalBands, function(bandRanges, bandIdx) {
+	                    this._animateItemForAddingData(bandRanges, data, function(itemIdx) {
+	                        optionBands[bandIdx].range.splice(itemIdx, 1);
+	                    });
+	                }, this);
 	            }
 	        }
+	    },
+
+	    /**
+	     * Animate Item for adding data.
+	     * @private
+	     * @param {Array.<object>} optionalItems - svg rect elements for animate
+	     * @param {{tickSize: number, shifting: boolean}} data - data for animation
+	     * @param {function} removePlotItem - function for optional plot delete
+	     */
+	    _animateItemForAddingData: function(optionalItems, data, removePlotItem) {
+	        snippet.forEach(optionalItems, function(item, lineIdx) {
+	            var bbox = item.getBBox();
+
+	            if (bbox.x - data.tickSize < this.layout.position.left) {
+	                item.animate({
+	                    transform: 'T-' + data.tickSize + ',0',
+	                    opacity: 0
+	                }, 300, 'linear', function() {
+	                    removePlotItem(lineIdx);
+	                    item.remove();
+	                });
+	            } else {
+	                item.animate({
+	                    transform: 'T-' + data.tickSize + ',0'
+	                }, 300);
+	            }
+	        }, this);
 	    },
 
 	    /**
@@ -16407,6 +16602,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.offset = params.offset;
 
 	        /**
+	         * title align option
+	         * @type {object}
+	         */
+	        this.align = params.align;
+
+	        /**
 	         * Graph renderer
 	         * @type {object}
 	         */
@@ -16424,7 +16625,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} data data for render title
 	     */
 	    render: function(data) {
-	        this.titleSet = this._renderTitleArea(data.paper);
+	        this.titleSet = this._renderTitleArea(data);
 	    },
 
 	    /**
@@ -16450,12 +16651,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Render title on given paper
-	     * @param {object} paper paper object
+	     * @param {object} data data for render title
 	     * @returns {object} raphael paper
 	     * @private
 	     */
-	    _renderTitleArea: function(paper) {
-	        return this.graphRenderer.render(paper, this.titleText, this.offset, this.theme);
+	    _renderTitleArea: function(data) {
+	        var paper = data.paper;
+	        var dimensionMap = data.dimensionMap;
+	        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
+	        var chartWidth = dimensionMap.series.width + legendWidth;
+
+	        return this.graphRenderer.render({
+	            paper: paper,
+	            titleText: this.titleText,
+	            offset: this.offset,
+	            theme: this.theme,
+	            align: this.align,
+	            chartWidth: chartWidth
+	        });
 	    }
 	});
 
@@ -16472,6 +16685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options.title && options.title.text) {
 	        param.text = options.title.text;
 	        param.offset = options.title.offset;
+	        param.align = options.title.align;
 
 	        title = new Title(param);
 	    }
@@ -19833,6 +20047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var snippet = __webpack_require__(6);
 	var raphael = __webpack_require__(3);
+	var objectUtil = __webpack_require__(36);
 	var chartConst = __webpack_require__(8),
 	    dom = __webpack_require__(9),
 	    predicate = __webpack_require__(21),
@@ -19889,6 +20104,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {object}
 	         */
 	        this.theme = params.theme;
+
+	        /**
+	         * Original Theme
+	         * @type {object}
+	         */
+	        this.originalTheme = objectUtil.deepCopy(params.theme);
 
 	        /**
 	         * whether vertical or not
@@ -21263,13 +21484,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _updateLegendTheme: function(checkedLegends) {
 	        var colors = [];
+	        var chartTypes = snippet.keys(this.originalTheme);
 
-	        snippet.forEachArray(this.dataProcessor.getOriginalLegendData(), function(item) {
-	            var _checkedLegends = checkedLegends[item.chartType] || checkedLegends;
-	            if (_checkedLegends[item.index]) {
-	                colors.push(item.theme.color);
-	            }
-	        });
+	        snippet.forEachArray(chartTypes, function(chartType) {
+	            var chartColors = this.originalTheme[chartType].colors;
+	            snippet.forEachArray(chartColors, function(color, index) {
+	                var _checkedLegends = checkedLegends[chartType] || checkedLegends;
+	                if (_checkedLegends[index]) {
+	                    colors.push(color);
+	                }
+	            }, this);
+	        }, this);
 
 	        return {
 	            colors: colors
@@ -23383,6 +23608,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                includedX, includedY;
 
 	            if (bound) {
+	                if (bound.top === bound.bottom) {
+	                    bound.top -= chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                    bound.bottom += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                }
+	                if (bound.left === bound.right) {
+	                    bound.left -= chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                    bound.right += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
+	                }
+
 	                includedX = bound.left <= layerX && bound.right >= layerX;
 	                includedY = bound.top <= layerY && bound.bottom >= layerY;
 	                included = includedX && includedY;
@@ -25618,7 +25852,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    rerender: function(data) {
 	        var checkedLegends;
 
-	        if (this.dataProcessor.getGroupCount(this.seriesType)) {
+	        if (this.seriesType === 'map' || this.dataProcessor.getGroupCount(this.seriesType)) {
 	            if (data.checkedLegends) {
 	                checkedLegends = data.checkedLegends[this.seriesType];
 	                this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
@@ -25679,6 +25913,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._clearSeriesContainer();
 	        this._setDataForRendering(data);
 	        this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
+	        this.rerender(data);
 	    },
 
 	    /**
@@ -26743,6 +26978,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
 	    }
+
 	});
 
 	BarTypeSeriesBase.mixin(ColumnChartSeries);
@@ -28111,7 +28347,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    render: function(data) {
 	        Series.prototype.render.call(this, data);
+	        this.seriesSet = this.graphRenderer.sectorSet;
 	        this._setMapRatio();
+	    },
+
+	    rerender: function(data) {
+	        Series.prototype.rerender.call(this, data);
+	        this.seriesSet = this.graphRenderer.sectorSet;
+	        this._setMapRatio();
+	    },
+
+	    /**
+	     * Resize series component.
+	     * @param {object} data data for rendering
+	     */
+	    resize: function(data) {
+	        this.rerender(data);
 	    },
 
 	    /**
@@ -36827,7 +37078,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var options = snippet.extend(baseOptions, {
 	            isVertical: isVertical,
 	            limitOption: this._pickLimitOption(axisOptions),
-	            tickCounts: additionalOptions.tickCounts
+	            tickCounts: additionalOptions.tickCounts,
+	            showLabel: this.options.series.showLabel
 	        });
 
 	        if (predicate.isBubbleChart(chartType)) {
@@ -37472,7 +37724,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            min: min,
 	            max: max,
 	            stepCount: stepCount,
-	            offsetSize: baseSize
+	            offsetSize: baseSize,
+	            showLabel: options.showLabel
 	        });
 
 	        if (!options.useSpectrumLegend) {
@@ -37635,6 +37888,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {number} min min
 	 * @param {number} max max
 	 * @param {number} step step
+	 * @param {number} [showLabel] showLabel option
 	 * @private
 	 * @returns {{
 	 *     min: number,
@@ -37642,13 +37896,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * }}
 	 * max = 155 and step = 10 ---> max = 160
 	 */
-	function getNormalizedLimit(min, max, step) {
+	function getNormalizedLimit(min, max, step, showLabel) {
 	    var minNumber = Math.min(getDigits(max), getDigits(step));
 	    var placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
 	    var fixedStep = (step * placeNumber);
+	    var noExtraMax = max;
+	    var isNotEnoughSize = false;
 
 	    // ceil max value step digits
 	    max = Math.ceil((max * placeNumber) / fixedStep) * fixedStep / placeNumber;
+	    isNotEnoughSize = fixedStep / 2 > max - noExtraMax;
+
+	    if (showLabel && isNotEnoughSize) {
+	        max += fixedStep;
+	    }
 
 	    if (min > step) {
 	        // floor min value to multiples of step
@@ -37682,13 +37943,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Get normalized scale data
 	 * @param {object} scale scale
+	 * @param {number} [showLabel] showLabel option
 	 * @private
 	 * @returns {object}
 	 * @ignore
 	 */
-	function getNormalizedScale(scale) {
+	function getNormalizedScale(scale, showLabel) {
 	    var step = getNormalizedStep(scale.step);
-	    var edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step);
+	    var edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step, showLabel);
 	    var limitSize = Math.abs(edge.max - edge.min);
 	    var stepCount = getNormalizedStepCount(limitSize, step);
 
@@ -37757,9 +38019,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var offsetSize = options.offsetSize;
 	    var stepCount = options.stepCount;
 	    var minimumStepSize = options.minimumStepSize;
+	    var showLabel = options.showLabel;
 
 	    var scale = getRoughScale(min, max, offsetSize, stepCount, minimumStepSize);
-	    scale = getNormalizedScale(scale);
+	    scale = getNormalizedScale(scale, showLabel);
 
 	    return scale;
 	}
@@ -37877,9 +38140,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	var chartConst = __webpack_require__(8);
 	var predicate = __webpack_require__(21);
 	var geomatric = __webpack_require__(49);
+	var calculator = __webpack_require__(45);
 	var renderUtil = __webpack_require__(7);
 	var arrayUtil = __webpack_require__(10);
 	var snippet = __webpack_require__(6);
+	var AUTO_INTERVAL_MIN_WIDTH = 90;
+	var AUTO_INTERVAL_MAX_WIDTH = 121;
+	var AUTO_INTERVAL_RANGE_STEP = 5;
 
 	/**
 	 * Axis data maker.
@@ -38091,11 +38358,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _makeCandidatesForAdjustingInterval: function(beforeBlockCount, seriesWidth) {
+	        var blockSizeRange;
 	        var self = this;
-	        var blockSizeRange = snippet.range(90, 121, 5); // [90, 95, 100, 105, 110, 115, 120]
-	        var candidates = snippet.map(blockSizeRange, function(blockSize) {
-	            return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
+	        var candidates = [];
+	        var candidateInterval = calculator.divisors(beforeBlockCount);
+	        snippet.forEach(candidateInterval, function(interval) {
+	            var intervalWidth = (interval / beforeBlockCount) * seriesWidth;
+	            if (intervalWidth >= AUTO_INTERVAL_MIN_WIDTH && intervalWidth <= AUTO_INTERVAL_MAX_WIDTH) {
+	                candidates.push({
+	                    blockCount: beforeBlockCount / interval,
+	                    interval: interval,
+	                    beforeRemainBlockCount: 0
+	                });
+	            }
 	        });
+
+	        if (candidates.length === 0) {
+	            blockSizeRange = snippet.range(AUTO_INTERVAL_MIN_WIDTH, AUTO_INTERVAL_MAX_WIDTH, AUTO_INTERVAL_RANGE_STEP);
+	            candidates = snippet.map(blockSizeRange, function(blockSize) {
+	                return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
+	            });
+	        }
 
 	        return snippet.filter(candidates, function(info) {
 	            return !!info;
@@ -38114,7 +38397,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var intervalInfo = null;
 
 	        if (candidates.length) {
-	            intervalInfo = arrayUtil.min(candidates, function(candidate) {
+	            intervalInfo = arrayUtil.max(candidates, function(candidate) {
 	                return candidate.blockCount;
 	            });
 	        }
@@ -38144,8 +38427,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {?boolean} addingDataMode - whether adding data mode or not
 	     */
 	    updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount, addingDataMode) {
-	        var beforeBlockCount, intervalInfo;
-	        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex;
+	        var beforeBlockCount, intervalInfo, lastLabelValue;
+	        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex, tickCount;
 
 	        if (addingDataMode) {
 	            axisData.tickCount -= 1;
@@ -38153,6 +38436,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        beforeBlockCount = axisData.tickCount - 1;
+
 	        intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
 
 	        if (!intervalInfo) {
@@ -38163,25 +38447,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	        interval = intervalInfo.interval;
 	        beforeRemainBlockCount = intervalInfo.beforeRemainBlockCount;
 	        axisData.eventTickCount = axisData.tickCount;
+	        tickCount = adjustingBlockCount + 1;
 
 	        // startIndex: (remaing block count / 2) - current moved tick index
 	        // |     |     |     |*|*|*|    - * remaing block
 	        // |*|*|O    |     |     |*|    - tick is not moved (O startIndex = 2)
 	        // |*|O    |     |     |*|*|    - tick moved 1 (O startIndex = 1)
-	        startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
-
-	        if (startIndex < 0) {
-	            startIndex += interval;
-	        }
-
+	        // startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
+	        // if (startIndex < 0) {
+	        //     startIndex += interval;
+	        // }
+	        // Fixed to 0 due to issues. (https://github.com/nhnent/tui.chart/issues/56)
+	        startIndex = 0;
+	        lastLabelValue = axisData.labels[axisData.labels.length - 1];
 	        axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
+
+	        if (beforeRemainBlockCount > 0) {
+	            axisData.labels.push(lastLabelValue);
+	        }
 
 	        snippet.extend(axisData, {
 	            startIndex: startIndex,
-	            tickCount: adjustingBlockCount + 1,
+	            tickCount: tickCount,
 	            positionRatio: (startIndex / beforeBlockCount),
 	            sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-	            interval: interval
+	            interval: interval,
+	            remainLastBlockInterval: beforeRemainBlockCount
 	        });
 	    },
 
@@ -38331,10 +38622,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        snippet.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
 	            var compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
-
 	            foundDegree = degree;
 
-	            if (compareWidth <= labelAreaWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN) {
+	            if (compareWidth <= labelAreaWidth) {
 	                return false;
 	            }
 
@@ -39931,6 +40221,47 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        snippet.forEachArray(chartTypes, addDataRatio);
 	    },
+
+	    /**
+	     * Add plot line.
+	     * @param {{index: number, color: string, id: string}} data - data
+	     * @override
+	     * @api
+	     */
+	    addPlotLine: function(data) {
+	        this.componentManager.get('plot').addPlotLine(data);
+	    },
+
+	    /**
+	     * Add plot band.
+	     * @param {{range: Array.<number>, color: string, id: string}} data - data
+	     * @override
+	     * @api
+	     */
+	    addPlotBand: function(data) {
+	        this.componentManager.get('plot').addPlotBand(data);
+	    },
+
+	    /**
+	     * Remove plot line.
+	     * @param {string} id - line id
+	     * @override
+	     * @api
+	     */
+	    removePlotLine: function(id) {
+	        this.componentManager.get('plot').removePlotLine(id);
+	    },
+
+	    /**
+	     * Remove plot band.
+	     * @param {string} id - band id
+	     * @override
+	     * @api
+	     */
+	    removePlotBand: function(id) {
+	        this.componentManager.get('plot').removePlotBand(id);
+	    },
+
 	    /**
 	     * Render for zoom.
 	     * from chart/zoomMixer

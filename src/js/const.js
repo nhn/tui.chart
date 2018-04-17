@@ -97,6 +97,8 @@ var chartConst = {
     SERIES_AREA_V_PADDING: 10,
     /** series label padding */
     SERIES_LABEL_PADDING: 5,
+    /** series event margins for the value zero */
+    SERIES_EXTRA_EVENT_AREA_FOR_ZERO: 2,
     /** default font size of title */
     DEFAULT_TITLE_FONT_SIZE: 14,
     /** default font size of axis title */
@@ -306,6 +308,9 @@ var chartConst = {
     DATE_TYPE_SECOND: 'second',
     /** title add padding */
     TITLE_PADDING: 20,
+    TITLE_ALIGN_CENTER: 'center',
+    TITLE_ALIGN_RIGHT: 'right',
+    TITLE_ALIGN_LEFT: 'left',
     /** default header height */
     DEFAULT_HEADER_HEIGHT: 10,
     /** legend area horizontal padding */
@@ -368,8 +373,6 @@ var chartConst = {
      * @type {string}
      */
     YAXIS_ALIGN_CENTER: 'center',
-    /** xAxis label compare margin */
-    XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */
     XAXIS_LABEL_GUTTER: 2,
     /**
@@ -381,6 +384,7 @@ var chartConst = {
      * Last standard multiple num of axis
      */
     AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
+    AXIS_EDGE_RATIO: 8,
     /** label padding top */
     LABEL_PADDING_TOP: 7,
     /** line margin top */

@@ -8,6 +8,7 @@
 
 var snippet = require('tui-code-snippet');
 var raphael = require('raphael');
+var objectUtil = require('../../helpers/objectUtil');
 var chartConst = require('../../const'),
     dom = require('../../helpers/domHandler'),
     predicate = require('../../helpers/predicate'),
@@ -64,6 +65,12 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
          * @type {object}
          */
         this.theme = params.theme;
+
+        /**
+         * Original Theme
+         * @type {object}
+         */
+        this.originalTheme = objectUtil.deepCopy(params.theme);
 
         /**
          * whether vertical or not

@@ -204,7 +204,7 @@ describe('Test for axisDataMaker', function() {
 
     describe('_makeCandidatesForAdjustingInterval()', function() {
         it('should make 7 candidates which is ranged from 90px to 120px(90, 95, 100, 105, 110, 115, 120)', function() {
-            var actual = maker._makeCandidatesForAdjustingInterval(15, 300);
+            var actual = maker._makeCandidatesForAdjustingInterval(41, 300);
 
             expect(actual.length).toBe(7);
         });
@@ -213,7 +213,7 @@ describe('Test for axisDataMaker', function() {
             var actual;
 
             spyOn(maker, '_makeAdjustingIntervalInfo').and.returnValue(null);
-            actual = maker._makeCandidatesForAdjustingInterval(15, 300);
+            actual = maker._makeCandidatesForAdjustingInterval(41, 300);
 
             expect(actual.length).toBe(0);
         });
@@ -223,9 +223,9 @@ describe('Test for axisDataMaker', function() {
         it('should make adjust interval info according to currunt block count and series width', function() {
             var actual = maker._calculateAdjustingIntervalInfo(73, 400);
 
-            expect(actual.blockCount).toBe(3);
+            expect(actual.blockCount).toBe(4);
             expect(actual.beforeRemainBlockCount).toBe(1);
-            expect(actual.interval).toBe(24);
+            expect(actual.interval).toBe(18);
         });
 
         it('should return null, if there is no candidates', function() {
@@ -260,13 +260,11 @@ describe('Test for axisDataMaker', function() {
             };
             maker.updateLabelAxisDataForAutoTickInterval(axisData, 400, 0);
 
-            expect(axisData.tickCount).toBe(4);
+            expect(axisData.tickCount).toBe(5);
             expect(axisData.eventTickCount).toBe(20);
-            expect(axisData.labels).toEqual([20, 80, 140, 200]);
-            expect(axisData.startIndex).toBe(1);
-            expect(axisData.positionRatio).toBe(0.05263157894736842);
-            expect(axisData.sizeRatio).toBe(0.9473684210526316);
-            expect(axisData.interval).toBe(6);
+            expect(axisData.labels).toEqual([10, 50, 90, 130, 170, 200]);
+            expect(axisData.sizeRatio).toBe(0.8421052631578947);
+            expect(axisData.interval).toBe(4);
         });
     });
 
@@ -375,10 +373,10 @@ describe('Test for axisDataMaker', function() {
         it('find rotation degree', function() {
             var actual = maker._findRotationDegree(50, 60, 20);
 
-            expect(actual).toBe(25);
+            expect(actual).toBe(65);
         });
 
-        it('max degree is 85', function() {
+        it('labelAreaWidth is too short to represent the label, the angle must be a maximum value of 85 degrees', function() {
             var actual = maker._findRotationDegree(5, 120, 20);
 
             expect(actual).toBe(85);
@@ -431,7 +429,7 @@ describe('Test for axisDataMaker', function() {
             );
 
             expect(actual).toEqual({
-                degree: 25,
+                degree: 45,
                 overflowHeight: 10,
                 overflowLeft: -40,
                 overflowRight: -70
