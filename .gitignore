@@ -1,5 +1,4 @@
 .idea
-node_modules
 lib/ne-code-snippet
 lib/raphael
 src
