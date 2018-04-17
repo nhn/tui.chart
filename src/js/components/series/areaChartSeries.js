@@ -7,7 +7,6 @@
 import Series from './series';
 import LineTypeSeriesBase from './lineTypeSeriesBase';
 import predicate from '../../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
 class AreaChartSeries extends Series {
     /**
@@ -55,17 +54,17 @@ class AreaChartSeries extends Series {
      * @private
      */
     _makeStackedPositions(groupPositions) {
-        var height = this.layout.dimension.height;
-        var baseTop = this.layout.position.top;
-        var firstStartTop = this._makePositionTopOfZeroPoint();
-        var prevPositionTops = [];
+        const {dimension: {height}, position: {top: baseTop}} = this.layout;
 
-        return snippet.map(groupPositions, function(positions) {
-            return snippet.map(positions, function(position, index) {
-                var prevTop = prevPositionTops[index] || firstStartTop;
-                var positionTop = position ? position.top : 0;
-                var stackedHeight = height - positionTop + baseTop;
-                var top = position ? prevTop - stackedHeight : prevTop;
+        const firstStartTop = this._makePositionTopOfZeroPoint();
+        const prevPositionTops = [];
+
+        return groupPositions.map(positions => (
+            positions.map((position, index) => {
+                const prevTop = prevPositionTops[index] || firstStartTop;
+                const positionTop = position ? position.top : 0;
+                const stackedHeight = height - positionTop + baseTop;
+                const top = position ? prevTop - stackedHeight : prevTop;
 
                 if (position) {
                     position.startTop = prevTop;
@@ -75,8 +74,8 @@ class AreaChartSeries extends Series {
                 prevPositionTops[index] = top;
 
                 return position;
-            });
-        });
+            })
+        ));
     }
 
     /**
@@ -86,7 +85,7 @@ class AreaChartSeries extends Series {
      * @private
      */
     _makePositions(seriesWidth) {
-        var groupPositions = this._makeBasicPositions(seriesWidth);
+        let groupPositions = this._makeBasicPositions(seriesWidth);
 
         if (predicate.isValidStackOption(this.options.stackType)) {
             groupPositions = this._makeStackedPositions(groupPositions);
@@ -102,19 +101,16 @@ class AreaChartSeries extends Series {
      * @override
      */
     _makeSeriesData() {
-        var dimension = this.layout.dimension;
-        var baseTop = this.layout.position.top;
-        var zeroTop = this._getLimitDistanceFromZeroPoint(dimension.height, this.limit).toMax + baseTop;
-        var groupPositions = this._makePositions();
+        const {dimension: {height}, position: {top: baseTop}} = this.layout;
+        const zeroTop = this._getLimitDistanceFromZeroPoint(height, this.limit).toMax + baseTop;
+        const groupPositions = this._makePositions();
 
         return {
             chartBackground: this.chartBackground,
-            groupPositions: groupPositions,
+            groupPositions,
             hasRangeData: this._getSeriesDataModel().hasRangeData(),
-            zeroTop: zeroTop,
-            isAvailable: function() {
-                return groupPositions && groupPositions.length > 0;
-            }
+            zeroTop,
+            isAvailable: () => (groupPositions && groupPositions.length > 0)
         };
     }
 
@@ -124,21 +120,16 @@ class AreaChartSeries extends Series {
      * @override
      */
     rerender(data) {
-        var paper;
-
         this._cancelMovingAnimation();
 
-        paper = Series.prototype.rerender.call(this, data);
-
-        return paper;
+        return Series.prototype.rerender.call(this, data);
     }
 }
 
 LineTypeSeriesBase.mixin(AreaChartSeries);
 
 export default function areaSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
+    const {chartTheme, chartOptions: {libType}} = params;
 
     params.libType = libType;
     params.chartType = 'area';

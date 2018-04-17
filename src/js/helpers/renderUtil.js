@@ -562,6 +562,7 @@ const renderUtil = {
      * @private
      */
     formatToComma(value) {
+        value = String(value);
         const comma = ',';
         const betweenLen = 3;
         const orgValue = value;
@@ -570,8 +571,6 @@ const renderUtil = {
         let values;
         let lastIndex;
         let formattedValue;
-
-        value = String(value);
 
         if (value.indexOf('.') > -1) {
             values = value.split('.');
