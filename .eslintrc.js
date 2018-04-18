@@ -14,5 +14,11 @@ module.exports = {
   },
   'globals': {
     'tui': true
+  },
+  'rules': {
+      'prefer-destructuring': ['error', {
+          VariableDeclarator: {array: true, object: true},
+          AssignmentExpression: {array: false, object: false}
+      }]
   }
 };

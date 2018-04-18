@@ -31,7 +31,7 @@ export default class LineTypeSeriesBase {
      * @private
      */
     _makePositionsForDefaultType(seriesWidth) {
-        const {width: dimensionWidth, height} = this.layout.dimension;
+        const {dimension: {height, width: dimensionWidth}} = this.layout;
         const seriesDataModel = this._getSeriesDataModel();
         const width = seriesWidth || dimensionWidth || 0;
         const len = seriesDataModel.getGroupCount();
@@ -47,23 +47,23 @@ export default class LineTypeSeriesBase {
         }
 
         return seriesDataModel.map(seriesGroup => (
-            seriesGroup.map(({end, ratio, startRatio}, index) => {
+            seriesGroup.map((seriesItem, index) => {
                 let position;
 
-                if (!snippet.isNull(end)) {
+                if (!snippet.isNull(seriesItem.end)) {
                     position = {
                         left: baseLeft + (step * index),
-                        top: baseTop + height - (ratio * height)
+                        top: baseTop + height - (seriesItem.ratio * height)
                     };
 
-                    if (snippet.isExisty(startRatio)) {
-                        position.startTop = baseTop + height - (startRatio * height);
+                    if (snippet.isExisty(seriesItem.startRatio)) {
+                        position.startTop = baseTop + height - (seriesItem.startRatio * height);
                     }
                 }
 
                 return position;
             })
-        ));
+        ), true);
     }
 
     /**
