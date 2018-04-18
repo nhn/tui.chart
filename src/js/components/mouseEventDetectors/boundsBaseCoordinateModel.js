@@ -259,7 +259,7 @@ export default class BoundsBaseCoordinateModel {
      */
     _findCandidates(data, layerX, layerY) {
         return data.filter(datum => {
-            const {bound = false} = datum;
+            const bound = datum && datum.bound;
             let included = false;
 
             if (bound) {

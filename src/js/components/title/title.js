@@ -5,9 +5,8 @@
  */
 import chartConst from '../../const';
 import pluginFactory from '../../factories/pluginFactory';
-import snippet from 'tui-code-snippet';
 
-var Title = snippet.defineClass(/** @lends Title.prototype */ {
+class Title {
     /**
      * Title component.
      * @constructs Title
@@ -17,7 +16,7 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
      *      @param {object} params.options title options
      *      @param {object} params.text title text content
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * Theme
          * @type {object}
@@ -53,36 +52,37 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
          * @type {string}
          */
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-    },
+    }
 
     /**
      * Render title component
      * @param {object} data data for render title
      */
-    render: function(data) {
+    render(data) {
         this.titleSet = this._renderTitleArea(data);
-    },
+    }
 
     /**
      * Render title component
      * @param {object} data data for render title
      */
-    resize: function(data) {
-        var dimensionMap = data.dimensionMap;
-        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
-        var width = dimensionMap.series.width + legendWidth;
+    resize(data) {
+        const {dimensionMap} = data;
+        const legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
+        const width = dimensionMap.series.width + legendWidth;
+
         this.graphRenderer.resize(width, this.titleSet);
-    },
+    }
 
     /**
      * Render title component
      * @param {object} data data for render title
      */
-    rerender: function(data) {
+    rerender(data) {
         this.titleSet.remove();
 
         this.render(data);
-    },
+    }
 
     /**
      * Render title on given paper
@@ -90,22 +90,21 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
      * @returns {object} raphael paper
      * @private
      */
-    _renderTitleArea: function(data) {
-        var paper = data.paper;
-        var dimensionMap = data.dimensionMap;
-        var legendWidth = dimensionMap.legend ? dimensionMap.legend.width : 0;
-        var chartWidth = dimensionMap.series.width + legendWidth;
+    _renderTitleArea(data) {
+        const {paper, dimensionMap: {legend, series}} = data;
+        const legendWidth = legend ? legend.width : 0;
+        const chartWidth = series.width + legendWidth;
 
         return this.graphRenderer.render({
-            paper: paper,
+            paper,
             titleText: this.titleText,
             offset: this.offset,
             theme: this.theme,
             align: this.align,
-            chartWidth: chartWidth
+            chartWidth
         });
     }
-});
+}
 
 /**
  * Factory for Title
@@ -113,9 +112,9 @@ var Title = snippet.defineClass(/** @lends Title.prototype */ {
  * @returns {object|null}
  * @ignore
  */
-function titleFactory(param) {
-    var options = param.chartOptions.chart || {title: {}};
-    var title = null;
+export default function titleFactory(param) {
+    const options = param.chartOptions.chart || {title: {}};
+    let title = null;
 
     if (options.title && options.title.text) {
         param.text = options.title.text;
@@ -130,5 +129,3 @@ function titleFactory(param) {
 
 titleFactory.componentType = 'title';
 titleFactory.Title = Title;
-
-module.exports = titleFactory;

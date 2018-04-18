@@ -146,7 +146,7 @@ class DataProcessor extends DataProcessorBase {
      * @private
      */
     _filterSeriesDataByIndexRange(seriesData, startIndex, endIndex) {
-        seriesData.forEach(seriesData, seriesDatum => {
+        seriesData.forEach(seriesDatum => {
             seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
         });
 
@@ -163,7 +163,7 @@ class DataProcessor extends DataProcessorBase {
     _filterRawDataByIndexRange(rawData, indexRange) {
         const [startIndex, endIndex] = indexRange;
 
-        rawData.series.forEach((seriesDataSet, seriesType) => {
+        Object.entries(rawData.series).forEach(([seriesType, seriesDataSet]) => {
             rawData.series[seriesType] = this._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 

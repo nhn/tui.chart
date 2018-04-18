@@ -2,7 +2,7 @@
  * @fileoverview AreaTypeDataModel is data model for mouse event detector of area type.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
- */ 
+ */
 import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
@@ -112,12 +112,11 @@ export default class AreaTypeDataModel {
      * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
      * @returns {object}
      */
-    findDataByIndexes(indexes) {
+    findDataByIndexes({index, seriesIndex}) {
         let foundData = null;
 
         this.data.forEach(datum => {
-            const {indexs: {groupIndex, index}} = datum;
-            if (groupIndex === indexes.index && index === indexes.seriesIndex) {
+            if (datum.indexes.groupIndex === index && datum.indexes.index === seriesIndex) {
                 foundData = datum;
             }
 

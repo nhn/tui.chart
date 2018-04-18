@@ -19,13 +19,12 @@ import snippet from 'tui-code-snippet';
  * @ignore
  */
 function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
-    var ratioLabel;
-    var percentageString = (seriesItem.ratio * 100).toFixed(4);
-    var percent = parseFloat(percentageString);
-    var needSlice = (percent < 0.0009 || percentageString.length > 5);
+    let percentageString = (seriesItem.ratio * 100).toFixed(4);
+    const percent = parseFloat(percentageString);
+    const needSlice = (percent < 0.0009 || percentageString.length > 5);
 
     percentageString = needSlice ? percentageString.substr(0, 4) : String(percent);
-    ratioLabel = percentageString + '&nbsp;%&nbsp;' || '';
+    const ratioLabel = `${percentageString}&nbsp;%&nbsp;` || '';
 
     tooltipDatum.ratioLabel = labelPrefix + ratioLabel;
     tooltipDatum.label = seriesItem.tooltipLabel || (seriesItem.label ? seriesItem.label : '');
@@ -39,16 +38,15 @@ function pieTooltipLabelFormatter(seriesItem, tooltipDatum, labelPrefix) {
  * @returns {object|null}
  * @ignore
  */
-function tooltipFactory(params) {
-    var chartType = params.chartOptions.chartType;
-    var seriesTypes = params.seriesTypes;
-    var xAxisOptions = params.chartOptions.xAxis;
-    var colors = [];
-    var factory;
+export default function tooltipFactory(params) {
+    const {chartOptions: {chartType}, seriesTypes} = params;
+    const xAxisOptions = params.chartOptions.xAxis;
+    let colors = [];
+    let factory;
 
-    snippet.forEach(snippet.filter(params.chartTheme.legend, function(item) {
-        return snippet.isArray(item.colors);
-    }), function(series) {
+    const legendTheme = Object.values(params.chartTheme.legend).filter(item => snippet.isArray(item.colors));
+
+    legendTheme.forEach(series => {
         colors = colors.concat(series.colors);
     });
 
@@ -74,5 +72,3 @@ function tooltipFactory(params) {
 }
 
 tooltipFactory.componentType = 'tooltip';
-
-module.exports = tooltipFactory;

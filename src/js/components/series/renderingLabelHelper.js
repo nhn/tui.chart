@@ -184,7 +184,7 @@ export default {
      * @returns {string}
      */
     boundsToLabelPostionsForTreemap(seriesItems, boundMap) {
-        const positions = seriesItems.map(seriesItems, seriesItem => {
+        const positions = seriesItems.map(seriesItem => {
             const bound = boundMap[seriesItem.id];
             let position;
 

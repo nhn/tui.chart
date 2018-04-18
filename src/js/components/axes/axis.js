@@ -188,7 +188,7 @@ class Axis {
      * @private
      */
     _renderDividedAxis({width}) {
-        const {tickCount, labels: categories} = this.data.axisData;
+        const {tickCount, labels: categories} = this.data;
         const lSideWidth = Math.round(width / 2);
         const rSideWidth = width - lSideWidth - 1;
         const halfTickCount = parseInt(tickCount / 2, 10) + 1;
