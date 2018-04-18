@@ -143,9 +143,10 @@ export default {
      * @private
      */
     _makeTooltipPositionForNotBarChart(params) {
-        const {bound, positionOption, dimension, alignOption = '', height: tooltipHeight} = params;
+        const {bound, positionOption, dimension, alignOption = ''} = params;
         const minusWidth = dimension.width - (bound.width || 0);
         const lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP;
+        const tooltipHeight = dimension.height;
         const baseLeft = bound.left - this.layout.position.left + positionOption.left;
         const baseTop = bound.top - this.layout.position.top + positionOption.top - chartConst.TOOLTIP_GAP;
 
