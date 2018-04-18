@@ -304,7 +304,7 @@ export default class TooltipBase {
                 if (!colors[themeKey]) {
                     colors[themeKey] = [];
                 }
-                checkedLegends[themeKey].forEach((checked, index) => {
+                (checkedLegends[themeKey] || []).forEach((checked, index) => {
                     if (checked) {
                         colors[themeKey].push(this.theme[themeKey].colors[index]);
                     }

@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var predicate = require('../helpers/predicate');
-var validTypeMakerForYAxisOptions = require('./validTypeMakerForYAxisOptions');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import rawDataHandler from '../models/data/rawDataHandler';
+import predicate from '../helpers/predicate';
+import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
+import snippet from 'tui-code-snippet';
 
 var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
     /**
