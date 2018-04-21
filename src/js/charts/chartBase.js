@@ -10,11 +10,12 @@ import DefaultDataProcessor from '../models/data/dataProcessor';
 import rawDataHandler from '../models/data/rawDataHandler';
 import dom from '../helpers/domHandler';
 import renderUtil from '../helpers/renderUtil';
+import objectUtil from '../helpers/objectUtil';
 import boundsAndScaleBuilder from '../models/boundsAndScaleBuilder.js';
 import predicate from '../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
-var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
+export default class ChartBase {
     /**
      * Chart base.
      * @constructs ChartBase
@@ -26,7 +27,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {DataProcessor} params.DataProcessor DataProcessor
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * theme
          * @type {object}
@@ -84,14 +85,14 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         if (this.options.usageStatistics) {
             this._sendHostName();
         }
-    },
+    }
 
     /**
      * Image ping for ga tracking
      * @private
      */
-    _sendHostName: function() {
-        var hostname = location.hostname;
+    _sendHostName() {
+        const {hostname} = location;
         snippet.imagePing('https://www.google-analytics.com/collect', {
             v: 1,
             t: 'event',
@@ -100,13 +101,13 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
             dp: hostname,
             dh: 'chart'
         });
-    },
+    }
 
     /**
      * Attach to event bus.
      * @private
      */
-    _attachToEventBus: function() {
+    _attachToEventBus() {
         this.eventBus.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
 
         if (this.onZoom) {
@@ -115,7 +116,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
                 resetZoom: this.onResetZoom
             }, this);
         }
-    },
+    }
 
     /**
      * Set offset property
@@ -124,7 +125,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @param {string} toProperty - to property name
      * @private
      */
-    _setOffsetProperty: function(options, fromProperty, toProperty) {
+    _setOffsetProperty(options, fromProperty, toProperty) {
         if (!snippet.isExisty(options[fromProperty])) {
             return;
         }
@@ -132,21 +133,21 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         options.offset = options.offset || {};
         options.offset[toProperty] = options[fromProperty];
         delete options[fromProperty];
-    },
+    }
 
     /**
      * Initialize offset.
      * @param {{offsetX: ?number, offsetY: ?number}} options - offset options
      * @private
      */
-    _initializeOffset: function(options) {
+    _initializeOffset(options) {
         if (!options) {
             return;
         }
 
         this._setOffsetProperty(options, 'offsetX', 'x');
         this._setOffsetProperty(options, 'offsetY', 'y');
-    },
+    }
 
     /**
      * Initialize title options.
@@ -156,17 +157,14 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * } targetOptions - target options
      * @private
      */
-    _initializeTitleOptions: function(targetOptions) {
-        var self = this;
-        var optionsSet;
-
+    _initializeTitleOptions(targetOptions) {
         if (!targetOptions) {
             return;
         }
 
-        optionsSet = snippet.isArray(targetOptions) ? targetOptions : [targetOptions];
-        snippet.forEachArray(optionsSet, function(options) {
-            var title = options.title;
+        const optionsSet = snippet.isArray(targetOptions) ? targetOptions : [targetOptions];
+        optionsSet.forEach(options => {
+            const {title} = options;
 
             if (snippet.isString(title)) {
                 options.title = {
@@ -174,61 +172,54 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
                 };
             }
 
-            self._initializeOffset(options.title);
+            this._initializeOffset(options.title);
         });
-    },
+    }
 
     /**
      * Initialize tooltip options.
      * @param {{grouped: ?boolean, offsetX: ?number, offsetY: ?number}} options - tooltip options
      * @private
      */
-    _initializeTooltipOptions: function(options) {
+    _initializeTooltipOptions(options) {
         options.grouped = !!options.grouped;
         this._initializeOffset(options);
 
         delete options.position;
-    },
+    }
 
     /**
      * Initialize options.
      * @param {object} options - options for chart
      * @private
      */
-    _initializeOptions: function(options) {
-        var defaultOption = {
+    _initializeOptions(options) {
+        const originalOptions = objectUtil.deepCopy(options);
+        const defaultOption = {
+            chartTypes: this.charTypes,
+            xAxis: {},
+            series: {},
+            tooltip: {},
             usageStatistics: true,
-            chartExportMenu: {
+            chartExportMenu: Object.assign({
                 visible: true
-            },
-            legend: {
+            }, originalOptions.chartExportMenu),
+            legend: Object.assign({
                 visible: true
-            }
+            }, originalOptions.legend)
         };
+        delete originalOptions.chartExportMenu;
+        delete originalOptions.legend;
 
-        options.chartTypes = this.charTypes;
-        options.xAxis = options.xAxis || {};
-        options.series = options.series || {};
-        options.tooltip = options.tooltip || {};
-        options.legend = options.legend || {};
-        options.chartExportMenu = options.chartExportMenu || {};
+        Object.assign(options, defaultOption, originalOptions);
 
         this._initializeTitleOptions(options.chart);
         this._initializeTitleOptions(options.xAxis);
         this._initializeTitleOptions(options.yAxis);
-
-        options = snippet.extend({}, defaultOption, options);
-        options.legend = snippet.extend({}, defaultOption.legend, options.legend);
-        options.chartExportMenu = snippet.extend({}, defaultOption.chartExportMenu, options.chartExportMenu);
-
         this._initializeTooltipOptions(options.tooltip);
 
-        /**
-         * options
-         * @type {object}
-         */
         this.options = options;
-    },
+    }
 
     /**
      * Create dataProcessor for processing raw data.
@@ -240,21 +231,19 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {object} data processor
      * @private
      */
-    _createDataProcessor: function(params) {
-        var DataProcessor, dataProcessor;
+    _createDataProcessor(params) {
+        const DataProcessor = params.DataProcessor || DefaultDataProcessor;
+        const dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, this.seriesTypes);
 
-        DataProcessor = params.DataProcessor || DefaultDataProcessor;
-        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, this.seriesTypes);
-
-        return dataProcessor
-    },
+        return dataProcessor;
+    }
 
     /**
      * Create ComponentManager.
      * @returns {ComponentManager}
      * @private
      */
-    _createComponentManager: function() {
+    _createComponentManager() {
         return new ComponentManager({
             options: this.options,
             theme: this.theme,
@@ -264,19 +253,19 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
             isVertical: this.isVertical,
             seriesTypes: this.seriesTypes || [this.chartType]
         });
-    },
+    }
 
     /**
      * Add components.
      * @abstract
      */
-    addComponents: function() {},
+    addComponents() {}
 
     /**
      * Get scale option.
      * @abstract
      */
-    getScaleOption: function() {},
+    getScaleOption() {}
 
     /**
      * Build bounds and scale data.
@@ -318,7 +307,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * }}
      * @private
      */
-    _buildBoundsAndScaleData: function(prevXAxisData, addingDataMode) {
+    _buildBoundsAndScaleData(prevXAxisData, addingDataMode) {
         return boundsAndScaleBuilder.build(this.dataProcessor, this.componentManager, {
             chartType: this.chartType,
             seriesTypes: this.seriesTypes,
@@ -329,24 +318,24 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
             isVertical: this.isVertical,
             hasRightYAxis: this.hasRightYAxis,
             addedDataCount: this._dynamicDataHelper ? this._dynamicDataHelper.addedDataCount : null,
-            prevXAxisData: prevXAxisData,
-            addingDataMode: addingDataMode
+            prevXAxisData,
+            addingDataMode
         });
-    },
+    }
 
     /**
      * Add data ratios.
      * @abstract
      */
-    addDataRatios: function() {},
+    addDataRatios() {}
 
     /**
      * Make chart ready for render, it should be invoked before render, rerender, resize and zoom.
      * @param {?boolean} addingDataMode - whether adding data mode or not
      * @returns {object} Bounds and scale data
      */
-    readyForRender: function(addingDataMode) {
-        var boundsAndScale = this._buildBoundsAndScaleData(this.prevXAxisData, addingDataMode);
+    readyForRender(addingDataMode) {
+        const boundsAndScale = this._buildBoundsAndScaleData(this.prevXAxisData, addingDataMode);
 
         if (boundsAndScale.axisDataMap.xAxis) {
             this.prevXAxisData = boundsAndScale.axisDataMap.xAxis;
@@ -355,20 +344,18 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         this.addDataRatios(boundsAndScale.limitMap);
 
         return boundsAndScale;
-    },
+    }
 
     /**
      * Render chart.
      * @param {HTMLElement} wrapper chart wrapper element
      */
-    render: function(wrapper) {
-        var container = dom.create('DIV', 'tui-chart ' + this.className);
-        var componentManager = this.componentManager;
-        var dataProcessor = this.dataProcessor;
-        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
-        var rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
-        var raphaelPaper = componentManager.drawingToolPicker.getPaper(container, chartConst.COMPONENT_TYPE_RAPHAEL);
-        var boundsAndScale;
+    render(wrapper) {
+        const container = dom.create('DIV', `tui-chart ${this.className}`);
+        const {componentManager, dataProcessor} = this;
+        const seriesVisibilityMap = dataProcessor.getLegendVisibility();
+        const rawData = rawDataHandler.filterCheckedRawData(dataProcessor.rawData, seriesVisibilityMap);
+        const raphaelPaper = componentManager.drawingToolPicker.getPaper(container, chartConst.COMPONENT_TYPE_RAPHAEL);
 
         this.dataProcessor.initData(rawData);
 
@@ -378,7 +365,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
         dom.append(wrapper, container);
 
-        boundsAndScale = this.readyForRender();
+        const boundsAndScale = this.readyForRender();
 
         renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
         componentManager.render('render', boundsAndScale, {
@@ -387,16 +374,15 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
         this.chartContainer = container;
         this.paper = raphaelPaper;
-    },
+    }
 
     /**
      * Rerender.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      */
-    rerender: function(checkedLegends, rawData) {
-        var dataProcessor = this.dataProcessor;
-        var boundsAndScale;
+    rerender(checkedLegends, rawData) {
+        const {dataProcessor} = this;
 
         if (!rawData) {
             rawData = rawDataHandler.filterCheckedRawData(
@@ -407,12 +393,10 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
 
         this.dataProcessor.initData(rawData);
 
-        boundsAndScale = this.readyForRender();
+        const boundsAndScale = this.readyForRender();
 
-        this.componentManager.render('rerender', boundsAndScale, {
-            checkedLegends: checkedLegends
-        }, this.chartContainer);
-    },
+        this.componentManager.render('rerender', boundsAndScale, {checkedLegends}, this.chartContainer);
+    }
 
     /**
      * On change checked legend.
@@ -420,38 +404,38 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
      */
-    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+    onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
         this.rerender(checkedLegends, rawData, boundsParams);
-    },
+    }
 
     /**
      * Animate chart.
      */
-    animateChart: function() {
+    animateChart() {
         this.componentManager.execute('animateComponent');
-    },
+    }
 
     /**
      * Register of user event.
      * @param {string} eventName event name
      * @param {function} func event callback
      */
-    on: function(eventName, func) {
+    on(eventName, func) {
         if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
             this.eventBus.on(chartConst.PUBLIC_EVENT_PREFIX + eventName, func);
         }
-    },
+    }
 
     /**
      * Remove user event.
      * @param {string} eventName event name
      * @param {function} func event callback
      */
-    off: function(eventName, func) {
+    off(eventName, func) {
         if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
             this.eventBus.off(chartConst.PUBLIC_EVENT_PREFIX + eventName, func);
         }
-    },
+    }
 
     /**
      * Update dimension of chart.
@@ -459,9 +443,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {boolean} whether updated or not
      * @private
      */
-    _updateChartDimension: function(dimension) {
-        var updated = false;
-        var options = this.options;
+    _updateChartDimension(dimension) {
+        let updated = false;
+        const {options} = this;
 
         options.chart = options.chart || {};
 
@@ -476,7 +460,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         return updated;
-    },
+    }
 
     /**
      * Public API for resizable.
@@ -485,23 +469,22 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {number} dimension.height height
      * @api
      */
-    resize: function(dimension) {
-        var dataProcessor = this.dataProcessor;
-        var seriesVisibilityMap = dataProcessor.getLegendVisibility();
-        var updated, boundsAndScale, chartDimension;
+    resize(dimension) {
+        const {dataProcessor} = this;
+        const seriesVisibilityMap = dataProcessor.getLegendVisibility();
 
         if (!dimension) {
             return;
         }
 
-        updated = this._updateChartDimension(dimension);
+        const updated = this._updateChartDimension(dimension);
 
         if (!updated) {
             return;
         }
 
-        boundsAndScale = this.readyForRender();
-        chartDimension = boundsAndScale.dimensionMap.chart;
+        const boundsAndScale = this.readyForRender();
+        const chartDimension = boundsAndScale.dimensionMap.chart;
 
         renderUtil.renderDimension(this.chartContainer, chartDimension);
         this.paper.resizeBackground(chartDimension.width, chartDimension.height);
@@ -509,16 +492,16 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         this.componentManager.render('resize', boundsAndScale, {
             checkedLegends: seriesVisibilityMap
         });
-    },
+    }
 
     /**
      * Set tooltip align option.
      * @param {string} align align (left|center|right, top|middle|bottom)
      * @api
      */
-    setTooltipAlign: function(align) {
+    setTooltipAlign(align) {
         this.componentManager.get('tooltip').setAlign(align);
-    },
+    }
 
     /**
      * Set tooltip offset option.
@@ -527,9 +510,9 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {number} offset.y - offset y
      * @api
      */
-    setTooltipOffset: function(offset) {
+    setTooltipOffset(offset) {
         this.componentManager.get('tooltip').setOffset(offset);
-    },
+    }
 
     /**
      * Set position option.
@@ -539,88 +522,88 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      * @deprecated
      */
-    setTooltipPosition: function(position) {
+    setTooltipPosition(position) {
         this.componentManager.get('tooltip').setPosition(position);
-    },
+    }
 
     /**
      * Reset tooltip align option.
      * @api
      */
-    resetTooltipAlign: function() {
+    resetTooltipAlign() {
         this.componentManager.get('tooltip').resetAlign();
-    },
+    }
 
     /**
      * Reset tooltip position.
      * @api
      */
-    resetTooltipOffset: function() {
+    resetTooltipOffset() {
         this.componentManager.get('tooltip').resetOffset();
-    },
+    }
 
     /**
      * Reset tooltip position.
      * @api
      * @deprecated
      */
-    resetTooltipPosition: function() {
+    resetTooltipPosition() {
         this.resetTooltipOffset();
-    },
+    }
 
     /**
      * Show series label.
      * @api
      */
-    showSeriesLabel: function() {
-        var seriesSet = this.componentManager.where({componentType: 'series'});
+    showSeriesLabel() {
+        const seriesSet = this.componentManager.where({componentType: 'series'});
 
-        snippet.forEachArray(seriesSet, function(series) {
+        seriesSet.forEach(series => {
             series.showLabel();
         });
-    },
+    }
 
     /**
      * Hide series label.
      * @api
      */
-    hideSeriesLabel: function() {
-        var seriesSet = this.componentManager.where({componentType: 'series'});
+    hideSeriesLabel() {
+        const seriesSet = this.componentManager.where({componentType: 'series'});
 
-        snippet.forEachArray(seriesSet, function(series) {
+        seriesSet.forEach(series => {
             series.hideLabel();
         });
-    },
+    }
 
     /**
      * Add data.
      * @abstract
      */
-    addData: function() {},
+    addData() {}
 
     /**
      * Add plot line.
      * @abstract
      */
-    addPlotLine: function() {},
+    addPlotLine() {}
 
     /**
      * Add plot band.
      * @abstract
      */
-    addPlotBand: function() {},
+    addPlotBand() {}
 
     /**
      * Remove plot line.
      * @abstract
      */
-    removePlotLine: function() {},
+    removePlotLine() {}
 
     /**
      * Remove plot band.
      * @abstract
      */
-    removePlotBand: function() {},
+    removePlotBand() {}
 
     /**
      * Get series item bound by indexes
@@ -631,11 +614,11 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {?object} - series item bound
      * @private
      */
-    _getSeriesData: function(index, seriesIndex, outlierIndex) {
-        var indexes = {
-            index: index,
-            seriesIndex: seriesIndex,
-            outlierIndex: outlierIndex
+    _getSeriesData(index, seriesIndex, outlierIndex) {
+        const indexes = {
+            index,
+            seriesIndex,
+            outlierIndex
         };
 
         if (seriesIndex < 0) {
@@ -643,7 +626,7 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         return this.componentManager.get('mouseEventDetector').findDataByIndexes(indexes);
-    },
+    }
 
     /**
      * find series index by legend label
@@ -652,13 +635,12 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {number} - if not found return -1, else return found series index
      * @private
      */
-    _findSeriesIndexByLabel: function(chartType, legendLabel) {
-        var labels = this.dataProcessor.getLegendLabels(chartType);
-        var seriesIndex = -1;
-        var i = 0;
-        var len = labels ? labels.length : 0;
+    _findSeriesIndexByLabel(chartType, legendLabel) {
+        const labels = this.dataProcessor.getLegendLabels(chartType);
+        const len = labels ? labels.length : 0;
+        let seriesIndex = -1;
 
-        for (; i < len; i += 1) {
+        for (let i = 0; i < len; i += 1) {
             if (labels[i] === legendLabel) {
                 seriesIndex = i;
                 break;
@@ -666,31 +648,31 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         return seriesIndex;
-    },
+    }
 
     /**
      * @param {number} index - category index
      * @param {number} seriesIndex - series index
      * @returns {object}
      */
-    _findDataByIndexes: function(index, seriesIndex) {
+    _findDataByIndexes(index, seriesIndex) {
         return this.componentManager.get('mouseEventDetector').findDataByIndexes(index, seriesIndex);
-    },
+    }
 
     /**
      * show tooltip by index of series item
      * @param {object} params - data needed for making a tooltip
      * @ignore
      */
-    showTooltip: function(params) {
-        var isGroupTooltip, mouseEventDetector, foundSeriesIndex, foundData;
+    showTooltip(params) {
+        let foundSeriesIndex, foundData;
 
         if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
             return;
         }
 
-        isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
-        mouseEventDetector = this.componentManager.get('mouseEventDetector');
+        const isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
+        const mouseEventDetector = this.componentManager.get('mouseEventDetector');
 
         if (isGroupTooltip) {
             foundData = {indexes: {groupIndex: params.index}};
@@ -705,27 +687,23 @@ var ChartBase = snippet.defineClass(/** @lends ChartBase.prototype */ {
         } else {
             this.hideTooltip();
         }
-    },
+    }
 
     /**
      * hide tooltip
      * @ignore
      */
-    hideTooltip: function() {
-        var isGroupTooltip, mouseEventDetector;
-
+    hideTooltip() {
         if (!predicate.isSupportPublicShowTooptipAPI(this.chartType)) {
             return;
         }
 
-        isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
-        mouseEventDetector = this.componentManager.get('mouseEventDetector');
+        const isGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
+        const mouseEventDetector = this.componentManager.get('mouseEventDetector');
 
         if ((isGroupTooltip && mouseEventDetector.prevIndex >= 0) ||
             (!isGroupTooltip && mouseEventDetector.prevFoundData)) {
             mouseEventDetector._hideTooltip({silent: true});
         }
     }
-});
-
-module.exports = ChartBase;
+}

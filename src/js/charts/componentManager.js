@@ -44,7 +44,7 @@ import BulletSeries from '../components/series/bulletChartSeries';
 import Zoom from '../components/series/zoom';
 import snippet from 'tui-code-snippet';
 
-var COMPONENT_FACTORY_MAP = {
+const COMPONENT_FACTORY_MAP = {
     axis: Axis,
     plot: Plot,
     radialPlot: RadialPlot,
@@ -55,7 +55,7 @@ var COMPONENT_FACTORY_MAP = {
     groupTooltip: GroupTooltip,
     mapChartTooltip: MapChartTooltip,
     mapChartEventDetector: MapChartEventDetector,
-    mouseEventDetector: mouseEventDetector,
+    mouseEventDetector,
     barSeries: BarSeries,
     columnSeries: ColumnSeries,
     lineSeries: LineSeries,
@@ -71,10 +71,10 @@ var COMPONENT_FACTORY_MAP = {
     bulletSeries: BulletSeries,
     zoom: Zoom,
     chartExportMenu: ChartExportMenu,
-    title: title
+    title
 };
 
-var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype */ {
+export default class ComponentManager {
     /**
      * ComponentManager manages components of chart.
      * @param {object} params parameters
@@ -85,10 +85,10 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
      * @constructs ComponentManager
      * @private
      */
-    init: function(params) {
-        var chartOption = params.options.chart;
-        var width = snippet.pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
-        var height = snippet.pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
+    constructor(params) {
+        const chartOption = params.options.chart;
+        const width = snippet.pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
+        const height = snippet.pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
 
         /**
          * Components
@@ -145,8 +145,8 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         this.drawingToolPicker = new DrawingToolPicker();
 
         this.drawingToolPicker.initDimension({
-            width: width,
-            height: height
+            width,
+            height
         });
 
         /**
@@ -154,7 +154,7 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
          * @type {Array.<string>}
          */
         this.seriesTypes = params.seriesTypes;
-    },
+    }
 
     /**
      * Make component options.
@@ -165,12 +165,12 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
      * @returns {object} options
      * @private
      */
-    _makeComponentOptions: function(options, optionKey, componentName, index) {
+    _makeComponentOptions(options, optionKey, componentName, index) {
         options = options || this.options[optionKey];
         options = snippet.isArray(options) ? options[index] : options || {};
 
         return options;
-    },
+    }
 
     /**
      * Register component.
@@ -181,18 +181,14 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
      * @param {string} classType component factory name
      * @param {object} params params that for alternative charts
      */
-    register: function(name, classType, params) {
-        var index, component, componentType, componentFactory, optionKey;
+    register(name, classType, params = {}) {
+        let optionKey;
 
-        params = params || {};
+        const index = params.index || 0;
+        const componentFactory = COMPONENT_FACTORY_MAP[classType];
+        const {componentType} = componentFactory;
 
         params.name = name;
-
-        index = params.index || 0;
-
-        componentFactory = COMPONENT_FACTORY_MAP[classType];
-        componentType = componentFactory.componentType;
-
         params.chartTheme = this.theme;
         params.chartOptions = this.options;
         params.seriesTypes = this.seriesTypes;
@@ -217,7 +213,7 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         }
 
         if (optionKey === 'series') {
-            snippet.forEach(this.seriesTypes, function(seriesType) {
+            this.seriesTypes.forEach(seriesType => {
                 if (name.indexOf(seriesType) === 0) {
                     params.options = params.options[seriesType] || params.options; // For combo chart, options are set for each chart
                     params.theme = params.theme[seriesType]; // For combo, single chart, themes are set for each chart
@@ -241,7 +237,7 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         // alternative scale models for charts that do not use common scale models like maps
         params.alternativeModel = this.alternativeModel;
 
-        component = componentFactory(params);
+        const component = componentFactory(params);
 
         // component creation can be refused by factory, according to option data
         if (component) {
@@ -251,7 +247,7 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
             this.components.push(component);
             this.componentMap[name] = component;
         }
-    },
+    }
 
     /**
      * Make data for rendering.
@@ -271,13 +267,11 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
      * @returns {object}
      * @private
      */
-    _makeDataForRendering: function(name, type, paper, boundsAndScale, additionalData) {
-        var data = snippet.extend({
-            paper: paper
-        }, additionalData);
+    _makeDataForRendering(name, type, paper, boundsAndScale, additionalData) {
+        const data = Object.assign({paper}, additionalData);
 
         if (boundsAndScale) {
-            snippet.extend(data, boundsAndScale);
+            Object.assign(data, boundsAndScale);
 
             data.layout = {
                 dimension: data.dimensionMap[name] || data.dimensionMap[type],
@@ -286,7 +280,7 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         }
 
         return data;
-    },
+    }
 
     /**
      * Render components.
@@ -303,21 +297,17 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
      * @param {?object} additionalData - additional data
      * @param {?HTMLElement} container - container
      */
-    render: function(funcName, boundsAndScale, additionalData, container) {
-        var self = this;
-        var name, type;
-
-        var elements = snippet.map(this.components, function(component) {
-            var element = null;
-            var data, result, paper;
+    render(funcName, boundsAndScale, additionalData, container) {
+        const elements = this.components.map(component => {
+            let element = null;
 
             if (component[funcName]) {
-                name = component.componentName;
-                type = component.componentType;
-                paper = self.drawingToolPicker.getPaper(container, component.drawingType);
-                data = self._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
+                const name = component.componentName;
+                const type = component.componentType;
+                const paper = this.drawingToolPicker.getPaper(container, component.drawingType);
+                const data = this._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
 
-                result = component[funcName](data);
+                const result = component[funcName](data);
 
                 if (result && !result.paper) {
                     element = result;
@@ -330,18 +320,18 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
         if (container) {
             dom.append(container, elements);
         }
-    },
+    }
 
     /**
      * Find components to conditionMap.
      * @param {object} conditionMap condition map
      * @returns {Array.<object>} filtered components
      */
-    where: function(conditionMap) {
-        return snippet.filter(this.components, function(component) {
-            var contained = true;
+    where(conditionMap) {
+        return this.components.filter(component => {
+            let contained = true;
 
-            snippet.forEach(conditionMap, function(value, key) {
+            Object.entries(conditionMap).forEach(([key, value]) => {
                 if (component[key] !== value) {
                     contained = false;
                 }
@@ -351,39 +341,35 @@ var ComponentManager = snippet.defineClass(/** @lends ComponentManager.prototype
 
             return contained;
         });
-    },
+    }
 
     /**
      * Execute components.
      * @param {string} funcName - function name
      */
-    execute: function(funcName) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        snippet.forEachArray(this.components, function(component) {
+    execute(funcName, ...args) {
+        this.components.forEach(component => {
             if (component[funcName]) {
-                component[funcName].apply(component, args);
+                component[funcName](...args);
             }
         });
-    },
+    }
 
     /**
      * Get component.
      * @param {string} name component name
      * @returns {object} component instance
      */
-    get: function(name) {
+    get(name) {
         return this.componentMap[name];
-    },
+    }
 
     /**
      * Whether has component or not.
      * @param {string} name - comopnent name
      * @returns {boolean}
      */
-    has: function(name) {
+    has(name) {
         return !!this.get(name);
     }
-});
-
-module.exports = ComponentManager;
+}

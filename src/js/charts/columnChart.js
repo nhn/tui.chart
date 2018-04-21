@@ -7,14 +7,8 @@
 import ChartBase from './chartBase';
 import chartConst from '../const';
 import rawDataHandler from '../models/data/rawDataHandler';
-import snippet from 'tui-code-snippet';
 
-var ColumnChart = snippet.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-column-chart',
+export default class ColumnChart extends ChartBase {
     /**
      * Column chart.
      * @constructs ColumnChart
@@ -25,37 +19,43 @@ var ColumnChart = snippet.defineClass(ChartBase, /** @lends ColumnChart.prototyp
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
         rawDataHandler.updateRawSeriesDataByOptions(rawData, options.series);
-        this._updateOptionsRelatedDiverging(options);
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true,
             isVertical: true
         });
-    },
+
+        this._updateOptionsRelatedDiverging(options);
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-column-chart';
+    }
 
     /**
      * Update options related diverging option.
      * @param {object} options - options
      * @private
      */
-    _updateOptionsRelatedDiverging: function(options) {
+    _updateOptionsRelatedDiverging(options) {
         options.series = options.series || {};
 
         if (options.series.diverging) {
             options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
         }
-    },
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -68,30 +68,29 @@ var ColumnChart = snippet.defineClass(ChartBase, /** @lends ColumnChart.prototyp
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
 
     /**
      * Get scale option.
      * @returns {{yAxis: boolean}}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         return {
             yAxis: true
         };
-    },
+    }
+
     /**
      * Add data ratios.
      * @override
      * modified from axisTypeMixer
      */
-    addDataRatios: function(limitMap) {
-        var seriesOption = this.options.series || {};
-        var chartType = this.chartType;
-        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+    addDataRatios(limitMap) {
+        const {series: seriesOption = {}} = this.options;
+        const {chartType} = this;
+        const {stackType} = (seriesOption[chartType] || seriesOption);
 
         this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
-});
-
-module.exports = ColumnChart;
+}

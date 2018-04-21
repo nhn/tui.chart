@@ -9,19 +9,7 @@ import rawDataHandler from '../models/data/rawDataHandler';
 import Series from '../components/series/areaChartSeries';
 import snippet from 'tui-code-snippet';
 
-var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-area-chart',
-
-    /**
-     * Series class
-     * @type {function}
-     */
-    Series: Series,
-
+export default class AreaChart extends ChartBase {
     /**
      * Area chart.
      * @constructs AreaChart
@@ -32,26 +20,40 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * @mixes axisTypeMixer
      * @mixes lineTypeMixer
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
         rawDataHandler.removeSeriesStack(rawData.series);
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true,
             isVertical: true
         });
 
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-area-chart';
+
+        /**
+         * Series class
+         * @type {function}
+         */
+        this.Series = Series;
+
         this._dynamicDataHelper = new DynamicDataHelper(this);
-    },
+    }
+
     /**
      * Add data.
      * @param {string} category - category
      * @param {Array} values - values
      */
-    addData: function(category, values) {
+    addData(category, values) {
         this._dynamicDataHelper.addData(category, values);
-    },
+    }
     /**
      * On change checked legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
@@ -59,40 +61,39 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * @param {?object} boundsParams addition params for calculating bounds
      * @override
      */
-    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+    onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
         this._dynamicDataHelper.reset();
         this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, boundsParams);
-    },
+    }
     /**
      * Add data ratios.
      * @override
      * from axisTypeMixer
      */
-    addDataRatios: function(limitMap) {
-        var self = this;
-        var chartTypes = this.chartTypes || [this.chartType];
-        var seriesOption = this.options.series || {};
-        var addDataRatio;
+    addDataRatios(limitMap) {
+        const chartTypes = this.chartTypes || [this.chartType];
+        const seriesOption = this.options.series || {};
+        let addDataRatio;
 
         if (this.dataProcessor.isCoordinateType()) {
             addDataRatio = function(chartType) {
-                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+                this.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
             };
         } else {
-            addDataRatio = function(chartType) {
-                var stackType = (seriesOption[chartType] || seriesOption).stackType;
-                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+            addDataRatio = chartType => {
+                const {stackType} = (seriesOption[chartType] || seriesOption);
+                this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
             };
         }
 
-        snippet.forEachArray(chartTypes, addDataRatio);
-    },
+        chartTypes.forEach(addDataRatio);
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -105,15 +106,15 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
     /**
      * Get scale option.
      * from lineTypeMixer
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @override
      */
-    getScaleOption: function() {
-        var scaleOption = {};
+    getScaleOption() {
+        const scaleOption = {};
 
         if (this.dataProcessor.isCoordinateType()) {
             scaleOption.xAxis = {
@@ -127,7 +128,7 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
         }
 
         return scaleOption;
-    },
+    }
 
     /**
      * Add plot line.
@@ -135,9 +136,9 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * @override
      * @api
      */
-    addPlotLine: function(data) {
+    addPlotLine(data) {
         this.componentManager.get('plot').addPlotLine(data);
-    },
+    }
 
     /**
      * Add plot band.
@@ -145,9 +146,9 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * @override
      * @api
      */
-    addPlotBand: function(data) {
+    addPlotBand(data) {
         this.componentManager.get('plot').addPlotBand(data);
-    },
+    }
 
     /**
      * Remove plot line.
@@ -155,9 +156,9 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * @override
      * @api
      */
-    removePlotLine: function(id) {
+    removePlotLine(id) {
         this.componentManager.get('plot').removePlotLine(id);
-    },
+    }
 
     /**
      * Remove plot band.
@@ -165,22 +166,20 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * @override
      * @api
      */
-    removePlotBand: function(id) {
+    removePlotBand(id) {
         this.componentManager.get('plot').removePlotBand(id);
-    },
+    }
     /**
      * Render for zoom.
      * from chart/zoomMixer
      * @param {boolean} isResetZoom - whether reset zoom or not
      * @private
      */
-    _renderForZoom: function(isResetZoom) {
-        var boundsAndScale = this.readyForRender();
+    _renderForZoom(isResetZoom) {
+        const boundsAndScale = this.readyForRender();
 
-        this.componentManager.render('zoom', boundsAndScale, {
-            isResetZoom: isResetZoom
-        });
-    },
+        this.componentManager.render('zoom', boundsAndScale, {isResetZoom});
+    }
 
     /**
      * On zoom.
@@ -188,19 +187,19 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * @param {Array.<number>} indexRange - index range for zoom
      * @override
      */
-    onZoom: function(indexRange) {
+    onZoom(indexRange) {
         this._dynamicDataHelper.pauseAnimation();
         this.dataProcessor.updateRawDataForZoom(indexRange);
         this._renderForZoom(false);
-    },
+    }
 
     /**
      * On reset zoom.
      * from chart/zoomMixer
      * @override
      */
-    onResetZoom: function() {
-        var rawData = this.dataProcessor.getOriginalRawData();
+    onResetZoom() {
+        let rawData = this.dataProcessor.getOriginalRawData();
 
         if (this._dynamicDataHelper.checkedLegends) {
             rawData = rawDataHandler.filterCheckedRawData(rawData, this._dynamicDataHelper.checkedLegends);
@@ -212,6 +211,4 @@ var AreaChart = snippet.defineClass(ChartBase, /** @lends AreaChart.prototype */
         this._renderForZoom(true);
         this._dynamicDataHelper.restartAnimation();
     }
-});
-
-module.exports = AreaChart;
+}

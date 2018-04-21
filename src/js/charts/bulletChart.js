@@ -6,15 +6,8 @@
 
 import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
-import snippet from 'tui-code-snippet';
 
-var BulletChart = snippet.defineClass(ChartBase, /** @lends BulletChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-bullet-chart',
-
+export default class BulletChart extends ChartBase {
     /**
      * Bullet chart.
      * @constructs BulletChart
@@ -24,25 +17,29 @@ var BulletChart = snippet.defineClass(ChartBase, /** @lends BulletChart.prototyp
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
-        var isVertical = !!options.series.vertical;
-
+    constructor(rawData, theme, options) {
         rawDataHandler._makeRawSeriesDataForBulletChart(rawData);
 
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true,
-            isVertical: isVertical
+            isVertical: !!options.series.vertical
         });
-    },
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-bullet-chart';
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -55,14 +52,14 @@ var BulletChart = snippet.defineClass(ChartBase, /** @lends BulletChart.prototyp
         this.componentManager.register('chartExportMenu', 'chartExportMenu', {chartType: 'bullet'});
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
 
     /**
      * Get scale option.
      * @returns {{xAxis: boolean}}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         if (this.isVertical) {
             return {
                 yAxis: true
@@ -72,18 +69,18 @@ var BulletChart = snippet.defineClass(ChartBase, /** @lends BulletChart.prototyp
         return {
             xAxis: true
         };
-    },
+    }
 
     /**
      * Add data ratios.
      * @override
      * modified from axisTypeMixer
      */
-    addDataRatios: function(limitMap) {
-        var chartType = this.chartType;
-
-        this.dataProcessor.addDataRatios(limitMap[chartType], null, chartType);
+    addDataRatios(limitMap) {
+        this.dataProcessor.addDataRatios(
+            limitMap[this.chartType],
+            null,
+            this.chartType
+        );
     }
-});
-
-module.exports = BulletChart;
+}

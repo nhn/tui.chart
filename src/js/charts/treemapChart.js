@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var ColorSpectrum = require('./colorSpectrum');
-var snippet = require('tui-code-snippet');
+import ChartBase from './chartBase';
+import ColorSpectrum from './colorSpectrum';
+import snippet from 'tui-code-snippet';
 
 var TreemapChart = snippet.defineClass(ChartBase, /** @lends TreemapChart.prototype */ {
     /**
