@@ -4,9 +4,7 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
+import snippet from 'tui-code-snippet';
 
 /**
  * Make valid types on yAxisOptions
@@ -22,10 +20,9 @@ var snippet = require('tui-code-snippet');
  * }
  * @ignore
  */
-function validTypeMakerForYAxisOptions(params) {
-    var rawSeriesData = params.rawSeriesData;
-    var yAxisOptions = params.yAxisOptions;
-    var chartTypesMap = makeChartTypesMap(rawSeriesData, yAxisOptions);
+export default function validTypeMakerForYAxisOptions(params) {
+    const {rawSeriesData, yAxisOptions} = params;
+    const chartTypesMap = makeChartTypesMap(rawSeriesData, yAxisOptions);
 
     return {
         chartTypes: chartTypesMap.chartTypes,
@@ -41,13 +38,11 @@ function validTypeMakerForYAxisOptions(params) {
  * @private
  */
 function makeChartTypesMap(rawSeriesData, yAxisOption) {
-    var seriesTypes = snippet.keys(rawSeriesData).sort();
-    var optionChartTypes = getYAxisOptionChartTypes(seriesTypes, yAxisOption);
-    var chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
-    var validChartTypes = snippet.filter(optionChartTypes, function(_chartType) {
-        return rawSeriesData[_chartType].length;
-    });
-    var chartTypesMap;
+    const seriesTypes = snippet.keys(rawSeriesData).sort();
+    const optionChartTypes = getYAxisOptionChartTypes(seriesTypes, yAxisOption);
+    const chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
+    const validChartTypes = optionChartTypes.filter(_chartType => rawSeriesData[_chartType].length);
+    let chartTypesMap;
 
     if (validChartTypes.length === 1) {
         chartTypesMap = {
@@ -56,8 +51,8 @@ function makeChartTypesMap(rawSeriesData, yAxisOption) {
         };
     } else {
         chartTypesMap = {
-            chartTypes: chartTypes,
-            seriesTypes: seriesTypes
+            chartTypes,
+            seriesTypes
         };
     }
 
@@ -72,19 +67,17 @@ function makeChartTypesMap(rawSeriesData, yAxisOption) {
  * @private
  */
 function getYAxisOptionChartTypes(chartTypes, yAxisOption) {
-    var resultChartTypes = chartTypes.slice();
-    var yAxisOptions = [].concat(yAxisOption || []);
-    var isReverse = false;
-    var optionChartTypes;
+    let resultChartTypes = chartTypes.slice();
+    const yAxisOptions = [].concat(yAxisOption || []);
+    let isReverse = false;
+    let optionChartTypes;
 
     if (!yAxisOptions.length || (yAxisOptions.length === 1 && !yAxisOptions[0].chartType)) {
         resultChartTypes = [];
     } else if (yAxisOptions.length) {
-        optionChartTypes = snippet.map(yAxisOptions, function(option) {
-            return option.chartType;
-        });
+        optionChartTypes = yAxisOptions.map(option => option.chartType);
 
-        snippet.forEachArray(optionChartTypes, function(chartType, index) {
+        optionChartTypes.forEach((chartType, index) => {
             isReverse = isReverse || ((chartType && resultChartTypes[index] !== chartType) || false);
         });
 
@@ -95,5 +88,3 @@ function getYAxisOptionChartTypes(chartTypes, yAxisOption) {
 
     return resultChartTypes;
 }
-
-module.exports = validTypeMakerForYAxisOptions;

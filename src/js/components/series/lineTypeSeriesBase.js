@@ -73,37 +73,39 @@ export default class LineTypeSeriesBase {
      * @private
      */
     _makePositionForCoordinateType(seriesWidth) {
-        const {dimension: {width: dimensionWidth, height}, position} = this.layout;
+        const {dimension} = this.layout;
         const seriesDataModel = this._getSeriesDataModel();
-        const {sizeRatio, positionRatio} = this.axisDataMap.xAxis;
-        const baseTop = position.top;
-        const baseLeft = position.left;
-        let width = seriesWidth || dimensionWidth || 0;
+        const {height} = dimension;
+        const {xAxis} = this.axisDataMap;
+        const baseTop = this.layout.position.top;
+        const baseLeft = this.layout.position.left;
+        let width = seriesWidth || dimension.width || 0;
         let additionalLeft = 0;
 
-        if (sizeRatio) {
-            additionalLeft = calculator.multiply(width, positionRatio);
-            width = calculator.multiply(width, sizeRatio);
+        if (xAxis.sizeRatio) {
+            additionalLeft = calculator.multiply(width, xAxis.positionRatio);
+            width = calculator.multiply(width, xAxis.sizeRatio);
         }
 
         return seriesDataModel.map(seriesGroup => (
             seriesGroup.map(seriesItem => {
-                let seriesPosition;
+                let position;
 
                 if (!snippet.isNull(seriesItem.end)) {
-                    seriesPosition = {
+                    position = {
                         left: baseLeft + (seriesItem.ratioMap.x * width) + additionalLeft,
                         top: baseTop + height - (seriesItem.ratioMap.y * height)
                     };
 
                     if (snippet.isExisty(seriesItem.ratioMap.start)) {
-                        seriesPosition.startTop = height - (seriesItem.ratioMap.start * height) + SERIES_EXPAND_SIZE;
+                        position.startTop =
+                            height - (seriesItem.ratioMap.start * height) + chartConst.SERIES_EXPAND_SIZE;
                     }
                 }
 
-                return seriesPosition;
+                return position;
             })
-        ));
+        ), true);
     }
 
     /**

@@ -1,13 +1,12 @@
 import chartConst from '../const';
 import predicate from '../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
-var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototype */ {
-    init: function(chart) {
-        var firstRenderCheck = snippet.bind(function() {
+export default class DynamicDataHelper {
+    constructor(chart) {
+        const firstRenderCheck = () => {
             this.isInitRenderCompleted = true;
             this.chart.off(firstRenderCheck);
-        }, this);
+        };
 
         /**
          * chart instance
@@ -20,8 +19,8 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
         this.chart.on('load', firstRenderCheck);
 
         this.reset();
-    },
-    reset: function() {
+    }
+    reset() {
         /**
          * whether lookupping or not
          * @type {boolean}
@@ -57,18 +56,19 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
          * @type {null|object}
          */
         this.prevXAxisData = null;
-    },
+    }
+
     /**
      * Calculate animate tick size.
      * @param {number} xAxisWidth - x axis width
      * @returns {number}
      * @private
      */
-    _calculateAnimateTickSize: function(xAxisWidth) {
-        var dataProcessor = this.chart.dataProcessor;
-        var tickInterval = this.chart.options.xAxis.tickInterval;
-        var shiftingOption = !!this.chart.options.series.shifting;
-        var tickCount;
+    _calculateAnimateTickSize(xAxisWidth) {
+        const {dataProcessor} = this.chart;
+        const {tickInterval} = this.chart.options.xAxis;
+        const shiftingOption = !!this.chart.options.series.shifting;
+        let tickCount;
 
         if (dataProcessor.isCoordinateType()) {
             tickCount = dataProcessor.getValues(this.chart.chartType, 'x').length - 1;
@@ -81,50 +81,48 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
         }
 
         return xAxisWidth / tickCount;
-    },
+    }
 
     /**
      * Animate for adding data.
      * @private
      */
-    _animateForAddingData: function() {
-        var chart = this.chart;
-        var boundsAndScale = chart.readyForRender(true);
-        var shiftingOption = !!this.chart.options.series.shifting;
-        var tickSize;
+    _animateForAddingData() {
+        const {chart} = this;
+        const boundsAndScale = chart.readyForRender(true);
+        const shiftingOption = !!this.chart.options.series.shifting;
 
         this.addedDataCount += 1;
 
-        tickSize = this._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
+        const tickSize = this._calculateAnimateTickSize(boundsAndScale.dimensionMap.xAxis.width);
 
         chart.componentManager.render('animateForAddingData', boundsAndScale, {
-            tickSize: tickSize,
+            tickSize,
             shifting: shiftingOption
         });
 
         if (shiftingOption) {
             chart.dataProcessor.shiftData();
         }
-    },
+    }
 
     /**
      * Rerender for adding data.
      * @private
      */
-    _rerenderForAddingData: function() {
-        var chart = this.chart;
-        var boundsAndScale = chart.readyForRender();
+    _rerenderForAddingData() {
+        const {chart} = this;
+        const boundsAndScale = chart.readyForRender();
         chart.componentManager.render('rerender', boundsAndScale);
-    },
+    }
 
     /**
      * Check for added data.
      * @private
      */
-    _checkForAddedData: function() {
-        var chart = this.chart;
-        var self = this;
-        var added = chart.dataProcessor.addDataFromDynamicData();
+    _checkForAddedData() {
+        const {chart} = this;
+        const added = chart.dataProcessor.addDataFromDynamicData();
 
         if (!added) {
             this.lookupping = false;
@@ -142,12 +140,12 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
 
         this._animateForAddingData();
 
-        this.rerenderingDelayTimerId = setTimeout(function() {
-            self.rerenderingDelayTimerId = null;
-            self._rerenderForAddingData();
-            self._checkForAddedData();
+        this.rerenderingDelayTimerId = setTimeout(() => {
+            this.rerenderingDelayTimerId = null;
+            this._rerenderForAddingData();
+            this._checkForAddedData();
         }, 400);
-    },
+    }
 
     /**
      * Change checked legend.
@@ -155,11 +153,10 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
      */
-    changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
-        var self = this;
-        var chart = this.chart;
-        var shiftingOption = !!chart.options.series.shifting;
-        var pastPaused = this.paused;
+    changeCheckedLegends(checkedLegends, rawData, boundsParams) {
+        const {chart} = this;
+        const shiftingOption = !!chart.options.series.shifting;
+        const pastPaused = this.paused;
 
         if (!pastPaused) {
             this.pauseAnimation();
@@ -169,17 +166,17 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
         chart.rerender(checkedLegends, rawData, boundsParams);
 
         if (!pastPaused) {
-            setTimeout(function() {
+            setTimeout(() => {
                 chart.dataProcessor.addDataFromRemainDynamicData(shiftingOption);
-                self.restartAnimation();
+                this.restartAnimation();
             }, chartConst.RERENDER_TIME);
         }
-    },
+    }
 
     /**
      * Pause animation for adding data.
      */
-    pauseAnimation: function() {
+    pauseAnimation() {
         this.paused = true;
 
         if (this.rerenderingDelayTimerId) {
@@ -190,22 +187,22 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
                 this.chart.dataProcessor.shiftData();
             }
         }
-    },
+    }
 
     /**
      * Restart animation for adding data.
      */
-    restartAnimation: function() {
+    restartAnimation() {
         this.paused = false;
         this.lookupping = false;
         this._startLookup();
-    },
+    }
 
     /**
      * Start lookup for checking added data.
      * @private
      */
-    _startLookup: function() {
+    _startLookup() {
         if (this.lookupping) {
             return;
         }
@@ -213,14 +210,14 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
         this.lookupping = true;
 
         this._checkForAddedData();
-    },
+    }
 
     /**
      * Add data.
      * @param {string} category - category
      * @param {Array} values - values
      */
-    addData: function(category, values) {
+    addData(category, values) {
         if (!values) {
             values = category;
             category = null;
@@ -235,6 +232,4 @@ var DynamicDataHelper = snippet.defineClass(/** @lends DynamicDataHelper.prototy
             this.addedDataCount += 1;
         }
     }
-});
-
-module.exports = DynamicDataHelper;
+}

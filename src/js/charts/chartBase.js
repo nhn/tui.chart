@@ -34,6 +34,14 @@ export default class ChartBase {
          */
         this.theme = params.theme;
 
+        if (params.seriesTypes) {
+            this.seriesTypes = params.seriesTypes;
+        }
+
+        if (params.chartTypes) {
+            this.chartTypes = params.chartTypes;
+        }
+
         this._initializeOptions(params.options);
 
         /**
