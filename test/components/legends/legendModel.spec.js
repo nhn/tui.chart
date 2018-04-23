@@ -4,19 +4,17 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import LegendModel from '../../../src/js/components/legends/legendModel';
+import renderUtil from '../../../src/js/helpers/renderUtil';
 
-var LegendModel = require('../../../src/js/components/legends/legendModel'),
-    renderUtil = require('../../../src/js/helpers/renderUtil');
+describe('Test for LegendModel', () => {
+    let legendModel;
 
-describe('Test for LegendModel', function() {
-    var legendModel;
-
-    beforeAll(function() {
+    beforeAll(() => {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         legendModel = new LegendModel({
             labels: [
                 'legend1',
@@ -44,8 +42,8 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('_addSendingDatum()', function() {
-        it('add sending data of column, index 1', function() {
+    describe('_addSendingDatum()', () => {
+        it('add sending data of column, index 1', () => {
             legendModel.data[1] = {
                 chartType: 'column',
                 index: 1
@@ -56,8 +54,8 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('_initCheckedIndexes()', function() {
-        it('should reset checkedIndexes(used to legend checkbox', function() {
+    describe('_initCheckedIndexes()', () => {
+        it('should reset checkedIndexes(used to legend checkbox', () => {
             spyOn(legendModel, 'updateCheckedLegendsWith');
             legendModel.labelInfos = [
                 {
@@ -77,10 +75,10 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('_setThemeToLegendData()', function() {
-        it('should set theme information and index to legend data', function() {
-            var legendData = [{}, {}];
-            var theme = {
+    describe('_setThemeToLegendData()', () => {
+        it('should set theme information and index to legend data', () => {
+            const legendData = [{}, {}];
+            const theme = {
                 colors: ['red', 'blue'],
                 borderColor: 'black'
             };
@@ -105,13 +103,13 @@ describe('Test for LegendModel', function() {
             });
         });
 
-        it('should set increased index for checked indexes only. If not, it should set index to -1', function() {
-            var legendData = [{}, {}];
-            var theme = {
+        it('should set increased index for checked indexes only. If not, it should set index to -1', () => {
+            const legendData = [{}, {}];
+            const theme = {
                 colors: ['red', 'blue'],
                 borderColor: 'black'
             };
-            var checkedIndexes = [];
+            const checkedIndexes = [];
 
             checkedIndexes[1] = true;
             legendModel._setThemeToLegendData(legendData, theme, checkedIndexes);
@@ -121,35 +119,34 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('_setData()', function() {
-        it('should make label data by labelInfos and theme, if seriesTypes is empty', function() {
-            var legendData = [{}, {}];
-            var expected = [{}, {}];
-            var colorTheme = {
+    describe('_setData()', () => {
+        it('should make label data by labelInfos and theme, if seriesTypes is empty', () => {
+            const legendData = [{}, {}];
+            const expected = [{}, {}];
+            const colorTheme = {
                 colors: ['red', 'blue'],
                 borderColor: 'black'
             };
-            var actual;
 
             legendModel.legendData = legendData;
             legendModel.theme[legendModel.chartType] = colorTheme;
 
             legendModel._setData();
 
-            actual = legendModel.data;
+            const actual = legendModel.data;
             legendModel._setThemeToLegendData(expected, colorTheme);
 
             expect(actual).toEqual(expected);
         });
 
-        it('should make legend data by seriesTypes, and set index for each chartType', function() {
-            var legendData = [{}, {}];
-            var seriesTypes = ['column', 'line'];
-            var labelMap = {
+        it('should make legend data by seriesTypes, and set index for each chartType', () => {
+            const legendData = [{}, {}];
+            const seriesTypes = ['column', 'line'];
+            const labelMap = {
                 column: ['legend1'],
                 line: ['legend2']
             };
-            var theme = {
+            const theme = {
                 column: {
                     colors: ['red']
                 },
@@ -157,7 +154,6 @@ describe('Test for LegendModel', function() {
                     colors: ['blue']
                 }
             };
-            var expected;
 
             legendModel.legendData = legendData;
             legendModel.theme = theme;
@@ -166,7 +162,7 @@ describe('Test for LegendModel', function() {
 
             legendModel._setData();
 
-            expected = [
+            const expected = [
                 {
                     theme: {
                         color: 'red'
@@ -187,14 +183,14 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('toggleSelectedIndex()', function() {
-        it('should set index to selectedIndex, when selectedIndex is not same to index', function() {
+    describe('toggleSelectedIndex()', () => {
+        it('should set index to selectedIndex, when selectedIndex is not same to index', () => {
             legendModel.toggleSelectedIndex(0);
 
             expect(legendModel.selectedIndex).toBe(0);
         });
 
-        it('should return null if selectedIndex is same to index', function() {
+        it('should return null if selectedIndex is same to index', () => {
             legendModel.selectedIndex = 0;
             legendModel.toggleSelectedIndex(0);
 
@@ -202,26 +198,25 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('getCheckedIndexes()', function() {
-        it('return checked data of series of singleChart', function() {
-            var checkedLegends = [true, true];
-            var actual, expected;
+    describe('getCheckedIndexes()', () => {
+        it('return checked data of series of singleChart', () => {
+            const checkedLegends = [true, true];
 
             legendModel.checkedIndexesMap = {
                 'pie': checkedLegends
             };
             legendModel.chartType = 'pie';
 
-            actual = legendModel.getCheckedIndexes();
-            expected = {
+            const actual = legendModel.getCheckedIndexes();
+            const expected = {
                 'pie': [true, true]
             };
 
             expect(actual).toEqual(expected);
         });
 
-        it('return checked data of series of comboChart', function() {
-            var checkedIndexesMap = {
+        it('return checked data of series of comboChart', () => {
+            const checkedIndexesMap = {
                 'column': [true, true],
                 'line': [true]
             };
@@ -233,10 +228,10 @@ describe('Test for LegendModel', function() {
         });
     });
 
-    describe('updateCheckedData()', function() {
-        it('should update checkbox check data', function() {
-            var checkedIndexes = [];
-            var checkedIndexesMap = {
+    describe('updateCheckedData()', () => {
+        it('should update checkbox check data', () => {
+            const checkedIndexes = [];
+            const checkedIndexesMap = {
                 column: [true],
                 line: [true]
             };

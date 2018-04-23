@@ -4,7 +4,7 @@ import renderUtil from './helpers/renderUtil';
 import arrayUtil from './helpers/arrayUtil';
 import colorUtil from './helpers/colorUtil';
 
-require('../less/style.less');
+import '../less/style.less';
 
 chart.registerPlugin('Raphael', pluginRaphael, callback);
 
@@ -16,4 +16,4 @@ chart.colorutil = colorUtil;
  * NHN Entertainment Toast UI Chart.
  * @namespace tui.chart
  */
-module.exports = chart;
+export default chart;

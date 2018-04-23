@@ -115,8 +115,7 @@ class Axis {
          */
         this.paperAdditionalWidth = 0;
 
-        /**
-         * Paper additional height
+        /** * Paper additional height
          * @type {number}
          */
         this.paperAdditionalHeight = 0;

@@ -3,14 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import dom from '../../src/js/helpers/domHandler';
+import chart from '../../src/js/index';
+const {barChart: barChartFactory} = chart;
 
-'use strict';
-
-var dom = require('../../src/js/helpers/domHandler');
-var barChartFactory = require('../../src/js/index').barChart;
-
-describe('Test public APIs for bar chart', function() {
-    var rawData = {
+describe('Test public APIs for bar chart', () => {
+    const rawData = {
         categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
         series: [
             {
@@ -32,16 +30,16 @@ describe('Test public APIs for bar chart', function() {
             }
         ]
     };
-    var barChart;
+    let barChart;
 
-    beforeEach(function() {
-        var container = dom.create('DIV');
+    beforeEach(() => {
+        const container = dom.create('DIV');
 
         barChart = barChartFactory(container, rawData, {});
     });
 
-    describe('resize()', function() {
-        it('resize width', function() {
+    describe('resize()', () => {
+        it('resize width', () => {
             expect(barChart.chartContainer.style.width).toBe('500px');
 
             barChart.resize({
@@ -51,7 +49,7 @@ describe('Test public APIs for bar chart', function() {
             expect(barChart.chartContainer.style.width).toBe('800px');
         });
 
-        it('resize width, when width is minus value', function() {
+        it('resize width, when width is minus value', () => {
             expect(barChart.chartContainer.style.width).toBe('500px');
 
             barChart.resize({
@@ -61,7 +59,7 @@ describe('Test public APIs for bar chart', function() {
             expect(barChart.chartContainer.style.width).toBe('500px');
         });
 
-        it('resize height', function() {
+        it('resize height', () => {
             expect(barChart.chartContainer.style.height).toBe('400px');
 
             barChart.resize({
@@ -71,7 +69,7 @@ describe('Test public APIs for bar chart', function() {
             expect(barChart.chartContainer.style.height).toBe('700px');
         });
 
-        it('resize height, when height is minus value', function() {
+        it('resize height, when height is minus value', () => {
             expect(barChart.chartContainer.style.height).toBe('400px');
 
             barChart.resize({
@@ -81,7 +79,7 @@ describe('Test public APIs for bar chart', function() {
             expect(barChart.chartContainer.style.height).toBe('400px');
         });
 
-        it('resize width and height', function() {
+        it('resize width and height', () => {
             barChart.resize({
                 width: 400,
                 height: 300
@@ -92,8 +90,8 @@ describe('Test public APIs for bar chart', function() {
         });
     });
 
-    describe('setTooltipAlign()', function() {
-        it('set align option for tooltip', function() {
+    describe('setTooltipAlign()', () => {
+        it('set align option for tooltip', () => {
             expect(barChart.options.tooltip.align).toBe('right middle');
 
             barChart.setTooltipAlign('center top');
@@ -102,8 +100,8 @@ describe('Test public APIs for bar chart', function() {
         });
     });
 
-    describe('setTooltipOffset()', function() {
-        it('set offset option for tooltip', function() {
+    describe('setTooltipOffset()', () => {
+        it('set offset option for tooltip', () => {
             expect(barChart.options.tooltip.offset).toBeUndefined();
 
             barChart.setTooltipOffset({
@@ -115,7 +113,7 @@ describe('Test public APIs for bar chart', function() {
             expect(barChart.options.tooltip.offset.y).toBe(20);
         });
 
-        it('set offset option for tooltip, when parameters have only x value', function() {
+        it('set offset option for tooltip, when parameters have only x value', () => {
             expect(barChart.options.tooltip.offset).toBeUndefined();
 
             barChart.setTooltipOffset({
@@ -126,7 +124,7 @@ describe('Test public APIs for bar chart', function() {
             expect(barChart.options.tooltip.offset.y).toBeUndefined();
         });
 
-        it('set offset option for tooltip, when parameters have only y value', function() {
+        it('set offset option for tooltip, when parameters have only y value', () => {
             expect(barChart.options.tooltip.offset).toBeUndefined();
 
             barChart.setTooltipOffset({
@@ -138,9 +136,9 @@ describe('Test public APIs for bar chart', function() {
         });
     });
 
-    describe('resetTooltipAlign()', function() {
-        it('reset align option for tooltip', function() {
-            var container = dom.create('DIV');
+    describe('resetTooltipAlign()', () => {
+        it('reset align option for tooltip', () => {
+            const container = dom.create('DIV');
 
             barChart = barChartFactory(container, rawData, {
                 tooltip: {
@@ -160,9 +158,9 @@ describe('Test public APIs for bar chart', function() {
         });
     });
 
-    describe('resetTooltipOffset()', function() {
-        it('reset offset option for tooltip', function() {
-            var container = dom.create('DIV');
+    describe('resetTooltipOffset()', () => {
+        it('reset offset option for tooltip', () => {
+            const container = dom.create('DIV');
 
             barChart = barChartFactory(container, rawData, {
                 tooltip: {
@@ -189,9 +187,9 @@ describe('Test public APIs for bar chart', function() {
         });
     });
 
-    describe('showSeriesLabel()', function() {
-        it('show series label', function() {
-            var series = barChart.componentManager.get('barSeries');
+    describe('showSeriesLabel()', () => {
+        it('show series label', () => {
+            const series = barChart.componentManager.get('barSeries');
 
             expect(barChart.options.series.showLabel).toBeUndefined();
             expect(series.seriesLabelContainer).toBeNull();
@@ -202,8 +200,8 @@ describe('Test public APIs for bar chart', function() {
         });
     });
 
-    describe('hideSeriesLabel()', function() {
-        it('hide series label', function() {
+    describe('hideSeriesLabel()', () => {
+        it('hide series label', () => {
             expect(barChart.options.series.showLabel).toBeUndefined();
 
             barChart.showSeriesLabel();

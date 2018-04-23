@@ -3,19 +3,16 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import raphael from 'raphael';
+import snippet from 'tui-code-snippet';
+import legendFactory from '../../../src/js/components/legends/legend';
+import chartConst from '../../../src/js/const';
+import renderUtil from '../../../src/js/helpers/renderUtil';
 
-'use strict';
+describe('Test for Legend', () => {
+    let legend, dataProcessor;
 
-var raphael = require('raphael');
-var snippet = require('tui-code-snippet');
-var legendFactory = require('../../../src/js/components/legends/legend'),
-    chartConst = require('../../../src/js/const'),
-    renderUtil = require('../../../src/js/helpers/renderUtil');
-
-describe('Test for Legend', function() {
-    var legend, dataProcessor;
-
-    beforeAll(function() {
+    beforeAll(() => {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getLegendData', 'findChartType']);
         dataProcessor.getLegendLabels.and.returnValue([
             'legend1',
@@ -32,9 +29,9 @@ describe('Test for Legend', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         legend = new legendFactory.Legend({
-            dataProcessor: dataProcessor,
+            dataProcessor,
             theme: {
                 label: {
                     fontSize: 12
@@ -50,8 +47,8 @@ describe('Test for Legend', function() {
         spyOn(legend.eventBus, 'fire');
     });
 
-    describe('render()', function() {
-        it('should call _renderLegendArea()', function() {
+    describe('render()', () => {
+        it('should call _renderLegendArea()', () => {
             spyOn(legend, '_renderLegendArea');
             spyOn(legend, '_listenEvents');
             legend.layout = {
@@ -72,9 +69,9 @@ describe('Test for Legend', function() {
         });
     });
 
-    describe('_renderLegendArea()', function() {
-        it('already calculated dimension width should be reflected.', function() {
-            var paper = raphael(document.createElement('DIV'), 100, 100);
+    describe('_renderLegendArea()', () => {
+        it('already calculated dimension width should be reflected.', () => {
+            const paper = raphael(document.createElement('DIV'), 100, 100);
             legend.dataProcessor.options = {series: {}};
             legend.layout = {
                 position: {
@@ -93,17 +90,15 @@ describe('Test for Legend', function() {
         });
     });
 
-    describe('_fireSelectLegendEvent()', function() {
-        it('fire selectLegend event', function() {
-            var data = {
+    describe('_fireSelectLegendEvent()', () => {
+        it('fire selectLegend event', () => {
+            const data = {
                 chartType: 'column',
                 seriesIndex: 0
             };
 
             spyOn(legend.legendModel, 'getSelectedIndex').and.returnValue(0);
-            dataProcessor.findChartType.and.callFake(function(chartType) {
-                return chartType;
-            });
+            dataProcessor.findChartType.and.callFake(chartType => chartType);
 
             legend._fireSelectLegendEvent(data, true);
 
@@ -111,9 +106,9 @@ describe('Test for Legend', function() {
         });
     });
 
-    describe('_fireSelectLegendPublicEvent()', function() {
-        it('fire select legend public event', function() {
-            var data = {
+    describe('_fireSelectLegendPublicEvent()', () => {
+        it('fire select legend public event', () => {
+            const data = {
                 label: 'legend',
                 chartType: 'bar',
                 index: 1
@@ -121,7 +116,7 @@ describe('Test for Legend', function() {
 
             legend._fireSelectLegendPublicEvent(data);
 
-            expect(legend.eventBus.fire).toHaveBeenCalledWith(chartConst.PUBLIC_EVENT_PREFIX + 'selectLegend', {
+            expect(legend.eventBus.fire).toHaveBeenCalledWith(`${chartConst.PUBLIC_EVENT_PREFIX}selectLegend`, {
                 legend: 'legend',
                 chartType: 'bar',
                 index: 1

@@ -1,27 +1,25 @@
-'use strict';
-
 /**
  * @fileoverview Test for Axis.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-var raphael = require('raphael');
-var axisFactory = require('../../../src/js/components/axes/axis');
-var dom = require('../../../src/js/helpers/domHandler');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
+import raphael from 'raphael';
+import axisFactory from '../../../src/js/components/axes/axis';
+import dom from '../../../src/js/helpers/domHandler';
+import renderUtil from '../../../src/js/helpers/renderUtil';
 
-describe('Test for Axis', function() {
-    var dataProcessor, axis;
+describe('Test for Axis', () => {
+    let dataProcessor, axis;
 
-    beforeAll(function() {
+    beforeAll(() => {
         // Rendered width, height is different according to browser
         // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['isValidAllSeriesDataModel', 'getCategories', 'isCoordinateType', 'getOption']);
 
@@ -46,14 +44,14 @@ describe('Test for Axis', function() {
                     opacity: 1
                 }
             },
-            dataProcessor: dataProcessor
+            dataProcessor
         });
     });
 
-    describe('_renderTitleArea()', function() {
-        it('render title area', function() {
-            var container = dom.create('div');
-            var paper = raphael(container, 200, 200);
+    describe('_renderTitleArea()', () => {
+        it('render title area', () => {
+            const container = dom.create('div');
+            const paper = raphael(container, 200, 200);
 
             axis.dimensionMap = {
                 yAxis: {
@@ -68,9 +66,9 @@ describe('Test for Axis', function() {
             expect(axis.graphRenderer.renderTitle).toHaveBeenCalled();
         });
 
-        it('do not render title area, when has no title', function() {
-            var container = dom.create('div');
-            var paper = raphael(container, 200, 200);
+        it('do not render title area, when has no title', () => {
+            const container = dom.create('div');
+            const paper = raphael(container, 200, 200);
             spyOn(axis.graphRenderer, 'renderTitle');
 
             delete axis.options.title;
@@ -80,9 +78,9 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_renderAxisArea()', function() {
-        it('should increase width by yAxis, and make divided axis, when divided option is true', function() {
-            var container = dom.create('DIV');
+    describe('_renderAxisArea()', () => {
+        it('should increase width by yAxis, and make divided axis, when divided option is true', () => {
+            const container = dom.create('DIV');
 
             spyOn(axis, '_renderNotDividedAxis');
             spyOn(axis, '_renderDividedAxis');
@@ -114,8 +112,8 @@ describe('Test for Axis', function() {
             expect(axis._renderDividedAxis).toHaveBeenCalled();
         });
 
-        it('should call _renderNotDividedAxis(), when divided option is not true', function() {
-            var container = dom.create('DIV');
+        it('should call _renderNotDividedAxis(), when divided option is not true', () => {
+            const container = dom.create('DIV');
 
             spyOn(axis, '_renderNotDividedAxis');
             spyOn(axis, '_renderDividedAxis');
@@ -146,8 +144,8 @@ describe('Test for Axis', function() {
             expect(axis._renderDividedAxis).not.toHaveBeenCalled();
         });
 
-        it('bar chart with min minus should draw a standard line.', function() {
-            var container = dom.create('DIV');
+        it('bar chart with min minus should draw a standard line.', () => {
+            const container = dom.create('DIV');
 
             spyOn(axis.graphRenderer, 'renderTitle');
             spyOn(axis.graphRenderer, 'renderTickLine');
@@ -156,7 +154,7 @@ describe('Test for Axis', function() {
             axis.componentName = 'xAxis';
             axis.dataProcessor = {
                 chartType: 'bar',
-                getOption: function() {}
+                getOption: () => {}
             };
             axis.layout = {
                 dimension: {
@@ -192,10 +190,8 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_renderNormalLabels()', function() {
-        it('"_renderNormalLabels()" method, the labelMargin option must be reflected in the label position.', function() {
-            var labelPosition;
-
+    describe('_renderNormalLabels()', () => {
+        it('"_renderNormalLabels()" method, the labelMargin option must be reflected in the label position.', () => {
             spyOn(axis.graphRenderer, 'renderLabel');
 
             axis.layout = {position: {top: 20}};
@@ -204,16 +200,14 @@ describe('Test for Axis', function() {
             };
             axis._renderNormalLabels([0], ['abc'], 0, 0);
 
-            labelPosition = axis.graphRenderer.renderLabel.calls.argsFor(0)[0].positionTopAndLeft;
+            const labelPosition = axis.graphRenderer.renderLabel.calls.argsFor(0)[0].positionTopAndLeft;
 
             expect(labelPosition.top).toBe(67);
         });
     });
 
-    describe('_renderRotationLabels()', function() {
-        it('"_renderRotationLabels()" method, the labelMargin option must be reflected in the label position.', function() {
-            var labelPosition;
-
+    describe('_renderRotationLabels()', () => {
+        it('"_renderRotationLabels()" method, the labelMargin option must be reflected in the label position.', () => {
             spyOn(axis.graphRenderer, 'renderRotatedLabel');
 
             axis.layout = {position: {top: 20}};
@@ -222,7 +216,7 @@ describe('Test for Axis', function() {
             };
             axis._renderRotationLabels([0], ['label1'], 0, 0);
 
-            labelPosition = axis.graphRenderer.renderRotatedLabel.calls.argsFor(0)[0].positionTopAndLeft;
+            const labelPosition = axis.graphRenderer.renderRotatedLabel.calls.argsFor(0)[0].positionTopAndLeft;
 
             expect(labelPosition.top).toBe(57);
         });

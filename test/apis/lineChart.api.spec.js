@@ -4,12 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-var raphael = require('raphael');
-var dom = require('../../src/js/helpers/domHandler');
-var lineChartFactory = require('../../src/js/index').lineChart;
+import raphael from 'raphael';
+import dom from '../../src/js/helpers/domHandler';
+import chart from '../../src/js/index';
+const {lineChart: lineChartFactory} = chart;
 
-describe('Test public APIs for line chart', function() {
-    var rawData = {
+describe('Test public APIs for line chart', () => {
+    const rawData = {
         categories: ['01/01/2016', '02/01/2016', '03/01/2016', '04/01/2016', '05/01/2016', '06/01/2016', '07/01/2016', '08/01/2016', '09/01/2016', '10/01/2016', '11/01/2016', '12/01/2016'],
         series: [
             {
@@ -34,34 +35,34 @@ describe('Test public APIs for line chart', function() {
             }
         ]
     };
-    var lineChart, plot;
+    let lineChart, plot;
 
-    beforeEach(function() {
-        var container = dom.create('DIV');
-        var plotContainer = dom.create('DIV');
+    beforeEach(() => {
+        const container = dom.create('DIV');
+        const plotContainer = dom.create('DIV');
 
         lineChart = lineChartFactory(container, rawData);
         plot = lineChart.componentManager.get('plot');
         plot.paper = raphael(plotContainer, 100, 100);
-        plot.paper.pushDownBackgroundToBottom = function() {};
+        plot.paper.pushDownBackgroundToBottom = () => {};
     });
 
-    afterEach(function() {
+    afterEach(() => {
         plot.paper.remove();
     });
 
-    describe('addData()', function() {
-        beforeEach(function() {
+    describe('addData()', () => {
+        beforeEach(() => {
             spyOn(lineChart.dataProcessor, 'addDynamicData');
         });
 
-        it('add data', function() {
+        it('add data', () => {
             lineChart.addData('category', [1, 2, 3]);
 
             expect(lineChart.dataProcessor.addDynamicData).toHaveBeenCalledWith('category', [1, 2, 3]);
         });
 
-        it('add data, when coordinate data type', function() {
+        it('add data, when coordinate data type', () => {
             lineChart.addData({
                 legend1: 10,
                 legend2: 5
@@ -74,8 +75,8 @@ describe('Test public APIs for line chart', function() {
         });
     });
 
-    describe('addPlotLine()', function() {
-        it('add plot line', function() {
+    describe('addPlotLine()', () => {
+        it('add plot line', () => {
             lineChart.addPlotLine({
                 value: '02/01/2016',
                 color: 'red'
@@ -85,8 +86,8 @@ describe('Test public APIs for line chart', function() {
         });
     });
 
-    describe('addPlotBand()', function() {
-        it('add plot band', function() {
+    describe('addPlotBand()', () => {
+        it('add plot band', () => {
             lineChart.addPlotBand({
                 range: ['03/01/2016', '04/01/2016'],
                 color: 'yellow',
@@ -97,8 +98,8 @@ describe('Test public APIs for line chart', function() {
         });
     });
 
-    describe('removePlotLine()', function() {
-        it('remove plot line', function() {
+    describe('removePlotLine()', () => {
+        it('remove plot line', () => {
             lineChart.addPlotLine({
                 id: 'line1',
                 value: '02/01/2016',
@@ -113,8 +114,8 @@ describe('Test public APIs for line chart', function() {
         });
     });
 
-    describe('removePlotBand()', function() {
-        it('remove plot band', function() {
+    describe('removePlotBand()', () => {
+        it('remove plot band', () => {
             lineChart.addPlotBand({
                 id: 'band1',
                 range: ['03/01/2016', '04/01/2016'],

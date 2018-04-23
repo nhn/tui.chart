@@ -18,6 +18,7 @@ module.exports = function(config) {
         ],
         files: [
             'test/index.js'
+            //'test/charts/bubbleChart.spec.js'
         ],
         preprocessors: {
             'test/index.js': ['webpack', 'sourcemap']
@@ -27,7 +28,7 @@ module.exports = function(config) {
             module: {
                 preLoaders: [{
                     test: /\.js$/,
-                    exclude: /(test|bower_components|node_modules)/,
+                    exclude: /(bower_components|node_modules)/,
                     loader: 'istanbul-instrumenter',
                     query: {
                         esModules: true
