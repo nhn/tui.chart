@@ -3,17 +3,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import snippet from 'tui-code-snippet';
+import MouseEventDetectorBase from '../../../src/js/components/mouseEventDetectors/mouseEventDetectorBase';
+import chartConst from '../../../src/js/const';
 
-'use strict';
+describe('Test for MouseEventDetectorBase', () => {
+    let mouseEventDetectorBase;
 
-var snippet = require('tui-code-snippet');
-var MouseEventDetectorBase = require('../../../src/js/components/mouseEventDetectors/mouseEventDetectorBase');
-var chartConst = require('../../../src/js/const');
-
-describe('Test for MouseEventDetectorBase', function() {
-    var mouseEventDetectorBase;
-
-    beforeEach(function() {
+    beforeEach(() => {
         mouseEventDetectorBase = new MouseEventDetectorBase({
             eventBus: new snippet.CustomEvents()
         });
@@ -25,162 +22,152 @@ describe('Test for MouseEventDetectorBase', function() {
         };
     });
 
-    describe('_isChangedSelectData()', function() {
-        it('should return true, when found no data', function() {
-            var actual = mouseEventDetectorBase._isChangedSelectData({
-                    chartType: 'column'
-                }, null),
-                expected = true;
+    describe('_isChangedSelectData()', () => {
+        it('should return true, when found no data', () => {
+            const actual = mouseEventDetectorBase._isChangedSelectData({
+                chartType: 'column'
+            }, null);
+            const expected = true;
             expect(actual).toBe(expected);
         });
 
-        it('should return true, if there is no previous data', function() {
-            var actual = mouseEventDetectorBase._isChangedSelectData(null, {
-                    chartType: 'line'
-                }),
-                expected = true;
+        it('should return true, if there is no previous data', () => {
+            const actual = mouseEventDetectorBase._isChangedSelectData(null, {
+                chartType: 'line'
+            });
+            const expected = true;
             expect(actual).toBe(expected);
         });
 
-        it('should return true, if found data is not same to previous one', function() {
-            var actual = mouseEventDetectorBase._isChangedSelectData({
-                    chartType: 'column'
-                }, {
-                    chartType: 'line'
-                }),
-                expected = true;
+        it('should return true, if found data is not same to previous one', () => {
+            const actual = mouseEventDetectorBase._isChangedSelectData({
+                chartType: 'column'
+            }, {
+                chartType: 'line'
+            });
+            const expected = true;
             expect(actual).toBe(expected);
         });
 
-        it('should return true, if found data\'s groupIndex is not same to previous one', function() {
-            var actual = mouseEventDetectorBase._isChangedSelectData({
-                    indexes: {
-                        groupIndex: 0
-                    }
-                }, {
-                    indexes: {
-                        groupIndex: 1
-                    }
-                }),
-                expected = true;
+        it('should return true, if found data\'s groupIndex is not same to previous one', () => {
+            const actual = mouseEventDetectorBase._isChangedSelectData({
+                indexes: {
+                    groupIndex: 0
+                }
+            }, {
+                indexes: {
+                    groupIndex: 1
+                }
+            });
+            const expected = true;
             expect(actual).toBe(expected);
         });
 
-        it('should return true, if found data\'s index is not same to previous one', function() {
-            var actual = mouseEventDetectorBase._isChangedSelectData({
-                    indexes: {
-                        index: 0
-                    }
-                }, {
-                    indexes: {
-                        index: 1
-                    }
-                }),
-                expected = true;
+        it('should return true, if found data\'s index is not same to previous one', () => {
+            const actual = mouseEventDetectorBase._isChangedSelectData({
+                indexes: {
+                    index: 0
+                }
+            }, {
+                indexes: {
+                    index: 1
+                }
+            });
+            const expected = true;
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_calculateLayerPosition()', function() {
-        beforeEach(function() {
+    describe('_calculateLayerPosition()', () => {
+        beforeEach(() => {
             mouseEventDetectorBase.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
         });
 
-        it('should calulate layerX by subtract SERIES_EXPAND_SIZE and rect.left from clientX', function() {
-            var actual;
-
+        it('should calulate layerX by subtract SERIES_EXPAND_SIZE and rect.left from clientX', () => {
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 450
             });
 
-            actual = mouseEventDetectorBase._calculateLayerPosition(150);
+            const actual = mouseEventDetectorBase._calculateLayerPosition(150);
 
             expect(actual.x).toBe(140);
         });
 
-        it('should adjust limit, if clientX is less than container.left', function() {
-            var actual;
-
+        it('should adjust limit, if clientX is less than container.left', () => {
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 450
             });
             mouseEventDetectorBase.expandSize = chartConst.SERIES_EXPAND_SIZE;
 
-            actual = mouseEventDetectorBase._calculateLayerPosition(30);
+            const actual = mouseEventDetectorBase._calculateLayerPosition(30);
 
             expect(actual.x).toBe(50);
         });
 
-        it('should not adjust limit value, when checkLimit is false', function() {
-            var clientX = 30;
-            var checkLimit = false;
-            var actual, clientY;
+        it('should not adjust limit value, when checkLimit is false', () => {
+            const clientX = 30;
+            const checkLimit = false;
+            let clientY;
 
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 450
             });
 
-            actual = mouseEventDetectorBase._calculateLayerPosition(clientX, clientY, checkLimit);
+            const actual = mouseEventDetectorBase._calculateLayerPosition(clientX, clientY, checkLimit);
 
             expect(actual.x).toBe(20);
         });
 
-        it('should adjust position, if clientX is less than event detector left', function() {
-            var actual;
-
+        it('should adjust position, if clientX is less than event detector left', () => {
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 450
             });
             mouseEventDetectorBase.expandSize = chartConst.SERIES_EXPAND_SIZE;
 
-            actual = mouseEventDetectorBase._calculateLayerPosition(480);
+            const actual = mouseEventDetectorBase._calculateLayerPosition(480);
 
             expect(actual.x).toBe(430);
         });
 
-        it('should not adjust position, if checkLimit is false even though clientX is less than event detector left.', function() {
-            var clientX = 480;
-            var checkLimit = false;
-            var actual, clientY;
+        it('should not adjust position, if checkLimit is false even though clientX is less than event detector left.', () => {
+            const clientX = 480;
+            const checkLimit = false;
+            let clientY;
 
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 450
             });
 
-            actual = mouseEventDetectorBase._calculateLayerPosition(clientX, clientY, checkLimit);
+            const actual = mouseEventDetectorBase._calculateLayerPosition(clientX, clientY, checkLimit);
 
             expect(actual.x).toBe(470);
         });
 
-        it('should return y when clientY is exist.', function() {
-            var actual;
-
+        it('should return y when clientY is exist.', () => {
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 450,
                 top: 50
             });
 
-            actual = mouseEventDetectorBase._calculateLayerPosition(150, 150);
+            const actual = mouseEventDetectorBase._calculateLayerPosition(150, 150);
 
             expect(actual.y).toBe(140);
         });
 
-        it('should not return y when no clientY.', function() {
-            var actual;
-
+        it('should not return y when no clientY.', () => {
             mouseEventDetectorBase.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 450,
                 top: 50
             });
 
-            actual = mouseEventDetectorBase._calculateLayerPosition(150);
+            const actual = mouseEventDetectorBase._calculateLayerPosition(150);
 
             expect(actual.y).toBeUndefined();
         });

@@ -3,20 +3,17 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import barSeriesFactory from '../../../src/js/components/series/bulletChartSeries';
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
+import SeriesItem from '../../../src/js/models/data/seriesDataModelForBullet';
+import chartConst from '../../../src/js/const';
+import snippet from 'tui-code-snippet';
 
-'use strict';
+describe('BulletChartSeries', () => {
+    let series, seriesDataModel, dataProcessor;
 
-var barSeriesFactory = require('../../../src/js/components/series/bulletChartSeries');
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
-var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
-var SeriesItem = require('../../../src/js/models/data/seriesDataModelForBullet');
-var chartConst = require('../../../src/js/const');
-var snippet = require('tui-code-snippet');
-
-describe('BulletChartSeries', function() {
-    var series, seriesDataModel, dataProcessor;
-
-    beforeEach(function() {
+    beforeEach(() => {
         series = new barSeriesFactory.BulletChartSeries({
             chartType: 'bullet',
             theme: {},
@@ -66,11 +63,10 @@ describe('BulletChartSeries', function() {
         ];
     });
 
-    describe('_makeBaseDataForMakingBound()', function() {
-        it('should set category axis to yAxis, when it is a horizontal chart', function() {
-            var baseData;
+    describe('_makeBaseDataForMakingBound()', () => {
+        it('should set category axis to yAxis, when it is a horizontal chart', () => {
             series.isVertical = false;
-            baseData = series._makeBaseDataForMakingBound();
+            const baseData = series._makeBaseDataForMakingBound();
 
             expect(baseData.categoryAxisTop).toBe(50);
             expect(baseData.categoryAxisLeft).toBe(100);
@@ -79,10 +75,9 @@ describe('BulletChartSeries', function() {
             expect(baseData.itemWidth).toBe(200);
         });
 
-        it('should set category axis to xAxis, when it is a vertical chart', function() {
-            var baseData;
+        it('should set category axis to xAxis, when it is a vertical chart', () => {
             series.isVertical = true;
-            baseData = series._makeBaseDataForMakingBound();
+            const baseData = series._makeBaseDataForMakingBound();
 
             expect(baseData.categoryAxisTop).toBe(450);
             expect(baseData.categoryAxisLeft).toBe(100);
@@ -92,10 +87,10 @@ describe('BulletChartSeries', function() {
         });
     });
 
-    describe('_makeBounds()', function() {
-        var baseData, iterationData, item;
+    describe('_makeBounds()', () => {
+        let baseData, iterationData, item;
 
-        beforeEach(function() {
+        beforeEach(() => {
             baseData = {
                 categoryAxisTop: 50,
                 categoryAxisLeft: 30,
@@ -105,8 +100,8 @@ describe('BulletChartSeries', function() {
             spyOn(series, '_makeBulletChartBound');
         });
 
-        it('should make bounds data', function() {
-            var bounds = series._makeBounds(baseData, iterationData, item);
+        it('should make bounds data', () => {
+            const bounds = series._makeBounds(baseData, iterationData, item);
 
             expect(bounds.length).toBe(2);
             expect(bounds[0].length).toBe(3);
@@ -114,10 +109,10 @@ describe('BulletChartSeries', function() {
         });
     });
 
-    describe('_updateIterationData', function() {
-        var iterationData, itemWidth;
+    describe('_updateIterationData', () => {
+        let iterationData, itemWidth;
 
-        beforeEach(function() {
+        beforeEach(() => {
             iterationData = {
                 top: 50,
                 left: 30
@@ -125,7 +120,7 @@ describe('BulletChartSeries', function() {
             itemWidth = 15;
         });
 
-        it('should move iterationData\'s top position by itemWidth, when it is a horizontal chart', function() {
+        it('should move iterationData\'s top position by itemWidth, when it is a horizontal chart', () => {
             series.isVertical = true;
             series._updateIterationData(iterationData, itemWidth);
 
@@ -133,7 +128,7 @@ describe('BulletChartSeries', function() {
             expect(iterationData.left).toBe(45);
         });
 
-        it('should move iterationData\'s left position by itemWidth, when it is a virtical chart', function() {
+        it('should move iterationData\'s left position by itemWidth, when it is a virtical chart', () => {
             series.isVertical = false;
             series._updateIterationData(iterationData, itemWidth);
 
@@ -142,10 +137,10 @@ describe('BulletChartSeries', function() {
         });
     });
 
-    describe('_makeBarBound()', function() {
-        var model, widthRatio, baseData, iterationData, valueAxisWidth;
+    describe('_makeBarBound()', () => {
+        let model, widthRatio, baseData, iterationData, valueAxisWidth;
 
-        beforeEach(function() {
+        beforeEach(() => {
             model = {
                 startValue: 0, startLabel: '0', startRatio: 0.16666,
                 endValue: 25, endLabel: '25', endRatio: 0.83333,
@@ -156,7 +151,7 @@ describe('BulletChartSeries', function() {
             baseData = {
                 categoryAxisTop: 50,
                 categoryAxisLeft: 30,
-                valueAxisWidth: valueAxisWidth,
+                valueAxisWidth,
                 itemWidth: 15
             };
             iterationData = {
@@ -165,10 +160,9 @@ describe('BulletChartSeries', function() {
             };
         });
 
-        it('should create a horizontal bound, when it is a horizontal chart', function() {
-            var barBound;
+        it('should create a horizontal bound, when it is a horizontal chart', () => {
             series.isVertical = false;
-            barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
+            const barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
             expect(barBound.top).toBe(53.75);
             expect(barBound.left).toBe(92.22399999999999);
@@ -176,11 +170,10 @@ describe('BulletChartSeries', function() {
             expect(barBound.height).toBe(7.5);
         });
 
-        it('should create a virtical bound, when it is vertical chart', function() {
-            var barBound;
+        it('should create a virtical bound, when it is vertical chart', () => {
             series.isVertical = true;
             iterationData.top += valueAxisWidth;
-            barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
+            const barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
             expect(barBound.top).toBe(116.668);
             expect(barBound.left).toBe(33.75);
@@ -188,11 +181,10 @@ describe('BulletChartSeries', function() {
             expect(barBound.height).toBe(271.108);
         });
 
-        it('should set bar width, according to widthRatio', function() {
-            var barBound;
+        it('should set bar width, according to widthRatio', () => {
             series.isVertical = true;
             iterationData.top += valueAxisWidth;
-            barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
+            let barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
             expect(barBound.width).toBe(7.5);
             expect(barBound.width).toBe(7.5);
@@ -204,11 +196,10 @@ describe('BulletChartSeries', function() {
             expect(barBound.height).toBe(7.5);
         });
 
-        it('should set bar height, according to ratioDistance', function() {
-            var barBound;
+        it('should set bar height, according to ratioDistance', () => {
             series.isVertical = true;
             iterationData.top += valueAxisWidth;
-            barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
+            let barBound = series._makeBarBound(model, widthRatio, baseData, iterationData);
 
             expect(barBound.height).toBe(271.108);
 
@@ -220,10 +211,10 @@ describe('BulletChartSeries', function() {
         });
     });
 
-    describe('_makeLineBound', function() {
-        var model, widthRatio, baseData, iterationData;
+    describe('_makeLineBound', () => {
+        let model, widthRatio, baseData, iterationData;
 
-        beforeEach(function() {
+        beforeEach(() => {
             model = {endRatio: 0.16666};
             widthRatio = 0.5;
             baseData = {
@@ -238,10 +229,9 @@ describe('BulletChartSeries', function() {
             };
         });
 
-        it('should create a horizontal bound, when it is a horizontal chart', function() {
-            var lineBound;
+        it('should create a horizontal bound, when it is a horizontal chart', () => {
             series.isVertical = false;
-            lineBound = series._makeLineBound(model, widthRatio, baseData, iterationData);
+            const lineBound = series._makeLineBound(model, widthRatio, baseData, iterationData);
 
             expect(lineBound.top).toBe(53.75);
             expect(lineBound.left).toBe(96.664);
@@ -249,10 +239,9 @@ describe('BulletChartSeries', function() {
             expect(lineBound.height).toBe(lineBound.length);
         });
 
-        it('should create a virtical bound, when it is verical chart', function() {
-            var lineBound;
+        it('should create a virtical bound, when it is verical chart', () => {
             series.isVertical = true;
-            lineBound = series._makeLineBound(model, widthRatio, baseData, iterationData);
+            const lineBound = series._makeLineBound(model, widthRatio, baseData, iterationData);
 
             expect(lineBound.top).toBe(-16.664);
             expect(lineBound.left).toBe(33.75);
@@ -260,10 +249,9 @@ describe('BulletChartSeries', function() {
             expect(lineBound.height).toBe(3);
         });
 
-        it('should set bar width, according to widthRatio', function() {
-            var lineBound;
+        it('should set bar width, according to widthRatio', () => {
             series.isVertical = true;
-            lineBound = series._makeLineBound(model, widthRatio, baseData, iterationData);
+            const lineBound = series._makeLineBound(model, widthRatio, baseData, iterationData);
 
             expect(lineBound.length).toBe(7.5);
         });

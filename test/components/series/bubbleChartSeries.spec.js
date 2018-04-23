@@ -3,22 +3,19 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import snippet from 'tui-code-snippet';
+import bubbleSeriesFactory from '../../../src/js/components/series/bubbleChartSeries';
 
-'use strict';
+describe('BubbleChartSeries', () => {
+    let series, dataProcessor, seriesDataModel;
 
-var snippet = require('tui-code-snippet');
-var bubbleSeriesFactory = require('../../../src/js/components/series/bubbleChartSeries');
-
-describe('BubbleChartSeries', function() {
-    var series, dataProcessor, seriesDataModel;
-
-    beforeAll(function() {
+    beforeAll(() => {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['hasCategories', 'getCategoryCount', 'isXCountGreaterThanYCount', 'getSeriesDataModel']);
         seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         series = new bubbleSeriesFactory.BubbleChartSeries({
             chartType: 'bubble',
             theme: {
@@ -28,7 +25,7 @@ describe('BubbleChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor,
+            dataProcessor,
             eventBus: new snippet.CustomEvents()
         });
         series.layout = {
@@ -39,10 +36,8 @@ describe('BubbleChartSeries', function() {
         };
     });
 
-    describe('_calculateStep()', function() {
-        it('should calculate step of chart having categories and number of x values are larger than y values, by dividing series.height to number of categories.', function() {
-            var actual, expected;
-
+    describe('_calculateStep()', () => {
+        it('should calculate step of chart having categories and number of x values are larger than y values, by dividing series.height to number of categories.', () => {
             dataProcessor.hasCategories.and.returnValue(true);
             dataProcessor.isXCountGreaterThanYCount.and.returnValue(true);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
@@ -51,15 +46,13 @@ describe('BubbleChartSeries', function() {
                 height: 270
             };
 
-            actual = series._calculateStep();
-            expected = 90;
+            const actual = series._calculateStep();
+            const expected = 90;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate step of chart having categories and number of x values are less or same to y values, by dividing series.width to categories', function() {
-            var actual, expected;
-
+        it('should calculate step of chart having categories and number of x values are less or same to y values, by dividing series.width to categories', () => {
             dataProcessor.hasCategories.and.returnValue(true);
             dataProcessor.isXCountGreaterThanYCount.and.returnValue(false);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
@@ -68,63 +61,57 @@ describe('BubbleChartSeries', function() {
                 width: 210
             };
 
-            actual = series._calculateStep();
-            expected = 70;
+            const actual = series._calculateStep();
+            const expected = 70;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeBound()', function() {
-        it('should calculate left using x ratio and series.width if there is x ratio(ratioMap.x).', function() {
-            var actual, expected;
-
+    describe('_makeBound()', () => {
+        it('should calculate left using x ratio and series.width if there is x ratio(ratioMap.x).', () => {
             series.layout.dimension = {
                 width: 200
             };
 
-            actual = series._makeBound({
+            const actual = series._makeBound({
                 x: 0.4
             });
-            expected = 90;
+            const expected = 90;
 
             expect(actual.left).toBe(expected);
         });
 
-        it('should calculate left using positinoByStep if there is not x ratio(ratioMap.x).', function() {
-            var positionByStep = 40,
-                actual, expected;
+        it('should calculate left using positinoByStep if there is not x ratio(ratioMap.x).', () => {
+            const positionByStep = 40;
 
             series.layout.dimension = {};
-            actual = series._makeBound({}, positionByStep);
-            expected = 50;
+            const actual = series._makeBound({}, positionByStep);
+            const expected = 50;
 
             expect(actual.left).toBe(expected);
         });
 
-        it('should calculate top using y ratio and series.height if y ratio(ratioMap.y) is exists.', function() {
-            var actual, expected;
-
+        it('should calculate top using y ratio and series.height if y ratio(ratioMap.y) is exists.', () => {
             series.layout.dimension = {
                 height: 150
             };
-            actual = series._makeBound({
+            const actual = series._makeBound({
                 y: 0.5
             });
-            expected = 85;
+            const expected = 85;
 
             expect(actual.top).toBe(expected);
         });
 
-        it('should calculate top using positionByStep, if y ratio(ratioMap.y) is not exist', function() {
-            var positionByStep = 40,
-                actual, expected;
+        it('should calculate top using positionByStep, if y ratio(ratioMap.y) is not exist', () => {
+            const positionByStep = 40;
 
             series.layout.dimension = {
                 height: 150
             };
-            actual = series._makeBound({}, positionByStep);
-            expected = 120;
+            const actual = series._makeBound({}, positionByStep);
+            const expected = 120;
 
             expect(actual.top).toBe(expected);
         });

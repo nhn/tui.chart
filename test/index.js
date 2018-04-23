@@ -20,10 +20,31 @@ require('./components/legends/legendModel.spec.js');
 require('./components/legends/spectrumLegend.spec.js');
 require('./components/mouseEventDetectors/areaTypeDataModel.spec.js');
 require('./components/mouseEventDetectors/boundsBaseCoordinateModel.spec.js');
-//require('./components/mouseEventDetectors/groupTypeEventDetector.spec.js');
-//require('./components/mouseEventDetectors/mapChartEventDetector.spec.js');
-//require('./components/mouseEventDetectors/mouseEventDetectorBase.spec.js');
-//require('./components/mouseEventDetectors/tickBaseCoordinateModel.spec.js');
-//require('./components/mouseEventDetectors/zoomMixer.spec.js');
+require('./components/mouseEventDetectors/groupTypeEventDetector.spec.js');
+require('./components/mouseEventDetectors/mapChartEventDetector.spec.js');
+require('./components/mouseEventDetectors/mouseEventDetectorBase.spec.js');
+require('./components/mouseEventDetectors/tickBaseCoordinateModel.spec.js');
+require('./components/mouseEventDetectors/zoomMixer.spec.js');
+require('./components/plots/plot.spec.js');
+require('./components/plots/radialPlot.spec.js');
+require('./components/series/areaChartSeries.spec.js');
+require('./components/series/barChartSeries.spec.js');
+require('./components/series/barTypeSeriesBase.spec.js');
+require('./components/series/boxPlotChartSeries.spec.js');
+require('./components/series/bubbleChartSeries.spec.js');
+require('./components/series/bulletChartSeries.spec.js');
+//require('./components/series/columnChartSeries.spec.js');
+//require('./components/series/heatmapChartSeries.spec.js');
+//require('./components/series/lineTypeSeriesBase.spec.js');
+//require('./components/series/mapChartSeries.spec.js');
+//require('./components/series/pieChartSeries.spec.js');
+//require('./components/series/radialSeries.spec.js');
+//require('./components/series/renderingLabelHelper.spec.js');
+//require('./components/series/scatterChartSeries.spec.js');
+//require('./components/series/series.spec.js');
+//require('./components/series/squarifier.spec.js');
+//require('./components/series/treemapChartSeries.spec.js');
+//require('./components/series/zoom.spec.js');
+
 
         
