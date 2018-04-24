@@ -14,7 +14,7 @@ var BUNDLE_PATH = path.join(__dirname, 'dist/');
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
 var babelPolyfill = require('babel-polyfill');
-var PolyfillsPlugin = require('webpack-polyfills-plugin');
+// var PolyfillsPlugin = require('webpack-polyfills-plugin');
 var es3ifyPlugin = require('es3ify-webpack-plugin');
 
 
@@ -32,7 +32,8 @@ module.exports = (function() {
         'bundle created at "' + readableTimestamp + '"';
 
     // Basic setting
-    var config = {
+  
+  var config = {
         eslint: {
             failOnError: isProduction
         },

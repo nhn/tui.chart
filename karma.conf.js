@@ -9,6 +9,8 @@ const webdriverConfig = {
     port: 4444,
     remoteHost: true
 };
+const es3ifyPlugin = require('es3ify-webpack-plugin');
+const babelPolyfill = require('babel-polyfill');
 
 module.exports = function(config) {
     const defaultConfig = {
@@ -17,8 +19,8 @@ module.exports = function(config) {
             'jasmine'
         ],
         files: [
+            'babel-polyfill',
             'test/index.js'
-            //'test/charts/bubbleChart.spec.js'
         ],
         preprocessors: {
             'test/index.js': ['webpack', 'sourcemap']
@@ -51,7 +53,10 @@ module.exports = function(config) {
                         loader: 'babel-loader'
                     }
                 ]
-            }
+            },
+            plugins: [
+                new es3ifyPlugin()
+            ]
         },
         port: 9876,
         colors: true,

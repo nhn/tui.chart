@@ -13,9 +13,9 @@ import objectUtil from './helpers/objectUtil';
 import seriesDataImporter from './helpers/seriesDataImporter';
 import drawingToolPicker from './helpers/drawingToolPicker';
 
-require('./polyfill');
-require('./charts/chartsRegistration');
-require('./themes/defaultThemesRegistration');
+import './polyfill';
+import './charts/chartsRegistration';
+import './themes/defaultThemesRegistration';
 
 /**
  * Raw series datum.
