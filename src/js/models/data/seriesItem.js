@@ -179,9 +179,7 @@ class SeriesItem {
      * @private
      */
     _createValues(value) {
-        let values = [].concat(value).map(newValue =>
-            snippet.isNull(newValue) ? null : parseFloat(newValue)
-        );
+        let values = [].concat(value).map(newValue => snippet.isNull(newValue) ? null : parseFloat(newValue));
 
         values = values.sort((a, b) => {
             if (a < 0 && b < 0) {
@@ -219,7 +217,7 @@ class SeriesItem {
      * @private
      */
     _updateFormattedValueforRange() {
-        this.label = `${this.startLabel}~${this.endLabel}`;
+        this.label = `${this.startLabel} ~ ${this.endLabel}`;
     }
 
     /**

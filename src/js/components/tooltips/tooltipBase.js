@@ -314,6 +314,7 @@ export default class TooltipBase {
 
         return colors;
     }
+
     /**
      * Resize tooltip component.
      * @param {object} data - bounds data

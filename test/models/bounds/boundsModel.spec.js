@@ -3,18 +3,15 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import BoundsModel from '../../../src/js/models/bounds/boundsModel';
+import chartConst from '../../../src/js/const';
+import renderUtil from '../../../src/js/helpers/renderUtil';
+import raphaelRenderUtil from '../../../src/js/plugins/raphaelRenderUtil';
 
-'use strict';
+describe('Test for BoundsModel', () => {
+    let boundsModel, dataProcessor;
 
-var BoundsModel = require('../../../src/js/models/bounds/boundsModel');
-var chartConst = require('../../../src/js/const');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
-var raphaelRenderUtil = require('../../../src/js/plugins/raphaelRenderUtil');
-
-describe('Test for BoundsModel', function() {
-    var boundsModel, dataProcessor;
-
-    beforeAll(function() {
+    beforeAll(() => {
         // Spy to produce consistence results
         // Because calculated width and hight might be differ for each browsers
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
@@ -25,10 +22,10 @@ describe('Test for BoundsModel', function() {
         dataProcessor.getFormatFunctions.and.returnValue([]);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         spyOn(renderUtil, 'getRenderedLabelHeight');
         boundsModel = new BoundsModel({
-            dataProcessor: dataProcessor,
+            dataProcessor,
             options: {
                 legend: {
                     visible: true
@@ -51,17 +48,15 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_registerChartDimension()', function() {
-        it('should register chart dimension from chart option(width, height)', function() {
-            var actual, expected;
-
+    describe('_registerChartDimension()', () => {
+        it('should register chart dimension from chart option(width, height)', () => {
             boundsModel.options.chart = {
                 width: 300,
                 height: 200
             };
             boundsModel._registerChartDimension();
-            actual = boundsModel.getDimension('chart');
-            expected = {
+            const actual = boundsModel.getDimension('chart');
+            const expected = {
                 width: 300,
                 height: 200
             };
@@ -69,12 +64,10 @@ describe('Test for BoundsModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should register default dimension when there is no chart option.', function() {
-            var actual, expected;
-
+        it('should register default dimension when there is no chart option.', () => {
             boundsModel._registerChartDimension();
-            actual = boundsModel.getDimension('chart');
-            expected = {
+            const actual = boundsModel.getDimension('chart');
+            const expected = {
                 width: chartConst.CHART_DEFAULT_WIDTH,
                 height: chartConst.CHART_DEFAULT_HEIGHT
             };
@@ -83,26 +76,22 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_registerTitleDimension()', function() {
-        it('should register title dimension.', function() {
-            var actual, expected;
-
+    describe('_registerTitleDimension()', () => {
+        it('should register title dimension.', () => {
             raphaelRenderUtil.getRenderedTextSize.and.returnValue({
                 height: 40
             });
             boundsModel._registerTitleDimension();
-            actual = boundsModel.getDimension('title');
-            expected = {
+            const actual = boundsModel.getDimension('title');
+            const expected = {
                 height: 60
             };
 
             expect(actual).toEqual(expected);
         });
-        it('should register 0 dimension, if not have title option title.', function() {
-            var actual, expected;
-
+        it('should register 0 dimension, if not have title option title.', () => {
             boundsModel = new BoundsModel({
-                dataProcessor: dataProcessor,
+                dataProcessor,
                 options: {
                     legend: {
                         visible: true
@@ -117,8 +106,8 @@ describe('Test for BoundsModel', function() {
 
             renderUtil.getRenderedLabelHeight.and.returnValue(20);
             boundsModel._registerTitleDimension();
-            actual = boundsModel.getDimension('title');
-            expected = {
+            const actual = boundsModel.getDimension('title');
+            const expected = {
                 height: 0
             };
 
@@ -126,24 +115,20 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_registerChartExportMenuDimension()', function() {
-        it('should register chartExportMenu dimension.', function() {
-            var actual, expected;
-
+    describe('_registerChartExportMenuDimension()', () => {
+        it('should register chartExportMenu dimension.', () => {
             boundsModel._registerChartExportMenuDimension();
-            actual = boundsModel.getDimension('chartExportMenu');
-            expected = {
+            const actual = boundsModel.getDimension('chartExportMenu');
+            const expected = {
                 height: 34,
                 width: 24
             };
 
             expect(actual).toEqual(expected);
         });
-        it('should register 0 dimension, if chartExportMenu option is not exist', function() {
-            var actual, expected;
-
+        it('should register 0 dimension, if chartExportMenu option is not exist', () => {
             boundsModel = new BoundsModel({
-                dataProcessor: dataProcessor,
+                dataProcessor,
                 options: {
                     legend: {
                         visible: true
@@ -157,8 +142,8 @@ describe('Test for BoundsModel', function() {
             });
 
             boundsModel._registerChartExportMenuDimension();
-            actual = boundsModel.getDimension('chartExportMenu');
-            expected = {
+            const actual = boundsModel.getDimension('chartExportMenu');
+            const expected = {
                 height: 0,
                 width: 0
             };
@@ -167,8 +152,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_updateDimensionsWidth()', function() {
-        it('update dimensions width', function() {
+    describe('_updateDimensionsWidth()', () => {
+        it('update dimensions width', () => {
             boundsModel.chartLeftPadding = 10;
             boundsModel.dimensionMap = {
                 plot: {
@@ -200,8 +185,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_updateDimensionsHeight()', function() {
-        it('should increase plot.height, series.height by 50, and descrease xAxis.heigth by 50.', function() {
+    describe('_updateDimensionsHeight()', () => {
+        it('should increase plot.height, series.height by 50, and descrease xAxis.heigth by 50.', () => {
             boundsModel.dimensionMap = {
                 plot: {
                     height: 200
@@ -237,17 +222,15 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_makePlotDimension()', function() {
-        it('should make plot dimension from series dimension by adding hidden height 1', function() {
-            var actual, expected;
-
+    describe('_makePlotDimension()', () => {
+        it('should make plot dimension from series dimension by adding hidden height 1', () => {
             boundsModel.dimensionMap.series = {
                 width: 200,
                 height: 100
             };
 
-            actual = boundsModel._makePlotDimension();
-            expected = {
+            const actual = boundsModel._makePlotDimension();
+            const expected = {
                 width: 200,
                 height: 101
             };
@@ -256,8 +239,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_registerAxisComponentsDimension()', function() {
-        it('should register component dimension from plot dimension', function() {
+    describe('_registerAxisComponentsDimension()', () => {
+        it('should register component dimension from plot dimension', () => {
             spyOn(boundsModel, '_makePlotDimension').and.returnValue({
                 width: 300,
                 height: 200
@@ -272,10 +255,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_makeSeriesDimension()', function() {
-        it('should make series dimesion using dimension of virtical legend, series', function() {
-            var actual, expected;
-
+    describe('_makeSeriesDimension()', () => {
+        it('should make series dimesion using dimension of virtical legend, series', () => {
             boundsModel.dimensionMap = {
                 chart: {
                     width: 500,
@@ -301,8 +282,8 @@ describe('Test for BoundsModel', function() {
                 }
             };
 
-            actual = boundsModel._makeSeriesDimension();
-            expected = {
+            const actual = boundsModel._makeSeriesDimension();
+            const expected = {
                 width: 380,
                 height: 280
             };
@@ -310,9 +291,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should calculate series dimension using horizontal legend width.', function() {
-            var actual, expected;
-
+        it('should calculate series dimension using horizontal legend width.', () => {
             boundsModel.dimensionMap = {
                 chart: {
                     width: 500,
@@ -339,8 +318,8 @@ describe('Test for BoundsModel', function() {
             };
             boundsModel.options.legend.align = chartConst.LEGEND_ALIGN_TOP;
 
-            actual = boundsModel._makeSeriesDimension();
-            expected = {
+            const actual = boundsModel._makeSeriesDimension();
+            const expected = {
                 width: 430,
                 height: 250
             };
@@ -349,8 +328,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_registerCenterComponentsDimension()', function() {
-        it('should register tooltip and event detector dimension from series dimension.', function() {
+    describe('_registerCenterComponentsDimension()', () => {
+        it('should register tooltip and event detector dimension from series dimension.', () => {
             boundsModel.dimensionMap = {
                 series: {
                     width: 300,
@@ -366,9 +345,9 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_registerAxisComponentsPosition()', function() {
-        it('should set position related to axis using dimension of series, leftLegendWidth, yAxis.', function() {
-            var leftLegendWidth = 0;
+    describe('_registerAxisComponentsPosition()', () => {
+        it('should set position related to axis using dimension of series, leftLegendWidth, yAxis.', () => {
+            const leftLegendWidth = 0;
 
             boundsModel.dimensionMap.series = {
                 width: 300,
@@ -395,10 +374,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_makeLegendPosition()', function() {
-        it('should make legend position of default align(left).', function() {
-            var actual, expected;
-
+    describe('_makeLegendPosition()', () => {
+        it('should make legend position of default align(left).', () => {
             boundsModel.dimensionMap = {
                 title: {
                     height: 20
@@ -420,8 +397,8 @@ describe('Test for BoundsModel', function() {
                 left: 20,
                 top: 50
             };
-            actual = boundsModel._makeLegendPosition();
-            expected = {
+            const actual = boundsModel._makeLegendPosition();
+            const expected = {
                 top: 60,
                 left: 270
             };
@@ -429,9 +406,7 @@ describe('Test for BoundsModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should make legend position of bottom align.', function() {
-            var actual, expected;
-
+        it('should make legend position of bottom align.', () => {
             boundsModel.dimensionMap = {
                 title: {
                     height: 20
@@ -456,8 +431,8 @@ describe('Test for BoundsModel', function() {
                 left: 20,
                 top: 50
             };
-            actual = boundsModel._makeLegendPosition();
-            expected = {
+            const actual = boundsModel._makeLegendPosition();
+            const expected = {
                 top: 60,
                 left: 270
             };
@@ -466,10 +441,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_makeCircleLegendPosition()', function() {
-        it('should calculate left position of circle legend using width fo series, circle legend, legend', function() {
-            var actual, expected;
-
+    describe('_makeCircleLegendPosition()', () => {
+        it('should calculate left position of circle legend using width fo series, circle legend, legend', () => {
             boundsModel.positionMap = {
                 series: {
                     left: 40
@@ -487,15 +460,13 @@ describe('Test for BoundsModel', function() {
                 }
             };
 
-            actual = boundsModel._makeCircleLegendPosition().left;
-            expected = 455;
+            const actual = boundsModel._makeCircleLegendPosition().left;
+            const expected = 455;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate left position of circle legend, using width of circle legend and legend, when circle aligns left.', function() {
-            var actual, expected;
-
+        it('should calculate left position of circle legend, using width of circle legend and legend, when circle aligns left.', () => {
             boundsModel.options.legend.align = chartConst.LEGEND_ALIGN_LEFT;
 
             boundsModel.positionMap = {
@@ -511,15 +482,13 @@ describe('Test for BoundsModel', function() {
                 }
             };
 
-            actual = boundsModel._makeCircleLegendPosition().left;
-            expected = 15;
+            const actual = boundsModel._makeCircleLegendPosition().left;
+            const expected = 15;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate left position using series.left and series.width, when horizontal circle legend', function() {
-            var actual, expected;
-
+        it('should calculate left position using series.left and series.width, when horizontal circle legend', () => {
             boundsModel.positionMap = {
                 series: {
                     left: 40
@@ -537,15 +506,13 @@ describe('Test for BoundsModel', function() {
                 }
             };
 
-            actual = boundsModel._makeCircleLegendPosition().left;
-            expected = 440;
+            const actual = boundsModel._makeCircleLegendPosition().left;
+            const expected = 440;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate left position using series.left and series.width, when circle legend is hidden.', function() {
-            var actual, expected;
-
+        it('should calculate left position using series.left and series.width, when circle legend is hidden.', () => {
             boundsModel.positionMap = {
                 series: {
                     left: 40
@@ -563,15 +530,13 @@ describe('Test for BoundsModel', function() {
                 }
             };
 
-            actual = boundsModel._makeCircleLegendPosition().left;
-            expected = 440;
+            const actual = boundsModel._makeCircleLegendPosition().left;
+            const expected = 440;
 
             expect(actual).toBe(expected);
         });
 
-        it('should set circleLegend.top to position.top + series.height - circleLegend.height.', function() {
-            var actual, expected;
-
+        it('should set circleLegend.top to position.top + series.height - circleLegend.height.', () => {
             boundsModel.positionMap = {
                 series: {
                     top: 60
@@ -587,15 +552,15 @@ describe('Test for BoundsModel', function() {
                 legend: {}
             };
 
-            actual = boundsModel._makeCircleLegendPosition().top;
-            expected = 280;
+            const actual = boundsModel._makeCircleLegendPosition().top;
+            const expected = 280;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_registerEssentialComponentsPositions()', function() {
-        it('should set position of event detector and legend, tooltip using series position.', function() {
+    describe('_registerEssentialComponentsPositions()', () => {
+        it('should set position of event detector and legend, tooltip using series position.', () => {
             spyOn(boundsModel, '_makeLegendPosition').and.returnValue({
                 top: 30,
                 left: 250
@@ -618,8 +583,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_updateBoundsForYAxisCenterOption()', function() {
-        it('should update bounds for center align yAxis.', function() {
+    describe('_updateBoundsForYAxisCenterOption()', () => {
+        it('should update bounds for center align yAxis.', () => {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             boundsModel.dimensionMap = {
                 extendedSeries: {
@@ -686,7 +651,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.positionMap.tooltip.left).toBe(1);
         });
 
-        it('should add series.left and extendedSeries.left by 1 for older browsers(IE7, IE8)', function() {
+        it('should add series.left and extendedSeries.left by 1 for older browsers(IE7, IE8)', () => {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
             boundsModel.dimensionMap = {
                 extendedSeries: {
@@ -743,8 +708,8 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('_updateLegendAndSeriesWidth()', function() {
-        it('update legend width, when has width for vertical type legend', function() {
+    describe('_updateLegendAndSeriesWidth()', () => {
+        it('update legend width, when has width for vertical type legend', () => {
             boundsModel.dimensionMap.series = {
                 width: 300
             };
@@ -761,7 +726,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.getDimension('legend').width).toBe(80);
         });
 
-        it('update legend width, when has not width for vertical type legend', function() {
+        it('update legend width, when has not width for vertical type legend', () => {
             boundsModel.dimensionMap.series = {
                 width: 300
             };
@@ -778,7 +743,7 @@ describe('Test for BoundsModel', function() {
             expect(boundsModel.getDimension('legend').width).toBe(0);
         });
 
-        it('update series width', function() {
+        it('update series width', () => {
             boundsModel.dimensionMap.series = {
                 width: 300
             };
@@ -789,25 +754,21 @@ describe('Test for BoundsModel', function() {
         });
     });
 
-    describe('getBaseSizeForLimit()', function() {
-        it('should return series.width to default size, when value axis is x.', function() {
-            var actual, expected;
-
+    describe('getBaseSizeForLimit()', () => {
+        it('should return series.width to default size, when value axis is x.', () => {
             spyOn(boundsModel, 'calculateSeriesWidth').and.returnValue(400);
 
-            actual = boundsModel.getBaseSizeForLimit();
-            expected = 400;
+            const actual = boundsModel.getBaseSizeForLimit();
+            const expected = 400;
 
             expect(actual).toBe(expected);
         });
 
-        it('should set series.height to default size, when value axis is y.', function() {
-            var actual, expected;
-
+        it('should set series.height to default size, when value axis is y.', () => {
             spyOn(boundsModel, 'calculateSeriesHeight').and.returnValue(300);
 
-            actual = boundsModel.getBaseSizeForLimit(true);
-            expected = 300;
+            const actual = boundsModel.getBaseSizeForLimit(true);
+            const expected = 300;
 
             expect(actual).toBe(expected);
         });

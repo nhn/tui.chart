@@ -16,4 +16,4 @@ chart.colorutil = colorUtil;
  * NHN Entertainment Toast UI Chart.
  * @namespace tui.chart
  */
-export default chart;
+module.exports = chart;

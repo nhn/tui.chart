@@ -57,7 +57,7 @@ class SeriesDataModelForBullet extends SeriesDataModel {
             }
 
             if (markers && markerCount) {
-                markers.map(marker => {
+                markers.forEach(marker => {
                     items.push(new SeriesItem({
                         datum: marker,
                         chartType,

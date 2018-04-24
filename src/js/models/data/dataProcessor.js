@@ -539,8 +539,8 @@ class DataProcessor extends DataProcessorBase {
      */
     makeTooltipCategory(categoryIndex, oppositeIndex, isVerticalChart) {
         const isVertical = !isVerticalChart;
-        const categoryCount = this.getCategoryCount(!isVertical);
         let category = this._getTooltipCategory(categoryIndex, isVertical);
+        const categoryCount = this.getCategoryCount(!isVertical);
 
         if (categoryCount) {
             category += `, ${this._getTooltipCategory(categoryCount - oppositeIndex - 1, !isVertical)}`;

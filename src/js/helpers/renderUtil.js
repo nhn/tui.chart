@@ -40,7 +40,7 @@ const renderUtil = {
             template.reduce((accumulator, part, i) => accumulator + expressions[i - 1] + part)
         );
 
-        return normalTag(...args).replace(/[\r\n]/g, '');
+        return normalTag(...args).replace(/\n\s*/g, '');
     },
 
     /**
@@ -414,7 +414,7 @@ const renderUtil = {
      * @returns {Array.<string>}
      * @memberof module:renderUtil
      */
-    formatValues(values, formatFunctions, typeInfos) {
+    formatValues(values, formatFunctions, typeInfos = {}) {
         const {chartType, areaType, valueType} = typeInfos;
 
         if (!formatFunctions || !formatFunctions.length) {

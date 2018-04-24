@@ -49,6 +49,7 @@ export default class PieDonutComboChart extends ChartBase {
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
+
     /**
      * Add data ratios.
      * @override

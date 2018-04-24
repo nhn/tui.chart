@@ -54,6 +54,7 @@ export default class AreaChart extends ChartBase {
     addData(category, values) {
         this._dynamicDataHelper.addData(category, values);
     }
+
     /**
      * On change checked legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
@@ -65,6 +66,7 @@ export default class AreaChart extends ChartBase {
         this._dynamicDataHelper.reset();
         this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, boundsParams);
     }
+
     /**
      * Add data ratios.
      * @override
@@ -107,6 +109,7 @@ export default class AreaChart extends ChartBase {
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
+
     /**
      * Get scale option.
      * from lineTypeMixer
@@ -169,6 +172,7 @@ export default class AreaChart extends ChartBase {
     removePlotBand(id) {
         this.componentManager.get('plot').removePlotBand(id);
     }
+
     /**
      * Render for zoom.
      * from chart/zoomMixer

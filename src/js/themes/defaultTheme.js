@@ -1,11 +1,9 @@
-'use strict';
-
-var DEFAULT_COLOR = '#000000';
-var DEFAULT_BACKGROUND = '#ffffff';
-var DEFAULT_FONTWEIGHT = 'lighter';
-var DEFAULT_FONTFAMILY = 'Arial';
-var EMPTY = '';
-var DEFAULT_AXIS = {
+const DEFAULT_COLOR = '#000000';
+const DEFAULT_BACKGROUND = '#ffffff';
+const DEFAULT_FONTWEIGHT = 'lighter';
+const DEFAULT_FONTFAMILY = 'Arial';
+const EMPTY = '';
+const DEFAULT_AXIS = {
     tickColor: DEFAULT_COLOR,
     title: {
         fontSize: 11,
@@ -21,7 +19,7 @@ var DEFAULT_AXIS = {
     }
 };
 
-var defaultTheme = {
+const defaultTheme = {
     chart: {
         background: {
             color: DEFAULT_BACKGROUND,
@@ -95,4 +93,4 @@ var defaultTheme = {
     }
 };
 
-module.exports = defaultTheme;
+export default defaultTheme;

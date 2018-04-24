@@ -3,16 +3,13 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import Zoom from '../../../src/js/components/series/zoom';
+import snippet from 'tui-code-snippet';
 
-'use strict';
+describe('Zoom', () => {
+    let zoom;
 
-var Zoom = require('../../../src/js/components/series/zoom');
-var snippet = require('tui-code-snippet');
-
-describe('Zoom', function() {
-    var zoom;
-
-    beforeEach(function() {
+    beforeEach(() => {
         zoom = new Zoom({
             eventBus: new snippet.CustomEvents(),
             dataProcessor: {
@@ -25,13 +22,13 @@ describe('Zoom', function() {
         spyOn(zoom.eventBus, 'fire');
     });
 
-    describe('_zoom()', function() {
-        it('should send position to zoom event handler.', function() {
-            var magn = 2,
-                position = {
-                    left: 10,
-                    top: 20
-                };
+    describe('_zoom()', () => {
+        it('should send position to zoom event handler.', () => {
+            const magn = 2;
+            const position = {
+                left: 10,
+                top: 20
+            };
 
             zoom.magn = 2;
             zoom._zoom(magn, position);
@@ -43,8 +40,8 @@ describe('Zoom', function() {
             });
         });
 
-        it('should not zoom-out at 1 magnification.', function() {
-            var magn = 0.5;
+        it('should not zoom-out at 1 magnification.', () => {
+            const magn = 0.5;
 
             zoom.magn = 1;
             zoom._zoom(magn);
@@ -53,22 +50,22 @@ describe('Zoom', function() {
         });
     });
 
-    describe('_calculateMagn()', function() {
-        it('return "magn += 0.1" when wheel data is positive number', function() {
+    describe('_calculateMagn()', () => {
+        it('return "magn += 0.1" when wheel data is positive number', () => {
             zoom.magn = 1;
 
             expect(zoom._calculateMagn(1)).toBe(1.1);
         });
-        it('return "magn -= 0.1" when wheel data is negetive number', function() {
+        it('return "magn -= 0.1" when wheel data is negetive number', () => {
             zoom.magn = 2;
 
             expect(zoom._calculateMagn(-1)).toBe(1.9);
         });
     });
 
-    describe('onWheel()', function() {
-        it('should zoom using wheelDelta value made with mouse wheel movement', function() {
-            var expectedMagn = 1.1;
+    describe('onWheel()', () => {
+        it('should zoom using wheelDelta value made with mouse wheel movement', () => {
+            const expectedMagn = 1.1;
 
             zoom.magn = 1;
             zoom.onWheel(120);

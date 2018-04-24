@@ -6,6 +6,7 @@
 
 import downloader from './downloader';
 import chartConst from '../const';
+import renderUtil from '../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 
 const DATA_URI_HEADERS = {
@@ -30,7 +31,7 @@ const dataExporter = {
         const chartData2DArray = _get2DArrayFromRawData(rawData);
         const content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
 
-        downloader(fileName, extension, content);
+        downloader.execDownload(fileName, extension, content);
     },
 
     /**
@@ -68,9 +69,9 @@ function _get2DArrayFromRawData(rawData) {
             return return2DArrayData;
         }
 
-        resultArray.push(['', ...categories]);
+        resultArray.push([''].concat(categories));
 
-        Object.values(rawData.series).forEach(seriesDatum => {
+        Object.values((rawData.series || {})).forEach(seriesDatum => {
             seriesDatum.forEach(seriesItem => {
                 resultArray.push([seriesItem.name, ...seriesItem.data]);
             });
@@ -158,7 +159,6 @@ function _get2DArrayFromBulletRawData(rawData) {
 
     resultArray.push(_makeTHeadForBullet(maxRangeCount, maxMarkerCount));
 
-    console.log(rawData.series.bullet);
     snippet.forEach(rawData.series.bullet, seriesItem => {
         const rangeArray = _makeTCellsFromBulletRanges(seriesItem.ranges, maxRangeCount);
         const markerArray = _makeTCellsFromBulletMarkers(seriesItem.markers, maxMarkerCount);
@@ -246,7 +246,7 @@ function _getTableElementStringForXls(chartData2DArray) {
  * @private
  */
 function _makeXlsBodyWithRawData(chartData2DArray) {
-    const xlsString = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
+    const xlsString = renderUtil.oneLineTrim`<html xmlns:o="urn:schemas-microsoft-com:office:office" 
         xmlns:x="urn:schemas-microsoft-com:office:excel" 
         xmlns="http://www.w3.org/TR/REC-html40">
         <head>

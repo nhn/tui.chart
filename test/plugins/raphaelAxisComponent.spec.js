@@ -1,14 +1,12 @@
-'use strict';
+import RaphaelAxisComponent from '../../src/js/plugins/raphaelAxisComponent';
+import raphael from 'raphael';
 
-var RaphaelAxisComponent = require('../../src/js/plugins/raphaelAxisComponent');
-var raphael = require('raphael');
+describe('RaphaelAxisComponent', () => {
+    const raphaelAxisComponent = new RaphaelAxisComponent();
+    let container, paper, data;
+    let positionWithoutOffset, positionWithOffset, positionDiff;
 
-describe('RaphaelAxisComponent', function() {
-    var raphaelAxisComponent = new RaphaelAxisComponent();
-    var container, paper, data;
-    var positionWithoutOffset, positionWithOffset, positionDiff;
-
-    beforeEach(function() {
+    beforeEach(() => {
         container = document.createElement('DIV');
         document.body.appendChild(container);
         paper = raphael(container, 1500, 1500);
@@ -33,34 +31,34 @@ describe('RaphaelAxisComponent', function() {
         positionDiff = {};
     });
 
-    afterEach(function() {
+    afterEach(() => {
         document.body.removeChild(container);
         positionWithOffset = null;
         positionWithoutOffset = null;
     });
 
-    describe('renderTicks() ', function() {
-        beforeEach(function() {
+    describe('renderTicks() ', () => {
+        beforeEach(() => {
             data.paper = paper;
             data.additionalSize = 0;
             raphaelAxisComponent.ticks = [];
         });
 
-        it('position beyond the dimension in the vertical axis should not be added.', function() {
+        it('position beyond the dimension in the vertical axis should not be added.', () => {
             data.isVertical = true;
             data.positions = [300, 900, 1200, 1500];
             raphaelAxisComponent.renderTicks(data);
 
             expect(raphaelAxisComponent.ticks.length).toBe(2);
         });
-        it('position beyond the dimension in the horizontal axis should not be added.', function() {
+        it('position beyond the dimension in the horizontal axis should not be added.', () => {
             data.isVertical = false;
             data.positions = [200, 400, 800, 900, 1000, 1200];
             raphaelAxisComponent.renderTicks(data);
 
             expect(raphaelAxisComponent.ticks.length).toBe(5);
         });
-        it('tick count should be calculated taking into account the width of the axis where the y-axis is centered', function() {
+        it('tick count should be calculated taking into account the width of the axis where the y-axis is centered', () => {
             data.positions = [200, 400, 800, 900, 1000, 1200];
             data.isDivided = true;
             raphaelAxisComponent.renderTicks(data);
@@ -69,8 +67,8 @@ describe('RaphaelAxisComponent', function() {
         });
     });
 
-    describe('calculatePosition() ', function() {
-        it('should add offset when rotationInfo is empty object', function() {
+    describe('calculatePosition() ', () => {
+        it('should add offset when rotationInfo is empty object', () => {
             positionWithoutOffset = raphaelAxisComponent.calculatePosition(paper, data);
 
             data.offset = {x: 100, y: 100};
@@ -83,7 +81,7 @@ describe('RaphaelAxisComponent', function() {
             expect(positionDiff.y).toBe(data.offset.y);
         });
 
-        it('should not add offset when set rotationInfo.isCenter true', function() {
+        it('should not add offset when set rotationInfo.isCenter true', () => {
             data.rotationInfo.isCenter = true;
             positionWithoutOffset = raphaelAxisComponent.calculatePosition(paper, data);
 
@@ -97,7 +95,7 @@ describe('RaphaelAxisComponent', function() {
             expect(positionDiff.y).toBe(0);
         });
 
-        it('should add offset when set rotationInfo.isPositionRight true', function() {
+        it('should add offset when set rotationInfo.isPositionRight true', () => {
             data.rotationInfo.isPositionRight = true;
             positionWithoutOffset = raphaelAxisComponent.calculatePosition(paper, data);
 
@@ -111,7 +109,7 @@ describe('RaphaelAxisComponent', function() {
             expect(positionDiff.y).toBe(data.offset.y);
         });
 
-        it('should add offset when set rotationInfo.isVertical true', function() {
+        it('should add offset when set rotationInfo.isVertical true', () => {
             data.rotationInfo.isVertical = true;
             positionWithoutOffset = raphaelAxisComponent.calculatePosition(paper, data);
 

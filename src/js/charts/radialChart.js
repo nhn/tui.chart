@@ -42,6 +42,7 @@ export default class RadialChart extends ChartBase {
          */
         this.Series = Series;
     }
+
     /**
      * Add components
      * @override
@@ -57,6 +58,7 @@ export default class RadialChart extends ChartBase {
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
+
     /**
      * Add data ratios.
      * @override

@@ -75,6 +75,7 @@ export default class LineAreaComboChart extends ChartBase {
         this._dynamicDataHelper.reset();
         this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, typeData);
     }
+
     /**
      * Add components
      * @override
@@ -98,6 +99,7 @@ export default class LineAreaComboChart extends ChartBase {
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
+
     /**
      * Get scale option.
      * @returns {{
@@ -117,6 +119,7 @@ export default class LineAreaComboChart extends ChartBase {
 
         return scaleOption;
     }
+
     /**
      * Make y axis scale option.
      * @param {string} name - component name
@@ -143,6 +146,7 @@ export default class LineAreaComboChart extends ChartBase {
             additionalOptions
         };
     }
+
     /**
      * Make yAxis options.
      * @param {Array.<string>} chartTypes chart types
@@ -160,6 +164,7 @@ export default class LineAreaComboChart extends ChartBase {
 
         return options;
     }
+
     /**
      * Add data.
      * @param {string} category - category
@@ -168,6 +173,7 @@ export default class LineAreaComboChart extends ChartBase {
     addData(category, values) {
         this._dynamicDataHelper.addData(category, values);
     }
+
     /**
      * Set additional parameter for making y axis scale option.
      * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
@@ -192,6 +198,7 @@ export default class LineAreaComboChart extends ChartBase {
             additionalOptions.stackType = seriesOption.stackType;
         });
     }
+
     /**
      * Add data ratios.
      * @override

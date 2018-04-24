@@ -37,7 +37,7 @@ class RaphaelLineTypeBase {
         let prevMissing = false;
 
         posTopType = posTopType || 'top';
-        positions.forEach(position => {
+        [].concat(positions).forEach(position => {
             const pathCommand = (prevMissing && !connectNulls) ? 'M' : 'L';
 
             if (position) {
@@ -353,7 +353,7 @@ class RaphaelLineTypeBase {
         const dots = groupPositions.map((positions, groupIndex) => {
             const color = colors[groupIndex];
 
-            return positions.map(position => {
+            return Object.values(positions).map(position => {
                 const dotMap = {
                     endDot: this.renderDot(paper, position, color, opacity)
                 };

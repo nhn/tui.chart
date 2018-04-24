@@ -3,16 +3,13 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import seriesDataImporter from '../../src/js/helpers/seriesDataImporter';
 
-'use strict';
+describe('SeriesDataImporter', () => {
+    const div = document.createElement('div');
+    const {body} = document;
 
-var seriesDataImporter = require('../../src/js/helpers/seriesDataImporter');
-
-describe('SeriesDataImporter', function() {
-    var div = document.createElement('div');
-    var body = document.body;
-
-    beforeEach(function() {
+    beforeEach(() => {
         body.appendChild(div);
         div.innerHTML = ['<table id="table-data">',
             '<thead>', '<tr><th>Budget</th><th>Income</th><th>Expenses</th><th>Dept</th></tr>',
@@ -28,12 +25,12 @@ describe('SeriesDataImporter', function() {
             '</tbody>', '</table>'].join('');
     });
 
-    afterEach(function() {
+    afterEach(() => {
         body.removeChild(div);
     });
 
-    it('should create series data with table id.', function() {
-        var importedData = seriesDataImporter.makeDataWithTable({
+    it('should create series data with table id.', () => {
+        const importedData = seriesDataImporter.makeDataWithTable({
             elementId: 'table-data'
         });
 
@@ -42,8 +39,8 @@ describe('SeriesDataImporter', function() {
         expect(importedData.categories.length).toBe(7);
     });
 
-    it('should create series data with table element.', function() {
-        var importedData = seriesDataImporter.makeDataWithTable({
+    it('should create series data with table element.', () => {
+        const importedData = seriesDataImporter.makeDataWithTable({
             element: document.getElementById('table-data')
         });
 
@@ -52,16 +49,16 @@ describe('SeriesDataImporter', function() {
         expect(importedData.categories.length).toBe(7);
     });
 
-    it('should not create series data without table element.', function() {
-        var importedData = seriesDataImporter.makeDataWithTable({
+    it('should not create series data without table element.', () => {
+        const importedData = seriesDataImporter.makeDataWithTable({
             element: 'just string'
         });
 
         expect(importedData).not.toBeDefined();
     });
 
-    it('should not create series data without table element.', function() {
-        var importedData = seriesDataImporter.makeDataWithTable({
+    it('should not create series data without table element.', () => {
+        const importedData = seriesDataImporter.makeDataWithTable({
             element: null
         });
 

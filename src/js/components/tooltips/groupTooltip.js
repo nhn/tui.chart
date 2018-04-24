@@ -198,9 +198,9 @@ class GroupTooltip extends TooltipBase {
      * @private
      */
     _makeColors(theme, groupIndex) {
-        let prevChartType;
         let colorIndex = 0;
         const legendLabels = this.dataProcessor.getLegendData();
+        let colors, prevChartType;
 
         if (this.isBullet) {
             return this.dataProcessor.getGraphColors()[groupIndex];
@@ -213,8 +213,6 @@ class GroupTooltip extends TooltipBase {
         const defaultColors = defaultTheme.series.colors.slice(0, legendLabels.length);
 
         return snippet.pluck(legendLabels, 'chartType').map(chartType => {
-            let colors;
-
             if (prevChartType !== chartType) {
                 colors = theme[chartType] ? theme[chartType].colors : defaultColors;
                 colorIndex = 0;

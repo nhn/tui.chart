@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import csc from '../../../src/js/models/scaleData/coordinateScaleCalculator';
 
-'use strict';
-
-var csc = require('../../../src/js/models/scaleData/coordinateScaleCalculator');
-
-describe('coordinateScaleCalculator', function() {
-    describe('positive values', function() {
-        it('calculate with tick count', function() {
-            var scale = csc({
+describe('coordinateScaleCalculator', () => {
+    describe('positive values', () => {
+        it('calculate with tick count', () => {
+            const scale = csc({
                 min: 0,
                 max: 1000,
                 offsetSize: 1000,
@@ -24,8 +21,8 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.stepCount).toEqual(10);
         });
 
-        it('calculate with default tick pixel size(pixelsPerTick)', function() {
-            var scale = csc({
+        it('calculate with default tick pixel size(pixelsPerTick)', () => {
+            const scale = csc({
                 min: 0,
                 max: 880,
                 offsetSize: 880
@@ -37,8 +34,8 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.stepCount).toEqual(9);
         });
 
-        it('get tick value that normalized', function() {
-            var scale = csc({
+        it('get tick value that normalized', () => {
+            const scale = csc({
                 min: 0,
                 max: 12345,
                 offsetSize: 1000
@@ -47,8 +44,8 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.step).toEqual(1000);
         });
 
-        it('get edges that normalized', function() {
-            var scale = csc({
+        it('get edges that normalized', () => {
+            const scale = csc({
                 min: 322,
                 max: 12345,
                 offsetSize: 1000
@@ -59,10 +56,10 @@ describe('coordinateScaleCalculator', function() {
         });
     });
 
-    describe('Negative values', function() {
-        var scale;
+    describe('Negative values', () => {
+        let scale;
 
-        beforeEach(function() {
+        beforeEach(() => {
             scale = csc({
                 min: -1830,
                 max: 12345,
@@ -70,14 +67,14 @@ describe('coordinateScaleCalculator', function() {
             });
         });
 
-        it('min should be -2000', function() {
+        it('min should be -2000', () => {
             expect(scale.limit.min).toEqual(-2000);
         });
     });
 
-    describe('Under decimal point', function() {
-        it('edge range 0.120 ~ 0.900, should have step 0.05', function() {
-            var scale = csc({
+    describe('Under decimal point', () => {
+        it('edge range 0.120 ~ 0.900, should have step 0.05', () => {
+            const scale = csc({
                 min: 0.120,
                 max: 0.900,
                 offsetSize: 1000
@@ -88,8 +85,8 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.step).toEqual(0.05);
         });
 
-        it('edge range 0.0045 ~ 1, should have step 0.05', function() {
-            var scale = csc({
+        it('edge range 0.0045 ~ 1, should have step 0.05', () => {
+            const scale = csc({
                 min: 0.0045,
                 max: 2,
                 offsetSize: 1000
@@ -100,8 +97,8 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.step).toEqual(0.2);
         });
 
-        it('edge range 0.01 ~ 0.47, should have min=0, max=0.6, step=0.2', function() {
-            var scale = csc({
+        it('edge range 0.01 ~ 0.47, should have min=0, max=0.6, step=0.2', () => {
+            const scale = csc({
                 min: 0.01,
                 max: 0.47,
                 offsetSize: 196
@@ -112,8 +109,8 @@ describe('coordinateScaleCalculator', function() {
             expect(scale.step).toEqual(0.2);
         });
 
-        it('using the showLabel option, the max value of sereis must be considered to the height of the label.', function() {
-            var scale = csc({
+        it('using the showLabel option, the max value of sereis must be considered to the height of the label.', () => {
+            const scale = csc({
                 min: 0.01,
                 max: 0.47,
                 offsetSize: 196,

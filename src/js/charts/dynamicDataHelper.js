@@ -20,6 +20,7 @@ export default class DynamicDataHelper {
 
         this.reset();
     }
+
     reset() {
         /**
          * whether lookupping or not

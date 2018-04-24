@@ -75,6 +75,7 @@ export default class ScatterChart extends ChartBase {
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
+
     /**
      * Add data ratios.
      * @override

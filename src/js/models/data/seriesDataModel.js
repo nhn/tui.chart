@@ -128,7 +128,7 @@ class SeriesDataModel {
             return;
         }
 
-        this.rawSeriesData.forEach(rawItem => {
+        Object.values(this.rawSeriesData).forEach(rawItem => {
             if (!snippet.isArray(rawItem.data)) {
                 return;
             }

@@ -3,18 +3,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModelForBullet';
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
+import SeriesItem from '../../../src/js/models/data/seriesItem';
 
-'use strict';
+describe('Test for SeriesDataModelForBullet', () => {
+    let seriesDataModel;
 
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModelForBullet');
-var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
-var SeriesItem = require('../../../src/js/models/data/seriesItem');
-
-describe('Test for SeriesDataModelForBullet', function() {
-    /* eslint-disable object-property-newline */
-    var seriesDataModel;
-
-    beforeEach(function() {
+    beforeEach(() => {
         seriesDataModel = new SeriesDataModel({});
         seriesDataModel.rawSeriesData = [
             {data: 11, ranges: [[-29, -10], [-10, 11], [11, 30]], markers: [10, 9]},
@@ -22,17 +18,17 @@ describe('Test for SeriesDataModelForBullet', function() {
         ];
     });
 
-    describe('_createSeriesGroupsFromRawData()', function() {
-        it('should create series group from base groups', function() {
-            var actual = seriesDataModel._createSeriesGroupsFromRawData();
+    describe('_createSeriesGroupsFromRawData()', () => {
+        it('should create series group from base groups', () => {
+            const actual = seriesDataModel._createSeriesGroupsFromRawData();
 
             expect(actual.length).toBe(2);
             expect(actual[0] instanceof SeriesGroup).toBe(true);
             expect(actual[0].items.length).toBe(6);
         });
 
-        it('should create series item from raw data', function() {
-            var actual = seriesDataModel._createSeriesGroupsFromRawData()[0].items;
+        it('should create series item from raw data', () => {
+            const actual = seriesDataModel._createSeriesGroupsFromRawData()[0].items;
 
             expect(actual.length).toBe(6);
             expect(actual[0].value).toBe(-29);
@@ -44,9 +40,9 @@ describe('Test for SeriesDataModelForBullet', function() {
         });
     });
 
-    describe('_createBaseGroups()', function() {
-        it('should create base group from raw data', function() {
-            var actual = seriesDataModel._createBaseGroups()[0];
+    describe('_createBaseGroups()', () => {
+        it('should create base group from raw data', () => {
+            const [actual] = seriesDataModel._createBaseGroups();
 
             expect(actual.length).toBe(6);
             expect(actual[0].value).toBe(-29);
@@ -58,12 +54,11 @@ describe('Test for SeriesDataModelForBullet', function() {
         });
     });
 
-    describe('_createValues()', function() {
-        it('should create base group from seriesGroup', function() {
-            var rawSeriesData = [
+    describe('_createValues()', () => {
+        it('should create base group from seriesGroup', () => {
+            const rawSeriesData = [
                 {data: 11, ranges: [[-29, -10], [-10, 11], [11, 30]], markers: [10, 9]}
             ];
-            var actual;
 
             seriesDataModel.rawSeriesData = rawSeriesData;
             seriesDataModel.groups = [
@@ -77,7 +72,7 @@ describe('Test for SeriesDataModelForBullet', function() {
                 ])
             ];
 
-            actual = seriesDataModel._createValues();
+            const actual = seriesDataModel._createValues();
             expect(actual).toEqual([11, -29, -10, 11, -10, 30, 11, 10, 9]);
         });
     });

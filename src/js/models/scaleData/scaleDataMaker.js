@@ -90,7 +90,7 @@ const scaleDataMaker = {
         let foundType;
 
         if (diff) {
-            millisecondTypes.forEach((type, index) => {
+            millisecondTypes.every((type, index) => {
                 const millisecond = millisecondMap[type];
                 const dividedCount = Math.floor(diff / millisecond);
                 let foundIndex;

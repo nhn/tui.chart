@@ -3,63 +3,60 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import legendCalculator from '../../../src/js/models/bounds/legendCalculator';
+import chartConst from '../../../src/js/const';
+import renderUtil from '../../../src/js/helpers/renderUtil';
 
-'use strict';
-
-var legendCalculator = require('../../../src/js/models/bounds/legendCalculator');
-var chartConst = require('../../../src/js/const');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
-
-describe('Test for legendCalculator', function() {
-    beforeAll(function() {
+describe('Test for legendCalculator', () => {
+    beforeAll(() => {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    describe('_calculateLegendsWidthSum()', function() {
-        it('calculate sum of legends width', function() {
-            var actual = legendCalculator._calculateLegendsWidthSum(
+    describe('_calculateLegendsWidthSum()', () => {
+        it('calculate sum of legends width', () => {
+            const actual = legendCalculator._calculateLegendsWidthSum(
                 ['legend1', 'legend2'], {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
-            var expected = 250;
+            const expected = 250;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_divideLegendLabels()', function() {
-        it('divide legend labels', function() {
-            var actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 2);
-            var expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4']];
+    describe('_divideLegendLabels()', () => {
+        it('divide legend labels', () => {
+            const actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 2);
+            const expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4']];
 
             expect(actual).toEqual(expected);
         });
 
-        it('divide legend labels, when count for dividing is three', function() {
-            var actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 3);
-            var expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']];
+        it('divide legend labels, when count for dividing is three', () => {
+            const actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 3);
+            const expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']];
 
             expect(actual).toEqual(expected);
         });
 
-        it('if count is one, retuns original labels', function() {
-            var actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 1);
-            var expected = [['ABC1', 'ABC2', 'ABC3', 'ABC4']];
+        it('if count is one, retuns original labels', () => {
+            const actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 1);
+            const expected = [['ABC1', 'ABC2', 'ABC3', 'ABC4']];
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makeDividedLabelsAndMaxLineWidth()', function() {
-        it('make divided labels and max line width.', function() {
+    describe('_makeDividedLabelsAndMaxLineWidth()', () => {
+        it('make divided labels and max line width.', () => {
             /**
              * 251: chart length = max line width + 1
              * devision loop ending condition: chart length > max line width
              */
-            var actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
+            const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
                 ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 261, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
-            var expected = {
+            const expected = {
                 labels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
                 maxLineWidth: 250 /* max line width */
             };
@@ -67,11 +64,11 @@ describe('Test for legendCalculator', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('make divided labels and max line width, when chart width less than label width', function() {
-            var actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
+        it('make divided labels and max line width, when chart width less than label width', () => {
+            const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
                 ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 130, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
-            var expected = {
+            const expected = {
                 labels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
                 maxLineWidth: 120 /* width of a legend item */
             };
@@ -80,23 +77,23 @@ describe('Test for legendCalculator', function() {
         });
     });
 
-    describe('_calculateHorizontalLegendHeight()', function() {
-        it('calculate horizontal height for legend', function() {
-            var actual = legendCalculator._calculateHorizontalLegendHeight(
+    describe('_calculateHorizontalLegendHeight()', () => {
+        it('calculate horizontal height for legend', () => {
+            const actual = legendCalculator._calculateHorizontalLegendHeight(
                 [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']]
             );
-            var expected = 98;
+            const expected = 98;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeHorizontalDimension()', function() {
-        it('calculate horizontal dimension', function() {
-            var actual = legendCalculator._makeHorizontalDimension(
+    describe('_makeHorizontalDimension()', () => {
+        it('calculate horizontal dimension', () => {
+            const actual = legendCalculator._makeHorizontalDimension(
                 {}, ['label1', 'label12'], 300, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
-            var expected = {
+            const expected = {
                 width: 250,
                 height: 40
             };
@@ -105,58 +102,51 @@ describe('Test for legendCalculator', function() {
         });
     });
 
-    describe('_makeVerticalDimension()', function() {
-        it('calculate vertical dimension', function() {
-            var actual, expected;
-
-            actual = legendCalculator._makeVerticalDimension(
+    describe('_makeVerticalDimension()', () => {
+        it('calculate vertical dimension', () => {
+            const actual = legendCalculator._makeVerticalDimension(
                 {}, ['label1', 'label12'], chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING);
-            expected = 140;
+            const expected = 140;
 
             expect(actual.width).toBe(expected);
         });
     });
 
-    describe('calculate()', function() {
-        it('if visible options is false, returns 0', function() {
-            var options = {
+    describe('calculate()', () => {
+        it('if visible options is false, returns 0', () => {
+            const options = {
                 visible: false
             };
-            var actual;
-
-            actual = legendCalculator.calculate(options);
+            const actual = legendCalculator.calculate(options);
 
             expect(actual.width).toBe(0);
         });
 
-        it('calculate dimension for legend, when horizontal type', function() {
-            var options = {
+        it('calculate dimension for legend, when horizontal type', () => {
+            const options = {
                 visible: true,
                 align: chartConst.LEGEND_ALIGN_TOP
             };
-            var labelTheme = {};
-            var legendLabels = ['label1', 'label12'];
-            var chartWidth = 200;
-            var actual, expected;
-
-            actual = legendCalculator.calculate(options, labelTheme, legendLabels, chartWidth);
-            expected = legendCalculator._makeHorizontalDimension(labelTheme, legendLabels,
+            const labelTheme = {};
+            const legendLabels = ['label1', 'label12'];
+            const chartWidth = 200;
+            const actual = legendCalculator.calculate(options, labelTheme, legendLabels, chartWidth);
+            const expected = legendCalculator._makeHorizontalDimension(labelTheme, legendLabels,
                 chartWidth, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING);
 
             expect(actual).toEqual(expected);
         });
 
-        it('calculate dimension for legend, when vertical type', function() {
-            var options = {
+        it('calculate dimension for legend, when vertical type', () => {
+            const options = {
                 visible: true,
                 align: chartConst.LEGEND_ALIGN_LEFT
             };
-            var labelTheme = {};
-            var legendLabels = ['label1', 'label12'];
-            var actual, expected;
+            const labelTheme = {};
+            const legendLabels = ['label1', 'label12'];
 
-            actual = legendCalculator.calculate(options, labelTheme, legendLabels);
-            expected = legendCalculator._makeVerticalDimension(labelTheme, legendLabels,
+            const actual = legendCalculator.calculate(options, labelTheme, legendLabels);
+            const expected = legendCalculator._makeVerticalDimension(labelTheme, legendLabels,
                 chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING);
 
             expect(actual).toEqual(expected);

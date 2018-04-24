@@ -257,10 +257,10 @@ const rawDataHandler = {
      * @private
      */
     _makeRawSeriesDataForBulletChart(rawData) {
-        const {bullet} = rawData.series;
+        const {bullet = []} = rawData.series;
 
         rawData.categories = rawData.categories || [];
-        rawData.categories = bullet.map(seriesData => seriesData.name || '');
+        rawData.categories = bullet.map(seriesData => (seriesData.name || ''));
     }
 };
 

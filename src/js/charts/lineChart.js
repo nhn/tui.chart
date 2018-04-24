@@ -51,6 +51,7 @@ export default class LineChart extends ChartBase {
 
         this._dynamicDataHelper = new DynamicDataHelper(this);
     }
+
     /**
      * Add data.
      * @param {string} category - category
@@ -71,6 +72,7 @@ export default class LineChart extends ChartBase {
         this._dynamicDataHelper.reset();
         this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, boundsParams);
     }
+
     /**
      * Add data ratios.
      * @override
@@ -96,6 +98,7 @@ export default class LineChart extends ChartBase {
 
         snippet.forEachArray(chartTypes, addDataRatio);
     }
+
     /**
      * Add components
      * @override
@@ -116,6 +119,7 @@ export default class LineChart extends ChartBase {
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
+
     /**
      * Get scale option.
      * from lineTypeMixer
@@ -192,6 +196,7 @@ export default class LineChart extends ChartBase {
     removePlotBand(id) {
         this.componentManager.get('plot').removePlotBand(id);
     }
+
     /**
      * Render for zoom.
      * from chart/zoomMixer

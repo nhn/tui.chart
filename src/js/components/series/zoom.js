@@ -36,7 +36,7 @@ class Zoom {
          */
         this.className = 'tui-chart-zoom-area';
 
-        const {seriesTypes} = params.seriesTypes;
+        const {seriesTypes} = params;
         const isMapChart = (seriesTypes && seriesTypes.length) ? predicate.isMapChart(seriesTypes[0]) : false;
         const legendOption = params.dataProcessor.options.legend;
         const isLegendTop = predicate.isLegendAlignTop(legendOption.align);
