@@ -10,7 +10,6 @@ const webdriverConfig = {
     remoteHost: true
 };
 const es3ifyPlugin = require('es3ify-webpack-plugin');
-const babelPolyfill = require('babel-polyfill');
 
 module.exports = function(config) {
     const defaultConfig = {
@@ -19,7 +18,7 @@ module.exports = function(config) {
             'jasmine'
         ],
         files: [
-            'babel-polyfill',
+            './node_modules/babel-polyfill/dist/polyfill.js',
             'test/index.js'
         ],
         preprocessors: {
