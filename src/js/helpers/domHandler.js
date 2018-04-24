@@ -10,7 +10,7 @@ import snippet from 'tui-code-snippet';
  * DOM Handler.
  * @module domHandler
  * @private */
-const domHandler = {
+export default {
     /**
      * Create element.
      * @memberOf module:domHandler
@@ -148,5 +148,3 @@ const domHandler = {
         });
     }
 };
-
-export default domHandler;

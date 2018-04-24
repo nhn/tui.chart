@@ -11,7 +11,7 @@ import calculator from '../../helpers/calculator';
 import predicate from '../../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
-class SeriesItem {
+export default class SeriesItem {
     /**
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
@@ -272,5 +272,3 @@ class SeriesItem {
         return valueMap;
     }
 }
-
-export default SeriesItem;

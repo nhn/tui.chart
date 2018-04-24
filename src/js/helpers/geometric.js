@@ -94,12 +94,10 @@ function calculateRotatedHeight(degree, width, height) {
     return (centerHalf + sideHalf) * 2;
 }
 
-const geometric = {
+export default {
     rotatePointAroundOrigin,
     calculateAdjacent,
     calculateRotatedHeight,
     calculateRotatedWidth,
     calculateOpposite
 };
-
-export default geometric;

@@ -38,8 +38,6 @@ const deepCopy = function(origin) {
  * util for object
  * @module objectUtil
  * @private */
-const objectUtil = {
+export default {
     deepCopy
 };
-
-export default objectUtil;

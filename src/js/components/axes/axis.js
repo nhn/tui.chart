@@ -153,15 +153,13 @@ class Axis {
      * @param {number} additionalWidth additional width
      * @private
      */
-    _renderChildContainers(size, tickCount, categories, additionalWidth) {
+    _renderChildContainers(size, tickCount, categories, additionalWidth = 0) {
         const isYAxisLineType = this.isYAxis && this.data.aligned;
         const axisLimit = this.limitMap[this.dataProcessor.chartType];
         const isNegativeLimitChart = !this.data.limit && axisLimit && axisLimit.min < 0;
         const isBarChart = predicate.isBarTypeChart(this.dataProcessor.chartType);
         const seriesOption = this.dataProcessor.getOption('series') || {};
         const isDivergingOption = seriesOption.diverging;
-
-        additionalWidth = additionalWidth || 0;
 
         if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
             this._renderBackground();

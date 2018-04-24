@@ -12,7 +12,7 @@ import renderUtil from '../../helpers/renderUtil';
  * Calculator for dimension of axis.
  * @module axisCalculator
  * @private */
-const axisCalculator = {
+export default {
     /**
      * Calculate height for x axis.
      * @param {{title: string, labelMargin: number}} options - title and label margin option for x axis
@@ -48,31 +48,31 @@ const axisCalculator = {
      * @returns {number}
      */
     calculateYAxisWidth(labels, options, theme, yAxisLabels, isDiverging) {
-        const {labelMargin} = options;
+        const {labelMargin, prefix, suffix, isCenter, type, dateFormat, showLabel, title} = options;
         let titleWidth = 0;
         let maxLabelWidth = 0;
         let width = 0;
 
-        labels = renderUtil.addPrefixSuffix(labels, options.prefix, options.suffix);
-        yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, options.prefix, options.suffix);
+        labels = renderUtil.addPrefixSuffix(labels, prefix, suffix);
+        yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, prefix, suffix);
 
-        if (options.isCenter) {
+        if (isCenter) {
             width += chartConst.Y_AXIS_LABEL_PADDING;
         }
 
-        if (predicate.isDatetimeType(options.type)) {
-            labels = renderUtil.formatDates(labels, options.dateFormat);
-            yAxisLabels = renderUtil.formatDates(yAxisLabels, options.dateFormat);
+        if (predicate.isDatetimeType(type)) {
+            labels = renderUtil.formatDates(labels, dateFormat);
+            yAxisLabels = renderUtil.formatDates(yAxisLabels, dateFormat);
         }
         if (labelMargin && labelMargin > 0) {
             width += labelMargin;
         }
         labels = yAxisLabels.length ? yAxisLabels : labels;
-        if (options.showLabel !== false) {
+        if (showLabel !== false) {
             maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
         }
-        if (options.title) {
-            titleWidth = renderUtil.getRenderedLabelWidth(options.title.text, theme.title);
+        if (title) {
+            titleWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title);
         }
 
         width += ((isDiverging ? Math.max(maxLabelWidth, titleWidth) : maxLabelWidth) +
@@ -81,5 +81,3 @@ const axisCalculator = {
         return width;
     }
 };
-
-export default axisCalculator;

@@ -23,7 +23,7 @@ const {
  * Calculator for dimension of legend.
  * @module legendCalculator
  * @private */
-const legendCalculator = {
+export default {
     /**
      * Calculate sum of legends width.
      * @param {Array.<string>} labels - legend labels
@@ -241,5 +241,3 @@ const legendCalculator = {
         return dimension;
     }
 };
-
-export default legendCalculator;

@@ -84,7 +84,7 @@ function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
     img.src = url;
 }
 
-const imageExporter = {
+export default {
     /**
      * Download image with png format
      * @param {string} fileName - file name to save
@@ -123,5 +123,3 @@ const imageExporter = {
         return imageExtensions;
     }
 };
-
-export default imageExporter;

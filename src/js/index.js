@@ -2,7 +2,7 @@ import {pluginRaphael, callback} from './plugins/pluginRaphael';
 import chart from './chart';
 import renderUtil from './helpers/renderUtil';
 import arrayUtil from './helpers/arrayUtil';
-import colorUtil from './helpers/colorUtil';
+import colorUtil from './helpers/colorutil';
 
 import '../less/style.less';
 

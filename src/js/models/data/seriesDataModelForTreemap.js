@@ -11,7 +11,7 @@ import chartConst from '../../const';
 import calculator from '../../helpers/calculator';
 import snippet from 'tui-code-snippet';
 
-class SeriesDataModelForTreeMap extends SeriesDataModel {
+export default class SeriesDataModelForTreeMap extends SeriesDataModel {
     /**
      * SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
      * @constructs SeriesDataModelForTreemap
@@ -291,5 +291,3 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
         this.foundSeriesItemsMap = null;
     }
 }
-
-export default SeriesDataModelForTreeMap;

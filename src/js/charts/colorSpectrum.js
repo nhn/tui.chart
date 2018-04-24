@@ -48,7 +48,7 @@ export default class ColorSpectrum {
             const rgbColor = this.startRGB.map((start, index) => (
                 start + parseInt(distances[index] * ratio, 10)
             ));
-            hexColor = colorutil.rgbToHEX.apply(null, rgbColor);
+            hexColor = colorutil.rgbToHEX(...rgbColor);
         }
 
         return hexColor || null;

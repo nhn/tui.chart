@@ -10,7 +10,7 @@ import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
 
 const charts = {};
-const factory = {
+export default {
     /**
      * Find key for getting chart.
      * @param {string} chartType - type of chart
@@ -67,5 +67,3 @@ const factory = {
         charts[chartType] = ChartClass;
     }
 };
-
-export default factory;

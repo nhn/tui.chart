@@ -61,13 +61,11 @@ module.exports = (function() {
             }
         },
         module: {
-            /*
             preLoaders: [{
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
                 loader: 'eslint'
             }],
-            */
             loaders: [
                 {
                     test: /\.js$/,

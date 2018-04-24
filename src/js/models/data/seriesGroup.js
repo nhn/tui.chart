@@ -8,7 +8,7 @@
 import calculator from '../../helpers/calculator';
 import snippet from 'tui-code-snippet';
 
-class SeriesGroup {
+export default class SeriesGroup {
     /**
      * SeriesGroup is a element of SeriesDataModel.groups.
      * SeriesGroup.items has SeriesItem.
@@ -269,5 +269,3 @@ class SeriesGroup {
         return this.items.filter(condition);
     }
 }
-
-export default SeriesGroup;
