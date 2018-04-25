@@ -39,7 +39,17 @@ textarea {
     height: 25px;
     text-align: right;
 }
-
+.btn-example{
+    background-color: #00a9ff;
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    border-radius: 8px;
+}
 #hidden-options, #theme-area {
     display:none;
 }
