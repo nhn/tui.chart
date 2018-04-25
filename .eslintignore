@@ -1,2 +1,3 @@
-# Ignore polyfill
 src/js/polyfill.js
+karma.conf.js
+webpack.config.js

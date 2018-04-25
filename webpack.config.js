@@ -6,7 +6,6 @@
 var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
-var pkg = require('./package.json');
 var SafeUmdPlugin = require('safe-umd-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -15,8 +14,6 @@ var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
 var babelPolyfill = require('babel-polyfill');
 var es3ifyPlugin = require('es3ify-webpack-plugin');
-
-
 var FILENAME = pkg.name + (isProduction && isMinified ? '.min' : '');
 
 
@@ -31,8 +28,7 @@ module.exports = (function() {
         'bundle created at "' + readableTimestamp + '"';
 
     // Basic setting
-  
-  var config = {
+    var config = {
         eslint: {
             failOnError: isProduction
         },

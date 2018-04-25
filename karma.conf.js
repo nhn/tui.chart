@@ -3,7 +3,6 @@
  * Config file for testing
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
 const webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
@@ -18,7 +17,6 @@ module.exports = function(config) {
             'jasmine'
         ],
         files: [
-            './node_modules/babel-polyfill/dist/polyfill.js',
             'test/index.js'
         ],
         preprocessors: {
@@ -39,8 +37,7 @@ module.exports = function(config) {
                     test: /\.js$/,
                     exclude: /(bower_components|node_modules)/,
                     loader: 'eslint-loader'
-                }
-                ],
+                }],
                 loaders: [
                     {
                         test: /\.less$/,
