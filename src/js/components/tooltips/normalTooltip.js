@@ -268,6 +268,12 @@ class NormalTooltip extends TooltipBase {
 
 singleTooltipMixer.mixin(NormalTooltip);
 
+/**
+ * normalTooltipFactory
+ * @param {object} params chart options
+ * @returns {object} normal tooltip instanse
+ * @ignore
+ */
 export default function normalTooltipFactory(params) {
     return new NormalTooltip(params);
 }

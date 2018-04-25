@@ -19,7 +19,7 @@ const DEFAULT_AXIS = {
     }
 };
 
-const defaultTheme = {
+export default {
     chart: {
         background: {
             color: DEFAULT_BACKGROUND,
@@ -92,5 +92,3 @@ const defaultTheme = {
         color: '#000'
     }
 };
-
-export default defaultTheme;

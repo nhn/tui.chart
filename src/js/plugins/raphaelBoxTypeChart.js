@@ -17,7 +17,7 @@ const MAX_BORDER_WIDTH = 4;
  * @class RaphaelBarChart
  * @private
  */
-class RaphaelBoxTypeChart {
+export default class RaphaelBoxTypeChart {
     /**
      * Render function of bar chart
      * @param {object} paper Raphael paper
@@ -482,5 +482,3 @@ class RaphaelBoxTypeChart {
         return labelSet;
     }
 }
-
-export default RaphaelBoxTypeChart;

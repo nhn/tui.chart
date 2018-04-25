@@ -12,8 +12,7 @@ const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LINE_WIDTH = 6;
 
-// var RaphaelRadialLineSeries = snippet.defineClass(RaphaelLineTypeBase, /** @lends RaphaelRadialLineSeries.prototype */{
-class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
+export default class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelRadialLineSeries
@@ -189,5 +188,3 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
         });
     }
 }
-
-export default RaphaelRadialLineSeries;

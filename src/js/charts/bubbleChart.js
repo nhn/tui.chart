@@ -3,7 +3,6 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
 import ChartBase from './chartBase';
 import chartConst from '../const';
 import snippet from 'tui-code-snippet';

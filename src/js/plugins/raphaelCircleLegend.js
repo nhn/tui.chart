@@ -11,7 +11,7 @@ import raphaelRenderUtil from './raphaelRenderUtil';
  * @class RaphaelCircleLegend
  * @private
  */
-class RaphaelCircleLegend {
+export default class RaphaelCircleLegend {
     /**
      * Render circle and label.
      * @param {object} paper paper object
@@ -50,5 +50,3 @@ class RaphaelCircleLegend {
         return circleLegendSet;
     }
 }
-
-export default RaphaelCircleLegend;

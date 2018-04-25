@@ -513,6 +513,12 @@ class GroupTooltip extends TooltipBase {
     }
 }
 
+/**
+ * groupTooltipFactory
+ * @param {object} params chart options
+ * @returns {object} group tooltip instanse
+ * @ignore
+ */
 export default function groupTooltipFactory(params) {
     return new GroupTooltip(params);
 }

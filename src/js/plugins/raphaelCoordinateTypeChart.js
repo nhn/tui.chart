@@ -34,7 +34,7 @@ const TOOLTIP_OFFSET_VALUE = 20;
  * @class RaphaelBubbleChart
  * @private
  */
-class RaphaelBubbleChart {
+export default class RaphaelBubbleChart {
     /**
      * Render function of bubble chart
      * @param {object} paper - Raphael paper
@@ -460,5 +460,3 @@ class RaphaelBubbleChart {
         });
     }
 }
-
-export default RaphaelBubbleChart;

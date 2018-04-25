@@ -179,7 +179,7 @@ export default class ComponentManager {
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
      * @param {string} classType component factory name
-     * @param {object} params params that for alternative charts
+     * @param {object} [params={}] optional params that for alternative charts
      */
     register(name, classType, params = {}) {
         let optionKey;

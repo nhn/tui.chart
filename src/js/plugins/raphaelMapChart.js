@@ -21,8 +21,7 @@ const FILL_COLOR_OF_NO_DATA = '#eee';
  * @class RaphaelMapChart
  * @private
  */
-// var RaphaelMapChart = snippet.defineClass(/** @lends RaphaelMapChart.prototype */ {
-class RaphaelMapChart {
+export default class RaphaelMapChart {
     /**
      * Render function of map chart.
      * @param {object} paper paper object
@@ -319,5 +318,3 @@ function createGElement(paper, sectorSet, id) {
 
     return g;
 }
-
-export default RaphaelMapChart;

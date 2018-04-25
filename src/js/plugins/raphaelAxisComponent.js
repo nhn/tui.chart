@@ -7,7 +7,7 @@ import raphaelRenderUtil from './raphaelRenderUtil';
 import chartConst from '../const';
 const {Y_AXIS_TITLE_PADDING, AXIS_BACKGROUND_RIGHT_PADDING} = chartConst;
 
-class RaphaelAxisComponent {
+export default class RaphaelAxisComponent {
     constructor() {
         this.ticks = [];
     }
@@ -453,4 +453,3 @@ function addOffset(position, offset) {
     }
 }
 
-export default RaphaelAxisComponent;

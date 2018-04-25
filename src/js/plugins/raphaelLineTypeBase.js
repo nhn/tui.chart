@@ -23,7 +23,7 @@ const CHART_HOVER_STATUS_OUT = 'out';
  * @class RaphaelLineTypeBase
  * @private
  */
-class RaphaelLineTypeBase {
+export default class RaphaelLineTypeBase {
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
@@ -994,5 +994,3 @@ function createClipPathRectWithLayout(paper, position, dimension, id) {
 
     return rect;
 }
-
-export default RaphaelLineTypeBase;

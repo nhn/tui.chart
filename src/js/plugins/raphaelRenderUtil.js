@@ -13,7 +13,7 @@ import raphael from 'raphael';
  * @module raphaelRenderUtil
  * @private
  */
-const raphaelRenderUtil = {
+export default {
 
     /**
      * Make line path.
@@ -279,5 +279,3 @@ const raphaelRenderUtil = {
 function isNumber(numberSuspect) {
     return snippet.isExisty(numberSuspect) && typeof numberSuspect === 'number';
 }
-
-export default raphaelRenderUtil;

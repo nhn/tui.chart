@@ -746,6 +746,12 @@ class PieChartSeries extends Series {
     }
 }
 
+/**
+ * pieSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} pie series instanse
+ * @ignore
+ */
 export default function pieSeriesFactory(params) {
     const {libType, chartType, legend: legendOption} = params.chartOptions;
     const {chartTheme} = params;

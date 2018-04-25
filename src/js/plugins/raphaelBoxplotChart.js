@@ -22,7 +22,7 @@ const WHISKER_LINE_WIDTH = 1;
  * @class RaphaelBoxplotChart
  * @private
  */
-class RaphaelBoxplotChart {
+export default class RaphaelBoxplotChart {
     /**
      * Render function of bar chart
      * @param {object} paper paper object
@@ -637,5 +637,3 @@ class RaphaelBoxplotChart {
         return labelSet;
     }
 }
-
-export default RaphaelBoxplotChart;

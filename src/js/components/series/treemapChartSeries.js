@@ -321,6 +321,12 @@ class TreemapChartSeries extends Series {
     }
 }
 
+/**
+ * treemapChartSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} treemap series instanse
+ * @ignore
+ */
 export default function treemapChartSeriesFactory(params) {
     params.libType = params.chartOptions.libType;
     params.chartType = 'treemap';

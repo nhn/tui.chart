@@ -10,7 +10,7 @@
  * @enum {number|string}
  * @private
  */
-const chartConst = {
+export default {
     /** tui class names
      * @type {string}
      */
@@ -468,4 +468,3 @@ const chartConst = {
     BULLET_MARKERS_HEIGHT_RATIO: 0.55,
     BULLET_MARKER_DETECT_PADDING: 3
 };
-export default chartConst;

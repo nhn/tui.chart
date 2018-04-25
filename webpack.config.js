@@ -2,7 +2,6 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  * @fileoverview webpack configuration file
  */
-
 var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
@@ -15,7 +14,6 @@ var isMinified = process.argv.indexOf('--minify') >= 0;
 var babelPolyfill = require('babel-polyfill');
 var es3ifyPlugin = require('es3ify-webpack-plugin');
 var FILENAME = pkg.name + (isProduction && isMinified ? '.min' : '');
-
 
 module.exports = (function() {
     var readableTimestamp = (new Date()).toString();

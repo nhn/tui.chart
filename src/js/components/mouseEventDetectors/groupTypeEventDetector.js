@@ -205,6 +205,12 @@ class GroupTypeEventDetector extends EventDetectorBase {
     }
 }
 
+/**
+ * groupTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} group type event detector instanse
+ * @ignore
+ */
 export default function groupTypeEventDetectorFactory(params) {
     return new GroupTypeEventDetector(params);
 }

@@ -69,6 +69,12 @@ class LineChartSeries extends Series {
 
 LineTypeSeriesBase.mixin(LineChartSeries);
 
+/**
+ * lineSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} linechart series instanse
+ * @ignore
+ */
 export default function lineSeriesFactory(params) {
     params.libType = params.chartOptions.libType;
     params.chartType = 'line';

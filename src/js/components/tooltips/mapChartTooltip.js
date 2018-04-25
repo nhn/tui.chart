@@ -100,6 +100,12 @@ class MapChartTooltip extends TooltipBase {
 
 singleTooltipMixer.mixin(MapChartTooltip);
 
+/**
+ * mapChartTooltipFactory
+ * @param {object} params chart options
+ * @returns {object} mapChart tooptip instanse
+ * @ignore
+ */
 export default function mapChartTooltipFactory(params) {
     return new MapChartTooltip(params);
 }

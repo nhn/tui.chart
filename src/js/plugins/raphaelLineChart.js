@@ -11,7 +11,7 @@ import snippet from 'tui-code-snippet';
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 
-class RaphaelLineChart extends RaphaelLineBase {
+export default class RaphaelLineChart extends RaphaelLineBase {
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelLineChart
@@ -326,5 +326,3 @@ class RaphaelLineChart extends RaphaelLineBase {
         return set;
     }
 }
-
-export default RaphaelLineChart;

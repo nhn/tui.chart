@@ -26,7 +26,7 @@ function getIconWidth() {
 }
 
 // const RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
-class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */ 
+export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */ 
     constructor() {
         /**
          * @type {number}
@@ -542,5 +542,3 @@ class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */
         this._checkBoxWidth = this._checkBoxHeight = chartConst.LEGEND_CHECKBOX_SIZE;
     }
 }
-
-export default RaphaelLegendComponent;

@@ -78,7 +78,7 @@ export default class AreaChart extends ChartBase {
         let addDataRatio;
 
         if (this.dataProcessor.isCoordinateType()) {
-            addDataRatio = function(chartType) {
+            addDataRatio = chartType => {
                 this.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
             };
         } else {

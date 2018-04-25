@@ -173,6 +173,12 @@ class BarChartSeries extends Series {
 
 BarTypeSeriesBase.mixin(BarChartSeries);
 
+/**
+ * barSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} bar series instanse
+ * @ignore
+ */
 export default function barSeriesFactory(params) {
     const {chartTheme, chartOptions: {libType}} = params;
 

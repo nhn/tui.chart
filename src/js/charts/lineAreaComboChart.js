@@ -155,9 +155,8 @@ export default class LineAreaComboChart extends ChartBase {
      * @private
      * from verticalTypeComboMixer
      */
-    _makeYAxisOptions(chartTypes, yAxisOptions) {
+    _makeYAxisOptions(chartTypes, yAxisOptions = {}) {
         const options = {};
-        yAxisOptions = yAxisOptions || {};
         chartTypes.forEach((chartType, index) => {
             options[chartType] = yAxisOptions[index] || yAxisOptions;
         });

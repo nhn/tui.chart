@@ -13,7 +13,7 @@ const {GUIDE_AREACHART_AREAOPACITY_TYPE, CLASS_NAME_SVG_AUTOSHAPE} = chartConst;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 
-class RaphaelAreaChart extends RaphaelLineBase {
+export default class RaphaelAreaChart extends RaphaelLineBase {
     /**
      * RaphaelAreaChart is graph renderer for area chart.
      * @constructs RaphaelAreaChart
@@ -517,5 +517,3 @@ class RaphaelAreaChart extends RaphaelLineBase {
         return isNumber;
     }
 }
-
-export default RaphaelAreaChart;

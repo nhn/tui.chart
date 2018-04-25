@@ -206,6 +206,12 @@ class Zoom {
     }
 }
 
+/**
+ * zoomFactory
+ * @param {object} params chart options
+ * @returns {object} zoom instanse
+ * @ignore
+ */
 export default function zoomFactory(params) {
     return new Zoom(params);
 }

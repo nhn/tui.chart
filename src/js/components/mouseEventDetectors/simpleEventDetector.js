@@ -81,6 +81,12 @@ class SimpleEventDetector extends MouseEventDetectorBase {
     }
 }
 
+/**
+ * simpleTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} simple type event detector instanse
+ * @ignore
+ */
 export default function simpleTypeEventDetectorFactory(params) {
     return new SimpleEventDetector(params);
 }

@@ -232,6 +232,12 @@ class BoundsTypeEventDetector extends EventDetectorBase {
     }
 }
 
+/**
+ * boundsTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} event detect instanse
+ * @ignore
+ */
 export default function boundsTypeEventDetectorFactory(params) {
     return new BoundsTypeEventDetector(params);
 }

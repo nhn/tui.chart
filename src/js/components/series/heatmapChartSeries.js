@@ -136,6 +136,12 @@ class HeatmapChartSeries extends Series {
     }
 }
 
+/**
+ * heatmapChartSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} heatmapChart series instanse
+ * @ignore
+ */
 export default function heatmapChartSeriesFactory(params) {
     params.libType = params.chartOptions.libType;
     params.chartType = 'heatmap';
