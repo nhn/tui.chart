@@ -4,19 +4,10 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import ChartBase from './chartBase';
+import chartConst from '../const';
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
-
-var ScatterChart = snippet.defineClass(ChartBase, /** @lends ScatterChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-scatter-chart',
+export default class ScatterChart extends ChartBase {
     /**
      * Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
      *  to display values for typically two variables for a set of data.
@@ -27,7 +18,7 @@ var ScatterChart = snippet.defineClass(ChartBase, /** @lends ScatterChart.protot
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
 
         if (!options.tooltip.align) {
@@ -36,20 +27,26 @@ var ScatterChart = snippet.defineClass(ChartBase, /** @lends ScatterChart.protot
 
         options.tooltip.grouped = false;
 
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true
         });
-    },
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-scatter-chart';
+    }
 
     /**
      * Get scale option.
      * @returns {{xAxis: {valueType: string}, yAxis: {valueType: string}}}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         return {
             xAxis: {
                 valueType: 'x'
@@ -58,12 +55,13 @@ var ScatterChart = snippet.defineClass(ChartBase, /** @lends ScatterChart.protot
                 valueType: 'y'
             }
         };
-    },
+    }
+
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -76,14 +74,13 @@ var ScatterChart = snippet.defineClass(ChartBase, /** @lends ScatterChart.protot
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
+
     /**
      * Add data ratios.
      * @override
      */
-    addDataRatios: function(limitMap) {
+    addDataRatios(limitMap) {
         this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, false);
     }
-});
-
-module.exports = ScatterChart;
+}

@@ -3,27 +3,24 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var MouseEventDetectorBase = require('./mouseEventDetectorBase');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var eventListener = require('../../helpers/eventListener');
-var snippet = require('tui-code-snippet');
+import MouseEventDetectorBase from './mouseEventDetectorBase';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import eventListener from '../../helpers/eventListener';
+import snippet from 'tui-code-snippet';
 
 /**
  * Mixer for zoom event of area type mouse event detector.
  * @mixin
  * @private */
-var zoomMixer = {
+export default {
     /**
      * Initialize for zoom.
      * @param {boolean} zoomable - whether zoomable or not
      * @private
      */
-    _initForZoom: function(zoomable) {
+    _initForZoom(zoomable) {
         /**
          * whether zoomable or not
          * @type {boolean}
@@ -95,9 +92,9 @@ var zoomMixer = {
      * Show tooltip after zoom.
      * @private
      */
-    _showTooltipAfterZoom: function() {
-        var isShowTooltipAfterZoom = this.isShowTooltipAfterZoom;
-        var lastDataBeforeZoom;
+    _showTooltipAfterZoom() {
+        const {isShowTooltipAfterZoom} = this;
+        let lastDataBeforeZoom;
 
         this.isShowTooltipAfterZoom = false;
 
@@ -121,7 +118,7 @@ var zoomMixer = {
      * @param {HTMLElement} selectionElement - drag selection element
      * @private
      */
-    _updateDimensionForDragSelection: function(selectionElement) {
+    _updateDimensionForDragSelection(selectionElement) {
         renderUtil.renderDimension(selectionElement, {
             height: this.layout.dimension.height
         });
@@ -132,8 +129,8 @@ var zoomMixer = {
      * @returns {HTMLElement}
      * @private
      */
-    _renderDragSelection: function() {
-        var selectionElement = dom.create('DIV', 'tui-chart-drag-selection');
+    _renderDragSelection() {
+        const selectionElement = dom.create('DIV', 'tui-chart-drag-selection');
 
         this._updateDimensionForDragSelection(selectionElement);
 
@@ -146,9 +143,9 @@ var zoomMixer = {
      * @returns {HTMLElement}
      * @override
      */
-    render: function(data) {
-        var container = MouseEventDetectorBase.prototype.render.call(this, data);
-        var selectionElement = this._renderDragSelection();
+    render(data) {
+        const container = MouseEventDetectorBase.prototype.render.call(this, data);
+        const selectionElement = this._renderDragSelection();
 
         dom.append(container, selectionElement);
         this.dragSelectionElement = selectionElement;
@@ -161,7 +158,7 @@ var zoomMixer = {
      * @param {{tickCount: number}} data - data for resizing
      * @override
      */
-    resize: function(data) {
+    resize(data) {
         this.containerBound = null;
         MouseEventDetectorBase.prototype.resize.call(this, data);
         this._updateDimensionForDragSelection(this.dragSelectionElement);
@@ -172,15 +169,15 @@ var zoomMixer = {
      * @private
      * @override
      */
-    _onClick: function() {},
+    _onClick() {},
 
     /**
      * Whether after drag mouseup or not.
      * @returns {boolean}
      * @private
      */
-    _isAfterDragMouseup: function() {
-        var afterMouseup = this.afterMouseup;
+    _isAfterDragMouseup() {
+        const {afterMouseup} = this;
 
         if (afterMouseup) {
             this.afterMouseup = false;
@@ -194,7 +191,7 @@ var zoomMixer = {
      * @param {HTMLElement} target - target element
      * @private
      */
-    _bindDragEvent: function(target) {
+    _bindDragEvent(target) {
         if (target.setCapture) {
             target.setCapture();
         }
@@ -208,7 +205,7 @@ var zoomMixer = {
      * Unbind drag event for zoom.
      * @private
      */
-    _unbindDragEvent: function() {
+    _unbindDragEvent() {
         if (this.downTarget && this.downTarget.releaseCapture) {
             this.downTarget.releaseCapture();
         }
@@ -224,14 +221,12 @@ var zoomMixer = {
      * @private
      * @override
      */
-    _onMousedown: function(e) {
-        var target;
-
+    _onMousedown(e) {
         if (!this.zoomable) {
             return;
         }
 
-        target = e.target || e.srcElement;
+        const target = e.target || e.srcElement;
 
         this.startClientPosition = {
             x: e.clientX,
@@ -248,14 +243,14 @@ var zoomMixer = {
      * @param {number} clientX - clientX
      * @private
      */
-    _showDragSelection: function(clientX) {
-        var layerX = this._calculateLayerPosition(clientX).x;
-        var left = Math.min(layerX, this.startLayerX) - this.layout.position.left;
-        var width = Math.abs(layerX - this.startLayerX);
-        var element = this.dragSelectionElement;
+    _showDragSelection(clientX) {
+        const layerX = this._calculateLayerPosition(clientX).x;
+        const left = Math.min(layerX, this.startLayerX) - this.layout.position.left;
+        const width = Math.abs(layerX - this.startLayerX);
+        const element = this.dragSelectionElement;
 
-        element.style.left = left + 'px';
-        element.style.width = width + 'px';
+        element.style.left = `${left}px`;
+        element.style.width = `${width}px`;
 
         dom.addClass(element, 'show');
     },
@@ -264,7 +259,7 @@ var zoomMixer = {
      * Hide drag selection.
      * @private
      */
-    _hideDragSelection: function() {
+    _hideDragSelection() {
         dom.removeClass(this.dragSelectionElement, 'show');
     },
 
@@ -273,13 +268,12 @@ var zoomMixer = {
      * @param {MouseEvent} e - mouse event
      * @private
      */
-    _onDrag: function(e) {
-        var clientPos = this.startClientPosition;
-        var target = e.target || e.srcElement;
-        var dataForZoomable;
+    _onDrag(e) {
+        const clientPos = this.startClientPosition;
+        const target = e.target || e.srcElement;
 
         if (clientPos) {
-            dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
+            const dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
 
             if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
                 if (snippet.isNull(this.dragStartIndexes)) {
@@ -298,11 +292,9 @@ var zoomMixer = {
      * @returns {Array.<number>}
      * @private
      */
-    _adjustIndexRange: function(startIndex, endIndex) {
-        var indexRange = [startIndex, endIndex].sort(function(a, b) {
-            return a - b;
-        });
-        var distanceOfRange = indexRange[1] - indexRange[0];
+    _adjustIndexRange(startIndex, endIndex) {
+        const indexRange = [startIndex, endIndex].sort((a, b) => a - b);
+        const distanceOfRange = indexRange[1] - indexRange[0];
 
         if (distanceOfRange === 0) {
             if (indexRange[0] === 0) {
@@ -328,10 +320,10 @@ var zoomMixer = {
      * @param {number} endIndex - end index
      * @private
      */
-    _fireZoom: function(startIndex, endIndex) {
-        var reverseMove = startIndex > endIndex;
-        var indexRange = this._adjustIndexRange(startIndex, endIndex);
-        var distanceOfRange = indexRange[1] - indexRange[0];
+    _fireZoom(startIndex, endIndex) {
+        const reverseMove = startIndex > endIndex;
+        const indexRange = this._adjustIndexRange(startIndex, endIndex);
+        const distanceOfRange = indexRange[1] - indexRange[0];
 
         if (this.prevDistanceOfRange === distanceOfRange) {
             return;
@@ -348,9 +340,9 @@ var zoomMixer = {
      * @param {number} clientY - clientY of mouse event
      * @private
      */
-    _setIsShowTooltipAfterZoomFlag: function(clientX, clientY) {
-        var layerX = this._calculateLayerPosition(clientX, clientY, false).x;
-        var limitLayerX = this._calculateLayerPosition(clientX, clientY).x;
+    _setIsShowTooltipAfterZoomFlag(clientX, clientY) {
+        const layerX = this._calculateLayerPosition(clientX, clientY, false).x;
+        const limitLayerX = this._calculateLayerPosition(clientX, clientY).x;
 
         this.isShowTooltipAfterZoom = (layerX === limitLayerX);
     },
@@ -360,18 +352,17 @@ var zoomMixer = {
      * @param {MouseEvent} e - mouse event
      * @private
      */
-    _onMouseupAfterDrag: function(e) {
+    _onMouseupAfterDrag(e) {
         // @TODO: define zoomable policy, when there is no data
         // To find dragEndIndex for zoom, data should not be null.
         // To avoid zooming avoid zooming with no data, check dragStartIndexes first
         // Becault chart without data returns invalid dragStartIndexes
-        var foundedDragEndData = this._findDataForZoomable(e.clientX, e.clientY);
-        var target;
+        const foundedDragEndData = this._findDataForZoomable(e.clientX, e.clientY);
 
         this._unbindDragEvent();
 
         if (snippet.isNull(this.dragStartIndexes)) {
-            target = e.target || e.srcElement;
+            const target = e.target || e.srcElement;
             if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
                 this._hideTooltip();
                 this.prevDistanceOfRange = null;
@@ -400,8 +391,8 @@ var zoomMixer = {
      * @returns {HTMLElement}
      * @private
      */
-    _renderResetZoomBtn: function() {
-        var resetBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
+    _renderResetZoomBtn() {
+        const resetBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
 
         return resetBtn;
     },
@@ -410,7 +401,7 @@ var zoomMixer = {
      * Zoom.
      * @param {object} data - data for rendering
      */
-    zoom: function(data) {
+    zoom(data) {
         this.prevFoundData = null;
         this.rerender(data);
         this._updateDimensionForDragSelection(this.dragSelectionElement);
@@ -425,4 +416,3 @@ var zoomMixer = {
     }
 };
 
-module.exports = zoomMixer;

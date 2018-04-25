@@ -4,11 +4,9 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import templateMaker from '../../helpers/templateMaker';
 
-var templateMaker = require('../../helpers/templateMaker');
-
-var htmls = {
+const htmls = {
     HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div class="tui-chart-tooltip-head {{ categoryVisible }}">{{ category }}</div>' +
         '<div class="tui-chart-tooltip-body">' +
@@ -120,7 +118,7 @@ var htmls = {
     '</div>'
 };
 
-module.exports = {
+export default {
     tplDefault: templateMaker.template(htmls.HTML_DEFAULT_TEMPLATE),
     tplPieChart: templateMaker.template(htmls.HTML_PIE_TEMPLATE),
     tplCoordinatetypeChart: templateMaker.template(htmls.HTML_COORDINATE_TYPE_CHART_TEMPLATE),

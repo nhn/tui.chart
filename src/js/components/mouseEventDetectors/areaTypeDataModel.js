@@ -3,23 +3,18 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import predicate from '../../helpers/predicate';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var predicate = require('../../helpers/predicate');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
-
-var concat = Array.prototype.concat;
-
-var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototype */ {
+export default class AreaTypeDataModel {
     /**
      * AreaTypeDataModel is data mode for mouse event detector of area type.
      * @constructs AreaTypeDataModel
      * @private
      * @param {Array} seriesItemBoundsData - series item bounds data
      */
-    init: function(seriesItemBoundsData) {
+    constructor(seriesItemBoundsData) {
         this.data = this._makeData(seriesItemBoundsData);
 
         /**
@@ -27,7 +22,7 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
          * @type {number}
          */
         this.lastGroupIndex = 0;
-    },
+    }
 
     /**
      * Make data for detecting mouse event.
@@ -35,12 +30,12 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
      * @returns {Array}
      * @private
      */
-    _makeData: function(seriesItemBoundsData) {
-        var lastGroupIndex = 0;
-        var seriesItemBoundsLength = seriesItemBoundsData.length;
-        var data = snippet.map(seriesItemBoundsData, function(seriesDatum, seriesIndex) {
-            var groupPositions = seriesDatum.data.groupPositions || seriesDatum.data.groupBounds;
-            var chartType = seriesDatum.chartType;
+    _makeData(seriesItemBoundsData) {
+        const seriesItemBoundsLength = seriesItemBoundsData.length;
+        let lastGroupIndex = 0;
+        let data = seriesItemBoundsData.map((seriesDatum, seriesIndex) => {
+            const {chartType, data: dotumData} = seriesDatum;
+            let groupPositions = dotumData.groupPositions || dotumData.groupBounds;
 
             if (predicate.isLineTypeChart(chartType) || predicate.isRadialChart(chartType)) {
                 groupPositions = arrayUtil.pivot(groupPositions);
@@ -48,16 +43,16 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
 
             lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
 
-            return snippet.map(groupPositions, function(positions, groupIndex) {
-                return snippet.map(positions, function(position, index) {
-                    var datum = null;
+            return groupPositions.map((positions, groupIndex) => (
+                positions.map((position, index) => {
+                    let datum = null;
 
                     if (position) {
                         datum = {
-                            chartType: chartType,
+                            chartType,
                             indexes: {
-                                groupIndex: groupIndex,
-                                index: index
+                                groupIndex,
+                                index
                             },
                             bound: position
                         };
@@ -69,17 +64,15 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
                     }
 
                     return datum;
-                });
-            });
+                })
+            ));
         });
 
-        data = concat.apply([], data);
+        data = [].concat(...data);
         this.lastGroupIndex = lastGroupIndex;
 
-        return snippet.filter(concat.apply([], data), function(datum) {
-            return !!datum;
-        });
-    },
+        return [].concat(...data).filter(datum => !!datum);
+    }
 
     /**
      * Find Data by layer position.
@@ -88,17 +81,17 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
      * @param {number} selectLegendIndex select legend sereis index
      * @returns {object}
      */
-    findData: function(layerPosition, distanceLimit, selectLegendIndex) {
-        var min = 100000;
-        var findFoundMap = {};
-        var findFound;
+    findData(layerPosition, distanceLimit, selectLegendIndex) {
+        const findFoundMap = {};
+        let min = 100000;
+        let findFound;
 
         distanceLimit = distanceLimit || Number.MAX_VALUE;
 
-        snippet.forEach(this.data, function(datum) {
-            var xDiff = layerPosition.x - datum.bound.left;
-            var yDiff = layerPosition.y - datum.bound.top;
-            var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+        this.data.forEach(datum => {
+            const xDiff = layerPosition.x - datum.bound.left;
+            const yDiff = layerPosition.y - datum.bound.top;
+            const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
             if (distance < distanceLimit && distance <= min) {
                 min = distance;
@@ -112,18 +105,18 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
         }
 
         return findFound;
-    },
+    }
 
     /**
      * Find data by indexes.
      * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
      * @returns {object}
      */
-    findDataByIndexes: function(indexes) {
-        var foundData = null;
+    findDataByIndexes({index, seriesIndex}) {
+        let foundData = null;
 
-        snippet.forEachArray(this.data, function(datum) {
-            if (datum.indexes.groupIndex === indexes.index && datum.indexes.index === indexes.seriesIndex) {
+        this.data.forEach(datum => {
+            if (datum.indexes.groupIndex === index && datum.indexes.index === seriesIndex) {
                 foundData = datum;
             }
 
@@ -131,35 +124,33 @@ var AreaTypeDataModel = snippet.defineClass(/** @lends AreaTypeDataModel.prototy
         });
 
         return foundData;
-    },
+    }
 
     /**
      * Get first data.
      * @param {number} index - index
      * @returns {object}
      */
-    getFirstData: function(index) {
-        var indexes = {
+    getFirstData(index) {
+        const indexes = {
             index: 0,
             seriesIndex: index
         };
 
         return this.findDataByIndexes(indexes);
-    },
+    }
 
     /**
      * Get last data.
      * @param {number} index - index
      * @returns {object}
      */
-    getLastData: function(index) {
-        var indexes = {
+    getLastData(index) {
+        const indexes = {
             index: this.lastGroupIndex,
             seriesIndex: index
         };
 
         return this.findDataByIndexes(indexes);
     }
-});
-
-module.exports = AreaTypeDataModel;
+}

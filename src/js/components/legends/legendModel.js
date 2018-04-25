@@ -3,15 +3,9 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-
-var concat = Array.prototype.concat;
-var forEachArray = snippet.forEachArray;
-
-var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
+export default class LegendModel {
     /**
      * LegendModel is legend model.
      * @constructs LegendModel
@@ -21,7 +15,7 @@ var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * legend theme
          * @type {Object}
@@ -78,24 +72,23 @@ var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
 
         this._setData();
         this._initCheckedIndexes();
-    },
+    }
 
     /**
      * Initialize checked data.
      * @private
      */
-    _initCheckedIndexes: function() {
-        var self = this;
-        var checkedIndexes = [];
-        forEachArray(this.legendData, function(legendDatum, index) {
-            if (legendDatum.visible) {
+    _initCheckedIndexes() {
+        const checkedIndexes = [];
+        this.legendData.forEach(({visible}, index) => {
+            if (visible) {
                 checkedIndexes.push(index);
             }
-            self.checkedWholeIndexes[index] = legendDatum.visible;
+            this.checkedWholeIndexes[index] = visible;
         });
 
         this.updateCheckedLegendsWith(checkedIndexes);
-    },
+    }
 
     /**
      * Set theme to legend data.
@@ -107,16 +100,16 @@ var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
      * @param {Array.<boolean>} [checkedIndexes] - checked indexes
      * @private
      */
-    _setThemeToLegendData: function(legendData, colorTheme, checkedIndexes) {
-        var seriesIndex = 0;
+    _setThemeToLegendData(legendData, {colors, borderColor}, checkedIndexes) {
+        let seriesIndex = 0;
 
-        forEachArray(legendData, function(datum, index) {
-            var itemTheme = {
-                color: colorTheme.colors[index]
+        legendData.forEach((datum, index) => {
+            const itemTheme = {
+                color: colors[index]
             };
 
-            if (colorTheme.borderColor) {
-                itemTheme.borderColor = colorTheme.borderColor;
+            if (borderColor) {
+                itemTheme.borderColor = borderColor;
             }
 
             datum.theme = itemTheme;
@@ -129,68 +122,63 @@ var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
                 datum.seriesIndex = -1;
             }
         });
-    },
+    }
 
     /**
      * Set legend data.
      * @private
      */
-    _setData: function() {
-        var self = this;
-        var theme = this.theme;
-        var chartType = this.chartType;
-        var seriesTypes = this.seriesTypes;
-        var legendData = this.legendData;
-        var checkedIndexesMap = this.checkedIndexesMap;
-        var data, startIndex;
+    _setData() {
+        const {theme, chartType, seriesTypes, legendData, checkedIndexesMap} = this;
+        let data;
 
         if (!seriesTypes || seriesTypes.length < 2) {
             this._setThemeToLegendData(legendData, theme[chartType], checkedIndexesMap[chartType]);
             data = legendData;
         } else {
-            startIndex = 0;
-            data = concat.apply([], snippet.map(seriesTypes, function(seriesType) {
-                var labelLen = self.labels[seriesType].length;
-                var endIndex = startIndex + labelLen;
-                var slicedLegendData, checkedIndexes;
+            let startIndex = 0;
+            const dataItems = seriesTypes.map(seriesType => {
+                const labelLen = this.labels[seriesType].length;
+                const endIndex = startIndex + labelLen;
+                const slicedLegendData = legendData.slice(startIndex, endIndex);
+                const checkedIndexes = checkedIndexesMap[seriesType];
 
-                slicedLegendData = legendData.slice(startIndex, endIndex);
-                checkedIndexes = checkedIndexesMap[seriesType];
                 startIndex = endIndex;
-                self._setThemeToLegendData(slicedLegendData, theme[seriesType], checkedIndexes);
+                this._setThemeToLegendData(slicedLegendData, theme[seriesType], checkedIndexes);
 
                 return slicedLegendData;
-            }));
+            });
+            data = [].concat(...dataItems);
         }
 
         this.data = data;
-    },
+    }
 
     /**
      * Get legend data.
      * @returns {Array.<{chartType: string, label: string, theme: object}>} legend data
      */
-    getData: function() {
+    getData() {
         return this.data;
-    },
+    }
 
     /**
      * Get legend datum by index.
      * @param {number} index legend index
      * @returns {{chartType: string, label: string, theme: object}} legend datum
      */
-    getDatum: function(index) {
+    getDatum(index) {
         return this.data[index];
-    },
+    }
 
     /**
      * Get legend datum by label
      * @param {string} label - legend label
      * @returns {{chartType: string, label: string, theme: object}} legend datum
      */
-    getDatumByLabel: function(label) {
-        var foundDatum = null;
-        forEachArray(this.data, function(datum) {
+    getDatumByLabel(label) {
+        let foundDatum = null;
+        this.data.forEach(datum => {
             if (datum.label === label) {
                 foundDatum = datum;
             }
@@ -199,30 +187,30 @@ var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
         });
 
         return foundDatum;
-    },
+    }
 
     /**
      * Get selected datum.
      * @returns {{chartType: string, label: string, theme: Object}} legend datum
      */
-    getSelectedDatum: function() {
+    getSelectedDatum() {
         return this.getDatum(this.selectedIndex);
-    },
+    }
 
     /**
      * Update selected index.
      * @param {?number} value value
      */
-    updateSelectedIndex: function(value) {
+    updateSelectedIndex(value) {
         this.selectedIndex = value;
-    },
+    }
 
     /**
      * Toggle selected index.
      * @param {number} index legend index
      */
-    toggleSelectedIndex: function(index) {
-        var selectedIndex;
+    toggleSelectedIndex(index) {
+        let selectedIndex;
 
         if (this.selectedIndex === index) {
             selectedIndex = null;
@@ -231,111 +219,108 @@ var LegendModel = snippet.defineClass(/** @lends LegendModel.prototype */ {
         }
 
         this.updateSelectedIndex(selectedIndex);
-    },
+    }
 
     /**
      * Get selected index.
      * @returns {number} selected index
      */
-    getSelectedIndex: function() {
+    getSelectedIndex() {
         return this.selectedIndex;
-    },
+    }
 
     /**
      * Whether unselected index or not.
      * @param {number} index legend index
      * @returns {boolean} true if selected
      */
-    isUnselectedIndex: function(index) {
+    isUnselectedIndex(index) {
         return !snippet.isNull(this.selectedIndex) && (this.selectedIndex !== index);
-    },
+    }
 
     /**
      * Whether checked selected index or not.
      * @returns {boolean} true if checked
      */
-    isCheckedSelectedIndex: function() {
+    isCheckedSelectedIndex() {
         return this.isCheckedIndex(this.selectedIndex);
-    },
+    }
 
     /**
      * Toggle checked index.
      * @param {number} index legend index
      */
-    toggleCheckedIndex: function(index) {
+    toggleCheckedIndex(index) {
         this.checkedWholeIndexes[index] = !this.checkedWholeIndexes[index];
-    },
+    }
 
     /**
      * Update checked index.
      * @param {number} index legend index
      * @private
      */
-    _updateCheckedIndex: function(index) {
+    _updateCheckedIndex(index) {
         this.checkedWholeIndexes[index] = true;
-    },
+    }
 
     /**
      * Whether checked index.
      * @param {number} index legend index
      * @returns {boolean} true if checked
      */
-    isCheckedIndex: function(index) {
+    isCheckedIndex(index) {
         return !!this.checkedWholeIndexes[index];
-    },
+    }
 
     /**
      * Add sending datum.
      * @param {number} index legend index
      */
-    _addSendingDatum: function(index) {
-        var legendDatum = this.getDatum(index);
+    _addSendingDatum(index) {
+        const legendDatum = this.getDatum(index);
         if (!this.checkedIndexesMap[legendDatum.chartType]) {
             this.checkedIndexesMap[legendDatum.chartType] = [];
         }
         this.checkedIndexesMap[legendDatum.chartType][legendDatum.index] = true;
-    },
+    }
 
     /**
      * Check selected index;
      */
-    checkSelectedIndex: function() {
+    checkSelectedIndex() {
         this._updateCheckedIndex(this.selectedIndex);
         this._addSendingDatum(this.selectedIndex);
         this._setData();
-    },
+    }
 
     /**
      * Get checked indexes.
      * @returns {object} object data that whether series has checked or not
      */
-    getCheckedIndexes: function() {
+    getCheckedIndexes() {
         return this.checkedIndexesMap;
-    },
+    }
 
     /**
      * Reset checked data.
      * @private
      */
-    _resetCheckedData: function() {
+    _resetCheckedData() {
         this.checkedWholeIndexes = [];
         this.checkedIndexesMap = {};
-    },
+    }
 
     /**
      * Update checked legend's indexes
      * @param {Array.<number>} indexes indexes
      */
-    updateCheckedLegendsWith: function(indexes) {
-        var self = this;
-
+    updateCheckedLegendsWith(indexes) {
         this._resetCheckedData();
-        forEachArray(indexes, function(index) {
-            self._updateCheckedIndex(index);
-            self._addSendingDatum(index);
+        indexes.forEach(index => {
+            this._updateCheckedIndex(index);
+            this._addSendingDatum(index);
         });
         this._setData();
     }
-});
+}
 
-module.exports = LegendModel;

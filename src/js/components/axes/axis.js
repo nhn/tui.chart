@@ -5,16 +5,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import pluginFactory from '../../factories/pluginFactory';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var pluginFactory = require('../../factories/pluginFactory');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+const {AXIS_EDGE_RATIO, X_AXIS_LABEL_PADDING, COMPONENT_TYPE_RAPHAEL} = chartConst;
 
-var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
+class Axis {
     /**
      * Axis component.
      * @constructs Axis
@@ -27,7 +27,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      *      @param {object} params.seriesType series type
      *      @param {boolean} params.isYAxis boolean value for axis is vertical or not
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * Axis view className
          * @type {string}
@@ -101,13 +101,13 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
          * Renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'axis');
+        this.graphRenderer = pluginFactory.get(COMPONENT_TYPE_RAPHAEL, 'axis');
 
         /**
          * Drawing type
          * @type {string}
          */
-        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+        this.drawingType = COMPONENT_TYPE_RAPHAEL;
 
         /**
          * Paper additional width
@@ -115,8 +115,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
          */
         this.paperAdditionalWidth = 0;
 
-        /**
-         * Paper additional height
+        /** * Paper additional height
          * @type {number}
          */
         this.paperAdditionalHeight = 0;
@@ -129,22 +128,23 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         this._elBg = null;
 
         this.isRightYAxis = params.name === 'rightYAxis';
-    },
+    }
 
     /**
      * Render vertical axis background
      * @private
      */
-    _renderBackground: function() {
-        var dimension = snippet.extend({}, this.layout.dimension);
-        var position = snippet.extend({}, this.layout.position);
+    _renderBackground() {
+        const dimension = Object.assign({}, this.layout.dimension);
+        const position = Object.assign({}, this.layout.position);
 
         if (this._elBg) {
             this._elBg.remove();
         }
 
         this._elBg = this.graphRenderer.renderBackground(this.paper, position, dimension, this.theme.background);
-    },
+    }
+
     /**
      * Render child containers like title area, label area and tick area.
      * @param {number} size xAxis width or yAxis height
@@ -153,15 +153,13 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} additionalWidth additional width
      * @private
      */
-    _renderChildContainers: function(size, tickCount, categories, additionalWidth) {
-        var isYAxisLineType = this.isYAxis && this.data.aligned;
-        var axisLimit = this.limitMap[this.dataProcessor.chartType];
-        var isNegativeLimitChart = !this.data.limit && axisLimit && axisLimit.min < 0;
-        var isBarChart = predicate.isBarTypeChart(this.dataProcessor.chartType);
-        var seriesOption = this.dataProcessor.getOption('series') || {};
-        var isDivergingOption = seriesOption.diverging;
-
-        additionalWidth = additionalWidth || 0;
+    _renderChildContainers(size, tickCount, categories, additionalWidth = 0) {
+        const isYAxisLineType = this.isYAxis && this.data.aligned;
+        const axisLimit = this.limitMap[this.dataProcessor.chartType];
+        const isNegativeLimitChart = !this.data.limit && axisLimit && axisLimit.min < 0;
+        const isBarChart = predicate.isBarTypeChart(this.dataProcessor.chartType);
+        const seriesOption = this.dataProcessor.getOption('series') || {};
+        const isDivergingOption = seriesOption.diverging;
 
         if (this.isYAxis && !this.data.isPositionRight && !this.options.isCenter && this.shifting) {
             this._renderBackground();
@@ -179,69 +177,69 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
         if (isNegativeLimitChart && isBarChart && !isDivergingOption) {
             this._renderNegativeStandardsLine(size, additionalWidth, this.dimensionMap.series, axisLimit);
         }
-    },
+    }
 
     /**
      * Render divided xAxis if yAxis rendered in the center.
      * @param {{width: number, height:number}} dimension axis area width and height
      * @private
      */
-    _renderDividedAxis: function(dimension) {
-        var axisData = this.data;
-        var lSideWidth = Math.round(dimension.width / 2);
-        var rSideWidth = dimension.width - lSideWidth - 1;
-        var tickCount = axisData.tickCount;
-        var halfTickCount = parseInt(tickCount / 2, 10) + 1;
-        var categories = axisData.labels;
-        var lCategories = categories.slice(0, halfTickCount);
-        var rCategories = categories.slice(halfTickCount - 1, tickCount);
-        var tickInterval = lSideWidth / halfTickCount;
-        var secondXAxisAdditionalPosition = lSideWidth + this.dimensionMap.yAxis.width - 1;
+    _renderDividedAxis({width}) {
+        const {tickCount, labels: categories} = this.data;
+        const lSideWidth = Math.round(width / 2);
+        const rSideWidth = width - lSideWidth - 1;
+        const halfTickCount = parseInt(tickCount / 2, 10) + 1;
+        const lCategories = categories.slice(0, halfTickCount);
+        const rCategories = categories.slice(halfTickCount - 1, tickCount);
+        const tickInterval = lSideWidth / halfTickCount;
+        const secondXAxisAdditionalPosition = lSideWidth + this.dimensionMap.yAxis.width - 1;
 
         this.paperAdditionalWidth = tickInterval;
 
         this._renderChildContainers(lSideWidth, halfTickCount, lCategories, 0);
         this._renderChildContainers(rSideWidth + 1, halfTickCount, rCategories,
             secondXAxisAdditionalPosition);
-    },
+    }
 
     /**
      * Render single axis if not divided.
      * @param {{width: number, height: number}} dimension axis area dimension
      * @private
      */
-    _renderNotDividedAxis: function(dimension) {
-        var axisData = this.data;
-        var isYAxis = this.isYAxis;
-        var size = isYAxis ? dimension.height : dimension.width;
-        var additionalSize = 0;
+    _renderNotDividedAxis({width, height}) {
+        const {positionRatio, tickCount, labels} = this.data;
+        const {isYAxis} = this;
+        const size = isYAxis ? height : width;
+        let additionalSize = 0;
 
-        if (axisData.positionRatio) {
-            additionalSize = size * axisData.positionRatio;
+        if (positionRatio) {
+            additionalSize = size * positionRatio;
         }
 
-        this._renderChildContainers(size, axisData.tickCount, axisData.labels, additionalSize);
-    },
+        this._renderChildContainers(size, tickCount, labels, additionalSize);
+    }
 
     /**
      * Render axis area.
      * @private
      */
-    _renderAxisArea: function() {
-        var dimension = this.layout.dimension;
-        var axisData = this.data;
+    _renderAxisArea() {
+        const {dimension} = this.layout;
+        const {isLabelAxis} = this.data;
+        const {divided, isCenter} = this.options;
+        let {width} = dimension;
 
-        this.isLabelAxis = axisData.isLabelAxis;
+        this.isLabelAxis = isLabelAxis;
 
-        if (this.options.divided) {
-            this.containerWidth = dimension.width + this.dimensionMap.yAxis.width;
+        if (divided) {
+            this.containerWidth = width + this.dimensionMap.yAxis.width;
             this._renderDividedAxis(dimension);
-            dimension.width = this.containerWidth;
+            width = this.containerWidth;
         } else {
-            dimension.width += this.options.isCenter ? 1 : 0;
+            width += isCenter ? 1 : 0;
             this._renderNotDividedAxis(dimension);
         }
-    },
+    }
 
     /**
      * Set data for rendering.
@@ -256,59 +254,60 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * }} data - bounds and scale data
      * @private
      */
-    _setDataForRendering: function(data) {
-        this.layout = data.layout;
-        this.dimensionMap = data.dimensionMap;
-        this.limitMap = data.limitMap;
-        this.data = data.axisDataMap[this.componentName];
+    _setDataForRendering({layout, dimensionMap, limitMap, axisDataMap}) {
+        this.layout = layout;
+        this.dimensionMap = dimensionMap;
+        this.limitMap = limitMap;
+        this.data = axisDataMap[this.componentName];
         this.options = this.data.options;
-    },
+    }
 
     /**
      * @param {object} data - bounds and scale data
      */
-    render: function(data) {
-        this.paper = data.paper;
-        this.axisSet = data.paper.set();
+    render(data) {
+        const {paper} = data;
+        this.paper = paper;
+        this.axisSet = paper.set();
 
         this._setDataForRendering(data);
         this._renderAxisArea();
-    },
+    }
 
     /**
      * Rerender axis component.
      * @param {object} data - bounds and scale data
      */
-    rerender: function(data) {
+    rerender(data) {
         this.axisSet.remove();
 
         this.render(data);
-    },
+    }
 
     /**
      * Resize axis component.
      * @param {object} data - bounds and scale data
      */
-    resize: function(data) {
+    resize(data) {
         this.rerender(data);
-    },
+    }
 
     /**
      * Zoom.
      * @param {object} data - bounds and scale data
      */
-    zoom: function(data) {
+    zoom(data) {
         this.rerender(data);
-    },
+    }
 
     /**
      * get other side axis dimension
      * @returns {object}
      * @private
      */
-    _getOtherSideDimension: function() {
+    _getOtherSideDimension() {
         return this.dimensionMap[this.isYAxis ? 'xAxis' : 'yAxis'];
-    },
+    }
 
     /**
      * Title area renderer
@@ -316,10 +315,10 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} additionalWidth - right side xAxis position
      * @private
      */
-    _renderTitleArea: function(size, additionalWidth) {
-        var title = this.options.title || {};
-        var yAxisOption = this.dataProcessor.getOption('yAxis');
-        var seriesOption = this.dataProcessor.getOption('series') || {};
+    _renderTitleArea(size, additionalWidth) {
+        const {title = {}} = this.options;
+        const yAxisOption = this.dataProcessor.getOption('yAxis');
+        const seriesOption = this.dataProcessor.getOption('series') || {};
 
         if (title.text) {
             this.graphRenderer.renderTitle(this.paper, {
@@ -338,13 +337,13 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
                 },
                 layout: this.layout,
                 areaSize: size,
-                additionalWidth: additionalWidth,
+                additionalWidth,
                 otherSideDimension: this._getOtherSideDimension(),
                 tickCount: this.data.tickCount,
                 set: this.axisSet
             });
         }
-    },
+    }
 
     /**
      * Render tick line.
@@ -353,22 +352,22 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} additionalSize - additional size
      * @private
      */
-    _renderTickLine: function(areaSize, isNotDividedXAxis, additionalSize) {
+    _renderTickLine(areaSize, isNotDividedXAxis, additionalSize) {
         this.graphRenderer.renderTickLine({
-            areaSize: areaSize,
-            additionalSize: additionalSize,
+            areaSize,
+            additionalSize,
             additionalWidth: this.paperAdditionalWidth,
             additionalHeight: this.paperAdditionalHeight,
             isPositionRight: this.data.isPositionRight,
             isCenter: this.data.options.isCenter,
-            isNotDividedXAxis: isNotDividedXAxis,
+            isNotDividedXAxis,
             isVertical: this.isYAxis,
             tickColor: this.theme.tickColor,
             layout: this.layout,
             paper: this.paper,
             set: this.axisSet
         });
-    },
+    }
 
     /**
      * Render ticks.
@@ -378,55 +377,52 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} [additionalSize] - additional size
      * @private
      */
-    _renderTicks: function(size, tickCount, isNotDividedXAxis, additionalSize) {
-        var tickColor = this.theme.tickColor;
-        var axisData = this.data;
-        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
-        var sizeRatio = axisData.sizeRatio || 1;
-        var isYAxis = this.isYAxis;
-        var isCenter = this.data.options.isCenter;
-        var isDivided = this.data.options.divided;
-        var isPositionRight = this.data.isPositionRight;
-        var positions = calculator.makeTickPixelPositions(
+    _renderTicks(size, tickCount, isNotDividedXAxis, additionalSize) {
+        const {tickColor} = this.theme;
+        const {remainLastBlockInterval, sizeRatio = 1, tickCount: dataTickCount, isPositionRight} = this.data;
+        const remainLastBlockIntervalPosition = (remainLastBlockInterval) ? size : 0;
+        const {isYAxis} = this;
+        const {isCenter, divided: isDivided} = this.data.options;
+        const positions = calculator.makeTickPixelPositions(
             (size * sizeRatio),
             tickCount,
             0,
             remainLastBlockIntervalPosition
         );
-        var additionalHeight = this.paperAdditionalHeight + 1;
-        var additionalWidth = this.paperAdditionalWidth;
-        var positionLength = remainLastBlockIntervalPosition ? axisData.tickCount + 1 : axisData.tickCount;
+        const additionalHeight = this.paperAdditionalHeight + 1;
+        const additionalWidth = this.paperAdditionalWidth;
+        const positionLength = remainLastBlockIntervalPosition ? dataTickCount + 1 : dataTickCount;
 
         positions.length = positionLength;
 
         this.graphRenderer.renderTicks({
             paper: this.paper,
             layout: this.layout,
-            positions: positions,
+            positions,
             isVertical: isYAxis,
-            isCenter: isCenter,
-            isDivided: isDivided,
-            additionalSize: additionalSize,
-            additionalWidth: additionalWidth,
-            additionalHeight: additionalHeight,
+            isCenter,
+            isDivided,
+            additionalSize,
+            additionalWidth,
+            additionalHeight,
             otherSideDimension: this._getOtherSideDimension(),
-            isPositionRight: isPositionRight,
-            tickColor: tickColor,
+            isPositionRight,
+            tickColor,
             set: this.axisSet
         });
-    },
+    }
 
-    _renderNegativeStandardsLine: function(size, additionalSize, seriesDimension, axisLimit) {
+    _renderNegativeStandardsLine(size, additionalSize, seriesDimension, axisLimit) {
         this.graphRenderer.renderStandardLine({
             areaSize: size,
             isVertical: this.isYAxis,
             layout: this.layout,
             paper: this.paper,
             set: this.axisSet,
-            seriesDimension: seriesDimension,
-            axisLimit: axisLimit
+            seriesDimension,
+            axisLimit
         });
-    },
+    }
 
     /**
      * Render tick area.
@@ -435,12 +431,12 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} [additionalSize] - additional size (width or height)
      * @private
      */
-    _renderTickArea: function(size, tickCount, additionalSize) {
-        var isNotDividedXAxis = !this.isYAxis && !this.options.divided;
+    _renderTickArea(size, tickCount, additionalSize) {
+        const isNotDividedXAxis = !this.isYAxis && !this.options.divided;
 
         this._renderTickLine(size, isNotDividedXAxis, (additionalSize || 0));
         this._renderTicks(size, tickCount, isNotDividedXAxis, (additionalSize || 0));
-    },
+    }
 
     /**
      * Render label area.
@@ -450,20 +446,19 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} [additionalSize] additional size (width or height)
      * @private
      */
-    _renderLabelArea: function(size, tickCount, categories, additionalSize) {
-        var sizeRatio = this.data.sizeRatio || 1;
-        var axisData = this.data;
-        var remainLastBlockIntervalPosition = (axisData.remainLastBlockInterval) ? size : 0;
-        var tickPixelPositions = calculator.makeTickPixelPositions(
+    _renderLabelArea(size, tickCount, categories, additionalSize) {
+        const {sizeRatio = 1, remainLastBlockInterval} = this.data;
+        const remainLastBlockIntervalPosition = (remainLastBlockInterval) ? size : 0;
+        const tickPixelPositions = calculator.makeTickPixelPositions(
             (size * sizeRatio),
             tickCount,
             0,
             remainLastBlockIntervalPosition
         );
-        var labelDistance = tickPixelPositions[1] - tickPixelPositions[0];
+        const labelDistance = tickPixelPositions[1] - tickPixelPositions[0];
 
         this._renderLabels(tickPixelPositions, categories, labelDistance, (additionalSize || 0));
-    },
+    }
 
     /**
      * Make html of rotation labels.
@@ -473,20 +468,21 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} additionalSize additional size
      * @private
      */
-    _renderRotationLabels: function(positions, categories, labelSize, additionalSize) {
-        var renderer = this.graphRenderer;
-        var isYAxis = this.isYAxis;
-        var theme = this.theme.label;
-        var degree = this.data.degree;
-        var halfWidth = labelSize / 2;
-        var edgeAlignWidth = labelSize / chartConst.AXIS_EDGE_RATIO;
-        var horizontalTop = this.layout.position.top + chartConst.X_AXIS_LABEL_PADDING;
-        var baseLeft = this.layout.position.left;
-        var labelMargin = this.options.labelMargin || 0;
+    _renderRotationLabels(positions, categories, labelSize, additionalSize) {
+        const renderer = this.graphRenderer;
+        const {isYAxis} = this;
+        const theme = this.theme.label;
+        const {degree} = this.data;
+        const halfWidth = labelSize / 2;
+        const edgeAlignWidth = labelSize / AXIS_EDGE_RATIO;
+        const {top, left} = this.layout.position;
+        const horizontalTop = top + X_AXIS_LABEL_PADDING;
+        const baseLeft = left;
+        const labelMargin = this.options.labelMargin || 0;
 
-        snippet.forEach(positions, function(position, index) {
-            var labelPosition = position + (additionalSize || 0);
-            var positionTopAndLeft = {};
+        positions.forEach((position, index) => {
+            const labelPosition = position + (additionalSize || 0);
+            const positionTopAndLeft = {};
 
             if (isYAxis) {
                 positionTopAndLeft.top = labelPosition + halfWidth;
@@ -497,15 +493,15 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             }
 
             renderer.renderRotatedLabel({
-                degree: degree,
+                degree,
                 labelText: categories[index],
                 paper: this.paper,
-                positionTopAndLeft: positionTopAndLeft,
+                positionTopAndLeft,
                 set: this.axisSet,
-                theme: theme
+                theme
             });
         }, this);
-    },
+    }
 
     /**
      * Make html of normal labels.
@@ -515,22 +511,19 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} additionalSize additional size
      * @private
      */
-    _renderNormalLabels: function(positions, categories, labelSize, additionalSize) {
-        var renderer = this.graphRenderer;
-        var isYAxis = this.isYAxis;
-        var isPositionRight = this.data.isPositionRight;
-        var isCategoryLabel = this.isLabelAxis;
-        var theme = this.theme.label;
-        var dataProcessor = this.dataProcessor;
-        var isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
-        var isPointOnColumn = isLineTypeChart && this.options.pointOnColumn;
-        var layout = this.layout;
-        var labelMargin = this.options.labelMargin || 0;
+    _renderNormalLabels(positions, categories, labelSize, additionalSize) {
+        const renderer = this.graphRenderer;
+        const {isYAxis, isLabelAxis: isCategoryLabel, dataProcessor, layout} = this;
+        const {isPositionRight} = this.data;
+        const theme = this.theme.label;
+        const {labelMargin = 0, pointOnColumn, isCenter} = this.options;
+        const isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
+        const isPointOnColumn = isLineTypeChart && pointOnColumn;
 
-        snippet.forEach(positions, function(position, index) {
-            var labelPosition = position + additionalSize;
-            var halfLabelDistance = labelSize / 2;
-            var positionTopAndLeft = {};
+        positions.forEach((position, index) => {
+            const labelPosition = position + additionalSize;
+            const halfLabelDistance = labelSize / 2;
+            let positionTopAndLeft = {};
             /*
              * to prevent printing `undefined` text, when category label is not set
              */
@@ -540,20 +533,20 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
 
             if (isYAxis) {
                 positionTopAndLeft = this._getYAxisLabelPosition(layout, {
-                    labelPosition: labelPosition,
-                    isCategoryLabel: isCategoryLabel,
-                    halfLabelDistance: halfLabelDistance,
-                    isPositionRight: isPositionRight
+                    labelPosition,
+                    isCategoryLabel,
+                    halfLabelDistance,
+                    isPositionRight
                 });
             } else {
                 positionTopAndLeft = this._getXAxisLabelPosition(layout, {
-                    labelMargin: labelMargin,
+                    labelMargin,
                     labelHeight: renderUtil.getRenderedLabelsMaxHeight(categories, theme),
-                    labelPosition: labelPosition,
-                    isCategoryLabel: isCategoryLabel,
-                    isLineTypeChart: isLineTypeChart,
-                    isPointOnColumn: isPointOnColumn,
-                    halfLabelDistance: halfLabelDistance
+                    labelPosition,
+                    isCategoryLabel,
+                    isLineTypeChart,
+                    isPointOnColumn,
+                    halfLabelDistance
                 });
             }
 
@@ -561,27 +554,27 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             positionTopAndLeft.left = Math.round(positionTopAndLeft.left);
 
             renderer.renderLabel({
-                isPositionRight: isPositionRight,
+                isPositionRight,
                 isVertical: isYAxis,
-                isCenter: this.options.isCenter,
-                labelSize: labelSize,
+                isCenter,
+                labelSize,
                 labelText: categories[index],
                 paper: this.paper,
-                positionTopAndLeft: positionTopAndLeft,
+                positionTopAndLeft,
                 set: this.axisSet,
-                theme: theme
+                theme
             });
         }, this);
-    },
+    }
 
     /**
      * @param {object} layout - axis dimension, position
      * @param {object} params - optional data needed to render axis labels
      * @returns {object} top, left positon of y axis
      */
-    _getYAxisLabelPosition: function(layout, params) {
-        var labelTopPosition = params.labelPosition;
-        var labelLeftPosition;
+    _getYAxisLabelPosition(layout, params) {
+        let labelLeftPosition;
+        let labelTopPosition = params.labelPosition;
 
         if (params.isCategoryLabel) {
             labelTopPosition += params.halfLabelDistance + layout.position.top;
@@ -601,18 +594,21 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             top: labelTopPosition,
             left: labelLeftPosition
         };
-    },
+    }
 
     /**
      * @param {object} layout - axis dimension, position
      * @param {object} params - optional data needed to render axis labels
      * @returns {object} top, left positon of y axis
      */
-    _getXAxisLabelPosition: function(layout, params) {
-        var labelTopPosition = layout.position.top
-            + chartConst.X_AXIS_LABEL_PADDING
-            + params.labelMargin + (params.labelHeight / 2);
-        var labelLeftPosition = params.labelPosition + layout.position.left;
+    _getXAxisLabelPosition(layout, params) {
+        const labelTopPosition = calculator.sum([
+            layout.position.top,
+            X_AXIS_LABEL_PADDING,
+            params.labelMargin,
+            (params.labelHeight / 2)
+        ]);
+        let labelLeftPosition = params.labelPosition + layout.position.left;
 
         if (params.isCategoryLabel) {
             if (!params.isLineTypeChart || params.isPointOnColumn) {
@@ -624,7 +620,7 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             top: labelTopPosition,
             left: labelLeftPosition
         };
-    },
+    }
 
     /**
      * Make labels html.
@@ -634,13 +630,15 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
      * @param {number} additionalSize additional size
      * @private
      */
-    _renderLabels: function(positions, categories, labelSize, additionalSize) {
-        var isRotationlessXAxis = !this.isYAxis && this.isLabelAxis && (this.options.rotateLabel === false);
-        var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.data.degree;
-        var axisLabels;
+    _renderLabels(positions, categories, labelSize, additionalSize) {
+        const {rotateLabel, prefix, suffix} = this.options;
+        const {degree, multilineLabels} = this.data;
+        const isRotationlessXAxis = !this.isYAxis && this.isLabelAxis && (rotateLabel === false);
+        const hasRotatedXAxisLabel = this.componentName === 'xAxis' && degree;
+        let axisLabels;
 
         if (isRotationlessXAxis) {
-            axisLabels = this.data.multilineLabels;
+            axisLabels = multilineLabels;
         } else {
             axisLabels = categories;
         }
@@ -649,24 +647,25 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
             positions.length = axisLabels.length;
         }
 
-        axisLabels = renderUtil.addPrefixSuffix(axisLabels, this.options.prefix, this.options.suffix);
+        axisLabels = renderUtil.addPrefixSuffix(axisLabels, prefix, suffix);
 
         if (hasRotatedXAxisLabel) {
             this._renderRotationLabels(positions, axisLabels, labelSize, additionalSize);
         } else {
             this._renderNormalLabels(positions, axisLabels, labelSize, additionalSize);
         }
-    },
+    }
+
     /**
      * Animate axis for adding data
      * @param {object} data rendering data
      */
-    animateForAddingData: function(data) {
+    animateForAddingData(data) {
         if (!this.isYAxis) {
             this.graphRenderer.animateForAddingData(data.tickSize);
         }
     }
-});
+}
 
 /**
  * Factory for Axis
@@ -674,30 +673,35 @@ var Axis = snippet.defineClass(/** @lends Axis.prototype */ {
  * @returns {object}
  * @ignore
  */
-function axisFactory(axisParam) {
-    var chartType = axisParam.chartOptions.chartType;
-    var name = axisParam.name;
+export default function axisFactory(axisParam) {
+    const {
+        chartOptions,
+        name,
+        theme,
+        seriesTypes
+    } = axisParam;
+    const {chartType, series} = chartOptions;
 
     axisParam.isYAxis = (name === 'yAxis' || name === 'rightYAxis');
-    axisParam.shifting = axisParam.chartOptions.series.shifting;
+    axisParam.shifting = series.shifting;
 
     // In combo chart, the theme is divided into series name considering two YAxis(yAxis and rightYAxis)
     // @todo change theme structure so that access theme by axis type, not considering chart type
     //     like theme.xAxis, theme.yAxis, theme.rightYAxis
     if (chartType === 'combo') {
         if (axisParam.isYAxis) {
-            axisParam.theme = axisParam.theme[axisParam.seriesTypes[0]];
+            axisParam.theme = theme[seriesTypes[0]];
         } else if (name === 'rightYAxis') {
             axisParam.componentType = 'yAxis';
-            axisParam.theme = axisParam.theme[axisParam.seriesTypes[1]];
+            axisParam.theme = theme[seriesTypes[1]];
             axisParam.index = 1;
         }
     // @todo I do not know why the single type chart with yAxis branches once again as the chart name inside it. I feel inconsistent
     } else if (axisParam.isYAxis) {
-        axisParam.theme = axisParam.theme[chartType];
+        axisParam.theme = theme[chartType];
     // single chart, xAxis
     } else {
-        axisParam.theme = axisParam.theme;
+        axisParam.theme = theme;
     }
 
     return new Axis(axisParam);
@@ -706,4 +710,3 @@ function axisFactory(axisParam) {
 axisFactory.componentType = 'axis';
 axisFactory.Axis = Axis;
 
-module.exports = axisFactory;

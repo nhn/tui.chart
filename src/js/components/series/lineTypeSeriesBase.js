@@ -4,14 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var arrayUtil = require('../../helpers/arrayUtil');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import arrayUtil from '../../helpers/arrayUtil';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
+const {
+    SERIES_EXPAND_SIZE,
+    SERIES_LABEL_PADDING,
+    MAX_HEIGHT_WORD,
+    ADDING_DATA_ANIMATION_DURATION
+} = chartConst;
 
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -19,22 +23,21 @@ var snippet = require('tui-code-snippet');
  * @private
  * @mixin
  * @private */
-var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
+export default class LineTypeSeriesBase {
     /**
      * Make positions for default data type.
      * @param {number} [seriesWidth] - width of series area
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makePositionsForDefaultType: function(seriesWidth) {
-        var dimension = this.layout.dimension;
-        var seriesDataModel = this._getSeriesDataModel();
-        var width = seriesWidth || dimension.width || 0;
-        var height = dimension.height;
-        var len = seriesDataModel.getGroupCount();
-        var baseTop = this.layout.position.top;
-        var baseLeft = this.layout.position.left;
-        var step;
+    _makePositionsForDefaultType(seriesWidth) {
+        const {dimension: {height, width: dimensionWidth}} = this.layout;
+        const seriesDataModel = this._getSeriesDataModel();
+        const width = seriesWidth || dimensionWidth || 0;
+        const len = seriesDataModel.getGroupCount();
+        const baseTop = this.layout.position.top;
+        let baseLeft = this.layout.position.left;
+        let step;
 
         if (this.aligned) {
             step = width / (len > 1 ? (len - 1) : len);
@@ -43,9 +46,9 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
             baseLeft += (step / 2);
         }
 
-        return seriesDataModel.map(function(seriesGroup) {
-            return seriesGroup.map(function(seriesItem, index) {
-                var position;
+        return seriesDataModel.map(seriesGroup => (
+            seriesGroup.map((seriesItem, index) => {
+                let position;
 
                 if (!snippet.isNull(seriesItem.end)) {
                     position = {
@@ -59,9 +62,9 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
                 }
 
                 return position;
-            });
-        }, true);
-    },
+            })
+        ), true);
+    }
 
     /**
      * Make positions for coordinate data type.
@@ -69,24 +72,24 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makePositionForCoordinateType: function(seriesWidth) {
-        var dimension = this.layout.dimension;
-        var seriesDataModel = this._getSeriesDataModel();
-        var width = seriesWidth || dimension.width || 0;
-        var height = dimension.height;
-        var xAxis = this.axisDataMap.xAxis;
-        var additionalLeft = 0;
-        var baseTop = this.layout.position.top;
-        var baseLeft = this.layout.position.left;
+    _makePositionForCoordinateType(seriesWidth) {
+        const {dimension} = this.layout;
+        const seriesDataModel = this._getSeriesDataModel();
+        const {height} = dimension;
+        const {xAxis} = this.axisDataMap;
+        const baseTop = this.layout.position.top;
+        const baseLeft = this.layout.position.left;
+        let width = seriesWidth || dimension.width || 0;
+        let additionalLeft = 0;
 
         if (xAxis.sizeRatio) {
             additionalLeft = calculator.multiply(width, xAxis.positionRatio);
             width = calculator.multiply(width, xAxis.sizeRatio);
         }
 
-        return seriesDataModel.map(function(seriesGroup) {
-            return seriesGroup.map(function(seriesItem) {
-                var position;
+        return seriesDataModel.map(seriesGroup => (
+            seriesGroup.map(seriesItem => {
+                let position;
 
                 if (!snippet.isNull(seriesItem.end)) {
                     position = {
@@ -101,9 +104,9 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
                 }
 
                 return position;
-            });
-        }, true);
-    },
+            })
+        ), true);
+    }
 
     /**
      * Make basic positions for rendering line graph.
@@ -111,17 +114,13 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makeBasicPositions: function(seriesWidth) {
-        var positions;
-
+    _makeBasicPositions(seriesWidth) {
         if (this.dataProcessor.isCoordinateType()) {
-            positions = this._makePositionForCoordinateType(seriesWidth);
-        } else {
-            positions = this._makePositionsForDefaultType(seriesWidth);
+            return this._makePositionForCoordinateType(seriesWidth);
         }
 
-        return positions;
-    },
+        return this._makePositionsForDefaultType(seriesWidth);
+    }
 
     /**
      * Calculate label position top.
@@ -132,20 +131,20 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {number} position top
      * @private
      */
-    _calculateLabelPositionTop: function(basePosition, value, labelHeight, isStart) {
-        var baseTop = basePosition.top,
-            top;
+    _calculateLabelPositionTop(basePosition, value, labelHeight, isStart) {
+        const baseTop = basePosition.top;
+        let top;
 
         if (predicate.isValidStackOption(this.options.stackType)) {
             top = ((basePosition.startTop + baseTop - labelHeight) / 2) + 1;
         } else if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
-            top = baseTop - labelHeight - chartConst.SERIES_LABEL_PADDING;
+            top = baseTop - labelHeight - SERIES_LABEL_PADDING;
         } else {
-            top = baseTop + chartConst.SERIES_LABEL_PADDING;
+            top = baseTop + SERIES_LABEL_PADDING;
         }
 
         return top;
-    },
+    }
 
     /**
      * Make label position for rendering label of series area.
@@ -157,13 +156,13 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {{left: number, top: number}}
      * @private
      */
-    _makeLabelPosition: function(basePosition, labelHeight, label, value, isStart) {
+    _makeLabelPosition(basePosition, labelHeight, label, value, isStart) {
         return {
             left: basePosition.left,
             top: this._calculateLabelPositionTop(basePosition, value, labelHeight / 2, isStart)
 
         };
-    },
+    }
 
     /**
      * Get label positions for line type chart
@@ -172,29 +171,27 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {object}
      * @private
      */
-    _getLabelPositions: function(seriesDataModel, theme) {
-        var self = this;
-        var basePositions = arrayUtil.pivot(this.seriesData.groupPositions);
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
+    _getLabelPositions(seriesDataModel, theme) {
+        const basePositions = arrayUtil.pivot(this.seriesData.groupPositions);
+        const labelHeight = renderUtil.getRenderedLabelHeight(MAX_HEIGHT_WORD, theme);
 
-        return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            return seriesGroup.map(function(seriesItem, index) {
-                var basePosition = basePositions[groupIndex][index];
-                var end = self._makeLabelPosition(basePosition, labelHeight, seriesItem.endLabel, seriesItem.end);
-                var position = {
-                    end: end
-                };
+        return seriesDataModel.map((seriesGroup, groupIndex) => (
+            seriesGroup.map((seriesItem, index) => {
+                const basePosition = basePositions[groupIndex][index];
+                const end = this._makeLabelPosition(basePosition, labelHeight, seriesItem.endLabel, seriesItem.end);
+                const position = {end};
 
                 if (seriesItem.isRange) {
                     basePosition.top = basePosition.startTop;
-                    position.start =
-                        self._makeLabelPosition(basePosition, labelHeight, seriesItem.startLabel, seriesItem.start);
+                    position.start = this._makeLabelPosition(
+                        basePosition, labelHeight, seriesItem.startLabel, seriesItem.start
+                    );
                 }
 
                 return position;
-            });
-        });
-    },
+            })
+        ));
+    }
 
     /**
      * Get label texts
@@ -202,21 +199,21 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {Array.<string>}
      * @private
      */
-    _getLabelTexts: function(seriesDataModel) {
-        return seriesDataModel.map(function(seriesGroup) {
-            return seriesGroup.map(function(seriesDatum) {
-                var label = {
-                    end: seriesDatum.endLabel
+    _getLabelTexts(seriesDataModel) {
+        return seriesDataModel.map(seriesGroup => (
+            seriesGroup.map(({endLabel, isRange, startLabel}) => {
+                const label = {
+                    end: endLabel
                 };
 
-                if (seriesDatum.isRange) {
-                    label.start = seriesDatum.startLabel;
+                if (isRange) {
+                    label.start = startLabel;
                 }
 
                 return label;
-            });
-        });
-    },
+            })
+        ));
+    }
 
     /**
      * Render series label.
@@ -224,14 +221,14 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function(paper) {
-        var theme = this.theme.label;
-        var seriesDataModel = this._getSeriesDataModel();
-        var groupLabels = this._getLabelTexts(seriesDataModel);
-        var positionsSet = this._getLabelPositions(seriesDataModel, theme);
+    _renderSeriesLabel(paper) {
+        const theme = this.theme.label;
+        const seriesDataModel = this._getSeriesDataModel();
+        const groupLabels = this._getLabelTexts(seriesDataModel);
+        const positionsSet = this._getLabelPositions(seriesDataModel, theme);
 
         return this.graphRenderer.renderSeriesLabel(paper, positionsSet, groupLabels, theme);
-    },
+    }
 
     /**
      * To call showGroupTooltipLine function of graphRenderer.
@@ -240,18 +237,18 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      *      position: {left: number, top: number}
      * }} bound bound
      */
-    onShowGroupTooltipLine: function(bound) {
+    onShowGroupTooltipLine(bound) {
         if (!this.graphRenderer.showGroupTooltipLine) {
             return;
         }
 
         this.graphRenderer.showGroupTooltipLine(bound, this.layout);
-    },
+    }
 
     /**
      * To call hideGroupTooltipLine function of graphRenderer.
      */
-    onHideGroupTooltipLine: function() {
+    onHideGroupTooltipLine() {
         if (!this.seriesData
             || !this.seriesData.isAvailable()
             || !this.graphRenderer.hideGroupTooltipLine
@@ -259,13 +256,13 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
             return;
         }
         this.graphRenderer.hideGroupTooltipLine();
-    },
+    }
 
     /**
      * Zoom by mouse drag.
      * @param {object} data - data
      */
-    zoom: function(data) {
+    zoom(data) {
         this._cancelMovingAnimation();
         this._clearSeriesContainer(data.paper);
         this._setDataForRendering(data);
@@ -275,7 +272,7 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
         if (!snippet.isNull(this.selectedLegendIndex)) {
             this.graphRenderer.selectLegend(this.selectedLegendIndex);
         }
-    },
+    }
 
     /**
      * Whether changed or not.
@@ -284,19 +281,18 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @returns {boolean}
      * @private
      */
-    _isChangedLimit: function(before, after) {
+    _isChangedLimit(before, after) {
         return before.min !== after.min || before.max !== after.max;
-    },
+    }
 
     /**
      * Whether changed axis limit(min, max) or not.
      * @returns {boolean}
      * @private
      */
-    _isChangedAxisLimit: function() {
-        var beforeAxisDataMap = this.beforeAxisDataMap;
-        var axisDataMap = this.axisDataMap;
-        var changed = true;
+    _isChangedAxisLimit() {
+        const {beforeAxisDataMap, axisDataMap} = this;
+        let changed = true;
 
         if (beforeAxisDataMap) {
             changed = this._isChangedLimit(beforeAxisDataMap.yAxis.limit, axisDataMap.yAxis.limit);
@@ -309,17 +305,16 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
         this.beforeAxisDataMap = axisDataMap;
 
         return changed;
-    },
+    }
 
     /**
      * Animate for motion of series area.
      * @param {function} callback - callback function
      * @private
      */
-    _animate: function(callback) {
-        var self = this;
-        var duration = chartConst.ADDING_DATA_ANIMATION_DURATION;
-        var changedLimit = this._isChangedAxisLimit();
+    _animate(callback) {
+        const duration = ADDING_DATA_ANIMATION_DURATION;
+        const changedLimit = this._isChangedAxisLimit();
 
         if (changedLimit && this.seriesLabelContainer) {
             this.seriesLabelContainer.innerHTML = '';
@@ -329,10 +324,10 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
             return;
         }
 
-        this.movingAnimation = renderUtil.startAnimation(duration, callback, function() {
-            self.movingAnimation = null;
+        this.movingAnimation = renderUtil.startAnimation(duration, callback, () => {
+            this.movingAnimation = null;
         });
-    },
+    }
 
     /**
      * Make top of zero point for adding data.
@@ -340,54 +335,50 @@ var LineTypeSeriesBase = snippet.defineClass(/** @lends LineTypeSeriesBase.proto
      * @private
      * @override
      */
-    _makeZeroTopForAddingData: function() {
-        var seriesHeight = this.layout.dimension.height;
-        var limit = this.axisDataMap.yAxis.limit;
+    _makeZeroTopForAddingData() {
+        const seriesHeight = this.layout.dimension.height;
+        const {limit} = this.axisDataMap.yAxis;
 
-        return this._getLimitDistanceFromZeroPoint(seriesHeight, limit).toMax + chartConst.SERIES_EXPAND_SIZE;
-    },
+        return this._getLimitDistanceFromZeroPoint(seriesHeight, limit).toMax + SERIES_EXPAND_SIZE;
+    }
 
     /**
      * Animate for adding data.
      * @param {{tickSize: number}} data - parameters for adding data.
      */
-    animateForAddingData: function(data) {
-        var dimension = this.dimensionMap.extendedSeries;
-        var seriesWidth = this.layout.dimension.width;
-        var tickSize = data.tickSize;
-        var shiftingOption = this.options.shifting;
-        var seriesData, paramsForRendering, groupPositions, zeroTop;
+    animateForAddingData({tickSize, limitMap, axisDataMap}) {
+        const dimension = this.dimensionMap.extendedSeries;
+        const shiftingOption = this.options.shifting;
+        let seriesWidth = this.layout.dimension.width;
 
-        this.limit = data.limitMap[this.chartType];
-        this.axisDataMap = data.axisDataMap;
+        this.limit = limitMap[this.chartType];
+        this.axisDataMap = axisDataMap;
 
-        seriesData = this._makeSeriesData();
-        paramsForRendering = this._makeParamsForGraphRendering(dimension, seriesData);
+        const seriesData = this._makeSeriesData();
+        const paramsForRendering = this._makeParamsForGraphRendering(dimension, seriesData);
 
         if (shiftingOption) {
             seriesWidth += tickSize;
         }
 
-        groupPositions = this._makePositions(seriesWidth);
-        zeroTop = this._makeZeroTopForAddingData();
+        const groupPositions = this._makePositions(seriesWidth);
+        const zeroTop = this._makeZeroTopForAddingData();
 
         this.graphRenderer.animateForAddingData(paramsForRendering, tickSize, groupPositions, shiftingOption, zeroTop);
-    },
+    }
 
     /**
      * Cancel moving animation.
      * @private
      */
-    _cancelMovingAnimation: function() {
+    _cancelMovingAnimation() {
         if (this.movingAnimation) {
             cancelAnimationFrame(this.movingAnimation.id);
             this.movingAnimation = null;
         }
     }
-});
+}
 
 LineTypeSeriesBase.mixin = function(func) {
     snippet.extend(func.prototype, LineTypeSeriesBase.prototype);
 };
-
-module.exports = LineTypeSeriesBase;

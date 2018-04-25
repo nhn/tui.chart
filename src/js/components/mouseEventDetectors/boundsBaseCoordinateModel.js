@@ -4,8 +4,6 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 /**
  * position
  * @typedef {{left: number, top: number}} position
@@ -46,21 +44,21 @@
  * @private
  */
 
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
-var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
+export default class BoundsBaseCoordinateModel {
     /**
      * BoundsBaseCoordinateModel is data mode for mouse event detector of bounds type.
      * @constructs BoundsBaseCoordinateModel
      * @private
      * @param {Array} seriesItemBoundsData - series item bounds data
      */
-    init: function(seriesItemBoundsData) {
+    constructor(seriesItemBoundsData) {
         this.data = this._makeData(seriesItemBoundsData);
-    },
+    }
 
     /**
      * @param {string} chartType - chart type
@@ -70,13 +68,13 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @returns {object} - `sendData`: tooltip contents, `bound`: for detecting hovered or not
      * @private
      */
-    _makeTooltipData: function(chartType, indexes, allowNegativeTooltip, bound) {
+    _makeTooltipData(chartType, indexes, allowNegativeTooltip, bound) {
         return {
             sendData: {
-                chartType: chartType,
-                indexes: indexes,
-                allowNegativeTooltip: allowNegativeTooltip,
-                bound: bound
+                chartType,
+                indexes,
+                allowNegativeTooltip,
+                bound
             },
             bound: {
                 left: bound.left,
@@ -85,7 +83,7 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
                 bottom: bound.top + bound.height
             }
         };
-    },
+    }
 
     /**
      * Make position data for rect type graph
@@ -94,11 +92,11 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @returns {Array}
      * @private
      */
-    _makeRectTypePositionData: function(groupBounds, chartType) {
-        var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
+    _makeRectTypePositionData(groupBounds, chartType) {
+        const allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
 
-        return snippet.map(groupBounds, function(bounds, groupIndex) {
-            return snippet.map(bounds, function(bound, index) {
+        return groupBounds.map((bounds, groupIndex) => (
+            bounds.map((bound, index) => {
                 if (!bound) {
                     return null;
                 }
@@ -106,15 +104,15 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
                 return this._makeTooltipData(
                     chartType,
                     {
-                        groupIndex: groupIndex,
-                        index: index
+                        groupIndex,
+                        index
                     },
                     allowNegativeTooltip,
                     bound.end || bound
                 );
-            }, this);
-        }, this);
-    },
+            })
+        ));
+    }
 
     /**
      * Make position data for rect type graph
@@ -123,17 +121,17 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @param {object} resultData resultData
      * @private
      */
-    _makeOutliersPositionDataForBoxplot: function(groupBounds, chartType, resultData) {
-        var allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
-        var _groupBounds = [].concat(groupBounds);
+    _makeOutliersPositionDataForBoxplot(groupBounds, chartType, resultData) {
+        const allowNegativeTooltip = !predicate.isBoxTypeChart(chartType);
+        const _groupBounds = [...groupBounds];
 
-        snippet.forEach(_groupBounds, function(bounds, groupIndex) {
-            snippet.forEach(bounds, function(bound, index) {
-                var outliers;
+        _groupBounds.forEach((bounds, groupIndex) => {
+            bounds.forEach((bound, index) => {
+                let outliers;
 
                 if (bound.outliers && bound.outliers.length) {
-                    outliers = snippet.map(bound.outliers, function(outlier, outlierIndex) {
-                        var outlierBound = {
+                    outliers = bound.outliers.map((outlier, outlierIndex) => {
+                        const outlierBound = {
                             top: outlier.top - 3,
                             left: outlier.left - 3,
                             width: 6,
@@ -143,20 +141,20 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
                         return this._makeTooltipData(
                             chartType,
                             {
-                                groupIndex: groupIndex,
-                                index: index,
-                                outlierIndex: outlierIndex
+                                groupIndex,
+                                index,
+                                outlierIndex
                             },
                             allowNegativeTooltip,
                             outlierBound
                         );
-                    }, this);
+                    });
 
                     resultData[groupIndex] = resultData[groupIndex].concat(outliers);
                 }
-            }, this);
-        }, this);
-    },
+            });
+        });
+    }
 
     /**
      * Make position data for dot type graph
@@ -165,23 +163,23 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makeDotTypePositionData: function(groupPositions, chartType) {
+    _makeDotTypePositionData(groupPositions, chartType) {
         if (!groupPositions) {
             return [];
         }
 
-        return snippet.map(arrayUtil.pivot(groupPositions), function(positions, groupIndex) {
-            return snippet.map(positions, function(position, index) {
+        return arrayUtil.pivot(groupPositions).map((positions, groupIndex) => (
+            positions.map((position, index) => {
                 if (!position) {
                     return null;
                 }
 
                 return {
                     sendData: {
-                        chartType: chartType,
+                        chartType,
                         indexes: {
-                            groupIndex: groupIndex,
-                            index: index
+                            groupIndex,
+                            index
                         },
                         bound: position
                     },
@@ -192,9 +190,9 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
                         bottom: position.top + chartConst.DOT_RADIUS
                     }
                 };
-            });
-        });
-    },
+            })
+        ));
+    }
 
     /**
      * Join data.
@@ -202,17 +200,17 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @returns {Array.<Array.<object>>} joined data
      * @private
      */
-    _joinData: function(dataGroupSet) {
-        var results = [];
-        snippet.forEachArray(dataGroupSet, function(dataGroup) {
-            snippet.forEachArray(dataGroup, function(data, index) {
-                var additionalIndex;
+    _joinData(dataGroupSet) {
+        const results = [];
+        dataGroupSet.forEach(dataGroup => {
+            dataGroup.forEach((data, index) => {
+                let additionalIndex;
 
                 if (!results[index]) {
                     results[index] = data;
                 } else {
                     additionalIndex = results[index].length;
-                    snippet.forEachArray(data, function(datum) {
+                    data.forEach(datum => {
                         if (datum) {
                             datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + additionalIndex;
                         }
@@ -223,7 +221,7 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
         });
 
         return results;
-    },
+    }
 
     /**
      * Make data for detecting mouse event.
@@ -231,9 +229,9 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @returns {Array.<Array.<object>>} coordinate data
      * @private
      */
-    _makeData: function(seriesItemBoundsData) {
-        var data = snippet.map(seriesItemBoundsData, function(info) {
-            var result;
+    _makeData(seriesItemBoundsData) {
+        const data = seriesItemBoundsData.map(info => {
+            let result;
 
             if (predicate.isLineTypeChart(info.chartType)) {
                 result = this._makeDotTypePositionData(info.data.groupPositions, info.chartType);
@@ -246,24 +244,23 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
             }
 
             return result;
-        }, this);
+        });
 
         return this._joinData(data);
-    },
+    }
 
     /**
      * Find candidates.
-     * @param {{bound: {left: number, top: number, right: number, bottom: number}}} data data
+     * @param {{bound: {left: number, top: number, right: number, bottom: number}}} data data *
      * @param {number} layerX layerX
      * @param {number} layerY layerY
      * @returns {Array.<{sendData: object}>} candidates
      * @private
      */
-    _findCandidates: function(data, layerX, layerY) {
-        return snippet.filter(data, function(datum) {
-            var bound = datum && datum.bound,
-                included = false,
-                includedX, includedY;
+    _findCandidates(data, layerX, layerY) {
+        return data.filter(datum => {
+            const bound = datum && datum.bound;
+            let included = false;
 
             if (bound) {
                 if (bound.top === bound.bottom) {
@@ -275,14 +272,14 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
                     bound.right += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
                 }
 
-                includedX = bound.left <= layerX && bound.right >= layerX;
-                includedY = bound.top <= layerY && bound.bottom >= layerY;
+                const includedX = bound.left <= layerX && bound.right >= layerX;
+                const includedY = bound.top <= layerY && bound.bottom >= layerY;
                 included = includedX && includedY;
             }
 
             return included;
         });
-    },
+    }
 
     /**
      * Find data.
@@ -291,18 +288,17 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @param {number} layerY mouse position y
      * @returns {object} tooltip data
      */
-    findData: function(groupIndex, layerX, layerY) {
-        var min = 10000;
-        var result = null;
-        var candidates;
+    findData(groupIndex, layerX, layerY) {
+        let min = 10000;
+        let result = null;
 
         if (groupIndex > -1 && this.data[groupIndex]) {
             // extract data containing layerX, layerY
-            candidates = this._findCandidates(this.data[groupIndex], layerX, layerY);
+            const candidates = this._findCandidates(this.data[groupIndex], layerX, layerY);
 
             // find nearest data to top position among extracted data
-            snippet.forEachArray(candidates, function(data) {
-                var diff = Math.abs(layerY - data.bound.top);
+            candidates.forEach(data => {
+                const diff = Math.abs(layerY - data.bound.top);
 
                 if (min > diff) {
                     min = diff;
@@ -312,7 +308,7 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
         }
 
         return result;
-    },
+    }
 
     /**
      * Find data by indexes.
@@ -320,15 +316,15 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * @param {number} [indexes.outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
      * @returns {object} tooltip data
      */
-    findDataByIndexes: function(indexes) {
-        var foundData = this.data[indexes.index][indexes.seriesIndex].sendData;
+    findDataByIndexes(indexes) {
+        const foundData = this.data[indexes.index][indexes.seriesIndex].sendData;
 
         if (snippet.isNumber(indexes.outlierIndex)) {
             return this._findOutlierDataByIndexes(indexes);
         }
 
         return foundData;
-    },
+    }
 
     /**
      * find plot chart data by indexes
@@ -339,12 +335,12 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
      * }} indexes - indexe of series item displaying a tooltip
      * @returns {object} - outlier tooltip data
      */
-    _findOutlierDataByIndexes: function(indexes) {
-        var foundData = null;
+    _findOutlierDataByIndexes(indexes) {
+        let foundData = null;
 
-        snippet.forEachArray(this.data[indexes.index], function(datum) {
-            var datumIndexes = datum.sendData.indexes;
-            var found = (datumIndexes.index === indexes.seriesIndex) &&
+        this.data[indexes.index].forEach(datum => {
+            const datumIndexes = datum.sendData.indexes;
+            const found = (datumIndexes.index === indexes.seriesIndex) &&
                 (datumIndexes.outlierIndex === indexes.outlierIndex);
 
             if (found) {
@@ -356,6 +352,4 @@ var BoundsBaseCoordinateModel = snippet.defineClass(/** @lends BoundsBaseCoordin
 
         return foundData;
     }
-});
-
-module.exports = BoundsBaseCoordinateModel;
+}

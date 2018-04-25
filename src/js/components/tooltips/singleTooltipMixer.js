@@ -4,26 +4,24 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-var chartConst = require('../../const'),
-    predicate = require('../../helpers/predicate'),
-    dom = require('../../helpers/domHandler'),
-    renderUtil = require('../../helpers/renderUtil');
+import snippet from 'tui-code-snippet';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
 
 /**
  * singleTooltipMixer is single tooltip mixer of map chart.
  * @mixin
  * @private */
-var singleTooltipMixer = {
+export default {
     /**
      * Set data indexes.
      * @param {HTMLElement} elTooltip tooltip element
      * @param {{groupIndex: number, index:number}} indexes indexes
      * @private
      */
-    _setIndexesCustomAttribute: function(elTooltip, indexes) {
+    _setIndexesCustomAttribute(elTooltip, indexes) {
         elTooltip.setAttribute('data-groupIndex', indexes.groupIndex);
         elTooltip.setAttribute('data-index', indexes.index);
     },
@@ -34,10 +32,10 @@ var singleTooltipMixer = {
      * @returns {{groupIndex: number, index: number}} indexes
      * @private
      */
-    _getIndexesCustomAttribute: function(elTooltip) {
-        var groupIndex = elTooltip.getAttribute('data-groupIndex');
-        var index = elTooltip.getAttribute('data-index');
-        var indexes = null;
+    _getIndexesCustomAttribute(elTooltip) {
+        const groupIndex = elTooltip.getAttribute('data-groupIndex');
+        const index = elTooltip.getAttribute('data-index');
+        let indexes = null;
 
         if (!snippet.isNull(groupIndex) && !snippet.isNull(index)) {
             indexes = {
@@ -55,7 +53,7 @@ var singleTooltipMixer = {
      * @param {boolean} status whether showed or not
      * @private
      */
-    _setShowedCustomAttribute: function(elTooltip, status) {
+    _setShowedCustomAttribute(elTooltip, status) {
         elTooltip.setAttribute('data-showed', status);
     },
 
@@ -65,8 +63,8 @@ var singleTooltipMixer = {
      * @returns {boolean} whether showed tooltip or not
      * @private
      */
-    _isShowedTooltip: function(elTooltip) {
-        var isShowed = elTooltip.getAttribute('data-showed');
+    _isShowedTooltip(elTooltip) {
+        const isShowed = elTooltip.getAttribute('data-showed');
 
         return isShowed === 'true' || isShowed === true; // true in ie7
     },
@@ -77,9 +75,8 @@ var singleTooltipMixer = {
      * @returns {object} - position of single tooltip
      * @private
      */
-    _makeTooltipPositionForBulletChart: function(params) {
-        var mousePosition = params.mousePosition;
-        var tooltipAreaPosition = this.layout.position;
+    _makeTooltipPositionForBulletChart({mousePosition}) {
+        const tooltipAreaPosition = this.layout.position;
 
         return {
             left: mousePosition.left - tooltipAreaPosition.left,
@@ -96,10 +93,10 @@ var singleTooltipMixer = {
      * @returns {number} left position value
      * @private
      */
-    _makeLeftPositionOfNotBarChart: function(baseLeft, alignOption, minusWidth, lineGap) {
-        var left = baseLeft;
-        var offsetNegative = minusWidth || 0;
-        var lineGapOffset = lineGap || chartConst.TOOLTIP_GAP;
+    _makeLeftPositionOfNotBarChart(baseLeft, alignOption, minusWidth, lineGap) {
+        let left = baseLeft;
+        const offsetNegative = minusWidth || 0;
+        const lineGapOffset = lineGap || chartConst.TOOLTIP_GAP;
 
         if (alignOption.indexOf('left') > -1) {
             left -= offsetNegative + lineGapOffset;
@@ -121,9 +118,9 @@ var singleTooltipMixer = {
      * @returns {number} top position value
      * @private
      */
-    _makeTopPositionOfNotBarChart: function(baseTop, alignOption, tooltipHeight, lineGap) {
-        var top = baseTop;
-        var offsetNegative = tooltipHeight || 0;
+    _makeTopPositionOfNotBarChart(baseTop, alignOption, tooltipHeight, lineGap) {
+        let top = baseTop;
+        const offsetNegative = tooltipHeight || 0;
 
         if (alignOption.indexOf('bottom') > -1) {
             top += offsetNegative + lineGap;
@@ -145,15 +142,13 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _makeTooltipPositionForNotBarChart: function(params) {
-        var bound = params.bound,
-            positionOption = params.positionOption,
-            minusWidth = params.dimension.width - (bound.width || 0),
-            lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
-            alignOption = params.alignOption || '',
-            tooltipHeight = params.dimension.height,
-            baseLeft = bound.left - this.layout.position.left + positionOption.left,
-            baseTop = bound.top - this.layout.position.top + positionOption.top - chartConst.TOOLTIP_GAP;
+    _makeTooltipPositionForNotBarChart(params) {
+        const {bound, positionOption, dimension, alignOption = ''} = params;
+        const minusWidth = dimension.width - (bound.width || 0);
+        const lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP;
+        const tooltipHeight = dimension.height;
+        const baseLeft = bound.left - this.layout.position.left + positionOption.left;
+        const baseTop = bound.top - this.layout.position.top + positionOption.top - chartConst.TOOLTIP_GAP;
 
         return {
             left: this._makeLeftPositionOfNotBarChart(baseLeft, alignOption, minusWidth, lineGap),
@@ -169,7 +164,7 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _makeTooltipPositionToMousePosition: function(params) {
+    _makeTooltipPositionToMousePosition(params) {
         if (!params.bound) {
             params.bound = params.bound || {};
             snippet.extend(params.bound, params.mousePosition);
@@ -186,8 +181,8 @@ var singleTooltipMixer = {
      * @returns {number} left position value
      * @private
      */
-    _makeLeftPositionForBarChart: function(baseLeft, alignOption, tooltipWidth) {
-        var left = baseLeft;
+    _makeLeftPositionForBarChart(baseLeft, alignOption, tooltipWidth) {
+        let left = baseLeft;
 
         if (alignOption.indexOf('left') > -1) {
             left -= tooltipWidth;
@@ -208,8 +203,8 @@ var singleTooltipMixer = {
      * @returns {number} top position value
      * @private
      */
-    _makeTopPositionForBarChart: function(baseTop, alignOption, minusHeight) {
-        var top = baseTop;
+    _makeTopPositionForBarChart(baseTop, alignOption, minusHeight) {
+        let top = baseTop;
 
         if (alignOption.indexOf('top') > -1) {
             top -= minusHeight;
@@ -229,15 +224,13 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _makeTooltipPositionForBarChart: function(params) {
-        var position = this.layout.position;
-        var bound = params.bound,
-            positionOption = params.positionOption,
-            minusHeight = params.dimension.height - (bound.height || 0),
-            alignOption = params.alignOption || '',
-            tooltipWidth = params.dimension.width,
-            baseLeft = bound.left + bound.width + positionOption.left - position.left,
-            baseTop = bound.top + positionOption.top - position.top;
+    _makeTooltipPositionForBarChart(params) {
+        const {position} = this.layout;
+        const {bound, positionOption, dimension, alignOption = ''} = params;
+        const minusHeight = dimension.height - (bound.height || 0);
+        const tooltipWidth = dimension.width;
+        const baseLeft = bound.left + bound.width + positionOption.left - position.left;
+        const baseTop = bound.top + positionOption.top - position.top;
 
         return {
             left: this._makeLeftPositionForBarChart(baseLeft, alignOption, tooltipWidth),
@@ -253,14 +246,13 @@ var singleTooltipMixer = {
      * @returns {{left: number, top: number}}
      * @private
      */
-    _makeTooltipPositionForTreemapChart: function(params) {
-        var position = this.layout.position;
-        var bound = params.bound;
-        var positionOption = params.positionOption;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, this.labelTheme);
+    _makeTooltipPositionForTreemapChart(params) {
+        const {position} = this.layout;
+        const {bound, positionOption, dimension} = params;
+        const labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, this.labelTheme);
 
         return {
-            left: bound.left + ((bound.width - params.dimension.width) / 2) + positionOption.left - position.left,
+            left: bound.left + ((bound.width - dimension.width) / 2) + positionOption.left - position.left,
             top: bound.top + (bound.height / 2) - labelHeight + positionOption.top - position.top
         };
     },
@@ -272,9 +264,9 @@ var singleTooltipMixer = {
      * @returns {{left: number, top: number}} adjusted position
      * @private
      */
-    _adjustPosition: function(tooltipDimension, position) {
-        var chartDimension = this.dimensionMap.chart;
-        var areaPosition = this.layout.position;
+    _adjustPosition(tooltipDimension, position) {
+        const chartDimension = this.dimensionMap.chart;
+        const areaPosition = this.layout.position;
 
         position.left = Math.max(position.left, -areaPosition.left);
         position.left = Math.min(position.left, chartDimension.width - areaPosition.left - tooltipDimension.width);
@@ -295,13 +287,13 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _makeTooltipPosition: function(params) {
-        var position = {},
-            sizeType, positionType, addPadding;
+    _makeTooltipPosition(params) {
+        let position = {};
 
         if (params.mousePosition) {
             position = this._makeTooltipPositionToMousePosition(params);
         } else {
+            let sizeType, positionType, addPadding;
             if (predicate.isBarChart(params.chartType)) {
                 position = this._makeTooltipPositionForBarChart(params);
                 sizeType = 'width';
@@ -322,9 +314,9 @@ var singleTooltipMixer = {
                     indexes: params.indexes,
                     dimension: params.dimension,
                     chartType: params.chartType,
-                    sizeType: sizeType,
-                    positionType: positionType,
-                    addPadding: addPadding
+                    sizeType,
+                    positionType,
+                    addPadding
                 });
             }
 
@@ -347,19 +339,16 @@ var singleTooltipMixer = {
      * @returns {{left: number, top: number}} moved position
      * @private
      */
-    _moveToSymmetry: function(position, params) {
-        var bound = params.bound;
-        var sizeType = params.sizeType;
-        var positionType = params.positionType;
-        var seriesType = params.seriesType || params.chartType;
-        var value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, seriesType);
-        var direction = predicate.isBarChart(this.chartType) ? -1 : 1;
-        var tooltipSize, barSize, movedPositionValue;
+    _moveToSymmetry(position, params) {
+        const {bound, sizeType, positionType, indexes} = params;
+        const seriesType = params.seriesType || params.chartType;
+        const value = this.dataProcessor.getValue(indexes.groupIndex, indexes.index, seriesType);
+        const direction = predicate.isBarChart(this.chartType) ? -1 : 1;
 
         if (value < 0) {
-            tooltipSize = params.dimension[sizeType];
-            barSize = bound[sizeType];
-            movedPositionValue = position[positionType]
+            const tooltipSize = params.dimension[sizeType];
+            const barSize = bound[sizeType];
+            const movedPositionValue = position[positionType]
                 + ((barSize + tooltipSize) * direction);
             position[positionType] = movedPositionValue;
         }
@@ -374,7 +363,7 @@ var singleTooltipMixer = {
      * @returns {boolean} whether changed or not
      * @private
      */
-    _isChangedIndexes: function(prevIndexes, indexes) {
+    _isChangedIndexes(prevIndexes, indexes) {
         return !!prevIndexes && (prevIndexes.groupIndex !== indexes.groupIndex || prevIndexes.index !== indexes.index);
     },
 
@@ -385,14 +374,13 @@ var singleTooltipMixer = {
      * @param {{left: number, top: number}} prevPosition prev position
      * @private
      */
-    _showTooltip: function(elTooltip, params, prevPosition) {
-        var boundingClientRect = this.tooltipContainer.parentNode.getBoundingClientRect();
-        var indexes = params.indexes;
-        var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
-        var offset = this.options.offset || {};
-        var positionOption = {};
-        var prevChartType = elTooltip && elTooltip.getAttribute('data-chart-type');
-        var position;
+    _showTooltip(elTooltip, params, prevPosition) {
+        const boundingClientRect = this.tooltipContainer.parentNode.getBoundingClientRect();
+        const {indexes} = params;
+        const prevIndexes = this._getIndexesCustomAttribute(elTooltip);
+        const offset = this.options.offset || {};
+        const positionOption = {};
+        const prevChartType = elTooltip && elTooltip.getAttribute('data-chart-type');
 
         if (!params.bound && params.mousePosition) {
             params.bound = {
@@ -422,9 +410,9 @@ var singleTooltipMixer = {
         positionOption.left = offset.x || 0;
         positionOption.top = offset.y || 0;
 
-        position = this._makeTooltipPosition(snippet.extend({
+        const position = this._makeTooltipPosition(snippet.extend({
             dimension: this.getTooltipDimension(elTooltip),
-            positionOption: positionOption,
+            positionOption,
             alignOption: this.options.align || ''
         }, params));
 
@@ -432,7 +420,7 @@ var singleTooltipMixer = {
         this.eventBus.fire('hoverSeries', indexes, params.chartType);
         this._fireAfterShowTooltipPublicEvent(indexes, {
             element: elTooltip,
-            position: position
+            position
         }, params.silent);
         delete params.silent;
     },
@@ -443,15 +431,13 @@ var singleTooltipMixer = {
      * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireBeforeShowTooltipPublicEvent: function(indexes, silent) {
-        var params;
-
+    _fireBeforeShowTooltipPublicEvent(indexes, silent) {
         if (silent) {
             return;
         }
 
-        params = this._makeShowTooltipParams(indexes);
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', params);
+        const params = this._makeShowTooltipParams(indexes);
+        this.eventBus.fire(`${chartConst.PUBLIC_EVENT_PREFIX}beforeShowTooltip`, params);
     },
 
     /**
@@ -461,15 +447,13 @@ var singleTooltipMixer = {
      * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireAfterShowTooltipPublicEvent: function(indexes, additionParams, silent) {
-        var params;
-
+    _fireAfterShowTooltipPublicEvent(indexes, additionParams, silent) {
         if (silent) {
             return;
         }
 
-        params = this._makeShowTooltipParams(indexes, additionParams);
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', params);
+        const params = this._makeShowTooltipParams(indexes, additionParams);
+        this.eventBus.fire(`${chartConst.PUBLIC_EVENT_PREFIX}afterShowTooltip`, params);
     },
 
     /**
@@ -477,7 +461,7 @@ var singleTooltipMixer = {
      * @param {HTMLElement} tooltipElement tooltip element
      * @private
      */
-    _executeHidingTooltip: function(tooltipElement) {
+    _executeHidingTooltip(tooltipElement) {
         dom.removeClass(tooltipElement, 'show');
         tooltipElement.removeAttribute('data-groupIndex');
         tooltipElement.removeAttribute('data-index');
@@ -491,11 +475,10 @@ var singleTooltipMixer = {
      * @param {{silent: {boolean}}} [options] - options for hiding a tooltip element
      * @private
      */
-    _hideTooltip: function(tooltipElement, prevFoundData, options) {
-        var self = this;
-        var indexes = this._getIndexesCustomAttribute(tooltipElement);
-        var chartType = tooltipElement.getAttribute('data-chart-type');
-        var silent = !!(options && options.silent);
+    _hideTooltip(tooltipElement, prevFoundData, options) {
+        const indexes = this._getIndexesCustomAttribute(tooltipElement);
+        const chartType = tooltipElement.getAttribute('data-chart-type');
+        const silent = !!(options && options.silent);
 
         if (predicate.isChartToDetectMouseEventOnSeries(chartType)) {
             this.eventBus.fire('hoverOffSeries', indexes, chartType);
@@ -509,12 +492,12 @@ var singleTooltipMixer = {
                 delete this.prevIndexes;
             }
 
-            setTimeout(function() {
-                if (self._isShowedTooltip(tooltipElement)) {
+            setTimeout(() => {
+                if (this._isShowedTooltip(tooltipElement)) {
                     return;
                 }
-                self._fireBeforeHideTooltipPublicEvent(indexes, silent);
-                self._executeHidingTooltip(tooltipElement);
+                this._fireBeforeHideTooltipPublicEvent(indexes, silent);
+                this._executeHidingTooltip(tooltipElement);
             }, chartConst.HIDE_DELAY);
         }
     },
@@ -525,26 +508,26 @@ var singleTooltipMixer = {
      * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireBeforeHideTooltipPublicEvent: function(indexes, silent) {
-        var params;
+    _fireBeforeHideTooltipPublicEvent(indexes, silent) {
+        let params;
         if (silent) {
             return;
         }
 
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeHideTooltip', params);
+        this.eventBus.fire(`${chartConst.PUBLIC_EVENT_PREFIX}beforeHideTooltip`, params);
     },
 
     /**
      * On show tooltip container.
      */
-    onShowTooltipContainer: function() {
+    onShowTooltipContainer() {
         this.tooltipContainer.style.zIndex = chartConst.TOOLTIP_ZINDEX;
     },
 
     /**
      * On hide tooltip container.
      */
-    onHideTooltipContainer: function() {
+    onHideTooltipContainer() {
         this.tooltipContainer.style.zIndex = 0;
     },
 
@@ -553,9 +536,7 @@ var singleTooltipMixer = {
      * @param {function} func target function
      * @ignore
      */
-    mixin: function(func) {
+    mixin(func) {
         snippet.extend(func.prototype, this);
     }
 };
-
-module.exports = singleTooltipMixer;

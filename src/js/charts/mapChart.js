@@ -4,16 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import ChartBase from './chartBase';
+import mapManager from '../factories/mapManager';
+import MapChartMapModel from './mapChartMapModel';
+import MapChartDataProcessor from '../models/data/mapChartDataProcessor';
+import ColorSpectrum from './colorSpectrum';
 
-var ChartBase = require('./chartBase');
-var mapManager = require('../factories/mapManager');
-var MapChartMapModel = require('./mapChartMapModel');
-var MapChartDataProcessor = require('../models/data/mapChartDataProcessor');
-var ColorSpectrum = require('./colorSpectrum');
-var snippet = require('tui-code-snippet');
-
-var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
+export default class MapChart extends ChartBase {
     /**
      * Map chart.
      * @constructs MapChart
@@ -22,73 +19,71 @@ var MapChart = snippet.defineClass(ChartBase, /** @lends MapChart.prototype */ {
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
+        options.map = mapManager.get(options.map);
+        options.tooltip = options.tooltip || {};
+        options.legend = options.legend || {};
+
+        super({
+            rawData,
+            theme,
+            options,
+            DataProcessor: MapChartDataProcessor
+        });
+
         /**
          * class name
          * @type {string}
          */
         this.className = 'tui-map-chart';
-
-        options.map = mapManager.get(options.map);
-        options.tooltip = options.tooltip || {};
-        options.legend = options.legend || {};
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            DataProcessor: MapChartDataProcessor
-        });
-    },
+    }
 
     /**
      * Add components.
      * @override
      * @private
      */
-    addComponents: function() {
-        var seriesTheme = this.theme.series[this.chartType];
-        var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
-        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+    addComponents() {
+        const seriesTheme = this.theme.series[this.chartType];
+        const mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
+        const colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
         this.componentManager.register('mapSeries', 'mapSeries', {
-            mapModel: mapModel,
-            colorSpectrum: colorSpectrum
+            mapModel,
+            colorSpectrum
         });
 
         this.componentManager.register('title', 'title');
 
         this.componentManager.register('legend', 'spectrumLegend', {
-            colorSpectrum: colorSpectrum
+            colorSpectrum
         });
 
         this.componentManager.register('tooltip', 'tooltip', {
-            mapModel: mapModel,
-            colorSpectrum: colorSpectrum
+            mapModel,
+            colorSpectrum
         });
 
         this.componentManager.register('zoom', 'zoom');
         this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
-    },
+    }
 
     /**
      * Get scale option.
      * @returns {{legend: boolean}}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         return {
             legend: true
         };
-    },
+    }
 
     /**
      * Add data ratios.
      * @override
      */
-    addDataRatios: function(limitMap) {
+    addDataRatios(limitMap) {
         this.dataProcessor.addDataRatios(limitMap.legend);
     }
-});
-
-module.exports = MapChart;
+}

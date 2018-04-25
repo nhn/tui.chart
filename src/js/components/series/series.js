@@ -4,27 +4,23 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
 
-var snippet = require('tui-code-snippet');
+const LABEL_FADE_IN_DURATION = 600;
+const {browser} = snippet;
+const IS_IE7 = browser.msie && browser.version === 7;
 
-var LABEL_FADE_IN_DURATION = 600;
-var browser = snippet.browser;
-var IS_IE7 = browser.msie && browser.version === 7;
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import pluginFactory from '../../factories/pluginFactory';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories/pluginFactory');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
+const {COMPONENT_TYPE_RAPHAEL, PUBLIC_EVENT_PREFIX, CLASS_NAME_SERIES_LABEL} = chartConst;
 
-var Series = snippet.defineClass(/** @lends Series.prototype */ {
-    /**
-     * Series component className
-     * @type {string}
-     */
-    className: 'tui-chart-series-area', /**
+export default class Series {
+    /*
      * Series base component.
      * @constructs Series
      * @private
@@ -32,8 +28,14 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
-    init: function(params) {
-        var libType = params.libType;
+    constructor(params) {
+        const {libType} = params;
+
+        /**
+         * Series component className
+         * @type {string}
+         */
+        this.className = 'tui-chart-series-area';
 
         /**
          * Chart type
@@ -172,7 +174,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
          * Drawing type
          * @type {string}
          */
-        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
+        this.drawingType = COMPONENT_TYPE_RAPHAEL;
 
         /**
          * whether series lable is supported
@@ -181,19 +183,19 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         this.supportSeriesLable = true;
 
         this._attachToEventBus();
-    },
+    }
 
     /**
      * Attach to event bus.
      * @private
      */
-    _attachToEventBus: function() {
-        var firstRenderCheck = snippet.bind(function() {
+    _attachToEventBus() {
+        const firstRenderCheck = function() {
             this.isInitRenderCompleted = true;
             this.eventBus.off('load', firstRenderCheck);
-        }, this);
+        }.bind(this);
 
-        this.eventBus.on(chartConst.PUBLIC_EVENT_PREFIX + 'load', firstRenderCheck);
+        this.eventBus.on(`${PUBLIC_EVENT_PREFIX}load`, firstRenderCheck);
 
         this.eventBus.on({
             selectLegend: this.onSelectLegend,
@@ -222,38 +224,38 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
                 moveSeries: this.onMoveSeries
             }, this);
         }
-    },
+    }
 
     /**
      * Get seriesDataModel.
      * @returns {SeriesDataModel}
      * @private
      */
-    _getSeriesDataModel: function() {
+    _getSeriesDataModel() {
         return this.dataProcessor.getSeriesDataModel(this.seriesType);
-    },
+    }
 
     /**
      * Make series data.
      * @private
      * @abstract
      */
-    _makeSeriesData: function() {},
+    _makeSeriesData() {}
 
     /**
      * Get seriesData
      * @returns {object} series data
      */
-    getSeriesData: function() {
+    getSeriesData() {
         return this.seriesData;
-    },
+    }
 
     /**
      * Render series label.
      * @private
      * @abstract
      */
-    _renderSeriesLabel: function() {},
+    _renderSeriesLabel() {}
 
     /**
      * Render series label area
@@ -261,21 +263,21 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabelArea: function(paper) {
+    _renderSeriesLabelArea(paper) {
         return this._renderSeriesLabel(paper);
-    },
+    }
 
     /**
      * Send boudns to mouseEventDetector component.
      * @param {object} seriesData - series data
      * @private
      */
-    _sendBoundsToMouseEventDetector: function(seriesData) {
+    _sendBoundsToMouseEventDetector(seriesData) {
         this.eventBus.fire('receiveSeriesData', {
             chartType: this.chartType,
             data: seriesData
         });
-    },
+    }
 
     /**
      * Render series area.
@@ -283,12 +285,9 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @param {function} funcRenderGraph - function for graph rendering
      * @private
      */
-    _renderSeriesArea: function(paper, funcRenderGraph) {
-        var dimension, seriesData;
-
-        dimension = this.dimensionMap.extendedSeries;
-
-        this.seriesData = seriesData = this._makeSeriesData();
+    _renderSeriesArea(paper, funcRenderGraph) {
+        const dimension = this.dimensionMap.extendedSeries;
+        const seriesData = this.seriesData = this._makeSeriesData();
 
         this._sendBoundsToMouseEventDetector(seriesData);
 
@@ -301,7 +300,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
                 this.labelSet = this._renderSeriesLabelArea(paper);
             }
         }
-    },
+    }
 
     /**
      * Make parameters for graph rendering.
@@ -310,15 +309,15 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {object} parameters for graph rendering
      * @private
      */
-    _makeParamsForGraphRendering: function(dimension, seriesData) {
-        return snippet.extend({
-            dimension: dimension,
+    _makeParamsForGraphRendering(dimension, seriesData) {
+        return Object.assign({
+            dimension,
             position: this.layout.position,
             chartType: this.seriesType,
             theme: this.theme,
             options: this.options
         }, seriesData);
-    },
+    }
 
     /**
      * Render raphael graph.
@@ -328,11 +327,11 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {object}
      * @private
      */
-    _renderGraph: function(dimension, seriesData, paper) {
-        var params = this._makeParamsForGraphRendering(dimension, seriesData);
+    _renderGraph(dimension, seriesData, paper) {
+        const params = this._makeParamsForGraphRendering(dimension, seriesData);
 
         return this.graphRenderer.render(paper, params);
-    },
+    }
 
     /**
      * Set data for rendering.
@@ -353,7 +352,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * }} data - data for rendering
      * @private
      */
-    _setDataForRendering: function(data) {
+    _setDataForRendering(data) {
         this.paper = data.paper;
         this.limit = data.limitMap[this.chartType];
         if (data.axisDataMap && data.axisDataMap.xAxis) {
@@ -363,21 +362,20 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         this.dimensionMap = data.dimensionMap;
         this.positionMap = data.positionMap;
         this.axisDataMap = data.axisDataMap;
-    },
+    }
 
     /**
      * Render series component.
      * @param {object} data - data for rendering
      */
-    render: function(data) {
-        var checkedLegends;
+    render(data) {
         this.paper = data.paper;
         this._setDataForRendering(data);
         this._clearSeriesContainer();
         this.beforeAxisDataMap = this.axisDataMap;
 
         if (data.checkedLegends) {
-            checkedLegends = data.checkedLegends[this.seriesType];
+            const checkedLegends = data.checkedLegends[this.seriesType];
             if (!this.options.colorByPoint) {
                 this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
             }
@@ -388,7 +386,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         if (this.paper.pushDownBackgroundToBottom) {
             this.paper.pushDownBackgroundToBottom();
         }
-    },
+    }
 
     /**
      * Get checked series theme.
@@ -397,48 +395,44 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {object} checked series theme
      * @private
      */
-    _getCheckedSeriesTheme: function(theme, checkedLegends) {
-        var cloneTheme;
-
+    _getCheckedSeriesTheme(theme, checkedLegends) {
         if (!checkedLegends.length) {
             return theme;
         }
 
-        cloneTheme = JSON.parse(JSON.stringify(theme));
-        cloneTheme.colors = snippet.filter(cloneTheme.colors, function(color, index) {
-            return checkedLegends[index];
-        });
+        const cloneTheme = JSON.parse(JSON.stringify(theme));
+        cloneTheme.colors = cloneTheme.colors.filter((color, index) => checkedLegends[index]);
 
         return cloneTheme;
-    },
+    }
 
     /**
      * Clear series container.
      * @private
      */
-    _clearSeriesContainer: function() {
+    _clearSeriesContainer() {
         if (this.seriesSet && this.seriesSet.remove) {
-            this.seriesSet.forEach(function(series) {
+            this.seriesSet.forEach(series => {
                 series.remove();
             }, this);
             this.seriesSet.remove();
         }
         if (this.labelSet && this.labelSet.remove) {
-            this.labelSet.forEach(function(label) {
+            this.labelSet.forEach(label => {
                 label.remove();
             }, this);
             this.labelSet.remove();
         }
 
         this.seriesData = [];
-    },
+    }
 
     /**
      * Rerender series
      * @param {object} data - data for rendering
      */
-    rerender: function(data) {
-        var checkedLegends;
+    rerender(data) {
+        let checkedLegends;
 
         if (this.seriesType === 'map' || this.dataProcessor.getGroupCount(this.seriesType)) {
             if (data.checkedLegends) {
@@ -466,16 +460,16 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         } else {
             this._clearSeriesContainer();
         }
-    },
+    }
 
     /**
      * Return whether label visible or not.
      * @returns {boolean}
      * @private
      */
-    _isLabelVisible: function() {
+    _isLabelVisible() {
         return !!(this.options.showLabel || this.options.showLegend);
-    },
+    }
 
     /**
      * Resize raphael graph by given dimension and series data
@@ -484,25 +478,25 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {Array.<object>}
      * @private
      */
-    _resizeGraph: function(dimension, seriesData) {
+    _resizeGraph(dimension, seriesData) {
         this.graphRenderer.resize(snippet.extend({
             dimension: this.dimensionMap.chart
         }, seriesData));
 
         return this.seriesSet;
-    },
+    }
 
     /**
      * Resize series component.
      * }} bound series bound
      * @param {object} data data for rendering
      */
-    resize: function(data) {
+    resize(data) {
         this._clearSeriesContainer();
         this._setDataForRendering(data);
         this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
         this.rerender(data);
-    },
+    }
 
     /**
      * Set element's top, left given top, left position
@@ -510,14 +504,14 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @param {{top: number, left: number}} position - series top, left position
      * @private
      */
-    _renderPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isOldBrowser() ? 1 : 0;
+    _renderPosition(el, position) {
+        const hiddenWidth = renderUtil.isOldBrowser() ? 1 : 0;
 
         renderUtil.renderPosition(el, {
             top: position.top - (hiddenWidth),
             left: position.left - (hiddenWidth * 2)
         });
-    },
+    }
 
     /**
      * Get limit distance from zero point.
@@ -526,12 +520,11 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {{toMax: number, toMin: number}} pixel distance
      * @private
      */
-    _getLimitDistanceFromZeroPoint: function(size, limit) {
-        var min = limit.min,
-            max = limit.max,
-            distance = max - min,
-            toMax = 0,
-            toMin = 0;
+    _getLimitDistanceFromZeroPoint(size, limit) {
+        const {min, max} = limit;
+        const distance = max - min;
+        let toMax = 0;
+        let toMin = 0;
 
         if (min <= 0 && max >= 0) {
             toMax = (distance + min) / distance * size;
@@ -541,10 +534,10 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         }
 
         return {
-            toMax: toMax,
-            toMin: toMin
+            toMax,
+            toMin
         };
-    },
+    }
 
     /**
      * Find label element.
@@ -552,24 +545,20 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {HTMLElement} label element
      * @private
      */
-    _findLabelElement: function(elTarget) {
-        var elLabel = null;
-
-        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_SERIES_LABEL)) {
-            elLabel = elTarget;
-        } else {
-            elLabel = dom.findParentByClass(elTarget, chartConst.CLASS_NAME_SERIES_LABEL);
+    _findLabelElement(elTarget) {
+        if (dom.hasClass(elTarget, CLASS_NAME_SERIES_LABEL)) {
+            return elTarget;
         }
 
-        return elLabel;
-    },
+        return dom.findParentByClass(elTarget, CLASS_NAME_SERIES_LABEL);
+    }
 
     /**
      * To call showAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      * @param {string} chartType - chart type
      */
-    onHoverSeries: function(data, chartType) {
+    onHoverSeries(data, chartType) {
         if (chartType !== this.chartType) {
             return;
         }
@@ -579,14 +568,14 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         }
 
         this.graphRenderer.showAnimation(data);
-    },
+    }
 
     /**
      * To call hideAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      * @param {string} chartType - chart type
      */
-    onHoverOffSeries: function(data, chartType) {
+    onHoverOffSeries(data, chartType) {
         if (chartType !== this.chartType) {
             return;
         }
@@ -596,58 +585,58 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         }
 
         this.graphRenderer.hideAnimation(data);
-    },
+    }
 
     /**
      * To call showGroupAnimation function of graphRenderer.
      * @param {number} index index
      */
-    onShowGroupAnimation: function(index) {
+    onShowGroupAnimation(index) {
         if (!this.graphRenderer.showGroupAnimation) {
             return;
         }
         this.graphRenderer.showGroupAnimation(index);
-    },
+    }
 
     /**
      * To call hideGroupAnimation function of graphRenderer.
      * @param {number} index index
      */
-    onHideGroupAnimation: function(index) {
+    onHideGroupAnimation(index) {
         if (!this.graphRenderer.hideGroupAnimation) {
             return;
         }
         this.graphRenderer.hideGroupAnimation(index);
-    },
+    }
 
     /**
      * Animate component.
      * @param {boolean} [isRerendering] - whether rerendering or not
      */
-    animateComponent: function(isRerendering) {
+    animateComponent(isRerendering) {
         if (this.graphRenderer.animate && this.seriesSet) {
             this.graphRenderer.animate(snippet.bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
         } else {
             this.animateSeriesLabelArea(isRerendering);
         }
-    },
+    }
 
     /**
      * Fire load event.
      * @param {boolean} [isRerendering] - whether rerendering or not
      * @private
      */
-    _fireLoadEvent: function(isRerendering) {
+    _fireLoadEvent(isRerendering) {
         if (!isRerendering) {
-            this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'load');
+            this.eventBus.fire(`${PUBLIC_EVENT_PREFIX}load`);
         }
-    },
+    }
 
     /**
      * Animate series label area.
      * @param {boolean} [isRerendering] - whether rerendering or not
      */
-    animateSeriesLabelArea: function(isRerendering) {
+    animateSeriesLabelArea(isRerendering) {
         if (!this._isLabelVisible()) {
             this._fireLoadEvent(isRerendering);
 
@@ -662,7 +651,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         } else if (this.labelSet && this.labelSet.length) {
             raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
         }
-    },
+    }
 
     /**
      * Make exportation data for public event of series type.
@@ -670,25 +659,25 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
      * @private
      */
-    _makeExportationSeriesData: function(seriesData) {
-        var indexes = seriesData.indexes;
-        var legendIndex = snippet.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
-        var legendData = this.dataProcessor.getLegendItem(legendIndex);
-        var index = snippet.isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
-        var seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
-        var result;
+    _makeExportationSeriesData(seriesData) {
+        const {indexes} = seriesData;
+        const legendIndex = snippet.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
+        const legendData = this.dataProcessor.getLegendItem(legendIndex);
+        const index = snippet.isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
+        const seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
+        let result;
 
         if (snippet.isExisty(seriesItem)) {
             result = {
                 chartType: legendData.chartType,
                 legend: legendData.label,
-                legendIndex: legendIndex
+                legendIndex
             };
             result.index = seriesItem.index;
         }
 
         return result;
-    },
+    }
 
     /**
      * Execute graph renderer.
@@ -697,9 +686,8 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
      * @returns {*} result.
      * @private
      */
-    _executeGraphRenderer: function(position, funcName) {
-        var isShowLabel = false;
-        var result;
+    _executeGraphRenderer(position, funcName) {
+        let isShowLabel = false;
 
         this.eventBus.fire('hideTooltipContainer');
         if (this.seriesLabelContainer && dom.hasClass(this.seriesLabelContainer, 'show')) {
@@ -707,7 +695,7 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
             isShowLabel = true;
         }
 
-        result = this.graphRenderer[funcName](position);
+        const result = this.graphRenderer[funcName](position);
 
         if (isShowLabel) {
             dom.addClass(this.seriesLabelContainer, 'show');
@@ -716,21 +704,19 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         this.eventBus.fire('showTooltipContainer');
 
         return result;
-    },
+    }
 
     /**
      * To call selectSeries callback of public event.
      * @param {object} seriesData - series data
      * @param {?boolean} shouldSelect - whether should select or not
      */
-    onSelectSeries: function(seriesData, shouldSelect) {
-        var eventName;
-
+    onSelectSeries(seriesData, shouldSelect) {
         if (seriesData.chartType !== this.chartType) {
             return;
         }
 
-        eventName = chartConst.PUBLIC_EVENT_PREFIX + 'selectSeries';
+        const eventName = `${PUBLIC_EVENT_PREFIX}selectSeries`;
 
         this.eventBus.fire(eventName, this._makeExportationSeriesData(seriesData));
         shouldSelect = snippet.isEmpty(shouldSelect) ? true : shouldSelect;
@@ -738,33 +724,31 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
             this.graphRenderer.selectSeries(seriesData.indexes);
         }
-    },
+    }
 
     /**
      * To call unselectSeries callback of public event.
      * @param {object} seriesData series data.
      */
-    onUnselectSeries: function(seriesData) {
-        var eventName;
-
+    onUnselectSeries(seriesData) {
         if (seriesData.chartType !== this.chartType) {
             return;
         }
 
-        eventName = chartConst.PUBLIC_EVENT_PREFIX + 'unselectSeries';
+        const eventName = `${PUBLIC_EVENT_PREFIX}unselectSeries`;
 
         this.eventBus.fire(eventName, this._makeExportationSeriesData(seriesData));
         if (this.options.allowSelect && this.graphRenderer.unselectSeries) {
             this.graphRenderer.unselectSeries(seriesData.indexes);
         }
-    },
+    }
 
     /**
      *On select legend.
      * @param {string} seriesType - series name
      * @param {?number} legendIndex - legend index
      */
-    onSelectLegend: function(seriesType, legendIndex) {
+    onSelectLegend(seriesType, legendIndex) {
         if ((this.seriesType !== seriesType) && !snippet.isNull(legendIndex)) {
             legendIndex = -1;
         }
@@ -774,38 +758,37 @@ var Series = snippet.defineClass(/** @lends Series.prototype */ {
         if (this._getSeriesDataModel().getGroupCount()) {
             this.graphRenderer.selectLegend(legendIndex);
         }
-    },
+    }
 
     /**
      * Show label.
      */
-    showLabel: function() {
+    showLabel() {
         this.options.showLabel = true;
 
         if (!this.seriesLabelContainer && this.supportSeriesLable) {
             this._renderSeriesLabelArea(this.paper);
         }
-    },
+    }
 
     /**
      * Hide label.
      */
-    hideLabel: function() {
+    hideLabel() {
         this.options.showLabel = false;
 
         if (this.seriesLabelContainer) {
             dom.removeClass(this.seriesLabelContainer, 'show');
             dom.removeClass(this.seriesLabelContainer, 'opacity');
         }
-    },
+    }
+
     /**
      * Return boolean value whether seriesData contains data
      * @param {object} seriesData seriesData object
      * @returns {boolean}
      */
-    hasDataForRendering: function(seriesData) {
+    hasDataForRendering(seriesData) {
         return !!(seriesData && seriesData.isAvailable());
     }
-});
-
-module.exports = Series;
+}

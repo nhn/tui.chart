@@ -3,14 +3,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var predicate = require('../../helpers/predicate');
-var areaTypeEventDetectorFactory = require('./areaTypeEventDetector');
-var simpleEventDetectorFactory = require('./simpleEventDetector');
-var groupTypeEventDetectorFactory = require('./groupTypeEventDetector');
-var boundsTypeEventDetectorFactory = require('./boundsTypeEventDetector');
-var mapChartEventDetectorFactory = require('./mapChartEventDetector');
+import predicate from '../../helpers/predicate';
+import areaTypeEventDetectorFactory from './areaTypeEventDetector';
+import simpleEventDetectorFactory from './simpleEventDetector';
+import groupTypeEventDetectorFactory from './groupTypeEventDetector';
+import boundsTypeEventDetectorFactory from './boundsTypeEventDetector';
+import mapChartEventDetectorFactory from './mapChartEventDetector';
 
 /**
  * Factory for MouseEventDetector
@@ -18,12 +16,10 @@ var mapChartEventDetectorFactory = require('./mapChartEventDetector');
  * @returns {object}
  * @ignore
  */
-function mouseEventDetectorFactory(params) {
-    var chartType = params.chartOptions.chartType;
-    var seriesTypes = params.seriesTypes;
-    var zoomable = params.chartOptions.series.zoomable;
-    var seriesAllowSelect = params.chartOptions.series.allowSelect;
-    var factory;
+export default function mouseEventDetectorFactory(params) {
+    const {chartOptions, seriesTypes} = params;
+    const {chartType, series: {zoomable, allowSelect: seriesAllowSelect}} = chartOptions;
+    let factory;
 
     if (params.chartOptions.tooltip.grouped) {
         factory = groupTypeEventDetectorFactory;
@@ -56,4 +52,3 @@ function mouseEventDetectorFactory(params) {
 
 mouseEventDetectorFactory.componentType = 'mouseEventDetector';
 
-module.exports = mouseEventDetectorFactory;

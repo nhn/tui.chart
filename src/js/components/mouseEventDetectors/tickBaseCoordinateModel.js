@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import predicate from '../../helpers/predicate';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
-var predicate = require('../../helpers/predicate');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
-
-var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototype */ {
+export default class TickBaseDataModel {
     /**
      * TickBaseDataModel is tick base data model.
      * @param {{
@@ -29,7 +27,7 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
      * @constructs TickBaseDataModel
      * @private
      */
-    init: function(layout, tickCount, chartType, isVertical, chartTypes) {
+    constructor(layout, tickCount, chartType, isVertical, chartTypes) {
         /**
          * whether line type or not
          * @type {boolean}
@@ -37,7 +35,7 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
         this.isLineType = predicate.isLineTypeChart(chartType, chartTypes);
 
         this.data = this._makeData(layout, tickCount, isVertical);
-    },
+    }
 
     /**
      * Get each tick ranges
@@ -47,12 +45,12 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
      * @returns {Array.<object>}
      * @private
      */
-    _getRanges: function(tickCount, firstPosition, tickInterval) {
-        var prev = firstPosition;
-        var halfInterval = tickInterval / 2;
+    _getRanges(tickCount, firstPosition, tickInterval) {
+        let prev = firstPosition;
+        const halfInterval = tickInterval / 2;
 
-        return snippet.map(snippet.range(0, tickCount), function() {
-            var limit = {
+        return snippet.range(0, tickCount).map(() => {
+            const limit = {
                 min: prev - halfInterval,
                 max: prev + halfInterval
             };
@@ -61,7 +59,7 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
 
             return limit;
         });
-    },
+    }
 
     /**
      * Make tick base data about line type chart.
@@ -71,14 +69,14 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
      * @returns {Array} tick base data
      * @private
      */
-    _makeLineTypeData: function(width, tickCount, firstPosition) {
-        var tickInterval = (width + 1) / (tickCount - 1);
-        var ranges = this._getRanges(tickCount, (firstPosition || 0), tickInterval);
+    _makeLineTypeData(width, tickCount, firstPosition) {
+        const tickInterval = (width + 1) / (tickCount - 1);
+        const ranges = this._getRanges(tickCount, (firstPosition || 0), tickInterval);
 
         ranges[tickCount - 1].max -= 1;
 
         return ranges;
-    },
+    }
 
     /**
      * Make tick base data about non line type chart.
@@ -88,22 +86,22 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
      * @returns {Array} tick base data
      * @private
      */
-    _makeNormalData: function(size, tickCount, firstPosition) {
-        var len = tickCount - 1;
-        var tickInterval = size / len;
-        var prev = (firstPosition || 0);
+    _makeNormalData(size, tickCount, firstPosition) {
+        const len = tickCount - 1;
+        const tickInterval = size / len;
+        let prev = (firstPosition || 0);
 
-        return snippet.map(snippet.range(0, len), function() {
-            var max = arrayUtil.min([size + prev, tickInterval + prev]);
-            var limit = {
+        return snippet.range(0, len).map(() => {
+            const max = arrayUtil.min([size + prev, tickInterval + prev]);
+            const limit = {
                 min: prev,
-                max: max
+                max
             };
             prev = max;
 
             return limit;
         });
-    },
+    }
 
     /**
      * Make tick base data for mouse event detector.
@@ -113,29 +111,26 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
      * @returns {Array.<object>} tick base data
      * @private
      */
-    _makeData: function(layout, tickCount, isVertical) {
-        var sizeType = isVertical ? 'width' : 'height';
-        var positionType = isVertical ? 'left' : 'top';
-        var data;
+    _makeData(layout, tickCount, isVertical) {
+        const sizeType = isVertical ? 'width' : 'height';
+        const positionType = isVertical ? 'left' : 'top';
 
         if (this.isLineType) {
-            data = this._makeLineTypeData(layout.dimension[sizeType], tickCount, layout.position[positionType]);
-        } else {
-            data = this._makeNormalData(layout.dimension[sizeType], tickCount, layout.position[positionType]);
+            return this._makeLineTypeData(layout.dimension[sizeType], tickCount, layout.position[positionType]);
         }
 
-        return data;
-    },
+        return this._makeNormalData(layout.dimension[sizeType], tickCount, layout.position[positionType]);
+    }
 
     /**
      * Find index.
      * @param {number} pointValue mouse position point value
      * @returns {number} group index
      */
-    findIndex: function(pointValue) {
-        var foundIndex = -1;
+    findIndex(pointValue) {
+        let foundIndex = -1;
 
-        snippet.forEachArray(this.data, function(limit, index) {
+        this.data.forEach((limit, index) => {
             if (limit.min < pointValue && limit.max >= pointValue) {
                 foundIndex = index;
 
@@ -146,15 +141,15 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
         });
 
         return foundIndex;
-    },
+    }
 
     /**
      * Get last index.
      * @returns {number}
      */
-    getLastIndex: function() {
+    getLastIndex() {
         return this.data.length - 1;
-    },
+    }
 
     /**
      * Make range of tooltip position.
@@ -163,9 +158,10 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
      * @returns {{start: number, end: number}} range type value
      * @private
      */
-    makeRange: function(index, positionValue) {
-        var limit = this.data[index],
-            range, center;
+    makeRange(index, positionValue) {
+        const limit = this.data[index];
+        let range, center;
+
         if (this.isLineType) {
             center = parseInt(limit.max - ((limit.max - limit.min) / 2), 10);
             range = {
@@ -181,6 +177,4 @@ var TickBaseDataModel = snippet.defineClass(/** @lends TickBaseDataModel.prototy
 
         return range;
     }
-});
-
-module.exports = TickBaseDataModel;
+}
