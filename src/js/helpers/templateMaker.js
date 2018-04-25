@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-module.exports = {
+export default {
     /**
      * This is template maker.
      * @param {string} html html

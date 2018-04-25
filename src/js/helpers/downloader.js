@@ -124,4 +124,6 @@ function execDownload(fileName, extension, content) {
     }
 }
 
-export default execDownload;
+export default {
+    execDownload
+};

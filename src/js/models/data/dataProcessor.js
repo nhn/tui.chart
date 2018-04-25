@@ -52,7 +52,7 @@ const {isUndefined} = snippet;
  * SeriesGroup.items has SeriesItem.
  */
 
-class DataProcessor extends DataProcessorBase {
+export default class DataProcessor extends DataProcessorBase {
     /**
      * Data processor.
      * @constructs DataProcessor
@@ -146,7 +146,7 @@ class DataProcessor extends DataProcessorBase {
      * @private
      */
     _filterSeriesDataByIndexRange(seriesData, startIndex, endIndex) {
-        seriesData.forEach(seriesData, seriesDatum => {
+        seriesData.forEach(seriesDatum => {
             seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
         });
 
@@ -163,7 +163,7 @@ class DataProcessor extends DataProcessorBase {
     _filterRawDataByIndexRange(rawData, indexRange) {
         const [startIndex, endIndex] = indexRange;
 
-        rawData.series.forEach((seriesDataSet, seriesType) => {
+        Object.entries(rawData.series).forEach(([seriesType, seriesDataSet]) => {
             rawData.series[seriesType] = this._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 
@@ -539,8 +539,8 @@ class DataProcessor extends DataProcessorBase {
      */
     makeTooltipCategory(categoryIndex, oppositeIndex, isVerticalChart) {
         const isVertical = !isVerticalChart;
-        const categoryCount = this.getCategoryCount(!isVertical);
         let category = this._getTooltipCategory(categoryIndex, isVertical);
+        const categoryCount = this.getCategoryCount(!isVertical);
 
         if (categoryCount) {
             category += `, ${this._getTooltipCategory(categoryCount - oppositeIndex - 1, !isVertical)}`;
@@ -873,8 +873,6 @@ class DataProcessor extends DataProcessorBase {
 
         this._eachByAllSeriesDataModel(seriesDataModel => {
             isValid = !!seriesDataModel.getGroupCount();
-
-            return isValid;
         });
 
         return isValid;
@@ -1040,7 +1038,7 @@ class DataProcessor extends DataProcessorBase {
 
         if (plotOptions.bands) {
             plotOptions.bands.forEach(line => {
-                const ranges = line.range.map(range => axisType !== 'datetime' ? range : new Date(range));
+                const ranges = line.range.map(range => (axisType !== 'datetime' ? range : new Date(range)));
 
                 values = values.concat(ranges);
             });
@@ -1173,7 +1171,7 @@ class DataProcessor extends DataProcessorBase {
             legendLabelsMap = [this.chartType];
             legendLabelsMap[this.chartType] = legendLabels;
         } else {
-            ({seriesTypes} = this);
+            seriesTypes = this.seriesTypes;
             legendLabelsMap = legendLabels;
         }
 
@@ -1394,5 +1392,3 @@ class DataProcessor extends DataProcessorBase {
         return (seriesOptions && seriesOptions.pie2 && seriesOptions.pie2.labelAlign === 'outer');
     }
 }
-
-export default DataProcessor;

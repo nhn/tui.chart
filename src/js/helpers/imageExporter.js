@@ -56,7 +56,7 @@ function downloadSvgWithCanvg(canvas, svgString, fileName, extension) {
 
     ctx.drawSvg(svgString, 0, 0);
 
-    downloader(fileName, extension, canvas.toDataURL(`image/${extension}`, 1));
+    downloader.execDownload(fileName, extension, canvas.toDataURL(`image/${extension}`, 1));
 }
 
 /**
@@ -76,7 +76,7 @@ function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
     img.onload = function() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        downloader(fileName, extension, canvas.toDataURL(`image/${extension}`, 1));
+        downloader.execDownload(fileName, extension, canvas.toDataURL(`image/${extension}`, 1));
 
         DOMURL.revokeObjectURL(url);
     };
@@ -84,7 +84,7 @@ function downloadSvgWithBlobURL(canvas, svgString, fileName, extension) {
     img.src = url;
 }
 
-const imageExporter = {
+export default {
     /**
      * Download image with png format
      * @param {string} fileName - file name to save
@@ -123,5 +123,3 @@ const imageExporter = {
         return imageExtensions;
     }
 };
-
-export default imageExporter;

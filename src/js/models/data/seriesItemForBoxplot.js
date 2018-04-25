@@ -9,7 +9,7 @@ import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
 import snippet from 'tui-code-snippet';
 
-class SeriesItem {
+export default class SeriesItem {
     /**
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
@@ -213,9 +213,7 @@ class SeriesItem {
      * @private
      */
     _createValues(value) {
-        const values = [].concat(value).map(newValue => snippet.isNull(newValue) ? null : parseFloat(newValue));
-
-        return values;
+        return [].concat(value).map(newValue => snippet.isNull(newValue) ? null : parseFloat(newValue));
     }
 
     /**
@@ -311,5 +309,3 @@ class SeriesItem {
         return valueMap;
     }
 }
-
-export default SeriesItem;

@@ -12,7 +12,7 @@ import snippet from 'tui-code-snippet';
  * Raw data Handler.
  * @module rawDataHandler
  * @private */
-const rawDataHandler = {
+export default {
     /**
      * Pick stacks.
      * @param {Array.<{stack: string}>} seriesData - raw series data
@@ -257,11 +257,9 @@ const rawDataHandler = {
      * @private
      */
     _makeRawSeriesDataForBulletChart(rawData) {
-        const {bullet} = rawData.series;
+        const {bullet = []} = rawData.series;
 
         rawData.categories = rawData.categories || [];
-        rawData.categories = bullet.map(seriesData => seriesData.name || '');
+        rawData.categories = bullet.map(seriesData => (seriesData.name || ''));
     }
 };
-
-export default rawDataHandler;

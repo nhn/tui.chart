@@ -11,7 +11,7 @@ import predicate from '../../helpers/predicate';
  * Calculator for series.
  * @module seriesCalculator
  * @private */
-const seriesCalculator = {
+export default {
     /**
      * Calculate width.
      * @param {{
@@ -25,9 +25,9 @@ const seriesCalculator = {
      * @returns {number} series width
      */
     calculateWidth(dimensionMap, legendOptions, maxLabelWidth) {
-        const chartWidth = dimensionMap.chart.width;
-        const yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis.width;
-        const legendDimension = dimensionMap.legend;
+        const {chart: {width: chartWidth}, yAxis, rightYAxis, legend} = dimensionMap;
+        const yAxisAreaWidth = yAxis.width + rightYAxis.width;
+        const legendDimension = legend;
         let legendWidth = 0;
         let xAxisLabelPadding = 0;
 
@@ -35,7 +35,7 @@ const seriesCalculator = {
             legendWidth = legendDimension ? legendDimension.width : 0;
         }
 
-        if (!legendWidth && !dimensionMap.rightYAxis.width && maxLabelWidth) {
+        if (!legendWidth && !rightYAxis.width && maxLabelWidth) {
             xAxisLabelPadding = maxLabelWidth / 2;
         }
 
@@ -77,5 +77,3 @@ const seriesCalculator = {
         return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight;
     }
 };
-
-export default seriesCalculator;

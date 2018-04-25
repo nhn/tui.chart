@@ -8,7 +8,7 @@ import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 
-class SeriesItemForTreemap {
+export default class SeriesItemForTreemap {
     /**
      * SeriesItem for treemap.
      * @constructs SeriesItemForTreemap
@@ -105,5 +105,3 @@ class SeriesItemForTreemap {
         return templateData;
     }
 }
-
-export default SeriesItemForTreemap;

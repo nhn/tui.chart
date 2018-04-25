@@ -9,7 +9,7 @@ import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 
-class SeriesItemForCoordinateType {
+export default class SeriesItemForCoordinateType {
     /**
      * SeriesItemForCoordinateType is a element of SeriesGroup.items.
      * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
@@ -170,5 +170,3 @@ class SeriesItemForCoordinateType {
         return valueMap;
     }
 }
-
-export default SeriesItemForCoordinateType;

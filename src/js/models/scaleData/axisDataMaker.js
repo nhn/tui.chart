@@ -474,7 +474,7 @@ const axisDataMaker = {
     _findRotationDegree(labelAreaWidth, labelWidth, labelHeight) {
         let foundDegree = null;
 
-        chartConst.DEGREE_CANDIDATES.forEach(degree => {
+        chartConst.DEGREE_CANDIDATES.every(degree => {
             const compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
             foundDegree = degree;
 

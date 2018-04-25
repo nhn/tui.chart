@@ -11,7 +11,7 @@ import calculator from '../../helpers/calculator';
 import predicate from '../../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
-class SeriesItem {
+export default class SeriesItem {
     /**
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
@@ -179,9 +179,7 @@ class SeriesItem {
      * @private
      */
     _createValues(value) {
-        let values = [].concat(value).map(newValue =>
-            snippet.isNull(newValue) ? null : parseFloat(newValue)
-        );
+        let values = [].concat(value).map(newValue => snippet.isNull(newValue) ? null : parseFloat(newValue));
 
         values = values.sort((a, b) => {
             if (a < 0 && b < 0) {
@@ -219,7 +217,7 @@ class SeriesItem {
      * @private
      */
     _updateFormattedValueforRange() {
-        this.label = `${this.startLabel}~${this.endLabel}`;
+        this.label = `${this.startLabel} ~ ${this.endLabel}`;
     }
 
     /**
@@ -274,5 +272,3 @@ class SeriesItem {
         return valueMap;
     }
 }
-
-export default SeriesItem;

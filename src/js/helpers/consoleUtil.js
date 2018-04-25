@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-const consoleUtil = {
+export default {
     /**
      * check if window.console exists
      * @param {string} message - message
@@ -16,5 +16,3 @@ const consoleUtil = {
         }
     }
 };
-
-export default consoleUtil;

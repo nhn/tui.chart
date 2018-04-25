@@ -180,6 +180,7 @@ class RaphaelAxisComponent {
         const centerAxisWidth = isDivided ? data.otherSideDimension.width : 0;
         const isContainDivensionArea = position => {
             const compareType = isVertical ? 'height' : 'width';
+
             return (position > layout.dimension[compareType] + centerAxisWidth);
         };
         let tick;
@@ -283,12 +284,14 @@ class RaphaelAxisComponent {
             isPositionRight,
             isCenter,
             isVertical,
-            tickColor
+            tickColor,
+            seriesDimension
         } = data;
+        const {position} = layout;
         const lineSize = areaSize;
-        const baseLeft = layout.position.left;
-        const verticalTickLineEndYCoord = layout.dimension.height + layout.position.top;
-        let baseTop = layout.position.top;
+        const baseLeft = position.left;
+        const verticalTickLineEndYCoord = layout.dimension.height + position.top;
+        let baseTop = position.top;
         let rightEdgeOfAxis = baseLeft + layout.dimension.width;
         let pathString = 'M';
         let lineStartYCoord, lineEndXCoord, lineEndYCoord;
@@ -299,7 +302,7 @@ class RaphaelAxisComponent {
         } else if (isVertical) {
             lineStartYCoord = baseTop;
             if (isNegativeStandard) {
-                rightEdgeOfAxis += data.seriesDimension.width / 2;
+                rightEdgeOfAxis += seriesDimension.width / 2;
             }
             pathString += `${rightEdgeOfAxis},${lineStartYCoord}`;
 
@@ -319,7 +322,7 @@ class RaphaelAxisComponent {
             }
 
             if (isNegativeStandard) {
-                baseTop -= data.seriesDimension.height / 2;
+                baseTop -= seriesDimension.height / 2;
             }
 
             pathString += `,${baseTop}H`;

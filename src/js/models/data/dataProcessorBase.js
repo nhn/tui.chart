@@ -14,7 +14,7 @@ import snippet from 'tui-code-snippet';
  * @class DataProcessorBase
  * @private
  */
-class DataProcessorBase {
+export default class DataProcessorBase {
     /**
      * Initialize.
      */
@@ -225,5 +225,3 @@ class DataProcessorBase {
         return this.formatFunctions;
     }
 }
-
-export default DataProcessorBase;

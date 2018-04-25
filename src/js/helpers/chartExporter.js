@@ -55,7 +55,7 @@ function exportChart(fileName, extension, rawData, svgElement, downloadOptions) 
     }
 }
 
-module.exports = {
+export default {
     exportChart,
     isDownloadSupported: isDownloadAttributeSupported || isMsSaveOrOpenBlobSupported,
     isImageDownloadAvailable,

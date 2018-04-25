@@ -12,8 +12,8 @@ import predicate from '../helpers/predicate';
 /**
  * Bounds and scale data builder.
  * @module boundsAndScaleBuilder
- * @private */
-const boundsAndScaleBuilder = {
+ */
+export default {
     /**
      * Create BoundsModel.
      * @param {DataProcessor} dataProcessor - DataProcessor instance
@@ -89,7 +89,7 @@ const boundsAndScaleBuilder = {
         const scaleData = scaleDataMap[axisName];
 
         if (scaleData) {
-            ({limit} = scaleData);
+            limit = scaleData.limit;
             yAxisLabels = scaleData.labels;
         }
         boundsModel.registerYAxisDimension({
@@ -114,10 +114,10 @@ const boundsAndScaleBuilder = {
     _setLayoutBoundsAndScale(dataProcessor, componentManager, boundsModel, scaleDataModel, params) {
         const {
             options,
-            scaleOption = {}
+            scaleOption = {},
+            addingDataMode,
+            isVertical
         } = params;
-        const {addingDataMode} = params;
-        const {isVertical} = params;
 
         // 01. register base dimension
         if (componentManager.has('xAxis')) {
@@ -240,5 +240,3 @@ const boundsAndScaleBuilder = {
         return boundsAndScale;
     }
 };
-
-export default boundsAndScaleBuilder;

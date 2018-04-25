@@ -6,7 +6,7 @@
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
-import {isTreemapChart} from '../helpers/predicate';
+import predicate from '../helpers/predicate';
 
 const ANIMATION_DURATION = 100;
 const MIN_BORDER_WIDTH = 0;
@@ -250,7 +250,7 @@ class RaphaelBoxTypeChart {
      * @private
      */
     _renderBoxes(seriesDataModel, startDepth, isPivot, seriesSet) {
-        const isTreemap = isTreemapChart(this.chartType);
+        const isTreemap = predicate.isTreemapChart(this.chartType);
 
         return seriesDataModel.map((seriesGroup, groupIndex) => {
             if (isTreemap && !this.colorSpectrum && seriesGroup.getSeriesItemCount()) {
@@ -296,22 +296,24 @@ class RaphaelBoxTypeChart {
     _setTreeFillOpacity(parentInfo, startDepth) {
         const children = this.seriesDataModel.findSeriesItemsByParent(parentInfo.id);
 
-        children.forEach(({depth, fillOpacity, id, hasChild}, index) => {
+        children.forEach((datum, index) => {
+            const {depth} = datum;
+
             if (depth === startDepth) {
-                fillOpacity = 1;
+                datum.fillOpacity = 1;
             } else if (depth === startDepth + 1) {
-                fillOpacity = 0.05 * index;
+                datum.fillOpacity = 0.05 * index;
             } else if (depth < startDepth) {
-                fillOpacity = 0;
+                datum.fillOpacity = 0;
             } else {
-                fillOpacity = parentInfo.fillOpacity + (0.05 * index);
+                datum.fillOpacity = parentInfo.fillOpacity + (0.05 * index);
             }
 
-            if (hasChild) {
+            if (datum.hasChild) {
                 this._setTreeFillOpacity(
                     {
-                        id,
-                        fillOpacity
+                        id: datum.id,
+                        fillOpacity: datum.fillOpacity
                     },
                     startDepth
                 );

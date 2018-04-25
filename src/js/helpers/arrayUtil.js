@@ -171,7 +171,7 @@ function pivot(arr2d) {
     return result;
 }
 
-const arrayUtil = {
+export default {
     min,
     max,
     any,
@@ -179,5 +179,3 @@ const arrayUtil = {
     unique,
     pivot
 };
-
-export default arrayUtil;

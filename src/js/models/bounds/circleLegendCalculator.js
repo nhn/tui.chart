@@ -10,8 +10,8 @@ import renderUtil from '../../helpers/renderUtil';
 /**
  * Calculator for circle legend.
  * @module circleLegendCalculator
- * @private */
-const circleLegendCalculator = {
+ */
+export default {
     /**
      * Calculate step of pixel unit.
      * @param {{tickCount: number, isLabelAxis: boolean}} axisData - data for rendering axis
@@ -67,7 +67,6 @@ const circleLegendCalculator = {
      * @param {string} maxLabel - maximum label
      * @param {string} fontFamily - fontFamily for legend
      * @returns {number}
-     * @private
      */
     calculateCircleLegendWidth(seriesDimension, axisDataMap, maxLabel, fontFamily) {
         const maxRadius = this._calculateRadiusByAxisData(seriesDimension, axisDataMap);
@@ -82,7 +81,6 @@ const circleLegendCalculator = {
      * @param {{xAxis: object, yAxis: object}} axisDataMap - axis data map
      * @param {boolean} [circleLegendVisible] - circleLegend visible option
      * @returns {number}
-     * @private
      */
     calculateMaxRadius(dimensionMap, axisDataMap, circleLegendVisible) {
         const maxRadius = this._calculateRadiusByAxisData(dimensionMap.series, axisDataMap);
@@ -95,5 +93,3 @@ const circleLegendCalculator = {
         return Math.min((circleLegendWidth - chartConst.CIRCLE_LEGEND_PADDING) / 2, maxRadius);
     }
 };
-
-export default circleLegendCalculator;

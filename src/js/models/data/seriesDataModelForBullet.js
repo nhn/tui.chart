@@ -7,7 +7,7 @@ import SeriesItem from './seriesItem';
 import SeriesDataModel from './seriesDataModel';
 import chartConst from '../../const';
 
-class SeriesDataModelForBullet extends SeriesDataModel {
+export default class SeriesDataModelForBullet extends SeriesDataModel {
     /**
      * SeriesDataModelForBullet is series model for boxplot chart
      * SeriesDataModel.groups has SeriesGroups.
@@ -36,7 +36,7 @@ class SeriesDataModelForBullet extends SeriesDataModel {
             const rangeCount = ranges.length;
 
             if (ranges && rangeCount) {
-                ranges.map(range => {
+                ranges.forEach(range => {
                     items.push(new SeriesItem({
                         datum: range,
                         chartType,
@@ -57,7 +57,7 @@ class SeriesDataModelForBullet extends SeriesDataModel {
             }
 
             if (markers && markerCount) {
-                markers.map(marker => {
+                markers.forEach(marker => {
                     items.push(new SeriesItem({
                         datum: marker,
                         chartType,
@@ -86,5 +86,3 @@ class SeriesDataModelForBullet extends SeriesDataModel {
         return SeriesDataModel.prototype._createSeriesGroupsFromRawData.call(this);
     }
 }
-
-export default SeriesDataModelForBullet;

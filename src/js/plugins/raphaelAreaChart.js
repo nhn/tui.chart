@@ -51,7 +51,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
      */
     render(paper, data) {
         const {dimension, groupPositions, theme = {}, position, zeroTop, hasRangeData, options} = data;
-        const {dot: dotTheme, colors} = theme;
+        const {dot: dotTheme = {}, colors} = theme;
         const {spline, allowSelect, connectNulls, pointWidth, showDot, areaOpacity: areaOpacityOptions} = options;
         const areaOpacity = this._isAreaOpacityNumber(areaOpacityOptions) ? areaOpacityOptions : 1;
         const dotOpacity = showDot ? 1 : 0;
@@ -191,7 +191,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
         let formerPath = [];
         let prevNull = false;
 
-        positions.forEach((position, index) => {
+        Object.entries(positions).forEach(([index, position]) => {
             let moveOrLine;
             if (position) {
                 if (prevNull) {
@@ -208,7 +208,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
                 latterPath.push(['z']);
             }
 
-            if (!position || index === positionLength - 1) {
+            if (!position || parseInt(index, 10) === positionLength - 1) {
                 paths.push(formerPath.concat(latterPath));
                 formerPath = [];
                 latterPath = [];

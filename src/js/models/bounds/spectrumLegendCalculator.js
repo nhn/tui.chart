@@ -7,12 +7,24 @@
 import chartConst from '../../const';
 import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
+const {
+    MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING,
+    MAP_LEGEND_WEDGE_SIZE,
+    MAP_LEGEND_AREA_PADDING_WIDE,
+    MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE,
+    MAP_LEGEND_GRAPH_SIZE,
+    MAP_LEGEND_LABEL_PADDING,
+    VERTICAL_MAP_LEGEND_HEIGHT,
+    MAP_LEGEND_TOOLTIP_VERTICAL_PADDING,
+    MAP_LEGEND_AREA_PADDING_NARROW,
+    HORIZONTAL_MAP_LEGEND_WIDTH
+} = chartConst;
 
 /**
  * Calculator for spectrum legend.
  * @module spectrumLegendCalculator
- * @private */
-const spectrumLegendCalculator = {
+ */
+export default {
     /**
      * Make vertical dimension.
      * @param {string} maxValue - formatted max value
@@ -26,21 +38,21 @@ const spectrumLegendCalculator = {
         const minValueLabelWidth = renderUtil.getRenderedLabelWidth(minValue, labelTheme);
         const labelWidth = renderUtil.getRenderedLabelWidth(maxValue, labelTheme);
         const tooltipWidth = calculator.sum([
-            (chartConst.MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING * 2),
+            (MAP_LEGEND_TOOLTIP_HORIZONTAL_PADDING * 2),
             labelWidth,
-            chartConst.MAP_LEGEND_WEDGE_SIZE
+            MAP_LEGEND_WEDGE_SIZE
         ]);
 
         return {
             width: calculator.sum([
-                chartConst.MAP_LEGEND_AREA_PADDING_WIDE,
+                MAP_LEGEND_AREA_PADDING_WIDE,
                 tooltipWidth,
-                chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE,
-                chartConst.MAP_LEGEND_GRAPH_SIZE,
-                chartConst.MAP_LEGEND_LABEL_PADDING,
+                MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE,
+                MAP_LEGEND_GRAPH_SIZE,
+                MAP_LEGEND_LABEL_PADDING,
                 Math.max(maxValueLabelWidth, minValueLabelWidth)
             ]),
-            height: chartConst.VERTICAL_MAP_LEGEND_HEIGHT
+            height: VERTICAL_MAP_LEGEND_HEIGHT
         };
     },
 
@@ -56,27 +68,25 @@ const spectrumLegendCalculator = {
     _makeHorizontalDimension(maxValue, labelTheme, isBoxType, isTopLegend) {
         const labelHeight = renderUtil.getRenderedLabelHeight(maxValue, labelTheme);
         const tooltipHeight = calculator.sum([
-            (chartConst.MAP_LEGEND_TOOLTIP_VERTICAL_PADDING * 2),
+            (MAP_LEGEND_TOOLTIP_VERTICAL_PADDING * 2),
             labelHeight,
-            chartConst.MAP_LEGEND_WEDGE_SIZE
+            MAP_LEGEND_WEDGE_SIZE
         ]);
-        const padding = isBoxType ? chartConst.MAP_LEGEND_AREA_PADDING_NARROW : chartConst.MAP_LEGEND_AREA_PADDING_WIDE;
-        const additionalTopPadding = isTopLegend ? chartConst.MAP_LEGEND_AREA_PADDING_WIDE : 0;
+        const padding = isBoxType ? MAP_LEGEND_AREA_PADDING_NARROW : MAP_LEGEND_AREA_PADDING_WIDE;
+        const additionalTopPadding = isTopLegend ? MAP_LEGEND_AREA_PADDING_WIDE : 0;
 
         return {
-            width: chartConst.HORIZONTAL_MAP_LEGEND_WIDTH,
+            width: HORIZONTAL_MAP_LEGEND_WIDTH,
             height: calculator.sum([
                 padding,
                 tooltipHeight,
-                chartConst.MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE,
-                chartConst.MAP_LEGEND_GRAPH_SIZE,
-                chartConst.MAP_LEGEND_LABEL_PADDING,
+                MAP_LEGEND_PADDING_BTW_GRAPH_AND_WEDGE,
+                MAP_LEGEND_GRAPH_SIZE,
+                MAP_LEGEND_LABEL_PADDING,
                 labelHeight,
-                chartConst.MAP_LEGEND_LABEL_PADDING,
+                MAP_LEGEND_LABEL_PADDING,
                 additionalTopPadding
             ])
         };
     }
 };
-
-export default spectrumLegendCalculator;

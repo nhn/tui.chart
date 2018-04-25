@@ -36,7 +36,7 @@ const IS_LTE_IE8 = browser.msie && browser.version <= 8;
  * @private
  */
 
-class BoundsModel {
+export default class BoundsModel {
     /**
      * Bounds maker.
      * @constructs BoundsModel
@@ -422,13 +422,12 @@ class BoundsModel {
     /**
      * Register dimension of circle legend.
      * @param {object} axisDataMap - axisData map
-     * @private
      */
     registerCircleLegendDimension(axisDataMap) {
         const seriesDimension = this.getDimension('series');
-        const legendOptions = this.options.legend;
+        const {legend: legendOptions} = this.options;
         const maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
-        const {fontFamily} = this.theme.chart;
+        const {chart: {fontFamily}} = this.theme;
         let circleLegendWidth = circleLegendCalculator.calculateCircleLegendWidth(
             seriesDimension,
             axisDataMap,
@@ -776,17 +775,18 @@ class BoundsModel {
         const leftLegendWidth = (isLegendAlignLeft) ? legendDimension.width : 0;
         const titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
         const yAxisTitlePadding = (() => {
-            let padding = 0;
             if (this.options.yAxis.title && !this.useSpectrumLegend) {
                 const titlePadding = renderUtil.getRenderedLabelHeight(
                     this.options.yAxis.title,
                     this.theme.yAxis.title
                 );
-                padding = titlePadding + chartConst.Y_AXIS_TITLE_PADDING;
+
+                return titlePadding + chartConst.Y_AXIS_TITLE_PADDING;
             }
 
-            return padding;
+            return 0;
         })();
+
         const seriesPadding = Math.max(0, (Math.max(topLegendHeight, yAxisTitlePadding) - chartConst.TITLE_PADDING));
         let seriesTop = titleOrExportMenuHeight + seriesPadding;
 
@@ -903,5 +903,3 @@ class BoundsModel {
         return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap, circleLegendVisible);
     }
 }
-
-export default BoundsModel;

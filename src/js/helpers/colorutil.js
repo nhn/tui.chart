@@ -155,7 +155,7 @@ const colorMap = {
     'yellowgreen': '#9acd32'
 };
 
-const colorutil = {
+export default {
     /**
      * pad left zero characters.
      * @param {number} number number value to pad zero.
@@ -193,7 +193,7 @@ const colorutil = {
      * @returns {number[]} rgb numbers
      */
     hexToRGB(hexStr) {
-        if (!colorutil.isValidRGB(hexStr)) {
+        if (!this.isValidRGB(hexStr)) {
             return false;
         }
 
@@ -216,11 +216,11 @@ const colorutil = {
     rgbToHEX(r, g, b) {
         const hexPreFix = '#';
         const hexStr = hexPreFix +
-            colorutil.leadingZero(r.toString(16), 2) +
-            colorutil.leadingZero(g.toString(16), 2) +
-            colorutil.leadingZero(b.toString(16), 2);
+            this.leadingZero(r.toString(16), 2) +
+            this.leadingZero(g.toString(16), 2) +
+            this.leadingZero(b.toString(16), 2);
 
-        if (colorutil.isValidRGB(hexStr)) {
+        if (this.isValidRGB(hexStr)) {
             return hexStr;
         }
 
@@ -237,4 +237,3 @@ const colorutil = {
     }
 };
 
-export default colorutil;
