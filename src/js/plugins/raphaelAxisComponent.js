@@ -232,29 +232,30 @@ export default class RaphaelAxisComponent {
      * @param {boolean} data.isVertical boolean value of vertical axis or not
      */
     renderStandardLine(data) {
-        const {lineSize, paper, layout, isVertical, axisLimit, seriesDimension, set} = data;
-
-        const baseLeft = layout.position.left;
-        const minAbs = Math.abs(axisLimit.min);
-        const maxAbs = Math.abs(axisLimit.max);
+        const {areaSize: lineSize, layout: {position, dimension}, paper, isVertical} = data;
+        const baseLeft = position.left;
+        const minAbs = Math.abs(data.axisLimit.min);
+        const maxAbs = Math.abs(data.axisLimit.max);
         const standardRatio = 1 - (maxAbs / (minAbs + maxAbs));
-        let baseTop = layout.position.top;
         let pathString = 'M';
-        let rightEdgeOfAxis = baseLeft + layout.dimension.width;
+        let baseTop = position.top;
+        let rightEdgeOfAxis = baseLeft + dimension.width;
 
         if (isVertical) {
             const lineStartYCoord = baseTop;
-            rightEdgeOfAxis += seriesDimension.width * standardRatio;
+            rightEdgeOfAxis += data.seriesDimension.width * standardRatio;
             pathString += `${rightEdgeOfAxis},${lineStartYCoord}`;
-            pathString += `V${(baseTop + lineSize)}`;
+            const lineEndYCoord = baseTop + lineSize;
+            pathString += `V${lineEndYCoord}`;
         } else {
             pathString += baseLeft;
-            baseTop -= seriesDimension.height * standardRatio;
+            baseTop -= data.seriesDimension.height * standardRatio;
             pathString += `,${baseTop}H`;
-            pathString += baseLeft + lineSize;
+            const lineEndXCoord = (baseLeft + lineSize);
+            pathString += lineEndXCoord;
         }
 
-        set.push(paper.path(pathString).attr({
+        data.set.push(paper.path(pathString).attr({
             'stroke-width': 1,
             opacity: 0.5
         }));
