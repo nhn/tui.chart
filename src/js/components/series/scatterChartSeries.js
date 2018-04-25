@@ -60,6 +60,12 @@ class ScatterChartSeries extends Series {
 
 CoordinateTypeSeriesBase.mixin(ScatterChartSeries);
 
+/**
+ * scatterSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} scatter series instanse
+ * @ignore
+ */
 export default function scatterSeriesFactory(params) {
     params.libType = params.chartOptions.libType;
     params.chartType = 'scatter';

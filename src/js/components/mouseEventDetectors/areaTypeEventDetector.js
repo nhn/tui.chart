@@ -224,6 +224,12 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
     }
 }
 
+/**
+ * areaTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} areatype event detector instanse
+ * @ignore
+ */
 export default function areaTypeEventDetectorFactory(params) {
     return new AreaTypeEventDetector(params);
 }

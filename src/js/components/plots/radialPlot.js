@@ -288,6 +288,12 @@ function makeRadialCategoryPositions(params) {
     return points;
 }
 
+/**
+ * RadialPlotFactory
+ * @param {object} param chart options
+ * @returns {object} radialplot instanse
+ * @ignore
+ */
 export default function RadialPlotFactory(param) {
     return new RadialPlot(param);
 }

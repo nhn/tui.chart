@@ -134,8 +134,8 @@ export default class ColumnLineComboChart extends ChartBase {
 
     /**
      * Make y axis scale option.
-     * @param {string} name - component name * @param {string} chartType - chart type
-     * @param {string} chartType - component name * @param {string} chartType - chart type
+     * @param {string} name - component name
+     * @param {string} chartType - chart type
      * @param {boolean} isSingleYAxis - whether single y axis or not
      * @returns {{options: object, areaType: string, chartType: string, additionalParams: object}}
      * @private

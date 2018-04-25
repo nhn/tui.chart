@@ -86,8 +86,7 @@ export default class BoxplotChart extends ChartBase {
      * modified from axisTypeMixer
      */
     addDataRatios(limitMap) {
-        const {series: seriesOption = {}} = this.options;
-        const {chartType} = this;
+        const {options: {series: seriesOption = {}}, chartType} = this;
         const {stackType} = (seriesOption[chartType] || seriesOption);
 
         this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);

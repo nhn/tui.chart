@@ -157,6 +157,12 @@ class ColumnChartSeries extends Series {
 
 BarTypeSeriesBase.mixin(ColumnChartSeries);
 
+/**
+ * columnSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} column series instanse
+ * @ignore
+ */
 export default function columnSeriesFactory(params) {
     params.libType = params.chartOptions.libType;
     params.chartType = 'column';

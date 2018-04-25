@@ -139,6 +139,12 @@ class RadialChartSeries extends Series {
     }
 }
 
+/**
+ * radialSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} radial series instanse
+ * @ignore
+ */
 export default function radialSeriesFactory(params) {
     params.libType = params.chartOptions.libType;
     params.chartType = params.chartOptions.chartType;

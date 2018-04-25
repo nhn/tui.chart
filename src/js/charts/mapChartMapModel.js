@@ -201,14 +201,29 @@ export default class MapChartMapModel {
             }
         }
 
+        this._addCommandPath(pathData, {
+            commandType,
+            coordinate
+        });
+
+        return pathData;
+    }
+
+    /**
+     * Add command path for Split path.
+     * @param {Array} pathData svg path array
+     * @param {Object} pathInfos svg path infos
+     *   @param {string} commandType svg command type
+     *   @param {string} coordinate path string
+     * @private
+     */
+    _addCommandPath(pathData, {commandType, coordinate} = {}) {
         if (commandType && coordinate) {
             pathData.push({
                 type: commandType,
                 coordinate
             });
         }
-
-        return pathData;
     }
 
     /**

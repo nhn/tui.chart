@@ -180,6 +180,12 @@ class MapChartEventDetector extends MouseEventDetectorBase {
     }
 }
 
+/**
+ * mapChartEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} map chart event detector instanse
+ * @ignore
+ */
 export default function mapChartEventDetectorFactory(params) {
     return new MapChartEventDetector(params);
 }

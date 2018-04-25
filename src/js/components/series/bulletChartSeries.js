@@ -353,6 +353,7 @@ class BulletChartSeries extends Series {
  * BulletChartSeries factory function
  * @param {object} params - series initialization data
  * @returns {BulletChartSeries} - bullet chart series
+ * private
  */
 export default function bulletSeriesFactory(params) {
     params.chartType = 'bullet';

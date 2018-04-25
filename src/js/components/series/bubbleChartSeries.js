@@ -129,6 +129,12 @@ class BubbleChartSeries extends Series {
 
 CoordinateTypeSeriesBase.mixin(BubbleChartSeries);
 
+/**
+ * bubbleSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} bubble series instanse
+ * @ignore
+ */
 export default function bubbleSeriesFactory(params) {
     const {chartOptions: {libType}, chartTheme} = params;
 

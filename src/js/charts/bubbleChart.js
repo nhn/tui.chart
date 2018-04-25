@@ -3,7 +3,6 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
 import ChartBase from './chartBase';
 import chartConst from '../const';
 import snippet from 'tui-code-snippet';
@@ -21,10 +20,12 @@ export default class BubbleChart extends ChartBase {
     constructor(rawData, theme, options) {
         options = Object.assign({
             tooltip: {},
-            circleLegend: {
-                visible: true
-            }
+            circleLegend: {}
         }, options);
+
+        options.circleLegend = Object.assign({
+            visible: true
+        }, options.circleLegend);
 
         options.tooltip = Object.assign({
             align: chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION,

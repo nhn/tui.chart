@@ -162,6 +162,12 @@ class BoxplotChartSeries extends Series {
 
 BarTypeSeriesBase.mixin(BoxplotChartSeries);
 
+/**
+ * boxplotSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} boxplot series instanse
+ * @ignore
+ */
 export default function boxplotSeriesFactory(params) {
     const {chartOptions: {libType}, chartTheme} = params;
 

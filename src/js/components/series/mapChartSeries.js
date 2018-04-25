@@ -464,6 +464,12 @@ class MapChartSeries extends Series {
     }
 }
 
+/**
+ * mapSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} mapChart series instanse
+ * @ignore
+ */
 export default function mapSeriesFactory(params) {
     params.libType = params.chartOptions.libType;
     params.chartType = 'map';

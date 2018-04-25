@@ -128,6 +128,12 @@ class AreaChartSeries extends Series {
 
 LineTypeSeriesBase.mixin(AreaChartSeries);
 
+/**
+ * areaSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} areaChart series instanse
+ * @ignore
+ */
 export default function areaSeriesFactory(params) {
     const {chartTheme, chartOptions: {libType}} = params;
 
