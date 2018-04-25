@@ -99,8 +99,8 @@ Visualize the data in different styles by customizing the details of the charts.
 ### And More From Examples
 
 * [Load Data from a table](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/import-chart-data-from-existing-table-element.md)
-* [Add data dynamically](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
-* [Apply themes](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
+* [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
+* [Apply themes](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
 * [Map Data Attribution](https://www.amcharts.com/svg-maps/)
 
 Check out [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html) and [wiki](https://github.com/nhnent/tui.chart/tree/production/docs/wiki#tutorial) to discover more.
