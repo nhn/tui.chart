@@ -278,7 +278,7 @@ export default class RaphaelAxisComponent {
         const {
             areaSize,
             paper,
-            layout,
+            layout: {position: {top: baseTop, left: baseLeft}, dimension},
             isNegativeStandard,
             isNotDividedXAxis,
             additionalSize,
@@ -288,14 +288,11 @@ export default class RaphaelAxisComponent {
             tickColor,
             seriesDimension
         } = data;
-        const {position} = layout;
         const lineSize = areaSize;
-        const baseLeft = position.left;
-        const verticalTickLineEndYCoord = layout.dimension.height + position.top;
-        let baseTop = position.top;
-        let rightEdgeOfAxis = baseLeft + layout.dimension.width;
+        const verticalTickLineEndYCoord = dimension.height + baseTop;
+        let rightEdgeOfAxis = baseLeft + dimension.width;
         let pathString = 'M';
-        let lineStartYCoord, lineEndXCoord, lineEndYCoord;
+        let lineStartYCoord, lineEndYCoord;
 
         if (isPositionRight) {
             pathString += `${baseLeft},${baseTop}`;
@@ -316,25 +313,15 @@ export default class RaphaelAxisComponent {
                 pathString += `V${lineEndYCoord}`;
             }
         } else {
-            if (isNotDividedXAxis) {
-                pathString += baseLeft;
-            } else {
-                pathString += (baseLeft + additionalSize);
-            }
-
-            if (isNegativeStandard) {
-                baseTop -= seriesDimension.height / 2;
-            }
-
-            pathString += `,${baseTop}H`;
-
-            lineEndXCoord = (baseLeft + lineSize);
-
-            if (!isNotDividedXAxis) {
-                lineEndXCoord += additionalSize;
-            }
-
-            pathString += lineEndXCoord;
+            pathString = this._makeNormalTickPath(pathString, {
+                isNotDividedXAxis,
+                baseTop,
+                baseLeft,
+                additionalSize,
+                isNegativeStandard,
+                seriesDimension,
+                lineSize
+            });
         }
 
         data.set.push(paper.path(pathString).attr({
@@ -342,6 +329,44 @@ export default class RaphaelAxisComponent {
             stroke: tickColor,
             opacity: 0.5
         }));
+    }
+
+    /**
+     * Render tick line  on given paper
+     * @param {string} pathString render path string
+     * @param {object} pathInfo render path infos
+     *   @param {boolean} pathInfo.isNotDividedXAxis boolean value for XAxis divided or not
+     *   @param {number} pathInfo.baseTop baseTop
+     *   @param {number} pathInfo.baseLeft baseLeft
+     *   @param {number} pathInfo.additionalSize additional size for position and line length
+     *   @param {boolean} bpathInfo.isNegativeStandard boolean value for XAxis divided or not
+     *   @param {object} pathInfo.seriesDimension seriesDemension
+     *   @param {number} pathInfo.lineSize tick line size
+     *   @returns {string} pathString
+     * @private
+     */
+    _makeNormalTickPath(pathString, pathInfo) {
+        if (pathInfo.isNotDividedXAxis) {
+            pathString += pathInfo.baseLeft;
+        } else {
+            pathString += (pathInfo.baseLeft + pathInfo.additionalSize);
+        }
+
+        if (pathInfo.isNegativeStandard) {
+            pathInfo.baseTop -= pathInfo.seriesDimension.height / 2;
+        }
+
+        pathString += `,${pathInfo.baseTop}H`;
+
+        let lineEndXCoord = (pathInfo.baseLeft + pathInfo.lineSize);
+
+        if (!pathInfo.isNotDividedXAxis) {
+            lineEndXCoord += pathInfo.additionalSize;
+        }
+
+        pathString += lineEndXCoord;
+
+        return pathString;
     }
 
     /**

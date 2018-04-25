@@ -228,22 +228,16 @@ export default class RaphaelMapChart {
         };
 
         raphaelMatrix.translate(distances.x, distances.y);
-
-        const currentTranslateX = (raphaelMatrix.e / raphaelMatrix.a);
-        const currentTranslateY = (raphaelMatrix.f / raphaelMatrix.d);
-        const translateX = currentTranslateX + (transformMatrix.e / transformMatrix.a);
-        const translateY = currentTranslateY + (transformMatrix.f / transformMatrix.d);
-
-        if (translateX >= 0 && currentTranslateX > 0) {
-            raphaelMatrix.e = 0;
-        } else if (translateX < 0 && translateX < -maxRight / transformMatrix.a && currentTranslateX < 0) {
-            raphaelMatrix.e = 0;
-        }
-        if (translateY >= 0 && currentTranslateY > 0) {
-            raphaelMatrix.f = 0;
-        } else if (translateY < 0 && translateY < -maxTop / transformMatrix.d && currentTranslateY < 0) {
-            raphaelMatrix.f = 0;
-        }
+        this._translateXForRaphaelMatrix({
+            raphaelMatrix,
+            transformMatrix,
+            maxRight
+        });
+        this._translateYForRaphaelMatrix({
+            raphaelMatrix,
+            transformMatrix,
+            maxTop
+        });
 
         matrix.a = raphaelMatrix.a;
         matrix.b = raphaelMatrix.b;
@@ -255,6 +249,28 @@ export default class RaphaelMapChart {
         translate.setMatrix(matrix);
         transformList.appendItem(translate);
         transformList.initialize(transformList.consolidate());
+    }
+
+    _translateXForRaphaelMatrix({raphaelMatrix, transformMatrix, maxRight}) {
+        const currentTranslateX = (raphaelMatrix.e / raphaelMatrix.a);
+        const translateX = currentTranslateX + (transformMatrix.e / transformMatrix.a);
+
+        if (translateX >= 0 && currentTranslateX > 0) {
+            raphaelMatrix.e = 0;
+        } else if (translateX < 0 && translateX < -maxRight / transformMatrix.a && currentTranslateX < 0) {
+            raphaelMatrix.e = 0;
+        }
+    }
+
+    _translateYForRaphaelMatrix({raphaelMatrix, transformMatrix, maxTop}) {
+        const currentTranslateY = (raphaelMatrix.f / raphaelMatrix.d);
+        const translateY = currentTranslateY + (transformMatrix.f / transformMatrix.d);
+
+        if (translateY >= 0 && currentTranslateY > 0) {
+            raphaelMatrix.f = 0;
+        } else if (translateY < 0 && translateY < -maxTop / transformMatrix.d && currentTranslateY < 0) {
+            raphaelMatrix.f = 0;
+        }
     }
 
     /**

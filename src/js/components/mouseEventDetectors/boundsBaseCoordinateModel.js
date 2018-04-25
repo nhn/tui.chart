@@ -260,7 +260,6 @@ export default class BoundsBaseCoordinateModel {
     _findCandidates(data, layerX, layerY) {
         return data.filter(datum => {
             const bound = datum && datum.bound;
-            let included = false;
 
             if (bound) {
                 if (bound.top === bound.bottom) {
@@ -272,13 +271,30 @@ export default class BoundsBaseCoordinateModel {
                     bound.right += chartConst.SERIES_EXTRA_EVENT_AREA_FOR_ZERO;
                 }
 
-                const includedX = bound.left <= layerX && bound.right >= layerX;
-                const includedY = bound.top <= layerY && bound.bottom >= layerY;
-                included = includedX && includedY;
+                return this._isCandidateTarget(bound, {
+                    layerX,
+                    layerY
+                });
             }
 
-            return included;
+            return false;
         });
+    }
+
+    /**
+     * Whether candidate target.
+     * @param {{left: number, top: number, right: number, bottom: number}} bound bound info
+     * @param {object} layout layout position
+     *   @param {number} layout.layerX layerX
+     *   @param {number} layout.layerY layerY
+     * @returns {boolean} is target
+     * @private
+     */
+    _isCandidateTarget(bound, {layerX, layerY}) {
+        const includedX = bound.left <= layerX && bound.right >= layerX;
+        const includedY = bound.top <= layerY && bound.bottom >= layerY;
+
+        return (includedX && includedY);
     }
 
     /**
