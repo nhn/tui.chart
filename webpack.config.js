@@ -64,7 +64,7 @@ module.exports = (function() {
                 {
                     test: /\.js$/,
                     exclude: /(node_modules|bower_components)/,
-                    loader: 'babel-loader'
+                    loader: 'babel-loader?cacheDirectory'
                 },
                 {
                     test: /\.less$/,
