@@ -83,7 +83,6 @@ function isImageExtension(extension) {
  */
 function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
     const blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
-
     window.navigator.msSaveOrOpenBlob(blobObject, `${fileName}.${extension}`);
 }
 

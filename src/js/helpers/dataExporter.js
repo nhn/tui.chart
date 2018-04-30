@@ -29,7 +29,18 @@ const dataExporter = {
      */
     downloadData(fileName, extension, rawData, downloadOption) {
         const chartData2DArray = _get2DArrayFromRawData(rawData);
-        const content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
+        const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+        const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+        let content = DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
+
+        content = encodeURIComponent(content);
+        if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
+            if (extension !== 'csv') {
+                content = window.btoa(unescape(content));
+            }
+        }
+
+        content = DATA_URI_HEADERS[extension] + content;
 
         downloader.execDownload(fileName, extension, content);
     },
@@ -272,7 +283,7 @@ function _makeXlsBodyWithRawData(chartData2DArray) {
         </body>
         </html>`;
 
-    return window.btoa(unescape(encodeURIComponent(xlsString)));
+    return xlsString;
 }
 
 /**
@@ -307,7 +318,7 @@ function _makeCsvBodyWithRawData(chartData2DArray, option = {}) {
         }
     });
 
-    return encodeURIComponent(csvText);
+    return csvText;
 }
 
 // export private methods for Test
