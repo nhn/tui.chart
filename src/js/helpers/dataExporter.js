@@ -264,8 +264,7 @@ function _getTableElementStringForXls(chartData2DArray) {
 
 /**
  * Make xls file with chart series data
- * @param {Array.<Arr
-ay.<object>>} chartData2DArray - chart chartData2DArray
+ * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
  * @returns {string} base64 xls file content
  * @private
  */
