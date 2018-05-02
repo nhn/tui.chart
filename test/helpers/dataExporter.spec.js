@@ -34,27 +34,27 @@ describe('Test for dataExporter', () => {
             const extension = 'xls';
 
             dataExporter.downloadData('myFile', extension, rawData, downloadOption);
-            expect(downloader.execDownload).toHaveBeenCalledWith('myFile', extension, jasmine.any(String));
+            expect(downloader.execDownload).toHaveBeenCalledWith('myFile', extension, jasmine.any(String), 'application/vnd.ms-excel');
         });
         it('should download data to csv.', () => {
             const extension = 'csv';
 
             dataExporter.downloadData('myFile', extension, rawData, downloadOption);
-            expect(downloader.execDownload).toHaveBeenCalledWith('myFile', extension, jasmine.any(String));
+            expect(downloader.execDownload).toHaveBeenCalledWith('myFile', extension, jasmine.any(String), 'text/csv;charset=utf-8');
         });
     });
     describe('_makeCsvTextWithRawData()', () => {
         it('should create csv string.', () => {
             expect(dataExporter._makeCsvBodyWithRawData([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
-                .toBe('1%2C2%2C3%0A4%2C5%2C6%0A7%2C8%2C9');
+                .toBe('1,2,3\n4,5,6\n7,8,9');
         });
 
         it('should create csv string with item delimiter.', () => {
-            expect(dataExporter._makeCsvBodyWithRawData([[1, 2, 3], [4, 5, 6], [7, 8, 9]], {itemDelimiter: '.'})).toBe('1.2.3%0A4.5.6%0A7.8.9');
+            expect(dataExporter._makeCsvBodyWithRawData([[1, 2, 3], [4, 5, 6], [7, 8, 9]], {itemDelimiter: '.'})).toBe('1.2.3\n4.5.6\n7.8.9');
         });
 
         it('should create csv string with line delimiter.', () => {
-            expect(dataExporter._makeCsvBodyWithRawData([[1, 2, 3], [4, 5, 6], [7, 8, 9]], {lineDelimiter: '-'})).toBe('1%2C2%2C3-4%2C5%2C6-7%2C8%2C9');
+            expect(dataExporter._makeCsvBodyWithRawData([[1, 2, 3], [4, 5, 6], [7, 8, 9]], {lineDelimiter: '-'})).toBe('1,2,3-4,5,6-7,8,9');
         });
 
         it('should create csv string with item and line delimiter.', () => {
@@ -70,7 +70,7 @@ describe('Test for dataExporter', () => {
             const actual = dataExporter._makeXlsBodyWithRawData([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
             const tableHTML = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Ark1</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta name=ProgId content=Excel.Sheet><meta charset=UTF-8></head><body><table><tr><th class="number">1</th><th>2</th><th>3</th></tr><tr><td class="number">4</td><td class="number">5</td><td class="number">6</td></tr><tr><td class="number">7</td><td class="number">8</td><td class="number">9</td></tr></table></body></html>';
 
-            expect(actual).toBe(window.btoa(tableHTML));
+            expect(actual).toBe(tableHTML);
         });
     });
 

@@ -31,18 +31,17 @@ const dataExporter = {
         const chartData2DArray = _get2DArrayFromRawData(rawData);
         const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
         const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+        const contentType = DATA_URI_HEADERS[extension].replace(/(data:|;base64,|,%EF%BB%BF)/g, '');
         let content = DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
 
-        content = encodeURIComponent(content);
         if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
             if (extension !== 'csv') {
-                content = window.btoa(unescape(content));
+                content = window.btoa(unescape(encodeURIComponent(content)));
             }
+            content = DATA_URI_HEADERS[extension] + content;
         }
 
-        content = DATA_URI_HEADERS[extension] + content;
-
-        downloader.execDownload(fileName, extension, content);
+        downloader.execDownload(fileName, extension, content, contentType);
     },
 
     /**
@@ -252,7 +251,8 @@ function _getTableElementStringForXls(chartData2DArray) {
 
 /**
  * Make xls file with chart series data
- * @param {Array.<Array.<object>>} chartData2DArray - chart chartData2DArray
+ * @param {Array.<Arr
+ay.<object>>} chartData2DArray - chart chartData2DArray
  * @returns {string} base64 xls file content
  * @private
  */
