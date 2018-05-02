@@ -24,7 +24,6 @@ describe('Test for dataExporter', () => {
 
     describe('downloadData()', () => {
         beforeEach(() => {
-            spyOn(downloader, 'execDownload').and.callFake(fn);
             spyOn(dataExporter, '_get2DArrayFromRawData');
             spyOn(dataExporter, '_makeXlsBodyWithRawData');
             spyOn(dataExporter, '_makeCsvBodyWithRawData');
@@ -32,15 +31,39 @@ describe('Test for dataExporter', () => {
 
         it('should download data to xls.', () => {
             const extension = 'xls';
+            spyOn(downloader, 'execDownload').and.callFake(fn);
 
             dataExporter.downloadData('myFile', extension, rawData, downloadOption);
             expect(downloader.execDownload).toHaveBeenCalledWith('myFile', extension, jasmine.any(String), 'application/vnd.ms-excel');
         });
         it('should download data to csv.', () => {
             const extension = 'csv';
+            spyOn(downloader, 'execDownload').and.callFake(fn);
 
             dataExporter.downloadData('myFile', extension, rawData, downloadOption);
             expect(downloader.execDownload).toHaveBeenCalledWith('myFile', extension, jasmine.any(String), 'text/csv;charset=utf-8');
+        });
+
+        it('should encoding data to xls.', () => {
+            spyOn(downloader, 'execDownload');
+            spyOn(dataExporter, '_isNeedDataEncodeing').and.returnValue(true);
+
+            const expected = 'data:application/vnd.ms-excel;base64,PGh0bWwgeG1sbnM6bz0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6b2ZmaWNlIiB4bWxuczp4PSJ1cm46c2NoZW1hcy1taWNyb3NvZnQtY29tOm9mZmljZTpleGNlbCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnL1RSL1JFQy1odG1sNDAiPjxoZWFkPjwhLS1baWYgZ3RlIG1zbyA5XT48eG1sPjx4OkV4Y2VsV29ya2Jvb2s+PHg6RXhjZWxXb3Jrc2hlZXRzPjx4OkV4Y2VsV29ya3NoZWV0Pjx4Ok5hbWU+QXJrMTwveDpOYW1lPjx4OldvcmtzaGVldE9wdGlvbnM+PHg6RGlzcGxheUdyaWRsaW5lcy8+PC94OldvcmtzaGVldE9wdGlvbnM+PC94OkV4Y2VsV29ya3NoZWV0PjwveDpFeGNlbFdvcmtzaGVldHM+PC94OkV4Y2VsV29ya2Jvb2s+PC94bWw+PCFbZW5kaWZdLS0+PG1ldGEgbmFtZT1Qcm9nSWQgY29udGVudD1FeGNlbC5TaGVldD48bWV0YSBjaGFyc2V0PVVURi04PjwvaGVhZD48Ym9keT48dGFibGU+PHRyPjx0aCBjbGFzcz0ibnVtYmVyIj48L3RoPjx0aD51bmRlZmluZWQ8L3RoPjwvdHI+PC90YWJsZT48L2JvZHk+PC9odG1sPg==';
+
+            dataExporter.downloadData('myFile', 'xls', rawData, downloadOption);
+
+            expect(downloader.execDownload.calls.mostRecent().args[2]).toBe(expected);
+        });
+
+        it('should not encoding data to xls.', () => {
+            spyOn(downloader, 'execDownload');
+            spyOn(dataExporter, '_isNeedDataEncodeing').and.returnValue(false);
+
+            const expected = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Ark1</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta name=ProgId content=Excel.Sheet><meta charset=UTF-8></head><body><table><tr><th class="number"></th><th>undefined</th></tr></table></body></html>';
+
+            dataExporter.downloadData('myFile', 'xls', rawData, downloadOption);
+
+            expect(downloader.execDownload.calls.mostRecent().args[2]).toBe(expected);
         });
     });
     describe('_makeCsvTextWithRawData()', () => {

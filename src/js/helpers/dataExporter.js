@@ -29,12 +29,10 @@ const dataExporter = {
      */
     downloadData(fileName, extension, rawData, downloadOption) {
         const chartData2DArray = _get2DArrayFromRawData(rawData);
-        const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
-        const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
         const contentType = DATA_URI_HEADERS[extension].replace(/(data:|;base64,|,%EF%BB%BF)/g, '');
         let content = DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
 
-        if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
+        if (this._isNeedDataEncodeing()) {
             if (extension !== 'csv') {
                 content = window.btoa(unescape(encodeURIComponent(content)));
             }
@@ -42,6 +40,21 @@ const dataExporter = {
         }
 
         downloader.execDownload(fileName, extension, content, contentType);
+    },
+
+    /**
+     * Whether need encode type or not
+     * @returns {boolean}
+     */
+    _isNeedDataEncodeing() {
+        const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+        const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+
+        if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
+            return true;
+        }
+
+        return false;
     },
 
     /**
