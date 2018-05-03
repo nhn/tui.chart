@@ -383,7 +383,9 @@ var RaphaelBoxTypeChart = snippet.defineClass(/** @lends RaphaelBoxTypeChart.pro
         });
 
         this.rectOverlay.toFront();
-        this.labelSet.toFront();
+        if (this.labelSet) {
+            this.labelSet.toFront();
+        }
     },
 
     /**
