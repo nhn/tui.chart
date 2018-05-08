@@ -15,7 +15,7 @@ export default class RaphaelTitleComponent {
      *   @param {{x: number, y: number}} renderInfo.offset - title offset x, y
      *   @param {object} renderInfo.theme - theme object
      *   @param {string} [renderInfo.align] - title align option
-     *   @param {number} renderInfo.chartWidth chart width
+     *   @param {number} renderInfo.chartTitleAreaWidth chart title area width
      * @returns {Array.<object>} title set
      */
     render(renderInfo) {
@@ -25,19 +25,24 @@ export default class RaphaelTitleComponent {
             offset,
             theme,
             align = chartConst.TITLE_ALIGN_LEFT,
-            chartWidth
+            chartTitleAreaWidth
         } = renderInfo;
-        const {fontSize, fontFamily} = theme.fontSize;
+        const {fontSize, fontFamily} = theme;
         const titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
         const titleSet = paper.set();
-        const pos = this.getTitlePosition(titleSize, align, chartWidth, offset);
+        const pos = this.getTitlePosition(titleSize, align, chartTitleAreaWidth, offset);
+        const textAnchor = {
+            left: 'start',
+            right: 'end',
+            center: 'middle'
+        }[align];
 
         titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
             'font-family': theme.fontFamily,
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
             fill: theme.color,
-            'text-anchor': 'start'
+            'text-anchor': textAnchor
         }));
 
         return titleSet;
@@ -54,10 +59,20 @@ export default class RaphaelTitleComponent {
     getTitlePosition(titleSize, align, chartWidth, offset) {
         let left;
 
+        /*
+        if (align === chartConst.TITLE_ALIGN_CENTER) {
+            left = (chartWidth / 2) - (titleSize.width / 2);
+        } else if (align === chartConst.TITLE_ALIGN_RIGHT) {
+            left = chartWidth - titleSize.width;
+        } else {
+            left = chartConst.CHART_PADDING;
+        }
+        */
+
         if (align === chartConst.TITLE_ALIGN_CENTER) {
             left = chartWidth / 2;
         } else if (align === chartConst.TITLE_ALIGN_RIGHT) {
-            left = chartWidth - titleSize.width - (titleSize.width / 2);
+            left = chartWidth;
         } else {
             left = chartConst.CHART_PADDING;
         }

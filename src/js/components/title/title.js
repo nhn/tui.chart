@@ -91,9 +91,8 @@ class Title {
      * @private
      */
     _renderTitleArea(data) {
-        const {paper, dimensionMap: {legend, series}} = data;
-        const legendWidth = legend ? legend.width : 0;
-        const chartWidth = series.width + legendWidth;
+        const {paper, dimensionMap} = data;
+        const chartTitleAreaWidth = this._calculateForTitleAreaWidth(dimensionMap);
 
         return this.graphRenderer.render({
             paper,
@@ -101,8 +100,22 @@ class Title {
             offset: this.offset,
             theme: this.theme,
             align: this.align,
-            chartWidth
+            chartTitleAreaWidth
         });
+    }
+
+    /**
+     * Calculate title area width
+     * @param {object} dimensionMap dimensionMap
+     *     @param {object} dimensionMap.chartExportMenu dimension of chartExportMenu
+     *     @param {object} dimensionMap.chart chart of chartExportMenu
+     * @returns {number} title area width
+     * @private
+     */
+    _calculateForTitleAreaWidth({chartExportMenu, chart}) {
+        const exportMenuWidth = chartExportMenu ? (chartExportMenu.width * 2) : 0;
+
+        return chart.width - exportMenuWidth;
     }
 }
 
