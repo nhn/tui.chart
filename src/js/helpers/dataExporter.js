@@ -34,6 +34,7 @@ const dataExporter = {
 
         if (this._isNeedDataEncodeing()) {
             if (extension !== 'csv') {
+                // base64 encoding for data URI scheme.
                 content = window.btoa(unescape(encodeURIComponent(content)));
             }
             content = DATA_URI_HEADERS[extension] + content;
@@ -45,6 +46,7 @@ const dataExporter = {
     /**
      * Whether need encode type or not
      * @returns {boolean}
+     * @private
      */
     _isNeedDataEncodeing() {
         const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
