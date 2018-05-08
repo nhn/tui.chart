@@ -79,11 +79,11 @@ function isImageExtension(extension) {
  * @param {string} fileName - file name
  * @param {string} extension - file extension
  * @param {string} content - file content
+ * @param {string} contentType - file content type
  * @ignore
  */
-function downloadWithMsSaveOrOpenBlob(fileName, extension, content) {
-    const blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content]);
-
+function downloadWithMsSaveOrOpenBlob(fileName, extension, content, contentType) {
+    const blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content], {type: contentType});
     window.navigator.msSaveOrOpenBlob(blobObject, `${fileName}.${extension}`);
 }
 
@@ -114,13 +114,14 @@ function downloadWithAnchorElementDownloadAttribute(fileName, extension, content
  * @param {string} fileName - file name
  * @param {string} extension - file extension
  * @param {string} content - file content
+ * @param {string} contentType - file content type
  * @ignore
  */
-function execDownload(fileName, extension, content) {
+function execDownload(fileName, extension, content, contentType) {
     const downloadMethod = getDownloadMethod();
 
     if (downloadMethod && snippet.isString(content)) {
-        DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content);
+        DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content, contentType);
     }
 }
 

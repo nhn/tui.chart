@@ -29,9 +29,34 @@ const dataExporter = {
      */
     downloadData(fileName, extension, rawData, downloadOption) {
         const chartData2DArray = _get2DArrayFromRawData(rawData);
-        const content = DATA_URI_HEADERS[extension] + DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
+        const contentType = DATA_URI_HEADERS[extension].replace(/(data:|;base64,|,%EF%BB%BF)/g, '');
+        let content = DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
 
-        downloader.execDownload(fileName, extension, content);
+        if (this._isNeedDataEncodeing()) {
+            if (extension !== 'csv') {
+                // base64 encoding for data URI scheme.
+                content = window.btoa(unescape(encodeURIComponent(content)));
+            }
+            content = DATA_URI_HEADERS[extension] + content;
+        }
+
+        downloader.execDownload(fileName, extension, content, contentType);
+    },
+
+    /**
+     * Whether need encode type or not
+     * @returns {boolean}
+     * @private
+     */
+    _isNeedDataEncodeing() {
+        const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+        const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+
+        if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
+            return true;
+        }
+
+        return false;
     },
 
     /**
@@ -272,7 +297,7 @@ function _makeXlsBodyWithRawData(chartData2DArray) {
         </body>
         </html>`;
 
-    return window.btoa(unescape(encodeURIComponent(xlsString)));
+    return xlsString;
 }
 
 /**
@@ -307,7 +332,7 @@ function _makeCsvBodyWithRawData(chartData2DArray, option = {}) {
         }
     });
 
-    return encodeURIComponent(csvText);
+    return csvText;
 }
 
 // export private methods for Test
