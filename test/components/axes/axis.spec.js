@@ -204,6 +204,20 @@ describe('Test for Axis', () => {
 
             expect(labelPosition.top).toBe(67);
         });
+
+        it('renderLabel should not occur when the tickInterval option is auto and the tick labels overlap.', () => {
+            spyOn(axis.graphRenderer, 'renderLabel');
+            spyOn(axis, '_isOverLapXAxisLabel').and.returnValue(true);
+
+            axis.options = {
+                labelMargin: 30,
+                tickInterval: 'auto'
+            };
+            axis.isYAxis = false;
+            axis._renderNormalLabels([0], ['abc'], 0, 0);
+
+            expect(axis.graphRenderer.renderLabel).not.toHaveBeenCalled();
+        });
     });
 
     describe('_renderRotationLabels()', () => {

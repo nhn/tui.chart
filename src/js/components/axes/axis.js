@@ -519,10 +519,12 @@ class Axis {
         const {labelMargin = 0, pointOnColumn, isCenter} = this.options;
         const isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
         const isPointOnColumn = isLineTypeChart && pointOnColumn;
+        const isAutoTickInterval = predicate.isAutoTickInterval(this.options.tickInterval);
 
         positions.forEach((position, index) => {
             const labelPosition = position + additionalSize;
             const halfLabelDistance = labelSize / 2;
+            const isOverLapXAxisLabel = this._isOverLapXAxisLabel(categories[index], position, positions[index + 1]);
             let positionTopAndLeft = {};
             /*
              * to prevent printing `undefined` text, when category label is not set
@@ -538,6 +540,8 @@ class Axis {
                     halfLabelDistance,
                     isPositionRight
                 });
+            } else if (isAutoTickInterval && isOverLapXAxisLabel) {
+                return;
             } else {
                 positionTopAndLeft = this._getXAxisLabelPosition(layout, {
                     labelMargin,
@@ -565,6 +569,21 @@ class Axis {
                 theme
             });
         }, this);
+    }
+
+    /**
+     * @param {string} labelText - axis label text
+     * @param {number} position - current left position
+     * @param {number} nextPosition - next  left position
+     * @returns {boolean}
+     */
+    _isOverLapXAxisLabel(labelText, position, nextPosition) {
+        const labelWidth = renderUtil.getRenderedLabelWidth(labelText);
+        if (nextPosition && nextPosition - position < labelWidth) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
