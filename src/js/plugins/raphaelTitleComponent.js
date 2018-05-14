@@ -31,18 +31,18 @@ export default class RaphaelTitleComponent {
         const titleSize = raphaelRenderUtil.getRenderedTextSize(titleText, fontSize, fontFamily);
         const titleSet = paper.set();
         const pos = this.getTitlePosition(titleSize, align, chartTitleAreaWidth, offset);
-        const textAnchor = {
+        const textAnchorAlign = {
             left: 'start',
             right: 'end',
             center: 'middle'
-        }[align];
+        };
 
         titleSet.push(raphaelRenderUtil.renderText(paper, pos, titleText, {
             'font-family': theme.fontFamily,
             'font-size': theme.fontSize,
             'font-weight': theme.fontWeight,
             fill: theme.color,
-            'text-anchor': textAnchor
+            'text-anchor': textAnchorAlign[align]
         }));
 
         return titleSet;
@@ -58,16 +58,6 @@ export default class RaphaelTitleComponent {
      */
     getTitlePosition(titleSize, align, chartWidth, offset) {
         let left;
-
-        /*
-        if (align === chartConst.TITLE_ALIGN_CENTER) {
-            left = (chartWidth / 2) - (titleSize.width / 2);
-        } else if (align === chartConst.TITLE_ALIGN_RIGHT) {
-            left = chartWidth - titleSize.width;
-        } else {
-            left = chartConst.CHART_PADDING;
-        }
-        */
 
         if (align === chartConst.TITLE_ALIGN_CENTER) {
             left = chartWidth / 2;
