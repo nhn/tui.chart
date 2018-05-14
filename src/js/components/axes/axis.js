@@ -526,10 +526,11 @@ class Axis {
             const halfLabelDistance = labelSize / 2;
             const isOverLapXAxisLabel = this._isOverLapXAxisLabel(categories[index], position, positions[index + 1]);
             let positionTopAndLeft = {};
+
             /*
              * to prevent printing `undefined` text, when category label is not set
              */
-            if (labelPosition < 0) {
+            if (labelPosition < 0 || (!isYAxis && isAutoTickInterval && isOverLapXAxisLabel)) {
                 return;
             }
 
@@ -540,8 +541,6 @@ class Axis {
                     halfLabelDistance,
                     isPositionRight
                 });
-            } else if (isAutoTickInterval && isOverLapXAxisLabel) {
-                return;
             } else {
                 positionTopAndLeft = this._getXAxisLabelPosition(layout, {
                     labelMargin,
@@ -579,7 +578,7 @@ class Axis {
      */
     _isOverLapXAxisLabel(labelText, position, nextPosition) {
         const labelWidth = renderUtil.getRenderedLabelWidth(labelText);
-        if (nextPosition && nextPosition - position < labelWidth) {
+        if (!snippet.isUndefined(nextPosition) && (nextPosition - position < labelWidth)) {
             return true;
         }
 
