@@ -12,7 +12,7 @@ describe('RaphaelTitleComponent', () => {
             };
             const actual = raphaelTitleComponent.getTitlePosition(titleSize, 'center', 300, offset).left;
 
-            expect(actual).toBe(130);
+            expect(actual).toBe(150);
         });
 
         it('position should have a value with the align right state applied.', () => {
@@ -23,7 +23,7 @@ describe('RaphaelTitleComponent', () => {
             };
             const actual = raphaelTitleComponent.getTitlePosition(titleSize, 'right', 300, offset).left;
 
-            expect(actual).toBe(260);
+            expect(actual).toBe(300);
         });
 
         it('position should have a value with the align left state applied.', () => {
