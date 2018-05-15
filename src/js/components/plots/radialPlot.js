@@ -4,20 +4,19 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import geom from '../../helpers/geometric';
+import calculator from '../../helpers/calculator';
+import chartConst from '../../const';
+import pluginFactory from '../../factories/pluginFactory';
+import snippet from 'tui-code-snippet';
+const {
+    COMPONENT_TYPE_RAPHAEL,
+    RADIAL_PLOT_PADDING,
+    RADIAL_MARGIN_FOR_CATEGORY,
+    RADIAL_CATEGORY_PADDING
+} = chartConst;
 
-var geom = require('../../helpers/geometric');
-var chartConst = require('../../const');
-var pluginFactory = require('../../factories/pluginFactory');
-var snippet = require('tui-code-snippet');
-
-var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
-    /**
-     * plot component className
-     * @type {string}
-     */
-    className: 'tui-chart-plot-area',
-
+class RadialPlot {
     /**
      * Plot component.
      * @constructs Plot
@@ -26,7 +25,13 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
      *      @param {number} params.hTickCount horizontal tick count
      *      @param {object} params.theme axis theme
      */
-    init: function(params) {
+    constructor(params) {
+        /**
+         * plot component className
+         * @type {string}
+         */
+        this.className = 'tui-chart-plot-area';
+
         /**
          * Options
          * @type {object}
@@ -45,10 +50,10 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
          * Graph renderer
          * @type {object}
          */
-        this.graphRenderer = pluginFactory.get(chartConst.COMPONENT_TYPE_RAPHAEL, 'radialPlot');
+        this.graphRenderer = pluginFactory.get(COMPONENT_TYPE_RAPHAEL, 'radialPlot');
 
-        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-    },
+        this.drawingType = COMPONENT_TYPE_RAPHAEL;
+    }
 
     /**
      * Render plot area
@@ -58,18 +63,18 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {object} labelData label data
      * @returns {Array.<object>} plotSet
      */
-    _renderPlotArea: function(paper, layout, plotPositions, labelData) {
-        var renderParams = {
-            paper: paper,
-            layout: layout,
-            plotPositions: plotPositions,
-            labelData: labelData,
+    _renderPlotArea(paper, layout, plotPositions, labelData) {
+        const renderParams = {
+            paper,
+            layout,
+            plotPositions,
+            labelData,
             theme: this.theme,
             options: this.options
         };
 
         return this.graphRenderer.render(renderParams);
-    },
+    }
 
     /**
      * Make plot positions for render
@@ -77,25 +82,33 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {object} layout layout
      * @returns {Array.<Array>} plot positions
      */
-    _makePositions: function(axisDataMap, layout) {
-        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
-            + layout.position.left;
-        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
-            - layout.position.top;
-        var stepCount = axisDataMap.yAxis.tickCount;
-        var angleStepCount = axisDataMap.xAxis.labels.length;
+    _makePositions(axisDataMap, layout) {
+        const {dimension, position: {left, top}} = layout;
+        let {width, height} = dimension;
+
+        width = width - RADIAL_PLOT_PADDING - RADIAL_MARGIN_FOR_CATEGORY;
+        height = height - RADIAL_PLOT_PADDING - RADIAL_MARGIN_FOR_CATEGORY;
+
+        const centerX = calculator.sum([
+            (width / 2),
+            (RADIAL_PLOT_PADDING / 2),
+            (RADIAL_MARGIN_FOR_CATEGORY / 2),
+            left
+        ]);
+
+        const centerY = (height / 2) - (RADIAL_PLOT_PADDING / 2) - (RADIAL_MARGIN_FOR_CATEGORY / 2) - top;
+        const stepCount = axisDataMap.yAxis.tickCount;
+        const angleStepCount = axisDataMap.xAxis.labels.length;
 
         return makeSpiderWebPositions({
-            width: width,
-            height: height,
-            centerX: centerX,
-            centerY: centerY,
-            angleStepCount: angleStepCount,
-            stepCount: stepCount
+            width,
+            height,
+            centerX,
+            centerY,
+            angleStepCount,
+            stepCount
         });
-    },
+    }
 
     /**
      * Make category positions
@@ -103,23 +116,30 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {object} layout layout
      * @returns {Array.<object>} category positions
      */
-    _makeCategoryPositions: function(axisDataMap, layout) {
-        var width = layout.dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
-        var height = layout.dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_CATEGORY_PADDING;
-        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_CATEGORY_PADDING / 2)
-            + layout.position.left;
-        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_CATEGORY_PADDING / 2)
-            - layout.position.top;
-        var angleStepCount = axisDataMap.xAxis.labels.length;
+    _makeCategoryPositions(axisDataMap, layout) {
+        const {dimension, position: {left, top}} = layout;
+        let {width, height} = dimension;
+
+        width = width - RADIAL_PLOT_PADDING - RADIAL_CATEGORY_PADDING;
+        height = height - RADIAL_PLOT_PADDING - RADIAL_CATEGORY_PADDING;
+
+        const centerX = calculator.sum([
+            (width / 2),
+            (RADIAL_PLOT_PADDING / 2),
+            (RADIAL_CATEGORY_PADDING / 2),
+            left
+        ]);
+        const centerY = (height / 2) - (RADIAL_PLOT_PADDING / 2) - (RADIAL_CATEGORY_PADDING / 2) - top;
+        const angleStepCount = axisDataMap.xAxis.labels.length;
 
         return makeRadialCategoryPositions({
-            width: width,
-            height: height,
-            centerX: centerX,
-            centerY: centerY,
-            angleStepCount: angleStepCount
+            width,
+            height,
+            centerX,
+            centerY,
+            angleStepCount
         });
-    },
+    }
 
     /**
      * Make label data
@@ -128,15 +148,15 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {Array.<Array>} plotPositions plot positions
      * @returns {object}
      */
-    _makeLabelData: function(axisDataMap, dimension, plotPositions) {
-        var categories = axisDataMap.xAxis.labels;
-        var stepLabels = axisDataMap.yAxis.labels;
-        var categoryPositions = this._makeCategoryPositions(axisDataMap, dimension);
-        var categoryLabelData = [];
-        var stepLabelData = [];
-        var i, j;
+    _makeLabelData(axisDataMap, dimension, plotPositions) {
+        const categories = axisDataMap.xAxis.labels;
+        const stepLabels = axisDataMap.yAxis.labels;
 
-        for (i = 0; i < categories.length; i += 1) {
+        const categoryPositions = this._makeCategoryPositions(axisDataMap, dimension);
+        const categoryLabelData = [];
+        const stepLabelData = [];
+
+        for (let i = 0; i < categories.length; i += 1) {
             categoryLabelData.push({
                 text: categories[i],
                 position: categoryPositions[i]
@@ -144,7 +164,7 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         // skip last step label. it could overlapped by category label
-        for (j = 0; j < (stepLabels.length - 1); j += 1) {
+        for (let j = 0; j < (stepLabels.length - 1); j += 1) {
             stepLabelData.push({
                 text: stepLabels[j],
                 position: plotPositions[j][0]
@@ -155,37 +175,37 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
             category: categoryLabelData,
             step: stepLabelData
         };
-    },
+    }
 
     /**
      * Render plot component.
      * @param {object} data - bounds and scale data
      */
-    render: function(data) {
-        var plotPositions = this._makePositions(data.axisDataMap, data.layout);
-        var labelData = this._makeLabelData(data.axisDataMap, data.layout, plotPositions);
+    render({axisDataMap, layout, paper}) {
+        const plotPositions = this._makePositions(axisDataMap, layout);
+        const labelData = this._makeLabelData(axisDataMap, layout, plotPositions);
 
-        this.plotSet = this._renderPlotArea(data.paper, data.layout, plotPositions, labelData);
-    },
+        this.plotSet = this._renderPlotArea(paper, layout, plotPositions, labelData);
+    }
 
     /**
      * Re render plot component
      * @param {object} data - bounds and scale data
      */
-    rerender: function(data) {
+    rerender(data) {
         this.plotSet.remove();
 
         this.render(data);
-    },
+    }
 
     /**
      * Resize plot component.
      * @param {object} data - bounds and scale data
      */
-    resize: function(data) {
+    resize(data) {
         this.rerender(data);
     }
-});
+}
 
 /**
  * Make Spider web positions
@@ -200,26 +220,19 @@ var RadialPlot = snippet.defineClass(/** @lends Plot.prototype */ {
  * @private
  */
 function makeSpiderWebPositions(params) {
-    var width = params.width;
-    var height = params.height;
-    var centerX = params.centerX;
-    var centerY = params.centerY;
-    var angleStepCount = params.angleStepCount;
-    var stepCount = params.stepCount;
-    var radius = Math.min(width, height) / 2;
-    var angleStep = 360 / angleStepCount;
-    var points = [];
-    var stepPoints, pointY, point, stepPixel, i, j;
+    const {width, height, centerX, centerY, angleStepCount, stepCount} = params;
+    const radius = Math.min(width, height) / 2;
+    const angleStep = 360 / angleStepCount;
+    const points = [];
+    const stepPixel = radius / (stepCount - 1); // As there is not size in step 0, one step is removed
 
-    stepPixel = radius / (stepCount - 1); // As there is not size in step 0, one step is removed
-
-    for (i = 0; i < stepCount; i += 1) {
-        stepPoints = [];
+    for (let i = 0; i < stepCount; i += 1) {
+        const stepPoints = [];
         // point Y of first pixel to rotate
-        pointY = centerY + (stepPixel * i);
+        const pointY = centerY + (stepPixel * i);
 
-        for (j = 0; j < angleStepCount; j += 1) {
-            point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, angleStep * j);
+        for (let j = 0; j < angleStepCount; j += 1) {
+            const point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, angleStep * j);
 
             stepPoints.push({
                 left: point.x,
@@ -228,7 +241,6 @@ function makeSpiderWebPositions(params) {
         }
 
         stepPoints.push(stepPoints[0]);
-
         points[i] = stepPoints;
     }
 
@@ -247,21 +259,16 @@ function makeSpiderWebPositions(params) {
  * @private
  */
 function makeRadialCategoryPositions(params) {
-    var width = params.width;
-    var height = params.height;
-    var centerX = params.centerX;
-    var centerY = params.centerY;
-    var angleStepCount = params.angleStepCount;
-    var radius = Math.min(height, width) / 2;
-    var angleStep = 360 / angleStepCount;
-    var points = [];
-    var anchor, point, i, pointY, reversedAngle;
+    const {width, height, centerX, centerY, angleStepCount} = params;
+    const radius = Math.min(height, width) / 2;
+    const angleStep = 360 / angleStepCount;
+    const points = [];
+    const pointY = centerY + radius;
 
-    pointY = centerY + radius;
-
-    for (i = 0; i < angleStepCount; i += 1) {
-        reversedAngle = 360 - (angleStep * i);
-        point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, reversedAngle);
+    for (let i = 0; i < angleStepCount; i += 1) {
+        const reversedAngle = 360 - (angleStep * i);
+        const point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, pointY, reversedAngle);
+        let anchor;
 
         if (reversedAngle > 0 && reversedAngle < 180) {
             anchor = 'end';
@@ -274,18 +281,22 @@ function makeRadialCategoryPositions(params) {
         points.push({
             left: point.x,
             top: height - point.y, // convert y to top
-            anchor: anchor
+            anchor
         });
     }
 
     return points;
 }
 
-function RadialPlotFactory(param) {
+/**
+ * RadialPlotFactory
+ * @param {object} param chart options
+ * @returns {object} radialplot instanse
+ * @ignore
+ */
+export default function RadialPlotFactory(param) {
     return new RadialPlot(param);
 }
 
 RadialPlotFactory.componentType = 'plot';
 RadialPlotFactory.RadialPlot = RadialPlot;
-
-module.exports = RadialPlotFactory;

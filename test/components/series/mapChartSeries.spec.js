@@ -4,22 +4,20 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import mapSeriesFactory from '../../../src/js/components/series/mapChartSeries.js';
 
-var snippet = require('tui-code-snippet');
-var mapSeriesFactory = require('../../../src/js/components/series/mapChartSeries.js');
+describe('MapChartSeries', () => {
+    let series, dataProcessor, mapModel;
 
-describe('MapChartSeries', function() {
-    var series, dataProcessor, mapModel;
-
-    beforeAll(function() {
+    beforeAll(() => {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getValueMap']);
         mapModel = jasmine.createSpyObj('mapModel', ['getMapDimension']);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         series = new mapSeriesFactory.MapChartSeries({
-            dataProcessor: dataProcessor,
+            dataProcessor,
             chartType: 'map',
             theme: {
                 heatmap: {}
@@ -33,10 +31,8 @@ describe('MapChartSeries', function() {
         };
     });
 
-    describe('_setMapRatio()', function() {
-        it('should calculate map ratio by dividing map size to chart area size. ', function() {
-            var actual, expected;
-
+    describe('_setMapRatio()', () => {
+        it('should calculate map ratio by dividing map size to chart area size. ', () => {
             series.layout = {
                 dimension: {
                     width: 400,
@@ -49,15 +45,13 @@ describe('MapChartSeries', function() {
             };
             series._setMapRatio(series.graphDimension);
 
-            actual = series.mapRatio;
-            expected = 0.5;
+            const actual = series.mapRatio;
+            const expected = 0.5;
 
             expect(actual).toBe(expected);
         });
 
-        it('should set map ratio, to smaller ratio of width and height', function() {
-            var actual, expected;
-
+        it('should set map ratio, to smaller ratio of width and height', () => {
             series.layout = {
                 dimension: {
                     width: 200,
@@ -70,17 +64,15 @@ describe('MapChartSeries', function() {
             };
             series._setMapRatio(series.graphDimension);
 
-            actual = series.mapRatio;
-            expected = 0.25;
+            const actual = series.mapRatio;
+            const expected = 0.25;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_setGraphDimension()', function() {
-        it('should set graph dimension by multiplying series dimension with zoom magnification', function() {
-            var actual, expected;
-
+    describe('_setGraphDimension()', () => {
+        it('should set graph dimension by multiplying series dimension with zoom magnification', () => {
             series.layout = {
                 dimension: {
                     width: 400,
@@ -90,8 +82,8 @@ describe('MapChartSeries', function() {
             series.zoomMagn = 2;
             series._setGraphDimension();
 
-            actual = series.graphDimension;
-            expected = {
+            const actual = series.graphDimension;
+            const expected = {
                 width: 800,
                 height: 600
             };
@@ -100,10 +92,8 @@ describe('MapChartSeries', function() {
         });
     });
 
-    describe('_setLimitPositionToMoveMap', function() {
-        it('should limit position of moving map.', function() {
-            var actual, expected;
-
+    describe('_setLimitPositionToMoveMap', () => {
+        it('should limit position of moving map.', () => {
             series.layout = {
                 dimension: {
                     width: 400,
@@ -116,8 +106,8 @@ describe('MapChartSeries', function() {
             };
             series._setLimitPositionToMoveMap();
 
-            actual = series.limitPosition;
-            expected = {
+            const actual = series.limitPosition;
+            const expected = {
                 left: -400,
                 top: -300
             };
@@ -126,20 +116,18 @@ describe('MapChartSeries', function() {
         });
     });
 
-    describe('_adjustMapPosition()', function() {
-        it('should adjust map position for making position not to over limit or under 0', function() {
-            var actual, expected;
-
+    describe('_adjustMapPosition()', () => {
+        it('should adjust map position for making position not to over limit or under 0', () => {
             series.limitPosition = {
                 left: -400,
                 top: -300
             };
 
-            actual = series._adjustMapPosition({
+            const actual = series._adjustMapPosition({
                 left: -420,
                 top: 10
             });
-            expected = {
+            const expected = {
                 left: -400,
                 top: 0
             };
@@ -148,8 +136,8 @@ describe('MapChartSeries', function() {
         });
     });
 
-    describe('_updatePositionsToResize()', function() {
-        it('should update position for resizing.', function() {
+    describe('_updatePositionsToResize()', () => {
+        it('should update position for resizing.', () => {
             series.mapRatio = 2;
             series.basePosition = {
                 left: -10,

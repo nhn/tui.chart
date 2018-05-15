@@ -3,23 +3,20 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import LineTypeSeriesBase from '../../../src/js/components/series/lineTypeSeriesBase';
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
+import renderUtil from '../../../src/js/helpers/renderUtil';
 
-'use strict';
+describe('LineTypeSeriesBase', () => {
+    let series, dataProcessor;
 
-var LineTypeSeriesBase = require('../../../src/js/components/series/lineTypeSeriesBase'),
-    SeriesDataModel = require('../../../src/js/models/data/seriesDataModel'),
-    SeriesGroup = require('../../../src/js/models/data/seriesGroup'),
-    renderUtil = require('../../../src/js/helpers/renderUtil');
-
-describe('LineTypeSeriesBase', function() {
-    var series, dataProcessor;
-
-    beforeAll(function() {
+    beforeAll(() => {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstItemLabel', 'isCoordinateType']);
         series = new LineTypeSeriesBase();
         series.dataProcessor = dataProcessor;
@@ -36,10 +33,9 @@ describe('LineTypeSeriesBase', function() {
         };
     });
 
-    describe('_makePositionsForDefaultType()', function() {
-        it('make positions for default data type, when not aligned.', function() {
-            var seriesDataModel = new SeriesDataModel();
-            var actual;
+    describe('_makePositionsForDefaultType()', () => {
+        it('make positions for default data type, when not aligned.', () => {
+            const seriesDataModel = new SeriesDataModel();
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
@@ -56,7 +52,8 @@ describe('LineTypeSeriesBase', function() {
                 xAxis: {}
             };
             series.aligned = false;
-            actual = series._makePositionsForDefaultType();
+
+            const actual = series._makePositionsForDefaultType();
 
             expect(actual).toEqual([
                 [
@@ -76,10 +73,9 @@ describe('LineTypeSeriesBase', function() {
             ]);
         });
 
-        it('should not create position when serieItem.end equals null.', function() {
-            var seriesDataModel = new SeriesDataModel();
-            var expected = [[]];
-            var actual;
+        it('should not create position when serieItem.end equals null.', () => {
+            const seriesDataModel = new SeriesDataModel();
+            const expected = [[]];
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
@@ -97,7 +93,7 @@ describe('LineTypeSeriesBase', function() {
                 xAxis: {}
             };
             series.aligned = false;
-            actual = series._makePositionsForDefaultType();
+            const actual = series._makePositionsForDefaultType();
 
             expected[0][1] = {
                 top: 100,
@@ -110,9 +106,8 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('make positions for default data type, when aligned & single data', function() {
-            var seriesDataModel = new SeriesDataModel();
-            var actual;
+        it('make positions for default data type, when aligned & single data', () => {
+            const seriesDataModel = new SeriesDataModel();
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
@@ -136,7 +131,7 @@ describe('LineTypeSeriesBase', function() {
                 xAxis: {}
             };
 
-            actual = series._makePositionsForDefaultType();
+            const actual = series._makePositionsForDefaultType();
 
             expect(actual).toEqual([
                 [
@@ -148,9 +143,8 @@ describe('LineTypeSeriesBase', function() {
             ]);
         });
 
-        it('make positions for default data type, when aligned & single null data', function() {
-            var seriesDataModel = new SeriesDataModel();
-            var actual;
+        it('make positions for default data type, when aligned & single null data', () => {
+            const seriesDataModel = new SeriesDataModel();
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
@@ -175,16 +169,15 @@ describe('LineTypeSeriesBase', function() {
                 xAxis: {}
             };
 
-            actual = series._makePositionsForDefaultType();
+            const actual = series._makePositionsForDefaultType();
 
             expect(actual.length).toBe(1);
             expect(actual[0].length).toBe(1);
             expect(actual[0][0]).toBeUndefined();
         });
 
-        it('make positions for default data type, when aligned & null', function() {
-            var seriesDataModel = new SeriesDataModel();
-            var actual;
+        it('make positions for default data type, when aligned & null', () => {
+            const seriesDataModel = new SeriesDataModel();
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
@@ -202,7 +195,7 @@ describe('LineTypeSeriesBase', function() {
                 xAxis: {}
             };
 
-            actual = series._makePositionsForDefaultType();
+            const actual = series._makePositionsForDefaultType();
 
             expect(actual).toEqual([
                 [
@@ -223,10 +216,9 @@ describe('LineTypeSeriesBase', function() {
         });
     });
 
-    describe('_makePositionForCoordinateType()', function() {
-        it('make positions for coordinate data type', function() {
-            var seriesDataModel = new SeriesDataModel();
-            var actual;
+    describe('_makePositionForCoordinateType()', () => {
+        it('make positions for coordinate data type', () => {
+            const seriesDataModel = new SeriesDataModel();
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
@@ -263,7 +255,7 @@ describe('LineTypeSeriesBase', function() {
                     positionRatio: 0.08
                 }
             };
-            actual = series._makePositionForCoordinateType();
+            const actual = series._makePositionForCoordinateType();
 
             expect(actual).toEqual([
                 [
@@ -284,84 +276,72 @@ describe('LineTypeSeriesBase', function() {
         });
     });
 
-    describe('_calculateLabelPositionTop()', function() {
-        it('should calculate label top position if stack type chart.', function() {
-            var actual, expected;
-
+    describe('_calculateLabelPositionTop()', () => {
+        it('should calculate label top position if stack type chart.', () => {
             series.options = {
                 stackType: 'normal'
             };
 
-            actual = series._calculateLabelPositionTop({
+            const actual = series._calculateLabelPositionTop({
                 top: 10,
                 startTop: 40
             }, 20, 16);
-            expected = 18;
+            const expected = 18;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculates top when the value is positive and not the starting value, not stack chart', function() {
-            var actual, expected;
-
+        it('should calculates top when the value is positive and not the starting value, not stack chart', () => {
             series.options = {};
 
-            actual = series._calculateLabelPositionTop({
+            const actual = series._calculateLabelPositionTop({
                 top: 60,
                 startTop: 40
             }, 30, 16);
-            expected = 39;
+            const expected = 39;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate top when the value is negative and start value, not stack chart', function() {
-            var actual, expected;
-
+        it('should calculate top when the value is negative and start value, not stack chart', () => {
             series.options = {};
 
-            actual = series._calculateLabelPositionTop({
+            const actual = series._calculateLabelPositionTop({
                 top: 60,
                 startTop: 40
             }, -30, 16, true);
-            expected = 39;
+            const expected = 39;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate top when the value is positive and start value, not stack chart', function() {
-            var actual, expected;
-
+        it('should calculate top when the value is positive and start value, not stack chart', () => {
             series.options = {};
 
-            actual = series._calculateLabelPositionTop({
+            const actual = series._calculateLabelPositionTop({
                 top: 10,
                 startTop: 40
             }, 30, 16, true);
-            expected = 15;
+            const expected = 15;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate top when the value is negative and not start value, not stack chart', function() {
-            var actual, expected;
-
+        it('should calculate top when the value is negative and not start value, not stack chart', () => {
             series.options = {};
 
-            actual = series._calculateLabelPositionTop({
+            const actual = series._calculateLabelPositionTop({
                 top: 10,
                 startTop: 40
             }, 30, 16, true);
-            expected = 15;
+            const expected = 15;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeLabelPosition()', function() {
-        it('should calculate left using labe.width and basePostion.left', function() {
-            var position, actual, expected;
-
+    describe('_makeLabelPosition()', () => {
+        it('should calculate left using labe.width and basePostion.left', () => {
             spyOn(series, '_calculateLabelPositionTop');
             series.theme = {};
             series.dimensionMap = {
@@ -370,18 +350,16 @@ describe('LineTypeSeriesBase', function() {
                 }
             };
 
-            position = series._makeLabelPosition({
+            const position = series._makeLabelPosition({
                 left: 60
             });
-            actual = position.left;
-            expected = 60;
+            const actual = position.left;
+            const expected = 60;
 
             expect(actual).toBe(expected);
         });
 
-        it('should calculate top using label.width and result of _calculateLabelPositionTop().', function() {
-            var position, actual, expected;
-
+        it('should calculate top using label.width and result of _calculateLabelPositionTop().', () => {
             spyOn(series, '_calculateLabelPositionTop').and.returnValue(50);
             series.theme = {};
             series.dimensionMap = {
@@ -390,11 +368,11 @@ describe('LineTypeSeriesBase', function() {
                 }
             };
 
-            position = series._makeLabelPosition({
+            const position = series._makeLabelPosition({
                 left: 60
             });
-            actual = position.top;
-            expected = 50;
+            const actual = position.top;
+            const expected = 50;
 
             expect(actual).toBe(expected);
         });

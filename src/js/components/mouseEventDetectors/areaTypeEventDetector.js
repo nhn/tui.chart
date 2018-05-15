@@ -3,17 +3,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import MouseEventDetectorBase from './mouseEventDetectorBase';
+import zoomMixer from './zoomMixer';
+import AreaTypeDataModel from './areaTypeDataModel';
+import snippet from 'tui-code-snippet';
 
-'use strict';
+const AREA_DETECT_DISTANCE_THRESHHOLD = 50;
 
-var MouseEventDetectorBase = require('./mouseEventDetectorBase');
-var zoomMixer = require('./zoomMixer');
-var AreaTypeDataModel = require('./areaTypeDataModel');
-var snippet = require('tui-code-snippet');
-
-var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
-
-var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends AreaTypeEventDetector.prototype */ {
+class AreaTypeEventDetector extends MouseEventDetectorBase {
     /**
      * AreaTypeEventDetector is mouse event detector for line type chart.
      * @param {object} params parameters
@@ -21,8 +18,8 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @extends MouseEventDetectorBase
      */
-    init: function(params) {
-        MouseEventDetectorBase.call(this, params);
+    constructor(params) {
+        super(params);
 
         /**
          * previous found data
@@ -46,36 +43,35 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
             snippet.extend(this, zoomMixer);
             this._initForZoom(params.zoomable);
         }
-    },
+    }
 
     /**
      * Animate for adding data.
      */
-    animateForAddingData: function() {
-        var foundData, isMoving;
-
+    animateForAddingData() {
         if (!this.prevClientPosition) {
             return;
         }
 
-        foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
+        const foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
 
         if (foundData) {
-            isMoving = this.prevFoundData && (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
+            const isMatchedIndex = (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
+            const isMoving = this.prevFoundData && isMatchedIndex;
             this._showTooltip(foundData, isMoving);
         }
 
         this.prevFoundData = foundData;
-    },
+    }
 
     /**
      * Create areaTypeDataModel from seriesItemBoundsData for mouse event detector.
      * @param {Array.<object>} seriesItemBoundsDatum - series item bounds datum
      * @override
      */
-    onReceiveSeriesData: function(seriesItemBoundsDatum) {
-        var seriesItemBoundsData = this.seriesItemBoundsData;
-        var seriesCount = this.seriesCount;
+    onReceiveSeriesData(seriesItemBoundsDatum) {
+        const {seriesCount} = this;
+        let {seriesItemBoundsData} = this;
 
         if (seriesItemBoundsData.length === seriesCount) {
             seriesItemBoundsData = [];
@@ -90,7 +86,7 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
         if (this.zoomable) {
             this._showTooltipAfterZoom();
         }
-    },
+    }
 
     /**
      * Find data by client position.
@@ -100,12 +96,12 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @override
      */
-    _findData: function(clientX, clientY) {
-        var layerPosition = this._calculateLayerPosition(clientX, clientY);
-        var selectLegendIndex = this.dataProcessor.selectLegendIndex;
+    _findData(clientX, clientY) {
+        const layerPosition = this._calculateLayerPosition(clientX, clientY);
+        const {selectLegendIndex} = this.dataProcessor;
 
         return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD, selectLegendIndex);
-    },
+    }
 
     /**
      * Find data by client position for zoomable
@@ -114,11 +110,11 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @returns {object}
      * @private
      */
-    _findDataForZoomable: function(clientX, clientY) {
-        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+    _findDataForZoomable(clientX, clientY) {
+        const layerPosition = this._calculateLayerPosition(clientX, clientY);
 
         return this.dataModel.findData(layerPosition);
-    },
+    }
 
     /**
      * Get first model data.
@@ -126,9 +122,9 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @returns {object}
      * @private
      */
-    _getFirstData: function(index) {
+    _getFirstData(index) {
         return this.dataModel.getFirstData(index);
-    },
+    }
 
     /**
      * Get last model data.
@@ -136,29 +132,29 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @returns {object}
      * @private
      */
-    _getLastData: function(index) {
+    _getLastData(index) {
         return this.dataModel.getLastData(index);
-    },
+    }
 
     /**
      * Show tooltip.
      * @param {object} foundData - model data
      * @private
      */
-    _showTooltip: function(foundData) {
+    _showTooltip(foundData) {
         this.eventBus.fire('showTooltip', foundData);
         this.prevFoundData = foundData;
-    },
+    }
 
     /**
      * Hide tooltip.
      * @param {{silent: {boolean}}} [options] - options for hiding tooltip
      * @private
      */
-    _hideTooltip: function(options) {
+    _hideTooltip(options) {
         this.eventBus.fire('hideTooltip', this.prevFoundData, options);
         this.prevFoundData = null;
-    },
+    }
 
     /**
      * On mousemove.
@@ -166,12 +162,11 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @override
      */
-    _onMousemove: function(e) {
-        var dragMoseupResult, foundData;
+    _onMousemove(e) {
+        let dragMoseupResult;
 
         this._setPrevClientPosition(e);
-
-        foundData = this._findData(e.clientX, e.clientY);
+        const foundData = this._findData(e.clientX, e.clientY);
 
         if (this.zoomable) {
             dragMoseupResult = this._isAfterDragMouseup();
@@ -188,36 +183,36 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
         }
 
         this.prevFoundData = foundData;
-    },
+    }
 
     /**
      * On mouseout.
      * @private
      * @override
      */
-    _onMouseout: function() {
+    _onMouseout() {
         if (this.prevFoundData) {
             this._hideTooltip();
         }
 
         this.prevClientPosition = null;
         this.prevFoundData = null;
-    },
+    }
 
     /**
      * find data by indexes
      * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
      * @returns {object} - series item data
      */
-    findDataByIndexes: function(indexes) {
+    findDataByIndexes(indexes) {
         return this.dataModel.findDataByIndexes(indexes);
-    },
+    }
 
     /**
      * Set prevClientPosition by MouseEvent
      * @param {?MouseEvent} event - mouse event
      */
-    _setPrevClientPosition: function(event) {
+    _setPrevClientPosition(event) {
         if (!event) {
             this.prevClientPosition = null;
         } else {
@@ -227,12 +222,16 @@ var AreaTypeEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
             };
         }
     }
-});
+}
 
-function areaTypeEventDetectorFactory(params) {
+/**
+ * areaTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} areatype event detector instanse
+ * @ignore
+ */
+export default function areaTypeEventDetectorFactory(params) {
     return new AreaTypeEventDetector(params);
 }
 
 areaTypeEventDetectorFactory.componentType = 'mouseEventDetector';
-
-module.exports = areaTypeEventDetectorFactory;

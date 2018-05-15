@@ -3,13 +3,9 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import chartConst from '../../const';
 
-'use strict';
-
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
-
-var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPositionModel.prototype */ {
+export default class GroupTooltipPositionModel {
     /**
      * GroupTooltipPositionModel is position model for group tooltip.
      * @constructs GroupTooltipPositionModel
@@ -22,7 +18,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @param {boolean} isVertical whether vertical or not
      * @param {{align: ?string, position: {left: number, top: number}}} options tooltip options
      */
-    init: function(chartDimension, areaBound, isVertical, options) {
+    constructor(chartDimension, areaBound, isVertical, options) {
         /**
          * chart dimension
          * @type {{width: number, height: number}}
@@ -54,7 +50,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         this.positions = {};
 
         this._setData(chartDimension, areaBound, isVertical, options);
-    },
+    }
 
     /**
      * Get horizontal direction.
@@ -62,10 +58,9 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {string} direction
      * @private
      */
-    _getHorizontalDirection: function(alignOption) {
-        var direction;
+    _getHorizontalDirection(alignOption = '') {
+        let direction;
 
-        alignOption = alignOption || '';
         if (alignOption.indexOf('left') > -1) {
             direction = chartConst.TOOLTIP_DIRECTION_BACKWARD;
         } else if (alignOption.indexOf('center') > -1) {
@@ -75,7 +70,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return direction;
-    },
+    }
 
     /**
      * Make vertical data.
@@ -92,8 +87,8 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * }} vertical data
      * @private
      */
-    _makeVerticalData: function(chartDimension, areaBound, alignOption) {
-        var hDirection = this._getHorizontalDirection(alignOption);
+    _makeVerticalData(chartDimension, areaBound, alignOption) {
+        const hDirection = this._getHorizontalDirection(alignOption);
 
         return {
             positionType: 'left',
@@ -104,7 +99,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
             chartSize: chartDimension.width,
             basePosition: chartConst.SERIES_EXPAND_SIZE
         };
-    },
+    }
 
     /**
      * Get vertical direction.
@@ -112,8 +107,8 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {string} direction
      * @private
      */
-    _getVerticalDirection: function(alignOption) {
-        var direction;
+    _getVerticalDirection(alignOption) {
+        let direction;
 
         alignOption = alignOption || '';
 
@@ -126,7 +121,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return direction;
-    },
+    }
 
     /**
      * Make horizontal data.
@@ -143,8 +138,8 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * }} horizontal data
      * @private
      */
-    _makeHorizontalData: function(chartDimension, areaBound, alignOption) {
-        var vDirection = this._getVerticalDirection(alignOption);
+    _makeHorizontalData(chartDimension, areaBound, alignOption) {
+        const vDirection = this._getVerticalDirection(alignOption);
 
         return {
             positionType: 'top',
@@ -155,7 +150,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
             chartSize: chartDimension.height,
             basePosition: chartConst.SERIES_EXPAND_SIZE
         };
-    },
+    }
 
     /**
      * Set data.
@@ -168,10 +163,10 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @param {{align: ?string, position: {left: number, top: number}}} options tooltip options
      * @private
      */
-    _setData: function(chartDimension, areaBound, isVertical, options) {
-        var verticalData = this._makeVerticalData(chartDimension, areaBound, options.align);
-        var horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
-        var offset = options.offset || {};
+    _setData(chartDimension, areaBound, isVertical, options) {
+        const verticalData = this._makeVerticalData(chartDimension, areaBound, options.align);
+        const horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
+        const offset = options.offset || {};
 
         if (isVertical) {
             this.mainData = verticalData;
@@ -186,7 +181,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         this.positionOption.top = offset.y || 0;
 
         this.positions = {};
-    },
+    }
 
     /**
      * Calculate main position value.
@@ -198,12 +193,12 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _calculateMainPositionValue: function(tooltipSize, range, data) {
-        var isLine = (range.start === range.end),
-            lineTypePadding = 9,
-            otherTypePadding = 5,
-            padding = isLine ? lineTypePadding : otherTypePadding,
-            value = data.basePosition;
+    _calculateMainPositionValue(tooltipSize, range, data) {
+        const isLine = (range.start === range.end);
+        const lineTypePadding = 9;
+        const otherTypePadding = 5;
+        const padding = isLine ? lineTypePadding : otherTypePadding;
+        let value = data.basePosition;
 
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value += range.end + padding;
@@ -216,7 +211,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return value;
-    },
+    }
 
     /**
      * Calculate sub position value.
@@ -228,9 +223,9 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _calculateSubPositionValue: function(tooltipSize, data) {
-        var middle = data.areaSize / 2,
-            value;
+    _calculateSubPositionValue(tooltipSize, data) {
+        const middle = data.areaSize / 2;
+        let value;
 
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value = middle + data.basePosition;
@@ -241,7 +236,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return value;
-    },
+    }
 
     /**
      * Make position value diff.
@@ -253,9 +248,9 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} diff
      * @private
      */
-    _makePositionValueDiff: function(value, tooltipSize, data) {
+    _makePositionValueDiff(value, tooltipSize, data) {
         return value + data.areaPosition + tooltipSize - data.chartSize;
-    },
+    }
 
     /**
      * Adjust backward position value.
@@ -269,8 +264,8 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _adjustBackwardPositionValue: function(value, range, tooltipSize, data) {
-        var changedValue;
+    _adjustBackwardPositionValue(value, range, tooltipSize, data) {
+        let changedValue;
 
         if (value < -data.areaPosition) {
             changedValue = this._calculateMainPositionValue(tooltipSize, range, {
@@ -285,7 +280,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return value;
-    },
+    }
 
     /**
      * Adjust forward position value.
@@ -299,12 +294,11 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _adjustForwardPositionValue: function(value, range, tooltipSize, data) {
-        var diff = this._makePositionValueDiff(value, tooltipSize, data),
-            changedValue;
+    _adjustForwardPositionValue(value, range, tooltipSize, data) {
+        const diff = this._makePositionValueDiff(value, tooltipSize, data);
 
         if (diff > 0) {
-            changedValue = this._calculateMainPositionValue(tooltipSize, range, {
+            const changedValue = this._calculateMainPositionValue(tooltipSize, range, {
                 direction: chartConst.TOOLTIP_DIRECTION_BACKWARD,
                 basePosition: data.basePosition
             });
@@ -316,7 +310,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return value;
-    },
+    }
 
     /**
      * Adjust main position value
@@ -329,7 +323,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _adjustMainPositionValue: function(value, range, tooltipSize, data) {
+    _adjustMainPositionValue(value, range, tooltipSize, data) {
         if (data.direction === chartConst.TOOLTIP_DIRECTION_BACKWARD) {
             value = this._adjustBackwardPositionValue(value, range, tooltipSize, data);
         } else if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
@@ -340,7 +334,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return value;
-    },
+    }
 
     /**
      * Adjust sub position value.
@@ -353,7 +347,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _adjustSubPositionValue: function(value, tooltipSize, data) {
+    _adjustSubPositionValue(value, tooltipSize, data) {
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value = Math.min(value, data.chartSize - data.areaPosition - tooltipSize);
         } else {
@@ -361,7 +355,7 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return value;
-    },
+    }
 
     /**
      * Make caching key.
@@ -369,9 +363,9 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {string} key
      * @private
      */
-    _makeCachingKey: function(range) {
-        return range.start + '-' + range.end;
-    },
+    _makeCachingKey({start, end}) {
+        return `${start}-${end}`;
+    }
 
     /**
      * Add position option.
@@ -380,9 +374,9 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position
      * @private
      */
-    _addPositionOptionValue: function(position, positionType) {
+    _addPositionOptionValue(position, positionType) {
         return position + this.positionOption[positionType];
-    },
+    }
 
     /**
      * Make main position value.
@@ -396,15 +390,13 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _makeMainPositionValue: function(tooltipDimension, range, main) {
-        var value;
-
-        value = this._calculateMainPositionValue(tooltipDimension[main.sizeType], range, main);
+    _makeMainPositionValue(tooltipDimension, range, main) {
+        let value = this._calculateMainPositionValue(tooltipDimension[main.sizeType], range, main);
         value = this._addPositionOptionValue(value, main.positionType);
         value = this._adjustMainPositionValue(value, range, tooltipDimension[main.sizeType], main);
 
         return value;
-    },
+    }
 
     /**
      * Make sub position value.
@@ -417,15 +409,13 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @returns {number} position value
      * @private
      */
-    _makeSubPositionValue: function(tooltipDimension, sub) {
-        var value;
-
-        value = this._calculateSubPositionValue(tooltipDimension[sub.sizeType], sub);
+    _makeSubPositionValue(tooltipDimension, sub) {
+        let value = this._calculateSubPositionValue(tooltipDimension[sub.sizeType], sub);
         value = this._addPositionOptionValue(value, sub.positionType);
         value = this._adjustSubPositionValue(value, tooltipDimension[sub.sizeType], sub);
 
         return value;
-    },
+    }
 
     /**
      * Calculate group tooltip position.
@@ -433,11 +423,11 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      * @param {{start: number, end: number}} range tooltip sector range
      * @returns {{left: number, top: number}} group tooltip position
      */
-    calculatePosition: function(tooltipDimension, range) {
-        var key = this._makeCachingKey(range),
-            main = this.mainData,
-            sub = this.subData,
-            position = this.positions[key];
+    calculatePosition(tooltipDimension, range) {
+        const key = this._makeCachingKey(range);
+        const main = this.mainData;
+        const sub = this.subData;
+        let position = this.positions[key];
 
         if (!position) {
             position = {};
@@ -447,16 +437,16 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
         }
 
         return position;
-    },
+    }
 
     /**
      * Update tooltip options for position calculation.
      * @param {{align: ?string, position: {left: number, top: number}}} options tooltip options
      */
-    updateOptions: function(options) {
+    updateOptions(options) {
         this.options = options;
         this._setData(this.chartDimension, this.areaBound, this.isVertical, options);
-    },
+    }
 
     /**
      * Update tooltip bound for position calculation.
@@ -465,10 +455,9 @@ var GroupTooltipPositionModel = snippet.defineClass(/** @lends GroupTooltipPosit
      *      position: {left: number, top: number}
      * }} bound tooltip area bound
      */
-    updateBound: function(bound) {
+    updateBound(bound) {
         this.areaBound = bound;
         this._setData(this.chartDimension, bound, this.isVertical, this.options);
     }
-});
+}
 
-module.exports = GroupTooltipPositionModel;

@@ -4,15 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
-var map = snippet.map;
-
-var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
+class Plot {
     /**
      * Plot component.
      * @constructs Plot
@@ -22,7 +19,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      *      @param {number} params.hTickCount horizontal tick count
      *      @param {object} params.theme axis theme
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * Plot view className
          * @type {string}
@@ -81,17 +78,15 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         this.axisDataMap = null;
 
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-    },
+    }
 
     /**
      * Render plot area.
      * @param {object} paper paper object
      * @private
      */
-    _renderPlotArea: function(paper) {
-        var dimension;
-
-        dimension = this.layout.dimension;
+    _renderPlotArea(paper) {
+        const {dimension} = this.layout;
 
         if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
             this._renderOptionalLines(paper, dimension);
@@ -100,7 +95,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         if (this.options.showLine) {
             this._renderPlotLines(paper, dimension);
         }
-    },
+    }
 
     /**
      * Set data for rendering.
@@ -113,21 +108,21 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * }} data - bounds and scale data
      * @private
      */
-    _setDataForRendering: function(data) {
+    _setDataForRendering(data) {
         if (data) {
             this.layout = data.layout;
             this.dimensionMap = data.dimensionMap;
             this.axisDataMap = data.axisDataMap;
             this.paper = data.paper;
         }
-    },
+    }
 
     /**
      * Render plot component.
      * @param {object} data - bounds and scale data
      */
-    render: function(data) {
-        var paper = (data && data.paper) || this.paper;
+    render(data) {
+        const paper = (data && data.paper) || this.paper;
         this.plotSet = paper.set();
         this.additionalPlotSet = paper.set();
 
@@ -137,33 +132,33 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         this.additionalPlotSet.toBack();
         this.plotSet.toBack();
         paper.pushDownBackgroundToBottom();
-    },
+    }
 
     /**
      * Rerender.
      * @param {object} data - bounds and scale data
      */
-    rerender: function(data) {
+    rerender(data) {
         this.additionalPlotSet.remove();
         this.plotSet.remove();
         this.render(data);
-    },
+    }
 
     /**
      * Resize plot component.
      * @param {object} data - bounds and scale data
      */
-    resize: function(data) {
+    resize(data) {
         this.rerender(data);
-    },
+    }
 
     /**
      * Zoom.
      * @param {object} data - bounds and scale data
      */
-    zoom: function(data) {
+    zoom(data) {
         this.rerender(data);
-    },
+    }
 
     /**
      * Make template params for vertical line.
@@ -171,13 +166,13 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {object}
      * @private
      */
-    _makeVerticalLineTemplateParams: function(additionalParams) {
+    _makeVerticalLineTemplateParams(additionalParams) {
         return snippet.extend({
             className: 'vertical',
             positionType: 'left',
             width: '1px'
         }, additionalParams);
-    },
+    }
 
     /**
      * Make template params for horizontal line.
@@ -185,13 +180,13 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {object}
      * @private
      */
-    _makeHorizontalLineTemplateParams: function(additionalParams) {
+    _makeHorizontalLineTemplateParams(additionalParams) {
         return snippet.extend({
             className: 'horizontal',
             positionType: 'bottom',
             height: '1px'
         }, additionalParams);
-    },
+    }
 
     /**
      * Render line
@@ -200,11 +195,10 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {object} path
      * @private
      */
-    _renderLine: function(offsetPosition, attributes) {
-        var top = this.layout.position.top;
-        var height = this.layout.dimension.height;
-        var pathString = 'M' + offsetPosition + ',' + top + 'V' + (top + height);
-        var path = this.paper.path(pathString);
+    _renderLine(offsetPosition, attributes) {
+        const {position: {top}, dimension: {height}} = this.layout;
+        const pathString = `M${offsetPosition},${top}V${(top + height)}`;
+        const path = this.paper.path(pathString);
 
         path.attr({
             opacity: attributes.opacity || 1,
@@ -214,7 +208,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         this.additionalPlotSet.push(path);
 
         return path;
-    },
+    }
 
     /**
      * Render band
@@ -224,12 +218,11 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {object} band
      * @private
      */
-    _renderBand: function(offsetPosition, plotWidth, attributes) {
-        var position = this.layout.position;
-        var dimension = this.layout.dimension;
-        var remainingWidth = dimension.width - offsetPosition + position.left;
-        var bandWidth = plotWidth < 0 ? remainingWidth : plotWidth;
-        var rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
+    _renderBand(offsetPosition, plotWidth, attributes) {
+        const {position, dimension} = this.layout;
+        const remainingWidth = dimension.width - offsetPosition + position.left;
+        const bandWidth = plotWidth < 0 ? remainingWidth : plotWidth;
+        const rect = this.paper.rect(offsetPosition, position.top, bandWidth, dimension.height);
 
         rect.attr({
             fill: attributes.color,
@@ -240,7 +233,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         this.additionalPlotSet.push(rect);
 
         return rect;
-    },
+    }
 
     /**
      * Create value range for optional line.
@@ -248,19 +241,19 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {Array.<number>}
      * @private
      */
-    _createOptionalLineValueRange: function(optionalLineData) {
-        var range = optionalLineData.range || [optionalLineData.value];
+    _createOptionalLineValueRange(optionalLineData) {
+        let range = optionalLineData.range || [optionalLineData.value];
 
         if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-            range = map(range, function(value) {
-                var date = new Date(value);
+            range = range.map(value => {
+                const date = new Date(value);
 
                 return date.getTime() || value;
             });
         }
 
         return range;
-    },
+    }
 
     /**
      * Create position for optional line, when value axis.
@@ -270,9 +263,9 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {number|null}
      * @private
      */
-    _createOptionalLinePosition: function(xAxisData, width, value) {
-        var ratio = (value - xAxisData.dataMin) / xAxisData.distance;
-        var position = ratio * width;
+    _createOptionalLinePosition({dataMin, distance}, width, value) {
+        const ratio = (value - dataMin) / distance;
+        let position = ratio * width;
 
         if (ratio === 1) {
             position -= 1;
@@ -283,7 +276,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         return position;
-    },
+    }
 
     /**
      * Create position for optional line, when label axis.
@@ -292,11 +285,11 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {number|null}
      * @private
      */
-    _createOptionalLinePositionWhenLabelAxis: function(width, value) {
-        var dataProcessor = this.dataProcessor;
-        var index = dataProcessor.findCategoryIndex(value);
-        var position = null;
-        var ratio;
+    _createOptionalLinePositionWhenLabelAxis(width, value) {
+        const {dataProcessor} = this;
+        const index = dataProcessor.findCategoryIndex(value);
+        let position = null;
+        let ratio;
 
         if (!snippet.isNull(index)) {
             ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
@@ -308,7 +301,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         return position;
-    },
+    }
 
     /**
      * Create position map for optional line.
@@ -318,10 +311,10 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {{start: number, end: number}}
      * @private
      */
-    _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
-        var categories = this.dataProcessor.getCategories();
-        var range = this._createOptionalLineValueRange(optionalLineData);
-        var startPosition, endPosition;
+    _createOptionalLinePositionMap(optionalLineData, xAxisData, width) {
+        const categories = this.dataProcessor.getCategories();
+        const range = this._createOptionalLineValueRange(optionalLineData);
+        let startPosition, endPosition;
 
         if (xAxisData.isLabelAxis) {
             startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
@@ -343,7 +336,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
             start: startPosition,
             end: endPosition
         };
-    },
+    }
 
     /**
      * @param {string} value - value of starting point
@@ -351,9 +344,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {boolean} - whether starting point value is at before first visible category data or not
      * @private
      */
-    _isBeforeVisibleCategories: function(value, firstCategory) {
-        var dataProcessor = this.dataProcessor;
-        var valueIndex, firstCategoryIndex;
+    _isBeforeVisibleCategories(value, firstCategory) {
+        const {dataProcessor} = this;
 
         if (!snippet.isExisty(value)) {
             return false;
@@ -363,11 +355,11 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
             return value < firstCategory;
         }
 
-        valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
-        firstCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(firstCategory);
+        const valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
+        const firstCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(firstCategory);
 
         return (valueIndex >= 0) && (valueIndex < firstCategoryIndex);
-    },
+    }
 
     /**
      * @param {string} value - value of end point
@@ -375,9 +367,8 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {boolean} - whether end point value is at after last visible category data or not
      * @private
      */
-    _isAfterVisibleCatgories: function(value, lastCategory) {
-        var dataProcessor = this.dataProcessor;
-        var valueIndex, lastCategoryIndex;
+    _isAfterVisibleCatgories(value, lastCategory) {
+        const {dataProcessor} = this;
 
         if (!snippet.isExisty(value)) {
             return false;
@@ -387,11 +378,11 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
             return value > lastCategory;
         }
 
-        valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
-        lastCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(lastCategory);
+        const valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
+        const lastCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(lastCategory);
 
         return (valueIndex >= 0) && (valueIndex > lastCategoryIndex);
-    },
+    }
 
     /**
      * Render optional line.
@@ -402,9 +393,9 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {object}
      * @private
      */
-    _renderOptionalLine: function(xAxisData, width, attributes, optionalLineData) {
-        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
-        var line;
+    _renderOptionalLine(xAxisData, width, attributes, optionalLineData) {
+        const positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
+        let line;
 
         if (positionMap.start >= 0 && positionMap.start <= width) {
             attributes.width = 1;
@@ -416,7 +407,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         return line;
-    },
+    }
 
     /**
      * Render optional band.
@@ -427,37 +418,37 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {object}
      * @private
      */
-    _makeOptionalBand: function(xAxisData, width, attributes, optionalLineData) {
-        var range = optionalLineData.range;
-        var positionMaps;
+    _makeOptionalBand(xAxisData, width, attributes, optionalLineData) {
+        const {range} = optionalLineData;
 
         if (range && range.length) {
             this._makeRangeTo2DArray(optionalLineData);
         }
 
-        positionMaps = map(optionalLineData.range, function(rangeItem) {
-            return this._createOptionalLinePositionMap({range: rangeItem}, xAxisData, width);
-        }, this);
+        let positionMaps = optionalLineData.range.map(rangeItem => (
+            this._createOptionalLinePositionMap({range: rangeItem}, xAxisData, width)
+        ));
 
         if (optionalLineData.mergeOverlappingRanges) {
             positionMaps.sort(compareByStartPosition);
             positionMaps = this._mergeOverlappingPositionMaps(positionMaps);
         }
 
-        return map(positionMaps, function(positionMap) {
-            var isStartPositionInsidePlotArea = (positionMap.start) >= 0 && (positionMap.start <= width);
-            var bandWidth, band;
+        return positionMaps.map(positionMap => {
+            const isStartPositionInsidePlotArea = (positionMap.start) >= 0 && (positionMap.start <= width);
+            let band;
 
             if (isStartPositionInsidePlotArea && positionMap.end >= 0) {
                 attributes.color = optionalLineData.color || 'transparent';
                 attributes.opacity = optionalLineData.opacity;
-                bandWidth = positionMap.end - positionMap.start;
+
+                const bandWidth = positionMap.end - positionMap.start;
                 band = this._renderBand(positionMap.start + this.layout.position.left, bandWidth, attributes);
             }
 
             return band;
         }, this);
-    },
+    }
 
     /**
      * Make optional lines html.
@@ -466,16 +457,15 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {string}
      * @private
      */
-    _makeOptionalLines: function(lines, dimension) {
-        var width = dimension.width;
-        var xAxisData = this.axisDataMap.xAxis;
-        var templateParams = this._makeVerticalLineTemplateParams({
-            height: dimension.height + 'px'
+    _makeOptionalLines(lines, {width, height}) {
+        const xAxisData = this.axisDataMap.xAxis;
+        const templateParams = this._makeVerticalLineTemplateParams({
+            height: `${height}px`
         });
-        var makeOptionalLineHtml = snippet.bind(this._renderOptionalLine, this, xAxisData, width, templateParams);
+        const makeOptionalLineHtml = this._renderOptionalLine.bind(this, xAxisData, width, templateParams);
 
-        return map(lines, makeOptionalLineHtml);
-    },
+        return lines.map(makeOptionalLineHtml);
+    }
 
     /**
      * Make optional lines html.
@@ -484,16 +474,15 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {string}
      * @private
      */
-    _makeOptionalBands: function(lines, dimension) {
-        var width = dimension.width;
-        var xAxisData = this.axisDataMap.xAxis;
-        var templateParams = this._makeVerticalLineTemplateParams({
-            height: dimension.height + 'px'
+    _makeOptionalBands(lines, {width, height}) {
+        const xAxisData = this.axisDataMap.xAxis;
+        const templateParams = this._makeVerticalLineTemplateParams({
+            height: `${height}px`
         });
-        var makeOptionalLineHtml = snippet.bind(this._makeOptionalBand, this, xAxisData, width, templateParams);
+        const makeOptionalLineHtml = this._makeOptionalBand.bind(this, xAxisData, width, templateParams);
 
-        return map(lines, makeOptionalLineHtml);
-    },
+        return lines.map(makeOptionalLineHtml);
+    }
 
     /**
      * Render optional lines and bands.
@@ -501,28 +490,24 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {{width: number, height: number}} dimension - dimension
      * @private
      */
-    _renderOptionalLines: function(paper, dimension) {
+    _renderOptionalLines(paper, dimension) {
         this.optionalBands = this._makeOptionalBands(this.options.bands, dimension);
         this.optionalLines = this._makeOptionalLines(this.options.lines, dimension);
-    },
+    }
 
     /**
      * Maker html for vertical lines
      * @param {{width: number, height: number}} dimension - dimension
      * @private
      */
-    _renderVerticalLines: function(dimension) {
-        var positions = this._makeHorizontalPositions(dimension.width);
-        var self = this;
-        var layout = this.layout;
-        var left = layout.position.left;
-        var top = layout.position.top;
-        var lineColor = this.theme.lineColor;
+    _renderVerticalLines({width}) {
+        const positions = this._makeHorizontalPositions(width);
+        const {layout, theme: {lineColor}} = this;
+        const {position: {top, left}} = layout;
 
-        snippet.forEach(positions, function(position) {
-            var pathString = 'M' + (position + left) + ',' + top + 'V' + (top + layout.dimension.height);
-
-            var path = self.paper.path(pathString);
+        positions.forEach(position => {
+            const pathString = `M${(position + left)},${top}V${(top + layout.dimension.height)}`;
+            const path = this.paper.path(pathString);
 
             path.attr({
                 stroke: lineColor,
@@ -530,27 +515,24 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
                 'stroke-opacity': 0.05
             });
 
-            self.plotSet.push(path);
+            this.plotSet.push(path);
         });
-    },
+    }
 
     /**
      * Maker html for horizontal lines.
      * @param {{width: number, height: number}} dimension - dimension
      * @private
      */
-    _renderHorizontalLines: function(dimension) {
-        var positions = this._makeVerticalPositions(dimension.height);
-        var self = this;
-        var layout = this.layout;
-        var left = layout.position.left;
-        var top = layout.position.top;
-        var distance = positions[1] - positions[0];
-        var lineColor = this.theme.lineColor;
+    _renderHorizontalLines({height}) {
+        const positions = this._makeVerticalPositions(height);
+        const {layout, theme: {lineColor}} = this;
+        const {position: {left, top}} = layout;
+        const distance = positions[1] - positions[0];
 
-        snippet.forEach(positions, function(position, index) {
-            var pathString = 'M' + left + ',' + ((distance * index) + top) + 'H' + (left + layout.dimension.width);
-            var path = self.paper.path(pathString);
+        positions.forEach((position, index) => {
+            const pathString = `M${left},${((distance * index) + top)}H${(left + layout.dimension.width)}`;
+            const path = this.paper.path(pathString);
 
             path.attr({
                 stroke: lineColor,
@@ -558,9 +540,9 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
                 'stroke-opacity': 0.05
             });
 
-            self.plotSet.push(path);
+            this.plotSet.push(path);
         });
-    },
+    }
 
     /**
      * Render plot lines.
@@ -568,12 +550,12 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {{width: number, height: number}} dimension plot area dimension
      * @private
      */
-    _renderPlotLines: function(container, dimension) {
+    _renderPlotLines(container, dimension) {
         if (!this.options.hideLine) {
             this._renderVerticalLines(dimension);
             this._renderHorizontalLines(dimension);
         }
-    },
+    }
 
     /**
      * Make positions for vertical line.
@@ -581,15 +563,15 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {Array.<number>} positions
      * @private
      */
-    _makeVerticalPositions: function(height) {
-        var axisDataMap = this.axisDataMap;
-        var yAxis = axisDataMap.yAxis || axisDataMap.rightYAxis;
-        var positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
+    _makeVerticalPositions(height) {
+        const {axisDataMap} = this;
+        const yAxis = axisDataMap.yAxis || axisDataMap.rightYAxis;
+        const positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
 
         positions.shift();
 
         return positions;
-    },
+    }
 
     /**
      * Make divided positions of plot.
@@ -598,23 +580,22 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {Array.<number>}
      * @private
      */
-    _makeDividedPlotPositions: function(width, tickCount) {
-        var yAxisWidth = this.dimensionMap.yAxis.width;
-        var leftWidth, rightWidth, leftPositions, rightPositions;
+    _makeDividedPlotPositions(width, tickCount) {
+        const yAxisWidth = this.dimensionMap.yAxis.width;
 
         tickCount = parseInt(tickCount / 2, 10) + 1;
         width -= yAxisWidth;
-        leftWidth = Math.round((width) / 2);
-        rightWidth = width - leftWidth;
 
-        leftPositions = calculator.makeTickPixelPositions(leftWidth, tickCount);
-        rightPositions = calculator.makeTickPixelPositions(rightWidth, tickCount, leftWidth + yAxisWidth);
+        const leftWidth = Math.round((width) / 2);
+        const rightWidth = width - leftWidth;
+        const leftPositions = calculator.makeTickPixelPositions(leftWidth, tickCount);
+        const rightPositions = calculator.makeTickPixelPositions(rightWidth, tickCount, leftWidth + yAxisWidth);
 
         leftPositions.pop();
         rightPositions.shift();
 
         return leftPositions.concat(rightPositions);
-    },
+    }
 
     /**
      * Make positions for horizontal line.
@@ -622,9 +603,9 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {Array.<number>} positions
      * @private
      */
-    _makeHorizontalPositions: function(width) {
-        var tickCount = this.axisDataMap.xAxis.validTickCount;
-        var positions;
+    _makeHorizontalPositions(width) {
+        const tickCount = this.axisDataMap.xAxis.validTickCount;
+        let positions;
 
         if (this.options.divided) {
             positions = this._makeDividedPlotPositions(width, tickCount);
@@ -634,70 +615,66 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
         }
 
         return positions;
-    },
+    }
 
     /**
      * Add plot line.
      * @param {{index: number, color: string, id: string}} data - data
      */
-    addPlotLine: function(data) {
+    addPlotLine(data) {
         this.options.lines.push(data);
         this.rerender();
-    },
+    }
 
     /**
      * Add plot band.
      * @param {{range: Array.<number>, color: string, id: string}} data - data
      */
-    addPlotBand: function(data) {
+    addPlotBand(data) {
         this.options.bands.push(data);
         this.rerender();
-    },
+    }
 
     /**
      * Remove plot line.
      * @param {string} id - line id
      */
-    removePlotLine: function(id) {
-        this.options.lines = snippet.filter(this.options.lines, function(line) {
-            return line.id !== id;
-        });
+    removePlotLine(id) {
+        this.options.lines = this.options.lines.filter(line => (line.id !== id));
         this.rerender();
-    },
+    }
 
     /**
      * Remove plot band.
      * @param {string} id - band id
      */
-    removePlotBand: function(id) {
-        this.options.bands = snippet.filter(this.options.bands, function(band) {
-            return band.id !== id;
-        });
+    removePlotBand(id) {
+        this.options.bands = this.options.bands.filter(band => (band.id !== id));
         this.rerender();
-    },
+    }
 
     /**
      * Animate for adding data.
      * @param {{tickSize: number, shifting: boolean}} data - data for animation
      */
-    animateForAddingData: function(data) {
-        var optionLines = this.options.lines;
-        var optionBands = this.options.bands;
+    animateForAddingData(data) {
+        const optionLines = this.options.lines;
+        const optionBands = this.options.bands;
 
         if (!this.dataProcessor.isCoordinateType()) {
             if (data.shifting) {
-                this._animateItemForAddingData(this.optionalLines, data, function(itemIdx) {
+                this._animateItemForAddingData(this.optionalLines, data, itemIdx => {
                     optionLines.splice(itemIdx, 1);
                 });
 
-                snippet.forEach(this.optionalBands, function(bandRanges, bandIdx) {
-                    this._animateItemForAddingData(bandRanges, data, function(itemIdx) {
+                this.optionalBands.forEach((bandRanges, bandIdx) => {
+                    this._animateItemForAddingData(bandRanges, data, itemIdx => {
                         optionBands[bandIdx].range.splice(itemIdx, 1);
                     });
-                }, this);
+                });
             }
         }
-    },
+    }
 
     /**
      * Animate Item for adding data.
@@ -706,40 +683,40 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @param {{tickSize: number, shifting: boolean}} data - data for animation
      * @param {function} removePlotItem - function for optional plot delete
      */
-    _animateItemForAddingData: function(optionalItems, data, removePlotItem) {
-        snippet.forEach(optionalItems, function(item, lineIdx) {
-            var bbox = item.getBBox();
+    _animateItemForAddingData(optionalItems, data, removePlotItem) {
+        optionalItems.forEach((item, lineIdx) => {
+            const bbox = item.getBBox();
 
             if (bbox.x - data.tickSize < this.layout.position.left) {
                 item.animate({
-                    transform: 'T-' + data.tickSize + ',0',
+                    transform: `T-${data.tickSize},0`,
                     opacity: 0
-                }, 300, 'linear', function() {
+                }, 300, 'linear', () => {
                     removePlotItem(lineIdx);
                     item.remove();
                 });
             } else {
                 item.animate({
-                    transform: 'T-' + data.tickSize + ',0'
+                    transform: `T-${data.tickSize},0`
                 }, 300);
             }
-        }, this);
-    },
+        });
+    }
 
     /**
      * Check if  optionalLineData has range property and range property is 2D array
      * @param {{range: ?Array.<number>}} optionalLineData - optional line data
      * @private
      */
-    _makeRangeTo2DArray: function(optionalLineData) {
-        var range = optionalLineData.range;
-        var isOneDimensionArray = range && snippet.isArray(range) &&
+    _makeRangeTo2DArray(optionalLineData) {
+        const {range} = optionalLineData;
+        const isOneDimensionArray = range && snippet.isArray(range) &&
             (range.length === 0 || !snippet.isArray(range[0]));
 
         if (isOneDimensionArray) {
             optionalLineData.range = [range];
         }
-    },
+    }
 
     /**
      * check if some areas are overlapped, and then merge overlapping area
@@ -747,18 +724,17 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
      * @returns {Array.<{start: number, end: number}>} - inspected positionMaps
      * @private
      */
-    _mergeOverlappingPositionMaps: function(positionMaps) {
-        var i = 1;
-        var len = positionMaps.length;
-        var processedMap, previous, current;
+    _mergeOverlappingPositionMaps(positionMaps) {
+        const len = positionMaps.length;
+        let processedMap, previous;
 
         if (len) {
             processedMap = [positionMaps[0]];
-            previous = processedMap[0];
+            ([previous] = processedMap);
         }
 
-        for (; i < len; i += 1) {
-            current = positionMaps[i];
+        for (let i = 1; i < len; i += 1) {
+            const current = positionMaps[i];
 
             if (current.start <= previous.end) {
                 previous.end = Math.max(current.end, previous.end);
@@ -770,7 +746,7 @@ var Plot = snippet.defineClass(/** @lends Plot.prototype */ {
 
         return processedMap;
     }
-});
+}
 
 /**
  * Compare positionMap by it's start value
@@ -789,10 +765,8 @@ function compareByStartPosition(previous, current) {
  * @returns {object}
  * @ignore
  */
-function plotFactory(param) {
-    var chartType = param.chartOptions.chartType;
-    var seriesTypes = param.seriesTypes;
-    var xAxisType = param.chartOptions.xAxis.type;
+export default function plotFactory(param) {
+    const {seriesTypes, chartOptions: {chartType, xAxis: {type: xAxisType}}} = param;
 
     // same among bar, chart, line, area charts
     param.chartType = chartType;
@@ -804,5 +778,3 @@ function plotFactory(param) {
 
 plotFactory.componentType = 'plot';
 plotFactory.Plot = Plot;
-
-module.exports = plotFactory;

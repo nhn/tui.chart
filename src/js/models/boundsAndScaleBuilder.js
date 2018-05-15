@@ -4,18 +4,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var BoundsModel = require('../models/bounds/boundsModel');
-var ScaleDataModel = require('../models/scaleData/scaleDataModel');
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
+import BoundsModel from '../models/bounds/boundsModel';
+import ScaleDataModel from '../models/scaleData/scaleDataModel';
+import chartConst from '../const';
+import predicate from '../helpers/predicate';
 
 /**
  * Bounds and scale data builder.
  * @module boundsAndScaleBuilder
- * @private */
-var boundsAndScaleBuilder = {
+ */
+export default {
     /**
      * Create BoundsModel.
      * @param {DataProcessor} dataProcessor - DataProcessor instance
@@ -23,13 +21,13 @@ var boundsAndScaleBuilder = {
      * @returns {BoundsModel}
      * @private
      */
-    _createBoundsModel: function(dataProcessor, params) {
+    _createBoundsModel(dataProcessor, params) {
         return new BoundsModel({
             chartType: params.chartType,
             seriesTypes: params.seriesTypes,
             options: params.options,
             theme: params.theme,
-            dataProcessor: dataProcessor,
+            dataProcessor,
             hasAxes: params.hasAxes,
             isVertical: params.isVertical
         });
@@ -43,14 +41,14 @@ var boundsAndScaleBuilder = {
      * @returns {ScaleDataModel}
      * @private
      */
-    _createScaleDataModel: function(dataProcessor, boundsModel, params) {
+    _createScaleDataModel(dataProcessor, boundsModel, params) {
         return new ScaleDataModel({
             chartType: params.chartType,
             seriesTypes: params.seriesTypes,
             options: params.options,
             theme: params.theme,
-            dataProcessor: dataProcessor,
-            boundsModel: boundsModel,
+            dataProcessor,
+            boundsModel,
             hasRightYAxis: params.hasRightYAxis,
             addedDataCount: params.addedDataCount
         });
@@ -63,7 +61,7 @@ var boundsAndScaleBuilder = {
      * @param {object} scaleOption - option for add scale
      * @param {object} yAxisOptions - option for yAxis
      */
-    addYAxisScale: function(scaleDataModel, name, scaleOption, yAxisOptions) {
+    addYAxisScale(scaleDataModel, name, scaleOption, yAxisOptions) {
         scaleDataModel.addScale(name, (scaleOption && scaleOption.options) || yAxisOptions || {}, {
             valueType: scaleOption.valueType || 'value',
             areaType: scaleOption.areaType,
@@ -80,28 +78,27 @@ var boundsAndScaleBuilder = {
      * @param {boolean} isVertical - whether vertical or not
      * @private
      */
-    _registerYAxisDimension: function(componentManager, boundsModel, scaleDataMap, axisName, isVertical) {
-        var yAxis = componentManager.get(axisName);
-        var limit = null;
-        var yAxisLabels = [];
-        var scaleData;
+    _registerYAxisDimension(componentManager, boundsModel, scaleDataMap, axisName, isVertical) {
+        const yAxis = componentManager.get(axisName);
+        let limit = null;
+        let yAxisLabels = [];
 
         if (!yAxis) {
             return;
         }
-        scaleData = scaleDataMap[axisName];
+        const scaleData = scaleDataMap[axisName];
 
         if (scaleData) {
             limit = scaleData.limit;
             yAxisLabels = scaleData.labels;
         }
         boundsModel.registerYAxisDimension({
-            limit: limit,
-            axisName: axisName,
+            limit,
+            axisName,
             options: yAxis.options,
             theme: yAxis.theme,
-            yAxisLabels: yAxisLabels,
-            isVertical: isVertical
+            yAxisLabels,
+            isVertical
         });
     },
 
@@ -114,12 +111,13 @@ var boundsAndScaleBuilder = {
      * @param {object} params - parameter for setting layout bounds and scale data.
      * @private
      */
-    _setLayoutBoundsAndScale: function(dataProcessor, componentManager, boundsModel, scaleDataModel, params) {
-        var options = params.options;
-        var scaleOption = params.scaleOption || {};
-        var addingDataMode = params.addingDataMode;
-        var isVertical = params.isVertical;
-        var scaleDataMap;
+    _setLayoutBoundsAndScale(dataProcessor, componentManager, boundsModel, scaleDataModel, params) {
+        const {
+            options,
+            scaleOption = {},
+            addingDataMode,
+            isVertical
+        } = params;
 
         // 01. register base dimension
         if (componentManager.has('xAxis')) {
@@ -151,7 +149,7 @@ var boundsAndScaleBuilder = {
             });
         }
 
-        scaleDataMap = scaleDataModel.scaleDataMap;
+        const {scaleDataMap} = scaleDataModel;
 
         if (scaleDataMap.legend && componentManager.get('legend') && componentManager.get('legend').colorSpectrum) {
             boundsModel.registerSpectrumLegendDimension(scaleDataMap.legend.limit);
@@ -215,14 +213,13 @@ var boundsAndScaleBuilder = {
      *      legendScaleData: ?object
      * }}
      */
-    build: function(dataProcessor, componentManager, params) {
-        var boundsModel = this._createBoundsModel(dataProcessor, params);
-        var scaleDataModel = this._createScaleDataModel(dataProcessor, boundsModel, params);
-        var boundsAndScale;
+    build(dataProcessor, componentManager, params) {
+        const boundsModel = this._createBoundsModel(dataProcessor, params);
+        const scaleDataModel = this._createScaleDataModel(dataProcessor, boundsModel, params);
 
         this._setLayoutBoundsAndScale(dataProcessor, componentManager, boundsModel, scaleDataModel, params);
 
-        boundsAndScale = {
+        const boundsAndScale = {
             dimensionMap: boundsModel.dimensionMap,
             positionMap: boundsModel.positionMap,
             limitMap: scaleDataModel.makeLimitMap(params.seriesTypes || [params.chartType], params.isVertical)
@@ -243,5 +240,3 @@ var boundsAndScaleBuilder = {
         return boundsAndScale;
     }
 };
-
-module.exports = boundsAndScaleBuilder;

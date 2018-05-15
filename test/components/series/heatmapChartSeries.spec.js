@@ -3,16 +3,13 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import snippet from 'tui-code-snippet';
+import heatmapSeriesFactory from '../../../src/js/components/series/heatmapChartSeries.js';
 
-'use strict';
+describe('HeatmapChartSeries', () => {
+    let series;
 
-var snippet = require('tui-code-snippet');
-var heatmapSeriesFactory = require('../../../src/js/components/series/heatmapChartSeries.js');
-
-describe('HeatmapChartSeries', function() {
-    var series;
-
-    beforeEach(function() {
+    beforeEach(() => {
         series = new heatmapSeriesFactory.HeatmapChartSeries({
             chartType: 'heatmap',
             theme: {
@@ -21,10 +18,8 @@ describe('HeatmapChartSeries', function() {
         });
     });
 
-    describe('_makeBound()', function() {
-        it('should make bonds using block dimesion and x, y position.', function() {
-            var actual;
-
+    describe('_makeBound()', () => {
+        it('should make bonds using block dimesion and x, y position.', () => {
             series.layout = {
                 dimension: {
                     height: 200
@@ -35,7 +30,7 @@ describe('HeatmapChartSeries', function() {
                 }
             };
 
-            actual = series._makeBound(30, 30, 0, 1);
+            const actual = series._makeBound(30, 30, 0, 1);
 
             expect(actual.end).toEqual({
                 left: 0,

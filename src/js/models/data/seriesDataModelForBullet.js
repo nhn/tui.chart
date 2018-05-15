@@ -3,15 +3,11 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import SeriesItem from './seriesItem';
+import SeriesDataModel from './seriesDataModel';
+import chartConst from '../../const';
 
-'use strict';
-
-var SeriesItem = require('./seriesItem');
-var SeriesDataModel = require('./seriesDataModel');
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
-
-var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBullet.prototype */ {
+export default class SeriesDataModelForBullet extends SeriesDataModel {
     /**
      * SeriesDataModelForBullet is series model for boxplot chart
      * SeriesDataModel.groups has SeriesGroups.
@@ -21,9 +17,6 @@ var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends S
      * @param {object} options - options
      * @param {Array.<function>} formatFunctions - format functions
      */
-    init: function(rawSeriesData, chartType, options, formatFunctions) {
-        SeriesDataModel.call(this, rawSeriesData, chartType, options, formatFunctions);
-    },
 
     /**
      * Create base groups.
@@ -32,25 +25,22 @@ var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends S
      * @private
      * @override
      */
-    _createBaseGroups: function() {
-        var chartType = this.chartType;
-        var formatFunctions = this.formatFunctions;
-        var maxRangeCount = 0;
-        var maxMarkerCount = 0;
-        var baseGroups = snippet.map(this.rawSeriesData, function(rawDatum) {
-            var items = [];
-            var data = rawDatum.data;
-            var markers = rawDatum.markers;
-            var markerCount = markers.length;
-            var ranges = rawDatum.ranges;
-            var rangeCount = ranges.length;
+    _createBaseGroups() {
+        const {chartType, formatFunctions} = this;
+        let maxRangeCount = 0;
+        let maxMarkerCount = 0;
+        const baseGroups = this.rawSeriesData.map(rawDatum => {
+            const items = [];
+            const {data, markers, ranges} = rawDatum;
+            const markerCount = markers.length;
+            const rangeCount = ranges.length;
 
             if (ranges && rangeCount) {
-                snippet.map(ranges, function(range) {
+                ranges.forEach(range => {
                     items.push(new SeriesItem({
                         datum: range,
-                        chartType: chartType,
-                        formatFunctions: formatFunctions,
+                        chartType,
+                        formatFunctions,
                         type: chartConst.BULLET_TYPE_RANGE
                     }));
                 });
@@ -60,17 +50,17 @@ var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends S
             if (data) {
                 items.push(new SeriesItem({
                     datum: data,
-                    chartType: chartType,
-                    formatFunctions: formatFunctions,
+                    chartType,
+                    formatFunctions,
                     type: chartConst.BULLET_TYPE_ACTUAL
                 }));
             }
 
             if (markers && markerCount) {
-                snippet.map(markers, function(marker) {
+                markers.forEach(marker => {
                     items.push(new SeriesItem({
                         datum: marker,
-                        chartType: chartType,
+                        chartType,
                         formabutFunctions: formatFunctions,
                         type: chartConst.BULLET_TYPE_MARKER
                     }));
@@ -85,16 +75,14 @@ var SeriesDataModelForBullet = snippet.defineClass(SeriesDataModel, /** @lends S
         this.maxRangeCount = maxRangeCount;
 
         return baseGroups;
-    },
+    }
 
     /**
      * Create SeriesGroups from rawData.series.
      * @returns {Array.<SeriesGroup>}
      * @private
      */
-    _createSeriesGroupsFromRawData: function() {
+    _createSeriesGroupsFromRawData() {
         return SeriesDataModel.prototype._createSeriesGroupsFromRawData.call(this);
     }
-});
-
-module.exports = SeriesDataModelForBullet;
+}

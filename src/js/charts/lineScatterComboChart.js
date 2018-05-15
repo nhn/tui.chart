@@ -4,12 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import ChartBase from './chartBase';
+import snippet from 'tui-code-snippet';
 
-var ChartBase = require('./chartBase');
-var snippet = require('tui-code-snippet');
-
-var LineScatterComboChart = snippet.defineClass(ChartBase, /** @lends LineScatterComboChart.prototype */ {
+export default class LineScatterComboChart extends ChartBase {
     /**
      * Line and Scatter Combo chart.
      * @constructs LineScatterComboChart
@@ -18,27 +16,17 @@ var LineScatterComboChart = snippet.defineClass(ChartBase, /** @lends LineScatte
      * @param {object} theme - chart theme
      * @param {object} options - chart options
      */
-    init: function(rawData, theme, options) {
-        /**
-         * chart types map
-         * @type {Object}
-         */
-        this.chartTypes = ['line', 'scatter'];
-
-        /**
-         * series types
-         * @type {Object|Array.<T>}
-         */
-        this.seriesTypes = ['line', 'scatter'];
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+    constructor(rawData, theme, options) {
+        super({
+            rawData,
+            theme,
+            options,
+            chartTypes: ['line', 'scatter'],
+            seriesTypes: ['line', 'scatter'],
             hasAxes: true,
             isVertical: true
         });
-    },
+    }
 
     /**
      * Get scale option.
@@ -48,7 +36,7 @@ var LineScatterComboChart = snippet.defineClass(ChartBase, /** @lends LineScatte
      * }}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         return {
             yAxis: {
                 valueType: 'y'
@@ -57,30 +45,28 @@ var LineScatterComboChart = snippet.defineClass(ChartBase, /** @lends LineScatte
                 valueType: 'x'
             }
         };
-    },
+    }
 
     /**
      * Add data ratios.
      * @override
      * from axisTypeMixer
      */
-    addDataRatios: function(limitMap) {
-        var self = this;
-        var chartTypes = this.chartTypes || [this.chartType];
-        var addDataRatio;
+    addDataRatios(limitMap) {
+        const chartTypes = this.chartTypes || [this.chartType];
 
-        addDataRatio = function(chartType) {
-            self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+        const addDataRatio = chartType => {
+            this.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
         };
 
         snippet.forEachArray(chartTypes, addDataRatio);
-    },
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -95,6 +81,4 @@ var LineScatterComboChart = snippet.defineClass(ChartBase, /** @lends LineScatte
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
-});
-
-module.exports = LineScatterComboChart;
+}

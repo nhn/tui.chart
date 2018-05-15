@@ -3,17 +3,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import snippet from 'tui-code-snippet';
+import areaSeriesFactory from '../../../src/js/components/series/areaChartSeries';
+import chartConst from '../../../src/js/const';
 
-'use strict';
+describe('AreaChartSeries', () => {
+    let series;
 
-var snippet = require('tui-code-snippet');
-var areaSeriesFactory = require('../../../src/js/components/series/areaChartSeries'),
-    chartConst = require('../../../src/js/const');
-
-describe('AreaChartSeries', function() {
-    var series;
-
-    beforeEach(function() {
+    beforeEach(() => {
         series = new areaSeriesFactory.AreaChartSeries({
             chartType: 'area',
             theme: {},
@@ -28,107 +25,99 @@ describe('AreaChartSeries', function() {
         };
     });
 
-    describe('_makePositionTopOfZeroPoint', function() {
-        it('should make postion to _getLimitDistanceFromZeroPoint().toMax + EXPAND_SIZE, when min is negative and max is positive', function() {
-            var limit = {
+    describe('_makePositionTopOfZeroPoint', () => {
+        it('should make postion to _getLimitDistanceFromZeroPoint().toMax + EXPAND_SIZE, when min is negative and max is positive', () => {
+            const limit = {
                 min: -10,
                 max: 10
             };
-            var height = 100;
-            var actual, expected;
-
+            const height = 100;
             series.layout.dimension = {
-                height: height
+                height
             };
             series.axisDataMap = {
                 yAxis: {
-                    limit: limit
+                    limit
                 }
             };
 
-            actual = series._makePositionTopOfZeroPoint();
-            expected = series._getLimitDistanceFromZeroPoint(height, limit).toMax + chartConst.SERIES_EXPAND_SIZE;
+            const actual = series._makePositionTopOfZeroPoint();
+            const expected = series._getLimitDistanceFromZeroPoint(height, limit).toMax + chartConst.SERIES_EXPAND_SIZE;
 
             expect(actual).toBe(expected);
         });
 
-        it('should return height + EXPAND_SIZE, if min, max are positive.', function() {
-            var limit = {
+        it('should return height + EXPAND_SIZE, if min, max are positive.', () => {
+            const limit = {
                 min: 0,
                 max: 10
             };
-            var height = 100;
-            var actual, expected;
+            const height = 100;
 
             series.layout.dimension = {
-                height: height
+                height
             };
             series.axisDataMap = {
                 yAxis: {
-                    limit: limit
+                    limit
                 }
             };
 
-            actual = series._makePositionTopOfZeroPoint();
-            expected = height + chartConst.SERIES_EXPAND_SIZE;
+            const actual = series._makePositionTopOfZeroPoint();
+            const expected = height + chartConst.SERIES_EXPAND_SIZE;
 
             expect(actual).toBe(expected);
         });
 
-        it('should return EXPAND_SIZE if min, max are negatives.', function() {
-            var limit = {
+        it('should return EXPAND_SIZE if min, max are negatives.', () => {
+            const limit = {
                 min: -20,
                 max: -10
             };
-            var height = 100;
-            var actual, expected;
+            const height = 100;
 
             series.layout.dimension = {
-                height: height
+                height
             };
             series.axisDataMap = {
                 yAxis: {
-                    limit: limit
+                    limit
                 }
             };
 
-            actual = series._makePositionTopOfZeroPoint();
-            expected = chartConst.SERIES_EXPAND_SIZE;
+            const actual = series._makePositionTopOfZeroPoint();
+            const expected = chartConst.SERIES_EXPAND_SIZE;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeStackedPositions()', function() {
-        it('should make stack type position by setting the previous top to startTop.', function() {
-            var actual, expected;
-
+    describe('_makeStackedPositions()', () => {
+        it('should make stack type position by setting the previous top to startTop.', () => {
             series.layout.dimension = {
                 height: 190
             };
 
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
-            actual = series._makeStackedPositions([[{top: 150}], [{top: 100}], [{top: 180}]]);
-            expected = [[{top: 150, startTop: 200}], [{top: 50, startTop: 150}], [{top: 30, startTop: 50}]];
+            const actual = series._makeStackedPositions([[{top: 150}], [{top: 100}], [{top: 180}]]);
+            const expected = [[{top: 150, startTop: 200}], [{top: 50, startTop: 150}], [{top: 30, startTop: 50}]];
 
             expect(actual).toEqual(expected);
         });
-        it('use prevTop if position is null.', function() {
-            var actual, expected;
-
+        it('use prevTop if position is null.', () => {
             series.layout.dimension = {
                 height: 190
             };
 
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
-            actual = series._makeStackedPositions([
+            const actual = series._makeStackedPositions([
                 [{top: 150}, {top: 100}],
                 [null, {top: 150}],
                 [{top: 180}, {top: 150}]
             ]);
-            expected = [
+            const expected = [
                 [{top: 150, startTop: 200}, {top: 100, startTop: 200}],
                 [null, {top: 50, startTop: 100}],
                 [{top: 130, startTop: 150}, {top: 0, startTop: 50}]
@@ -138,10 +127,9 @@ describe('AreaChartSeries', function() {
         });
     });
 
-    describe('_makePositions()', function() {
-        it('should make stack type position by using _makeBasicPositions() and _makeStackedPosition().', function() {
-            var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
-                actual, expected;
+    describe('_makePositions()', () => {
+        it('should make stack type position by using _makeBasicPositions() and _makeStackedPosition().', () => {
+            const basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]];
 
             series.layout.dimension = {
                 height: 190
@@ -150,24 +138,21 @@ describe('AreaChartSeries', function() {
             spyOn(series, '_makeBasicPositions').and.returnValue(basicPositions);
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
-            actual = series._makePositions();
-            expected = series._makeStackedPositions(basicPositions);
+            const actual = series._makePositions();
+            const expected = series._makeStackedPositions(basicPositions);
 
             expect(actual).toEqual(expected);
         });
 
-        it('should make non stack type position by using _makeBasicPosition().', function() {
-            var actual, expected;
-
+        it('should make non stack type position by using _makeBasicPosition().', () => {
             series.layout.dimension = {
                 height: 190
             };
-
             spyOn(series, '_makeBasicPositions').and.returnValue([[{top: 150}], [{top: 100}], [{top: 180}]]);
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
-            actual = series._makePositions();
-            expected = series._makeBasicPositions();
+            const actual = series._makePositions();
+            const expected = series._makeBasicPositions();
 
             expect(actual).toEqual(expected);
         });

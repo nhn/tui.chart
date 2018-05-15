@@ -63,6 +63,14 @@ if (typeof Object.create != 'function') {
     })();
 }
 
+// https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
+// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
+if (!Array.isArray) {
+    Array.isArray = function(arg) {
+        return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+}
+
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel

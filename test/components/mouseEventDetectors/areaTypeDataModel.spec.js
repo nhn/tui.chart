@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import AreaTypeDataModel from '../../../src/js/components/mouseEventDetectors/areaTypeDataModel';
 
-'use strict';
+describe('Test for AreaTypeDataModel', () => {
+    let dataModel;
 
-var AreaTypeDataModel = require('../../../src/js/components/mouseEventDetectors/areaTypeDataModel');
-
-describe('Test for AreaTypeDataModel', function() {
-    var dataModel;
-
-    beforeEach(function() {
+    beforeEach(() => {
         dataModel = new AreaTypeDataModel([{
             chartType: 'line',
             data: {
@@ -20,9 +17,9 @@ describe('Test for AreaTypeDataModel', function() {
         }]);
     });
 
-    describe('_makeData()', function() {
-        it('make data for detecting mouse event', function() {
-            var seriesItemBoundsData = [
+    describe('_makeData()', () => {
+        it('make data for detecting mouse event', () => {
+            const seriesItemBoundsData = [
                 {
                     chartType: 'line',
                     data: {
@@ -35,7 +32,7 @@ describe('Test for AreaTypeDataModel', function() {
                     }
                 }
             ];
-            var actual = dataModel._makeData(seriesItemBoundsData);
+            const actual = dataModel._makeData(seriesItemBoundsData);
 
             expect(actual[0].chartType).toBe('line');
             expect(actual[0].indexes.groupIndex).toBe(0);
@@ -47,9 +44,8 @@ describe('Test for AreaTypeDataModel', function() {
         });
     });
 
-    describe('findData()', function() {
-        it('find data', function() {
-            var actual, expected;
+    describe('findData()', () => {
+        it('find data', () => {
             dataModel.data = [
                 {
                     bound: {
@@ -68,11 +64,11 @@ describe('Test for AreaTypeDataModel', function() {
                     }
                 }
             ];
-            actual = dataModel.findData({
+            const actual = dataModel.findData({
                 x: 17,
                 y: 10
             }, null, null);
-            expected = dataModel.data[0];
+            const [expected] = dataModel.data;
             expect(actual).toBe(expected);
         });
     });

@@ -3,37 +3,33 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var TooltipBase = require('./tooltipBase');
-var singleTooltipMixer = require('./singleTooltipMixer');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var tooltipTemplate = require('./tooltipTemplate');
-var snippet = require('tui-code-snippet');
+import TooltipBase from './tooltipBase';
+import singleTooltipMixer from './singleTooltipMixer';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import tooltipTemplate from './tooltipTemplate';
+import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc NormalTooltip component.
  * @class NormalTooltip
  * @private
  */
-var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.prototype */ {
+class NormalTooltip extends TooltipBase {
     /**
      * NormalTooltip component.
      * @constructs NormalTooltip
      * @private
      * @override
      */
-    init: function(params) {
+    constructor(params) {
+        super(params);
         /**
          * Color spectrum
          * @type {ColorSpectrum}
          */
         this.colorSpectrum = params.colorSpectrum;
-
-        TooltipBase.apply(this, arguments);
-    },
+    }
 
     /**
      * Make tooltip html.
@@ -42,13 +38,13 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(category, item) {
-        var template = this._getTooltipTemplate(item);
+    _makeTooltipHtml(category, item) {
+        const template = this._getTooltipTemplate(item);
         return template(snippet.extend({
             categoryVisible: category ? 'show' : 'hide',
-            category: category
+            category
         }, item));
-    },
+    }
 
     /**
      * get tooltip template from a templates collection
@@ -56,8 +52,8 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @returns {string} tooltip template
      * @private
      */
-    _getTooltipTemplate: function(item) {
-        var template = tooltipTemplate.tplDefault;
+    _getTooltipTemplate(item) {
+        let template = tooltipTemplate.tplDefault;
 
         if (predicate.isBoxplotChart(this.chartType)) {
             template = this._getBoxplotTooltipTemplate(item);
@@ -73,7 +69,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         }
 
         return template;
-    },
+    }
 
     /**
      * Get tooltip template of box plot chart
@@ -83,8 +79,8 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @returns {string} tooltip template
      * @private
      */
-    _getBoxplotTooltipTemplate: function(item) {
-        var template = tooltipTemplate.tplBoxplotChartDefault;
+    _getBoxplotTooltipTemplate(item) {
+        let template = tooltipTemplate.tplBoxplotChartDefault;
 
         if (snippet.isNumber(item.outlierIndex)) {
             template = tooltipTemplate.tplBoxplotChartOutlier;
@@ -92,7 +88,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         }
 
         return template;
-    },
+    }
 
     /**
      * Make html for value types like x, y, r
@@ -101,11 +97,15 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @returns {string}
      * @private
      */
-    _makeHtmlForValueTypes: function(data, valueTypes) {
-        return snippet.map(valueTypes, function(type) {
-            return (data[type]) ? '<tr><td>' + type + '</td><td class="' + chartConst.CLASS_NAME_TOOLTIP_VALUE + '">' + data[type] + '</td></tr>' : '';
+    _makeHtmlForValueTypes(data, valueTypes) {
+        return valueTypes.map(type => {
+            if (data[type]) {
+                return `<tr><td>${type}</td><td class="${chartConst.CLASS_NAME_TOOLTIP_VALUE}">${data[type]}</td></tr>`;
+            }
+
+            return '';
         }).join('');
-    },
+    }
 
     /**
      * Make single tooltip html.
@@ -114,13 +114,15 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @returns {string} tooltip html
      * @private
      */
-    _makeSingleTooltipHtml: function(chartType, indexes) {
-        var groupIndex = indexes.groupIndex;
-        var data = snippet.extend({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
-        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
-            && this.dataProcessor.options.series.colorByPoint;
-        var seriesIndex = indexes.index;
-        var color;
+    _makeSingleTooltipHtml(chartType, indexes) {
+        const {groupIndex} = indexes;
+        let data = Object.assign({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
+        const isbar = predicate.isBarTypeChart(this.chartType);
+        const isboxplot = predicate.isBoxplotChart(this.chartType);
+        const colorByPoint = (
+            (isbar || isboxplot) && this.dataProcessor.options.series.colorByPoint
+        );
+        let seriesIndex = indexes.index;
 
         if (predicate.isBulletChart(this.chartType)) {
             seriesIndex = groupIndex;
@@ -128,7 +130,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
             seriesIndex = data.tooltipColorIndex;
         }
 
-        color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
+        let color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
 
         if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;
@@ -138,21 +140,21 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         }
 
         data.chartType = this.chartType;
-        data.cssText = 'background-color: ' + color;
-        data = snippet.extend({
+        data.cssText = `background-color: ${color}`;
+        data = Object.assign({
             suffix: this.suffix
         }, data);
         data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
 
         return this.templateFunc(data.category, data, this.getRawCategory(groupIndex));
-    },
+    }
 
     /**
      * Set default align option of tooltip.
      * @private
      * @override
      */
-    _setDefaultTooltipPositionOption: function() {
+    _setDefaultTooltipPositionOption() {
         if (this.options.align) {
             return;
         }
@@ -162,7 +164,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         } else {
             this.options.align = chartConst.TOOLTIP_DEFAULT_HORIZONTAL_ALIGN_OPTION;
         }
-    },
+    }
 
     /**
      * Make parameters for show tooltip user event.
@@ -171,22 +173,19 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip
      * @private
      */
-    _makeShowTooltipParams: function(indexes, additionParams) {
-        var legendIndex = indexes.index;
-        var legendData = this.dataProcessor.getLegendItem(legendIndex);
-        var chartType;
-
-        var params;
+    _makeShowTooltipParams(indexes, additionParams) {
+        const legendIndex = indexes.index;
+        const legendData = this.dataProcessor.getLegendItem(legendIndex);
 
         if (!legendData) {
             return null;
         }
 
-        chartType = legendData.chartType;
-        params = snippet.extend({
-            chartType: chartType,
-            legend: legendData.label,
-            legendIndex: legendIndex,
+        const {chartType, label} = legendData;
+        const params = snippet.extend({
+            chartType,
+            legend: label,
+            legendIndex,
             index: indexes.groupIndex
         }, additionParams);
 
@@ -196,7 +195,7 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
         }
 
         return params;
-    },
+    }
 
     /**
      * Make tooltip datum.
@@ -206,35 +205,34 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
      * @returns {Object}
      * @private
      */
-    _makeTooltipDatum: function(legendLabel, category, seriesItem) {
-        var tooltipLabel = seriesItem.tooltipLabel;
-        var labelFormatter = this.labelFormatter;
-        var tooltipDatum = {
-            legend: legendLabel || '',
+    _makeTooltipDatum(legendLabel = '', category = '', seriesItem) {
+        const {tooltipLabel} = seriesItem;
+        const {labelFormatter} = this;
+        let tooltipDatum = {
+            legend: legendLabel,
             label: tooltipLabel || (seriesItem.label ? seriesItem.label : ''),
-            category: category || ''
+            category
         };
 
         if (labelFormatter) {
             tooltipDatum = labelFormatter(seriesItem, tooltipDatum, '');
         }
 
-        tooltipDatum.category = category || '';
+        tooltipDatum.category = category;
 
         return snippet.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
-    },
+    }
 
     /**
      * Make tooltip data.
      * @returns {Array.<object>} tooltip data
      * @override
      */
-    makeTooltipData: function() {
-        var self = this;
-        var orgLegendLabels = this.dataProcessor.getLegendLabels();
-        var isPivot = predicate.isTreemapChart(this.chartType);
-        var legendLabels = {};
-        var tooltipData = {};
+    makeTooltipData() {
+        const orgLegendLabels = this.dataProcessor.getLegendLabels();
+        const isPivot = predicate.isTreemapChart(this.chartType);
+        let legendLabels = {};
+        const tooltipData = {};
 
         if (snippet.isArray(orgLegendLabels)) {
             legendLabels[this.chartType] = orgLegendLabels;
@@ -242,21 +240,19 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
             legendLabels = orgLegendLabels;
         }
 
-        this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
-            var data, isBulletChart;
+        this.dataProcessor.eachBySeriesGroup((seriesGroup, groupIndex, chartType) => {
+            chartType = chartType || this.chartType;
+            const isBulletChart = predicate.isBulletChart(chartType);
 
-            chartType = chartType || self.chartType;
-            isBulletChart = predicate.isBulletChart(chartType);
-
-            data = seriesGroup.map(function(seriesItem, index) {
-                var category = self.dataProcessor.makeTooltipCategory(groupIndex, index, self.isVertical);
-                var legendIndex = isBulletChart ? groupIndex : index;
+            const data = seriesGroup.map((seriesItem, index) => {
+                const category = this.dataProcessor.makeTooltipCategory(groupIndex, index, this.isVertical);
+                const legendIndex = isBulletChart ? groupIndex : index;
 
                 if (!seriesItem) {
                     return null;
                 }
 
-                return self._makeTooltipDatum(legendLabels[chartType][legendIndex], category, seriesItem);
+                return this._makeTooltipDatum(legendLabels[chartType][legendIndex], category, seriesItem);
             });
 
             if (!tooltipData[chartType]) {
@@ -268,15 +264,19 @@ var NormalTooltip = snippet.defineClass(TooltipBase, /** @lends NormalTooltip.pr
 
         return tooltipData;
     }
-});
+}
 
 singleTooltipMixer.mixin(NormalTooltip);
 
-function normalTooltipFactory(params) {
+/**
+ * normalTooltipFactory
+ * @param {object} params chart options
+ * @returns {object} normal tooltip instanse
+ * @ignore
+ */
+export default function normalTooltipFactory(params) {
     return new NormalTooltip(params);
 }
 
 normalTooltipFactory.componentType = 'tooltip';
 normalTooltipFactory.NormalTooltip = NormalTooltip;
-
-module.exports = normalTooltipFactory;

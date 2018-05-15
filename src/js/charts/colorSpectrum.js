@@ -3,13 +3,9 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import colorutil from '../helpers/colorutil';
 
-'use strict';
-
-var colorutil = require('../helpers/colorutil');
-var snippet = require('tui-code-snippet');
-
-var ColorSpectrum = snippet.defineClass(/** @lends ColorSpectrum.prototype */ {
+export default class ColorSpectrum {
     /**
      * ColorSpectrum create a color spectrum and provide color value.
      * @constructs ColorSpectrum
@@ -17,17 +13,15 @@ var ColorSpectrum = snippet.defineClass(/** @lends ColorSpectrum.prototype */ {
      * @param {string} startColor hex color
      * @param {string} endColor hex color
      */
-    init: function(startColor, endColor) {
-        var endRGB;
-
+    constructor(startColor, endColor) {
         this.start = colorutil.colorNameToHex(startColor);
         this.startRGB = colorutil.hexToRGB(this.start);
         this.end = colorutil.colorNameToHex(endColor);
 
-        endRGB = colorutil.hexToRGB(this.end);
+        const endRGB = colorutil.hexToRGB(this.end);
         this.distances = this._makeDistances(this.startRGB, endRGB);
         this.colorMap = {};
-    },
+    }
 
     /**
      * Make distances start RGB to end RGB.
@@ -36,31 +30,26 @@ var ColorSpectrum = snippet.defineClass(/** @lends ColorSpectrum.prototype */ {
      * @returns {Array.<number>} distances
      * @private
      */
-    _makeDistances: function(startRGB, endRGB) {
-        return snippet.map(startRGB, function(value, index) {
-            return endRGB[index] - value;
-        });
-    },
+    _makeDistances(startRGB, endRGB) {
+        return startRGB.map((value, index) => (endRGB[index] - value));
+    }
 
     /**
      * Get hex color.
      * @param {number} ratio ratio
      * @returns {string} hex color
      */
-    getColor: function(ratio) {
-        var hexColor = this.colorMap[ratio];
-        var distances, rgbColor;
+    getColor(ratio) {
+        let hexColor = this.colorMap[ratio];
 
         if (!hexColor) {
-            distances = this.distances;
-            rgbColor = snippet.map(this.startRGB, function(start, index) {
-                return start + parseInt(distances[index] * ratio, 10);
-            });
-            hexColor = colorutil.rgbToHEX.apply(null, rgbColor);
+            const {distances, startRGB} = this;
+            const rgbColor = startRGB.map((start, index) => (
+                start + parseInt(distances[index] * ratio, 10)
+            ));
+            hexColor = colorutil.rgbToHEX(...rgbColor);
         }
 
         return hexColor || null;
     }
-});
-
-module.exports = ColorSpectrum;
+}

@@ -4,27 +4,32 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import chartExporter from '../../helpers/chartExporter';
+import dom from '../../helpers/domHandler';
+import eventListener from '../../helpers/eventListener';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
 
-var chartConst = require('../../const');
-var chartExporter = require('../../helpers/chartExporter');
-var dom = require('../../helpers/domHandler');
-var eventListener = require('../../helpers/eventListener');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+const CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
+const CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
+const {
+    CLASS_NAME_CHART_EXPORT_MENU_BUTTON,
+    CLASS_NAME_CHART_EXPORT_MENU,
+    CLASS_NAME_CHART_EXPORT_MENU_HEAD,
+    CLASS_NAME_CHART_EXPORT_MENU_BODY,
+    CLASS_NAME_CHART_EXPORT_MENU_ITEM,
+    COMPONENT_TYPE_DOM
+} = chartConst;
 
-var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
-var CLASS_NAME_CHART_EXPORT_MENU_OPENED = 'menu-opened';
-
-var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype */ {
+class ChartExportMenu {
     /**
      * ChartExportMenu component.
      * @constructs ChartExportMenu
      * @private
      * @param {object} params parameters
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * ChartExportMenu view className
          * @type {string}
@@ -83,67 +88,65 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
          * @type {EventBus}
          */
         this.eventBus = params.eventBus;
-
-        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
+        this.drawingType = COMPONENT_TYPE_DOM;
 
         this.theme = params.theme || null;
-    },
+    }
 
     /**
      * Create chartExportMenuButton
      * @returns {HTMLElement}
      * @private
      */
-    _createChartExportMenuButton: function() {
-        var menuButton = dom.create('div', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
+    _createChartExportMenuButton() {
+        const menuButton = dom.create('div', CLASS_NAME_CHART_EXPORT_MENU_BUTTON);
 
         if (this.options.buttonClass) {
             dom.addClass(menuButton, this.options.buttonClass);
         }
 
         return menuButton;
-    },
+    }
+
     /**
      * Render chartExportMenu area.
      * @param {HTMLElement} chartExportMenuContainer chartExportMenu area element
      * @private
      */
-    _renderChartExportMenuArea: function(chartExportMenuContainer) {
-        var menuButton = this._createChartExportMenuButton();
-        var dimension = this.layout.dimension;
+    _renderChartExportMenuArea(chartExportMenuContainer) {
+        const menuButton = this._createChartExportMenuButton();
+        const {dimension} = this.layout;
 
         chartExportMenuContainer.appendChild(menuButton);
 
         renderUtil.renderDimension(chartExportMenuContainer, dimension);
         renderUtil.renderPosition(chartExportMenuContainer, this.layout.position);
-    },
+    }
 
     /**
      * Render chartExportMenu area.
      * @param {HTMLElement} chartExportMenuContainer chartExportMenu area element
      * @private
      */
-    _renderChartExportMenu: function(chartExportMenuContainer) {
-        var seriesDataModelMap = this.dataProcessor.seriesDataModelMap;
-        var isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
-        var isDownloadSupported = chartExporter.isDownloadSupported;
-        var isImageExtension = chartExporter.isImageExtension;
-        var isImageDownloadAvailable = chartExporter.isImageDownloadAvailable;
-        var menuElement = dom.create('ul', chartConst.CLASS_NAME_CHART_EXPORT_MENU);
-        var menuHead = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_HEAD);
-        var menuBody = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_BODY);
-        var menuStyle = menuElement.style;
-        var menuTheme = this.theme;
-        var menuItems = [];
+    _renderChartExportMenu(chartExportMenuContainer) {
+        const {seriesDataModelMap} = this.dataProcessor;
+        const isDataDownloadAvailable = this.isDataDownloadAvailable(seriesDataModelMap);
+        const {isDownloadSupported, isImageExtension, isImageDownloadAvailable} = chartExporter;
+        const menuElement = dom.create('ul', CLASS_NAME_CHART_EXPORT_MENU);
+        const menuHead = dom.create('li', CLASS_NAME_CHART_EXPORT_MENU_HEAD);
+        const menuBody = dom.create('li', CLASS_NAME_CHART_EXPORT_MENU_BODY);
+        const menuStyle = menuElement.style;
+        const {borderWidth, borderRadius, backgroundColor, color} = this.theme;
+        let menuItems = [];
 
         if (isDownloadSupported && (isDataDownloadAvailable || isImageDownloadAvailable)) {
-            menuItems = snippet.map(CHART_EXPORT_MENU_ITEMS, function(exportItemType) {
-                var itemElement;
+            menuItems = CHART_EXPORT_MENU_ITEMS.map(exportItemType => {
+                let itemElement;
 
                 if ((!isImageExtension(exportItemType) && isDataDownloadAvailable)
                     || (isImageExtension(exportItemType) && isImageDownloadAvailable)
                 ) {
-                    itemElement = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
+                    itemElement = dom.create('li', CLASS_NAME_CHART_EXPORT_MENU_ITEM);
                     itemElement.id = exportItemType;
                     itemElement.innerHTML = exportItemType;
                 }
@@ -152,25 +155,25 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
             });
         } else {
             menuStyle.width = '200px';
-            menuItems[0] = dom.create('li', chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM);
+            menuItems[0] = dom.create('li', CLASS_NAME_CHART_EXPORT_MENU_ITEM);
             menuItems[0].innerHTML = 'Browser does not support client-side download.';
         }
 
-        if (menuTheme) {
-            if (menuTheme.borderWidth) {
-                menuStyle.borderWidth = menuTheme.borderWidth;
+        if (this.theme) {
+            if (borderWidth) {
+                menuStyle.borderWidth = borderWidth;
             }
 
-            if (menuTheme.borderRadius) {
-                menuStyle.borderRadius = menuTheme.borderRadius;
+            if (borderRadius) {
+                menuStyle.borderRadius = borderRadius;
             }
 
-            if (menuTheme.backgroundColor) {
-                menuStyle.backgroundColor = menuTheme.backgroundColor;
+            if (backgroundColor) {
+                menuStyle.backgroundColor = backgroundColor;
             }
 
-            if (menuTheme.color) {
-                menuStyle.color = menuTheme.color;
+            if (color) {
+                menuStyle.color = color;
             }
         }
 
@@ -187,7 +190,7 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
         this.chartExportMenu = menuElement;
 
         dom.append(chartExportMenuContainer, menuElement);
-    },
+    }
 
     /**
      * Set data for rendering.
@@ -200,21 +203,21 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
      * }} data - bounds and scale data
      * @private
      */
-    _setDataForRendering: function(data) {
+    _setDataForRendering(data) {
         if (data) {
             this.layout = data.layout;
             this.dimensionMap = data.dimensionMap;
             this.axisDataMap = data.axisDataMap;
         }
-    },
+    }
 
     /**
      * Render chartExportMenu component.
      * @param {object} data - bounds and scale data
      * @returns {HTMLElement} chartExportMenu element
      */
-    render: function(data) {
-        var container = null;
+    render(data) {
+        let container = null;
 
         if (chartExporter.isDownloadSupported) {
             container = this.container = data.paper;
@@ -229,51 +232,51 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
         }
 
         return container;
-    },
+    }
 
     /**
      * Rerender.
      */
-    rerender: function() {
+    rerender() {
         this._hideChartExportMenu();
-    },
+    }
 
     /**
      * Resize.
      */
-    resize: function() {
-    },
+    resize() {
+    }
 
     /**
      * Show chart export menu
      * @private
      */
-    _showChartExportMenu: function() {
+    _showChartExportMenu() {
         dom.addClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
         this.chartExportMenu.style.display = 'block';
-    },
+    }
 
     /**
      * Hide chart export menu
      * @private
      */
-    _hideChartExportMenu: function() {
+    _hideChartExportMenu() {
         if (this.chartExportMenuContainer) {
             dom.removeClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED);
             this.chartExportMenu.style.display = 'none';
         }
-    },
+    }
 
     /**
      * onclick event handler
      * @param {MouseEvent} e mouse event
      * @private
      */
-    _onClick: function(e) {
-        var elTarget = e.target || e.srcElement;
-        var svgElement = this.container.parentNode.getElementsByTagName('svg')[0];
+    _onClick(e) {
+        const elTarget = e.target || e.srcElement;
+        const [svgElement] = this.container.parentNode.getElementsByTagName('svg');
 
-        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
+        if (dom.hasClass(elTarget, CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
             if (elTarget.id) {
                 this.eventBus.fire('beforeImageDownload');
 
@@ -284,27 +287,27 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
             }
 
             this._hideChartExportMenu();
-        } else if (dom.hasClass(elTarget, chartConst.CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
+        } else if (dom.hasClass(elTarget, CLASS_NAME_CHART_EXPORT_MENU_BUTTON)
             && (this.chartExportMenuContainer === elTarget.parentNode)
             && !dom.hasClass(this.chartExportMenuContainer, CLASS_NAME_CHART_EXPORT_MENU_OPENED)) {
             this._showChartExportMenu();
         } else {
             this._hideChartExportMenu();
         }
-    },
+    }
 
     /**
      * Return boolean value for chart data is able to export
      * @param {object} seriesDataModels series data model
      * @returns {boolean}
      */
-    isDataDownloadAvailable: function(seriesDataModels) {
-        var result = true;
+    isDataDownloadAvailable(seriesDataModels) {
+        let result = true;
 
         if (predicate.isTreemapChart(this.chartType)) {
             result = false;
         } else {
-            snippet.forEach(seriesDataModels, function(seriesDataModel) {
+            Object.values(seriesDataModels).forEach(seriesDataModel => {
                 if (seriesDataModel.isCoordinateType) {
                     result = false;
                 }
@@ -314,24 +317,24 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
         }
 
         return result;
-    },
+    }
 
     /**
      * Attach browser event.
      * @private
      */
-    _attachEvent: function() {
+    _attachEvent() {
         eventListener.on(this.chartExportMenuContainer.parentNode, 'click', this._onClick, this);
-    },
+    }
 
     /**
      * Detach browser event.
      * @private
      */
-    _detachEvent: function() {
+    _detachEvent() {
         eventListener.off(this.chartExportMenuContainer.parentNode, 'click', this._onClick);
     }
-});
+}
 
 /**
  * Factory for ChartExportMenu
@@ -339,11 +342,11 @@ var ChartExportMenu = snippet.defineClass(/** @lends ChartExportMenu.prototype *
  * @returns {object|null}
  * @ignore
  */
-function chartExportMenuFactory(params) {
-    var isVisible = params.options.visible;
-    var chartExportMenu = null;
-    var chartOption = params.chartOptions.chart || {};
-    var exportingOption = params.chartOptions.chartExportMenu;
+export default function chartExportMenuFactory(params) {
+    const isVisible = params.options.visible;
+    const {chart: chartOption = {}} = params.chartOptions;
+    const exportingOption = params.chartOptions.chartExportMenu;
+    let chartExportMenu = null;
 
     if (chartOption.title) {
         params.chartTitle = chartOption.title.text;
@@ -362,4 +365,3 @@ function chartExportMenuFactory(params) {
 
 chartExportMenuFactory.componentType = 'chartExportMenu';
 
-module.exports = chartExportMenuFactory;

@@ -3,82 +3,76 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import scaleLabelFormatter from '../../../src/js/models/scaleData/scaleLabelFormatter.js';
+import chartConst from '../../../src/js/const';
 
-'use strict';
-
-var scaleLabelFormatter = require('../../../src/js/models/scaleData/scaleLabelFormatter.js');
-var chartConst = require('../../../src/js/const');
-
-describe('Test for scaleLabelFormatter', function() {
-    describe('_getFormatFunctions()', function() {
-        it('get format functions, when is percent stacked chart', function() {
-            var chartType = 'bar';
-            var stackType = 'percent';
-            var actual, expected;
+describe('Test for scaleLabelFormatter', () => {
+    describe('_getFormatFunctions()', () => {
+        it('get format functions, when is percent stacked chart', () => {
+            const chartType = 'bar';
+            const stackType = 'percent';
 
             scaleLabelFormatter.chartType = chartConst.CHART_TYPE_BAR;
             scaleLabelFormatter.stackType = chartConst.PERCENT_STACK_TYPE;
-            actual = scaleLabelFormatter._getFormatFunctions(chartType, stackType);
-            expected = '10%';
+            const actual = scaleLabelFormatter._getFormatFunctions(chartType, stackType);
+            const expected = '10%';
 
             expect(actual[0](10)).toBe(expected);
         });
 
-        it('get format functions, when is not percent stacked chart', function() {
-            var chartType = chartConst.CHART_TYPE_LINE;
-            var stackType = '';
-            var formatFunctions = 'formatFunctions';
-            var actual;
+        it('get format functions, when is not percent stacked chart', () => {
+            const chartType = chartConst.CHART_TYPE_LINE;
+            const stackType = '';
+            const formatFunctions = 'formatFunctions';
 
-            actual = scaleLabelFormatter._getFormatFunctions(chartType, stackType, formatFunctions);
+            const actual = scaleLabelFormatter._getFormatFunctions(chartType, stackType, formatFunctions);
 
             expect(actual).toBe('formatFunctions');
         });
     });
 
-    describe('_createScaleValues()', function() {
-        it('create scale values, when is diverging chart', function() {
-            var scaleData = {
+    describe('_createScaleValues()', () => {
+        it('create scale values, when is diverging chart', () => {
+            const scaleData = {
                 limit: {
                     min: -50,
                     max: 50
                 },
                 step: 25
             };
-            var chartType = chartConst.CHART_TYPE_BAR;
-            var diverging = true;
-            var actual = scaleLabelFormatter._createScaleValues(scaleData, chartType, diverging);
-            var expected = [50, 25, 0, 25, 50];
+            const chartType = chartConst.CHART_TYPE_BAR;
+            const diverging = true;
+            const actual = scaleLabelFormatter._createScaleValues(scaleData, chartType, diverging);
+            const expected = [50, 25, 0, 25, 50];
 
             expect(actual).toEqual(expected);
         });
 
-        it('create scale values, when is not diverging chart', function() {
-            var scaleData = {
+        it('create scale values, when is not diverging chart', () => {
+            const scaleData = {
                 limit: {
                     min: -50,
                     max: 50
                 },
                 step: 25
             };
-            var chartType = chartConst.CHART_TYPE_LINE;
-            var diverging = false;
-            var actual = scaleLabelFormatter._createScaleValues(scaleData, chartType, diverging);
-            var expected = [-50, -25, 0, 25, 50];
+            const chartType = chartConst.CHART_TYPE_LINE;
+            const diverging = false;
+            const actual = scaleLabelFormatter._createScaleValues(scaleData, chartType, diverging);
+            const expected = [-50, -25, 0, 25, 50];
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('createFormattedLabels()', function() {
-        it('create formatted scale values, when axis type is datetime', function() {
-            var scaleData = {};
-            var typeMap = {};
-            var options = {
+    describe('createFormattedLabels()', () => {
+        it('create formatted scale values, when axis type is datetime', () => {
+            const scaleData = {};
+            const typeMap = {};
+            const options = {
                 type: chartConst.AXIS_TYPE_DATETIME,
                 dateFormat: 'YYYY.MM'
             };
-            var actual;
 
             spyOn(scaleLabelFormatter, '_createScaleValues').and.returnValue([
                 (new Date('01/01/2016')),
@@ -86,7 +80,7 @@ describe('Test for scaleLabelFormatter', function() {
                 (new Date('08/01/2016'))
             ]);
 
-            actual = scaleLabelFormatter.createFormattedLabels(scaleData, typeMap, options);
+            const actual = scaleLabelFormatter.createFormattedLabels(scaleData, typeMap, options);
 
             expect(actual).toEqual([
                 '2016.01',
@@ -95,22 +89,17 @@ describe('Test for scaleLabelFormatter', function() {
             ]);
         });
 
-        it('create formatted scale values, when axis type is not datetime', function() {
-            var scaleData = {};
-            var typeMap = {
+        it('create formatted scale values, when axis type is not datetime', () => {
+            const scaleData = {};
+            const typeMap = {
                 chartType: chartConst.CHART_TYPE_LINE
             };
-            var options = {};
-            var formatFunctions = [
-                function(value) {
-                    return 'formatted:' + value;
-                }
-            ];
-            var actual;
+            const options = {};
+            const formatFunctions = [value => `formatted:${value}`];
 
             spyOn(scaleLabelFormatter, '_createScaleValues').and.returnValue([10, 20, 30]);
 
-            actual = scaleLabelFormatter.createFormattedLabels(scaleData, typeMap, options, formatFunctions);
+            const actual = scaleLabelFormatter.createFormattedLabels(scaleData, typeMap, options, formatFunctions);
 
             expect(actual).toEqual([
                 'formatted:10',

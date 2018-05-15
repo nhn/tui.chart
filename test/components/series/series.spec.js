@@ -3,19 +3,16 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import Series from '../../../src/js/components/series/series';
+import chartConst from '../../../src/js/const';
+import dom from '../../../src/js/helpers/domHandler';
+import renderUtil from '../../../src/js/helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
-'use strict';
+describe('Series', () => {
+    let series;
 
-var Series = require('../../../src/js/components/series/series');
-var chartConst = require('../../../src/js/const');
-var dom = require('../../../src/js/helpers/domHandler');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-describe('Series', function() {
-    var series;
-
-    beforeEach(function() {
+    beforeEach(() => {
         series = new Series({
             chartType: 'bar',
             tooltipPrefix: 'tooltip-prefix-',
@@ -32,9 +29,9 @@ describe('Series', function() {
         });
     });
 
-    describe('_getLimitDistanceFromZeroPoint()', function() {
-        it('should calculate limit distance from zero, if 0 is between min, max value.', function() {
-            var result = series._getLimitDistanceFromZeroPoint(100, {
+    describe('_getLimitDistanceFromZeroPoint()', () => {
+        it('should calculate limit distance from zero, if 0 is between min, max value.', () => {
+            const result = series._getLimitDistanceFromZeroPoint(100, {
                 min: -20,
                 max: 80
             });
@@ -44,8 +41,8 @@ describe('Series', function() {
             });
         });
 
-        it('should set {toMax: size, toMin: 0}, if min, max are positive number.', function() {
-            var result = series._getLimitDistanceFromZeroPoint(100, {
+        it('should set {toMax: size, toMin: 0}, if min, max are positive number.', () => {
+            const result = series._getLimitDistanceFromZeroPoint(100, {
                 min: 20,
                 max: 80
             });
@@ -55,8 +52,8 @@ describe('Series', function() {
             });
         });
 
-        it('should set {toMax: 0, toMin: 0}, if min, max are negative number.', function() {
-            var result = series._getLimitDistanceFromZeroPoint(100, {
+        it('should set {toMax: 0, toMin: 0}, if min, max are negative number.', () => {
+            const result = series._getLimitDistanceFromZeroPoint(100, {
                 min: -80,
                 max: -20
             });
@@ -67,9 +64,9 @@ describe('Series', function() {
         });
     });
 
-    describe('renderBounds()', function() {
-        it('should render position of series area.', function() {
-            var seriesContainer = dom.create('DIV');
+    describe('renderBounds()', () => {
+        it('should render position of series area.', () => {
+            const seriesContainer = dom.create('DIV');
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
 
@@ -83,11 +80,11 @@ describe('Series', function() {
         });
     });
 
-    describe('_findLabelElement()', function() {
-        it('should return target element if target is series label element.', function() {
-            var elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL);
-            var actual = series._findLabelElement(elTarget);
-            var expected = elTarget;
+    describe('_findLabelElement()', () => {
+        it('should return target element if target is series label element.', () => {
+            const elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL);
+            const actual = series._findLabelElement(elTarget);
+            const expected = elTarget;
 
             expect(actual).toBe(expected);
         });

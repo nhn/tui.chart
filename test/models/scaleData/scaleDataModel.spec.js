@@ -3,28 +3,25 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import ScaleDataModel from '../../../src/js/models/scaleData/scaleDataModel.js';
+import axisDataMaker from '../../../src/js/models/scaleData/axisDataMaker';
 
-'use strict';
+describe('Test for ScaleDataModel', () => {
+    let scaleDataModel, dataProcessor, boundsModel;
 
-var ScaleDataModel = require('../../../src/js/models/scaleData/scaleDataModel.js');
-var axisDataMaker = require('../../../src/js/models/scaleData/axisDataMaker');
-
-describe('Test for ScaleDataModel', function() {
-    var scaleDataModel, dataProcessor, boundsModel;
-
-    beforeEach(function() {
+    beforeEach(() => {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'hasCategories']);
         boundsModel = jasmine.createSpyObj('boundsModel', ['getDimension']);
         scaleDataModel = new ScaleDataModel({
-            dataProcessor: dataProcessor,
-            boundsModel: boundsModel,
+            dataProcessor,
+            boundsModel,
             options: {}
         });
     });
 
-    describe('_createAxisData()', function() {
-        it('if exist scaleData, returns result by executing axisDataMaker.makeValueAxisData', function() {
-            var scaleData = {
+    describe('_createAxisData()', () => {
+        it('if exist scaleData, returns result by executing axisDataMaker.makeValueAxisData', () => {
+            const scaleData = {
                 limit: {
                     min: 1000,
                     max: 3000
@@ -33,14 +30,13 @@ describe('Test for ScaleDataModel', function() {
                 labels: ['1,000', '2,000', '3,000'],
                 axisOptions: 'options'
             };
-            var actual, expected;
 
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
             dataProcessor.hasCategories.and.returnValue(true);
 
-            actual = scaleDataModel._createAxisData(scaleData, 'options', 'labelTheme', true);
-            expected = 'value type';
+            const actual = scaleDataModel._createAxisData(scaleData, 'options', 'labelTheme', true);
+            const expected = 'value type';
 
             expect(axisDataMaker.makeValueAxisData).toHaveBeenCalledWith({
                 labels: ['1,000', '2,000', '3,000'],
@@ -59,16 +55,14 @@ describe('Test for ScaleDataModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('if not exist scaleData, returns result by executing axisDataMaker.makeLabelAxisData', function() {
-            var actual, expected;
-
+        it('if not exist scaleData, returns result by executing axisDataMaker.makeLabelAxisData', () => {
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
             scaleDataModel.options.series = {};
 
-            actual = scaleDataModel._createAxisData(null, 'options', 'labelTheme');
-            expected = 'label type';
+            const actual = scaleDataModel._createAxisData(null, 'options', 'labelTheme');
+            const expected = 'label type';
 
             expect(axisDataMaker.makeLabelAxisData).toHaveBeenCalledWith({
                 labels: ['cate1', 'cate2'],
@@ -83,8 +77,8 @@ describe('Test for ScaleDataModel', function() {
         });
     });
 
-    describe('updateXAxisDataForAutoTickInterval()', function() {
-        beforeEach(function() {
+    describe('updateXAxisDataForAutoTickInterval()', () => {
+        beforeEach(() => {
             boundsModel.getDimension.and.returnValue({
                 width: 200
             });
@@ -93,7 +87,7 @@ describe('Test for ScaleDataModel', function() {
             };
         });
 
-        it('update xAxisData, when has shifting option', function() {
+        it('update xAxisData, when has shifting option', () => {
             scaleDataModel.options.series = {
                 shifting: true
             };
@@ -105,7 +99,7 @@ describe('Test for ScaleDataModel', function() {
             expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0, false);
         });
 
-        it('update xAxisData, when has not prevUpdatedData', function() {
+        it('update xAxisData, when has not prevUpdatedData', () => {
             scaleDataModel.options.series = {
                 shifting: true
             };
@@ -117,8 +111,8 @@ describe('Test for ScaleDataModel', function() {
             expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalledWith({}, 200, 0, false);
         });
 
-        it('update xAxisData, when has not shifting option and has prevUpdatedData', function() {
-            var prevXAxisData = 'previous xAxis data';
+        it('update xAxisData, when has not shifting option and has prevUpdatedData', () => {
+            const prevXAxisData = 'previous xAxis data';
 
             scaleDataModel.options.series = {};
             scaleDataModel.firstTickCount = 5;

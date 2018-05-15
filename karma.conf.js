@@ -3,17 +3,15 @@
  * Config file for testing
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var webdriverConfig = {
+const webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
 };
+const es3ifyPlugin = require('es3ify-webpack-plugin');
 
 module.exports = function(config) {
-    var defaultConfig = {
+    const defaultConfig = {
         basePath: './',
         frameworks: [
             'jasmine'
@@ -29,19 +27,32 @@ module.exports = function(config) {
             module: {
                 preLoaders: [{
                     test: /\.js$/,
-                    exclude: /(test|bower_components|node_modules)/,
-                    loader: 'istanbul-instrumenter'
+                    exclude: /(bower_components|node_modules)/,
+                    loader: 'istanbul-instrumenter',
+                    query: {
+                        esModules: true
+                    }
                 },
                 {
                     test: /\.js$/,
                     exclude: /(bower_components|node_modules)/,
                     loader: 'eslint-loader'
                 }],
-                loaders: [{
-                    test: /\.less$/,
-                    loader: 'style-loader!css-loader!less-loader?paths=src/less/'
-                }]
-            }
+                loaders: [
+                    {
+                        test: /\.less$/,
+                        loader: 'style-loader!css-loader!less-loader?paths=src/less/'
+                    },
+                    {
+                        test: /\.js$/,
+                        exclude: /(node_modules|bower_components)/,
+                        loader: 'babel-loader?cacheDirectory'
+                    }
+                ]
+            },
+            plugins: [
+                new es3ifyPlugin()
+            ]
         },
         port: 9876,
         colors: true,

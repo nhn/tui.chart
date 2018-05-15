@@ -3,10 +3,7 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var snippet = require('tui-code-snippet');
+import snippet from 'tui-code-snippet';
 
 /**
  * Deep copy.
@@ -14,19 +11,20 @@ var snippet = require('tui-code-snippet');
  * @param {object|Array|*} origin - original data
  * @returns {*}
  */
-var deepCopy = function(origin) {
-    var clone;
+const deepCopy = function(origin) {
+    let clone;
 
     if (snippet.isArray(origin)) {
         clone = [];
-        snippet.forEachArray(origin, function(value, index) {
+        origin.forEach((value, index) => {
             clone[index] = deepCopy(value);
         });
     } else if (snippet.isFunction(origin) || snippet.isDate(origin)) {
         clone = origin;
     } else if (snippet.isObject(origin)) {
         clone = {};
-        snippet.forEach(origin, function(value, key) {
+
+        Object.entries(origin).forEach(([key, value]) => {
             clone[key] = deepCopy(value);
         });
     } else {
@@ -40,8 +38,6 @@ var deepCopy = function(origin) {
  * util for object
  * @module objectUtil
  * @private */
-var objectUtil = {
-    deepCopy: deepCopy
+export default {
+    deepCopy
 };
-
-module.exports = objectUtil;

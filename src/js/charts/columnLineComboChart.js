@@ -4,15 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import ChartBase from './chartBase';
+import rawDataHandler from '../models/data/rawDataHandler';
+import predicate from '../helpers/predicate';
+import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
+import snippet from 'tui-code-snippet';
 
-var ChartBase = require('./chartBase');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var predicate = require('../helpers/predicate');
-var validTypeMakerForYAxisOptions = require('./validTypeMakerForYAxisOptions');
-var snippet = require('tui-code-snippet');
-
-var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
+export default class ColumnLineComboChart extends ChartBase {
     /**
      * Column and Line Combo chart.
      * @constructs ColumnLineComboChart
@@ -21,23 +19,24 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
-        var typeData = validTypeMakerForYAxisOptions({
+    constructor(rawData, theme, options) {
+        options.tooltip = options.tooltip || {};
+        options.tooltip.grouped = true;
+
+        const typeData = validTypeMakerForYAxisOptions({
             rawSeriesData: rawData.series,
             yAxisOptions: options.yAxis
         });
 
-        /**
-         * chart types
-         * @type {Object}
-         */
-        this.chartTypes = typeData.chartTypes;
-
-        /**
-         * series types
-         * @type {Object|Array.<T>}
-         */
-        this.seriesTypes = typeData.seriesTypes;
+        super({
+            rawData,
+            theme,
+            options,
+            chartTypes: typeData.chartTypes,
+            seriesTypes: typeData.seriesTypes,
+            hasAxes: true,
+            isVertical: true
+        });
 
         /**
          * yAxis options
@@ -50,18 +49,7 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
          * @type {boolean}
          */
         this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
-
-        options.tooltip = options.tooltip || {};
-        options.tooltip.grouped = true;
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            hasAxes: true,
-            isVertical: true
-        });
-    },
+    }
 
     /**
      * Make yAxis options.
@@ -71,24 +59,24 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
      * @private
      * from verticalTypeComboMixer
      */
-    _makeYAxisOptions: function(chartTypes, yAxisOptions) {
-        var options = {};
+    _makeYAxisOptions(chartTypes, yAxisOptions) {
+        const options = {};
         yAxisOptions = yAxisOptions || {};
-        snippet.forEachArray(chartTypes, function(chartType, index) {
+        chartTypes.forEach((chartType, index) => {
             options[chartType] = yAxisOptions[index] || yAxisOptions;
         });
 
         return options;
-    },
+    }
 
     /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
-    onChangeCheckedLegends: function(checkedLegends) {
-        var originalRawData = this.dataProcessor.getOriginalRawData();
-        var rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
-        var typeData = validTypeMakerForYAxisOptions({
+    onChangeCheckedLegends(checkedLegends) {
+        const originalRawData = this.dataProcessor.getOriginalRawData();
+        const rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
+        const typeData = validTypeMakerForYAxisOptions({
             rawSeriesData: rawData.series,
             yAxisOptions: this.options.yAxis
         });
@@ -97,13 +85,13 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
         this.seriesTypes = typeData.seriesTypes;
 
         this.rerender(checkedLegends, rawData, typeData);
-    },
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -122,7 +110,8 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
+
     /**
      * Get scale option.
      * @returns {{
@@ -131,8 +120,8 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
      * }}
      * @override
      */
-    getScaleOption: function() {
-        var scaleOption = {
+    getScaleOption() {
+        const scaleOption = {
             yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
         };
 
@@ -141,7 +130,8 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
         }
 
         return scaleOption;
-    },
+    }
+
     /**
      * Make y axis scale option.
      * @param {string} name - component name
@@ -151,9 +141,9 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
      * @private
      * from verticalTypeComboMixer
      */
-    _makeYAxisScaleOption: function(name, chartType, isSingleYAxis) {
-        var yAxisOption = this.yAxisOptions[chartType];
-        var additionalOptions = {
+    _makeYAxisScaleOption(name, chartType, isSingleYAxis) {
+        const yAxisOption = this.yAxisOptions[chartType];
+        const additionalOptions = {
             isSingleYAxis: !!isSingleYAxis
         };
 
@@ -164,10 +154,10 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
         return {
             options: yAxisOption,
             areaType: 'yAxis',
-            chartType: chartType,
-            additionalOptions: additionalOptions
+            chartType,
+            additionalOptions
         };
-    },
+    }
 
     /**
      * Set additional parameter for making y axis scale option.
@@ -175,17 +165,15 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
      * @private
      * from verticalTypeComboMixer
      */
-    _setAdditionalOptions: function(additionalOptions) {
-        var dataProcessor = this.dataProcessor;
+    _setAdditionalOptions(additionalOptions) {
+        const {dataProcessor} = this;
 
-        snippet.forEach(this.options.series, function(seriesOption, seriesType) {
-            var chartType;
-
+        Object.entries(this.options.series).forEach(([seriesType, seriesOption]) => {
             if (!seriesOption.stackType) {
                 return;
             }
 
-            chartType = dataProcessor.findChartType(seriesType);
+            const chartType = dataProcessor.findChartType(seriesType);
 
             if (!predicate.isAllowedStackOption(chartType)) {
                 return;
@@ -194,26 +182,22 @@ var ColumnLineComboChart = snippet.defineClass(ChartBase, /** @lends ColumnLineC
             additionalOptions.chartType = chartType;
             additionalOptions.stackType = seriesOption.stackType;
         });
-    },
+    }
+
     /**
      * Add data ratios.
      * @override
      * from axisTypeMixer
      */
-    addDataRatios: function(limitMap) {
-        var self = this;
-        var chartTypes = this.chartTypes || [this.chartType];
-        var seriesOption = this.options.series || {};
-        var addDataRatio;
+    addDataRatios(limitMap) {
+        const chartTypes = this.chartTypes || [this.chartType];
+        const seriesOption = this.options.series || {};
+        const addDataRatio = chartType => {
+            const {stackType} = (seriesOption[chartType] || seriesOption);
 
-        addDataRatio = function(chartType) {
-            var stackType = (seriesOption[chartType] || seriesOption).stackType;
-
-            self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+            this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
         };
 
-        snippet.forEachArray(chartTypes, addDataRatio);
+        chartTypes.forEach(addDataRatio);
     }
-});
-
-module.exports = ColumnLineComboChart;
+}

@@ -4,20 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import raphael from 'raphael';
+import snippet from 'tui-code-snippet';
+import pieSeriesFactory from '../../../src/js/components/series/pieChartSeries.js';
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
+import dom from '../../../src/js/helpers/domHandler.js';
+import renderUtil from '../../../src/js/helpers/renderUtil.js';
 
-var raphael = require('raphael');
-var snippet = require('tui-code-snippet');
-var pieSeriesFactory = require('../../../src/js/components/series/pieChartSeries.js');
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
-var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
-var dom = require('../../../src/js/helpers/domHandler.js');
-var renderUtil = require('../../../src/js/helpers/renderUtil.js');
+describe('PieChartSeries', () => {
+    let series, dataProcessor;
 
-describe('PieChartSeries', function() {
-    var series, dataProcessor;
-
-    beforeAll(function() {
+    beforeAll(() => {
         // Rendered width, height is different according to browser
         // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
@@ -29,7 +27,7 @@ describe('PieChartSeries', function() {
         dataProcessor.getFirstItemLabel.and.returnValue('2.2');
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         series = new pieSeriesFactory.PieChartSeries({
             chartType: 'pie',
             theme: {
@@ -39,7 +37,7 @@ describe('PieChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor,
+            dataProcessor,
             eventBus: new snippet.CustomEvents()
         });
         series.layout = {
@@ -50,72 +48,66 @@ describe('PieChartSeries', function() {
         };
     });
 
-    describe('_makeValidAngle()', function() {
-        it('should convert negative angle to positive angle under 360.', function() {
-            var actual = series._makeValidAngle(-90);
+    describe('_makeValidAngle()', () => {
+        it('should convert negative angle to positive angle under 360.', () => {
+            const actual = series._makeValidAngle(-90);
 
             expect(actual).toBe(270);
         });
 
-        it('should convert over 360 angle to under 360 angle', function() {
-            var actual = series._makeValidAngle(450);
+        it('should convert over 360 angle to under 360 angle', () => {
+            const actual = series._makeValidAngle(450);
 
             expect(actual).toBe(90);
         });
 
-        it('should return default angle if angle is undefined.', function() {
-            var angle;
-            var defaultAngle = 0;
-            var actual = series._makeValidAngle(angle, defaultAngle);
+        it('should return default angle if angle is undefined.', () => {
+            let angle;
+            const defaultAngle = 0;
+            const actual = series._makeValidAngle(angle, defaultAngle);
 
             expect(actual).toBe(0);
         });
     });
 
-    describe('_calculateAngleForRendering()', function() {
-        it('should calculate angle by subtracting start angle from end angle, if start angle is larger than end angle.', function() {
-            var actual;
-
+    describe('_calculateAngleForRendering()', () => {
+        it('should calculate angle by subtracting start angle from end angle, if start angle is larger than end angle.', () => {
             series.options = {
                 startAngle: 10,
                 endAngle: 90
             };
 
-            actual = series._calculateAngleForRendering();
+            const actual = series._calculateAngleForRendering();
 
             expect(actual).toBe(80);
         });
 
-        it('should calculate angle by (360 - (start - angle)), if start angle is larger than end angle.', function() {
-            var actual;
-
+        it('should calculate angle by (360 - (start - angle)), if start angle is larger than end angle.', () => {
             series.options = {
                 startAngle: 90,
                 endAngle: 10
             };
 
-            actual = series._calculateAngleForRendering();
+            const actual = series._calculateAngleForRendering();
 
             expect(actual).toBe(280);
         });
 
-        it('should return 360, if start and end angle are same.', function() {
-            var actual;
-
+        it('should return 360, if start and end angle are same.', () => {
             series.options = {
                 startAngle: 90,
                 endAngle: 90
             };
 
-            actual = series._calculateAngleForRendering();
+            const actual = series._calculateAngleForRendering();
 
             expect(actual).toBe(360);
         });
     });
 
-    describe('_getQuadrantFromAngle()', function() {
-        it('should return 1 if angle is more or same to 0, and less than 90.', function() {
-            var actual = series._getQuadrantFromAngle(0);
+    describe('_getQuadrantFromAngle()', () => {
+        it('should return 1 if angle is more or same to 0, and less than 90.', () => {
+            let actual = series._getQuadrantFromAngle(0);
 
             expect(actual).toBe(1);
 
@@ -128,8 +120,8 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(1);
         });
 
-        it('should return 2, if angle is more or same to 90, and less than 180.', function() {
-            var actual = series._getQuadrantFromAngle(90);
+        it('should return 2, if angle is more or same to 90, and less than 180.', () => {
+            let actual = series._getQuadrantFromAngle(90);
 
             expect(actual).toBe(2);
 
@@ -142,8 +134,8 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(2);
         });
 
-        it('should return 3, if angle is more or same to 180, and less than 270.', function() {
-            var actual = series._getQuadrantFromAngle(180);
+        it('should return 3, if angle is more or same to 180, and less than 270.', () => {
+            let actual = series._getQuadrantFromAngle(180);
 
             expect(actual).toBe(3);
 
@@ -156,8 +148,8 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(2);
         });
 
-        it('should return 4, if angle is more or same to 270, and less than 360.', function() {
-            var actual = series._getQuadrantFromAngle(270);
+        it('should return 4, if angle is more or same to 270, and less than 360.', () => {
+            let actual = series._getQuadrantFromAngle(270);
 
             expect(actual).toBe(4);
 
@@ -170,9 +162,9 @@ describe('PieChartSeries', function() {
             expect(actual).not.toBe(4);
         });
 
-        it('should subtract 1 from original quadrant, if isEnd is true and angle is multiples of 90', function() {
-            var isEnd = true;
-            var actual = series._getQuadrantFromAngle(90, isEnd);
+        it('should subtract 1 from original quadrant, if isEnd is true and angle is multiples of 90', () => {
+            const isEnd = true;
+            let actual = series._getQuadrantFromAngle(90, isEnd);
 
             expect(actual).toBe(1);
 
@@ -185,18 +177,17 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(3);
         });
 
-        it('should return 4, if isEnd is true and angle is 0.', function() {
-            var isEnd = true;
-            var actual = series._getQuadrantFromAngle(0, isEnd);
+        it('should return 4, if isEnd is true and angle is 0.', () => {
+            const isEnd = true;
+            const actual = series._getQuadrantFromAngle(0, isEnd);
 
             expect(actual).toBe(4);
         });
     });
 
-    describe('_makeSectorData()', function() {
-        it('should create path ratio 0 when seriesItem is null.', function() {
-            var seriesDataModel = new SeriesDataModel(),
-                actual;
+    describe('_makeSectorData()', () => {
+        it('should create path ratio 0 when seriesItem is null.', () => {
+            const seriesDataModel = new SeriesDataModel();
 
             seriesDataModel.groups = [
                 new SeriesGroup([
@@ -213,7 +204,7 @@ describe('PieChartSeries', function() {
             ];
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
 
-            actual = series._makeSectorData({
+            const actual = series._makeSectorData({
                 cx: 100,
                 cy: 100,
                 r: 100
@@ -223,9 +214,8 @@ describe('PieChartSeries', function() {
             expect(actual[0].ratio).toBe(0);
         });
 
-        it('should create angle, center position, outer position values using percentValues.', function() {
-            var seriesDataModel = new SeriesDataModel(),
-                actual;
+        it('should create angle, center position, outer position values using percentValues.', () => {
+            const seriesDataModel = new SeriesDataModel();
 
             seriesDataModel.groups = [
                 new SeriesGroup([
@@ -244,7 +234,7 @@ describe('PieChartSeries', function() {
             ];
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
 
-            actual = series._makeSectorData({
+            const actual = series._makeSectorData({
                 cx: 300,
                 cy: 300,
                 r: 150
@@ -267,10 +257,8 @@ describe('PieChartSeries', function() {
         });
     });
 
-    describe('_calculateBaseSize()', function() {
-        it('should set base size to smaller of twiced height and width, if it is on 2 ~ 3 quadrant.', function() {
-            var actual;
-
+    describe('_calculateBaseSize()', () => {
+        it('should set base size to smaller of twiced height and width, if it is on 2 ~ 3 quadrant.', () => {
             series.layout.dimension = {
                 width: 600,
                 height: 400
@@ -278,14 +266,12 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 120;
             series.options.endAngle = 220;
 
-            actual = series._calculateBaseSize();
+            const actual = series._calculateBaseSize();
 
             expect(actual).toBe(600);
         });
 
-        it('should set base size to smaller of twiced height and width, if it is on 4 ~ 1 quadrant.', function() {
-            var actual;
-
+        it('should set base size to smaller of twiced height and width, if it is on 4 ~ 1 quadrant.', () => {
             series.layout.dimension = {
                 width: 600,
                 height: 400
@@ -293,14 +279,12 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 320;
             series.options.endAngle = 80;
 
-            actual = series._calculateBaseSize();
+            const actual = series._calculateBaseSize();
 
             expect(actual).toBe(600);
         });
 
-        it('should set base size to smaller of height and twiced width, if it is on 1 ~ 2 quadrant.', function() {
-            var actual;
-
+        it('should set base size to smaller of height and twiced width, if it is on 1 ~ 2 quadrant.', () => {
             series.layout.dimension = {
                 width: 300,
                 height: 400
@@ -308,14 +292,12 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 0;
             series.options.endAngle = 180;
 
-            actual = series._calculateBaseSize();
+            const actual = series._calculateBaseSize();
 
             expect(actual).toBe(400);
         });
 
-        it('should set base size to smaller of height and twiced width, if it is on 3 ~ 4 quadrant.', function() {
-            var actual;
-
+        it('should set base size to smaller of height and twiced width, if it is on 3 ~ 4 quadrant.', () => {
             series.layout.dimension = {
                 width: 300,
                 height: 400
@@ -323,14 +305,12 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 180;
             series.options.endAngle = 360;
 
-            actual = series._calculateBaseSize();
+            const actual = series._calculateBaseSize();
 
             expect(actual).toBe(400);
         });
 
-        it('should set base size to smaller of twiced width and twiced height, if start quardrant and end quadrant is same.', function() {
-            var actual;
-
+        it('should set base size to smaller of twiced width and twiced height, if start quardrant and end quadrant is same.', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -338,57 +318,49 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 20;
             series.options.endAngle = 80;
 
-            actual = series._calculateBaseSize();
+            const actual = series._calculateBaseSize();
 
             expect(actual).toBe(800);
         });
 
-        it('should return smaller of width and height without any calculation, if it is combo chart.', function() {
-            var actual;
-
+        it('should return smaller of width and height without any calculation, if it is combo chart.', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
             };
             series.isCombo = true;
 
-            actual = series._calculateBaseSize();
+            const actual = series._calculateBaseSize();
 
             expect(actual).toBe(400);
         });
     });
 
-    describe('_calculateRadius()', function() {
-        it('should calculate radius to min(width, height) * 0.9.', function() {
-            var actual;
-
+    describe('_calculateRadius()', () => {
+        it('should calculate radius to min(width, height) * 0.9.', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
             };
 
-            actual = series._calculateRadius();
+            const actual = series._calculateRadius();
 
             expect(actual).toBe(180);
         });
 
-        it('should calculate radius to min(width, height) * 0.75, if isShowOuterLabel is true.', function() {
-            var actual;
-
+        it('should calculate radius to min(width, height) * 0.75, if isShowOuterLabel is true.', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
             };
             series.isShowOuterLabel = true;
 
-            actual = series._calculateRadius();
+            const actual = series._calculateRadius();
 
             expect(actual).toBe(150);
         });
 
-        it('should calculate pie1 radius to be same to pie2', function() {
-            var actual;
-
+        it('should calculate pie1 radius to be same to pie2', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -398,16 +370,14 @@ describe('PieChartSeries', function() {
             series.isShowOuterLabel = false;
             dataProcessor.isComboDonutShowOuterLabel.and.returnValue(true);
 
-            actual = series._calculateRadius();
+            const actual = series._calculateRadius();
 
             expect(actual).toBe(150);
         });
     });
 
-    describe('_calculateCenterXY()', function() {
-        it('should calculate cx by subtracting half of radius, cy by adding half of radius. if pie sector is only on 1 quadrant', function() {
-            var actual;
-
+    describe('_calculateCenterXY()', () => {
+        it('should calculate cx by subtracting half of radius, cy by adding half of radius. if pie sector is only on 1 quadrant', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -415,15 +385,13 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 20;
             series.options.endAngle = 80;
 
-            actual = series._calculateCenterXY(320);
+            const actual = series._calculateCenterXY(320);
 
             expect(actual.cx).toEqual(90);
             expect(actual.cy).toEqual(360);
         });
 
-        it('should calculate cx by subtracting half of radius. if pie sector is on 1 ~ 2 quadrant', function() {
-            var actual;
-
+        it('should calculate cx by subtracting half of radius. if pie sector is on 1 ~ 2 quadrant', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -431,15 +399,13 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 20;
             series.options.endAngle = 160;
 
-            actual = series._calculateCenterXY(160);
+            const actual = series._calculateCenterXY(160);
 
             expect(actual.cx).toEqual(170);
             expect(actual.cy).toEqual(200);
         });
 
-        it('should calculate cx by subtracting half of radius, cy by substraction half of radius. if pie sector is only on 1 quadrant', function() {
-            var actual;
-
+        it('should calculate cx by subtracting half of radius, cy by substraction half of radius. if pie sector is only on 1 quadrant', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -447,15 +413,13 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 110;
             series.options.endAngle = 180;
 
-            actual = series._calculateCenterXY(320);
+            const actual = series._calculateCenterXY(320);
 
             expect(actual.cx).toEqual(90);
             expect(actual.cy).toEqual(40);
         });
 
-        it('should calculate cy by substracting half of radius. if pie sector is on 2 and 3 quadrant', function() {
-            var actual;
-
+        it('should calculate cy by substracting half of radius. if pie sector is on 2 and 3 quadrant', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -463,15 +427,13 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 90;
             series.options.endAngle = 270;
 
-            actual = series._calculateCenterXY(200);
+            const actual = series._calculateCenterXY(200);
 
             expect(actual.cx).toEqual(250);
             expect(actual.cy).toEqual(100);
         });
 
-        it('should calculate cx by adding half of radius, cy by substractiong half of radius. if pie sector is only on 3 quadrant', function() {
-            var actual;
-
+        it('should calculate cx by adding half of radius, cy by substractiong half of radius. if pie sector is only on 3 quadrant', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -479,15 +441,13 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 220;
             series.options.endAngle = 250;
 
-            actual = series._calculateCenterXY(320);
+            const actual = series._calculateCenterXY(320);
 
             expect(actual.cx).toEqual(410);
             expect(actual.cy).toEqual(40);
         });
 
-        it('should calculate cx by adding half of radius. if pie sector is on 3 and 4 quadrant', function() {
-            var actual;
-
+        it('should calculate cx by adding half of radius. if pie sector is on 3 and 4 quadrant', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -495,15 +455,13 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 250;
             series.options.endAngle = 350;
 
-            actual = series._calculateCenterXY(160);
+            const actual = series._calculateCenterXY(160);
 
             expect(actual.cx).toEqual(330);
             expect(actual.cy).toEqual(200);
         });
 
-        it('should calculate cy by adding half of radius. if pie sector is on 4 and 1 quadrant.', function() {
-            var actual;
-
+        it('should calculate cy by adding half of radius. if pie sector is on 4 and 1 quadrant.', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -511,15 +469,13 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 280;
             series.options.endAngle = 50;
 
-            actual = series._calculateCenterXY(200);
+            const actual = series._calculateCenterXY(200);
 
             expect(actual.cx).toEqual(250);
             expect(actual.cy).toEqual(300);
         });
 
-        it('should calculate cx, cy by adding half of radius, if pie sector is on 4 quadrant', function() {
-            var actual;
-
+        it('should calculate cx, cy by adding half of radius, if pie sector is on 4 quadrant', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
@@ -527,37 +483,33 @@ describe('PieChartSeries', function() {
             series.options.startAngle = 270;
             series.options.endAngle = 360;
 
-            actual = series._calculateCenterXY(320);
+            const actual = series._calculateCenterXY(320);
 
             expect(actual.cx).toEqual(410);
             expect(actual.cy).toEqual(360);
         });
 
-        it('should return cx, cy without any calculation, if it is combo chart', function() {
-            var actual;
-
+        it('should return cx, cy without any calculation, if it is combo chart', () => {
             series.layout.dimension = {
                 width: 500,
                 height: 400
             };
             series.isCombo = true;
 
-            actual = series._calculateCenterXY(320);
+            const actual = series._calculateCenterXY(320);
 
             expect(actual.cx).toEqual(250);
             expect(actual.cy).toEqual(200);
         });
     });
 
-    describe('_makeCircleBound()', function() {
-        it('should make circle bounds of pie type chart like pie or donut chart.', function() {
-            var actual;
-
+    describe('_makeCircleBound()', () => {
+        it('should make circle bounds of pie type chart like pie or donut chart.', () => {
             series.layout.dimension = {
                 width: 400,
                 height: 300
             };
-            actual = series._makeCircleBound();
+            const actual = series._makeCircleBound();
 
             expect(actual).toEqual({
                 cx: 200,
@@ -567,25 +519,25 @@ describe('PieChartSeries', function() {
         });
     });
 
-    describe('_getArcPosition()', function() {
-        it('should make arc position by using midpoint(cx, cy), radius, angle', function() {
-            var actual = series._getArcPosition({
-                    cx: 100,
-                    cy: 100,
-                    r: 50,
-                    angle: 45
-                }),
-                expected = {
-                    left: 135.35533905932738,
-                    top: 64.64466094067262
-                };
+    describe('_getArcPosition()', () => {
+        it('should make arc position by using midpoint(cx, cy), radius, angle', () => {
+            const actual = series._getArcPosition({
+                cx: 100,
+                cy: 100,
+                r: 50,
+                angle: 45
+            });
+            const expected = {
+                left: 135.35533905932738,
+                top: 64.64466094067262
+            };
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_addEndPosition()', function() {
-        it('should add end position for rendering outer legend line.', function() {
-            var positions = [
+    describe('_addEndPosition()', () => {
+        it('should add end position for rendering outer legend line.', () => {
+            const positions = [
                 {
                     middle: {
                         left: 100,
@@ -617,15 +569,16 @@ describe('PieChartSeries', function() {
         });
     });
 
-    describe('_renderSeriesLabel()', function() {
-        beforeEach(function() {
-            var container = dom.create('div');
-            this.seriesDataModel = new SeriesDataModel();
-            this.paper = raphael(container, 100, 100);
+    describe('_renderSeriesLabel()', () => {
+        let seriesDataModel, paper;
+        beforeEach(() => {
+            const container = dom.create('div');
+            seriesDataModel = new SeriesDataModel();
+            paper = raphael(container, 100, 100);
 
             spyOn(series.graphRenderer, 'renderLabels');
 
-            this.seriesDataModel.groups = [
+            seriesDataModel.groups = [
                 new SeriesGroup([{
                     label: 10
                 }, {
@@ -638,52 +591,48 @@ describe('PieChartSeries', function() {
             series.valueLabels = ['10', '20', '30'];
         });
 
-        it('showLabel and showLegend options are both true, they should all be displayed.', function() {
+        it('showLabel and showLegend options are both true, they should all be displayed.', () => {
             series.options.showLabel = true;
             series.options.showLegend = true;
 
-            dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
-            series._renderSeriesLabel(this.paper, {});
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._renderSeriesLabel(paper, {});
 
             expect(series.graphRenderer.renderLabels.calls.count()).toBe(2);
             expect(series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels[0]).toBe('10');
             expect(series.graphRenderer.renderLabels.calls.allArgs()[1][0].labels[0]).toBe('apple');
 
-            this.paper.remove();
+            paper.remove();
         });
 
-        it('showLabel option is true, only one should be displayed.', function() {
-            var expectLabelObj;
-
+        it('showLabel option is true, only one should be displayed.', () => {
             series.options.showLabel = true;
             series.options.showLegend = false;
 
-            dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
-            series._renderSeriesLabel(this.paper, {});
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._renderSeriesLabel(paper, {});
 
-            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels;
+            const expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels;
 
             expect(series.graphRenderer.renderLabels.calls.count()).toBe(1);
             expect(expectLabelObj[0]).toBe('10');
 
-            this.paper.remove();
+            paper.remove();
         });
 
-        it('showRegend option is true, only one should be displayed.', function() {
-            var expectLabelObj;
-
+        it('showRegend option is true, only one should be displayed.', () => {
             series.options.showLabel = false;
             series.options.showLegend = true;
 
-            dataProcessor.getSeriesDataModel.and.returnValue(this.seriesDataModel);
-            series._renderSeriesLabel(this.paper, {});
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._renderSeriesLabel(paper, {});
 
-            expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels;
+            const expectLabelObj = series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels;
 
             expect(series.graphRenderer.renderLabels.calls.count()).toBe(1);
             expect(expectLabelObj[0]).toBe('apple');
 
-            this.paper.remove();
+            paper.remove();
         });
     });
 });

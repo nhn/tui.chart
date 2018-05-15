@@ -5,20 +5,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import pluginFactory from '../../factories/pluginFactory';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../../const');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var pluginFactory = require('../../factories/pluginFactory');
-var snippet = require('tui-code-snippet');
-
-var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
-    /**
-     * ratios for rendering circle
-     * @type {Array.<number>}
-     */
-    circleRatios: [1, 0.5, 0.25],
+class CircleLegend {
     /**
      * Circle legend component render a legend in the form of overlapping circles by representative radius values.
      * @constructs CircleLegend
@@ -29,20 +22,24 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
      *      @param {DataProcessor} params.dataProcessor - DataProcessor
      *      @param {string} params.baseFontFamily - base fontFamily of chart
      */
-    init: function(params) {
-        var libType = params.libType;
+    constructor({libType, chartType, dataProcessor, baseFontFamily}) {
+        /**
+         * ratios for rendering circle
+         * @type {Array.<number>}
+         */
+        this.circleRatios = [1, 0.5, 0.25];
 
         /**
          * chart type
          * @type {string}
          */
-        this.chartType = params.chartType;
+        this.chartType = chartType;
 
         /**
          * data processor
          * @type {DataProcessor}
          */
-        this.dataProcessor = params.dataProcessor;
+        this.dataProcessor = dataProcessor;
 
         /**
          * theme for label of circle legend area
@@ -50,7 +47,7 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
          */
         this.labelTheme = {
             fontSize: chartConst.CIRCLE_LEGEND_LABEL_FONT_SIZE,
-            fontFamily: params.baseFontFamily
+            fontFamily: baseFontFamily
         };
 
         /**
@@ -72,7 +69,7 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
         this.maxRadius = null;
 
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-    },
+    }
 
     /**
      * Format label.
@@ -81,9 +78,9 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
      * @returns {string}
      * @private
      */
-    _formatLabel: function(label, decimalLength) {
-        var formatFunctions = this.dataProcessor.getFormatFunctions();
-        var formattedLabel;
+    _formatLabel(label, decimalLength) {
+        const formatFunctions = this.dataProcessor.getFormatFunctions();
+        let formattedLabel;
 
         if (decimalLength === 0) {
             formattedLabel = String(parseInt(label, 10));
@@ -93,27 +90,24 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
 
         return renderUtil.formatValue({
             value: formattedLabel,
-            formatFunctions: formatFunctions,
+            formatFunctions,
             chartType: this.chartType,
             areaType: 'circleLegend',
             valueType: 'r'
         });
-    },
+    }
 
     /**
      * Make label html.
      * @returns {Array.<string>}
      * @private
      */
-    _makeLabels: function() {
-        var self = this;
-        var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
-        var decimalLength = calculator.getDecimalLength(maxValueRadius);
+    _makeLabels() {
+        const maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
+        const decimalLength = calculator.getDecimalLength(maxValueRadius);
 
-        return snippet.map(this.circleRatios, function(ratio) {
-            return self._formatLabel(maxValueRadius * ratio, decimalLength);
-        });
-    },
+        return this.circleRatios.map(ratio => this._formatLabel(maxValueRadius * ratio, decimalLength));
+    }
 
     /**
      * Render for circle legend area.
@@ -121,9 +115,9 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
      * @returns {Array.<object>}
      * @private
      */
-    _render: function(paper) {
+    _render(paper) {
         return this.graphRenderer.render(paper, this.layout, this.maxRadius, this.circleRatios, this._makeLabels());
-    },
+    }
 
     /**
      * Set data for rendering.
@@ -136,39 +130,39 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
      * }} data - bounds data
      * @private
      */
-    _setDataForRendering: function(data) {
+    _setDataForRendering(data) {
         this.layout = data.layout;
         this.maxRadius = data.maxRadius;
-    },
+    }
 
     /**
      * Render.
      * @param {object} data - bounds data
      */
-    render: function(data) {
+    render(data) {
         this._setDataForRendering(data);
         this.circleLegendSet = this._render(data.paper);
-    },
+    }
 
     /**
      * Rerender.
      * @param {object} data - bounds data
      */
-    rerender: function(data) {
+    rerender(data) {
         this.circleLegendSet.remove();
 
         this._setDataForRendering(data);
         this.circleLegendSet = this._render(data.paper);
-    },
+    }
 
     /**
      * Resize.
      * @param {object} data - bounds data
      */
-    resize: function(data) {
+    resize(data) {
         this.rerender(data);
     }
-});
+}
 
 /**
  * Factory for CircleLegend
@@ -176,12 +170,11 @@ var CircleLegend = snippet.defineClass(/** @lends CircleLegend.prototype */ {
  * @returns {object|null}
  * @ignore
  */
-function circleLegendFactory(params) {
-    var chartType = params.chartOptions.chartType;
-    var chartTheme = params.chartTheme;
-    var visibleOption = snippet.pick(params.chartOptions, 'circleLegend', 'visible');
-    var circleLegend = null;
-    var isLegendVisible;
+export default function circleLegendFactory(params) {
+    const {chartTheme, chartOptions: {chartType}} = params;
+    const visibleOption = snippet.pick(params.chartOptions, 'circleLegend', 'visible');
+    let circleLegend = null;
+    let isLegendVisible;
 
     if (snippet.isUndefined(visibleOption)) {
         isLegendVisible = true;
@@ -201,5 +194,3 @@ function circleLegendFactory(params) {
 
 circleLegendFactory.componentType = 'legend';
 circleLegendFactory.CircleLegend = CircleLegend;
-
-module.exports = circleLegendFactory;

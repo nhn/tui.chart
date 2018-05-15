@@ -4,14 +4,21 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import renderUtil from '../../helpers/renderUtil';
+import chartConst from '../../const';
+const {
+    BULLET_TYPE_ACTUAL,
+    BULLET_ACTUAL_HEIGHT_RATIO,
+    BULLET_TYPE_RANGE,
+    BULLET_RANGES_HEIGHT_RATIO,
+    BULLET_TYPE_MARKER,
+    BULLET_MARKERS_HEIGHT_RATIO,
+    BULLET_MARKER_DETECT_PADDING,
+    MAX_HEIGHT_WORD
+} = chartConst;
 
-var Series = require('./series');
-var renderUtil = require('../../helpers/renderUtil');
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
-
-var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries.prototype */ {
+class BulletChartSeries extends Series {
     /**
      * Bullet chart series component.
      * @constructs BulletChartSeries
@@ -19,8 +26,8 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @extends Series
      * @param {object} params series initialization data
      */
-    init: function(params) {
-        Series.call(this, params);
+    constructor(params) {
+        super(params);
 
         /**
          * true if graph stratches vertically
@@ -28,7 +35,7 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
          * @type {boolean}
          */
         this.isVertical = params.isVertical;
-    },
+    }
 
     /**
      * Create data for rendering series
@@ -36,58 +43,52 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @override
      * @private
      */
-    _makeSeriesData: function() {
-        var groupBounds = this._makeBounds();
+    _makeSeriesData() {
+        const groupBounds = this._makeBounds();
 
         return {
-            groupBounds: groupBounds,
+            groupBounds,
             seriesDataModel: this._getSeriesDataModel(),
             isVertical: this.isVertical,
-            isAvailable: function() {
-                return groupBounds && groupBounds.length > 0;
-            }
+            isAvailable: () => (groupBounds && groupBounds.length > 0)
         };
-    },
+    }
 
     /**
      * Create bounds data
      * @returns {Array.<Bound>} - bound data of bullet graph components
      * @private
      */
-    _makeBounds: function() {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var baseData = this._makeBaseDataForMakingBound();
-        var iterationData = {
+    _makeBounds() {
+        const seriesDataModel = this._getSeriesDataModel();
+        const baseData = this._makeBaseDataForMakingBound();
+        const iterationData = {
             renderedItemCount: 0,
             top: baseData.categoryAxisTop,
             left: baseData.categoryAxisLeft
         };
 
-        return seriesDataModel.map(function(seriesGroup) {
-            var iteratee = snippet.bind(self._makeBulletChartBound, self, baseData, iterationData);
-            var bounds = seriesGroup.map(iteratee);
+        return seriesDataModel.map(seriesGroup => {
+            const iteratee = this._makeBulletChartBound.bind(this, baseData, iterationData);
+            const bounds = seriesGroup.map(iteratee);
 
-            self._updateIterationData(iterationData, baseData.itemWidth);
+            this._updateIterationData(iterationData, baseData.itemWidth);
 
             return bounds;
         });
-    },
+    }
 
     /**
      * prepare a base data before making a bound
      * @returns {object} - base data
      * @private
      */
-    _makeBaseDataForMakingBound: function() {
-        var groupCount = this._getSeriesDataModel().getGroupCount();
-        var dimension = this.layout.dimension;
-        var width = dimension.width;
-        var height = dimension.height;
-        var position = this.layout.position;
-        var categoryAxisTop = position.top;
-        var categoryAxisLeft = position.left;
-        var categoryAxisWidth, valueAxisWidth, itemWidth;
+    _makeBaseDataForMakingBound() {
+        const groupCount = this._getSeriesDataModel().getGroupCount();
+        const {dimension: {width, height}, position} = this.layout;
+        const categoryAxisLeft = position.left;
+        let categoryAxisTop = position.top;
+        let categoryAxisWidth, valueAxisWidth;
 
         if (this.isVertical) {
             categoryAxisTop += height;
@@ -98,16 +99,16 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
             valueAxisWidth = width;
         }
 
-        itemWidth = categoryAxisWidth / groupCount;
+        const itemWidth = categoryAxisWidth / groupCount;
 
         return {
-            categoryAxisTop: categoryAxisTop,
-            categoryAxisLeft: categoryAxisLeft,
-            categoryAxisWidth: categoryAxisWidth,
-            valueAxisWidth: valueAxisWidth,
-            itemWidth: itemWidth
+            categoryAxisTop,
+            categoryAxisLeft,
+            categoryAxisWidth,
+            valueAxisWidth,
+            itemWidth
         };
-    },
+    }
 
     /**
      * Create a bullet chart bound before making a base data
@@ -117,22 +118,22 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {Bound} - bullet graph bound
      * @private
      */
-    _makeBulletChartBound: function(baseData, iterationData, item) {
-        var type = item.type;
-        var bound;
+    _makeBulletChartBound(baseData, iterationData, item) {
+        const {type} = item;
+        let bound;
 
-        if (type === chartConst.BULLET_TYPE_ACTUAL) {
-            bound = this._makeBarBound(item, chartConst.BULLET_ACTUAL_HEIGHT_RATIO, baseData, iterationData);
-        } else if (type === chartConst.BULLET_TYPE_RANGE) {
-            bound = this._makeBarBound(item, chartConst.BULLET_RANGES_HEIGHT_RATIO, baseData, iterationData);
-        } else if (type === chartConst.BULLET_TYPE_MARKER) {
-            bound = this._makeLineBound(item, chartConst.BULLET_MARKERS_HEIGHT_RATIO, baseData, iterationData);
+        if (type === BULLET_TYPE_ACTUAL) {
+            bound = this._makeBarBound(item, BULLET_ACTUAL_HEIGHT_RATIO, baseData, iterationData);
+        } else if (type === BULLET_TYPE_RANGE) {
+            bound = this._makeBarBound(item, BULLET_RANGES_HEIGHT_RATIO, baseData, iterationData);
+        } else if (type === BULLET_TYPE_MARKER) {
+            bound = this._makeLineBound(item, BULLET_MARKERS_HEIGHT_RATIO, baseData, iterationData);
         }
 
         bound.type = type;
 
         return bound;
-    },
+    }
 
     /**
      * Create bar type bound data
@@ -143,11 +144,11 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {object} - bar type bound data
      * @private
      */
-    _makeBarBound: function(model, widthRatio, baseData, iterationData) {
-        var barWidth = baseData.itemWidth * widthRatio;
-        var barHeight = baseData.valueAxisWidth * model.ratioDistance;
-        var barEndHeight = baseData.valueAxisWidth * model.endRatio;
-        var bound;
+    _makeBarBound({ratioDistance, endRatio}, widthRatio, baseData, iterationData) {
+        const barWidth = baseData.itemWidth * widthRatio;
+        const barHeight = baseData.valueAxisWidth * ratioDistance;
+        const barEndHeight = baseData.valueAxisWidth * endRatio;
+        let bound;
 
         if (this.isVertical) {
             bound = this._makeVerticalBarBound(iterationData, baseData, barWidth, barHeight, barEndHeight);
@@ -156,7 +157,7 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
         }
 
         return bound;
-    },
+    }
 
     /**
      * create a bound of bar type component, when it is virtical chart
@@ -168,14 +169,14 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {object} - bound data
      * @private
      */
-    _makeVerticalBarBound: function(iterationData, baseData, barWidth, barHeight, barEndHeight) {
+    _makeVerticalBarBound(iterationData, baseData, barWidth, barHeight, barEndHeight) {
         return {
             top: iterationData.top - barEndHeight,
             left: iterationData.left + ((baseData.itemWidth - barWidth) / 2),
             width: barWidth,
             height: barHeight
         };
-    },
+    }
 
     /**
      * create a bound of bar type component, when it is a horizontal chart
@@ -187,14 +188,14 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {object} - bound data
      * @private
      */
-    _makeHorizontalBarBound: function(iterationData, baseData, barWidth, barHeight, barEndHeight) {
+    _makeHorizontalBarBound(iterationData, baseData, barWidth, barHeight, barEndHeight) {
         return {
             top: iterationData.top + ((baseData.itemWidth - barWidth) / 2),
             left: iterationData.left + barEndHeight - barHeight,
             width: barHeight,
             height: barWidth
         };
-    },
+    }
 
     /**
      * Create line type bound data
@@ -205,31 +206,32 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {object} - line type bound data
      * @private
      */
-    _makeLineBound: function(model, widthRatio, baseData, iterationData) {
-        var lineWidth = baseData.itemWidth * widthRatio;
-        var endHeight = baseData.valueAxisWidth * model.endRatio;
-        var width = chartConst.BULLET_MARKER_DETECT_PADDING;
-        var height = chartConst.BULLET_MARKER_DETECT_PADDING;
-        var top, left;
+    _makeLineBound(model, widthRatio, baseData, iterationData) {
+        const {itemWidth, valueAxisWidth} = baseData;
+        const lineWidth = itemWidth * widthRatio;
+        const endHeight = valueAxisWidth * model.endRatio;
+        let height = BULLET_MARKER_DETECT_PADDING;
+        let width = BULLET_MARKER_DETECT_PADDING;
+        let top, left;
 
         if (this.isVertical) {
             top = iterationData.top - endHeight;
-            left = iterationData.left + ((baseData.itemWidth - lineWidth) / 2);
+            left = iterationData.left + ((itemWidth - lineWidth) / 2);
             width = lineWidth;
         } else {
-            top = iterationData.top + ((baseData.itemWidth - lineWidth) / 2);
+            top = iterationData.top + ((itemWidth - lineWidth) / 2);
             left = iterationData.left + endHeight;
             height = lineWidth;
         }
 
         return {
-            top: top,
-            left: left,
-            length: lineWidth,
-            width: width,
-            height: height
+            top,
+            left,
+            width,
+            height,
+            length: lineWidth
         };
-    },
+    }
 
     /**
      * update iterationData after making a graph bound
@@ -237,7 +239,7 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @param {number} itemWidth - size of category axis area
      * @private
      */
-    _updateIterationData: function(iterationData, itemWidth) {
+    _updateIterationData(iterationData, itemWidth) {
         iterationData.renderedItemCount += 1;
 
         if (this.isVertical) {
@@ -245,7 +247,7 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
         } else {
             iterationData.top += itemWidth;
         }
-    },
+    }
 
     /**
     * Render series area.
@@ -253,11 +255,11 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
     * @param {function} funcRenderGraph - function for graph rendering
     * @private
     */
-    _renderSeriesArea: function(paper, funcRenderGraph) {
+    _renderSeriesArea(paper, funcRenderGraph) {
         Series.prototype._renderSeriesArea.call(this, paper, funcRenderGraph);
 
         this.dataProcessor.setGraphColors(this.graphRenderer.getGraphColors());
-    },
+    }
 
     /**
      * Render series labels
@@ -267,14 +269,14 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @override
      * @private
      */
-    _renderSeriesLabel: function(paper) {
-        var theme = this.theme.label;
-        var seriesDataModel = this._getSeriesDataModel();
-        var groupLabels = this._getLabelTexts(seriesDataModel);
-        var positionsSet = this._calculateLabelPositions(seriesDataModel, theme);
+    _renderSeriesLabel(paper) {
+        const theme = this.theme.label;
+        const seriesDataModel = this._getSeriesDataModel();
+        const groupLabels = this._getLabelTexts(seriesDataModel);
+        const positionsSet = this._calculateLabelPositions(seriesDataModel, theme);
 
         return this.graphRenderer.renderSeriesLabel(paper, positionsSet, groupLabels, theme);
-    },
+    }
 
     /**
      * Get label texts needed for enabling `options.series.showLabel` option
@@ -282,19 +284,19 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {Array.<string>} - actual data and marker data label
      * @private
      */
-    _getLabelTexts: function(seriesDataModel) {
-        return seriesDataModel.map(function(seriesGroup) {
-            var seriesLabels = [];
+    _getLabelTexts(seriesDataModel) {
+        return seriesDataModel.map(seriesGroup => {
+            const seriesLabels = [];
 
-            seriesGroup.each(function(seriesDatum) {
-                if (seriesDatum.type !== chartConst.BULLET_TYPE_RANGE) {
+            seriesGroup.each(seriesDatum => {
+                if (seriesDatum.type !== BULLET_TYPE_RANGE) {
                     seriesLabels.push(seriesDatum.endLabel);
                 }
             });
 
             return seriesLabels;
         });
-    },
+    }
 
     /**
      * calculate a label position
@@ -303,22 +305,22 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {Array.<object>} - position of label text
      * @private
      */
-    _calculateLabelPositions: function(seriesDataModel, theme) {
-        var serieses = this.seriesData.groupBounds;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
+    _calculateLabelPositions(seriesDataModel, theme) {
+        const serieses = this.seriesData.groupBounds;
+        const labelHeight = renderUtil.getRenderedLabelHeight(MAX_HEIGHT_WORD, theme);
 
-        return snippet.map(serieses, function(series) {
-            var bounds = [];
+        return serieses.map(series => {
+            const bounds = [];
 
-            snippet.forEach(series, function(item) {
-                if (item.type !== chartConst.BULLET_TYPE_RANGE) {
+            series.forEach(item => {
+                if (item.type !== BULLET_TYPE_RANGE) {
                     bounds.push(this._makePositionByBound(item, labelHeight));
                 }
-            }, this);
+            });
 
             return bounds;
-        }, this);
-    },
+        });
+    }
 
     /**
      * make position top, left data using bound data and label height
@@ -327,43 +329,39 @@ var BulletChartSeries = snippet.defineClass(Series, /** @lends BulletChartSeries
      * @returns {object} - position top, left
      * @private
      */
-    _makePositionByBound: function(bound, labelHeight) {
-        var boundTop = bound.top;
-        var boundLeft = bound.left;
-        var width, height;
-        var position = {};
+    _makePositionByBound(bound, labelHeight) {
+        const boundTop = bound.top;
+        const boundLeft = bound.left;
+        const position = {};
 
         if (this.isVertical) {
-            width = bound.width || bound.length;
+            const width = bound.width || bound.length;
             position.top = boundTop - labelHeight;
             position.left = boundLeft + (width / 2);
         } else {
-            width = bound.width || 0;
-            height = bound.height || bound.length;
+            const width = bound.width || 0;
+            const height = bound.height || bound.length;
             position.top = boundTop + (height / 2);
             position.left = boundLeft + 5 + (width || 0);
         }
 
         return position;
     }
-});
+}
 
 /**
  * BulletChartSeries factory function
  * @param {object} params - series initialization data
  * @returns {BulletChartSeries} - bullet chart series
+ * private
  */
-function bulletSeriesFactory(params) {
-    var chartTheme = params.chartTheme;
-
-    params.libType = params.chartOptions.libType;
+export default function bulletSeriesFactory(params) {
     params.chartType = 'bullet';
-    params.chartBackground = chartTheme.chart.background;
+    params.libType = params.chartOptions.libType;
+    params.chartBackground = params.chartTheme.chart.background;
 
     return new BulletChartSeries(params);
 }
 
 bulletSeriesFactory.componentType = 'series';
 bulletSeriesFactory.BulletChartSeries = BulletChartSeries;
-
-module.exports = bulletSeriesFactory;

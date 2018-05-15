@@ -3,14 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import dom from '../../src/js/helpers/domHandler';
+import chart from '../../src/js/index';
+const barChartFactory = chart.barChart;
 
-'use strict';
-
-var dom = require('../../src/js/helpers/domHandler');
-var barChartFactory = require('../../src/js/index').barChart;
-
-describe('Test user events for bar chart', function() {
-    var rawData = {
+describe('Test user events for bar chart', () => {
+    const rawData = {
         categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
         series: [
             {
@@ -32,10 +30,10 @@ describe('Test user events for bar chart', function() {
             }
         ]
     };
-    var barChart;
+    let barChart;
 
-    beforeEach(function() {
-        var container = dom.create('DIV');
+    beforeEach(() => {
+        const container = dom.create('DIV');
 
         barChart = barChartFactory(container, rawData, {
             series: {
@@ -44,9 +42,9 @@ describe('Test user events for bar chart', function() {
         });
     });
 
-    describe('selectSeries', function() {
-        it('select series', function(done) {
-            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
+    describe('selectSeries', () => {
+        it('select series', done => {
+            const mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -56,7 +54,7 @@ describe('Test user events for bar chart', function() {
                 bottom: 390
             });
 
-            barChart.on('selectSeries', function(info) {
+            barChart.on('selectSeries', info => {
                 expect(info.chartType).toBe('bar');
                 expect(info.legend).toBe('Income');
                 expect(info.legendIndex).toBe(1);
@@ -72,9 +70,9 @@ describe('Test user events for bar chart', function() {
         });
     });
 
-    describe('unselectSeries', function() {
-        it('unselect series', function(done) {
-            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
+    describe('unselectSeries', () => {
+        it('unselect series', done => {
+            const mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -84,7 +82,7 @@ describe('Test user events for bar chart', function() {
                 bottom: 390
             });
 
-            barChart.on('unselectSeries', function(info) {
+            barChart.on('unselectSeries', info => {
                 expect(info.chartType).toBe('bar');
                 expect(info.legend).toBe('Income');
                 expect(info.legendIndex).toBe(1);
@@ -99,7 +97,7 @@ describe('Test user events for bar chart', function() {
                 clientY: 100
             });
 
-            setTimeout(function() {
+            setTimeout(() => {
                 // unselect
                 mouseEventDetector._onClick({
                     clientX: 100,
@@ -109,11 +107,11 @@ describe('Test user events for bar chart', function() {
         });
     });
 
-    describe('selectLegend', function() {
-        it('select legend', function(done) {
-            var legend = barChart.componentManager.get('legend');
+    describe('selectLegend', () => {
+        it('select legend', done => {
+            const legend = barChart.componentManager.get('legend');
 
-            barChart.on('selectLegend', function(info) {
+            barChart.on('selectLegend', info => {
                 expect(info).toEqual({
                     chartType: 'bar',
                     legend: 'Expenses',
@@ -127,9 +125,9 @@ describe('Test user events for bar chart', function() {
         });
     });
 
-    describe('beforeShowTooltip', function() {
-        it('before show tooltip', function(done) {
-            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
+    describe('beforeShowTooltip', () => {
+        it('before show tooltip', done => {
+            const mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -139,7 +137,7 @@ describe('Test user events for bar chart', function() {
                 bottom: 390
             });
 
-            barChart.on('beforeShowTooltip', function(info) {
+            barChart.on('beforeShowTooltip', info => {
                 expect(info.chartType).toBe('bar');
                 expect(info.legend).toBe('Income');
                 expect(info.legendIndex).toBe(1);
@@ -155,9 +153,9 @@ describe('Test user events for bar chart', function() {
         });
     });
 
-    describe('afterShowTooltip', function() {
-        it('after show tooltip', function(done) {
-            var mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
+    describe('afterShowTooltip', () => {
+        it('after show tooltip', done => {
+            const mouseEventDetector = barChart.componentManager.get('mouseEventDetector');
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -167,7 +165,7 @@ describe('Test user events for bar chart', function() {
                 bottom: 390
             });
 
-            barChart.on('afterShowTooltip', function(info) {
+            barChart.on('afterShowTooltip', info => {
                 expect(info.chartType).toBe('bar');
                 expect(info.legend).toBe('Income');
                 expect(info.legendIndex).toBe(1);

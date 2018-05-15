@@ -4,22 +4,16 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import RaphaelLineBase from './raphaelLineTypeBase';
+import raphaelRenderUtil from './raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
+import chartConst from '../const';
+import consoleUtil from '../helpers/consoleUtil';
+const {GUIDE_AREACHART_AREAOPACITY_TYPE, CLASS_NAME_SVG_AUTOSHAPE} = chartConst;
+const EMPHASIS_OPACITY = 1;
+const DE_EMPHASIS_OPACITY = 0.3;
 
-var RaphaelLineBase = require('./raphaelLineTypeBase');
-var raphaelRenderUtil = require('./raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
-
-var EMPHASIS_OPACITY = 1;
-var DE_EMPHASIS_OPACITY = 0.3;
-
-var concat = Array.prototype.concat;
-var chartConst = require('../const');
-var GUIDE_AREACHART_AREAOPACITY_TYPE = chartConst.GUIDE_AREACHART_AREAOPACITY_TYPE;
-var CLASS_NAME_SVG_AUTOSHAPE = chartConst.CLASS_NAME_SVG_AUTOSHAPE;
-var consoleUtil = require('../helpers/consoleUtil');
-
-var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
+export default class RaphaelAreaChart extends RaphaelLineBase {
     /**
      * RaphaelAreaChart is graph renderer for area chart.
      * @constructs RaphaelAreaChart
@@ -27,7 +21,9 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @private
      * @extends RaphaelLineTypeBase
      */
-    init: function() {
+    constructor() {
+        super();
+
         /**
          * selected legend index
          * @type {?number}
@@ -45,7 +41,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
          * @type {number}
          */
         this.lineWidth = 0;
-    },
+    }
 
     /**
      * Render function of area chart.
@@ -53,37 +49,33 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @returns {object}
      */
-    render: function(paper, data) {
-        var dimension = data.dimension;
-        var groupPositions = data.groupPositions;
-        var theme = data.theme;
-        var dotTheme = (theme && theme.dot) || {};
-        var colors = theme.colors;
-        var options = data.options;
-        var areaOpacity = this._isAreaOpacityNumber(options.areaOpacity) ? options.areaOpacity : 1;
-        var dotOpacity = options.showDot ? 1 : 0;
-        var borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
-        var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
-        var lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
-        var seriesSet;
+    render(paper, data) {
+        const {dimension, groupPositions, theme = {}, position, zeroTop, hasRangeData, options} = data;
+        const {dot: dotTheme = {}, colors} = theme;
+        const {spline, allowSelect, connectNulls, pointWidth, showDot, areaOpacity: areaOpacityOptions} = options;
+        const areaOpacity = this._isAreaOpacityNumber(areaOpacityOptions) ? areaOpacityOptions : 1;
+        const dotOpacity = showDot ? 1 : 0;
+        const borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
+        const outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
+        const lineWidth = this.lineWidth = (snippet.isNumber(pointWidth) ? pointWidth : this.lineWidth);
 
         this.paper = paper;
-        this.theme = data.theme;
-        this.isSpline = options.spline;
+        this.theme = theme;
+        this.isSpline = spline;
         this.dimension = dimension;
-        this.position = data.position;
-        this.zeroTop = data.zeroTop;
-        this.hasRangeData = data.hasRangeData;
+        this.position = position;
+        this.zeroTop = zeroTop;
+        this.hasRangeData = hasRangeData;
 
         paper.setStart();
 
-        this.groupPaths = this._getAreaChartPath(groupPositions, null, options.connectNulls);
+        this.groupPaths = this._getAreaChartPath(groupPositions, null, connectNulls);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors, lineWidth, areaOpacity);
 
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, dotOpacity);
 
-        if (options.allowSelect) {
+        if (allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
 
@@ -97,24 +89,23 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         this.dotOpacity = dotOpacity;
         this.pivotGroupDots = null;
 
-        seriesSet = paper.setFinish();
+        const seriesSet = paper.setFinish();
         this._moveSeriesToFrontAll();
         this.tooltipLine.toFront();
 
         return seriesSet;
-    },
+    }
 
     /**
      * Rearrange all series sequences.
      * @private
      */
-    _moveSeriesToFrontAll: function() {
-        var len = this.groupPaths ? this.groupPaths.length : 0;
-        var i = 0;
-        for (; i < len; i += 1) {
+    _moveSeriesToFrontAll() {
+        const len = this.groupPaths ? this.groupPaths.length : 0;
+        for (let i = 0; i < len; i += 1) {
             this.moveSeriesToFront(this.groupAreas[i], this.groupDots[i]);
         }
-    },
+    }
 
     /**
      * Get path for area chart.
@@ -124,17 +115,13 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @returns {*}
      * @private
      */
-    _getAreaChartPath: function(groupPositions, hasExtraPath, connectNulls) {
-        var path;
-
+    _getAreaChartPath(groupPositions, hasExtraPath, connectNulls) {
         if (this.isSpline) {
-            path = this._makeSplineAreaChartPath(groupPositions, hasExtraPath);
-        } else {
-            path = this._makeAreaChartPath(groupPositions, hasExtraPath, connectNulls);
+            return this._makeSplineAreaChartPath(groupPositions, hasExtraPath);
         }
 
-        return path;
-    },
+        return this._makeAreaChartPath(groupPositions, hasExtraPath, connectNulls);
+    }
 
     /**
      * Render area graphs.
@@ -146,23 +133,21 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @returns {Array} raphael objects
      * @private
      */
-    _renderAreas: function(paper, groupPaths, colors, lineWidth, opacity) {
-        var groupAreas;
-
+    _renderAreas(paper, groupPaths, colors, lineWidth, opacity) {
         colors = colors.slice(0, groupPaths.length);
         colors.reverse();
         groupPaths.reverse();
 
-        groupAreas = snippet.map(groupPaths, function(path, groupIndex) {
-            var polygons = {};
-            var areaColor = colors[groupIndex] || 'transparent';
-            var lineColor = areaColor;
-            var area = raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
+        const groupAreas = groupPaths.map((path, groupIndex) => {
+            const polygons = {};
+            const areaColor = colors[groupIndex] || 'transparent';
+            const lineColor = areaColor;
+            const area = raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
                 fill: areaColor,
-                opacity: opacity,
+                opacity,
                 stroke: areaColor
             });
-            var line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth);
+            const line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth);
 
             area.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
             line.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
@@ -178,7 +163,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         });
 
         return groupAreas.reverse();
-    },
+    }
 
     /**
      * Make height.
@@ -187,9 +172,9 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @returns {number} height
      * @private
      */
-    _makeHeight: function(top, startTop) {
+    _makeHeight(top, startTop) {
         return Math.abs(top - startTop);
-    },
+    }
 
     /**
      * Make areas path.
@@ -198,17 +183,16 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @returns {Array.<string | number>} path
      * @private
      */
-    _makeAreasPath: function(positions, hasExtraPath) {
-        var path = [];
-        var paths = [];
-        var prevNull = false;
-        var positionLength = positions.length;
-        var targetIndex;
-        var formerPath = [];
-        var latterPath = [];
+    _makeAreasPath(positions, hasExtraPath) {
+        const paths = [];
+        const positionLength = positions.length;
+        let path = [];
+        let latterPath = [];
+        let formerPath = [];
+        let prevNull = false;
 
-        snippet.forEachArray(positions, function(position, index) {
-            var moveOrLine;
+        Object.entries(positions).forEach(([index, position]) => {
+            let moveOrLine;
             if (position) {
                 if (prevNull) {
                     moveOrLine = 'M';
@@ -224,27 +208,27 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 latterPath.push(['z']);
             }
 
-            if (!position || index === positionLength - 1) {
+            if (!position || parseInt(index, 10) === positionLength - 1) {
                 paths.push(formerPath.concat(latterPath));
                 formerPath = [];
                 latterPath = [];
             }
         });
 
-        snippet.forEachArray(paths, function(partialPath) {
+        paths.forEach(partialPath => {
             path = path.concat(partialPath);
         });
 
         if (hasExtraPath !== false) {
-            targetIndex = positions.length - 1;
+            const targetIndex = positions.length - 1;
             path.splice(targetIndex + 1, 0, path[targetIndex], path[targetIndex + 1]);
         }
 
-        path = concat.apply([], path);
+        path = [].concat(...path);
         path[0] = 'M';
 
         return path;
-    },
+    }
 
     /**
      * Make path for area chart.
@@ -254,24 +238,20 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _makeAreaChartPath: function(groupPositions, hasExtraPath, connectNulls) {
-        var self = this;
-
-        return snippet.map(groupPositions, function(positions) {
-            var paths;
-
-            paths = {
-                area: self._makeAreasPath(positions, hasExtraPath),
-                line: self._makeLinesPath(positions, null, connectNulls)
+    _makeAreaChartPath(groupPositions, hasExtraPath, connectNulls) {
+        return groupPositions.map(positions => {
+            const paths = {
+                area: this._makeAreasPath(positions, hasExtraPath),
+                line: this._makeLinesPath(positions, null, connectNulls)
             };
 
-            if (self.hasRangeData) {
-                paths.startLine = self._makeLinesPath(positions, 'startTop');
+            if (this.hasRangeData) {
+                paths.startLine = this._makeLinesPath(positions, 'startTop');
             }
 
             return paths;
         });
-    },
+    }
 
     /**
      * Make spline path for area chart.
@@ -280,31 +260,25 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _makeSplineAreaChartPath: function(groupPositions, hasExtraPath) {
-        var self = this;
+    _makeSplineAreaChartPath(groupPositions, hasExtraPath) {
+        return groupPositions.map(positions => {
+            const reversePosition = positions.concat().reverse().map(position => ({
+                left: position.left,
+                top: position.startTop
+            }));
 
-        return snippet.map(groupPositions, function(positions) {
-            var reversePosition = snippet.map(positions.concat().reverse(), function(position) {
-                return {
-                    left: position.left,
-                    top: position.startTop
-                };
-            });
-
-            var linesPath = self._makeSplineLinesPath(positions);
-            var reverseLinesPath = self._makeSplineLinesPath(reversePosition, {
+            const linesPath = this._makeSplineLinesPath(positions);
+            const reverseLinesPath = this._makeSplineLinesPath(reversePosition, {
                 isReverseDirection: true,
                 isBeConnected: true
             });
 
-            var areaPath = JSON.parse(JSON.stringify(linesPath));
-            var reverseAreaPath = JSON.parse(JSON.stringify(reverseLinesPath));
-
-            var lastPosition, lastReversePosition;
+            const areaPath = JSON.parse(JSON.stringify(linesPath));
+            const reverseAreaPath = JSON.parse(JSON.stringify(reverseLinesPath));
 
             if (hasExtraPath !== false) {
-                lastPosition = positions[positions.length - 1];
-                lastReversePosition = reversePosition[reversePosition.length - 1];
+                const lastPosition = positions[positions.length - 1];
+                const lastReversePosition = reversePosition[reversePosition.length - 1];
 
                 areaPath.push(['K', lastPosition.left, lastPosition.top]);
                 areaPath.push(['L', lastPosition.left, lastPosition.startTop]);
@@ -318,7 +292,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 line: linesPath
             };
         });
-    },
+    }
 
     /**
      * Resize graph of area chart.
@@ -326,21 +300,17 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
-    resize: function(params) {
-        var self = this,
-            dimension = params.dimension,
-            groupPositions = params.groupPositions;
-
+    resize({dimension, groupPositions, zeroTop}) {
         this.resizeClipRect(dimension.width, dimension.height);
 
-        this.zeroTop = params.zeroTop;
+        this.zeroTop = zeroTop;
         this.groupPositions = groupPositions;
         this.groupPaths = this._getAreaChartPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        snippet.forEachArray(this.groupPaths, function(path, groupIndex) {
-            var area = self.groupAreas[groupIndex];
+        this.groupPaths.forEach((path, groupIndex) => {
+            const area = this.groupAreas[groupIndex];
             area.area.attr({path: path.area.join(' ')});
             area.line.attr({path: path.line.join(' ')});
 
@@ -348,28 +318,27 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 area.startLine.attr({path: path.startLine.join(' ')});
             }
 
-            snippet.forEachArray(self.groupDots[groupIndex], function(item, index) {
-                var position = groupPositions[groupIndex][index];
-                var startPositon;
+            this.groupDots[groupIndex].forEach((item, index) => {
+                const position = groupPositions[groupIndex][index];
 
                 if (item.endDot) {
-                    self._moveDot(item.endDot.dot, position);
+                    this._moveDot(item.endDot.dot, position);
                 }
                 if (item.startDot) {
-                    startPositon = snippet.extend({}, position);
+                    const startPositon = Object.assign({}, position);
                     startPositon.top = startPositon.startTop;
-                    self._moveDot(item.startDot.dot, startPositon);
+                    this._moveDot(item.startDot.dot, startPositon);
                 }
             });
         });
-    },
+    }
 
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
      */
-    selectLegend: function(legendIndex) {
-        var noneSelected = snippet.isNull(legendIndex);
+    selectLegend(legendIndex) {
+        const noneSelected = snippet.isNull(legendIndex);
 
         if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
             this.resetSeriesOrder(this.selectedLegendIndex);
@@ -377,10 +346,10 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
 
         this.selectedLegendIndex = legendIndex;
 
-        snippet.forEachArray(this.groupAreas, function(area, groupIndex) {
-            var isSelectedLegend = legendIndex === groupIndex;
-            var opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
-            var groupDots = this.groupDots[groupIndex];
+        this.groupAreas.forEach((area, groupIndex) => {
+            const isSelectedLegend = legendIndex === groupIndex;
+            const opacity = (noneSelected || isSelectedLegend) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            const groupDots = this.groupDots[groupIndex];
 
             area.area.attr({'fill-opacity': opacity});
             area.line.attr({'stroke-opacity': opacity});
@@ -392,29 +361,28 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             if (isSelectedLegend) {
                 this.moveSeriesToFront(area, groupDots);
             }
-        }, this);
-    },
+        });
+    }
 
     /**
      * Reset series order after selected to be same to when it is first rendered
      * @param {number} legendIndex - legend index to reset series order
      * @ignore
      */
-    resetSeriesOrder: function(legendIndex) {
-        var frontSeries = ((legendIndex + 1) < this.groupAreas.length) ? this.groupAreas[legendIndex + 1] : null;
-        var frontArea;
+    resetSeriesOrder(legendIndex) {
+        const frontSeries = ((legendIndex + 1) < this.groupAreas.length) ? this.groupAreas[legendIndex + 1] : null;
 
         if (frontSeries) {
-            frontArea = frontSeries.area;
+            const frontArea = frontSeries.area;
             this.groupAreas[legendIndex].area.insertBefore(frontArea);
             this.groupAreas[legendIndex].line.insertBefore(frontArea);
-            snippet.forEachArray(this.groupDots[legendIndex], function(item) {
+            this.groupDots[legendIndex].forEach(item => {
                 if (item && item.endDot) {
                     item.endDot.dot.insertBefore(frontArea);
                 }
             });
         }
-    },
+    }
 
     /**
      * @param {{area: {SVGElement}, line: {SVGElement}, startLine: {SVGElement}}} areaSurface - line or plane to represent area chart
@@ -422,7 +390,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @ignore
      * @override
      */
-    moveSeriesToFront: function(areaSurface, dots) {
+    moveSeriesToFront(areaSurface, dots) {
         areaSurface.line.toFront();
         areaSurface.area.toFront();
 
@@ -430,13 +398,13 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             areaSurface.startLine.toFront();
         }
 
-        snippet.forEachArray(dots, function(item) {
+        dots.forEach(item => {
             item.endDot.dot.toFront();
             if (item.startDot) {
                 item.startDot.dot.toFront();
             }
         });
-    },
+    }
 
     /**
      * Animate for adding data.
@@ -446,10 +414,9 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @param {boolean} [shiftingOption] - shifting option
      * @param {number} zeroTop - position top value for zero point
      */
-    animateForAddingData: function(data, tickSize, groupPositions, shiftingOption, zeroTop) {
-        var self = this;
-        var groupPaths = this._getAreaChartPath(groupPositions, false);
-        var additionalIndex = 0;
+    animateForAddingData(data, tickSize, groupPositions, shiftingOption, zeroTop) {
+        const groupPaths = this._getAreaChartPath(groupPositions, false);
+        let additionalIndex = 0;
 
         if (!groupPositions.length) {
             return;
@@ -461,38 +428,38 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
 
         this.zeroTop = zeroTop;
 
-        snippet.forEachArray(this.groupAreas, function(area, groupIndex) {
-            var dots = self.groupDots[groupIndex];
-            var groupPosition = groupPositions[groupIndex];
-            var pathMap = groupPaths[groupIndex];
+        this.groupAreas.forEach((area, groupIndex) => {
+            const dots = this.groupDots[groupIndex];
+            const groupPosition = groupPositions[groupIndex];
+            const pathMap = groupPaths[groupIndex];
 
             if (shiftingOption) {
-                self._removeFirstDot(dots);
+                this._removeFirstDot(dots);
             }
 
-            snippet.forEachArray(dots, function(item, index) {
-                var position = groupPosition[index + additionalIndex];
-                self._animateByPosition(item.endDot.dot, position, tickSize);
+            dots.forEach((item, index) => {
+                const position = groupPosition[index + additionalIndex];
+                this._animateByPosition(item.endDot.dot, position, tickSize);
 
                 if (item.startDot) {
-                    self._animateByPosition(item.startDot.dot, {
+                    this._animateByPosition(item.startDot.dot, {
                         left: position.left,
                         top: position.startTop
                     }, tickSize);
                 }
             });
 
-            self._animateByPath(area.area, pathMap.area, tickSize);
-            self._animateByPath(area.line, pathMap.line, tickSize);
+            this._animateByPath(area.area, pathMap.area, tickSize);
+            this._animateByPath(area.line, pathMap.line, tickSize);
 
             if (area.startLine) {
-                self._animateByPath(area.startLine, pathMap.startLine, tickSize);
+                this._animateByPath(area.startLine, pathMap.startLine, tickSize);
             }
         });
-    },
+    }
 
-    renderSeriesLabel: function(paper, groupPositions, groupLabels, labelTheme) {
-        var attributes = {
+    renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme) {
+        const attributes = {
             'font-size': labelTheme.fontSize,
             'font-family': labelTheme.fontFamily,
             'font-weight': labelTheme.fontWeight,
@@ -500,13 +467,12 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             'text-anchor': 'middle',
             opacity: 0
         };
-        var set = paper.set();
+        const set = paper.set();
 
-        snippet.forEach(groupLabels, function(categoryLabel, categoryIndex) {
-            snippet.forEach(categoryLabel, function(label, seriesIndex) {
-                var position = groupPositions[categoryIndex][seriesIndex];
-                var endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
-                var startLabel;
+        groupLabels.forEach((categoryLabel, categoryIndex) => {
+            categoryLabel.forEach((label, seriesIndex) => {
+                const position = groupPositions[categoryIndex][seriesIndex];
+                const endLabel = raphaelRenderUtil.renderText(paper, position.end, label.end, attributes);
 
                 set.push(endLabel);
 
@@ -515,7 +481,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
                 endLabel.node.setAttribute('filter', 'url(#glow)');
 
                 if (position.start) {
-                    startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
+                    const startLabel = raphaelRenderUtil.renderText(paper, position.start, label.start, attributes);
 
                     startLabel.node.style.userSelect = 'none';
                     startLabel.node.style.cursor = 'default';
@@ -527,7 +493,7 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         });
 
         return set;
-    },
+    }
 
     /**
      * Test areaOpacity is a number, and return the result.
@@ -537,8 +503,8 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @returns {boolean} - whether areaOpacity is a number.
      * @private
      */
-    _isAreaOpacityNumber: function(areaOpacity) {
-        var isNumber = snippet.isNumber(areaOpacity);
+    _isAreaOpacityNumber(areaOpacity) {
+        const isNumber = snippet.isNumber(areaOpacity);
 
         if (isNumber) {
             if (areaOpacity < 0 || areaOpacity > 1) {
@@ -550,6 +516,4 @@ var RaphaelAreaChart = snippet.defineClass(RaphaelLineBase, /** @lends RaphaelAr
 
         return isNumber;
     }
-});
-
-module.exports = RaphaelAreaChart;
+}

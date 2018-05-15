@@ -3,17 +3,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import Series from './series';
+import squarifier from './squarifier';
+import labelHelper from './renderingLabelHelper';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var Series = require('./series');
-var squarifier = require('./squarifier');
-var labelHelper = require('./renderingLabelHelper');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
-
-var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
+class TreemapChartSeries extends Series {
     /**
      * Series component for rendering graph of treemap chart.
      * @constructs TreemapChartSeries
@@ -21,8 +18,8 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @param {object} params - parameters
      * @extends Series
      */
-    init: function(params) {
-        Series.call(this, params);
+    constructor(params) {
+        super(params);
 
         this.theme.borderColor = this.theme.borderColor || chartConst.TREEMAP_DEFAULT_BORDER;
         this.theme.label.color = this.options.useColorValue ? '#000' : '#fff';
@@ -58,13 +55,13 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         this.colorSpectrum = params.colorSpectrum;
 
         this._initOptions();
-    },
+    }
 
     /**
      * Initialize options.
      * @private
      */
-    _initOptions: function() {
+    _initOptions() {
         this.options.useColorValue = !!this.options.useColorValue;
 
         if (snippet.isUndefined(this.options.zoomable)) {
@@ -74,7 +71,7 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         if (snippet.isUndefined(this.options.useLeafLabel)) {
             this.options.useLeafLabel = !this.options.zoomable;
         }
-    },
+    }
 
     /**
      * Make series data.
@@ -85,24 +82,22 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @private
      * @override
      */
-    _makeSeriesData: function() {
-        var boundMap = this._getBoundMap();
-        var groupBounds = this._makeBounds(boundMap);
+    _makeSeriesData() {
+        const boundMap = this._getBoundMap();
+        const groupBounds = this._makeBounds(boundMap);
 
         return {
-            boundMap: boundMap,
-            groupBounds: groupBounds,
+            boundMap,
+            groupBounds,
             seriesDataModel: this._getSeriesDataModel(),
             startDepth: this.startDepth,
             isPivot: true,
             colorSpectrum: this.options.useColorValue ? this.colorSpectrum : null,
             chartBackground: this.chartBackground,
             zoomable: this.options.zoomable,
-            isAvailable: function() {
-                return groupBounds && groupBounds.length > 0;
-            }
+            isAvailable: () => (groupBounds && groupBounds.length > 0)
         };
-    },
+    }
 
     /**
      * Make bound map by dimension.
@@ -112,22 +107,20 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @returns {object.<string, {left: number, top: number, width: number, height: number}>}
      * @private
      */
-    _makeBoundMap: function(parent, boundMap, layout) {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var defaultLayout = snippet.extend({}, this.layout.dimension, this.layout.position);
-        var seriesItems;
+    _makeBoundMap(parent, boundMap, layout) {
+        const seriesDataModel = this._getSeriesDataModel();
+        const defaultLayout = snippet.extend({}, this.layout.dimension, this.layout.position);
+        const seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
 
         layout = layout || defaultLayout;
-        seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
         boundMap = snippet.extend(boundMap || {}, squarifier.squarify(layout, seriesItems));
 
-        snippet.forEachArray(seriesItems, function(seriesItem) {
-            boundMap = self._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
+        seriesItems.forEach(seriesItem => {
+            boundMap = this._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
         });
 
         return boundMap;
-    },
+    }
 
     /**
      * Make bounds for rendering graph.
@@ -135,25 +128,21 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @returns {Array.<Array.<{left: number, top: number, width: number, height: number}>>}
      * @private
      */
-    _makeBounds: function(boundMap) {
-        var startDepth = this.startDepth;
-        var seriesDataModel = this._getSeriesDataModel();
-        var isValid;
+    _makeBounds(boundMap) {
+        const {startDepth} = this;
+        const seriesDataModel = this._getSeriesDataModel();
+        let isValid;
 
         if (this.options.zoomable) {
-            isValid = function(seriesItem) {
-                return seriesItem.depth === startDepth;
-            };
+            isValid = seriesItem => (seriesItem.depth === startDepth);
         } else {
-            isValid = function(seriesItem) {
-                return !seriesItem.hasChild;
-            };
+            isValid = seriesItem => (!seriesItem.hasChild);
         }
 
-        return seriesDataModel.map(function(seriesGroup) {
-            return seriesGroup.map(function(seriesItem) {
-                var bound = boundMap[seriesItem.id];
-                var result = null;
+        return seriesDataModel.map(seriesGroup => (
+            seriesGroup.map(seriesItem => {
+                const bound = boundMap[seriesItem.id];
+                let result = null;
 
                 if (bound && isValid(seriesItem)) {
                     result = {
@@ -162,22 +151,22 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
                 }
 
                 return result;
-            }, true);
-        }, true);
-    },
+            }, true)
+        ), true);
+    }
 
     /**
      * Get bound map for rendering graph.
      * @returns {object.<string, {left: number, top: number, width: number, height: number}>}
      * @private
      */
-    _getBoundMap: function() {
+    _getBoundMap() {
         if (!this.boundMap) {
             this.boundMap = this._makeBoundMap(this.rootId);
         }
 
         return this.boundMap;
-    },
+    }
 
     /**
      * Whether should dimmed or not.
@@ -187,12 +176,11 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @returns {boolean}
      * @private
      */
-    _shouldDimmed: function(seriesDataModel, hoverSeriesItem, seriesItem) {
-        var shouldTransparent = false;
-        var parent;
+    _shouldDimmed(seriesDataModel, hoverSeriesItem, seriesItem) {
+        let shouldTransparent = false;
 
         if (hoverSeriesItem && seriesItem.id !== hoverSeriesItem.id && seriesItem.group === hoverSeriesItem.group) {
-            parent = seriesDataModel.findParentByDepth(seriesItem.id, hoverSeriesItem.depth + 1);
+            const parent = seriesDataModel.findParentByDepth(seriesItem.id, hoverSeriesItem.depth + 1);
 
             if (parent && parent.parent === hoverSeriesItem.id) {
                 shouldTransparent = true;
@@ -200,7 +188,7 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         }
 
         return shouldTransparent;
-    },
+    }
 
     /**
      * Render series label.
@@ -208,12 +196,12 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function(paper) {
-        var seriesDataModel = this._getSeriesDataModel();
-        var boundMap = this._getBoundMap();
-        var labelTheme = this.theme.label;
-        var labelTemplate = this.options.labelTemplate;
-        var positions, seriesItems, labels;
+    _renderSeriesLabel(paper) {
+        const seriesDataModel = this._getSeriesDataModel();
+        const boundMap = this._getBoundMap();
+        const labelTheme = this.theme.label;
+        const {labelTemplate} = this.options;
+        let seriesItems;
 
         if (this.options.useLeafLabel) {
             seriesItems = seriesDataModel.findLeafSeriesItems(this.selectedGroup);
@@ -221,26 +209,26 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
             seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
         }
 
-        labels = snippet.map(seriesItems, function(seriesItem) {
-            var labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
+        const labels = seriesItems.map(seriesItem => {
+            const labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
 
             return labelText;
         });
 
-        positions = labelHelper.boundsToLabelPostionsForTreemap(seriesItems, boundMap, labelTheme);
+        const positions = labelHelper.boundsToLabelPostionsForTreemap(seriesItems, boundMap, labelTheme);
 
         return this.graphRenderer.renderSeriesLabelForTreemap(paper, positions, labels, labelTheme);
-    },
+    }
 
     /**
      * Resize.
      * @override
      */
-    resize: function() {
+    resize(...args) {
         this.boundMap = null;
 
-        Series.prototype.resize.apply(this, arguments);
-    },
+        Series.prototype.resize.apply(this, args);
+    }
 
     /**
      * Zoom.
@@ -249,7 +237,7 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @param {number} group - group
      * @private
      */
-    _zoom: function(rootId, startDepth, group) {
+    _zoom(rootId, startDepth, group) {
         this._clearSeriesContainer();
         this.boundMap = null;
         this.rootId = rootId;
@@ -257,15 +245,14 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
         this.selectedGroup = group;
         this._renderSeriesArea(this.paper, snippet.bind(this._renderGraph, this));
         this.animateComponent(true);
-    },
+    }
 
     /**
      * Zoom
      * @param {{index: number}} data - data for zoom
      */
-    zoom: function(data) {
-        var detectedIndex = data.index;
-        var seriesDataModel, seriesItem;
+    zoom(data) {
+        const detectedIndex = data.index;
 
         this.labelSet.remove();
 
@@ -275,8 +262,8 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
             return;
         }
 
-        seriesDataModel = this._getSeriesDataModel();
-        seriesItem = seriesDataModel.getSeriesItem(0, detectedIndex, true);
+        const seriesDataModel = this._getSeriesDataModel();
+        const seriesItem = seriesDataModel.getSeriesItem(0, detectedIndex, true);
 
         if (!seriesItem || !seriesItem.hasChild) {
             return;
@@ -284,7 +271,7 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
 
         this._zoom(seriesItem.id, seriesItem.depth + 1, seriesItem.group);
         this.eventBus.fire('afterZoom', detectedIndex);
-    },
+    }
 
     /**
      * Make exportation data for public event of series type.
@@ -292,62 +279,61 @@ var TreemapChartSeries = snippet.defineClass(Series, /** @lends TreemapChartSeri
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
      * @private
      */
-    _makeExportationSeriesData: function(seriesData) {
-        var indexes = seriesData.indexes;
-        var seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
+    _makeExportationSeriesData(seriesData) {
+        const {indexes} = seriesData;
+        const seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
 
         return snippet.extend({
             chartType: this.chartType,
             indexes: seriesItem.indexes
         });
-    },
+    }
 
     /**
      * To call showAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
-    onHoverSeries: function(indexes) {
-        var item, ratio;
-
+    onHoverSeries(indexes) {
         if (!predicate.isShowLabel(this.options)) {
             return;
         }
 
-        item = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
-        ratio = item.colorRatio;
+        const item = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
+        const ratio = item.colorRatio;
 
         this.graphRenderer.showAnimation(indexes, this.options.useColorValue, 0.6);
 
         if (ratio > -1) {
             this.eventBus.fire('showWedge', ratio, item.colorValue);
         }
-    },
+    }
 
     /**
      * To call hideAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
-    onHoverOffSeries: function(indexes) {
+    onHoverOffSeries(indexes) {
         if (!predicate.isShowLabel(this.options) || !indexes) {
             return;
         }
 
         this.graphRenderer.hideAnimation(indexes, this.options.useColorValue);
     }
-});
+}
 
-function treemapChartSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
-
-    params.libType = libType;
+/**
+ * treemapChartSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} treemap series instanse
+ * @ignore
+ */
+export default function treemapChartSeriesFactory(params) {
+    params.libType = params.chartOptions.libType;
     params.chartType = 'treemap';
-    params.chartBackground = chartTheme.chart.background;
+    params.chartBackground = params.chartTheme.chart.background;
 
     return new TreemapChartSeries(params);
 }
 
 treemapChartSeriesFactory.componentType = 'series';
 treemapChartSeriesFactory.TreemapChartSeries = TreemapChartSeries;
-
-module.exports = treemapChartSeriesFactory;

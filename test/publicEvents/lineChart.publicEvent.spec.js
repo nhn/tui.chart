@@ -3,14 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import dom from '../../src/js/helpers/domHandler';
+import chart from '../../src/js/index';
+const lineChartFactory = chart.lineChart;
 
-'use strict';
-
-var dom = require('../../src/js/helpers/domHandler');
-var lineChartFactory = require('../../src/js/index').lineChart;
-
-describe('Test user events for line chart', function() {
-    var rawData = {
+describe('Test user events for line chart', () => {
+    const rawData = {
         categories: ['01/01/2016', '02/01/2016', '03/01/2016', '04/01/2016', '05/01/2016', '06/01/2016', '07/01/2016', '08/01/2016', '09/01/2016', '10/01/2016', '11/01/2016', '12/01/2016'],
         series: [
             {
@@ -35,10 +33,10 @@ describe('Test user events for line chart', function() {
             }
         ]
     };
-    var lineChart;
+    let lineChart;
 
-    beforeEach(function() {
-        var container = dom.create('DIV');
+    beforeEach(() => {
+        const container = dom.create('DIV');
 
         lineChart = lineChartFactory(container, rawData, {
             series: {
@@ -47,9 +45,9 @@ describe('Test user events for line chart', function() {
         });
     });
 
-    describe('selectSeries', function() {
-        it('select series', function(done) {
-            var mouseEventDetector = lineChart.componentManager.get('mouseEventDetector');
+    describe('selectSeries', () => {
+        it('select series', done => {
+            const mouseEventDetector = lineChart.componentManager.get('mouseEventDetector');
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -59,7 +57,7 @@ describe('Test user events for line chart', function() {
                 bottom: 380
             });
 
-            lineChart.on('selectSeries', function(info) {
+            lineChart.on('selectSeries', info => {
                 expect(info.chartType).toBe('line');
                 expect(info.legend).toBe('Sydney');
                 expect(info.legendIndex).toBe(2);
@@ -74,9 +72,9 @@ describe('Test user events for line chart', function() {
         });
     });
 
-    describe('unselectSeries', function() {
-        it('unselect series', function(done) {
-            var mouseEventDetector = lineChart.componentManager.get('mouseEventDetector');
+    describe('unselectSeries', () => {
+        it('unselect series', done => {
+            const mouseEventDetector = lineChart.componentManager.get('mouseEventDetector');
 
             mouseEventDetector.mouseEventDetectorContainer = jasmine.createSpyObj('mouseEventDetectorContainer', ['getBoundingClientRect']);
             mouseEventDetector.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
@@ -86,7 +84,7 @@ describe('Test user events for line chart', function() {
                 bottom: 380
             });
 
-            lineChart.on('unselectSeries', function(info) {
+            lineChart.on('unselectSeries', info => {
                 expect(info.chartType).toBe('line');
                 expect(info.legend).toBe('Sydney');
                 expect(info.legendIndex).toBe(2);
@@ -101,7 +99,7 @@ describe('Test user events for line chart', function() {
                 clientY: 100
             });
 
-            setTimeout(function() {
+            setTimeout(() => {
                 // unselect
                 mouseEventDetector._onClick({
                     clientX: 65,

@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import calculator from '../../helpers/calculator';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
-var calculator = require('../../helpers/calculator');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
-
-var squarifier = {
+export default {
     /**
      * bound map
      * @type {object.<string, {width: number, height: number, left: number, top: number}>}
@@ -23,7 +21,7 @@ var squarifier = {
      * @returns {{width: number, height: number, left: number, top: number}}
      * @private
      */
-    _makeBaseBound: function(layout) {
+    _makeBaseBound(layout) {
         return snippet.extend({}, layout);
     },
 
@@ -35,7 +33,7 @@ var squarifier = {
      * @returns {number}
      * @private
      */
-    _calculateScale: function(values, width, height) {
+    _calculateScale(values, width, height) {
         return (width * height) / calculator.sum(values);
     },
 
@@ -47,16 +45,12 @@ var squarifier = {
      * @returns {Array.<{itme: SeriesItem, weight: number}>}
      * @private
      */
-    _makeBaseData: function(seriesItems, width, height) {
-        var scale = this._calculateScale(snippet.pluck(seriesItems, 'value'), width, height);
-        var data = snippet.map(seriesItems, function(seriesItem) {
-            return {
-                id: seriesItem.id,
-                weight: seriesItem.value * scale
-            };
-        }).sort(function(a, b) {
-            return b.weight - a.weight;
-        });
+    _makeBaseData(seriesItems, width, height) {
+        const scale = this._calculateScale(snippet.pluck(seriesItems, 'value'), width, height);
+        const data = seriesItems.map(seriesItem => ({
+            id: seriesItem.id,
+            weight: seriesItem.value * scale
+        })).sort((a, b) => (b.weight - a.weight));
 
         return data;
     },
@@ -71,9 +65,9 @@ var squarifier = {
      * @returns {number}
      * @private
      */
-    _worst: function(sum, min, max, baseSize) {
-        var sumSquare = sum * sum;
-        var sizeSquare = baseSize * baseSize;
+    _worst(sum, min, max, baseSize) {
+        const sumSquare = sum * sum;
+        const sizeSquare = baseSize * baseSize;
 
         return Math.max((sizeSquare * max) / sumSquare, sumSquare / (sizeSquare * min));
     },
@@ -87,11 +81,11 @@ var squarifier = {
      * @returns {boolean}
      * @private
      */
-    _changedStackDirection: function(sum, weights, baseSize, newWeight) {
-        var min = arrayUtil.min(weights);
-        var max = arrayUtil.max(weights);
-        var beforeWorst = this._worst(sum, min, max, baseSize);
-        var newWorst = this._worst(sum + newWeight, Math.min(min, newWeight), Math.max(max, newWeight), baseSize);
+    _changedStackDirection(sum, weights, baseSize, newWeight) {
+        const min = arrayUtil.min(weights);
+        const max = arrayUtil.max(weights);
+        const beforeWorst = this._worst(sum, min, max, baseSize);
+        const newWorst = this._worst(sum + newWeight, Math.min(min, newWeight), Math.max(max, newWeight), baseSize);
 
         return newWorst >= beforeWorst;
     },
@@ -102,7 +96,7 @@ var squarifier = {
      * @returns {boolean}
      * @private
      */
-    _isVerticalStack: function(baseBound) {
+    _isVerticalStack(baseBound) {
         return baseBound.height < baseBound.width;
     },
 
@@ -112,7 +106,7 @@ var squarifier = {
      * @returns {number}
      * @private
      */
-    _selectBaseSize: function(baseBound) {
+    _selectBaseSize(baseBound) {
         return this._isVerticalStack(baseBound) ? baseBound.height : baseBound.width;
     },
 
@@ -124,11 +118,9 @@ var squarifier = {
      * @returns {number}
      * @private
      */
-    _calculateFixedSize: function(baseSize, sum, row) {
-        var weights;
-
+    _calculateFixedSize(baseSize, sum, row) {
         if (!sum) {
-            weights = snippet.pluck(row, 'weight');
+            const weights = snippet.pluck(row, 'weight');
             sum = calculator.sum(weights);
         }
 
@@ -143,9 +135,9 @@ var squarifier = {
      * @param {function} callback - callback function
      * @private
      */
-    _addBounds: function(startPosition, row, fixedSize, callback) {
-        snippet.reduce([startPosition].concat(row), function(storedPosition, rowDatum) {
-            var dynamicSize = rowDatum.weight / fixedSize;
+    _addBounds(startPosition, row, fixedSize, callback) {
+        [startPosition].concat(row).reduce((storedPosition, rowDatum) => {
+            const dynamicSize = rowDatum.weight / fixedSize;
 
             callback(dynamicSize, storedPosition, rowDatum.id);
 
@@ -162,12 +154,12 @@ var squarifier = {
      * @param {string | number} id - id of seriesItem
      * @private
      */
-    _addBound: function(left, top, width, height, id) {
+    _addBound(left, top, width, height, id) {
         this.boundMap[id] = {
-            left: left,
-            top: top,
-            width: width,
-            height: height
+            left,
+            top,
+            width,
+            height
         };
     },
 
@@ -179,12 +171,11 @@ var squarifier = {
      * @param {number} sum - sum for weights of row
      * @private
      */
-    _addBoundsForVerticalStack: function(row, baseBound, baseSize, sum) {
-        var self = this;
-        var fixedWidth = this._calculateFixedSize(baseSize, sum, row);
+    _addBoundsForVerticalStack(row, baseBound, baseSize, sum) {
+        const fixedWidth = this._calculateFixedSize(baseSize, sum, row);
 
-        this._addBounds(baseBound.top, row, fixedWidth, function(dynamicHeight, storedTop, id) {
-            self._addBound(baseBound.left, storedTop, fixedWidth, dynamicHeight, id);
+        this._addBounds(baseBound.top, row, fixedWidth, (dynamicHeight, storedTop, id) => {
+            this._addBound(baseBound.left, storedTop, fixedWidth, dynamicHeight, id);
         });
 
         baseBound.left += fixedWidth;
@@ -199,12 +190,11 @@ var squarifier = {
      * @param {number} sum - sum for weights of row
      * @private
      */
-    _addBoundsForHorizontalStack: function(row, baseBound, baseSize, sum) {
-        var self = this;
-        var fixedHeight = this._calculateFixedSize(baseSize, sum, row);
+    _addBoundsForHorizontalStack(row, baseBound, baseSize, sum) {
+        const fixedHeight = this._calculateFixedSize(baseSize, sum, row);
 
-        this._addBounds(baseBound.left, row, fixedHeight, function(dynamicWidth, storedLeft, id) {
-            self._addBound(storedLeft, baseBound.top, dynamicWidth, fixedHeight, id);
+        this._addBounds(baseBound.left, row, fixedHeight, (dynamicWidth, storedLeft, id) => {
+            this._addBound(storedLeft, baseBound.top, dynamicWidth, fixedHeight, id);
         });
 
         baseBound.top += fixedHeight;
@@ -217,16 +207,12 @@ var squarifier = {
      * @returns {*}
      * @private
      */
-    _getAddingBoundsFunction: function(baseBound) {
-        var addBound;
-
+    _getAddingBoundsFunction(baseBound) {
         if (this._isVerticalStack(baseBound)) {
-            addBound = snippet.bind(this._addBoundsForVerticalStack, this);
-        } else {
-            addBound = snippet.bind(this._addBoundsForHorizontalStack, this);
+            return snippet.bind(this._addBoundsForVerticalStack, this);
         }
 
-        return addBound;
+        return this._addBoundsForHorizontalStack.bind(this);
     },
 
     /**
@@ -235,27 +221,26 @@ var squarifier = {
      * @param {Array.<SeriesItem>} seriesItems - seriesItems
      * @returns {object.<string, {width: number, height: number, left: number, top: number}>}
      */
-    squarify: function(layout, seriesItems) {
-        var self = this;
-        var baseBound = this._makeBaseBound(layout);
-        var baseData = this._makeBaseData(seriesItems, baseBound.width, baseBound.height);
-        var row = [];
-        var baseSize, addBounds;
+    squarify(layout, seriesItems) {
+        const baseBound = this._makeBaseBound(layout);
+        const baseData = this._makeBaseData(seriesItems, baseBound.width, baseBound.height);
+        let row = [];
+        let baseSize, addBounds;
 
         this.boundMap = {};
 
-        snippet.forEachArray(baseData, function(datum) {
-            var weights = snippet.pluck(row, 'weight');
-            var sum = calculator.sum(weights);
+        baseData.forEach(datum => {
+            const weights = snippet.pluck(row, 'weight');
+            const sum = calculator.sum(weights);
 
-            if (row.length && self._changedStackDirection(sum, weights, baseSize, datum.weight)) {
+            if (row.length && this._changedStackDirection(sum, weights, baseSize, datum.weight)) {
                 addBounds(row, baseBound, baseSize, sum);
                 row = [];
             }
 
             if (!row.length) {
-                baseSize = self._selectBaseSize(baseBound);
-                addBounds = self._getAddingBoundsFunction(baseBound);
+                baseSize = this._selectBaseSize(baseBound);
+                addBounds = this._getAddingBoundsFunction(baseBound);
             }
 
             row.push(datum);
@@ -268,5 +253,3 @@ var squarifier = {
         return this.boundMap;
     }
 };
-
-module.exports = squarifier;

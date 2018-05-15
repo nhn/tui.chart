@@ -4,14 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import LineTypeSeriesBase from './lineTypeSeriesBase';
 
-var Series = require('./series');
-
-var LineTypeSeriesBase = require('./lineTypeSeriesBase');
-var snippet = require('tui-code-snippet');
-
-var LineChartSeries = snippet.defineClass(Series, /** @lends LineChartSeries.prototype */ {
+class LineChartSeries extends Series {
     /**
      * Line chart series component.
      * @constructs LineChartSeries
@@ -23,15 +19,15 @@ var LineChartSeries = snippet.defineClass(Series, /** @lends LineChartSeries.pro
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
-    init: function() {
-        Series.apply(this, arguments);
+    constructor(...args) {
+        super(...args);
 
         /**
          * object for requestAnimationFrame
          * @type {null | {id: number}}
          */
         this.movingAnimation = null;
-    },
+    }
 
     /**
      * Make positions for rendering graph and sending to mouse event detector.
@@ -39,9 +35,9 @@ var LineChartSeries = snippet.defineClass(Series, /** @lends LineChartSeries.pro
      * @returns {Array.<Array.<{left: number, top: number}>>} positions
      * @private
      */
-    _makePositions: function(seriesWidth) {
+    _makePositions(seriesWidth) {
         return this._makeBasicPositions(seriesWidth);
-    },
+    }
 
     /**
      * Make series data for rendering graph and sending to mouse event detector.
@@ -49,47 +45,42 @@ var LineChartSeries = snippet.defineClass(Series, /** @lends LineChartSeries.pro
      * @private
      * @override
      */
-    _makeSeriesData: function() {
-        var groupPositions = this._makePositions();
+    _makeSeriesData() {
+        const groupPositions = this._makePositions();
 
         return {
             chartBackground: this.chartBackground,
-            groupPositions: groupPositions,
-            isAvailable: function() {
-                return groupPositions && groupPositions.length > 0;
-            }
+            groupPositions,
+            isAvailable: () => (groupPositions && groupPositions.length > 0)
         };
-    },
+    }
 
     /**
      * Rerender.
      * @param {object} data - data for rerendering
      * @override
      */
-    rerender: function(data) {
-        var paper;
-
+    rerender(data) {
         this._cancelMovingAnimation();
 
-        paper = Series.prototype.rerender.call(this, data);
-
-        return paper;
+        return Series.prototype.rerender.call(this, data);
     }
-});
+}
 
 LineTypeSeriesBase.mixin(LineChartSeries);
 
-function lineSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
-
-    params.libType = libType;
+/**
+ * lineSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} linechart series instanse
+ * @ignore
+ */
+export default function lineSeriesFactory(params) {
+    params.libType = params.chartOptions.libType;
     params.chartType = 'line';
-    params.chartBackground = chartTheme.chart.background;
+    params.chartBackground = params.chartTheme.chart.background;
 
     return new LineChartSeries(params);
 }
 
 lineSeriesFactory.componentType = 'series';
-
-module.exports = lineSeriesFactory;

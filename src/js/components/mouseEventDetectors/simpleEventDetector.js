@@ -4,14 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import MouseEventDetectorBase from './mouseEventDetectorBase';
+import renderUtil from '../../helpers/renderUtil';
 
-var chartConst = require('../../const');
-var MouseEventDetectorBase = require('./mouseEventDetectorBase');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-var SimpleEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends SimpleEventDetector.prototype */ {
+class SimpleEventDetector extends MouseEventDetectorBase {
     /**
      * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
      * @constructs SimpleEventDetector
@@ -20,7 +17,8 @@ var SimpleEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends
      *      @param {string} params.chartType - chart type
      * @extends MouseEventDetectorBase
      */
-    init: function(params) {
+    constructor(params) {
+        super();
         /**
          * chart type
          * @type {string}
@@ -34,23 +32,23 @@ var SimpleEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends
          * @type {object}
          */
         this.eventBus = params.eventBus;
-    },
+    }
 
     /**
      * Render mouse event detector area
      * @param {HTMLElement} mouseEventDetectorContainer - container element for mouse event detector
      * @private
      */
-    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
+    _renderMouseEventDetectorArea(mouseEventDetectorContainer) {
         renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
         renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
-    },
+    }
 
     /**
      * Initialize data of mouse event detector
      * @override
      */
-    onReceiveSeriesData: function() {},
+    onReceiveSeriesData() {}
 
     /**
      * On click.
@@ -58,9 +56,9 @@ var SimpleEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends
      * @private
      * @override
      */
-    _onClick: function(e) {
+    _onClick(e) {
         this._onMouseEvent('click', e);
-    },
+    }
 
     /**
      * On mouse move.
@@ -68,9 +66,9 @@ var SimpleEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends
      * @private
      * @override
      */
-    _onMousemove: function(e) {
+    _onMousemove(e) {
         this._onMouseEvent('move', e);
-    },
+    }
 
     /**
      * On mouse out.
@@ -78,15 +76,20 @@ var SimpleEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends
      * @private
      * @override
      */
-    _onMouseout: function(e) {
+    _onMouseout(e) {
         this._onMouseEvent('move', e);
     }
-});
+}
 
-function simpleTypeEventDetectorFactory(params) {
+/**
+ * simpleTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} simple type event detector instanse
+ * @ignore
+ */
+export default function simpleTypeEventDetectorFactory(params) {
     return new SimpleEventDetector(params);
 }
 
 simpleTypeEventDetectorFactory.componentType = 'mouseEventDetector';
 
-module.exports = simpleTypeEventDetectorFactory;

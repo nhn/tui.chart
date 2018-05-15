@@ -5,12 +5,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
-
-var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
+export default class SeriesGroup {
     /**
      * SeriesGroup is a element of SeriesDataModel.groups.
      * SeriesGroup.items has SeriesItem.
@@ -18,7 +16,7 @@ var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
      * @private
      * @param {Array.<SeriesItem>} seriesItems - series items
      */
-    init: function(seriesItems) {
+    constructor(seriesItems) {
         /**
          * items has SeriesItem
          * @type {Array.<SeriesItem>}
@@ -32,32 +30,32 @@ var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
         this.valuesMap = {};
 
         this.valuesMapPerStack = null;
-    },
+    }
 
     /**
      * Get series item count.
      * @returns {number}
      */
-    getSeriesItemCount: function() {
+    getSeriesItemCount() {
         return this.items.length;
-    },
+    }
 
     /**
      * Get series item.
      * @param {number} index - index of items
      * @returns {SeriesItem}
      */
-    getSeriesItem: function(index) {
+    getSeriesItem(index) {
         return this.items[index];
-    },
+    }
 
     /**
      * Get first SeriesItem.
      * @returns {SeriesItem}
      */
-    getFirstSeriesItem: function() {
+    getFirstSeriesItem() {
         return this.getSeriesItem(0);
-    },
+    }
 
     /**
      * Create values that picked value from SeriesItems.
@@ -65,10 +63,10 @@ var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
      * @returns {Array.<number>}
      * @private
      */
-    _createValues: function(valueType) {
-        var values = [];
+    _createValues(valueType) {
+        const values = [];
 
-        this.each(function(item) {
+        this.each(item => {
             if (!item) {
                 return;
             }
@@ -82,14 +80,14 @@ var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
         });
 
         return values;
-    },
+    }
 
     /**
      * Get values from valuesMap.
      * @param {?string} valueType - type of value
      * @returns {Array}
      */
-    getValues: function(valueType) {
+    getValues(valueType) {
         valueType = valueType || 'value';
 
         if (!this.valuesMap[valueType]) {
@@ -97,17 +95,17 @@ var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
         }
 
         return this.valuesMap[valueType];
-    },
+    }
 
     /**
      * Make values map per stack.
      * @returns {object}
      * @private
      */
-    _makeValuesMapPerStack: function() {
-        var valuesMap = {};
+    _makeValuesMapPerStack() {
+        const valuesMap = {};
 
-        this.each(function(item) {
+        this.each(item => {
             if (!valuesMap[item.stack]) {
                 valuesMap[item.stack] = [];
             }
@@ -115,145 +113,143 @@ var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
         });
 
         return valuesMap;
-    },
+    }
 
     /**
      * Get values map per stack.
      * @returns {*|Object}
      */
-    getValuesMapPerStack: function() {
+    getValuesMapPerStack() {
         if (!this.valuesMapPerStack) {
             this.valuesMapPerStack = this._makeValuesMapPerStack();
         }
 
         return this.valuesMapPerStack;
-    },
+    }
 
     /**
      * Make sum map per stack.
      * @returns {object} sum map
      * @private
      */
-    _makeSumMapPerStack: function() {
-        var valuesMap = this.getValuesMapPerStack(),
-            sumMap = {};
+    _makeSumMapPerStack() {
+        const valuesMap = this.getValuesMapPerStack();
+        const sumMap = {};
 
-        snippet.forEach(valuesMap, function(values, key) {
-            sumMap[key] = calculator.sum(snippet.map(values, function(value) {
-                return Math.abs(value);
-            }));
+        Object.entries(valuesMap).forEach(([key, values]) => {
+            sumMap[key] = calculator.sum(values.map(value => Math.abs(value)));
         });
 
         return sumMap;
-    },
+    }
 
     /**
      * Add start value to all series item.
      * @param {number} start start value
      */
-    addStartValueToAllSeriesItem: function(start) {
-        this.each(function(item) {
+    addStartValueToAllSeriesItem(start) {
+        this.each(item => {
             if (!item) {
                 return;
             }
             item.addStart(start);
         });
-    },
+    }
 
     /**
      * Add ratios when percent stackType.
      * @param {number} baseRatio - base ratio
      */
-    addRatiosWhenPercentStacked: function(baseRatio) {
-        var sumMap = this._makeSumMapPerStack();
+    addRatiosWhenPercentStacked(baseRatio) {
+        const sumMap = this._makeSumMapPerStack();
 
-        this.each(function(item) {
-            var dividingNumber = sumMap[item.stack];
+        this.each(item => {
+            const dividingNumber = sumMap[item.stack];
 
             item.addRatio(dividingNumber, 0, baseRatio);
         });
-    },
+    }
 
     /**
      * Add ratios when diverging stacked.
      * @param {number} plusSum - sum of plus number
      * @param {number} minusSum - sum of minus number
      */
-    addRatiosWhenDivergingStacked: function(plusSum, minusSum) {
-        this.each(function(item) {
-            var dividingNumber = (item.value >= 0) ? plusSum : minusSum;
+    addRatiosWhenDivergingStacked(plusSum, minusSum) {
+        this.each(item => {
+            const dividingNumber = (item.value >= 0) ? plusSum : minusSum;
 
             item.addRatio(dividingNumber, 0, 0.5);
         });
-    },
+    }
 
     /**
      * Add ratios.
      * @param {number} divNumber dividing number
      * @param {number} subValue subtraction value
      */
-    addRatios: function(divNumber, subValue) {
-        this.each(function(item) {
+    addRatios(divNumber, subValue) {
+        this.each(item => {
             if (!item) {
                 return;
             }
             item.addRatio(divNumber, subValue);
         });
-    },
+    }
 
     /**
      * Whether has range data or not.
      * @returns {boolean}
      */
-    hasRangeData: function() {
-        var hasRangeData = false;
+    hasRangeData() {
+        let hasRangeData = false;
 
-        this.each(function(seriesItem) {
+        this.each(seriesItem => {
             hasRangeData = seriesItem && seriesItem.isRange;
 
             return !hasRangeData;
         });
 
         return hasRangeData;
-    },
+    }
 
     /**
      * Traverse items, and executes iteratee function.
      * @param {function} iteratee - iteratee function
      */
-    each: function(iteratee) {
-        snippet.forEachArray(this.items, iteratee);
-    },
+    each(iteratee) {
+        this.items.forEach(iteratee);
+    }
 
     /**
      * Traverse items, and returns to results of execution about iteratee function.
      * @param {function} iteratee - iteratee function
      * @returns {Array}
      */
-    map: function(iteratee) {
-        return snippet.map(this.items, iteratee);
-    },
+    map(iteratee) {
+        return this.items.map(iteratee);
+    }
 
     /**
      * Traverse items, and returns to picked result at item.
      * @param {string} key key for pick
      * @returns {Array}
      */
-    pluck: function(key) {
-        var items = snippet.filter(this.items, snippet.isExisty);
+    pluck(key) {
+        const items = this.items.filter(snippet.isExisty);
 
         return snippet.pluck(items, key);
-    },
+    }
 
     /**
      * Traverse items, and returns to found SeriesItem by condition function.
      * @param {function} condition - condition function
      * @returns {SeriesItem|null}
      */
-    find: function(condition) {
-        var foundItem;
+    find(condition) {
+        let foundItem;
 
-        this.each(function(seriesItem) {
+        this.each(seriesItem => {
             if (condition(seriesItem)) {
                 foundItem = seriesItem;
             }
@@ -262,16 +258,14 @@ var SeriesGroup = snippet.defineClass(/** @lends SeriesGroup.prototype */{
         });
 
         return foundItem || null;
-    },
+    }
 
     /**
      * Traverse items, and returns to filter SeriesItems by condition function.
      * @param {function} condition - condition function
      * @returns {Array}
      */
-    filter: function(condition) {
-        return snippet.filter(this.items, condition);
+    filter(condition) {
+        return this.items.filter(condition);
     }
-});
-
-module.exports = SeriesGroup;
+}

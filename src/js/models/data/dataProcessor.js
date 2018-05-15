@@ -6,25 +6,22 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import DataProcessorBase from './dataProcessorBase';
 
-var chartConst = require('../../const');
-var DataProcessorBase = require('./dataProcessorBase');
-var SeriesDataModel = require('../data/seriesDataModel');
-var SeriesDataModelForBoxplot = require('../data/seriesDataModelForBoxplot');
-var SeriesDataModelForBullet = require('../data/seriesDataModelForBullet');
-var SeriesDataModelForTreemap = require('../data/seriesDataModelForTreemap');
-var SeriesGroup = require('./seriesGroup');
-var rawDataHandler = require('../../models/data/rawDataHandler');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
-var objectUtil = require('../../helpers/objectUtil');
-var snippet = require('tui-code-snippet');
+import SeriesDataModel from '../data/seriesDataModel';
+import SeriesDataModelForBoxplot from '../data/seriesDataModelForBoxplot';
+import SeriesDataModelForBullet from '../data/seriesDataModelForBullet';
+import SeriesDataModelForTreemap from '../data/seriesDataModelForTreemap';
+import SeriesGroup from './seriesGroup';
+import rawDataHandler from '../../models/data/rawDataHandler';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import calculator from '../../helpers/calculator';
+import objectUtil from '../../helpers/objectUtil';
+import snippet from 'tui-code-snippet';
 
-var concat = Array.prototype.concat;
-
-var isUndefined = snippet.isUndefined;
+const {isUndefined} = snippet;
 
 /*
  * Raw series datum.
@@ -55,7 +52,7 @@ var isUndefined = snippet.isUndefined;
  * SeriesGroup.items has SeriesItem.
  */
 
-var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProcessor.prototype */{
+export default class DataProcessor extends DataProcessorBase {
     /**
      * Data processor.
      * @constructs DataProcessor
@@ -65,7 +62,8 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {object} options options
      * @param {Array.<string>} seriesTypes chart types
      */
-    init: function(rawData, chartType, options, seriesTypes) {
+    constructor(rawData, chartType, options, seriesTypes) {
+        super();
         /**
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
@@ -113,22 +111,22 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         this.initData(rawData);
         this.initZoomedRawData();
         this.baseInit();
-    },
+    }
 
     /**
      * Get original raw data.
      * @returns {rawData} raw data
      */
-    getOriginalRawData: function() {
+    getOriginalRawData() {
         return objectUtil.deepCopy(this.originalRawData);
-    },
+    }
 
     /**
      * Get zoomed raw data.
      * @returns {*|null}
      */
-    getZoomedRawData: function() {
-        var zoomedRawData = this.zoomedRawData;
+    getZoomedRawData() {
+        let {zoomedRawData} = this;
 
         if (zoomedRawData) {
             zoomedRawData = objectUtil.deepCopy(zoomedRawData);
@@ -137,7 +135,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return zoomedRawData;
-    },
+    }
 
     /**
      * Filter seriesData by index range.
@@ -147,13 +145,13 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _filterSeriesDataByIndexRange: function(seriesData, startIndex, endIndex) {
-        snippet.forEachArray(seriesData, function(seriesDatum) {
+    _filterSeriesDataByIndexRange(seriesData, startIndex, endIndex) {
+        seriesData.forEach(seriesDatum => {
             seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
         });
 
         return seriesData;
-    },
+    }
 
     /**
      * Filter raw data by index range.
@@ -162,13 +160,11 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {*}
      * @private
      */
-    _filterRawDataByIndexRange: function(rawData, indexRange) {
-        var self = this;
-        var startIndex = indexRange[0];
-        var endIndex = indexRange[1];
+    _filterRawDataByIndexRange(rawData, indexRange) {
+        const [startIndex, endIndex] = indexRange;
 
-        snippet.forEach(rawData.series, function(seriesDataSet, seriesType) {
-            rawData.series[seriesType] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+        Object.entries(rawData.series).forEach(([seriesType, seriesDataSet]) => {
+            rawData.series[seriesType] = this._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 
         if (rawData.categories) {
@@ -176,33 +172,33 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return rawData;
-    },
+    }
 
     /**
      * Update raw data for zoom
      * @param {Array.<number>} indexRange - index range for zoom
      */
-    updateRawDataForZoom: function(indexRange) {
-        var rawData = this.getRawData();
-        var zoomedRawData = this.getZoomedRawData();
+    updateRawDataForZoom(indexRange) {
+        const zoomedRawData = this.getZoomedRawData();
+        let rawData = this.getRawData();
 
         this.zoomedRawData = this._filterRawDataByIndexRange(zoomedRawData, indexRange);
         rawData = this._filterRawDataByIndexRange(rawData, indexRange);
         this.initData(rawData);
-    },
+    }
 
     /**
      * Init zoomed raw data.
      */
-    initZoomedRawData: function() {
+    initZoomedRawData() {
         this.zoomedRawData = null;
-    },
+    }
 
     /**
      * Initialize data.
      * @param {rawData} rawData raw data
      */
-    initData: function(rawData) {
+    initData(rawData) {
         /**
          * raw data
          * @type {rawData}
@@ -268,24 +264,24 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
          * @type {null|boolean}
          */
         this.coordinateType = null;
-    },
+    }
 
     /**
      * Get raw data.
      * @returns {rawData}
      */
-    getRawData: function() {
+    getRawData() {
         return this.rawData;
-    },
+    }
 
     /**
      * Find chart type from series name.
      * @param {string} seriesType - series name
      * @returns {*}
      */
-    findChartType: function(seriesType) {
+    findChartType(seriesType) {
         return rawDataHandler.findChartType(this.rawData.seriesAlias, seriesType);
-    },
+    }
 
     /**
      * Escape categories.
@@ -293,11 +289,9 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {*|Array.<Object>|Array}
      * @private
      */
-    _escapeCategories: function(categories) {
-        return snippet.map(categories, function(category) {
-            return snippet.encodeHTMLEntity(String(category));
-        });
-    },
+    _escapeCategories(categories) {
+        return categories.map(category => snippet.encodeHTMLEntity(String(category)));
+    }
 
     /**
      * Map categories.
@@ -306,29 +300,25 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {Array.<string | number>}
      * @private
      */
-    _mapCategories: function(categories, axisName) {
-        var axisType = axisName + 'Axis';
-        var options = this.options[axisType] || {};
-        var isDateTime = false;
+    _mapCategories(categories, axisName) {
+        const axisType = `${axisName}Axis`;
+        const options = this.options[axisType] || {};
+        let isDateTime = false;
 
         if (snippet.isArray(options)) {
-            isDateTime = snippet.filter(options, function(option) {
-                return option.type && predicate.isDatetimeType(option.type);
-            });
+            isDateTime = options.filter(option => option.type && predicate.isDatetimeType(option.type));
         } else {
             isDateTime = options.type && predicate.isDatetimeType(options.type);
         }
         if (isDateTime) {
-            categories = snippet.map(categories, function(value) {
-                return this.chageDatetypeToTimestamp(value);
-            }, this);
+            categories = categories.map(value => this.chageDatetypeToTimestamp(value));
         } else {
             categories = this._escapeCategories(categories);
         }
         this.categoriesIsDateTime[axisName] = isDateTime;
 
         return categories;
-    },
+    }
 
     /**
      * Process categories.
@@ -336,9 +326,9 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {null | Array.<string>} processed categories
      * @private
      */
-    _processCategories: function(type) {
-        var rawCategories = this.rawData.categories;
-        var categoriesMap = {};
+    _processCategories(type) {
+        const rawCategories = this.rawData.categories;
+        const categoriesMap = {};
 
         if (snippet.isArray(rawCategories)) {
             categoriesMap[type] = this._mapCategories(rawCategories, type);
@@ -353,16 +343,16 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return categoriesMap;
-    },
+    }
 
     /**
      * Get Categories
      * @param {boolean} isVertical - whether vertical or not
      * @returns {Array.<string>}}
      */
-    getCategories: function(isVertical) {
-        var type = isVertical ? 'y' : 'x';
-        var foundCategories = [];
+    getCategories(isVertical) {
+        const type = isVertical ? 'y' : 'x';
+        let foundCategories = [];
 
         if (!this.categoriesMap) {
             this.categoriesMap = this._processCategories(type);
@@ -371,7 +361,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         if (snippet.isExisty(isVertical)) {
             foundCategories = this.categoriesMap[type] || [];
         } else {
-            snippet.forEach(this.categoriesMap, function(categories) {
+            Object.values(this.categoriesMap).every(categories => {
                 foundCategories = categories;
 
                 return false;
@@ -379,85 +369,85 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return foundCategories;
-    },
+    }
 
     /**
      * Get Category date type
      * @param {boolean} isVertical - whether vertical or not
      * @returns {boolean}
      */
-    getCategorieDateType: function(isVertical) {
-        var type = isVertical ? 'y' : 'x';
+    getCategorieDateType(isVertical) {
+        const type = isVertical ? 'y' : 'x';
 
         return this.categoriesIsDateTime[type];
-    },
+    }
 
     /**
      * value to timestamp of datetype category
      * @param {string} dateTypeValue - datetype category value
      * @returns {boolean}
      */
-    chageDatetypeToTimestamp: function(dateTypeValue) {
-        var date = new Date(dateTypeValue);
+    chageDatetypeToTimestamp(dateTypeValue) {
+        let date = new Date(dateTypeValue);
         if (!(date.getTime() > 0)) {
             date = new Date(parseInt(dateTypeValue, 10));
         }
 
         return date.getTime() || dateTypeValue;
-    },
+    }
 
     /**
      * Get category count.
      * @param {boolean} isVertical - whether vertical or not
      * @returns {*}
      */
-    getCategoryCount: function(isVertical) {
-        var categories = this.getCategories(isVertical);
+    getCategoryCount(isVertical) {
+        const categories = this.getCategories(isVertical);
 
         return categories ? categories.length : 0;
-    },
+    }
 
     /**
      * Whether has categories or not.
      * @param {boolean} isVertical - whether vertical or not
      * @returns {boolean}
      */
-    hasCategories: function(isVertical) {
+    hasCategories(isVertical) {
         return !!this.getCategoryCount(isVertical);
-    },
+    }
 
     /**
      * Whether count of x data grater than count of y data.
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isXCountGreaterThanYCount: function(chartType) {
-        var seriesDataModel = this.getSeriesDataModel(chartType);
+    isXCountGreaterThanYCount(chartType) {
+        const seriesDataModel = this.getSeriesDataModel(chartType);
 
         return seriesDataModel.isXCountGreaterThanYCount();
-    },
+    }
 
     /**
      * Whether has x value or not.
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    hasXValue: function(chartType) {
-        var hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
+    hasXValue(chartType) {
+        const hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
 
         return !this.hasCategories(hasVerticalCategory) || hasVerticalCategory;
-    },
+    }
 
     /**
      * Whether has y value or not.
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    hasYValue: function(chartType) {
-        var hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
+    hasYValue(chartType) {
+        const hasVerticalCategory = this.isXCountGreaterThanYCount(chartType);
 
         return !this.hasCategories(hasVerticalCategory) || !hasVerticalCategory;
-    },
+    }
 
     /**
      * Get category.
@@ -465,21 +455,21 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {boolean} isVertical - whether vertical or not
      * @returns {string} category
      */
-    getCategory: function(index, isVertical) {
+    getCategory(index, isVertical) {
         return this.getCategories(isVertical)[index];
-    },
+    }
 
     /**
      * Find category index by value
      * @param {string} value - category value
      * @returns {null|number}
      */
-    findCategoryIndex: function(value) {
-        var categories = this.getCategories();
-        var isDateType = this.getCategorieDateType();
-        var foundIndex = null;
+    findCategoryIndex(value) {
+        const categories = this.getCategories();
+        const isDateType = this.getCategorieDateType();
+        let foundIndex = null;
 
-        snippet.forEachArray(categories, function(category, index) {
+        categories.forEach((category, index) => {
             if (isDateType) {
                 value = this.chageDatetypeToTimestamp(value);
             }
@@ -489,25 +479,25 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
             }
 
             return snippet.isNull(foundIndex);
-        }, this);
+        });
 
         return foundIndex;
-    },
+    }
 
     /**
      * @param {string} value - category
      * @returns {number} - found: category index, not found: -1
      */
-    findAbsoluteCategoryIndex: function(value) {
-        var originalCategories = this.originalRawData ? this.originalRawData.categories : null;
-        var index = -1;
+    findAbsoluteCategoryIndex(value) {
+        const originalCategories = this.originalRawData ? this.originalRawData.categories : null;
+        let index = -1;
 
         if (!originalCategories) {
             return index;
         }
 
-        snippet.forEach(originalCategories, function(category, categoryIndex) {
-            var found = category === value;
+        originalCategories.forEach((category, categoryIndex) => {
+            const found = category === value;
             if (found) {
                 index = categoryIndex;
             }
@@ -516,7 +506,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         });
 
         return index;
-    },
+    }
 
     /**
      * Get tooltip category.
@@ -525,11 +515,11 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {string}
      * @private
      */
-    _getTooltipCategory: function(categoryIndex, isVertical) {
-        var category = this.getCategory(categoryIndex, isVertical);
-        var axisType = isVertical ? 'yAxis' : 'xAxis';
-        var axisOption = this.options[axisType] || {};
-        var tooltipOption = this.options.tooltip || {};
+    _getTooltipCategory(categoryIndex, isVertical) {
+        let category = this.getCategory(categoryIndex, isVertical);
+        const axisType = isVertical ? 'yAxis' : 'xAxis';
+        const axisOption = this.options[axisType] || {};
+        const tooltipOption = this.options.tooltip || {};
 
         if (predicate.isDatetimeType(tooltipOption.type)) {
             category = renderUtil.formatDate(category, tooltipOption.dateFormat);
@@ -538,7 +528,8 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return category;
-    },
+    }
+
     /**
      * Make category for tooltip.
      * @param {number} categoryIndex - category index
@@ -546,58 +537,59 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {boolean} isVerticalChart - whether vertical chart or not
      * @returns {string}
      */
-    makeTooltipCategory: function(categoryIndex, oppositeIndex, isVerticalChart) {
-        var isVertical = !isVerticalChart;
-        var category = this._getTooltipCategory(categoryIndex, isVertical);
-        var categoryCount = this.getCategoryCount(!isVertical);
+    makeTooltipCategory(categoryIndex, oppositeIndex, isVerticalChart) {
+        const isVertical = !isVerticalChart;
+        let category = this._getTooltipCategory(categoryIndex, isVertical);
+        const categoryCount = this.getCategoryCount(!isVertical);
 
         if (categoryCount) {
-            category += ', ' + this._getTooltipCategory(categoryCount - oppositeIndex - 1, !isVertical);
+            category += `, ${this._getTooltipCategory(categoryCount - oppositeIndex - 1, !isVertical)}`;
         }
 
         return category;
-    },
+    }
 
     /**
      * Get stacks from raw series data.
      * @param {string} seriesType seriesType to count stacks
      * @returns {Array.<string>}
      */
-    getStacks: function(seriesType) {
+    getStacks(seriesType) {
         if (!this.stacks) {
             this.stacks = rawDataHandler.pickStacks(this.rawData.series[seriesType]);
         }
 
         return this.stacks;
-    },
+    }
 
     /**
      * Get stack count.
      * @param {string} seriesType - series type
      * @returns {Number}
      */
-    getStackCount: function(seriesType) {
+    getStackCount(seriesType) {
         return this.getStacks(seriesType).length;
-    },
+    }
 
     /**
      * Find stack index from stack list by stack value.
      * @param {string} stack stack
      * @returns {number}
      */
-    findStackIndex: function(stack) {
+    findStackIndex(stack) {
         return snippet.inArray(stack, this.getStacks());
-    },
+    }
 
     /**
      * Whether coordinate type or not.
      * @returns {boolean}
      */
-    isCoordinateType: function() {
-        var chartType = this.chartType;
-        var coordinateType = this.coordinateType;
+    isCoordinateType() {
+        let {coordinateType} = this;
 
         if (!snippet.isExisty(coordinateType)) {
+            const {chartType} = this;
+
             coordinateType = predicate.isCoordinateTypeChart(chartType);
             coordinateType = coordinateType || predicate.isLineScatterComboChart(chartType, this.seriesTypes);
             coordinateType = coordinateType || (predicate.isLineTypeChart(chartType) && !this.hasCategories());
@@ -605,19 +597,18 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return coordinateType;
-    },
+    }
 
     /**
      * Get SeriesDataModel.
      * @param {string} seriesType - series name
      * @returns {SeriesDataModel}
      */
-    getSeriesDataModel: function(seriesType) {
-        var rawSeriesData, chartType, SeriesDataModelClass;
-
+    getSeriesDataModel(seriesType) {
         if (!this.seriesDataModelMap[seriesType]) {
-            chartType = this.findChartType(seriesType);
-            rawSeriesData = this.rawData.series[seriesType];
+            const chartType = this.findChartType(seriesType);
+            const rawSeriesData = this.rawData.series[seriesType];
+            let SeriesDataModelClass;
 
             if (predicate.isBoxplotChart(this.chartType)) {
                 SeriesDataModelClass = SeriesDataModelForBoxplot;
@@ -629,53 +620,58 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
                 SeriesDataModelClass = SeriesDataModel;
             }
 
-            this.seriesDataModelMap[seriesType] = new SeriesDataModelClass(rawSeriesData, chartType,
-                this.options, this.getFormatFunctions(), this.isCoordinateType());
+            this.seriesDataModelMap[seriesType] = new SeriesDataModelClass(
+                rawSeriesData,
+                chartType,
+                this.options,
+                this.getFormatFunctions(),
+                this.isCoordinateType()
+            );
         }
 
         return this.seriesDataModelMap[seriesType];
-    },
+    }
 
     /**
      * Get chart option
      * @param {string} optionType option category
      * @returns {object}
      */
-    getOption: function(optionType) {
+    getOption(optionType) {
         return this.options[optionType];
-    },
+    }
 
     /**
      * Get group count.
      * @param {string} chartType chart type
      * @returns {number}
      */
-    getGroupCount: function(chartType) {
+    getGroupCount(chartType) {
         return this.getSeriesDataModel(chartType).getGroupCount();
-    },
+    }
 
     /**
      * Push category.
      * @param {string} category - category
      * @private
      */
-    _pushCategory: function(category) {
+    _pushCategory(category) {
         if (this.rawData.categories) {
             this.rawData.categories.push(category);
             this.originalRawData.categories.push(category);
         }
-    },
+    }
 
     /**
      * Shift category.
      * @private
      */
-    _shiftCategory: function() {
+    _shiftCategory() {
         if (this.rawData.categories) {
             this.rawData.categories.shift();
             this.originalRawData.categories.shift();
         }
-    },
+    }
 
     /**
      * Find raw series datum by name.
@@ -684,13 +680,12 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {object}
      * @private
      */
-    _findRawSeriesDatumByName: function(name, seriesType) {
-        var foundSeriesDatum = null;
-        var seriesData = this.rawData.series[seriesType];
+    _findRawSeriesDatumByName(name, seriesType) {
+        const seriesData = this.rawData.series[seriesType];
+        let foundSeriesDatum = null;
 
-        snippet.forEachArray(seriesData, function(seriesDatum) {
-            var isEqual = seriesDatum.name === name;
-
+        seriesData.forEach(seriesDatum => {
+            const isEqual = seriesDatum.name === name;
             if (isEqual) {
                 foundSeriesDatum = seriesDatum;
             }
@@ -699,7 +694,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         });
 
         return foundSeriesDatum;
-    },
+    }
 
     /**
      * Push value to data property of series.
@@ -708,15 +703,15 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} seriesType - sereis name
      * @private
      */
-    _pushValue: function(seriesDatum, value, seriesType) {
-        var rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesType);
+    _pushValue(seriesDatum, value, seriesType) {
+        const rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesType);
 
         seriesDatum.data.push(value);
 
         if (rawSeriesDatum) {
             rawSeriesDatum.data.push(value);
         }
-    },
+    }
 
     /**
      * Push values to series of originalRawData and series of rawData.
@@ -725,33 +720,28 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} [seriesType] - series name
      * @private
      */
-    _pushValues: function(seriesData, values, seriesType) {
-        var self = this;
-
-        snippet.forEachArray(seriesData, function(seriesDatum, index) {
-            self._pushValue(seriesDatum, values[index], seriesType);
+    _pushValues(seriesData, values, seriesType) {
+        seriesData.forEach((seriesDatum, index) => {
+            this._pushValue(seriesDatum, values[index], seriesType);
         });
-    },
+    }
 
     /**
      * Push series data.
      * @param {Array.<number>} values - values
      * @private
      */
-    _pushSeriesData: function(values) {
-        var self = this;
-        var temp;
-
+    _pushSeriesData(values) {
         if (this.chartType !== 'combo' && snippet.isArray(values)) {
-            temp = values;
+            const temp = values;
             values = {};
             values[this.chartType] = temp;
         }
 
-        snippet.forEach(this.originalRawData.series, function(seriesData, seriesType) {
-            self._pushValues(seriesData, values[seriesType], seriesType);
+        Object.entries(this.originalRawData.series).forEach(([seriesType, seriesData]) => {
+            this._pushValues(seriesData, values[seriesType], seriesType);
         });
-    },
+    }
 
     /**
      * Shift values.
@@ -759,71 +749,66 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} seriesType - series name
      * @private
      */
-    _shiftValues: function(seriesData, seriesType) {
-        var self = this;
-
-        snippet.forEachArray(seriesData, function(seriesDatum) {
-            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesType);
+    _shiftValues(seriesData, seriesType) {
+        seriesData.forEach(seriesDatum => {
+            const rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesType);
 
             seriesDatum.data.shift();
             if (rawSeriesDatum) {
                 rawSeriesDatum.data.shift();
             }
         });
-    },
+    }
 
     /**
      * Shift series data.
      * @private
      */
-    _shiftSeriesData: function() {
-        var self = this;
-
-        snippet.forEach(this.originalRawData.series, function(seriesData, seriesType) {
-            self._shiftValues(seriesData, seriesType);
+    _shiftSeriesData() {
+        Object.entries(this.originalRawData.series).forEach(([seriesType, seriesData]) => {
+            this._shiftValues(seriesData, seriesType);
         });
-    },
+    }
 
     /**
      * Add dynamic data.
      * @param {string} category - category
      * @param {Array.<number>} values - values
      */
-    addDynamicData: function(category, values) {
+    addDynamicData(category, values) {
         this.dynamicData.push({
-            category: category,
-            values: values
+            category,
+            values
         });
-    },
+    }
 
     /**
      * Push dynamic data.
      * @param {{category: string, values: Array.<number>}} data - adding data
      * @private
      */
-    _pushDynamicData: function(data) {
+    _pushDynamicData(data) {
         this._pushCategory(data.category);
         this._pushSeriesData(data.values);
-    },
+    }
 
     /**
      * Push dynamic data for coordinate type.
      * @param {object.<string, Array.<number>|object.<string, number>>} data - adding data
      * @private
      */
-    _pushDynamicDataForCoordinateType: function(data) {
-        var self = this;
-        snippet.forEachArray(this.originalRawData.series, function(seriesDatum) {
-            self._pushValue(seriesDatum, data[seriesDatum.name]);
+    _pushDynamicDataForCoordinateType(data) {
+        Object.values(this.originalRawData.series).forEach(seriesDatum => {
+            this._pushValue(seriesDatum, data[seriesDatum.name]);
         });
-    },
+    }
 
     /**
      * Add data from dynamic data.
      * @returns {boolean}
      */
-    addDataFromDynamicData: function() {
-        var datum = this.dynamicData.shift();
+    addDataFromDynamicData() {
+        const datum = this.dynamicData.shift();
 
         if (datum) {
             if (this.isCoordinateType()) {
@@ -836,81 +821,73 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return !!datum;
-    },
+    }
 
     /**
      * Shift data.
      */
-    shiftData: function() {
+    shiftData() {
         this._shiftCategory();
         this._shiftSeriesData();
 
         this.initData(this.rawData);
-    },
+    }
 
     /**
      * Add data from remain dynamic data.
      * @param {boolean} shiftingOption - whether has shifting option or not.
      */
-    addDataFromRemainDynamicData: function(shiftingOption) {
-        var self = this;
-        var dynamicData = this.dynamicData;
-
+    addDataFromRemainDynamicData(shiftingOption) {
+        const {dynamicData} = this;
         this.dynamicData = [];
 
-        snippet.forEach(dynamicData, function(datum) {
-            self._pushCategory(datum.category);
-            self._pushSeriesData(datum.values);
+        dynamicData.forEach(datum => {
+            this._pushCategory(datum.category);
+            this._pushSeriesData(datum.values);
             if (shiftingOption) {
-                self._shiftCategory();
-                self._shiftSeriesData();
+                this._shiftCategory();
+                this._shiftSeriesData();
             }
         });
 
         this.initData(this.rawData);
-    },
+    }
 
     /**
      * Traverse all SeriesDataModel by seriesTypes, and executes iteratee function.
      * @param {function} iteratee iteratee function
      * @private
      */
-    _eachByAllSeriesDataModel: function(iteratee) {
-        var self = this,
-            seriesTypes = this.seriesTypes || [this.chartType];
+    _eachByAllSeriesDataModel(iteratee) {
+        const seriesTypes = this.seriesTypes || [this.chartType];
 
-        snippet.forEachArray(seriesTypes, function(chartType) {
-            return iteratee(self.getSeriesDataModel(chartType), chartType);
-        });
-    },
+        seriesTypes.forEach(chartType => iteratee(this.getSeriesDataModel(chartType), chartType));
+    }
 
     /**
      * Whether valid all SeriesDataModel or not.
      * @returns {boolean}
      */
-    isValidAllSeriesDataModel: function() {
-        var isValid = true;
+    isValidAllSeriesDataModel() {
+        let isValid = true;
 
-        this._eachByAllSeriesDataModel(function(seriesDataModel) {
+        this._eachByAllSeriesDataModel(seriesDataModel => {
             isValid = !!seriesDataModel.getGroupCount();
-
-            return isValid;
         });
 
         return isValid;
-    },
+    }
 
     /**
      * Make SeriesGroups.
      * @returns {Array.<SeriesGroup>}
      * @private
      */
-    _makeSeriesGroups: function() {
-        var joinedGroups = [],
-            seriesGroups;
+    _makeSeriesGroups() {
+        const joinedGroups = [];
 
-        this._eachByAllSeriesDataModel(function(seriesDataModel) {
-            seriesDataModel.each(function(seriesGroup, index) {
+        this._eachByAllSeriesDataModel(seriesDataModel => {
+            seriesDataModel.each((seriesGroup, index) => {
                 if (!joinedGroups[index]) {
                     joinedGroups[index] = [];
                 }
@@ -918,24 +895,22 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
             });
         });
 
-        seriesGroups = snippet.map(joinedGroups, function(items) {
-            return new SeriesGroup(items);
-        });
+        const seriesGroups = joinedGroups.map(items => new SeriesGroup(items));
 
         return seriesGroups;
-    },
+    }
 
     /**
      * Get SeriesGroups.
      * @returns {Array.<SeriesGroup>}
      */
-    getSeriesGroups: function() {
+    getSeriesGroups() {
         if (!this.seriesGroups) {
             this.seriesGroups = this._makeSeriesGroups();
         }
 
         return this.seriesGroups;
-    },
+    }
 
     /**
      * Get value.
@@ -944,59 +919,59 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {?string} chartType chart type
      * @returns {number} value
      */
-    getValue: function(groupIndex, index, chartType) {
+    getValue(groupIndex, index, chartType) {
         return this.getSeriesDataModel(chartType).getValue(groupIndex, index);
-    },
+    }
 
     /**
      * Get fallback datetime values
      * @returns {number[]} milliseconds
      */
-    getDefaultDatetimeValues: function() {
-        var hour = 60 * 60 * 1000;
-        var now = Date.now();
+    getDefaultDatetimeValues() {
+        const hour = 60 * 60 * 1000;
+        const now = Date.now();
 
         return [now - hour, now];
-    },
+    }
 
     /**
      * Return boolean value of whether seriesData empty or not
      * @param {string} chartType Type string of chart
      * @returns {boolean}
      */
-    isSeriesDataEmpty: function(chartType) {
-        var rawData = this.rawData;
-        var seriesNotExist = rawData && !rawData.series;
+    isSeriesDataEmpty(chartType) {
+        const {rawData} = this;
+        const seriesNotExist = rawData && !rawData.series;
 
         return (
             !rawData
             || seriesNotExist
             || (!(rawData.series[chartType])
-                || (rawData.series[chartType] && !(rawData.series[chartType].length)))
+            || (rawData.series[chartType] && !(rawData.series[chartType].length)))
         );
-    },
+    }
 
     /**
      * Return boolean value of whether axis limit option empty or not
      * @param {string} axisType Type string of axis
      * @returns {boolean}
      */
-    isLimitOptionsEmpty: function(axisType) {
-        var axisOption = this.options[axisType] || {};
+    isLimitOptionsEmpty(axisType) {
+        const axisOption = this.options[axisType] || {};
 
         return isUndefined(axisOption.min) && isUndefined(axisOption.max);
-    },
+    }
 
     /**
      * Return boolean value of whether axis limit option empty or not
      * @param {string} axisType Type string of axis
      * @returns {boolean}
      */
-    isLimitOptionsInsufficient: function(axisType) {
-        var axisOption = this.options[axisType] || {};
+    isLimitOptionsInsufficient(axisType) {
+        const axisOption = this.options[axisType] || {};
 
         return isUndefined(axisOption.min) || isUndefined(axisOption.max);
-    },
+    }
 
     /**
      * Create values that picked value from SeriesItems of specific SeriesDataModel.
@@ -1006,23 +981,22 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {Array.<number>}
      * @private
      */
-    _createValues: function(chartType, valueType, axisName) {
-        var values, plotValues;
-        var options = this.options;
-        var plotOptions = options.plot;
-        var axisOption = options[axisName] || {};
-        var type = axisOption.type;
-        var isEmptyRawData = this.isSeriesDataEmpty(chartType);
-        var isEmptyLimitOptions = this.isLimitOptionsEmpty(axisName);
-
-        var isInsufficientLimitOptions = this.isLimitOptionsInsufficient(axisName);
-        var isLineOrAreaChart = (predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
+    _createValues(chartType, valueType, axisName) {
+        let values;
+        const {options} = this;
+        const plotOptions = options.plot;
+        const axisOption = options[axisName] || {};
+        const {type} = axisOption;
+        const isEmptyRawData = this.isSeriesDataEmpty(chartType);
+        const isEmptyLimitOptions = this.isLimitOptionsEmpty(axisName);
+        const isInsufficientLimitOptions = this.isLimitOptionsInsufficient(axisName);
+        const isLineOrAreaChart = (predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
             || predicate.isLineAreaComboChart(chartType, this.seriesTypes));
-        var valueCandidate = this.defaultValues;
+        let valueCandidate = this.defaultValues;
 
         if (predicate.isComboChart(chartType)) {
             values = [];
-            this._eachByAllSeriesDataModel(function(seriesDataModel) {
+            this._eachByAllSeriesDataModel(seriesDataModel => {
                 values = values.concat(seriesDataModel.getValues(valueType));
             });
         } else if (isEmptyRawData && isInsufficientLimitOptions) {
@@ -1034,7 +1008,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
                 values = this.getDefaultDatetimeValues();
 
                 if (isLineOrAreaChart && plotOptions) {
-                    plotValues = this.getValuesFromPlotOptions(plotOptions, type);
+                    const plotValues = this.getValuesFromPlotOptions(plotOptions, type);
                     values = values.concat(plotValues);
                 }
             } else {
@@ -1045,7 +1019,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return values;
-    },
+    }
 
     /**
      * Get values of plot lines, and bands if it exist
@@ -1053,27 +1027,25 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} [axisType] axis value type 'value' 'datetime'
      * @returns {Array.<number>}
      */
-    getValuesFromPlotOptions: function(plotOptions, axisType) {
-        var values = [];
+    getValuesFromPlotOptions(plotOptions, axisType) {
+        let values = [];
 
         if (plotOptions.lines) {
-            snippet.forEach(plotOptions.lines, function(line) {
+            plotOptions.lines.forEach(line => {
                 values.push(axisType !== 'datetime' ? line.value : new Date(line.value));
             });
         }
 
         if (plotOptions.bands) {
-            snippet.forEach(plotOptions.bands, function(line) {
-                var ranges = snippet.map(line.range, function(range) {
-                    return axisType !== 'datetime' ? range : new Date(range);
-                });
+            plotOptions.bands.forEach(line => {
+                const ranges = line.range.map(range => (axisType !== 'datetime' ? range : new Date(range)));
 
                 values = values.concat(ranges);
             });
         }
 
         return values;
-    },
+    }
 
     /**
      * Get values from valuesMap.
@@ -1082,31 +1054,28 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {?string} axisType - type of axis value 'value', 'datetime'
      * @returns {Array.<number>}
      */
-    getValues: function(chartType, valueType, axisType) {
-        var mapKey;
-
-        // chartType = chartType || chartConst.DUMMY_KEY;
-        mapKey = chartType + valueType;
+    getValues(chartType, valueType, axisType) {
+        const mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {
             this.valuesMap[mapKey] = this._createValues(chartType, valueType, axisType);
         }
 
         return this.valuesMap[mapKey];
-    },
+    }
 
     /**
      * Traverse SeriesGroup of all SeriesDataModel, and executes iteratee function.
      * @param {function} iteratee iteratee function
      * @param {boolean} [isPivot] - whether pivot or not
      */
-    eachBySeriesGroup: function(iteratee, isPivot) {
-        this._eachByAllSeriesDataModel(function(seriesDataModel, chartType) {
-            seriesDataModel.each(function(seriesGroup, groupIndex) {
+    eachBySeriesGroup(iteratee, isPivot) {
+        this._eachByAllSeriesDataModel((seriesDataModel, chartType) => {
+            seriesDataModel.each((seriesGroup, groupIndex) => {
                 iteratee(seriesGroup, groupIndex, chartType);
             }, isPivot);
         });
-    },
+    }
 
     /**
      * Pick legend label.
@@ -1114,9 +1083,9 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {string} label
      * @private
      */
-    _pickLegendLabel: function(item) {
+    _pickLegendLabel(item) {
         return item.name ? snippet.encodeHTMLEntity(item.name) : null;
-    },
+    }
 
     /**
      * Pick legend visibility.
@@ -1124,14 +1093,14 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {boolean}
      * @private
      */
-    _isVisibleLegend: function(item) {
-        var visibility = true;
+    _isVisibleLegend(item) {
+        let visibility = true;
         if (snippet.isExisty(item.visible) && item.visible === false) {
             visibility = false;
         }
 
         return visibility;
-    },
+    }
 
     /**
      * Pick legend labels or visibilities from raw data.
@@ -1139,10 +1108,10 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {string[]|boolean[]} labels or visibilities
      * @private
      */
-    _pickLegendData: function(dataType) {
-        var seriesData = this.rawData.series;
-        var result = {};
-        var pickerMethod;
+    _pickLegendData(dataType) {
+        const seriesData = this.rawData.series;
+        let result = {};
+        let pickerMethod;
 
         if (dataType === 'visibility') {
             pickerMethod = this._isVisibleLegend;
@@ -1151,52 +1120,52 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         if (pickerMethod) {
-            snippet.forEach(seriesData, function(seriesDatum, seriesType) {
-                result[seriesType] = snippet.map(seriesDatum, pickerMethod);
+            Object.entries(seriesData).forEach(([seriesType, seriesDatum]) => {
+                result[seriesType] = seriesDatum.map(pickerMethod);
             });
 
             result = snippet.filter(result, snippet.isExisty);
         }
 
         return result;
-    },
+    }
 
     /**
      * Get legend labels.
      * @param {?string} chartType chart type
      * @returns {Array.<string> | {column: ?Array.<string>, line: ?Array.<string>}} legend labels
      */
-    getLegendLabels: function(chartType) {
+    getLegendLabels(chartType) {
         if (!this.legendLabels) {
             this.legendLabels = this._pickLegendData('label');
         }
 
         return this.legendLabels[chartType] || this.legendLabels;
-    },
+    }
 
     /**
      * Get legend visibility.
      * @param {?string} chartType chart type
      * @returns {Array.<string> | {column: ?Array.<string>, line: ?Array.<string>}} legend labels
      */
-    getLegendVisibility: function(chartType) {
+    getLegendVisibility(chartType) {
         if (!this.legendVisibilities) {
             this.legendVisibilities = this._pickLegendData('visibility');
         }
 
         return this.legendVisibilities[chartType] || this.legendVisibilities;
-    },
+    }
 
     /**
      * Make legend data.
      * @returns {Array} labels
      * @private
      */
-    _makeLegendData: function() {
-        var legendLabels = this.getLegendLabels(this.chartType);
-        var seriesTypes = this.seriesTypes || [this.chartType];
-        var legendLabelsMap, legendData;
-        var legendVisibilities = this.getLegendVisibility();
+    _makeLegendData() {
+        const legendLabels = this.getLegendLabels(this.chartType);
+        const legendVisibilities = this.getLegendVisibility();
+        let seriesTypes = this.seriesTypes || [this.chartType];
+        let legendLabelsMap;
 
         if (snippet.isArray(legendLabels)) {
             legendLabelsMap = [this.chartType];
@@ -1206,26 +1175,26 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
             legendLabelsMap = legendLabels;
         }
 
-        legendData = snippet.map(seriesTypes, function(chartType) {
-            return snippet.map(legendLabelsMap[chartType], function(label, index) {
-                var is2DArray = snippet.isArray(legendVisibilities[chartType]);
+        const legendData = seriesTypes.map(chartType => (
+            legendLabelsMap[chartType].map((label, index) => {
+                const is2DArray = snippet.isArray(legendVisibilities[chartType]);
 
                 return {
-                    chartType: chartType,
-                    label: label,
+                    chartType,
+                    label,
                     visible: is2DArray ? legendVisibilities[chartType][index] : legendVisibilities[index]
                 };
-            });
-        });
+            })
+        ));
 
-        return concat.apply([], legendData);
-    },
+        return [].concat(...legendData);
+    }
 
     /**
      * Get legend data.
      * @returns {Array.<{chartType: string, label: string}>} legend data
      */
-    getLegendData: function() {
+    getLegendData() {
         if (!this.legendData) {
             this.legendData = this._makeLegendData();
         }
@@ -1235,41 +1204,41 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return this.legendData;
-    },
+    }
 
     /**
      * get original legend data.
      * @returns {Array.<{chartType: string, label: string}>}
      */
-    getOriginalLegendData: function() {
+    getOriginalLegendData() {
         return this.originalLegendData;
-    },
+    }
 
     /**
      * Get legend item.
      * @param {number} index index
      * @returns {{chartType: string, label: string}} legend data
      */
-    getLegendItem: function(index) {
+    getLegendItem(index) {
         return this.getLegendData()[index];
-    },
+    }
 
     /**
      * Get first label of SeriesItem.
      * @param {?string} chartType chartType
      * @returns {string} formatted value
      */
-    getFirstItemLabel: function(chartType) {
+    getFirstItemLabel(chartType) {
         return this.getSeriesDataModel(chartType).getFirstItemLabel();
-    },
+    }
 
     /**
      * Add data ratios of pie chart.
      * @param {string} chartType - type of chart.
      */
-    addDataRatiosOfPieChart: function(chartType) {
+    addDataRatiosOfPieChart(chartType) {
         this.getSeriesDataModel(chartType).addDataRatiosOfPieChart();
-    },
+    }
 
     /**
      * Add data ratios for chart of coordinate type.
@@ -1277,12 +1246,12 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
      * @param {boolean} [hasRadius] - whether has radius or not
      */
-    addDataRatiosForCoordinateType: function(chartType, limitMap, hasRadius) {
+    addDataRatiosForCoordinateType(chartType, limitMap, hasRadius) {
         if (predicate.isLineTypeChart(chartType)) {
             this._addStartValueToAllSeriesItem(limitMap.yAxis, chartType);
         }
         this.getSeriesDataModel(chartType).addDataRatiosForCoordinateType(limitMap, hasRadius);
-    },
+    }
 
     /**
      * Add start value to all series item.
@@ -1290,8 +1259,8 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} chartType - chart type
      * @private
      */
-    _addStartValueToAllSeriesItem: function(limit, chartType) {
-        var start = 0;
+    _addStartValueToAllSeriesItem(limit, chartType) {
+        let start = 0;
 
         if (limit.min >= 0) {
             start = limit.min;
@@ -1300,7 +1269,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         this.getSeriesDataModel(chartType).addStartValueToAllSeriesItem(start);
-    },
+    }
 
     /**
      * Register percent values.
@@ -1308,21 +1277,21 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} stackType stackType option
      * @param {string} chartType chart type
      */
-    addDataRatios: function(limit, stackType, chartType) {
-        var seriesDataModel = this.getSeriesDataModel(chartType);
+    addDataRatios(limit, stackType, chartType) {
+        const seriesDataModel = this.getSeriesDataModel(chartType);
 
         this._addStartValueToAllSeriesItem(limit, chartType);
         seriesDataModel.addDataRatios(limit, stackType);
-    },
+    }
 
     /**
      * Add data ratios for treemap chart.
      * @param {{min: number, max: number}} limit - limit
      * @param {string} chartType - chart type
      */
-    addDataRatiosForTreemapChart: function(limit, chartType) {
+    addDataRatiosForTreemapChart(limit, chartType) {
         this.getSeriesDataModel(chartType).addDataRatios(limit);
-    },
+    }
 
     /**
      * Create base values for normal stackType chart.
@@ -1330,22 +1299,22 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @returns {Array.<number>}
      * @private
      */
-    _createBaseValuesForNormalStackedChart: function(chartType) {
-        var seriesDataModel = this.getSeriesDataModel(chartType);
-        var baseValues = [];
+    _createBaseValuesForNormalStackedChart(chartType) {
+        const seriesDataModel = this.getSeriesDataModel(chartType);
+        let baseValues = [];
 
-        seriesDataModel.each(function(seriesGroup) {
-            var valuesMap = seriesGroup._makeValuesMapPerStack();
+        seriesDataModel.each(seriesGroup => {
+            const valuesMap = seriesGroup._makeValuesMapPerStack();
 
-            snippet.forEach(valuesMap, function(values) {
-                var plusSum = calculator.sumPlusValues(values);
-                var minusSum = calculator.sumMinusValues(values);
+            Object.values(valuesMap).forEach(values => {
+                const plusSum = calculator.sumPlusValues(values);
+                const minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
         });
 
         return baseValues;
-    },
+    }
 
     /**
      * Create base values for calculating limit
@@ -1356,8 +1325,8 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} axisType - value type
      * @returns {Array.<number>}
      */
-    createBaseValuesForLimit: function(chartType, isSingleYAxis, stackType, valueType, axisType) {
-        var baseValues;
+    createBaseValuesForLimit(chartType, isSingleYAxis, stackType, valueType, axisType) {
+        let baseValues;
 
         if (predicate.isComboChart(this.chartType) && isSingleYAxis) {
             baseValues = this.getValues(this.chartType, valueType);
@@ -1373,7 +1342,7 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
         }
 
         return baseValues;
-    },
+    }
 
     /**
      * Find overflow item than graph area
@@ -1381,10 +1350,10 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
      * @param {string} valueType - value type
      * @returns {{minItem: SeriesItem, maxItem: SeriesItem}}
      */
-    findOverflowItem: function(chartType, valueType) {
-        var seriesDataModel = this.getSeriesDataModel(chartType);
-        var maxRadiusValue = seriesDataModel.getMaxValue('r');
-        var isBiggerRatioThanHalfRatio = function(seriesItem) {
+    findOverflowItem(chartType, valueType) {
+        const seriesDataModel = this.getSeriesDataModel(chartType);
+        const maxRadiusValue = seriesDataModel.getMaxValue('r');
+        const isBiggerRatioThanHalfRatio = function(seriesItem) {
             return (seriesItem.r / maxRadiusValue) > chartConst.HALF_RATIO;
         };
 
@@ -1392,36 +1361,34 @@ var DataProcessor = snippet.defineClass(DataProcessorBase, /** @lends DataProces
             minItem: seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio),
             maxItem: seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio)
         };
-    },
+    }
 
     /**
      * Register color and opacity data of tooltip icon
      * @param {Array.<Array.<object>>} colors - color and opacities setGraphColors
      * @ignore
      */
-    setGraphColors: function(colors) {
+    setGraphColors(colors) {
         this.graphColors = colors;
-    },
+    }
 
     /**
      * Get color and opacity data of tooltip data
      * @returns {Array.<Array.<object>>} - color and opacities set
      * @ignore
      */
-    getGraphColors: function() {
+    getGraphColors() {
         return this.graphColors;
-    },
+    }
 
     /**
      * Check The donut chart on pie donut combo chart has outer label align option
      * @returns {boolean} - whether donut chart has outer label align option or not
      * @ignore
      */
-    isComboDonutShowOuterLabel: function() {
-        var seriesOptions = this.options.series;
+    isComboDonutShowOuterLabel() {
+        const seriesOptions = this.options.series;
 
         return (seriesOptions && seriesOptions.pie2 && seriesOptions.pie2.labelAlign === 'outer');
     }
-});
-
-module.exports = DataProcessor;
+}

@@ -1,20 +1,18 @@
-'use strict';
+import scaleDataMaker from './scaleDataMaker';
+import scaleLabelFormatter from './scaleLabelFormatter';
+import axisDataMaker from './axisDataMaker';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
-var scaleDataMaker = require('./scaleDataMaker');
-var scaleLabelFormatter = require('./scaleLabelFormatter');
-var axisDataMaker = require('./axisDataMaker');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
+class ScaleDataModel {
     /**
      * ScaleDataModel is scale model for scale data and axis data.
      * @param {object} params - parameters
      * @constructs ScaleDataModel
      * @private
      */
-    init: function(params) {
+    constructor(params) {
         this.chartType = params.chartType;
         this.seriesTypes = params.seriesTypes;
         this.dataProcessor = params.dataProcessor;
@@ -26,24 +24,24 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
 
         this.initScaleData(params.addedDataCount);
         this.initForAutoTickInterval();
-    },
+    }
 
     /**
      * Initialize scale data.
      * @param {?number} addedDataCount - increased added count by dynamic adding data
      */
-    initScaleData: function(addedDataCount) {
+    initScaleData(addedDataCount) {
         this.scaleDataMap = {};
         this.axisDataMap = {};
         this.addedDataCount = addedDataCount;
-    },
+    }
 
     /**
      * Initialize for auto tick interval.
      */
-    initForAutoTickInterval: function() {
+    initForAutoTickInterval() {
         this.firstTickCount = null;
-    },
+    }
 
     /**
      * Pick limit option.
@@ -51,14 +49,14 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * @returns {{min: ?number, max: ?number}}
      * @private
      */
-    _pickLimitOption: function(axisOptions) {
+    _pickLimitOption(axisOptions) {
         axisOptions = axisOptions || {};
 
         return {
             min: axisOptions.min,
             max: axisOptions.max
         };
-    },
+    }
 
     /**
      * Create base scale data.
@@ -77,14 +75,19 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * @returns {{limit: {min: number, max: number}, step: number}}
      * @private
      */
-    _createBaseScaleData: function(typeMap, baseOptions, axisOptions, additionalOptions) {
-        var chartType = typeMap.chartType;
-        var isVertical = typeMap.areaType !== 'xAxis';
-        var baseValues = this.dataProcessor.createBaseValuesForLimit(
-            chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType, typeMap.areaType);
-        var baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
-        var options = snippet.extend(baseOptions, {
-            isVertical: isVertical,
+    _createBaseScaleData(typeMap, baseOptions, axisOptions, additionalOptions) {
+        const {chartType} = typeMap;
+        const isVertical = typeMap.areaType !== 'xAxis';
+        const baseValues = this.dataProcessor.createBaseValuesForLimit(
+            chartType,
+            additionalOptions.isSingleYAxis,
+            baseOptions.stackType,
+            typeMap.valueType,
+            typeMap.areaType
+        );
+        const baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
+        const options = Object.assign(baseOptions, {
+            isVertical,
             limitOption: this._pickLimitOption(axisOptions),
             tickCounts: additionalOptions.tickCounts,
             showLabel: this.options.series.showLabel
@@ -101,7 +104,7 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
         }
 
         return scaleDataMaker.makeScaleData(baseValues, baseSize, chartType, options);
-    },
+    }
 
     /**
      * Create scale labels.
@@ -120,14 +123,14 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * @returns {Array.<string>}
      * @private
      */
-    _createScaleLabels: function(baseScaleData, typeMap, baseOptions, dateFormat) {
-        var formatFunctions = this.dataProcessor.getFormatFunctions();
-        var options = snippet.extend(baseOptions, {
-            dateFormat: dateFormat
+    _createScaleLabels(baseScaleData, typeMap, baseOptions, dateFormat) {
+        const formatFunctions = this.dataProcessor.getFormatFunctions();
+        const options = Object.assign(baseOptions, {
+            dateFormat
         });
 
         return scaleLabelFormatter.createFormattedLabels(baseScaleData, typeMap, options, formatFunctions);
-    },
+    }
 
     /**
      * Create scale.
@@ -137,25 +140,25 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * @returns {object}
      * @private
      */
-    _createScaleData: function(axisOptions, typeMap, additionalOptions) {
-        var seriesOptions = this.options.series;
-        var chartType = typeMap.chartType || this.chartType;
-        var baseOptions, baseScaleData;
+    _createScaleData(axisOptions, typeMap, additionalOptions) {
+        let seriesOptions = this.options.series;
+        const chartType = typeMap.chartType || this.chartType;
 
         typeMap.chartType = chartType;
         seriesOptions = seriesOptions[chartType] || seriesOptions;
-        baseOptions = {
+
+        const baseOptions = {
             stackType: additionalOptions.stackType || seriesOptions.stackType,
             diverging: seriesOptions.diverging,
             type: axisOptions.type
         };
-        baseScaleData = this._createBaseScaleData(typeMap, baseOptions, axisOptions, additionalOptions);
+        const baseScaleData = this._createBaseScaleData(typeMap, baseOptions, axisOptions, additionalOptions);
 
         return snippet.extend(baseScaleData, {
             labels: this._createScaleLabels(baseScaleData, typeMap, baseOptions, axisOptions.dateFormat),
-            axisOptions: axisOptions
+            axisOptions
         });
-    },
+    }
 
     /**
      * Create value type axis data.
@@ -174,35 +177,32 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * }}
      * @private
      */
-    _createValueAxisData: function(scaleData, labelTheme, aligned, isVertical, isPositionRight) {
-        var hasCategories = this.dataProcessor.hasCategories();
-        var isCoordinateLineType = !isVertical && !hasCategories && aligned;
-        var labels = scaleData.labels;
-        var limit = scaleData.limit;
-        var step = scaleData.step;
-        var tickCount = labels.length;
-        var values, additional;
-
-        var axisData = axisDataMaker.makeValueAxisData({
-            labels: labels,
+    _createValueAxisData(scaleData, labelTheme, aligned, isVertical, isPositionRight) {
+        const hasCategories = this.dataProcessor.hasCategories();
+        const isCoordinateLineType = !isVertical && !hasCategories && aligned;
+        const {labels, limit, step} = scaleData;
+        const tickCount = labels.length;
+        const axisData = axisDataMaker.makeValueAxisData({
+            labels,
             tickCount: labels.length,
-            limit: limit,
-            step: step,
+            limit,
+            step,
+            labelTheme,
+            aligned,
             options: scaleData.axisOptions,
-            labelTheme: labelTheme,
             isVertical: !!isVertical,
-            isPositionRight: !!isPositionRight,
-            aligned: aligned
+            isPositionRight: !!isPositionRight
         });
 
         if (isCoordinateLineType) {
-            values = this.dataProcessor.getValues(this.chartType, 'x');
-            additional = axisDataMaker.makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            const values = this.dataProcessor.getValues(this.chartType, 'x');
+            const additional = axisDataMaker.makeAdditionalDataForCoordinateLineType(
+                labels, values, limit, step, tickCount);
             snippet.extend(axisData, additional);
         }
 
         return axisData;
-    },
+    }
 
     /**
      * Create label type axis data.
@@ -223,17 +223,17 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * }}
      * @private
      */
-    _createLabelAxisData: function(axisOptions, labelTheme, aligned, isVertical, isPositionRight) {
+    _createLabelAxisData(axisOptions, labelTheme, aligned, isVertical, isPositionRight) {
         return axisDataMaker.makeLabelAxisData({
             labels: this.dataProcessor.getCategories(isVertical),
             options: axisOptions,
-            labelTheme: labelTheme,
+            labelTheme,
+            aligned,
             isVertical: !!isVertical,
             isPositionRight: !!isPositionRight,
-            aligned: aligned,
             addedDataCount: this.options.series.shifting ? this.addedDataCount : 0
         });
-    },
+    }
 
     /**
      * Create axis data.
@@ -245,9 +245,9 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * @returns {object}
      * @private
      */
-    _createAxisData: function(scaleData, axisOptions, labelTheme, isVertical, isPositionRight) {
-        var aligned = predicate.isLineTypeChart(this.chartType, this.seriesTypes) && !axisOptions.pointOnColumn;
-        var axisData;
+    _createAxisData(scaleData, axisOptions, labelTheme, isVertical, isPositionRight) {
+        const aligned = predicate.isLineTypeChart(this.chartType, this.seriesTypes) && !axisOptions.pointOnColumn;
+        let axisData;
 
         if (scaleData) {
             axisData = this._createValueAxisData(scaleData, labelTheme, aligned, isVertical, isPositionRight);
@@ -256,19 +256,17 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
         }
 
         return axisData;
-    },
+    }
 
     /**
      * Create axes data.
      * @returns {object.<string, object>}
      * @private
      */
-    _createAxesData: function() {
-        var scaleDataMap = this.scaleDataMap;
-        var options = this.options;
-        var theme = this.theme;
-        var yAxisOptions = snippet.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
-        var dataMap = {};
+    _createAxesData() {
+        const {scaleDataMap, options, theme} = this;
+        const yAxisOptions = snippet.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
+        const dataMap = {};
 
         dataMap.xAxis = this._createAxisData(scaleDataMap.xAxis, options.xAxis, theme.xAxis.label);
         dataMap.yAxis = this._createAxisData(scaleDataMap.yAxis, yAxisOptions[0], theme.yAxis.label, true);
@@ -281,7 +279,7 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
         }
 
         return dataMap;
-    },
+    }
 
     /**
      * Add scale.
@@ -290,33 +288,31 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * @param {{chartType: string, areaType: string}} typeMap - type map
      * @param {object} additionalOptions - additional parameters
      */
-    addScale: function(axisName, axisOptions, typeMap, additionalOptions) {
-        typeMap = typeMap || {};
-        additionalOptions = additionalOptions || {};
+    addScale(axisName, axisOptions, typeMap = {}, additionalOptions = {}) {
         typeMap.areaType = typeMap.areaType || axisName;
         typeMap.chartType = additionalOptions.chartType || typeMap.chartType;
 
         this.scaleDataMap[axisName] = this._createScaleData(axisOptions, typeMap, additionalOptions);
-    },
+    }
 
     /**
      * Set axis data map.
      */
-    setAxisDataMap: function() {
+    setAxisDataMap() {
         this.axisDataMap = this._createAxesData();
-    },
+    }
 
     /**
      * Update x axis data for auto tick interval.
      * @param {object} prevXAxisData - previous xAxis data
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
-    updateXAxisDataForAutoTickInterval: function(prevXAxisData, addingDataMode) {
-        var shiftingOption = this.options.series.shifting;
-        var zoomableOption = this.options.series.zoomable;
-        var xAxisData = this.axisDataMap.xAxis;
-        var seriesWidth = this.boundsModel.getDimension('series').width;
-        var addedCount = this.addedDataCount;
+    updateXAxisDataForAutoTickInterval(prevXAxisData, addingDataMode) {
+        const shiftingOption = this.options.series.shifting;
+        const zoomableOption = this.options.series.zoomable;
+        const xAxisData = this.axisDataMap.xAxis;
+        const seriesWidth = this.boundsModel.getDimension('series').width;
+        const addedCount = this.addedDataCount;
 
         if (shiftingOption || !prevXAxisData || zoomableOption) {
             axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, addedCount, addingDataMode);
@@ -327,19 +323,19 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
         if (!this.firstTickCount) {
             this.firstTickCount = xAxisData.tickCount;
         }
-    },
+    }
 
     /**
      * Update x axis data for label.
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
-    updateXAxisDataForLabel: function(addingDataMode) {
-        var axisData = this.axisDataMap.xAxis;
-        var labels = axisData.labels;
-        var dimensionMap = this.boundsModel.getDimensionMap(['series', 'yAxis', 'chart']);
-        var isLabelAxis = axisData.isLabelAxis;
-        var theme = this.theme.xAxis.label;
-        var validLabels, validLabelCount, additionalData;
+    updateXAxisDataForLabel(addingDataMode) {
+        const axisData = this.axisDataMap.xAxis;
+        const dimensionMap = this.boundsModel.getDimensionMap(['series', 'yAxis', 'chart']);
+        const {isLabelAxis} = axisData;
+        const theme = this.theme.xAxis.label;
+        let validLabelCount, additionalData;
+        let {labels} = axisData;
 
         if (addingDataMode) {
             labels = labels.slice(0, labels.length - 1);
@@ -347,9 +343,7 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
 
         labels = renderUtil.addPrefixSuffix(labels, this.options.xAxis.prefix, this.options.xAxis.suffix);
 
-        validLabels = snippet.filter(labels, function(label) {
-            return !!label;
-        });
+        const validLabels = snippet.filter(labels, label => !!label);
 
         if (!snippet.isNull(this.prevValidLabelCount)) {
             validLabelCount = this.prevValidLabelCount;
@@ -375,7 +369,7 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
         this.prevValidLabelCount = validLabelCount;
 
         snippet.extend(axisData, additionalData);
-    },
+    }
 
     /**
      * Find limit from limitMap by seriesIndex
@@ -385,8 +379,8 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * @returns {boolean}
      * @private
      */
-    _findLimit: function(limitMap, seriesIndex, isVertical) {
-        var limit;
+    _findLimit(limitMap, seriesIndex, isVertical) {
+        let limit;
 
         if (seriesIndex === 0) {
             limit = isVertical ? limitMap.yAxis : limitMap.xAxis;
@@ -395,7 +389,7 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
         }
 
         return limit;
-    },
+    }
 
     /**
      * Make limit map.
@@ -410,10 +404,9 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
      * }}
      * @private
      */
-    makeLimitMap: function(seriesTypes, isVertical) {
-        var self = this;
-        var scaleDataMap = this.scaleDataMap;
-        var limitMap = {};
+    makeLimitMap(seriesTypes, isVertical) {
+        const {scaleDataMap} = this;
+        const limitMap = {};
 
         if (scaleDataMap.xAxis) {
             limitMap.xAxis = scaleDataMap.xAxis.limit;
@@ -431,12 +424,12 @@ var ScaleDataModel = snippet.defineClass(/** @lends ScaleDataModel.prototype */{
             limitMap.legend = scaleDataMap.legend.limit;
         }
 
-        snippet.forEachArray(seriesTypes, function(seriesType, index) {
-            limitMap[seriesType] = self._findLimit(limitMap, index, isVertical);
+        seriesTypes.forEach((seriesType, index) => {
+            limitMap[seriesType] = this._findLimit(limitMap, index, isVertical);
         });
 
         return limitMap;
     }
-});
+}
 
-module.exports = ScaleDataModel;
+export default ScaleDataModel;

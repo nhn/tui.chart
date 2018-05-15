@@ -5,15 +5,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import renderUtil from '../../helpers/renderUtil';
+import calculator from '../../helpers/calculator';
+import predicate from '../../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../../const');
-var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
-
-var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
+export default class SeriesItem {
     /**
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
@@ -26,7 +24,7 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      *      @param {number} params.index - raw data index
      *      @param {?string} params.stack - stack
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * type of chart
          * @type {string}
@@ -132,7 +130,7 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
         this.legendName = params.legendName;
 
         this._initValues(params.datum, params.index);
-    },
+    }
 
     /**
      * Initialize values of item.
@@ -140,11 +138,11 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      * @param {number} index - raw data index
      * @private
      */
-    _initValues: function(rawValue, index) {
-        var values = this._createValues(rawValue);
-        var areaType = 'makingSeriesLabel';
-        var hasStart = values.length > 1;
-        var value = values[0];
+    _initValues(rawValue, index) {
+        const values = this._createValues(rawValue);
+        const areaType = 'makingSeriesLabel';
+        const hasStart = values.length > 1;
+        let [value] = values;
 
         this.value = this.end = value;
         this.index = index;
@@ -157,10 +155,10 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
             this.label = '';
         } else {
             this.label = renderUtil.formatValue({
-                value: value,
+                value,
                 formatFunctions: this.formatFunctions,
                 chartType: this.chartType,
-                areaType: areaType,
+                areaType,
                 legendName: this.legendName
             });
         }
@@ -172,7 +170,7 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
             this._updateFormattedValueforRange();
             this.isRange = true;
         }
-    },
+    }
 
     /**
      * Crete sorted values.
@@ -180,12 +178,10 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      * @returns {Array.<number>}
      * @private
      */
-    _createValues: function(value) {
-        var values = snippet.map([].concat(value), function(newValue) {
-            return snippet.isNull(newValue) ? null : parseFloat(newValue);
-        });
+    _createValues(value) {
+        let values = [].concat(value).map(newValue => snippet.isNull(newValue) ? null : parseFloat(newValue));
 
-        values = values.sort(function(a, b) {
+        values = values.sort((a, b) => {
             if (a < 0 && b < 0) {
                 return a - b;
             }
@@ -194,35 +190,35 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
         });
 
         return values;
-    },
+    }
 
     /**
      * Add start.
      * @param {number} value - value
      * @ignore
      */
-    addStart: function(value) {
+    addStart(value) {
         if (!snippet.isNull(this.start)) {
             return;
         }
 
         this.start = value;
         this.startLabel = renderUtil.formatValue({
-            value: value,
+            value,
             formatFunctions: this.formatFunctions,
             chartType: this.chartType,
             areaType: 'series',
             legendName: this.legendName
         });
-    },
+    }
 
     /**
      * Update formatted value for range.
      * @private
      */
-    _updateFormattedValueforRange: function() {
-        this.label = this.startLabel + ' ~ ' + this.endLabel;
-    },
+    _updateFormattedValueforRange() {
+        this.label = `${this.startLabel} ~ ${this.endLabel}`;
+    }
 
     /**
      * Add ratio.
@@ -230,18 +226,14 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      * @param {?number} subNumber - number for subtraction
      * @param {?number} baseRatio - base ratio
      */
-    addRatio: function(divNumber, subNumber, baseRatio) {
-        divNumber = divNumber || 1;
-        baseRatio = baseRatio || 1;
-        subNumber = subNumber || 0;
-
+    addRatio(divNumber = 1, subNumber = 0, baseRatio = 1) {
         this.ratio = this.endRatio = calculator.calculateRatio(this.value, divNumber, subNumber, baseRatio);
 
         if (snippet.isExisty(this.start)) {
             this.startRatio = calculator.calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
-    },
+    }
 
     /**
      * Get formatted value for tooltip.
@@ -249,23 +241,23 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
      * @returns {string}
      * @private
      */
-    _getFormattedValueForTooltip: function(valueType) {
+    _getFormattedValueForTooltip(valueType) {
         return renderUtil.formatValue({
             value: this[valueType],
             formatFunctions: this.formatFunctions,
             chartType: this.chartType,
             areaType: 'tooltip',
-            valueType: valueType,
+            valueType,
             legendName: this.legendName
         });
-    },
+    }
 
     /**
      * Pick value map for tooltip.
      * @returns {{value: number, start: ?number, end: ?number}}
      */
-    pickValueMapForTooltip: function() {
-        var valueMap = {
+    pickValueMapForTooltip() {
+        const valueMap = {
             value: this._getFormattedValueForTooltip('value'),
             ratio: this.ratio
         };
@@ -279,6 +271,4 @@ var SeriesItem = snippet.defineClass(/** @lends SeriesItem.prototype */{
 
         return valueMap;
     }
-});
-
-module.exports = SeriesItem;
+}

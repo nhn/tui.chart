@@ -5,23 +5,20 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import EventDetectorBase from './mouseEventDetectorBase';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import dom from '../../helpers/domHandler';
 
-var EventDetectorBase = require('./mouseEventDetectorBase');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var dom = require('../../helpers/domHandler');
-var snippet = require('tui-code-snippet');
-
-var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends BoundsTypeEventDetector.prototype */ {
+class BoundsTypeEventDetector extends EventDetectorBase {
     /**
      * BoundsTypeEventDetector is mouse event detector for bounds type charts like bar, column, heatmap, treemap.
      * @constructs BoundsTypeEventDetector
      * @private
      * @extends EventDetectorBase
      */
-    init: function() {
-        EventDetectorBase.apply(this, arguments);
+    constructor(...args) {
+        super(...args);
 
         /**
          * previous found data
@@ -40,52 +37,52 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
          * @type {null | HTMLElement}
          */
         this.historyBackBtn = null;
-    },
+    }
 
     /**
      * Attach to event bus.
      * @private
      * @override
      */
-    _attachToEventBus: function() {
+    _attachToEventBus() {
         EventDetectorBase.prototype._attachToEventBus.call(this);
 
         this.eventBus.on('afterZoom', this.onAfterZoom, this);
-    },
+    }
 
     /**
      * Show tooltip.
      * @param {object} foundData - model data
      * @private
      */
-    _showTooltip: function(foundData) {
+    _showTooltip(foundData) {
         this.eventBus.fire('showTooltip', foundData);
         this.prevFoundData = foundData;
-    },
+    }
 
     /**
      * Hide tooltip.
      * @param {{silent: {boolean}}} [options] - options for hiding a tooltip
      * @private
      */
-    _hideTooltip: function(options) {
+    _hideTooltip(options) {
         this.eventBus.fire('hideTooltip', this.prevFoundData, options);
         this.prevFoundData = null;
         this.styleCursor(false);
-    },
+    }
 
     /**
      * Style css cursor.
      * @param {boolean} hasChild - whether has child or not
      */
-    styleCursor: function(hasChild) {
-        var container = this.mouseEventDetectorContainer;
+    styleCursor(hasChild) {
+        const container = this.mouseEventDetectorContainer;
         if (hasChild) {
             container.style.cursor = 'pointer';
         } else {
             container.style.cursor = 'default';
         }
-    },
+    }
 
     /**
      * On mousemove.
@@ -93,12 +90,9 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      * @private
      * @override
      */
-    _onMousemove: function(e) {
-        var clientX = e.clientX;
-        var clientY = e.clientY;
-        var layerPosition = this._calculateLayerPosition(clientX, clientY);
-        var foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
-        var seriesItem;
+    _onMousemove({clientX, clientY}) {
+        const layerPosition = this._calculateLayerPosition(clientX, clientY);
+        const foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
 
         if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
@@ -115,7 +109,7 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
         }
 
         if (predicate.isTreemapChart(this.chartType)) {
-            seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
+            const seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
             this.styleCursor(seriesItem.hasChild);
         } else if (predicate.isBulletChart(this.chartType)) {
             foundData.mousePosition = {
@@ -124,14 +118,14 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
             };
         }
         this._showTooltip(foundData);
-    },
+    }
 
     /**
      * Zoom history back.
      * @private
      */
-    _zoomHistoryBack: function() {
-        var index = this.zoomHistory[this.zoomHistory.length - 2];
+    _zoomHistoryBack() {
+        const index = this.zoomHistory[this.zoomHistory.length - 2];
 
         this.zoomHistory.pop();
         this.eventBus.fire('zoom', index);
@@ -140,7 +134,7 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
             this.mouseEventDetectorContainer.removeChild(this.historyBackBtn);
             this.historyBackBtn = null;
         }
-    },
+    }
 
     /**
      * Get seriesItem by indexes
@@ -148,11 +142,11 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      * @returns {SeriesItem}
      * @private
      */
-    _getSeriesItemByIndexes: function(indexes) {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(chartConst.CHART_TYPE_TREEMAP);
+    _getSeriesItemByIndexes(indexes) {
+        const seriesDataModel = this.dataProcessor.getSeriesDataModel(chartConst.CHART_TYPE_TREEMAP);
 
         return seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true);
-    },
+    }
 
     /**
      * On mousemove.
@@ -160,9 +154,8 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      * @private
      * @override
      */
-    _onClick: function(e) {
-        var target = e.target || e.srcElement;
-        var layerPosition, foundData, seriesItem;
+    _onClick(e) {
+        const target = e.target || e.srcElement;
 
         EventDetectorBase.prototype._onClick.call(this, e);
 
@@ -177,11 +170,11 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
             return;
         }
 
-        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
-        foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
+        const layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
+        const foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
 
         if (foundData) {
-            seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
+            const seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
 
             if (!seriesItem.hasChild) {
                 return;
@@ -190,20 +183,19 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
             this._hideTooltip();
             this.eventBus.fire('zoom', foundData.indexes.index);
         }
-    },
+    }
 
     /**
      * On mouseout.
      * @override
      */
-    _onMouseout: function(e) {
+    _onMouseout({clientX, clientY}) {
         // do not cache getBoundingClientRect() - if not, it will cause error when chart location changed
-        var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
-        var clientX = e.clientX;
-        var clientY = e.clientY;
+        const bound = this.mouseEventDetectorContainer.getBoundingClientRect();
+        const {left, right, top, bottom} = bound;
 
-        if ((bound.left <= clientX) && (bound.top <= clientY) &&
-            (bound.right >= clientX) && (bound.bottom >= clientY)) {
+        if ((left <= clientX) && (top <= clientY) &&
+            (right >= clientX) && (bottom >= clientY)) {
             return;
         }
 
@@ -212,13 +204,13 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
         }
 
         this.prevFoundData = null;
-    },
+    }
 
     /**
      * On after zoom.
      * @param {number} index - index of target seriesItem
      */
-    onAfterZoom: function(index) {
+    onAfterZoom(index) {
         if (!this.historyBackBtn) {
             this.historyBackBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
             dom.append(this.mouseEventDetectorContainer, this.historyBackBtn);
@@ -227,7 +219,7 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
         if (this.zoomHistory[this.zoomHistory.length - 1] !== index) {
             this.zoomHistory.push(index);
         }
-    },
+    }
 
     /**
      * Find data by indexes.
@@ -235,15 +227,20 @@ var BoundsTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends 
      * @param {number} [indexes.outlierIndex] - index of outlier of boxplot series, it only exists in boxplot chart
      * @returns {object} - series item data
      */
-    findDataByIndexes: function(indexes) {
+    findDataByIndexes(indexes) {
         return this.boundsBaseCoordinateModel.findDataByIndexes(indexes);
     }
-});
+}
 
-function boundsTypeEventDetectorFactory(params) {
+/**
+ * boundsTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} event detect instanse
+ * @ignore
+ */
+export default function boundsTypeEventDetectorFactory(params) {
     return new BoundsTypeEventDetector(params);
 }
 
 boundsTypeEventDetectorFactory.componentType = 'mouseEventDetector';
 
-module.exports = boundsTypeEventDetectorFactory;

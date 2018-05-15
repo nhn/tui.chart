@@ -4,25 +4,24 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import renderUtil from '../../helpers/renderUtil';
 
-var chartConst = require('../../const');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+const {MAX_HEIGHT_WORD, SERIES_LABEL_PADDING} = chartConst;
 
 /**
  * renderingLabelHelper is helper for rendering of series label.
  * @module renderingLabelHelper
  * @private
  */
-var renderingLabelHelper = {
+export default {
     /**
      * Calculate left position for center align of series label.
      * @param {{left: number, top: number, width:number, height: number}} bound - bound
      * @returns {number}
      * @private
      */
-    _calculateLeftPositionForCenterAlign: function(bound) {
+    _calculateLeftPositionForCenterAlign(bound) {
         return bound.left + (bound.width / 2);
     },
 
@@ -32,7 +31,7 @@ var renderingLabelHelper = {
      * @returns {number}
      * @private
      */
-    _calculateTopPositionForMiddleAlign: function(bound) {
+    _calculateTopPositionForMiddleAlign(bound) {
         return bound.top + (bound.height / 2);
     },
 
@@ -42,7 +41,7 @@ var renderingLabelHelper = {
      * @returns {{left: number, top: number}}
      * @private
      */
-    _makePositionForBoundType: function(bound) {
+    _makePositionForBoundType(bound) {
         return {
             left: this._calculateLeftPositionForCenterAlign(bound),
             top: this._calculateTopPositionForMiddleAlign(bound)
@@ -59,10 +58,11 @@ var renderingLabelHelper = {
      * @returns {{end: *}}
      * @private
      */
-    _makePositionMap: function(seriesItem, bound, labelHeight, theme, makePosition) {
-        var value = seriesItem.value;
-        var isOppositeSide = value >= 0;
-        var positionMap = {
+    _makePositionMap(seriesItem, bound, labelHeight, theme, makePosition) {
+        const {value} = seriesItem;
+        let isOppositeSide = (value >= 0);
+
+        const positionMap = {
             end: makePosition(bound, labelHeight, seriesItem.endLabel || seriesItem.label, theme, isOppositeSide)
         };
 
@@ -83,20 +83,19 @@ var renderingLabelHelper = {
      * @param {boolean} [isPivot] - whether pivot or not
      * @returns {Array.<Object>}
      */
-    boundsToLabelPositions: function(seriesDataModel, boundsSet, theme, makePosition, isPivot) {
-        var self = this;
-        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORD, theme);
+    boundsToLabelPositions(seriesDataModel, boundsSet, theme, makePosition, isPivot) {
+        const labelHeight = renderUtil.getRenderedLabelHeight(MAX_HEIGHT_WORD, theme);
 
-        makePosition = makePosition || snippet.bind(this._makePositionForBoundType, this);
+        makePosition = makePosition || this._makePositionForBoundType.bind(this);
         isPivot = !!isPivot;
 
-        return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var bounds = boundsSet[groupIndex];
+        return seriesDataModel.map((seriesGroup, groupIndex) => {
+            const bounds = boundsSet[groupIndex];
 
-            return seriesGroup.map(function(seriesItem, index) {
-                var bound = bounds[index].end;
+            return seriesGroup.map((seriesItem, index) => {
+                const bound = bounds[index].end;
 
-                return self._makePositionMap(seriesItem, bound, labelHeight, theme, makePosition);
+                return this._makePositionMap(seriesItem, bound, labelHeight, theme, makePosition);
             });
         }, isPivot);
     },
@@ -111,18 +110,18 @@ var renderingLabelHelper = {
      * @returns {{left: number, top: number}}
      * @private
      */
-    _makePositionForBarChart: function(bound, labelHeight, label, theme, isOppositeSide) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(label, theme);
-        var left = bound.left;
+    _makePositionForBarChart(bound, labelHeight, label, theme, isOppositeSide) {
+        const labelWidth = renderUtil.getRenderedLabelWidth(label, theme);
+        let {left} = bound;
 
         if (isOppositeSide) {
-            left += bound.width + chartConst.SERIES_LABEL_PADDING;
+            left += bound.width + SERIES_LABEL_PADDING;
         } else {
-            left -= labelWidth + chartConst.SERIES_LABEL_PADDING;
+            left -= labelWidth + SERIES_LABEL_PADDING;
         }
 
         return {
-            left: left,
+            left,
             top: this._calculateTopPositionForMiddleAlign(bound)
         };
     },
@@ -134,8 +133,8 @@ var renderingLabelHelper = {
      * @param {object} theme - theme for series label
      * @returns {*|Array.<Object>|Array}
      */
-    boundsToLabelPositionsForBarChart: function(seriesDataModel, boundsSet, theme) {
-        var makePositionFunction = snippet.bind(this._makePositionForBarChart, this);
+    boundsToLabelPositionsForBarChart(seriesDataModel, boundsSet, theme) {
+        const makePositionFunction = this._makePositionForBarChart.bind(this);
 
         return this.boundsToLabelPositions(seriesDataModel, boundsSet, theme, makePositionFunction);
     },
@@ -150,18 +149,18 @@ var renderingLabelHelper = {
      * @returns {{left: number, top: number}}
      * @private
      */
-    _makePositionForColumnChart: function(bound, labelHeight, label, theme, isOppositeSide) {
-        var top = bound.top;
+    _makePositionForColumnChart(bound, labelHeight, label, theme, isOppositeSide) {
+        let {top} = bound;
 
         if (isOppositeSide) {
-            top -= labelHeight + chartConst.SERIES_LABEL_PADDING;
+            top -= labelHeight + SERIES_LABEL_PADDING;
         } else {
-            top += bound.height + chartConst.SERIES_LABEL_PADDING;
+            top += bound.height + SERIES_LABEL_PADDING;
         }
 
         return {
             left: this._calculateLeftPositionForCenterAlign(bound),
-            top: top
+            top
         };
     },
 
@@ -172,8 +171,8 @@ var renderingLabelHelper = {
      * @param {object} theme - theme for series label
      * @returns {*|Array.<Object>|Array}
      */
-    boundsToLabelPositionsForColumnChart: function(seriesDataModel, boundsSet, theme) {
-        var makePositionFunction = snippet.bind(this._makePositionForColumnChart, this);
+    boundsToLabelPositionsForColumnChart(seriesDataModel, boundsSet, theme) {
+        const makePositionFunction = this._makePositionForColumnChart.bind(this);
 
         return this.boundsToLabelPositions(seriesDataModel, boundsSet, theme, makePositionFunction);
     },
@@ -184,14 +183,13 @@ var renderingLabelHelper = {
      * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
      * @returns {string}
      */
-    boundsToLabelPostionsForTreemap: function(seriesItems, boundMap) {
-        var self = this;
-        var positions = snippet.map(seriesItems, function(seriesItem) {
-            var bound = boundMap[seriesItem.id];
-            var position;
+    boundsToLabelPostionsForTreemap(seriesItems, boundMap) {
+        const positions = seriesItems.map(seriesItem => {
+            const bound = boundMap[seriesItem.id];
+            let position;
 
             if (bound) {
-                position = self._makePositionForBoundType(bound);
+                position = this._makePositionForBoundType(bound);
             }
 
             return position;
@@ -200,5 +198,3 @@ var renderingLabelHelper = {
         return positions;
     }
 };
-
-module.exports = renderingLabelHelper;

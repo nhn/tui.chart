@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import radialPlotFactory from '../../../src/js/components/plots/radialPlot';
 
-'use strict';
+describe('Test for RadialPlot', () => {
+    let plot;
 
-var radialPlotFactory = require('../../../src/js/components/plots/radialPlot');
-
-describe('Test for RadialPlot', function() {
-    var plot;
-
-    beforeEach(function() {
+    beforeEach(() => {
         plot = new radialPlotFactory.RadialPlot({
             theme: {
                 lineColor: 'black'
@@ -19,8 +16,8 @@ describe('Test for RadialPlot', function() {
         });
     });
 
-    it('_makePositions should make plotPositions', function() {
-        var result = plot._makePositions({
+    it('_makePositions should make plotPositions', () => {
+        const result = plot._makePositions({
             yAxis: {
                 tickCount: 6
             },
@@ -49,8 +46,8 @@ describe('Test for RadialPlot', function() {
             top: 37.5
         });
     });
-    it('_makeCategoryPositions should make category positions', function() {
-        var result = plot._makeCategoryPositions({
+    it('_makeCategoryPositions should make category positions', () => {
+        const result = plot._makeCategoryPositions({
             xAxis: {
                 labels: ['1', '2', '3', '4', '5', '6']
             }

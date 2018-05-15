@@ -4,10 +4,8 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var arrayUtil = require('./arrayUtil');
-var snippet = require('tui-code-snippet');
+import arrayUtil from './arrayUtil';
+import snippet from 'tui-code-snippet';
 
 /**
  * Get series data from 2D array
@@ -19,20 +17,19 @@ var snippet = require('tui-code-snippet');
  * @private
  */
 function getChartDataFrom2DArray(table2DArray) {
-    var chartData;
+    let chartData;
 
     if (table2DArray.length > 0) {
         chartData = {};
         chartData.categories = [];
         chartData.series = [];
-
         chartData.categories = table2DArray.shift().slice(1);
-        snippet.forEach(table2DArray, function(tr) {
-            var seriesDatum = {};
 
-            seriesDatum.name = tr[0];
-            seriesDatum.data = tr.slice(1);
-
+        table2DArray.forEach(tr => {
+            const seriesDatum = {
+                name: tr[0],
+                data: tr.slice(1)
+            };
             chartData.series.push(seriesDatum);
         });
     }
@@ -47,17 +44,16 @@ function getChartDataFrom2DArray(table2DArray) {
  * @private
  */
 function get2DArray(tableElement) {
-    var trs = [];
-    var secondDimensionArray = [];
-    var resultArray = [];
+    let resultArray = [];
 
     if (tableElement) {
-        trs = snippet.toArray(tableElement.getElementsByTagName('TR'));
+        const secondDimensionArray = [];
+        const trs = snippet.toArray(tableElement.getElementsByTagName('TR'));
 
-        snippet.forEach(trs, function(tr, index) {
-            var tagName = index === 0 ? 'TH' : 'TD';
-            var cells = snippet.toArray(tr.getElementsByTagName(tagName));
-            var rows = snippet.pluck(cells, 'innerText');
+        snippet.forEach(trs, (tr, index) => {
+            const tagName = index === 0 ? 'TH' : 'TD';
+            const cells = snippet.toArray(tr.getElementsByTagName(tagName));
+            const rows = snippet.pluck(cells, 'innerText');
 
             secondDimensionArray.push(rows);
         });
@@ -84,19 +80,19 @@ function get2DArray(tableElement) {
  * @api
  */
 function makeDataWithTable(table) {
-    var element, chartData;
+    let element;
 
     if (table.element && table.element.tagName === 'TABLE') {
-        element = table.element;
+        ({element} = table);
     } else if (table.elementId) {
         element = document.getElementById(table.elementId);
     }
 
-    chartData = getChartDataFrom2DArray(get2DArray(element));
+    const chartData = getChartDataFrom2DArray(get2DArray(element));
 
     return chartData;
 }
 
-module.exports = {
-    makeDataWithTable: makeDataWithTable
+export default {
+    makeDataWithTable
 };

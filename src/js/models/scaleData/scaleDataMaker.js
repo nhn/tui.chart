@@ -4,22 +4,18 @@
  *       FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var arrayUtil = require('../../helpers/arrayUtil');
-var coordinateScaleCalculator = require('./coordinateScaleCalculator.js');
-var snippet = require('tui-code-snippet');
-
-var abs = Math.abs;
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import arrayUtil from '../../helpers/arrayUtil';
+import coordinateScaleCalculator from './coordinateScaleCalculator.js';
+import snippet from 'tui-code-snippet';
 
 /**
  * scaleMaker calculates limit and step into values of processed data and returns it.
  * @module scaleDataMaker
  * @private */
-var scaleDataMaker = {
+const scaleDataMaker = {
     /**
      * Make limit for diverging option.
      * To balance diverging chart
@@ -29,8 +25,8 @@ var scaleDataMaker = {
      * @returns {{min: number, max: number}} changed limit
      * @private
      */
-    _makeLimitForDivergingOption: function(limit) {
-        var newMax = Math.max(abs(limit.min), abs(limit.max));
+    _makeLimitForDivergingOption(limit) {
+        const newMax = Math.max(Math.abs(limit.min), Math.abs(limit.max));
 
         return {
             min: -newMax,
@@ -45,9 +41,8 @@ var scaleDataMaker = {
      * @returns {object} limit
      * @private
      */
-    _adjustLimitForOverflow: function(limit, step, isOverflowed) {
-        var min = limit.min;
-        var max = limit.max;
+    _adjustLimitForOverflow(limit, step, isOverflowed) {
+        let {min, max} = limit;
 
         if (isOverflowed.min) {
             min = calculator.subtract(min, step);
@@ -58,8 +53,8 @@ var scaleDataMaker = {
         }
 
         return {
-            min: min,
-            max: max
+            min,
+            max
         };
     },
 
@@ -88,18 +83,17 @@ var scaleDataMaker = {
      * @returns {string}
      * @private
      */
-    _findDateType: function(dataLimit, count) {
-        var diff = dataLimit.max - dataLimit.min;
-        var millisecondTypes = this.millisecondTypes;
-        var millisecondMap = this.millisecondMap;
-        var lastTypeIndex = millisecondTypes.length - 1;
-        var foundType;
+    _findDateType(dataLimit, count) {
+        const diff = dataLimit.max - dataLimit.min;
+        const {millisecondTypes, millisecondMap} = this;
+        const lastTypeIndex = millisecondTypes.length - 1;
+        let foundType;
 
         if (diff) {
-            snippet.forEachArray(millisecondTypes, function(type, index) {
-                var millisecond = millisecondMap[type];
-                var dividedCount = Math.floor(diff / millisecond);
-                var foundIndex;
+            millisecondTypes.every((type, index) => {
+                const millisecond = millisecondMap[type];
+                const dividedCount = Math.floor(diff / millisecond);
+                let foundIndex;
 
                 if (dividedCount) {
                     foundIndex = index < lastTypeIndex && dividedCount < 2 && dividedCount < count ? index + 1 : index;
@@ -122,19 +116,19 @@ var scaleDataMaker = {
      * @returns {{divisionNumber: number, minDate: number, dataLimit: {min: number, max: number}}}
      * @private
      */
-    _makeDatetimeInfo: function(dataLimit, count) {
-        var dateType = this._findDateType(dataLimit, count);
-        var divisionNumber = this.millisecondMap[dateType];
-        var minDate = calculator.divide(dataLimit.min, divisionNumber);
-        var maxDate = calculator.divide(dataLimit.max, divisionNumber);
-        var max = maxDate - minDate;
+    _makeDatetimeInfo(dataLimit, count) {
+        const dateType = this._findDateType(dataLimit, count);
+        const divisionNumber = this.millisecondMap[dateType];
+        const minDate = calculator.divide(dataLimit.min, divisionNumber);
+        const maxDate = calculator.divide(dataLimit.max, divisionNumber);
+        const max = maxDate - minDate;
 
         return {
-            divisionNumber: divisionNumber,
-            minDate: minDate,
+            divisionNumber,
+            minDate,
             dataLimit: {
                 min: 0,
-                max: max
+                max
             }
         };
     },
@@ -147,8 +141,8 @@ var scaleDataMaker = {
      * @returns {{step: number, limit: {min: number, max: number}}}
      * @private
      */
-    _restoreScaleToDatetimeType: function(scale, minDate, divisionNumber) {
-        var limit = scale.limit;
+    _restoreScaleToDatetimeType(scale, minDate, divisionNumber) {
+        const {limit} = scale;
 
         scale.step = calculator.multiply(scale.step, divisionNumber);
         limit.min = calculator.multiply(calculator.add(limit.min, minDate), divisionNumber);
@@ -162,15 +156,14 @@ var scaleDataMaker = {
      * @param {Array} baseValues base values
      * @returns {{min: number, max: number}}
      */
-    _getLimitSafely: function(baseValues) {
-        var limit = {
+    _getLimitSafely(baseValues) {
+        const limit = {
             min: arrayUtil.min(baseValues),
             max: arrayUtil.max(baseValues)
         };
-        var firstValue;
 
         if (baseValues.length === 1) {
-            firstValue = baseValues[0];
+            const [firstValue] = baseValues;
 
             if (firstValue > 0) {
                 limit.min = 0;
@@ -197,18 +190,15 @@ var scaleDataMaker = {
      * @returns {{limit: {min: number, max: number}, step: number}}
      * @private
      */
-    _calculateDatetimeScale: function(baseValues, baseSize, isDiverging) {
-        var datetimeInfo, scale, limit;
-
-        datetimeInfo = this._makeDatetimeInfo(this._getLimitSafely(baseValues), baseValues.length);
-
-        limit = datetimeInfo.dataLimit;
+    _calculateDatetimeScale(baseValues, baseSize, isDiverging) {
+        const datetimeInfo = this._makeDatetimeInfo(this._getLimitSafely(baseValues), baseValues.length);
+        let limit = datetimeInfo.dataLimit;
 
         if (isDiverging) {
             limit = this._makeLimitForDivergingOption(limit);
         }
 
-        scale = coordinateScaleCalculator({
+        let scale = coordinateScaleCalculator({
             min: limit.min,
             max: limit.max,
             offsetSize: baseSize,
@@ -227,8 +217,8 @@ var scaleDataMaker = {
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _calculatePercentStackedScale: function(baseValues, isDiverging) {
-        var scale;
+    _calculatePercentStackedScale(baseValues, isDiverging) {
+        let scale;
 
         if (calculator.sumMinusValues(baseValues) === 0) {
             scale = chartConst.PERCENT_STACKED_AXIS_SCALE;
@@ -256,39 +246,33 @@ var scaleDataMaker = {
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _calculateCoordinateScale: function(makeScaleInfos) {
-        var options = makeScaleInfos.options;
-        var baseSize = makeScaleInfos.baseSize;
-        var overflowItem = makeScaleInfos.overflowItem;
-        var chartType = makeScaleInfos.chartType;
-        var limit = this._getLimitSafely(makeScaleInfos.baseValues);
-        var limitOption = options.limitOption || {};
-        var hasMinOption = snippet.isExisty(limitOption.min);
-        var hasMaxOption = snippet.isExisty(limitOption.max);
-        var min = limit.min;
-        var max = limit.max;
-        var stepCount = options.stepCount;
-        var isOverflowed, scaleData;
+    _calculateCoordinateScale(makeScaleInfos) {
+        const {options: {limitOption = {}, useSpectrumLegend}, baseSize, overflowItem, chartType} = makeScaleInfos;
+        const limit = this._getLimitSafely(makeScaleInfos.baseValues);
+        const hasMinOption = snippet.isExisty(limitOption.min);
+        const hasMaxOption = snippet.isExisty(limitOption.max);
+        let {min, max} = limit;
+        let isOverflowed;
+        let {stepCount} = makeScaleInfos.options;
 
         if (hasMinOption) {
-            min = limitOption.min;
+            ({min} = limitOption);
             stepCount = null;
         }
 
         if (hasMaxOption) {
-            max = limitOption.max;
+            ({max} = limitOption);
             stepCount = null;
         }
 
-        scaleData = coordinateScaleCalculator({
-            min: min,
-            max: max,
-            stepCount: stepCount,
-            offsetSize: baseSize,
-            showLabel: options.showLabel
+        const scaleData = coordinateScaleCalculator({
+            min,
+            max,
+            stepCount,
+            offsetSize: baseSize
         });
 
-        if (!options.useSpectrumLegend) {
+        if (!useSpectrumLegend) {
             isOverflowed = this._isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption);
         }
 
@@ -303,13 +287,13 @@ var scaleDataMaker = {
         return scaleData;
     },
 
-    _isOverflowed: function(overflowItem, scaleData, limit, hasMinOption, hasMaxOption) {
-        var isBubbleMinOverflowed = !!(overflowItem && overflowItem.minItem);
-        var isBubbleMaxOverflowed = !!(overflowItem && overflowItem.maxItem);
-        var scaleDataLimit = scaleData.limit;
-        var isOverflowedMin = isBubbleMinOverflowed ||
+    _isOverflowed(overflowItem, scaleData, limit, hasMinOption, hasMaxOption) {
+        const isBubbleMinOverflowed = !!(overflowItem && overflowItem.minItem);
+        const isBubbleMaxOverflowed = !!(overflowItem && overflowItem.maxItem);
+        const scaleDataLimit = scaleData.limit;
+        const isOverflowedMin = isBubbleMinOverflowed ||
              (!hasMinOption && scaleDataLimit.min === limit.min && scaleDataLimit.min !== 0);
-        var isOverflowedMax = isBubbleMaxOverflowed ||
+        const isOverflowedMax = isBubbleMaxOverflowed ||
             (!hasMaxOption && scaleDataLimit.max === limit.max && scaleDataLimit.max !== 0);
 
         if (!isOverflowedMin && !isOverflowedMax) {
@@ -337,10 +321,10 @@ var scaleDataMaker = {
      * }} options - options
      * @returns {{limit: {min:number, max:number}, step: number, stepCount: number}}
      */
-    makeScaleData: function(baseValues, baseSize, chartType, options) {
-        var scaleData;
-        var isDiverging = predicate.isDivergingChart(chartType, options.diverging);
-        var overflowItem = options.overflowItem;
+    makeScaleData(baseValues, baseSize, chartType, options) {
+        let scaleData;
+        const isDiverging = predicate.isDivergingChart(chartType, options.diverging);
+        const {overflowItem} = options;
 
         if (predicate.isPercentStackChart(chartType, options.stackType)) {
             scaleData = this._calculatePercentStackedScale(baseValues, isDiverging);
@@ -352,12 +336,12 @@ var scaleDataMaker = {
             }
 
             scaleData = this._calculateCoordinateScale({
-                baseValues: baseValues,
-                baseSize: baseSize,
-                overflowItem: overflowItem,
-                isDiverging: isDiverging,
-                chartType: chartType,
-                options: options
+                baseValues,
+                baseSize,
+                overflowItem,
+                isDiverging,
+                chartType,
+                options
             });
         }
 
@@ -365,4 +349,4 @@ var scaleDataMaker = {
     }
 };
 
-module.exports = scaleDataMaker;
+export default scaleDataMaker;

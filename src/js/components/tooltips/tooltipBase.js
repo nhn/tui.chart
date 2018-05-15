@@ -4,17 +4,15 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import raphael from 'raphael';
+import objectUtil from '../../helpers/objectUtil';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
 
-var snippet = require('tui-code-snippet');
-var raphael = require('raphael');
-var objectUtil = require('../../helpers/objectUtil');
-var chartConst = require('../../const'),
-    dom = require('../../helpers/domHandler'),
-    predicate = require('../../helpers/predicate'),
-    renderUtil = require('../../helpers/renderUtil');
-
-var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
+export default class TooltipBase {
     /**
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
@@ -32,8 +30,8 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      *      @param {string} params.dateFormat - date format
      *      @param {object} params.labelFormatter - label formatter function
      */
-    init: function(params) {
-        var isPieChart = predicate.isPieChart(params.chartType);
+    constructor(params) {
+        const isPieChart = predicate.isPieChart(params.chartType);
 
         /**
          * Chart type
@@ -124,7 +122,7 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
          * Tooltip suffix.
          * @type {string}
          */
-        this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
+        this.suffix = this.options.suffix ? `&nbsp;${this.options.suffix}` : '';
 
         /**
          * Tooltip template function.
@@ -172,13 +170,13 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
         this._saveOriginalPositionOptions();
 
         this._attachToEventBus();
-    },
+    }
 
     /**
      * Attach to event bus.
      * @private
      */
-    _attachToEventBus: function() {
+    _attachToEventBus() {
         this.eventBus.on({
             showTooltip: this.onShowTooltip,
             hideTooltip: this.onHideTooltip
@@ -190,47 +188,45 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
                 hideTooltipContainer: this.onHideTooltipContainer
             }, this);
         }
-    },
+    }
 
     /**
      * Make tooltip html.
      * @private
      * @abstract
      */
-    _makeTooltipHtml: function() {},
+    _makeTooltipHtml() {}
 
     /**
      * Set default align option of tooltip.
      * @private
      * @abstract
      */
-    _setDefaultTooltipPositionOption: function() {},
+    _setDefaultTooltipPositionOption() {}
 
     /**
      * Save position options.
      * @private
      */
-    _saveOriginalPositionOptions: function() {
+    _saveOriginalPositionOptions() {
         this.orgPositionOptions = {
             align: this.options.align,
             offset: this.options.offset
         };
-    },
+    }
 
     /**
      * Render tooltip component.
      * @param {HTMLElement} iconElement - icon element
      */
-    makeLineLegendIcon: function(iconElement) {
-        var iconElementLength = iconElement.length;
-        var icon, strokeColor, paper, line;
-        var i = 0;
+    makeLineLegendIcon(iconElement) {
+        const iconElementLength = iconElement.length;
 
-        for (; i < iconElementLength; i += 1) {
-            icon = iconElement[i];
-            strokeColor = icon.style['background-color'];
-            paper = raphael(icon, 10, 10);
-            line = paper.path(chartConst.LEGEND_LINE_ICON_PATH);
+        for (let i = 0; i < iconElementLength; i += 1) {
+            const icon = iconElement[i];
+            const strokeColor = icon.style['background-color'];
+            const paper = raphael(icon, 10, 10);
+            const line = paper.path(chartConst.LEGEND_LINE_ICON_PATH);
             icon.style['background-color'] = '';
             line.attr({
                 'stroke': strokeColor,
@@ -238,14 +234,14 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
                 'stroke-opacity': 1
             });
         }
-    },
+    }
 
     /**
      * Make tooltip data.
      * @private
      * @abstract
      */
-    makeTooltipData: function() {},
+    makeTooltipData() {}
 
     /**
      * Set data for rendering.
@@ -258,19 +254,19 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      * }} data - bounds data
      * @private
      */
-    _setDataForRendering: function(data) {
+    _setDataForRendering(data) {
         this.layout = data.layout;
         this.dimensionMap = data.dimensionMap;
         this.positionMap = data.positionMap;
-    },
+    }
 
     /**
      * Render tooltip component.
      * @param {object} data - bounds data
      * @returns {HTMLElement} tooltip element
      */
-    render: function(data) {
-        var el = data.paper;
+    render(data) {
+        const el = data.paper;
 
         dom.addClass(el, this.className);
 
@@ -282,17 +278,17 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
         this.tooltipContainer = el;
 
         return el;
-    },
+    }
 
     /**
      * Rerender.
      * @param {object} data - bounds data
      */
-    rerender: function(data) {
+    rerender(data) {
         this.resize(data);
         this.data = this.makeTooltipData();
         this.tooltipColors = this.makeTooltipLegendColor(data.checkedLegends);
-    },
+    }
 
     /**
      * make legend color
@@ -300,69 +296,68 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      * @returns {{colors: Array.<string>}} legend colors
      * @private
      */
-    makeTooltipLegendColor: function(checkedLegends) {
-        var colors = {};
+    makeTooltipLegendColor(checkedLegends) {
+        const colors = {};
 
         if (checkedLegends) {
-            snippet.forEach(this.theme, function(themeItem, themeKey) {
+            Object.keys(this.theme).forEach(themeKey => {
                 if (!colors[themeKey]) {
                     colors[themeKey] = [];
                 }
-                snippet.forEach(checkedLegends[themeKey], function(checked, index) {
+                (checkedLegends[themeKey] || []).forEach((checked, index) => {
                     if (checked) {
                         colors[themeKey].push(this.theme[themeKey].colors[index]);
                     }
-                }, this);
-            }, this);
+                });
+            });
         }
 
         return colors;
-    },
+    }
+
     /**
      * Resize tooltip component.
      * @param {object} data - bounds data
      * @override
      */
-    resize: function(data) {
+    resize(data) {
         this._setDataForRendering(data);
 
         renderUtil.renderPosition(this.tooltipContainer, this.layout.position);
         if (this.positionModel) {
             this.positionModel.updateBound(this.layout);
         }
-    },
+    }
 
     /**
      * Zoom.
      */
-    zoom: function() {
+    zoom() {
         this.data = this.makeTooltipData();
-    },
+    }
 
     /**
      * Get tooltip element.
      * @returns {HTMLElement} tooltip element
      * @private
      */
-    _getTooltipElement: function() {
-        var tooltipElement;
-
+    _getTooltipElement() {
         if (!this.tooltipElement) {
-            this.tooltipElement = tooltipElement = dom.create('DIV', 'tui-chart-tooltip');
+            const tooltipElement = this.tooltipElement = dom.create('DIV', 'tui-chart-tooltip');
             dom.append(this.tooltipContainer, tooltipElement);
         }
 
         return this.tooltipElement;
-    },
+    }
 
     /**
      * onShowTooltip is callback of mouse event detector showTooltip for SeriesView.
      * @param {object} params coordinate event parameters
      */
-    onShowTooltip: function(params) {
-        var tooltipElement = this._getTooltipElement();
-        var isScatterCombo = predicate.isComboChart(this.chartType) && predicate.isScatterChart(params.chartType);
-        var prevPosition;
+    onShowTooltip(params) {
+        const tooltipElement = this._getTooltipElement();
+        const isScatterCombo = predicate.isComboChart(this.chartType) && predicate.isScatterChart(params.chartType);
+        let prevPosition;
 
         if ((!predicate.isChartToDetectMouseEventOnSeries(params.chartType) || isScatterCombo)
             && tooltipElement.offsetWidth) {
@@ -373,19 +368,19 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
         }
 
         this._showTooltip(tooltipElement, params, prevPosition);
-    },
+    }
 
     /**
      * Get tooltip dimension
      * @param {HTMLElement} tooltipElement tooltip element
      * @returns {{width: number, height: number}} rendered tooltip dimension
      */
-    getTooltipDimension: function(tooltipElement) {
+    getTooltipDimension({offsetWidth, offsetHeight}) {
         return {
-            width: tooltipElement.offsetWidth,
-            height: tooltipElement.offsetHeight
+            width: offsetWidth,
+            height: offsetHeight
         };
-    },
+    }
 
     /**
      * Move to Position.
@@ -394,13 +389,13 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {{left: number, top: number}} prevPosition prev position
      * @private
      */
-    _moveToPosition: function(tooltipElement, position, prevPosition) {
+    _moveToPosition(tooltipElement, position, prevPosition) {
         if (prevPosition) {
             this._slideTooltip(tooltipElement, prevPosition, position);
         } else {
             renderUtil.renderPosition(tooltipElement, position);
         }
-    },
+    }
 
     /**
      * Slide tooltip
@@ -409,19 +404,19 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {{left: number, top: number}} position position
      * @private
      */
-    _slideTooltip: function(tooltipElement, prevPosition, position) {
-        var moveTop = position.top - prevPosition.top,
-            moveLeft = position.left - prevPosition.left;
+    _slideTooltip(tooltipElement, prevPosition, position) {
+        const moveTop = position.top - prevPosition.top;
+        const moveLeft = position.left - prevPosition.left;
 
         renderUtil.cancelAnimation(this.slidingAnimation);
 
-        this.slidingAnimation = renderUtil.startAnimation(this.animationTime, function(ratio) {
-            var left = moveLeft * ratio,
-                top = moveTop * ratio;
-            tooltipElement.style.left = (prevPosition.left + left) + 'px';
-            tooltipElement.style.top = (prevPosition.top + top) + 'px';
+        this.slidingAnimation = renderUtil.startAnimation(this.animationTime, ratio => {
+            const left = moveLeft * ratio;
+            const top = moveTop * ratio;
+            tooltipElement.style.left = `${(prevPosition.left + left)}px`;
+            tooltipElement.style.top = `${(prevPosition.top + top)}px`;
         });
-    },
+    }
 
     /**
      * onHideTooltip is callback of mouse event detector hideTooltip for SeriesView
@@ -429,42 +424,42 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      *                                  - showing tooltip index in case group tooltip
      * @param {{silent: {boolean}}} [options] - hide tooltip options
      */
-    onHideTooltip: function(prevFound, options) {
-        var tooltipElement = this._getTooltipElement();
+    onHideTooltip(prevFound, options) {
+        const tooltipElement = this._getTooltipElement();
 
         this._hideTooltip(tooltipElement, prevFound, options);
-    },
+    }
 
     /**
      * Set align option.
      * @param {string} align align
      */
-    setAlign: function(align) {
+    setAlign(align) {
         this.options.align = align;
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
         }
-    },
+    }
 
     /**
      * Update offset option.
      * @param {{x: number, y: number}} offset - offset
      * @private
      */
-    _updateOffsetOption: function(offset) {
+    _updateOffsetOption(offset) {
         this.options.offset = offset;
 
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
         }
-    },
+    }
 
     /**
      * Set offset.
      * @param {{x: number, y: number}} offset - offset
      */
-    setOffset: function(offset) {
-        var offsetOption = snippet.extend({}, this.options.offset);
+    setOffset(offset) {
+        const offsetOption = Object.assign({}, this.options.offset);
 
         if (snippet.isExisty(offset.x)) {
             offsetOption.x = offset.x;
@@ -475,15 +470,15 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
         }
 
         this._updateOffsetOption(snippet.extend({}, this.options.offset, offsetOption));
-    },
+    }
 
     /**
      * Set position option.
      * @param {{left: number, top: number}} position moving position
      * @deprecated
      */
-    setPosition: function(position) {
-        var offsetOption = snippet.extend({}, this.options.offset);
+    setPosition(position) {
+        const offsetOption = Object.assign({}, this.options.offset);
 
         if (snippet.isExisty(position.left)) {
             offsetOption.x = position.left;
@@ -494,28 +489,28 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
         }
 
         this._updateOffsetOption(offsetOption);
-    },
+    }
 
     /**
      * Reset align option.
      */
-    resetAlign: function() {
-        var align = this.orgPositionOptions.align;
+    resetAlign() {
+        const {align} = this.orgPositionOptions;
 
         this.options.align = align;
 
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
         }
-    },
+    }
 
     /**
      * Reset offset option.
      */
-    resetOffset: function() {
+    resetOffset() {
         this.options.offset = this.orgPositionOptions.offset;
         this._updateOffsetOption(this.options.offset);
-    },
+    }
 
     /**
      * Get category's raw data
@@ -523,10 +518,10 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {string} format - date format
      * @returns {string} - category's raw data
      */
-    getRawCategory: function(index, format) {
-        var axis = this.isVertical ? 'x' : 'y';
-        var categories = this.dataProcessor.categoriesMap ? this.dataProcessor.categoriesMap[axis] : null;
-        var rawCategory = '';
+    getRawCategory(index, format) {
+        const axis = this.isVertical ? 'x' : 'y';
+        const categories = this.dataProcessor.categoriesMap ? this.dataProcessor.categoriesMap[axis] : null;
+        let rawCategory = '';
 
         if (categories) {
             rawCategory = categories[index];
@@ -538,6 +533,4 @@ var TooltipBase = snippet.defineClass(/** @lends TooltipBase.prototype */ {
 
         return rawCategory;
     }
-});
-
-module.exports = TooltipBase;
+}

@@ -4,23 +4,21 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import DataProcessor from '../../../src/js/models/data/dataProcessor.js';
+import chartConst from '../../../src/js/const';
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
 
-var DataProcessor = require('../../../src/js/models/data/dataProcessor.js');
-var chartConst = require('../../../src/js/const');
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
-var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
+describe('Test for DataProcessor', () => {
+    let dataProcessor;
 
-describe('Test for DataProcessor', function() {
-    var dataProcessor;
-
-    beforeEach(function() {
+    beforeEach(() => {
         dataProcessor = new DataProcessor({}, '', {});
     });
 
-    describe('_filterSeriesDataByIndexRange()', function() {
-        it('filter seriesData by index range', function() {
-            var seriesData = [
+    describe('_filterSeriesDataByIndexRange()', () => {
+        it('filter seriesData by index range', () => {
+            const seriesData = [
                 {
                     data: [1, 2, 3, 4, 5]
                 },
@@ -28,8 +26,8 @@ describe('Test for DataProcessor', function() {
                     data: [11, 12, 13, 14, 15]
                 }
             ];
-            var actual = dataProcessor._filterSeriesDataByIndexRange(seriesData, 1, 3);
-            var expected = [
+            const actual = dataProcessor._filterSeriesDataByIndexRange(seriesData, 1, 3);
+            const expected = [
                 {
                     data: [2, 3, 4]
                 },
@@ -42,9 +40,9 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_filterRawDataByIndexRange()', function() {
-        it('filter raw data(category and series) by index range, when single chart', function() {
-            var rawData = {
+    describe('_filterRawDataByIndexRange()', () => {
+        it('filter raw data(category and series) by index range, when single chart', () => {
+            const rawData = {
                 categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
                 series: {
                     line: [
@@ -57,8 +55,8 @@ describe('Test for DataProcessor', function() {
                     ]
                 }
             };
-            var actual = dataProcessor._filterRawDataByIndexRange(rawData, [1, 3]);
-            var expected = {
+            const actual = dataProcessor._filterRawDataByIndexRange(rawData, [1, 3]);
+            const expected = {
                 categories: ['cate2', 'cate3', 'cate4'],
                 series: {
                     line: [
@@ -75,8 +73,8 @@ describe('Test for DataProcessor', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('filter raw data(category and series) by index range, when combo chart', function() {
-            var rawData = {
+        it('filter raw data(category and series) by index range, when combo chart', () => {
+            const rawData = {
                 categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
                 series: {
                     line: [
@@ -91,8 +89,8 @@ describe('Test for DataProcessor', function() {
                     ]
                 }
             };
-            var actual = dataProcessor._filterRawDataByIndexRange(rawData, [1, 3]);
-            var expected = {
+            const actual = dataProcessor._filterRawDataByIndexRange(rawData, [1, 3]);
+            const expected = {
                 categories: ['cate2', 'cate3', 'cate4'],
                 series: {
                     line: [
@@ -112,33 +110,31 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_escapeCategories()', function() {
-        it('should escape category label on HTML', function() {
-            var actual = dataProcessor._escapeCategories(['<div>ABC</div>', 'EFG']);
-            var expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
+    describe('_escapeCategories()', () => {
+        it('should escape category label on HTML', () => {
+            const actual = dataProcessor._escapeCategories(['<div>ABC</div>', 'EFG']);
+            const expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
 
             expect(actual).toEqual(expected);
         });
 
-        it('should change type to string, if input data type is number', function() {
-            var actual = dataProcessor._escapeCategories([1, 2]);
-            var expected = ['1', '2'];
+        it('should change type to string, if input data type is number', () => {
+            const actual = dataProcessor._escapeCategories([1, 2]);
+            const expected = ['1', '2'];
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_mapCategories()', function() {
-        it('if x axis is datetime type, return excaped categories', function() {
-            var actual;
-
+    describe('_mapCategories()', () => {
+        it('if x axis is datetime type, return excaped categories', () => {
             dataProcessor.options = {
                 xAxis: {
                     type: chartConst.AXIS_TYPE_DATETIME
                 }
             };
 
-            actual = dataProcessor._mapCategories([
+            const actual = dataProcessor._mapCategories([
                 '01/02/2016',
                 '01/04/2016',
                 '01/07/2016'
@@ -151,38 +147,32 @@ describe('Test for DataProcessor', function() {
             ]);
         });
 
-        it('if x axis is not datetime type, return escaped categories', function() {
-            var actual;
-
+        it('if x axis is not datetime type, return escaped categories', () => {
             dataProcessor.options = {
                 xAxis: {}
             };
 
-            actual = dataProcessor._mapCategories(['<div>ABC</div>', 'EFG']);
+            const actual = dataProcessor._mapCategories(['<div>ABC</div>', 'EFG']);
 
             expect(actual).toEqual(['&lt;div&gt;ABC&lt;/div&gt;', 'EFG']);
         });
     });
 
-    describe('_processCategories()', function() {
-        it('should set rawData.categories to object\'s type property, if type of rawData.categories is array', function() {
-            var actual;
-
+    describe('_processCategories()', () => {
+        it('should set rawData.categories to object\'s type property, if type of rawData.categories is array', () => {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor._processCategories('y');
+            const actual = dataProcessor._processCategories('y');
 
             expect(actual).toEqual({
                 y: ['cate1', 'cate2', 'cate3']
             });
         });
 
-        it('should reverse data, if type of rawData.categories is object', function() {
-            var actual;
-
+        it('should reverse data, if type of rawData.categories is object', () => {
             dataProcessor.rawData = {
                 categories: {
                     x: ['ABC', 'EFG'],
@@ -191,39 +181,35 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor._processCategories();
+            const actual = dataProcessor._processCategories();
 
             expect(actual.y).toEqual(['2', '1']);
         });
 
-        it('should not return value, when type of rawData.categories is obejct, and having prperties other than x, y.', function() {
-            var actual;
-
+        it('should not return value, when type of rawData.categories is obejct, and having prperties other than x, y.', () => {
             dataProcessor.rawData = {
                 categories: {
                     z: ['ABC', 'EFG']
                 }
             };
 
-            actual = dataProcessor._processCategories();
+            const actual = dataProcessor._processCategories();
 
             expect(actual.z).toBeUndefined();
         });
 
-        it('should return empty object, if data processor has not rawData.categories.', function() {
-            var actual;
-
+        it('should return empty object, if data processor has not rawData.categories.', () => {
             dataProcessor.rawData = {};
 
-            actual = dataProcessor._processCategories();
+            const actual = dataProcessor._processCategories();
 
             expect(actual).toEqual({});
         });
     });
 
-    describe('getCategories()', function() {
-        it('should cache categories map of key y, when there is no categoriesMap, and vertical categories.', function() {
-            var isVertical = true;
+    describe('getCategories()', () => {
+        it('should cache categories map of key y, when there is no categoriesMap, and vertical categories.', () => {
+            const isVertical = true;
 
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
@@ -236,8 +222,8 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.categoriesMap.x).toBeUndefined();
         });
 
-        it('should cache categories map of key x, when there is no categoriesMap, and horizontal categories.', function() {
-            var isVertical = false;
+        it('should cache categories map of key x, when there is no categoriesMap, and horizontal categories.', () => {
+            const isVertical = false;
 
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
@@ -250,73 +236,63 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.categoriesMap.y).toBeUndefined();
         });
 
-        it('should return categories from cached categoriesMap.y when vertical category.', function() {
-            var isVertical = true;
-            var actual;
+        it('should return categories from cached categoriesMap.y when vertical category.', () => {
+            const isVertical = true;
 
             dataProcessor.categoriesMap = {
                 y: ['cate1', 'cate2', 'cate3']
             };
 
-            actual = dataProcessor.getCategories(isVertical);
+            const actual = dataProcessor.getCategories(isVertical);
 
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
 
-        it('should return categories from cached categoriesMap.x when horizontal category', function() {
-            var isVertical = false;
-            var actual;
+        it('should return categories from cached categoriesMap.x when horizontal category', () => {
+            const isVertical = false;
 
             dataProcessor.categoriesMap = {
                 x: ['cate1', 'cate2', 'cate3']
             };
 
-            actual = dataProcessor.getCategories(isVertical);
+            const actual = dataProcessor.getCategories(isVertical);
 
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
 
-        it('should pick any category, when find categories without isVertical option.(used to check existence on hasCategories()).', function() {
-            var actual;
-
+        it('should pick any category, when find categories without isVertical option.(used to check existence on hasCategories()).', () => {
             dataProcessor.categoriesMap = {
                 y: ['cate1', 'cate2', 'cate3']
             };
 
-            actual = dataProcessor.getCategories();
+            const actual = dataProcessor.getCategories();
 
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
     });
 
-    describe('findCategoryIndex()', function() {
-        it('find category index by category value', function() {
-            var actual;
-
+    describe('findCategoryIndex()', () => {
+        it('find category index by category value', () => {
             dataProcessor.categoriesMap = {
                 x: ['cate1', 'cate2', 'cate3']
             };
 
-            actual = dataProcessor.findCategoryIndex('cate2');
+            const actual = dataProcessor.findCategoryIndex('cate2');
 
             expect(actual).toBe(1);
         });
 
-        it('if not found category index, returns null', function() {
-            var actual;
-
+        it('if not found category index, returns null', () => {
             dataProcessor.categoriesMap = {
                 x: ['cate1', 'cate2', 'cate3']
             };
 
-            actual = dataProcessor.findCategoryIndex('cate4');
+            const actual = dataProcessor.findCategoryIndex('cate4');
 
             expect(actual).toBeNull();
         });
 
-        it('timestamp should be properly cast and compared in both string and numeric modes', function() {
-            var actual;
-
+        it('timestamp should be properly cast and compared in both string and numeric modes', () => {
             dataProcessor.categoriesMap = {
                 x: [1530958121000, 1530958122000, 1530958123000]
             };
@@ -324,44 +300,38 @@ describe('Test for DataProcessor', function() {
                 x: true
             };
 
-            actual = dataProcessor.findCategoryIndex('1530958122000');
+            const actual = dataProcessor.findCategoryIndex('1530958122000');
 
             expect(actual).toBe(1);
         });
     });
 
-    describe('makeTooltipCategory()', function() {
-        it('should use vertical category as default on horizontal chart', function() {
-            var actual;
-
+    describe('makeTooltipCategory()', () => {
+        it('should use vertical category as default on horizontal chart', () => {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor.makeTooltipCategory(0, null, false);
+            const actual = dataProcessor.makeTooltipCategory(0, null, false);
 
             expect(dataProcessor.categoriesMap.y).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual).toBe('cate1');
         });
 
-        it('should use horizontal category as default on vertical chart.', function() {
-            var actual;
-
+        it('should use horizontal category as default on vertical chart.', () => {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor.makeTooltipCategory(0, null, true);
+            const actual = dataProcessor.makeTooltipCategory(0, null, true);
 
             expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual).toBe('cate1');
         });
 
-        it('should add vertical category with ",", if there is vertical chart and having vertical category', function() {
-            var actual;
-
+        it('should add vertical category with ",", if there is vertical chart and having vertical category', () => {
             dataProcessor.rawData = {
                 categories: {
                     x: ['cate1', 'cate2', 'cate3'],
@@ -370,16 +340,14 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.options.xAxis = {};
 
-            actual = dataProcessor.makeTooltipCategory(0, 2, true);
+            const actual = dataProcessor.makeTooltipCategory(0, 2, true);
 
             expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual).toBe('cate1, 3');
         });
 
-        describe('category type is datetime', function() {
-            it('should return categories formatted by xAxis.dateFormat, when xAxis.type is datetime and vertical chart type', function() {
-                var actual;
-
+        describe('category type is datetime', () => {
+            it('should return categories formatted by xAxis.dateFormat, when xAxis.type is datetime and vertical chart type', () => {
                 dataProcessor.rawData = {
                     categories: ['12/01/2017', '01/01/2017', '02/01/2018']
                 };
@@ -390,7 +358,7 @@ describe('Test for DataProcessor', function() {
                         dateFormat: 'YYYY-MM'
                     }
                 };
-                actual = dataProcessor.makeTooltipCategory(2, null, false);
+                const actual = dataProcessor.makeTooltipCategory(2, null, false);
                 expect(dataProcessor.categoriesMap.y).toEqual([
                     new Date('12/01/2017').getTime(),
                     new Date('01/01/2017').getTime(),
@@ -399,9 +367,7 @@ describe('Test for DataProcessor', function() {
                 expect(actual).toBe('2018-02');
             });
 
-            it('should return categories formatted by xAxis.dateFormat, when yAxis.type is datetime and horizontal chart type', function() {
-                var actual;
-
+            it('should return categories formatted by xAxis.dateFormat, when yAxis.type is datetime and horizontal chart type', () => {
                 dataProcessor.rawData = {
                     categories: ['12/01/2017', '01/01/2017', '02/01/2018']
                 };
@@ -412,15 +378,13 @@ describe('Test for DataProcessor', function() {
                     },
                     yAxis: {}
                 };
-                actual = dataProcessor.makeTooltipCategory(2, null, true);
+                const actual = dataProcessor.makeTooltipCategory(2, null, true);
 
                 expect(dataProcessor.categoriesMap.x).toEqual([new Date('12/01/2017').getTime(), new Date('01/01/2017').getTime(), new Date('02/01/2018').getTime()]);
                 expect(actual).toBe('2018-02');
             });
 
-            it('should return categories formatted by tooltip.dateFormat, when tooltip.type is datetime', function() {
-                var actual;
-
+            it('should return categories formatted by tooltip.dateFormat, when tooltip.type is datetime', () => {
                 dataProcessor.rawData = {
                     categories: ['12/01/2017', '01/01/2017', '02/01/2018']
                 };
@@ -435,7 +399,7 @@ describe('Test for DataProcessor', function() {
                         dateFormat: 'MM'
                     }
                 };
-                actual = dataProcessor.makeTooltipCategory(2, null, false);
+                const actual = dataProcessor.makeTooltipCategory(2, null, false);
 
                 expect(dataProcessor.categoriesMap.y).toEqual([
                     new Date('12/01/2017').getTime(),
@@ -447,8 +411,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_pushCategory', function() {
-        it('should append categories to rawData.categories and originalRawData.categories.', function() {
+    describe('_pushCategory', () => {
+        it('should append categories to rawData.categories and originalRawData.categories.', () => {
             dataProcessor.rawData.categories = ['cate1', 'cate2'];
             dataProcessor.originalRawData.categories = ['cate1', 'cate2'];
 
@@ -459,8 +423,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_shiftCategory', function() {
-        it('should delete first element from rawData.categories and originalRawData.categories', function() {
+    describe('_shiftCategory', () => {
+        it('should delete first element from rawData.categories and originalRawData.categories', () => {
             dataProcessor.rawData.categories = ['cate1', 'cate2', 'cate3'];
             dataProcessor.originalRawData.categories = ['cate1', 'cate2', 'cate3'];
 
@@ -471,10 +435,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_findRawSeriesDatumByName()', function() {
-        it('find raw series datum by legend name, when single chart', function() {
-            var actual;
-
+    describe('_findRawSeriesDatumByName()', () => {
+        it('find raw series datum by legend name, when single chart', () => {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -488,7 +450,7 @@ describe('Test for DataProcessor', function() {
                 ]
             };
 
-            actual = dataProcessor._findRawSeriesDatumByName('legend2', 'line');
+            const actual = dataProcessor._findRawSeriesDatumByName('legend2', 'line');
 
             expect(actual).toEqual({
                 name: 'legend2',
@@ -496,9 +458,7 @@ describe('Test for DataProcessor', function() {
             });
         });
 
-        it('find raw series datum by legend name, when combo chart', function() {
-            var actual;
-
+        it('find raw series datum by legend name, when combo chart', () => {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -514,7 +474,7 @@ describe('Test for DataProcessor', function() {
                 ]
             };
 
-            actual = dataProcessor._findRawSeriesDatumByName('legend2', 'area');
+            const actual = dataProcessor._findRawSeriesDatumByName('legend2', 'area');
 
             expect(actual).toEqual({
                 name: 'legend2',
@@ -522,9 +482,7 @@ describe('Test for DataProcessor', function() {
             });
         });
 
-        it('if not found data, returns null', function() {
-            var actual;
-
+        it('if not found data, returns null', () => {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -540,20 +498,20 @@ describe('Test for DataProcessor', function() {
                 ]
             };
 
-            actual = dataProcessor._findRawSeriesDatumByName('legend2', 'line');
+            const actual = dataProcessor._findRawSeriesDatumByName('legend2', 'line');
 
             expect(actual).toBeNull();
         });
     });
 
-    describe('_pushValue()', function() {
-        it('push value to data property of series', function() {
-            var originalRawSeriesDatum = {
+    describe('_pushValue()', () => {
+        it('push value to data property of series', () => {
+            const originalRawSeriesDatum = {
                 name: 'legend1',
                 data: [1, 2]
             };
 
-            var value = 5;
+            const value = 5;
 
             dataProcessor.rawData.series = {
                 line: [
@@ -570,12 +528,12 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.rawData.series.line[0].data).toEqual([1, 2, 5]);
         });
 
-        it('push value to data property of series, when combo chart', function() {
-            var originalRawSeriesDatum = {
+        it('push value to data property of series, when combo chart', () => {
+            const originalRawSeriesDatum = {
                 name: 'legend1',
                 data: [1, 2]
             };
-            var value = 5;
+            const value = 5;
 
             dataProcessor.rawData.series = {
                 line: [
@@ -600,9 +558,9 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_pushValues()', function() {
-        it('push values to series of originalRawData and series of rawData', function() {
-            var originalRawSeriesData = [
+    describe('_pushValues()', () => {
+        it('push values to series of originalRawData and series of rawData', () => {
+            const originalRawSeriesData = [
                 {
                     name: 'legend1',
                     data: [1, 2]
@@ -612,7 +570,7 @@ describe('Test for DataProcessor', function() {
                     data: [3, 4]
                 }
             ];
-            var values = [5, 6];
+            const values = [5, 6];
 
             dataProcessor.rawData.series = {
                 line: [
@@ -630,14 +588,14 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.rawData.series.line[0].data).toEqual([1, 2, 5]);
         });
 
-        it('push values to series of originalRawData and series of rawData, when combo chart', function() {
-            var originalRawSeriesData = [
+        it('push values to series of originalRawData and series of rawData, when combo chart', () => {
+            const originalRawSeriesData = [
                 {
                     name: 'legend1',
                     data: [1, 2]
                 }
             ];
-            var values = [5];
+            const values = [5];
 
             dataProcessor.rawData.series = {
                 line: [
@@ -662,8 +620,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_pushSeriesData()', function() {
-        it('should push series data to rawData.series, originalRawData.series. it should be pushed to data of same index', function() {
+    describe('_pushSeriesData()', () => {
+        it('should push series data to rawData.series, originalRawData.series. it should be pushed to data of same index', () => {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -698,7 +656,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.originalRawData.series.line[1].data).toEqual([3, 4, 6]);
         });
 
-        it('should push data using originalRawData\'s name, when rawData is filtered by checked legend data.', function() {
+        it('should push data using originalRawData\'s name, when rawData is filtered by checked legend data.', () => {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -729,9 +687,9 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_shiftValues()', function() {
-        it('shift value of series data, when single chart', function() {
-            var originalRawSeriesData = [
+    describe('_shiftValues()', () => {
+        it('shift value of series data, when single chart', () => {
+            const originalRawSeriesData = [
                 {
                     name: 'legend1',
                     data: [1, 2, 3]
@@ -763,8 +721,8 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.rawData.series.line[1].data).toEqual([5, 6]);
         });
 
-        it('shift value of series data, when combo chart', function() {
-            var originalRawSeriesData = [
+        it('shift value of series data, when combo chart', () => {
+            const originalRawSeriesData = [
                 {
                     name: 'legend1',
                     data: [1, 2, 3]
@@ -794,8 +752,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_shiftSeriesData', function() {
-        it('should delete first element of data from rawData and originalRawData.', function() {
+    describe('_shiftSeriesData', () => {
+        it('should delete first element of data from rawData and originalRawData.', () => {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -829,7 +787,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.originalRawData.series.line[1].data).toEqual([5, 6]);
         });
 
-        it('should delete first item using originalRawData when raw data is filtered by checked legend data.', function() {
+        it('should delete first item using originalRawData when raw data is filtered by checked legend data.', () => {
             dataProcessor.rawData.series = {
                 line: [
                     {
@@ -859,10 +817,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('addDataFromDynamicData()', function() {
-        it('Add data from dynamic data, when coordinate type', function() {
-            var actual;
-
+    describe('addDataFromDynamicData()', () => {
+        it('Add data from dynamic data, when coordinate type', () => {
             dataProcessor.dynamicData = [
                 {
                     values: {
@@ -875,7 +831,7 @@ describe('Test for DataProcessor', function() {
             spyOn(dataProcessor, '_pushDynamicDataForCoordinateType');
             spyOn(dataProcessor, 'initData');
 
-            actual = dataProcessor.addDataFromDynamicData();
+            const actual = dataProcessor.addDataFromDynamicData();
 
             expect(dataProcessor._pushDynamicDataForCoordinateType).toHaveBeenCalledWith({
                 'legend1': [10, 20]
@@ -884,9 +840,7 @@ describe('Test for DataProcessor', function() {
             expect(actual).toBe(true);
         });
 
-        it('Add data from dynamic data, when not coordinate type', function() {
-            var actual;
-
+        it('Add data from dynamic data, when not coordinate type', () => {
             dataProcessor.dynamicData = [
                 {
                     category: 'cate',
@@ -897,7 +851,7 @@ describe('Test for DataProcessor', function() {
             spyOn(dataProcessor, '_pushDynamicData');
             spyOn(dataProcessor, 'initData');
 
-            actual = dataProcessor.addDataFromDynamicData();
+            const actual = dataProcessor.addDataFromDynamicData();
 
             expect(dataProcessor._pushDynamicData).toHaveBeenCalledWith({
                 category: 'cate',
@@ -907,15 +861,13 @@ describe('Test for DataProcessor', function() {
             expect(actual).toBe(true);
         });
 
-        it('if dynamicData is empty, returns false', function() {
-            var actual;
-
+        it('if dynamicData is empty, returns false', () => {
             dataProcessor.dynamicData = [];
             spyOn(dataProcessor, '_pushDynamicDataForCoordinateType');
             spyOn(dataProcessor, '_pushDynamicData');
             spyOn(dataProcessor, 'initData');
 
-            actual = dataProcessor.addDataFromDynamicData();
+            const actual = dataProcessor.addDataFromDynamicData();
 
             expect(dataProcessor._pushDynamicDataForCoordinateType).not.toHaveBeenCalled();
             expect(dataProcessor._pushDynamicData).not.toHaveBeenCalled();
@@ -924,8 +876,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('addDataFromRemainDynamicData', function() {
-        it('should append data to rest dynamic data.', function() {
+    describe('addDataFromRemainDynamicData', () => {
+        it('should append data to rest dynamic data.', () => {
             dataProcessor.dynamicData = [
                 {
                     category: 'cate1',
@@ -948,8 +900,8 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.dynamicData.length).toBe(0);
         });
 
-        it('should delete first item when shifting option is on', function() {
-            var shiftingOption = true;
+        it('should delete first item when shifting option is on', () => {
+            const shiftingOption = true;
 
             dataProcessor.dynamicData = [
                 {
@@ -974,10 +926,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('isValidAllSeriesDataModel()', function() {
-        it('should return true, when all SeriesDataModel has valid series group.', function() {
-            var actual, expected;
-
+    describe('isValidAllSeriesDataModel()', () => {
+        it('should return true, when all SeriesDataModel has valid series group.', () => {
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -986,15 +936,13 @@ describe('Test for DataProcessor', function() {
             dataProcessor.seriesDataModelMap.line.groups = ['seriesGroup3'];
             dataProcessor.seriesTypes = ['column', 'line'];
 
-            actual = dataProcessor.isValidAllSeriesDataModel();
-            expected = true;
+            const actual = dataProcessor.isValidAllSeriesDataModel();
+            const expected = true;
 
             expect(actual).toBe(expected);
         });
 
-        it('should return false when some SeriesDataModel has invalid series group', function() {
-            var actual, expected;
-
+        it('should return false when some SeriesDataModel has invalid series group', () => {
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -1003,17 +951,15 @@ describe('Test for DataProcessor', function() {
             dataProcessor.seriesDataModelMap.line.groups = [];
             dataProcessor.seriesTypes = ['column', 'line'];
 
-            actual = dataProcessor.isValidAllSeriesDataModel();
-            expected = false;
+            const actual = dataProcessor.isValidAllSeriesDataModel();
+            const expected = false;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeSeriesGroups()', function() {
-        it('should make series groups by merging series item from by chart type', function() {
-            var actual;
-
+    describe('_makeSeriesGroups()', () => {
+        it('should make series groups by merging series item from by chart type', () => {
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -1028,7 +974,7 @@ describe('Test for DataProcessor', function() {
             ];
             dataProcessor.seriesTypes = ['column', 'line'];
 
-            actual = dataProcessor._makeSeriesGroups();
+            const actual = dataProcessor._makeSeriesGroups();
 
             expect(actual.length).toBe(2);
             expect(actual[0].items).toEqual([
@@ -1044,10 +990,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_createValues()', function() {
-        it('should pick all values when combo chart', function() {
-            var actual, expected;
-
+    describe('_createValues()', () => {
+        it('should pick all values when combo chart', () => {
             dataProcessor.chartType = chartConst.CHART_TYPE_COMBO;
             dataProcessor.seriesTypes = ['column', 'line'];
             dataProcessor.seriesDataModelMap = {
@@ -1073,15 +1017,14 @@ describe('Test for DataProcessor', function() {
                 }])
             ];
 
-            actual = dataProcessor._createValues(chartConst.CHART_TYPE_COMBO);
-            expected = [10, 20, 30, 40];
+            const actual = dataProcessor._createValues(chartConst.CHART_TYPE_COMBO);
+            const expected = [10, 20, 30, 40];
 
             expect(actual).toEqual(expected);
         });
 
-        it('should pick values from series item of corresponding chart type, when single chart', function() {
-            var actual;
-            var expected = [10, 5, 30, 20];
+        it('should pick values from series item of corresponding chart type, when single chart', () => {
+            let expected = [10, 5, 30, 20];
 
             dataProcessor.rawData.series = {
                 column: expected
@@ -1101,15 +1044,14 @@ describe('Test for DataProcessor', function() {
                 }])
             ];
 
-            actual = dataProcessor._createValues('column');
+            const actual = dataProcessor._createValues('column');
             expected = [10, 30];
 
             expect(actual).toEqual(expected);
         });
 
-        it('should include start value, if start value is not null', function() {
-            var actual;
-            var expected = [10, 5, 30, 20];
+        it('should include start value, if start value is not null', () => {
+            const expected = [10, 5, 30, 20];
 
             dataProcessor.rawData.series = {
                 column: expected
@@ -1129,13 +1071,13 @@ describe('Test for DataProcessor', function() {
                 }])
             ];
 
-            actual = dataProcessor._createValues('column');
+            const actual = dataProcessor._createValues('column');
 
             expect(actual).toEqual(expected);
         });
 
-        it('create temporary values of line/area chart without series data.', function() {
-            var values = [new Date('01/01/2017'), new Date('02/01/2017')];
+        it('create temporary values of line/area chart without series data.', () => {
+            const values = [new Date('01/01/2017'), new Date('02/01/2017')];
 
             spyOn(dataProcessor, 'getDefaultDatetimeValues').and.returnValue(values);
 
@@ -1149,10 +1091,10 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor._createValues('line', 'x', 'xAxis')).toEqual(values);
         });
 
-        it('create temporary values of line/area chart without series data but plot lines & bands.', function() {
-            var values = [new Date('01/01/2017'), new Date('02/01/2017')];
-            var lineValue = new Date('03/01/2017');
-            var bandRange = [new Date('05/01/2017'), new Date('08/01/2017')];
+        it('create temporary values of line/area chart without series data but plot lines & bands.', () => {
+            const values = [new Date('01/01/2017'), new Date('02/01/2017')];
+            const lineValue = new Date('03/01/2017');
+            const bandRange = [new Date('05/01/2017'), new Date('08/01/2017')];
 
             spyOn(dataProcessor, 'getDefaultDatetimeValues').and.returnValue(values);
 
@@ -1169,10 +1111,8 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_pickLegendData()', function() {
-        it('should pick legend label from series data', function() {
-            var actual, expected;
-
+    describe('_pickLegendData()', () => {
+        it('should pick legend label from series data', () => {
             dataProcessor.rawData = {
                 series: {
                     line: [
@@ -1196,16 +1136,14 @@ describe('Test for DataProcessor', function() {
                 }
             };
 
-            actual = dataProcessor._pickLegendData('label');
-            expected = {
+            const actual = dataProcessor._pickLegendData('label');
+            const expected = {
                 line: ['Legend1', 'Legend2', 'Legend3', 'Legend4']
             };
 
             expect(actual).toEqual(expected);
         });
-        it('pick legend visibilities.', function() {
-            var actual;
-
+        it('pick legend visibilities.', () => {
             dataProcessor.rawData = {
                 series: {
                     line: [
@@ -1233,14 +1171,12 @@ describe('Test for DataProcessor', function() {
                 }
             };
 
-            actual = dataProcessor._pickLegendData('visibility');
+            const actual = dataProcessor._pickLegendData('visibility');
 
             expect(actual.line).toEqual([true, true, true, true]);
         });
 
-        it('pick legend visibility true when `visible` is undefined.', function() {
-            var actual;
-
+        it('pick legend visibility true when `visible` is undefined.', () => {
             dataProcessor.rawData = {
                 series: {
                     line: [
@@ -1268,14 +1204,12 @@ describe('Test for DataProcessor', function() {
                 }
             };
 
-            actual = dataProcessor._pickLegendData('visibility');
+            const actual = dataProcessor._pickLegendData('visibility');
 
             expect(actual.line).toEqual([true, false, true, true]);
         });
 
-        it('pick legend visibility true when `visible` is undefined.', function() {
-            var actual;
-
+        it('pick legend visibility true when `visible` is undefined.', () => {
             dataProcessor.rawData = {
                 series: {
                     line: [
@@ -1302,53 +1236,51 @@ describe('Test for DataProcessor', function() {
                 }
             };
 
-            actual = dataProcessor._pickLegendData('visibility');
+            const actual = dataProcessor._pickLegendData('visibility');
 
             expect(actual.line).toEqual([true, false, true, true]);
         });
     });
 
-    describe('_formatToZeroFill()', function() {
-        it('should return "001" when fill zero 1 to lenght 3', function() {
-            var result = dataProcessor._formatToZeroFill(3, 1);
+    describe('_formatToZeroFill()', () => {
+        it('should return "001" when fill zero 1 to lenght 3', () => {
+            const result = dataProcessor._formatToZeroFill(3, 1);
             expect(result).toBe('001');
         });
 
-        it('should return "0022", when fill zero 22 to 4', function() {
-            var result = dataProcessor._formatToZeroFill(4, 22);
+        it('should return "0022", when fill zero 22 to 4', () => {
+            const result = dataProcessor._formatToZeroFill(4, 22);
             expect(result).toBe('0022');
         });
     });
 
-    describe('_pickMaxLenUnderPoint()', function() {
-        it('should pick max length of decimal places from [1.12, 2.2, 3.33, 4.456]', function() {
-            var point = dataProcessor._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
+    describe('_pickMaxLenUnderPoint()', () => {
+        it('should pick max length of decimal places from [1.12, 2.2, 3.33, 4.456]', () => {
+            const point = dataProcessor._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
             expect(point).toBe(3);
         });
     });
 
-    describe('_findFormatFunctions()', function() {
-        it('should return array consist of format function, when format type is function', function() {
-            var format = function() {};
-            var actual;
-
+    describe('_findFormatFunctions()', () => {
+        it('should return array consist of format function, when format type is function', () => {
+            const format = () => {};
             dataProcessor.options = {
                 chart: {
-                    format: format
+                    format
                 }
             };
 
-            actual = dataProcessor._findFormatFunctions(format);
+            const actual = dataProcessor._findFormatFunctions(format);
 
             expect(actual).toEqual([format]);
         });
 
-        it('should call _findSimpleTypeFormatFunctions() when format type is string', function() {
-            var format = '1,000';
+        it('should call _findSimpleTypeFormatFunctions() when format type is string', () => {
+            const format = '1,000';
 
             dataProcessor.options = {
                 chart: {
-                    format: format
+                    format
                 }
             };
             spyOn(dataProcessor, '_findSimpleTypeFormatFunctions');
@@ -1358,57 +1290,53 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor._findSimpleTypeFormatFunctions).toHaveBeenCalledWith(format);
         });
 
-        it('should return empty array, when there is no format infomation.', function() {
-            var actual = dataProcessor._findFormatFunctions();
+        it('should return empty array, when there is no format infomation.', () => {
+            const actual = dataProcessor._findFormatFunctions();
             expect(actual).toEqual([]);
         });
     });
 
-    describe('_findSimpleTypeFormatFunctions()', function() {
-        it('should format to number with 3 decimal places, when format  is "0.000"', function() {
-            var actual, expected;
-            var format = '0.000';
+    describe('_findSimpleTypeFormatFunctions()', () => {
+        it('should format to number with 3 decimal places, when format  is "0.000"', () => {
+            const format = '0.000';
 
-            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
-            expected = '1000.000';
-
-            expect(actual[0](1000)).toBe(expected);
-        });
-
-        it('should format numbers with comma, when format is "1,000"', function() {
-            var format = '1,000';
-            var actual, expected;
-
-            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
-            expected = '1,000';
+            const actual = dataProcessor._findSimpleTypeFormatFunctions(format);
+            const expected = '1000.000';
 
             expect(actual[0](1000)).toBe(expected);
         });
 
-        it('should format number with comma and decimal places, when format is "1,000.00"', function() {
-            var format = '1,000.00';
-            var actual, expected;
+        it('should format numbers with comma, when format is "1,000"', () => {
+            const format = '1,000';
 
-            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
-            expected = '1,000.00';
+            const actual = dataProcessor._findSimpleTypeFormatFunctions(format);
+            const expected = '1,000';
+
+            expect(actual[0](1000)).toBe(expected);
+        });
+
+        it('should format number with comma and decimal places, when format is "1,000.00"', () => {
+            const format = '1,000.00';
+
+            const actual = dataProcessor._findSimpleTypeFormatFunctions(format);
+            const expected = '1,000.00';
 
             expect(actual.length).toBe(2);
             expect(actual[1](actual[0](1000))).toBe(expected);
         });
 
-        it('should fill zero, when format is "0001".', function() {
-            var format = '0001';
-            var actual, expected;
+        it('should fill zero, when format is "0001".', () => {
+            const format = '0001';
 
-            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
-            expected = '0011';
+            const actual = dataProcessor._findSimpleTypeFormatFunctions(format);
+            const expected = '0011';
 
             expect(actual[0](11)).toBe(expected);
         });
     });
 
-    describe('_addStartValueToAllSeriesItem()', function() {
-        it('should set start value as limit.min, when limit.min, limit.max are positive', function() {
+    describe('_addStartValueToAllSeriesItem()', () => {
+        it('should set start value as limit.min, when limit.min, limit.max are positive', () => {
             dataProcessor.seriesDataModelMap = {
                 bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
             };
@@ -1420,7 +1348,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(10);
         });
 
-        it('should set start value as limit.max, when all limit.min, limit.max are negative.', function() {
+        it('should set start value as limit.max, when all limit.min, limit.max are negative.', () => {
             dataProcessor.seriesDataModelMap = {
                 bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
             };
@@ -1432,7 +1360,7 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(-10);
         });
 
-        it('should set start value to 0, when limit.min is negative and limit.max is positive', function() {
+        it('should set start value to 0, when limit.min is negative and limit.max is positive', () => {
             dataProcessor.seriesDataModelMap = {
                 bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
             };
@@ -1445,14 +1373,12 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_createBaseValuesForNormalStackedChart()', function() {
-        it('create base values for normal stacked chart', function() {
-            var seriesGroup, actual, expected;
-
+    describe('_createBaseValuesForNormalStackedChart()', () => {
+        it('create base values for normal stacked chart', () => {
             dataProcessor.seriesDataModelMap = {
                 bar: new SeriesDataModel()
             };
-            seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
+            const seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
             seriesGroup._makeValuesMapPerStack.and.returnValue({
                 st1: [-10, 30, -50],
                 st2: [-20, 40, 60]
@@ -1461,17 +1387,17 @@ describe('Test for DataProcessor', function() {
                 seriesGroup
             ];
 
-            actual = dataProcessor._createBaseValuesForNormalStackedChart(chartConst.CHART_TYPE_BAR);
-            expected = [30, -60, 100, -20];
+            const actual = dataProcessor._createBaseValuesForNormalStackedChart(chartConst.CHART_TYPE_BAR);
+            const expected = [30, -60, 100, -20];
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('createBaseValuesForLimit()', function() {
-        it('create base values for limit.', function() {
-            var chartType = chartConst.CHART_TYPE_BAR;
-            var values = [70, 10, 20, 20, 80, 30];
+    describe('createBaseValuesForLimit()', () => {
+        it('create base values for limit.', () => {
+            const chartType = chartConst.CHART_TYPE_BAR;
+            const values = [70, 10, 20, 20, 80, 30];
 
             dataProcessor.rawData.series = {
                 bar: values
@@ -1486,9 +1412,9 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.createBaseValuesForLimit(chartType)).toEqual(values);
         });
 
-        it('create base values for limit, when single yAxis in comboChart.', function() {
-            var chartType = chartConst.CHART_TYPE_COMBO;
-            var isSingleYAxis = true;
+        it('create base values for limit, when single yAxis in comboChart.', () => {
+            const chartType = chartConst.CHART_TYPE_COMBO;
+            const isSingleYAxis = true;
 
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
@@ -1507,10 +1433,9 @@ describe('Test for DataProcessor', function() {
                 .toEqual([70, 10, 20, 20, 80, 30, 1, 2, 3]);
         });
 
-        it('Make base values, when single yAxis and has stackType option in comboChart.', function() {
-            var isSingleYAxis = true;
-            var stackType = chartConst.NORMAL_STACK_TYPE;
-            var seriesGroup, actual, expected;
+        it('Make base values, when single yAxis and has stackType option in comboChart.', () => {
+            const isSingleYAxis = true;
+            const stackType = chartConst.NORMAL_STACK_TYPE;
 
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
@@ -1519,7 +1444,7 @@ describe('Test for DataProcessor', function() {
 
             dataProcessor.chartType = chartConst.CHART_TYPE_COMBO;
             dataProcessor.seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
-            seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
+            const seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
             dataProcessor.seriesDataModelMap.column.groups = [
                 seriesGroup
             ];
@@ -1533,31 +1458,31 @@ describe('Test for DataProcessor', function() {
                 value: [1, 2, 3]
             };
 
-            actual = dataProcessor.createBaseValuesForLimit(chartConst.CHART_TYPE_COLUMN, isSingleYAxis, stackType);
-            expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
+            const actual = dataProcessor.createBaseValuesForLimit(
+                chartConst.CHART_TYPE_COLUMN, isSingleYAxis, stackType);
+            const expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
 
             expect(actual).toEqual(expected);
         });
 
-        it('Make base values, when stackType is normal.', function() {
-            var chartType = chartConst.CHART_TYPE_COLUMN;
-            var isSingleYAxis = false;
-            var stackType = chartConst.NORMAL_STACK_TYPE;
-            var actual, expected;
+        it('Make base values, when stackType is normal.', () => {
+            const chartType = chartConst.CHART_TYPE_COLUMN;
+            const isSingleYAxis = false;
+            const stackType = chartConst.NORMAL_STACK_TYPE;
 
             spyOn(dataProcessor, '_createBaseValuesForNormalStackedChart').and.returnValue([
                 80, -10, 20, -30, 80, -40
             ]);
 
-            actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis, stackType);
-            expected = [80, -10, 20, -30, 80, -40];
+            const actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis, stackType);
+            const expected = [80, -10, 20, -30, 80, -40];
 
             expect(actual).toEqual(expected);
         });
 
         it('Make base values by calling dataProcessor.getValues with arguments(chartType, valueType),' +
-            ' when chartType is treemap.', function() {
-            var chartType = chartConst.CHART_TYPE_TREEMAP;
+            ' when chartType is treemap.', () => {
+            const chartType = chartConst.CHART_TYPE_TREEMAP;
 
             spyOn(dataProcessor, 'getValues');
 
@@ -1567,15 +1492,15 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('getValuesFromPlotOptions()', function() {
-        it('create values from plotOptions.', function() {
+    describe('getValuesFromPlotOptions()', () => {
+        it('create values from plotOptions.', () => {
             expect(dataProcessor.getValuesFromPlotOptions({
                 lines: [{value: 100}],
                 bands: [{range: [20, 40]}, {range: [10, 15]}]
             })).toEqual([100, 20, 40, 10, 15]);
         });
 
-        it('create datetime values from plotOptions.', function() {
+        it('create datetime values from plotOptions.', () => {
             expect(dataProcessor.getValuesFromPlotOptions({
                 lines: [{value: '06/01/2016'}],
                 bands: [{range: ['01/01/2016', '03/01/2016']}, {range: ['06/01/2017', '09/01/2017']}]

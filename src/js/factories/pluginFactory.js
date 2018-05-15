@@ -4,44 +4,38 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import chartConst from '../const';
 
-'use strict';
+const plugins = {};
+export default {
+    /**
+        * Get graph renderer.
+        * @param {string} libType type of graph library
+        * @param {string} chartType chart type
+        * @returns {object} renderer instance
+        */
+    get(libType, chartType) {
+        const plugin = plugins[libType || chartConst.DEFAULT_PLUGIN];
 
-var chartConst = require('../const');
-
-var plugins = {},
-    factory = {
-        /**
-         * Get graph renderer.
-         * @param {string} libType type of graph library
-         * @param {string} chartType chart type
-         * @returns {object} renderer instance
-         */
-        get: function(libType, chartType) {
-            var plugin = plugins[libType || chartConst.DEFAULT_PLUGIN],
-                Renderer, renderer;
-
-            if (!plugin) {
-                throw new Error('Not exist ' + libType + ' plugin.');
-            }
-
-            Renderer = plugin[chartType];
-            if (!Renderer) {
-                throw new Error('Not exist ' + chartType + ' chart renderer.');
-            }
-
-            renderer = new Renderer();
-
-            return renderer;
-        },
-        /**
-         * Plugin register.
-         * @param {string} libType type of graph library
-         * @param {object} plugin plugin to control library
-         */
-        register: function(libType, plugin) {
-            plugins[libType] = plugin;
+        if (!plugin) {
+            throw new Error(`Not exist ${libType} plugin.`);
         }
-    };
 
-module.exports = factory;
+        const Renderer = plugin[chartType];
+        if (!Renderer) {
+            throw new Error(`Not exist ${chartType} chart renderer.`);
+        }
+
+        const renderer = new Renderer();
+
+        return renderer;
+    },
+    /**
+        * Plugin register.
+        * @param {string} libType type of graph library
+        * @param {object} plugin plugin to control library
+        */
+    register(libType, plugin) {
+        plugins[libType] = plugin;
+    }
+};

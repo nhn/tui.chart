@@ -3,18 +3,15 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import raphael from 'raphael';
+import snippet from 'tui-code-snippet';
+import spectrumLegendFactory from '../../../src/js/components/legends/spectrumLegend';
+import renderUtil from '../../../src/js/helpers/renderUtil';
 
-'use strict';
+describe('Test for SpectrumLegend', () => {
+    let legend;
 
-var raphael = require('raphael');
-var snippet = require('tui-code-snippet');
-var spectrumLegendFactory = require('../../../src/js/components/legends/spectrumLegend');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
-
-describe('Test for SpectrumLegend', function() {
-    var legend;
-
-    beforeEach(function() {
+    beforeEach(() => {
         legend = new spectrumLegendFactory.SpectrumLegend({
             eventBus: new snippet.CustomEvents(),
             theme: {
@@ -29,10 +26,10 @@ describe('Test for SpectrumLegend', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    describe('_renderTickArea()', function() {
-        it('should render tick with given labels', function(done) {
-            var paper = raphael(document.createElement('div'), 100, 100);
-            var legendSet = paper.set();
+    describe('_renderTickArea()', () => {
+        it('should render tick with given labels', done => {
+            const paper = raphael(document.createElement('div'), 100, 100);
+            const legendSet = paper.set();
 
             legend.layout = {
                 dimension: {
@@ -53,15 +50,15 @@ describe('Test for SpectrumLegend', function() {
 
             legend._renderTickArea(legendSet);
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect(legendSet.length).toBe(5);
                 done();
             });
         });
 
-        it('reverse option is true, labels must be in reverse order', function() {
-            var paper = raphael(document.createElement('div'), 100, 100);
-            var legendSet = paper.set();
+        it('reverse option is true, labels must be in reverse order', () => {
+            const paper = raphael(document.createElement('div'), 100, 100);
+            const legendSet = paper.set();
 
             legend.layout = {
                 dimension: {
@@ -86,12 +83,12 @@ describe('Test for SpectrumLegend', function() {
             expect(legend.scaleData.labels[0]).toBe(200);
         });
     });
-    describe('_renderGraph()', function() {
-        it('reverse option is true, color should look reversed', function() {
-            var paper = raphael(document.createElement('div'), 100, 100);
-            var legendSet = paper.set();
-            var startColor = '#F4F4F4';
-            var endColor = '#345391';
+    describe('_renderGraph()', () => {
+        it('reverse option is true, color should look reversed', () => {
+            const paper = raphael(document.createElement('div'), 100, 100);
+            const legendSet = paper.set();
+            const startColor = '#F4F4F4';
+            const endColor = '#345391';
 
             legend.layout = {
                 dimension: {

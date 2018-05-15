@@ -3,41 +3,32 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
-
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
 /**
  * Raw data Handler.
  * @module rawDataHandler
  * @private */
-var rawDataHandler = {
+export default {
     /**
      * Pick stacks.
      * @param {Array.<{stack: string}>} seriesData - raw series data
      * @param {boolean} [divergingOption] - diverging option
      * @returns {Array.<string>} stacks
      */
-    pickStacks: function(seriesData, divergingOption) {
-        var stacks, uniqStacks, filteredStack;
+    pickStacks(seriesData, divergingOption) {
+        const stacks = seriesData.map(seriesDatum => seriesDatum.stack);
 
-        stacks = snippet.map(seriesData, function(seriesDatum) {
-            return seriesDatum.stack;
-        });
-
-        uniqStacks = arrayUtil.unique(stacks);
+        let uniqStacks = arrayUtil.unique(stacks);
 
         if (divergingOption) {
             uniqStacks = uniqStacks.slice(0, 2);
         }
 
-        filteredStack = snippet.filter(uniqStacks, function(stack) {
-            return !!stack;
-        });
+        const filteredStack = uniqStacks.filter(stack => !!stack);
 
         if (filteredStack.length < uniqStacks.length) {
             filteredStack.push(chartConst.DEFAULT_STACK);
@@ -53,17 +44,15 @@ var rawDataHandler = {
      * @returns {Array}
      * @private
      */
-    _sortSeriesData: function(seriesData, stacks) {
-        var newSeriesData = [];
+    _sortSeriesData(seriesData, stacks) {
+        let newSeriesData = [];
 
         if (!stacks) {
             stacks = this.pickStacks(seriesData);
         }
 
-        snippet.forEachArray(stacks, function(stack) {
-            var filtered = snippet.filter(seriesData, function(datum) {
-                return (datum.stack || chartConst.DEFAULT_STACK) === stack;
-            });
+        stacks.forEach(stack => {
+            const filtered = seriesData.filter(datum => (datum.stack || chartConst.DEFAULT_STACK) === stack);
             newSeriesData = newSeriesData.concat(filtered);
         });
 
@@ -74,8 +63,8 @@ var rawDataHandler = {
      * Remove stack of series data.
      * @param {Array.<{stack: ?string}>} seriesData series data
      */
-    removeSeriesStack: function(seriesData) {
-        snippet.forEachArray(seriesData, function(datum) {
+    removeSeriesStack(seriesData) {
+        Object.values(seriesData).forEach(datum => {
             delete datum.stack;
         });
     },
@@ -86,8 +75,8 @@ var rawDataHandler = {
      * @param {string} seriesType - series name
      * @returns {*}
      */
-    findChartType: function(seriesAlias, seriesType) {
-        var chartType;
+    findChartType(seriesAlias, seriesType) {
+        let chartType;
 
         if (seriesAlias) {
             chartType = seriesAlias[seriesType];
@@ -101,13 +90,12 @@ var rawDataHandler = {
      * @param {{series: (Array | object)}} rawData - raw data
      * @returns {object.<string, string>}
      */
-    getChartTypeMap: function(rawData) {
-        var self = this;
-        var chartTypeMap = {};
+    getChartTypeMap(rawData) {
+        const chartTypeMap = {};
 
         if (snippet.isObject(rawData.series)) {
-            snippet.forEach(rawData.series, function(data, seriesType) {
-                chartTypeMap[self.findChartType(rawData.seriesAlias, seriesType)] = true;
+            snippet.forEach(rawData.series, (data, seriesType) => {
+                chartTypeMap[this.findChartType(rawData.seriesAlias, seriesType)] = true;
             });
         }
 
@@ -120,10 +108,8 @@ var rawDataHandler = {
      * @returns {Array} minus values
      * @private
      */
-    _createMinusValues: function(data) {
-        return snippet.map(data, function(value) {
-            return value < 0 ? 0 : -value;
-        });
+    _createMinusValues(data) {
+        return data.map(value => value < 0 ? 0 : -value);
     },
 
     /**
@@ -132,10 +118,8 @@ var rawDataHandler = {
      * @returns {Array} plus values
      * @private
      */
-    _createPlusValues: function(data) {
-        return snippet.map(data, function(value) {
-            return value < 0 ? 0 : value;
-        });
+    _createPlusValues(data) {
+        return data.map(value => value < 0 ? 0 : value);
     },
 
     /**
@@ -144,7 +128,7 @@ var rawDataHandler = {
      * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
-    _makeNormalDivergingRawSeriesData: function(rawSeriesData) {
+    _makeNormalDivergingRawSeriesData(rawSeriesData) {
         rawSeriesData.length = Math.min(rawSeriesData.length, 2);
 
         rawSeriesData[0].data = this._createMinusValues(rawSeriesData[0].data);
@@ -162,22 +146,20 @@ var rawDataHandler = {
      * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
-    _makeRawSeriesDataForStackedDiverging: function(rawSeriesData) {
-        var self = this;
-        var stacks = this.pickStacks(rawSeriesData, true);
-        var result = [];
-        var leftStack = stacks[0];
-        var rightStack = stacks[1];
+    _makeRawSeriesDataForStackedDiverging(rawSeriesData) {
+        const stacks = this.pickStacks(rawSeriesData, true);
+        const result = [];
+        const [leftStack, rightStack] = stacks;
 
         rawSeriesData = this._sortSeriesData(rawSeriesData, stacks);
 
-        snippet.forEachArray(rawSeriesData, function(seriesDatum) {
-            var stack = seriesDatum.stack || chartConst.DEFAULT_STACK;
+        rawSeriesData.forEach(seriesDatum => {
+            const stack = seriesDatum.stack || chartConst.DEFAULT_STACK;
             if (stack === leftStack) {
-                seriesDatum.data = self._createMinusValues(seriesDatum.data);
+                seriesDatum.data = this._createMinusValues(seriesDatum.data);
                 result.push(seriesDatum);
             } else if (stack === rightStack) {
-                seriesDatum.data = self._createPlusValues(seriesDatum.data);
+                seriesDatum.data = this._createPlusValues(seriesDatum.data);
                 result.push(seriesDatum);
             }
         });
@@ -192,7 +174,7 @@ var rawDataHandler = {
      * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
-    _makeRawSeriesDataForDiverging: function(rawSeriesData, stackTypeOption) {
+    _makeRawSeriesDataForDiverging(rawSeriesData, stackTypeOption) {
         if (predicate.isValidStackOption(stackTypeOption)) {
             rawSeriesData = this._makeRawSeriesDataForStackedDiverging(rawSeriesData);
         } else {
@@ -207,20 +189,16 @@ var rawDataHandler = {
      * @param {object} rawData - raw data
      * @param {{stackType: ?string, diverging: ?boolean}} seriesOptions - series options
      */
-    updateRawSeriesDataByOptions: function(rawData, seriesOptions) {
-        var self = this;
-
-        seriesOptions = seriesOptions || {};
-
+    updateRawSeriesDataByOptions(rawData, seriesOptions = {}) {
         if (predicate.isValidStackOption(seriesOptions.stackType)) {
-            snippet.forEach(rawData.series, function(seriesDatum, seriesType) {
-                rawData.series[seriesType] = self._sortSeriesData(rawData.series[seriesType]);
+            Object.keys(rawData.series).forEach(seriesType => {
+                rawData.series[seriesType] = this._sortSeriesData(rawData.series[seriesType]);
             });
         }
 
         if (seriesOptions.diverging) {
-            snippet.forEach(rawData.series, function(seriesDatum, seriesType) {
-                rawData.series[seriesType] = self._makeRawSeriesDataForDiverging(seriesDatum, seriesOptions.stackType);
+            Object.entries(rawData.series).forEach(([seriesType, seriesDatum]) => {
+                rawData.series[seriesType] = this._makeRawSeriesDataForDiverging(seriesDatum, seriesOptions.stackType);
             });
         }
     },
@@ -229,13 +207,12 @@ var rawDataHandler = {
      * Append outlier value to boxplot series data end
      * @param {object} rawData - raw data
      */
-    appendOutliersToSeriesData: function(rawData) {
-        var boxplot = rawData.series.boxplot;
-        snippet.forEach(boxplot, function(seriesItem) {
-            var outliers = seriesItem.outliers;
-
+    appendOutliersToSeriesData(rawData) {
+        const {boxplot} = rawData.series;
+        boxplot.forEach(seriesItem => {
+            const {outliers} = seriesItem;
             if (outliers && outliers.length) {
-                snippet.forEach(outliers, function(outlier) {
+                outliers.forEach(outlier => {
                     seriesItem.data[outlier[0]].push(outlier[1]);
                 });
             }
@@ -248,25 +225,22 @@ var rawDataHandler = {
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @returns {object} rawData
      */
-    filterCheckedRawData: function(rawData, checkedLegends) {
-        var cloneData = JSON.parse(JSON.stringify(rawData));
-        var filteredCategories;
+    filterCheckedRawData(rawData, checkedLegends) {
+        const cloneData = JSON.parse(JSON.stringify(rawData));
 
         if (checkedLegends) {
-            snippet.forEach(cloneData.series, function(serieses, chartType) {
+            Object.entries(cloneData.series).forEach(([chartType, serieses]) => {
                 if (!checkedLegends[chartType]) {
                     cloneData.series[chartType] = [];
                 } else if (checkedLegends[chartType].length) {
-                    cloneData.series[chartType] = snippet.filter(serieses, function(series, index) {
-                        return checkedLegends[chartType][index];
-                    });
+                    cloneData.series[chartType] = serieses.filter((series, index) => checkedLegends[chartType][index]);
                 }
             });
         }
 
         if (cloneData.series.bullet) {
-            filteredCategories = [];
-            snippet.forEach(checkedLegends.bullet, function(isChecked, index) {
+            const filteredCategories = [];
+            checkedLegends.bullet.forEach((isChecked, index) => {
                 if (isChecked) {
                     filteredCategories.push(rawData.categories[index]);
                 }
@@ -282,15 +256,10 @@ var rawDataHandler = {
      * @param {object} rawData - raw data
      * @private
      */
-    _makeRawSeriesDataForBulletChart: function(rawData) {
-        var bullet = rawData.series.bullet;
+    _makeRawSeriesDataForBulletChart(rawData) {
+        const {bullet = []} = rawData.series;
 
         rawData.categories = rawData.categories || [];
-
-        rawData.categories = snippet.map(bullet, function(seriesData) {
-            return seriesData.name || '';
-        });
+        rawData.categories = bullet.map(seriesData => (seriesData.name || ''));
     }
 };
-
-module.exports = rawDataHandler;

@@ -3,16 +3,13 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import seriesCalculator from '../../../src/js/models/bounds/seriesCalculator';
+import chartConst from '../../../src/js/const';
 
-'use strict';
-
-var seriesCalculator = require('../../../src/js/models/bounds/seriesCalculator');
-var chartConst = require('../../../src/js/const');
-
-describe('Test for seriesCalculator', function() {
-    describe('calculateWidth()', function() {
-        it('calculate width', function() {
-            var dimensionMap = {
+describe('Test for seriesCalculator', () => {
+    describe('calculateWidth()', () => {
+        it('calculate width', () => {
+            const dimensionMap = {
                 chart: {
                     width: 500
                 },
@@ -26,16 +23,16 @@ describe('Test for seriesCalculator', function() {
                     width: 0
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 visible: true
             };
-            var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
+            const actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
             expect(actual).toBe(380);
         });
 
-        it('calculate width, when align option is left', function() {
-            var dimensionMap = {
+        it('calculate width, when align option is left', () => {
+            const dimensionMap = {
                 chart: {
                     width: 500
                 },
@@ -49,17 +46,17 @@ describe('Test for seriesCalculator', function() {
                     width: 0
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 align: chartConst.LEGEND_ALIGN_LEFT,
                 visible: true
             };
-            var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
+            const actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
             expect(actual).toBe(380);
         });
 
-        it('calculate width, when align option is top', function() {
-            var dimensionMap = {
+        it('calculate width, when align option is top', () => {
+            const dimensionMap = {
                 chart: {
                     width: 500
                 },
@@ -70,17 +67,17 @@ describe('Test for seriesCalculator', function() {
                     width: 0
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 align: chartConst.LEGEND_ALIGN_TOP,
                 visible: true
             };
-            var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
+            const actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
             expect(actual).toBe(430);
         });
 
-        it('calculate width, when align option is bottom', function() {
-            var dimensionMap = {
+        it('calculate width, when align option is bottom', () => {
+            const dimensionMap = {
                 chart: {
                     width: 500
                 },
@@ -91,17 +88,17 @@ describe('Test for seriesCalculator', function() {
                     width: 0
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 align: chartConst.LEGEND_ALIGN_TOP,
                 visible: true
             };
-            var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
+            const actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
             expect(actual).toBe(430);
         });
 
-        it('calculate width, when visible option is false', function() {
-            var dimensionMap = {
+        it('calculate width, when visible option is false', () => {
+            const dimensionMap = {
                 chart: {
                     width: 500
                 },
@@ -112,18 +109,18 @@ describe('Test for seriesCalculator', function() {
                     width: 0
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 visible: false
             };
-            var actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
+            const actual = seriesCalculator.calculateWidth(dimensionMap, legendOption);
 
             expect(actual).toBe(430);
         });
     });
 
-    describe('calculateHeight()', function() {
-        it('calculate height', function() {
-            var dimensionMap = {
+    describe('calculateHeight()', () => {
+        it('calculate height', () => {
+            const dimensionMap = {
                 chart: {
                     height: 400
                 },
@@ -140,17 +137,17 @@ describe('Test for seriesCalculator', function() {
                     height: 10
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 visible: true
             };
-            var yAxisTitleAreaHeight = 20;
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
+            const yAxisTitleAreaHeight = 20;
+            const actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(280);
         });
 
-        it('calculate height, when align option is left', function() {
-            var dimensionMap = {
+        it('calculate height, when align option is left', () => {
+            const dimensionMap = {
                 chart: {
                     height: 400
                 },
@@ -167,18 +164,18 @@ describe('Test for seriesCalculator', function() {
                     height: 50
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 align: chartConst.LEGEND_ALIGN_LEFT,
                 visible: true
             };
-            var yAxisTitleAreaHeight = 20;
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
+            const yAxisTitleAreaHeight = 20;
+            const actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(280);
         });
 
-        it('calculate height, when align option is top', function() {
-            var dimensionMap = {
+        it('calculate height, when align option is top', () => {
+            const dimensionMap = {
                 chart: {
                     height: 400
                 },
@@ -195,18 +192,18 @@ describe('Test for seriesCalculator', function() {
                     height: 30
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 align: chartConst.LEGEND_ALIGN_TOP,
                 visible: true
             };
-            var yAxisTitleAreaHeight = 20;
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
+            const yAxisTitleAreaHeight = 20;
+            const actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(250);
         });
 
-        it('calculate height, when align option is bottom', function() {
-            var dimensionMap = {
+        it('calculate height, when align option is bottom', () => {
+            const dimensionMap = {
                 chart: {
                     height: 400
                 },
@@ -223,18 +220,18 @@ describe('Test for seriesCalculator', function() {
                     height: 30
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 align: chartConst.LEGEND_ALIGN_BOTTOM,
                 visible: true
             };
-            var yAxisTitleAreaHeight = 20;
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
+            const yAxisTitleAreaHeight = 20;
+            const actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(230);
         });
 
-        it('calculate height, when visible option is false', function() {
-            var dimensionMap = {
+        it('calculate height, when visible option is false', () => {
+            const dimensionMap = {
                 chart: {
                     height: 400
                 },
@@ -248,11 +245,11 @@ describe('Test for seriesCalculator', function() {
                     height: 30
                 }
             };
-            var legendOption = {
+            const legendOption = {
                 visible: false
             };
-            var yAxisTitleAreaHeight = 20;
-            var actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
+            const yAxisTitleAreaHeight = 20;
+            const actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
 
             expect(actual).toBe(280);
         });

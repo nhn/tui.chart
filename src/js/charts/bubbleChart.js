@@ -3,19 +3,11 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import ChartBase from './chartBase';
+import chartConst from '../const';
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
-
-var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-bubble-chart',
+export default class BubbleChart extends ChartBase {
     /**
      * Bubble chart.
      * @constructs BubbleChart
@@ -25,35 +17,42 @@ var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototyp
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
-        options.tooltip = options.tooltip || {};
-        options.circleLegend = options.circleLegend || {};
+    constructor(rawData, theme, options) {
+        options = Object.assign({
+            tooltip: {},
+            circleLegend: {}
+        }, options);
 
-        if (!options.tooltip.align) {
-            options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
-        }
+        options.circleLegend = Object.assign({
+            visible: true
+        }, options.circleLegend);
 
-        if (snippet.isUndefined(options.circleLegend.visible)) {
-            options.circleLegend.visible = true;
-        }
+        options.tooltip = Object.assign({
+            align: chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION,
+            grouped: false
+        }, options.tooltip);
 
-        options.tooltip.grouped = false;
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true
         });
-    },
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-bubble-chart';
+    }
 
     /**
      * Get scale option.
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?{valueType:string}}}
      * @override
      */
-    getScaleOption: function() {
-        var scaleOption = {};
+    getScaleOption() {
+        const scaleOption = {};
 
         if (this.dataProcessor.hasXValue(this.chartType)) {
             scaleOption.xAxis = {
@@ -67,7 +66,7 @@ var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototyp
         }
 
         return scaleOption;
-    },
+    }
 
     /**
      * Set default options.
@@ -75,20 +74,20 @@ var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototyp
      * @private
      * @override
      */
-    _setDefaultOptions: function(options) {
+    _setDefaultOptions(options) {
         ChartBase.prototype._setDefaultOptions.call(this, options);
         this.options.circleLegend = this.options.circleLegend || {};
 
         if (snippet.isUndefined(this.options.circleLegend.visible)) {
             this.options.circleLegend.visible = true;
         }
-    },
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -102,14 +101,13 @@ var BubbleChart = snippet.defineClass(ChartBase, /** @lends BubbleChart.prototyp
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
+
     /**
      * Add data ratios.
      * @override
      */
-    addDataRatios: function(limitMap) {
+    addDataRatios(limitMap) {
         this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);
     }
-});
-
-module.exports = BubbleChart;
+}

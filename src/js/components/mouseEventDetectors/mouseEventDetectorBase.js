@@ -4,18 +4,17 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import TickBaseCoordinateModel from './tickBaseCoordinateModel';
+import BoundsBaseCoordinateModel from './boundsBaseCoordinateModel';
+import chartConst from '../../const';
+import eventListener from '../../helpers/eventListener';
+import predicate from '../../helpers/predicate';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
 
-var TickBaseCoordinateModel = require('./tickBaseCoordinateModel');
-var BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel');
-var chartConst = require('../../const');
-var eventListener = require('../../helpers/eventListener');
-var predicate = require('../../helpers/predicate');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
+import snippet from 'tui-code-snippet';
 
-var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBase.prototype */ {
+export default class MouseEventDetectorBase {
     /**
      * MouseEventDetectorBase is base class for mouse event detector components.
      * @constructs MouseEventDetectorBase
@@ -27,8 +26,10 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      *      @param {DataProcessor} params.dataProcessor - DataProcessor instance
      *      @param {boolean} params.allowSelect - whether has allowSelect option or not
      */
-    init: function(params) {
-        var isLineTypeChart;
+    constructor(params) {
+        if (!params) {
+            return;
+        }
 
         /**
          * type of chart
@@ -78,7 +79,7 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
          */
         this.selectedData = null;
 
-        isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
+        const isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
         /**
          * expand size
          * @type {number}
@@ -100,15 +101,15 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
         this._attachToEventBus();
 
         this.drawingType = chartConst.COMPONENT_TYPE_DOM;
-    },
+    }
 
     /**
      * Attach to event bus.
      * @private
      */
-    _attachToEventBus: function() {
+    _attachToEventBus() {
         this.eventBus.on('receiveSeriesData', this.onReceiveSeriesData, this);
-    },
+    }
 
     /**
      * Get bound for rendering.
@@ -118,11 +119,11 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * }}
      * @private
      */
-    _getRenderingBound: function() {
-        var renderingBound = renderUtil.expandBound(this.layout);
+    _getRenderingBound() {
+        const renderingBound = renderUtil.expandBound(this.layout);
 
         return renderingBound;
-    },
+    }
 
     /**
      * Render event handle layer area.
@@ -130,17 +131,21 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @param {number} tickCount - tick count
      * @private
      */
-    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer, tickCount) {
-        var dimension = this.layout.dimension;
-        var renderingBound, tbcm;
+    _renderMouseEventDetectorArea(mouseEventDetectorContainer, tickCount) {
+        ({dimension: this.dimension} = this.layout);
 
-        this.dimension = dimension;
-        tbcm = new TickBaseCoordinateModel(this.layout, tickCount, this.chartType, this.isVertical, this.chartTypes);
+        const tbcm = new TickBaseCoordinateModel(
+            this.layout,
+            tickCount,
+            this.chartType,
+            this.isVertical,
+            this.chartTypes
+        );
         this.tickBaseCoordinateModel = tbcm;
-        renderingBound = this._getRenderingBound();
-        renderUtil.renderDimension(mouseEventDetectorContainer, renderingBound.dimension);
-        renderUtil.renderPosition(mouseEventDetectorContainer, renderingBound.position);
-    },
+        const {dimension, position} = this._getRenderingBound();
+        renderUtil.renderDimension(mouseEventDetectorContainer, dimension);
+        renderUtil.renderPosition(mouseEventDetectorContainer, position);
+    }
 
     /**
      * Set data for rendering.
@@ -152,9 +157,9 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * }} data - bounds data
      * @private
      */
-    _setDataForRendering: function(data) {
+    _setDataForRendering(data) {
         this.layout = data.layout;
-    },
+    }
 
     /**
      * Pick tick count.
@@ -162,27 +167,23 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @returns {number}
      * @private
      */
-    _pickTickCount: function(axisDataMap) {
-        var tickCount;
-
+    _pickTickCount(axisDataMap) {
         if (this.isVertical) {
-            tickCount = axisDataMap.xAxis.eventTickCount || axisDataMap.xAxis.tickCount;
-        } else {
-            tickCount = axisDataMap.yAxis.tickCount;
+            return axisDataMap.xAxis.eventTickCount || axisDataMap.xAxis.tickCount;
         }
 
-        return tickCount;
-    },
+        return axisDataMap.yAxis.tickCount;
+    }
 
     /**
      * Render for mouseEventDetector component.
      * @param {object} data - bounds data and tick count
      * @returns {HTMLElement} container for mouse event detector
      */
-    render: function(data) {
-        var container = data.paper;
-        var tickCount;
+    render(data) {
         this.positionMap = data.positionMap;
+        const container = data.paper;
+        let tickCount;
 
         dom.addClass(container, 'tui-chart-series-custom-event-area');
         container.style.backgroundColor = 'aliceblue';
@@ -200,7 +201,7 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
         dom.append(container, this.transparentChild);
 
         return container;
-    },
+    }
 
     /**
      * Create a transparent element
@@ -208,16 +209,16 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @returns {HTMLElement} transparent element
      * @private
      */
-    _createTransparentChild: function() {
-        var child = document.createElement('DIV');
-        var style = child.style;
+    _createTransparentChild() {
+        const child = document.createElement('DIV');
+        const {style} = child;
 
         style.backgroundColor = '#fff';
         style.height = renderUtil.getStyle(this.mouseEventDetectorContainer).height;
         renderUtil.setOpacity(child, 0);
 
         return child;
-    },
+    }
 
     /**
      * Calculate layer position by client position.
@@ -227,37 +228,36 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @returns {{x: number, y: ?number}}
      * @private
      */
-    _calculateLayerPosition: function(clientX, clientY, checkLimit) {
-        var bound = this.mouseEventDetectorContainer.getBoundingClientRect();
-        var seriesPosition = this.positionMap.series;
-        var expandSize = this.expandSize;
-        var layerPosition = {};
-        var maxLeft, minLeft;
+    _calculateLayerPosition(clientX, clientY, checkLimit) {
+        const {left, right, top} = this.mouseEventDetectorContainer.getBoundingClientRect();
+        const seriesPosition = this.positionMap.series;
+        const {expandSize} = this;
+        const layerPosition = {};
 
         checkLimit = snippet.isUndefined(checkLimit) ? true : checkLimit;
 
         if (checkLimit) {
-            maxLeft = bound.right - expandSize;
-            minLeft = bound.left + expandSize;
+            const maxLeft = right - expandSize;
+            const minLeft = left + expandSize;
             clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
         }
 
-        layerPosition.x = clientX - bound.left + seriesPosition.left - chartConst.CHART_PADDING;
+        layerPosition.x = clientX - left + seriesPosition.left - chartConst.CHART_PADDING;
 
         if (!snippet.isUndefined(clientY)) {
-            layerPosition.y = clientY - bound.top + seriesPosition.top - chartConst.CHART_PADDING;
+            layerPosition.y = clientY - top + seriesPosition.top - chartConst.CHART_PADDING;
         }
 
         return layerPosition;
-    },
+    }
 
     /**
      * Create BoundsBaseCoordinateModel from seriesItemBoundsData for mouse event detector.
      * @param {{chartType: string, data: object}} seriesItemBoundsDatum - series item bounds datum
      */
-    onReceiveSeriesData: function(seriesItemBoundsDatum) {
-        var seriesItemBoundsData = this.seriesItemBoundsData;
-        var seriesCount = this.seriesCount;
+    onReceiveSeriesData(seriesItemBoundsDatum) {
+        const {seriesCount} = this;
+        let {seriesItemBoundsData} = this;
 
         if (seriesItemBoundsData.length === seriesCount) {
             seriesItemBoundsData = [];
@@ -268,14 +268,14 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
         if (seriesItemBoundsData.length === seriesCount) {
             this.boundsBaseCoordinateModel = new BoundsBaseCoordinateModel(seriesItemBoundsData);
         }
-    },
+    }
 
     /**
      * Rerender mouse event detector component.
      * @param {object} data - bounds data and tick count
      */
-    rerender: function(data) {
-        var tickCount;
+    rerender(data) {
+        let tickCount;
 
         if (data.axisDataMap.xAxis) {
             tickCount = this._pickTickCount(data.axisDataMap);
@@ -286,16 +286,16 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
         this._renderMouseEventDetectorArea(this.mouseEventDetectorContainer, tickCount);
 
         this.transparentChild.style.height = renderUtil.getStyle(this.mouseEventDetectorContainer).height;
-    },
+    }
 
     /**
      * Rerender, when resizing chart.
      * @param {object} data - bounds data and tick count
      */
-    resize: function(data) {
+    resize(data) {
         this.containerBound = null;
         this.rerender(data);
-    },
+    }
 
     /**
      * Whether changed select data or not.
@@ -304,10 +304,15 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @returns {boolean}
      * @private
      */
-    _isChangedSelectData: function(prev, cur) {
-        return !prev || !cur || prev.chartType !== cur.chartType ||
-            prev.indexes.groupIndex !== cur.indexes.groupIndex || prev.indexes.index !== cur.indexes.index;
-    },
+    _isChangedSelectData(prev, cur) {
+        return (
+            !prev ||
+            !cur ||
+            prev.chartType !== cur.chartType ||
+            prev.indexes.groupIndex !== cur.indexes.groupIndex ||
+            prev.indexes.index !== cur.indexes.index
+        );
+    }
 
     /**
      * Find coordinate data from boundsCoordinateModel.
@@ -315,10 +320,10 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @returns {object}
      * @private
      */
-    _findDataFromBoundsCoordinateModel: function(layerPosition) {
-        var layerX = layerPosition.x;
-        var layerY = layerPosition.y;
-        var groupIndex;
+    _findDataFromBoundsCoordinateModel(layerPosition) {
+        const layerX = layerPosition.x;
+        const layerY = layerPosition.y;
+        let groupIndex;
 
         if (predicate.isTreemapChart(this.chartType)) {
             groupIndex = 0;
@@ -327,7 +332,7 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
         }
 
         return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
-    },
+    }
 
     /**
      * Find data.
@@ -336,25 +341,25 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @returns {object}
      * @private
      */
-    _findData: function(clientX, clientY) {
-        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+    _findData(clientX, clientY) {
+        const layerPosition = this._calculateLayerPosition(clientX, clientY);
 
         return this._findDataFromBoundsCoordinateModel(layerPosition);
-    },
+    }
 
     /**
      * Show tooltip
      * @private
      * @abstract
      */
-    _showTooltip: function() {},
+    _showTooltip() {}
 
     /**
      * hide tooltip
      * @private
      * @abstract
      */
-    _hideTooltip: function() {},
+    _hideTooltip() {}
 
     /**
      * When mouse event happens,
@@ -364,23 +369,23 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @param {MouseEvent} e - mouse event
      * @private
      */
-    _onMouseEvent: function(eventType, e) {
+    _onMouseEvent(eventType, e) {
         dom.addClass(this.mouseEventDetectorContainer, 'hide');
-        this.eventBus.fire(eventType + 'Series', {
+        this.eventBus.fire(`${eventType}Series`, {
             left: e.clientX,
             top: e.clientY
         });
         dom.removeClass(this.mouseEventDetectorContainer, 'hide');
-    },
+    }
 
     /**
      * Unselect selected data.
      * @private
      */
-    _unselectSelectedData: function() {
+    _unselectSelectedData() {
         this.eventBus.fire('unselectSeries', this.selectedData);
         this.selectedData = null;
-    },
+    }
 
     /**
      * Call 'selectSeries' event, when changed found position data.
@@ -388,8 +393,8 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @param {MouseEvent} e - mouse event
      * @private
      */
-    _onClick: function(e) {
-        var foundData = this._findData(e.clientX, e.clientY);
+    _onClick(e) {
+        const foundData = this._findData(e.clientX, e.clientY);
 
         if (!this._isChangedSelectData(this.selectedData, foundData)) {
             this._unselectSelectedData();
@@ -403,21 +408,21 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
                 this.selectedData = foundData;
             }
         }
-    },
+    }
 
     /**
      * On mouse down
      * @private
      * @abstract
      */
-    _onMousedown: function() {},
+    _onMousedown() {}
 
     /**
      * On mouse up
      * @private
      * @abstract
      */
-    _onMouseup: function() {},
+    _onMouseup() {}
 
     /**
      * Store client position, when occur mouse move event.
@@ -425,20 +430,20 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
      * @abstract
      * @private
      */
-    _onMousemove: function() {},
+    _onMousemove() {}
 
     /**
      * Abstract mouseout handler
      * @abstract
      * @private
      */
-    _onMouseout: function() {},
+    _onMouseout() {}
 
     /**
      * Attach mouse event.
      * @param {HTMLElement} target - target element
      */
-    attachEvent: function(target) {
+    attachEvent(target) {
         eventListener.on(target, {
             click: this._onClick,
             mousedown: this._onMousedown,
@@ -446,19 +451,19 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
             mousemove: this._onMousemove,
             mouseout: this._onMouseout
         }, this);
-    },
+    }
 
     /**
      * find data by indexes
      * @abstract
      */
-    findDataByIndexes: function() {},
+    findDataByIndexes() {}
 
     /**
      * Set prevClientPosition by MouseEvent
      * @param {?MouseEvent} event - mouse event
      */
-    _setPrevClientPosition: function(event) {
+    _setPrevClientPosition(event) {
         if (!event) {
             this.prevClientPosition = null;
         } else {
@@ -468,8 +473,6 @@ var MouseEventDetectorBase = snippet.defineClass(/** @lends MouseEventDetectorBa
             };
         }
     }
-});
+}
 
 snippet.CustomEvents.mixin(MouseEventDetectorBase);
-
-module.exports = MouseEventDetectorBase;

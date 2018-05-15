@@ -4,22 +4,20 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../const';
+import predicate from '../helpers/predicate';
+import defaultTheme from './defaultTheme';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
-var defaultTheme = require('./defaultTheme');
-var snippet = require('tui-code-snippet');
+const themes = {};
 
-var themes = {};
-
-module.exports = {
+export default {
     /**
      * Theme register.
      * @param {string} themeName theme name
      * @param {object} theme theme
      */
-    register: function(themeName, theme) {
+    register(themeName, theme) {
         theme = JSON.parse(JSON.stringify(theme));
         themes[themeName] = theme;
     },
@@ -31,10 +29,10 @@ module.exports = {
      * @returns {Array}
      * @private
      */
-    _pickSeriesNames: function(chartType, rawSeriesData) {
-        var seriesTypes = [];
+    _pickSeriesNames(chartType, rawSeriesData) {
+        const seriesTypes = [];
         if (predicate.isComboChart(chartType)) {
-            snippet.forEach(rawSeriesData, function(data, seriesType) {
+            Object.keys(rawSeriesData).forEach(seriesType => {
                 seriesTypes.push(seriesType);
             });
         } else {
@@ -50,11 +48,9 @@ module.exports = {
      * @param {object} toTheme - to theme
      * @private
      */
-    _overwriteTheme: function(fromTheme, toTheme) {
-        var self = this;
-
-        snippet.forEach(toTheme, function(item, key) {
-            var fromItem = fromTheme[key];
+    _overwriteTheme(fromTheme, toTheme) {
+        Object.entries(toTheme).forEach(([key, item]) => {
+            const fromItem = fromTheme[key];
             if (!fromItem && fromItem !== 0) {
                 return;
             }
@@ -62,7 +58,7 @@ module.exports = {
             if (snippet.isArray(fromItem)) {
                 toTheme[key] = fromItem.slice();
             } else if (snippet.isObject(fromItem)) {
-                self._overwriteTheme(fromItem, item);
+                this._overwriteTheme(fromItem, item);
             } else {
                 toTheme[key] = fromItem;
             }
@@ -76,10 +72,10 @@ module.exports = {
      * @returns {object}
      * @private
      */
-    _pickValidTheme: function(theme, componentType) {
-        var validTheme = {};
+    _pickValidTheme(theme, componentType) {
+        const validTheme = {};
 
-        snippet.forEachArray(chartConst.THEME_PROPS_MAP[componentType], function(propName) {
+        chartConst.THEME_PROPS_MAP[componentType].forEach(propName => {
             if (snippet.isExisty(theme[propName])) {
                 validTheme[propName] = theme[propName];
             }
@@ -97,18 +93,17 @@ module.exports = {
      * @returns {object}
      * @private
      */
-    _createComponentThemeWithSeriesName: function(seriesTypes, fromTheme, toTheme, componentType) {
-        var self = this;
-        var newTheme = {};
+    _createComponentThemeWithSeriesName(seriesTypes, fromTheme, toTheme, componentType) {
+        const newTheme = {};
 
         fromTheme = fromTheme || {};
 
-        snippet.forEachArray(seriesTypes, function(seriesType) {
-            var theme = fromTheme[seriesType] || self._pickValidTheme(fromTheme, componentType);
+        seriesTypes.forEach(seriesType => {
+            const theme = fromTheme[seriesType] || this._pickValidTheme(fromTheme, componentType);
 
             if (snippet.keys(theme).length) {
                 newTheme[seriesType] = JSON.parse(JSON.stringify(defaultTheme[componentType]));
-                self._overwriteTheme(theme, newTheme[seriesType]);
+                this._overwriteTheme(theme, newTheme[seriesType]);
             } else {
                 newTheme[seriesType] = JSON.parse(JSON.stringify(toTheme));
             }
@@ -124,13 +119,12 @@ module.exports = {
      * @param {number} startColorIndex Start color index
      * @returns {Array.<string>} colors
      */
-    _makeEachSeriesColors: function(themeColors, seriesCount, startColorIndex) {
-        var colors = [];
-        var themeColorsLen = themeColors.length;
-        var colorIndex = startColorIndex || 0;
-        var i;
+    _makeEachSeriesColors(themeColors, seriesCount, startColorIndex) {
+        const colors = [];
+        const themeColorsLen = themeColors.length;
+        let colorIndex = startColorIndex || 0;
 
-        for (i = 0; i < seriesCount; i += 1) {
+        for (let i = 0; i < seriesCount; i += 1) {
             colors.push(themeColors[colorIndex]);
 
             colorIndex += 1;
@@ -151,13 +145,13 @@ module.exports = {
      * @param {object} rawSeriesData - raw series data
      * @private
      */
-    _setSeriesColors: function(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
-        var seriesColors, seriesCount, hasOwnColors;
-        var colorIndex = 0;
+    _setSeriesColors(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
+        let seriesColors, seriesCount, hasOwnColors;
+        let colorIndex = 0;
 
         rawSeriesThemes = rawSeriesThemes || {}; // to simplify if/else statement
 
-        snippet.forEachArray(seriesTypes, function(seriesType) {
+        seriesTypes.forEach(seriesType => {
             if (rawSeriesThemes[seriesType]) {
                 seriesColors = rawSeriesThemes[seriesType].colors;
                 hasOwnColors = true;
@@ -175,7 +169,7 @@ module.exports = {
             if (!hasOwnColors) {
                 colorIndex = (seriesCount + colorIndex) % seriesColors.length;
             }
-        }, this);
+        });
     },
 
     /**
@@ -184,8 +178,8 @@ module.exports = {
      * @returns {number} number of series theme color
      * @private
      */
-    _getSeriesThemeColorCount: function(rawSeriesDatum) {
-        var seriesCount = 0;
+    _getSeriesThemeColorCount(rawSeriesDatum) {
+        let seriesCount = 0;
 
         if (rawSeriesDatum && rawSeriesDatum.length) {
             if (rawSeriesDatum.colorLength) {
@@ -208,8 +202,8 @@ module.exports = {
      * @private
      * @ignore
      */
-    _initTheme: function(themeName, rawTheme, seriesTypes, rawSeriesData) {
-        var theme;
+    _initTheme(themeName, rawTheme, seriesTypes, rawSeriesData) {
+        let theme;
 
         if (themeName !== chartConst.DEFAULT_THEME_NAME) { // customized theme that overrides default theme
             theme = JSON.parse(JSON.stringify(defaultTheme));
@@ -233,8 +227,8 @@ module.exports = {
      * @returns {Array.<object>}
      * @private
      */
-    _createTargetThemesForFontInherit: function(theme) {
-        var items = [
+    _createTargetThemesForFontInherit(theme) {
+        const items = [
             theme.title,
             theme.xAxis.title,
             theme.xAxis.label,
@@ -242,11 +236,11 @@ module.exports = {
             theme.plot.label
         ];
 
-        snippet.forEach(theme.yAxis, function(_theme) {
+        snippet.forEach(theme.yAxis, _theme => {
             items.push(_theme.title, _theme.label);
         });
 
-        snippet.forEach(theme.series, function(_theme) {
+        snippet.forEach(theme.series, _theme => {
             items.push(_theme.label);
         });
 
@@ -258,11 +252,11 @@ module.exports = {
      * @param {object} theme theme
      * @private
      */
-    _inheritThemeFont: function(theme) {
-        var targetThemes = this._createTargetThemesForFontInherit(theme);
-        var baseFont = theme.chart.fontFamily;
+    _inheritThemeFont(theme) {
+        const targetThemes = this._createTargetThemesForFontInherit(theme);
+        const baseFont = theme.chart.fontFamily;
 
-        snippet.forEachArray(targetThemes, function(item) {
+        targetThemes.forEach(item => {
             if (!item.fontFamily) {
                 item.fontFamily = baseFont;
             }
@@ -276,7 +270,7 @@ module.exports = {
      * @param {object} seriesType - series name
      * @private
      */
-    _copySeriesColorTheme: function(seriesTheme, otherTheme, seriesType) {
+    _copySeriesColorTheme(seriesTheme, otherTheme, seriesType) {
         otherTheme[seriesType] = {
             colors: seriesTheme.colors,
             borderColor: seriesTheme.borderColor,
@@ -290,12 +284,10 @@ module.exports = {
      * @private
      * @ignore
      */
-    _copySeriesColorThemeToOther: function(theme) {
-        var self = this;
-
-        snippet.forEach(theme.series, function(seriesTheme, seriesType) {
-            self._copySeriesColorTheme(seriesTheme, theme.legend, seriesType);
-            self._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesType);
+    _copySeriesColorThemeToOther(theme) {
+        snippet.forEach(theme.series, (seriesTheme, seriesType) => {
+            this._copySeriesColorTheme(seriesTheme, theme.legend, seriesType);
+            this._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesType);
         });
     },
 
@@ -306,17 +298,16 @@ module.exports = {
      * @param {object} rawSeriesData - raw series data
      * @returns {object}
      */
-    get: function(themeName, chartType, rawSeriesData) {
-        var rawTheme = themes[themeName];
-        var theme, seriesTypes;
+    get(themeName, chartType, rawSeriesData) {
+        const rawTheme = themes[themeName];
 
         if (!rawTheme) {
-            throw new Error('Not exist ' + themeName + ' theme.');
+            throw new Error(`Not exist ${themeName} theme.`);
         }
 
-        seriesTypes = this._pickSeriesNames(chartType, rawSeriesData);
+        const seriesTypes = this._pickSeriesNames(chartType, rawSeriesData);
 
-        theme = this._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
+        const theme = this._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
 
         this._inheritThemeFont(theme, seriesTypes);
         this._copySeriesColorThemeToOther(theme);

@@ -4,38 +4,34 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import labelHelper from './renderingLabelHelper';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../../const');
-var labelHelper = require('./renderingLabelHelper');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
-var snippet = require('tui-code-snippet');
+const {CHART_PADDING, LEGEND_LABEL_LEFT_PADDING} = chartConst;
+const DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.85;
 
-var DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.85;
-
-var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
+export default class BarTypeSeriesBase {
     /**
      * Make series data.
      * @returns {object} add data
      * @private
      * @override
      */
-    _makeSeriesData: function() {
-        var groupBounds = this._makeBounds(this.layout.dimension);
-
+    _makeSeriesData() {
+        const groupBounds = this._makeBounds(this.layout.dimension);
         this.groupBounds = groupBounds;
 
         return {
-            groupBounds: groupBounds,
+            groupBounds,
             seriesDataModel: this._getSeriesDataModel(),
-            isAvailable: function() {
-                return groupBounds && groupBounds.length > 0;
-            }
+            isAvailable: () => (groupBounds && groupBounds.length > 0)
         };
-    },
+    }
 
     /**
      * Get bar width option size.
@@ -44,8 +40,8 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {number} option size
      * @private
      */
-    _getBarWidthOptionSize: function(pointInterval, optionBarWidth) {
-        var optionsSize = 0;
+    _getBarWidthOptionSize(pointInterval, optionBarWidth) {
+        let optionsSize = 0;
 
         if (optionBarWidth) {
             if ((optionBarWidth / 2) >= pointInterval) {
@@ -57,7 +53,7 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
         }
 
         return optionsSize;
-    },
+    }
 
     /**
      * Calculate difference between optionSize and barSize.
@@ -67,15 +63,15 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {number} addition padding
      * @private
      */
-    _calculateAdditionalPosition: function(barSize, optionSize, itemCount) {
-        var additionalPosition = 0;
+    _calculateAdditionalPosition(barSize, optionSize, itemCount) {
+        let additionalPosition = 0;
 
         if (optionSize && optionSize < barSize) {
             additionalPosition = (barSize / 2) + ((barSize - optionSize) * itemCount / 2);
         }
 
         return additionalPosition;
-    },
+    }
 
     /**
      * Make base data for making bound.
@@ -91,34 +87,38 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * }}
      * @private
      */
-    _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
-        var isStackType = predicate.isValidStackOption(this.options.stackType);
-        var seriesDataModel = this._getSeriesDataModel();
-        var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
-        var columnTopOffset = -this.layout.position.top + chartConst.CHART_PADDING;
-        var positionValue, itemCount, barSize, optionSize, basePosition, pointInterval, baseBounds;
-        var zeroToMin = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
+    _makeBaseDataForMakingBound(baseGroupSize, baseBarSize) {
+        const isStackType = predicate.isValidStackOption(this.options.stackType);
+        const seriesDataModel = this._getSeriesDataModel();
+        const groupSize = baseGroupSize / seriesDataModel.getGroupCount();
+        const columnTopOffset = -this.layout.position.top + CHART_PADDING;
+        const zeroToMin = this._getLimitDistanceFromZeroPoint(baseBarSize, this.limit).toMin;
+        let positionValue, baseBounds;
 
         if (predicate.isColumnChart(this.chartType)) {
             positionValue = columnTopOffset;
         } else if (predicate.isBoxplotChart(this.chartType)) {
-            positionValue = this.layout.position.top - chartConst.CHART_PADDING;
+            positionValue = this.layout.position.top - CHART_PADDING;
         } else {
             positionValue = this.layout.position.left;
         }
 
         if (seriesDataModel.rawSeriesData.length > 0) {
+            let itemCount;
+
             if (!isStackType) {
                 itemCount = seriesDataModel.getFirstSeriesGroup().getSeriesItemCount();
             } else {
                 itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount(this.seriesType);
             }
 
-            pointInterval = groupSize / (itemCount + 1);
-            barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
-            optionSize = this.options.barWidth || this.options.pointWidth;
+            const pointInterval = groupSize / (itemCount + 1);
+            const optionSize = this.options.barWidth || this.options.pointWidth;
+
+            let barSize = pointInterval * DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL;
+            let basePosition = zeroToMin + positionValue;
+
             barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
-            basePosition = zeroToMin + positionValue;
 
             if (predicate.isColumnChart(this.chartType)) {
                 basePosition = baseBarSize - basePosition;
@@ -129,18 +129,18 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
             }
 
             baseBounds = {
-                baseBarSize: baseBarSize,
-                groupSize: groupSize,
-                barSize: barSize,
-                pointInterval: pointInterval,
-                firstAdditionalPosition: pointInterval,
-                basePosition: basePosition,
-                itemCount: itemCount
+                baseBarSize,
+                groupSize,
+                barSize,
+                pointInterval,
+                basePosition,
+                itemCount,
+                firstAdditionalPosition: pointInterval
             };
         }
 
         return baseBounds;
-    },
+    }
 
     /**
      * Render normal series label.
@@ -148,26 +148,27 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {Array.<object>}
      * @private
      */
-    _renderNormalSeriesLabel: function(paper) {
-        var graphRenderer = this.graphRenderer;
-        var seriesDataModel = this._getSeriesDataModel();
-        var boundsSet = this.seriesData.groupBounds;
-        var labelTheme = this.theme.label;
-        var selectedIndex = this.selectedLegendIndex;
-        var groupLabels = seriesDataModel.map(function(seriesGroup) {
-            return seriesGroup.map(function(seriesDatum) {
-                var label = {
-                    end: seriesDatum.endLabel
+    _renderNormalSeriesLabel(paper) {
+        const {graphRenderer} = this;
+        const seriesDataModel = this._getSeriesDataModel();
+        const boundsSet = this.seriesData.groupBounds;
+        const labelTheme = this.theme.label;
+        const selectedIndex = this.selectedLegendIndex;
+        const groupLabels = seriesDataModel.map(seriesGroup => (
+            seriesGroup.map(({start, startLabel, endLabel}) => {
+                const label = {
+                    end: endLabel
                 };
 
-                if (snippet.isExisty(seriesDatum.start)) {
-                    label.start = seriesDatum.startLabel;
+                if (snippet.isExisty(start)) {
+                    label.start = startLabel;
                 }
 
                 return label;
-            });
-        });
-        var positionsSet;
+            })
+        ));
+
+        let positionsSet;
 
         if (predicate.isBarChart(this.chartType)) {
             positionsSet = labelHelper.boundsToLabelPositionsForBarChart(seriesDataModel, boundsSet, labelTheme);
@@ -176,23 +177,21 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
         }
 
         return graphRenderer.renderSeriesLabel(paper, positionsSet, groupLabels, labelTheme, selectedIndex);
-    },
+    }
 
     /**
      * Make sum values.
      * @param {Array.<number>} values values
      * @returns {number} sum result.
      */
-    _makeSumValues: function(values) {
-        var sum = calculator.sum(values);
-
+    _makeSumValues(values) {
         return renderUtil.formatValue({
-            value: sum,
+            value: calculator.sum(values),
             formatFunctions: this.dataProcessor.getFormatFunctions(),
             chartType: this.chartType,
             areaType: 'series'
         });
-    },
+    }
 
     /**
      * Make stackType label position.
@@ -200,15 +199,12 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {{left: number, top: number}} position
      * @private
      */
-    _makeStackedLabelPosition: function(bound) {
-        var left = bound.left + (bound.width / 2);
-        var top = bound.top + (bound.height / 2);
-
+    _makeStackedLabelPosition({top, left, width, height}) {
         return {
-            left: left,
-            top: top
+            left: left + (width / 2),
+            top: top + (height / 2)
         };
-    },
+    }
 
     /**
      * Make labels html, when has stackType option.
@@ -218,15 +214,14 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {string} label positions
      * @private
      */
-    _makeStackedLabelPositions: function(params) {
-        var self = this;
-        var seriesGroup = params.seriesGroup;
-        var positions = seriesGroup.map(function(seriesItem, index) {
-            var bound = params.bounds[index];
-            var position;
+    _makeStackedLabelPositions(params) {
+        const {seriesGroup} = params;
+        const positions = seriesGroup.map((seriesItem, index) => {
+            const bound = params.bounds[index];
+            let position;
 
             if (bound && seriesItem) {
-                position = self._makeStackedLabelPosition(bound.end);
+                position = this._makeStackedLabelPosition(bound.end);
             }
 
             return {
@@ -235,23 +230,20 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
         });
 
         return positions;
-    },
+    }
 
-    getGroupLabels: function(seriesDataModel, sumPlusValues, sumMinusValues) {
-        var isNormalStack = predicate.isNormalStack(this.options.stackType);
+    getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues) {
+        const isNormalStack = predicate.isNormalStack(this.options.stackType);
 
-        return seriesDataModel.map(function(seriesGroup) {
-            var labels = seriesGroup.map(function(seriesDatum) {
-                return {
-                    end: seriesDatum.endLabel
-                };
-            });
-            var minusSum;
+        return seriesDataModel.map(seriesGroup => {
+            const labels = seriesGroup.map(seriesDatum => ({
+                end: seriesDatum.endLabel
+            }));
 
             if (isNormalStack) {
                 sumPlusValues.push(calculator.sumPlusValues(seriesGroup.pluck('value')));
 
-                minusSum = calculator.sumMinusValues(seriesGroup.pluck('value'));
+                const minusSum = calculator.sumMinusValues(seriesGroup.pluck('value'));
                 if (minusSum < 0) {
                     sumMinusValues.push(minusSum);
                 }
@@ -259,18 +251,16 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
 
             return labels;
         });
-    },
+    }
 
-    getGroupPositions: function(seriesDataModel, groupBounds) {
-        var self = this;
-
-        return seriesDataModel.map(function(seriesGroup, index) {
-            return self._makeStackedLabelPositions({
-                seriesGroup: seriesGroup,
+    getGroupPositions(seriesDataModel, groupBounds) {
+        return seriesDataModel.map((seriesGroup, index) => (
+            this._makeStackedLabelPositions({
+                seriesGroup,
                 bounds: groupBounds[index]
-            });
-        });
-    },
+            })
+        ));
+    }
 
     /**
      * Render series label, when has stackType option.
@@ -278,28 +268,27 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {Array.<object>}
      * @private
      */
-    _renderStackedSeriesLabel: function(paper) {
-        var self = this;
-        var sumPlusValues = [];
-        var sumMinusValues = [];
-        var labelTheme = this.theme.label;
-        var groupBounds = this.seriesData.groupBounds;
-        var seriesDataModel = this._getSeriesDataModel();
-        var groupPositions = this.getGroupPositions(seriesDataModel, groupBounds);
-        var groupLabels = this.getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues);
-        var isStacked = true;
-        var isNormalStack = predicate.isNormalStack(this.options.stackType);
-        var isBarChart = predicate.isBarChart(this.chartType);
-        var dimensionType = isBarChart ? 'width' : 'height';
-        var positionType = isBarChart ? 'left' : 'top';
-        var direction = isBarChart ? 1 : -1;
+    _renderStackedSeriesLabel(paper) {
+        const sumPlusValues = [];
+        const sumMinusValues = [];
+        const labelTheme = this.theme.label;
+        const {groupBounds} = this.seriesData;
+        const seriesDataModel = this._getSeriesDataModel();
+        const groupPositions = this.getGroupPositions(seriesDataModel, groupBounds);
+        const groupLabels = this.getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues);
+        const isStacked = true;
+        const isNormalStack = predicate.isNormalStack(this.options.stackType);
+        const isBarChart = predicate.isBarChart(this.chartType);
+        const dimensionType = isBarChart ? 'width' : 'height';
+        const positionType = isBarChart ? 'left' : 'top';
+        const direction = isBarChart ? 1 : -1;
 
         if (isNormalStack) {
-            snippet.forEach(groupLabels, function(labels, index) {
-                var plusSumValue = sumPlusValues[index];
-                var minusSumValue = sumMinusValues[index];
+            groupLabels.forEach((labels, index) => {
+                const plusSumValue = sumPlusValues[index];
+                let minusSumValue = sumMinusValues[index];
 
-                if (minusSumValue < 0 && self.options.diverging) {
+                if (minusSumValue < 0 && this.options.diverging) {
                     minusSumValue *= -1;
                 }
 
@@ -314,23 +303,25 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
                 }
             });
 
-            snippet.forEach(groupPositions, function(positions, index) {
-                var bounds = groupBounds[index];
-                var lastBound = bounds[bounds.length - 1].end;
-                var firstBound = bounds[Math.max(parseInt(bounds.length / 2, 10), 1) - 1].end;
-                var plusEnd = self._makeStackedLabelPosition(lastBound);
-                var minusEnd = self._makeStackedLabelPosition(firstBound);
-                var plusLabel = sumPlusValues[index];
-                var minusLabel = sumMinusValues[index];
-                var plusLabelSize = raphaelRenderUtil.getRenderedTextSize(plusLabel, labelTheme.fontSize,
-                    labelTheme.fontFamily);
-                var minusLabelSize = raphaelRenderUtil.getRenderedTextSize(minusLabel, labelTheme.fontSize,
-                    labelTheme.fontFamily);
-                var lastBoundEndPosition = ((lastBound[dimensionType] + plusLabelSize[dimensionType]) / 2);
-                var firstBoundStartPosition = ((firstBound[dimensionType] + minusLabelSize[dimensionType]) / 2);
+            groupPositions.forEach((positions, index) => {
+                const bounds = groupBounds[index];
+                const lastBound = bounds[bounds.length - 1].end;
+                const firstBound = bounds[Math.max(parseInt(bounds.length / 2, 10), 1) - 1].end;
+                const plusEnd = this._makeStackedLabelPosition(lastBound);
+                const minusEnd = this._makeStackedLabelPosition(firstBound);
+                const plusLabel = sumPlusValues[index];
+                const minusLabel = sumMinusValues[index];
+                const plusLabelSize = raphaelRenderUtil.getRenderedTextSize(
+                    plusLabel, labelTheme.fontSize, labelTheme.fontFamily
+                );
+                const minusLabelSize = raphaelRenderUtil.getRenderedTextSize(
+                    minusLabel, labelTheme.fontSize, labelTheme.fontFamily
+                );
+                const lastBoundEndPosition = ((lastBound[dimensionType] + plusLabelSize[dimensionType]) / 2);
+                const firstBoundStartPosition = ((firstBound[dimensionType] + minusLabelSize[dimensionType]) / 2);
 
-                plusEnd[positionType] += (lastBoundEndPosition + chartConst.LEGEND_LABEL_LEFT_PADDING) * direction;
-                minusEnd[positionType] -= (firstBoundStartPosition + chartConst.LEGEND_LABEL_LEFT_PADDING) * direction;
+                plusEnd[positionType] += (lastBoundEndPosition + LEGEND_LABEL_LEFT_PADDING) * direction;
+                minusEnd[positionType] -= (firstBoundStartPosition + LEGEND_LABEL_LEFT_PADDING) * direction;
 
                 positions.push({
                     end: plusEnd
@@ -344,7 +335,7 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
         }
 
         return this.graphRenderer.renderSeriesLabel(paper, groupPositions, groupLabels, labelTheme, isStacked);
-    },
+    }
 
     /**
      * Render series label.
@@ -352,21 +343,15 @@ var BarTypeSeriesBase = snippet.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function(paper) {
-        var labelSet;
-
+    _renderSeriesLabel(paper) {
         if (this.options.stackType) {
-            labelSet = this._renderStackedSeriesLabel(paper);
-        } else {
-            labelSet = this._renderNormalSeriesLabel(paper);
+            return this._renderStackedSeriesLabel(paper);
         }
 
-        return labelSet;
+        return this._renderNormalSeriesLabel(paper);
     }
-});
+}
 
 BarTypeSeriesBase.mixin = function(func) {
-    snippet.extend(func.prototype, BarTypeSeriesBase.prototype);
+    Object.assign(func.prototype, BarTypeSeriesBase.prototype);
 };
-
-module.exports = BarTypeSeriesBase;

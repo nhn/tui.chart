@@ -4,20 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from './const';
+import chartFactory from './factories/chartFactory';
+import pluginFactory from './factories/pluginFactory';
+import themeManager from './themes/themeManager';
+import mapManager from './factories/mapManager';
+import objectUtil from './helpers/objectUtil';
+import seriesDataImporter from './helpers/seriesDataImporter';
+import drawingToolPicker from './helpers/drawingToolPicker';
 
-var chartConst = require('./const');
-var chartFactory = require('./factories/chartFactory');
-var pluginFactory = require('./factories/pluginFactory');
-var themeManager = require('./themes/themeManager');
-var mapManager = require('./factories/mapManager');
-var objectUtil = require('./helpers/objectUtil');
-var seriesDataImporter = require('./helpers/seriesDataImporter');
-var drawingToolPicker = require('./helpers/drawingToolPicker');
-
-require('./polyfill');
-require('./charts/chartsRegistration');
-require('./themes/defaultThemesRegistration');
+import './polyfill';
+import './charts/chartsRegistration';
+import './themes/defaultThemesRegistration';
 
 /**
  * Raw series datum.
@@ -79,13 +77,7 @@ require('./themes/defaultThemesRegistration');
  * @private
  * @ignore
  */
-function _createChart(container, rawData, options, chartType) {
-    var theme, chart, temp;
-
-    if (!rawData) {
-        rawData = {};
-    }
-
+function _createChart(container, rawData = {}, options, chartType) {
     if (rawData.table) {
         rawData = seriesDataImporter.makeDataWithTable(rawData.table);
     }
@@ -97,7 +89,7 @@ function _createChart(container, rawData, options, chartType) {
     rawData = objectUtil.deepCopy(rawData);
 
     if (chartType !== 'combo') {
-        temp = rawData.series;
+        const temp = rawData.series;
         rawData.series = {};
         rawData.series[chartType] = temp;
     }
@@ -105,9 +97,9 @@ function _createChart(container, rawData, options, chartType) {
     options = options ? objectUtil.deepCopy(options) : {};
     options.chartType = chartType;
     options.theme = options.theme || chartConst.DEFAULT_THEME_NAME;
-    theme = themeManager.get(options.theme, chartType, rawData.series);
 
-    chart = chartFactory.get(options.chartType, rawData, theme, options);
+    const theme = themeManager.get(options.theme, chartType, rawData.series);
+    const chart = chartFactory.get(options.chartType, rawData, theme, options);
 
     chart.render(container);
     chart.animateChart();
@@ -1559,21 +1551,21 @@ function registerPlugin(libType, plugin, getPaperCallback) {
 }
 
 module.exports = {
-    barChart: barChart,
-    columnChart: columnChart,
-    lineChart: lineChart,
-    areaChart: areaChart,
-    bubbleChart: bubbleChart,
-    scatterChart: scatterChart,
-    heatmapChart: heatmapChart,
-    treemapChart: treemapChart,
-    comboChart: comboChart,
-    pieChart: pieChart,
-    mapChart: mapChart,
-    radialChart: radialChart,
-    boxplotChart: boxplotChart,
-    bulletChart: bulletChart,
-    registerTheme: registerTheme,
-    registerMap: registerMap,
-    registerPlugin: registerPlugin
+    barChart,
+    columnChart,
+    lineChart,
+    areaChart,
+    bubbleChart,
+    scatterChart,
+    heatmapChart,
+    treemapChart,
+    comboChart,
+    pieChart,
+    mapChart,
+    radialChart,
+    boxplotChart,
+    bulletChart,
+    registerTheme,
+    registerMap,
+    registerPlugin
 };

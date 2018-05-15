@@ -3,14 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import dom from '../../src/js/helpers/domHandler';
+import chart from '../../src/js/index';
+const comboChartFactory = chart.comboChart;
 
-'use strict';
-
-var dom = require('../../src/js/helpers/domHandler');
-var comboChartFactory = require('../../src/js/index').comboChart;
-
-describe('Test user events for combo chart', function() {
-    var rawData = {
+describe('Test user events for combo chart', () => {
+    const rawData = {
         categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
         series: {
             column: [
@@ -41,10 +39,10 @@ describe('Test user events for combo chart', function() {
             ]
         }
     };
-    var comboChart;
-    var container;
+    let comboChart;
+    let container;
 
-    beforeEach(function() {
+    beforeEach(() => {
         container = dom.create('DIV');
 
         dom.append(document.body, container);
@@ -59,15 +57,15 @@ describe('Test user events for combo chart', function() {
         });
     });
 
-    afterEach(function() {
+    afterEach(() => {
         document.body.removeChild(container);
     });
 
-    describe('selectSeries', function() {
-        it('select series', function(done) {
-            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
+    describe('selectSeries', () => {
+        it('select series', done => {
+            const mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            comboChart.on('selectSeries', function(info) {
+            comboChart.on('selectSeries', info => {
                 expect(info.chartType).toBe('column');
                 expect(info.legend).toBe('Sydney');
                 expect(info.legendIndex).toBe(2);
@@ -83,11 +81,11 @@ describe('Test user events for combo chart', function() {
         });
     });
 
-    describe('unselectSeries', function() {
-        it('unselect series', function(done) {
-            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
+    describe('unselectSeries', () => {
+        it('unselect series', done => {
+            const mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            comboChart.on('unselectSeries', function(info) {
+            comboChart.on('unselectSeries', info => {
                 expect(info.chartType).toBe('column');
                 expect(info.legend).toBe('Sydney');
                 expect(info.legendIndex).toBe(2);
@@ -102,7 +100,7 @@ describe('Test user events for combo chart', function() {
                 clientY: 330
             });
 
-            setTimeout(function() {
+            setTimeout(() => {
                 // unselect
                 mouseEventDetector._onClick({
                     clientX: 120,
@@ -113,11 +111,11 @@ describe('Test user events for combo chart', function() {
     });
 
     // if group tooltip
-    describe('beforeShowTooltip', function() {
-        it('before show tooltip', function(done) {
-            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
+    describe('beforeShowTooltip', () => {
+        it('before show tooltip', done => {
+            const mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            comboChart.on('beforeShowTooltip', function(info) {
+            comboChart.on('beforeShowTooltip', info => {
                 expect(info.chartType).toBe('combo');
                 expect(info.index).toBe(1);
                 expect(info.range.start).toBeDefined();
@@ -133,11 +131,11 @@ describe('Test user events for combo chart', function() {
         });
     });
 
-    describe('afterShowTooltip', function() {
-        it('after show tooltip', function(done) {
-            var mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
+    describe('afterShowTooltip', () => {
+        it('after show tooltip', done => {
+            const mouseEventDetector = comboChart.componentManager.get('mouseEventDetector');
 
-            comboChart.on('afterShowTooltip', function(info) {
+            comboChart.on('afterShowTooltip', info => {
                 expect(info.chartType).toBe('combo');
                 expect(info.index).toBe(1);
                 expect(info.range.start).toBeDefined();

@@ -3,22 +3,18 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
+import SeriesItem from '../../../src/js/models/data/seriesItem';
 
-'use strict';
+describe('Test for seriesGroup', () => {
+    let seriesGroup;
 
-var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
-var SeriesItem = require('../../../src/js/models/data/seriesItem');
-
-describe('Test for seriesGroup', function() {
-    var seriesGroup;
-
-    beforeEach(function() {
+    beforeEach(() => {
         seriesGroup = new SeriesGroup();
     });
 
-    describe('_createValues()', function() {
-        it('should pick values from all series items', function() {
-            var actual, expected;
+    describe('_createValues()', () => {
+        it('should pick values from all series items', () => {
             seriesGroup.items = [
                 new SeriesItem({
                     datum: 10
@@ -34,14 +30,13 @@ describe('Test for seriesGroup', function() {
                 })
             ];
 
-            actual = seriesGroup._createValues('value');
-            expected = [10, 20, 30, 40];
+            const actual = seriesGroup._createValues('value');
+            const expected = [10, 20, 30, 40];
 
             expect(actual).toEqual(expected);
         });
 
-        it('should return start value, when series item is range type', function() {
-            var actual, expected;
+        it('should return start value, when series item is range type', () => {
             seriesGroup.items = [
                 new SeriesItem({
                     datum: [10, 20]
@@ -57,17 +52,15 @@ describe('Test for seriesGroup', function() {
                 })
             ];
 
-            actual = seriesGroup._createValues('value');
-            expected = [20, 10, 30, 20, 40, 30, 50, 40];
+            const actual = seriesGroup._createValues('value');
+            const expected = [20, 10, 30, 20, 40, 30, 50, 40];
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makeValuesMapPerStack()', function() {
-        it('should create stacked values from series item', function() {
-            var actual, expected;
-
+    describe('_makeValuesMapPerStack()', () => {
+        it('should create stacked values from series item', () => {
             seriesGroup.items = [
                 new SeriesItem({
                     datum: 10,
@@ -102,8 +95,8 @@ describe('Test for seriesGroup', function() {
                 })
             ];
 
-            actual = seriesGroup._makeValuesMapPerStack();
-            expected = {
+            const actual = seriesGroup._makeValuesMapPerStack();
+            const expected = {
                 st1: [10, 30],
                 st2: [20, 40]
             };
@@ -112,10 +105,8 @@ describe('Test for seriesGroup', function() {
         });
     });
 
-    describe('_makeSumMapPerStack()', function() {
-        it('should replace each stack data to sum of values', function() {
-            var actual, expected;
-
+    describe('_makeSumMapPerStack()', () => {
+        it('should replace each stack data to sum of values', () => {
             seriesGroup.items = [
                 new SeriesItem({
                     datum: 10,
@@ -150,8 +141,8 @@ describe('Test for seriesGroup', function() {
                 })
             ];
 
-            actual = seriesGroup._makeSumMapPerStack();
-            expected = {
+            const actual = seriesGroup._makeSumMapPerStack();
+            const expected = {
                 st1: 40,
                 st2: 60
             };
@@ -160,9 +151,9 @@ describe('Test for seriesGroup', function() {
         });
     });
 
-    describe('addRatiosWhenPercentStacked()', function() {
-        it('should calculate dividing number, when percent stack chart.', function() {
-            var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
+    describe('addRatiosWhenPercentStacked()', () => {
+        it('should calculate dividing number, when percent stack chart.', () => {
+            const seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;
             seriesItem.stack = 'st';
@@ -173,9 +164,9 @@ describe('Test for seriesGroup', function() {
         });
     });
 
-    describe('addRatiosWhenDivergingStacked()', function() {
-        it('should send dividing number and 0.5 when diverging chart. dividing number should be selected from plus or minus sum', function() {
-            var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
+    describe('addRatiosWhenDivergingStacked()', () => {
+        it('should send dividing number and 0.5 when diverging chart. dividing number should be selected from plus or minus sum', () => {
+            const seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;
             seriesGroup.items = [seriesItem];
@@ -185,9 +176,9 @@ describe('Test for seriesGroup', function() {
         });
     });
 
-    describe('addRatios()', function() {
-        it('should send a dividing number and substraction value to addRatio()', function() {
-            var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
+    describe('addRatios()', () => {
+        it('should send a dividing number and substraction value to addRatio()', () => {
+            const seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;
             seriesGroup.items = [seriesItem];

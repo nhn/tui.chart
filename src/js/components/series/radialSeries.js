@@ -4,14 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import chartConst from '../../const';
+import calculator from '../../helpers/calculator';
+import geom from '../../helpers/geometric';
+import snippet from 'tui-code-snippet';
+const {
+    COMPONENT_TYPE_RAPHAEL,
+    RADIAL_PLOT_PADDING,
+    RADIAL_MARGIN_FOR_CATEGORY
+} = chartConst;
 
-var Series = require('./series');
-var chartConst = require('../../const');
-var geom = require('../../helpers/geometric');
-var snippet = require('tui-code-snippet');
-
-var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries.prototype */ {
+class RadialChartSeries extends Series {
     /**
      * Line chart series component.
      * @constructs RadialChartSeries
@@ -22,10 +26,10 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
-    init: function() {
-        Series.apply(this, arguments);
+    constructor(...args) {
+        super(...args);
 
-        this.options = snippet.extend({
+        this.options = Object.assign({
             showDot: false,
             showArea: false
         }, this.options);
@@ -36,8 +40,8 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
          */
         this.movingAnimation = null;
 
-        this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-    },
+        this.drawingType = COMPONENT_TYPE_RAPHAEL;
+    }
 
     /**
      * Make positions data for radial series
@@ -46,35 +50,41 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makePositionsForRadial: function(seriesGroups, groupCount) {
-        var layout = this.layout;
-        var dimension = layout.dimension;
-        var width = dimension.width - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-        var height = dimension.height - chartConst.RADIAL_PLOT_PADDING - chartConst.RADIAL_MARGIN_FOR_CATEGORY;
-        var centerX = (width / 2) + (chartConst.RADIAL_PLOT_PADDING / 2) + (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
-            + layout.position.left;
-        var centerY = (height / 2) - (chartConst.RADIAL_PLOT_PADDING / 2) - (chartConst.RADIAL_MARGIN_FOR_CATEGORY / 2)
-            - layout.position.top;
+    _makePositionsForRadial(seriesGroups, groupCount) {
+        const {dimension, position: {top, left}} = this.layout;
+        const width = dimension.width - RADIAL_PLOT_PADDING - RADIAL_MARGIN_FOR_CATEGORY;
+        const height = dimension.height - RADIAL_PLOT_PADDING - RADIAL_MARGIN_FOR_CATEGORY;
+        const centerX = calculator.sum([
+            (width / 2),
+            (RADIAL_PLOT_PADDING / 2),
+            (RADIAL_MARGIN_FOR_CATEGORY / 2),
+            left
+        ]);
+        const centerY = calculator.sum([
+            (height / 2),
+            -(RADIAL_PLOT_PADDING / 2),
+            -(RADIAL_MARGIN_FOR_CATEGORY / 2),
+            -top
+        ]);
 
-        var stepAngle = 360 / groupCount;
-        var radius;
+        const stepAngle = 360 / groupCount;
 
-        radius = Math.min(width, height) / 2;
+        const radius = Math.min(width, height) / 2;
 
-        return snippet.map(seriesGroups, function(seriesGroup) {
-            var positions = snippet.map(seriesGroup, function(seriesItem, index) {
-                var position, y, angle, point, valueSize;
+        return seriesGroups.map(seriesGroup => {
+            const positions = seriesGroup.map((seriesItem, index) => {
+                let position;
 
                 if (!snippet.isNull(seriesItem.end)) {
-                    valueSize = seriesItem.ratio * radius;
+                    const valueSize = seriesItem.ratio * radius;
 
                     // center y + real vaule size
-                    y = centerY + valueSize;
+                    const y = centerY + valueSize;
 
                     // turn angle to clockwise
-                    angle = 360 - (stepAngle * index);
+                    const angle = 360 - (stepAngle * index);
 
-                    point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, y, angle);
+                    const point = geom.rotatePointAroundOrigin(centerX, centerY, centerX, y, angle);
 
                     position = {
                         left: point.x,
@@ -88,23 +98,19 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
             positions.push(positions[0]);
 
             return positions;
-        }, true);
-    },
+        });
+    }
 
     /**
      * Get pivoted seriesGroups
      * @returns {Array.<Array>} series group
      * @private
      */
-    _getSeriesGroups: function() {
-        var seriesDataModel = this._getSeriesDataModel();
+    _getSeriesGroups() {
+        const seriesDataModel = this._getSeriesDataModel();
 
-        return seriesDataModel.map(function(group) {
-            return group.map(function(item) {
-                return item;
-            });
-        }, true);
-    },
+        return seriesDataModel.map(group => group.map(item => item), true);
+    }
 
     /**
      * Make series data for rendering graph and sending to mouse event detector.
@@ -112,17 +118,15 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
      * @private
      * @override
      */
-    _makeSeriesData: function() {
-        var groups = this._getSeriesGroups();
-        var groupPositions = this._makePositionsForRadial(groups, this._getSeriesDataModel().getGroupCount());
+    _makeSeriesData() {
+        const groups = this._getSeriesGroups();
+        const groupPositions = this._makePositionsForRadial(groups, this._getSeriesDataModel().getGroupCount());
 
         return {
-            groupPositions: groupPositions,
-            isAvailable: function() {
-                return groupPositions && groupPositions.length > 0;
-            }
+            groupPositions,
+            isAvailable: () => (groupPositions && groupPositions.length > 0)
         };
-    },
+    }
 
     /**
      * Rerender.
@@ -130,24 +134,24 @@ var RadialChartSeries = snippet.defineClass(Series, /** @lends RadialChartSeries
      * @returns {Raphael.Paper} raphael paper
      * @override
      */
-    rerender: function(data) {
+    rerender(data) {
         return Series.prototype.rerender.call(this, data);
     }
-});
+}
 
-function radialSeriesFactory(params) {
-    var chartType = params.chartOptions.chartType;
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
-
-    params.libType = libType;
-    params.chartType = chartType;
-    params.chartBackground = chartTheme.background;
+/**
+ * radialSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} radial series instanse
+ * @ignore
+ */
+export default function radialSeriesFactory(params) {
+    params.libType = params.chartOptions.libType;
+    params.chartType = params.chartOptions.chartType;
+    params.chartBackground = params.chartTheme.background;
 
     return new RadialChartSeries(params);
 }
 
 radialSeriesFactory.componentType = 'series';
 radialSeriesFactory.RadialChartSeries = RadialChartSeries;
-
-module.exports = radialSeriesFactory;

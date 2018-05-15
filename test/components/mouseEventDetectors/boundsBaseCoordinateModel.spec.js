@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import BoundsBaseCoordinateModel from '../../../src/js/components/mouseEventDetectors/boundsBaseCoordinateModel';
 
-'use strict';
+describe('Test for BoundsBaseCoordinateModel', () => {
+    let coordinateModel;
 
-var BoundsBaseCoordinateModel = require('../../../src/js/components/mouseEventDetectors/boundsBaseCoordinateModel');
-
-describe('Test for BoundsBaseCoordinateModel', function() {
-    var coordinateModel;
-
-    beforeEach(function() {
+    beforeEach(() => {
         coordinateModel = new BoundsBaseCoordinateModel([{
             data: {
                 groupBounds: []
@@ -20,9 +17,9 @@ describe('Test for BoundsBaseCoordinateModel', function() {
         }]);
     });
 
-    describe('_makeRectTypePositionData()', function() {
-        it('should create rect type coordinate data', function() {
-            var actual = coordinateModel._makeRectTypePositionData([[
+    describe('_makeRectTypePositionData()', () => {
+        it('should create rect type coordinate data', () => {
+            const actual = coordinateModel._makeRectTypePositionData([[
                 {
                     end: {
                         left: 10,
@@ -51,9 +48,9 @@ describe('Test for BoundsBaseCoordinateModel', function() {
         });
     });
 
-    describe('_makeDotTypePositionData()', function() {
-        it('should create dot type coordinate data', function() {
-            var actual = coordinateModel._makeDotTypePositionData([[
+    describe('_makeDotTypePositionData()', () => {
+        it('should create dot type coordinate data', () => {
+            const actual = coordinateModel._makeDotTypePositionData([[
                 {
                     left: 10,
                     top: 10
@@ -76,9 +73,9 @@ describe('Test for BoundsBaseCoordinateModel', function() {
         });
     });
 
-    describe('_joinData()', function() {
-        it('join last depth array', function() {
-            var actual = coordinateModel._joinData([
+    describe('_joinData()', () => {
+        it('join last depth array', () => {
+            const actual = coordinateModel._joinData([
                 [
                     [{
                         sendData: {
@@ -129,7 +126,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                     }]
                 ]
             ]);
-            var expected = [
+            const expected = [
                 [{
                     sendData: {
                         indexes: {
@@ -180,8 +177,8 @@ describe('Test for BoundsBaseCoordinateModel', function() {
 
             expect(actual).toEqual(expected);
         });
-        it('should not set "datum.sendData.indexes.legendIndex" without datum', function() {
-            var actual = coordinateModel._joinData([
+        it('should not set "datum.sendData.indexes.legendIndex" without datum', () => {
+            const actual = coordinateModel._joinData([
                 [
                     [null, {
                         sendData: {
@@ -225,7 +222,7 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                     }]
                 ]
             ]);
-            var expected = [
+            const expected = [
                 [null, {
                     sendData: {
                         indexes: {
@@ -272,9 +269,9 @@ describe('Test for BoundsBaseCoordinateModel', function() {
         });
     });
 
-    describe('_makeData()', function() {
-        it('make data for detecting mouse event', function() {
-            var actual = coordinateModel._makeData([
+    describe('_makeData()', () => {
+        it('make data for detecting mouse event', () => {
+            const actual = coordinateModel._makeData([
                 {
                     chartType: 'column',
                     data: {
@@ -335,9 +332,9 @@ describe('Test for BoundsBaseCoordinateModel', function() {
         });
     });
 
-    describe('_findCandidates()', function() {
-        it('should filter candidates from data by layerX, laeryY', function() {
-            var data = [
+    describe('_findCandidates()', () => {
+        it('should filter candidates from data by layerX, laeryY', () => {
+            const data = [
                     {
                         bound: {
                             left: 10,
@@ -385,8 +382,8 @@ describe('Test for BoundsBaseCoordinateModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('top and bottom are the same, there should be an empty event space.', function() {
-            var data = [
+        it('top and bottom are the same, there should be an empty event space.', () => {
+            const data = [
                 {
                     bound: {
                         left: 10,
@@ -396,15 +393,15 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                     }
                 }
             ];
-            var layerX = 15;
-            var layerY = 23;
-            var actual = coordinateModel._findCandidates(data, layerX, layerY).length;
+            const layerX = 15;
+            const layerY = 23;
+            const actual = coordinateModel._findCandidates(data, layerX, layerY).length;
 
             expect(actual).toBe(1);
         });
 
-        it('left and right are the same, there should be an empty event space.', function() {
-            var data = [
+        it('left and right are the same, there should be an empty event space.', () => {
+            const data = [
                 {
                     bound: {
                         left: 10,
@@ -414,25 +411,23 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                     }
                 }
             ];
-            var layerX = 8;
-            var layerY = 25;
-            var actual = coordinateModel._findCandidates(data, layerX, layerY).length;
+            const layerX = 8;
+            const layerY = 25;
+            const actual = coordinateModel._findCandidates(data, layerX, layerY).length;
 
             expect(actual).toBe(1);
         });
     });
 
-    describe('findData()', function() {
-        it('should find closest data from candinates', function() {
-            var actual, expected;
+    describe('findData()', () => {
+        it('should find closest data from candinates', () => {
             coordinateModel.data = [[
                 {
                     bound: {
                         left: 10,
                         top: 25,
                         right: 20,
-                        bottom: 35
-                    },
+                        bottom: 35},
                     sendData: {
                         bound: {
                             top: 30
@@ -453,8 +448,8 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                     }
                 }
             ]];
-            actual = coordinateModel.findData(0, 20, 28);
-            expected = coordinateModel.data[0][0].sendData;
+            const actual = coordinateModel.findData(0, 20, 28);
+            const expected = coordinateModel.data[0][0].sendData;
             expect(actual).toBe(expected);
         });
     });
