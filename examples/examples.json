@@ -122,6 +122,9 @@
   "example10-01-heatmap-chart-basic": {
     "title": "10.1 [Heatmap chart] basic"
   },
+  "example10-02-heatmap-chart-random-series": {
+    "title": "10.2 [Heatmap chart] random series"
+  },
   "example11-01-treemap-chart-basic": {
     "title": "11.1 [Treemap chart] basic"
   },
