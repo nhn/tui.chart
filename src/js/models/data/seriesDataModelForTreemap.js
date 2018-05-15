@@ -5,24 +5,20 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import SeriesDataModel from './seriesDataModel';
+import SeriesItem from './seriesItemForTreemap';
+import chartConst from '../../const';
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 
-var SeriesDataModel = require('./seriesDataModel');
-var SeriesItem = require('./seriesItemForTreemap');
-var chartConst = require('../../const');
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
-
-var aps = Array.prototype.slice;
-
-var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForTreeMap.prototype */{
+export default class SeriesDataModelForTreeMap extends SeriesDataModel {
     /**
      * SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
      * @constructs SeriesDataModelForTreemap
      * @private
      */
-    init: function() {
-        SeriesDataModel.apply(this, arguments);
+    constructor(...args) {
+        super(...args);
 
         /**
          * cached found seriesItems map
@@ -35,7 +31,7 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
          * @type {object<string, SeriesItem>}
          */
         this.seriesItemMap = {};
-    },
+    }
 
     /**
      * Flatten hierarchical data.
@@ -45,13 +41,12 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @returns {Array.<object>}
      * @private
      */
-    _flattenHierarchicalData: function(rawSeriesData, parent, ancestorIndexes) {
-        var self = this;
-        var flatData = [];
-        var idPrefix;
+    _flattenHierarchicalData(rawSeriesData, parent, ancestorIndexes) {
+        let flatData = [];
+        let idPrefix;
 
         if (parent) {
-            idPrefix = parent + '_';
+            idPrefix = `${parent}_`;
         } else {
             idPrefix = chartConst.TREEMAP_ID_PREFIX;
             parent = chartConst.TREEMAP_ROOT_ID;
@@ -59,10 +54,10 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
 
         ancestorIndexes = ancestorIndexes || [];
 
-        snippet.forEachArray(rawSeriesData, function(datum, index) {
-            var id = idPrefix + index;
-            var children = datum.children;
-            var indexes = ancestorIndexes.concat(index);
+        rawSeriesData.forEach((datum, index) => {
+            const id = idPrefix + index;
+            const {children} = datum;
+            const indexes = ancestorIndexes.concat(index);
 
             datum.indexes = indexes;
 
@@ -79,13 +74,13 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
             }
 
             if (children) {
-                flatData = flatData.concat(self._flattenHierarchicalData(children, id, indexes));
+                flatData = flatData.concat(this._flattenHierarchicalData(children, id, indexes));
                 delete datum.children;
             }
         });
 
         return flatData;
-    },
+    }
 
     /**
      * Partition raw series data by parent id
@@ -94,11 +89,11 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @returns {Array.<Array>}
      * @private
      */
-    _partitionRawSeriesDataByParent: function(rawSeriesData, parent) {
-        var filtered = [];
-        var rejected = [];
+    _partitionRawSeriesDataByParent(rawSeriesData, parent) {
+        const filtered = [];
+        const rejected = [];
 
-        snippet.forEachArray(rawSeriesData, function(datum) {
+        rawSeriesData.forEach(datum => {
             if (datum.parent === parent) {
                 filtered.push(datum);
             } else {
@@ -107,7 +102,7 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
         });
 
         return [filtered, rejected];
-    },
+    }
 
     /**
      * Set tree properties like depth, group in raw series data.
@@ -118,22 +113,18 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @returns {Array.<object>}
      * @private
      */
-    _setTreeProperties: function(flatSeriesData, depth, parent, group) {
-        var self = this;
-        var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
-        var filtered = parted[0];
-        var rejected = parted[1];
-        var childDepth = depth + 1;
+    _setTreeProperties(flatSeriesData, depth, parent, group) {
+        const parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
+        let [filtered] = parted;
+        const [, rejected] = parted;
+        const childDepth = depth + 1;
 
-        snippet.forEachArray(filtered, function(datum, index) {
-            var descendants, children;
-
+        filtered.forEach((datum, index) => {
             datum.depth = depth;
             datum.group = snippet.isUndefined(group) ? index : group;
-            descendants = self._setTreeProperties(rejected, childDepth, datum.id, datum.group, datum.fillOpacity);
-            children = snippet.filter(descendants, function(descendant) {
-                return descendant.depth === childDepth;
-            });
+
+            const descendants = this._setTreeProperties(rejected, childDepth, datum.id, datum.group, datum.fillOpacity);
+            const children = descendants.filter(descendant => descendant.depth === childDepth);
 
             if (children.length) {
                 datum.value = calculator.sum(snippet.pluck(children, 'value'));
@@ -143,16 +134,14 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
             }
 
             if (descendants.length) {
-                descendants.sort(function(a, b) {
-                    return b.value - a.value;
-                });
+                descendants.sort((a, b) => (b.value - a.value));
             }
 
             filtered = filtered.concat(descendants);
         });
 
         return filtered;
-    },
+    }
 
     /**
      * Set ratio.
@@ -160,23 +149,21 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @param {string} parent - parent id
      * @private
      */
-    _setRatio: function(flatSeriesData, parent) {
-        var self = this;
-        var parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
-        var filtered = parted[0];
-        var rejected = parted[1];
-        var total = calculator.sum(snippet.pluck(filtered, 'value'));
+    _setRatio(flatSeriesData, parent) {
+        const parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
+        const [filtered, rejected] = parted;
+        const total = calculator.sum(snippet.pluck(filtered, 'value'));
 
-        snippet.forEachArray(filtered, function(datum) {
-            var value = snippet.isNull(datum.value) ? 0 : datum.value;
+        filtered.forEach(datum => {
+            const value = snippet.isNull(datum.value) ? 0 : datum.value;
 
             datum.ratio = value / total;
 
             if (datum.hasChild) {
-                self._setRatio(rejected, datum.id);
+                this._setRatio(rejected, datum.id);
             }
         });
-    },
+    }
 
     /**
      * Create base groups.
@@ -184,22 +171,21 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @private
      * @override
      */
-    _createBaseGroups: function() {
-        var chartType = this.chartType;
-        var seriesItemMap = this.seriesItemMap;
-        var formatFunctions = this.formatFunctions;
-        var flatSeriesData = this._flattenHierarchicalData(this.rawSeriesData);
+    _createBaseGroups() {
+        const {chartType, seriesItemMap, formatFunctions} = this;
+        let flatSeriesData = this._flattenHierarchicalData(this.rawSeriesData);
+
         flatSeriesData = this._setTreeProperties(flatSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
         this._setRatio(flatSeriesData, chartConst.TREEMAP_ROOT_ID);
 
-        return [snippet.map(flatSeriesData, function(rawDatum) {
-            var seriesItem = new SeriesItem(rawDatum, formatFunctions, chartType);
+        return [flatSeriesData.map(rawDatum => {
+            const seriesItem = new SeriesItem(rawDatum, formatFunctions, chartType);
 
             seriesItemMap[seriesItem.id] = seriesItem;
 
             return seriesItem;
         })];
-    },
+    }
 
     /**
      * Find SeriesItems.
@@ -208,13 +194,13 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @returns {Array.<SeriesItem>}
      * @private
      */
-    _findSeriesItems: function(key, condition) {
+    _findSeriesItems(key, condition) {
         if (!this.foundSeriesItemsMap[key]) {
             this.foundSeriesItemsMap[key] = this.getFirstSeriesGroup(true).filter(condition);
         }
 
         return this.foundSeriesItemsMap[key];
-    },
+    }
 
     /**
      * Make cache key for caching found SeriesItems.
@@ -222,15 +208,15 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @returns {string}
      * @private
      */
-    _makeCacheKey: function(prefix) {
-        var key = prefix;
+    _makeCacheKey(...args) {
+        let [key] = args;
 
-        if (arguments.length > 1) {
-            key += aps.call(arguments, 1).join('_');
+        if (args.length > 1) {
+            key += args.slice(1).join('_');
         }
 
         return key;
-    },
+    }
 
     /**
      * Whether valid group or not.
@@ -240,9 +226,9 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @returns {boolean}
      * @private
      */
-    _isValidGroup: function(group, comparingGroup) {
+    _isValidGroup(group, comparingGroup) {
         return !snippet.isExisty(comparingGroup) || (group === comparingGroup);
-    },
+    }
 
     /**
      * Find SeriesItems by depth.
@@ -250,41 +236,37 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @param {number} [group] - tree group
      * @returns {Array.<SeriesItem>}
      */
-    findSeriesItemsByDepth: function(depth, group) {
-        var self = this;
-        var key = this._makeCacheKey(chartConst.TREEMAP_DEPTH_KEY_PREFIX, depth, group);
+    findSeriesItemsByDepth(depth, group) {
+        const key = this._makeCacheKey(chartConst.TREEMAP_DEPTH_KEY_PREFIX, depth, group);
 
-        return this._findSeriesItems(key, function(seriesItem) {
-            return (seriesItem.depth === depth) && self._isValidGroup(seriesItem.group, group);
-        });
-    },
+        return this._findSeriesItems(key, seriesItem => (
+            (seriesItem.depth === depth) && this._isValidGroup(seriesItem.group, group)
+        ));
+    }
 
     /**
      * Find SeriesItems by parent id.
      * @param {string | number} parent - parent id
      * @returns {Array.<SeriesItem>}
      */
-    findSeriesItemsByParent: function(parent) {
-        var key = this._makeCacheKey(chartConst.TREEMAP_PARENT_KEY_PREFIX, parent);
+    findSeriesItemsByParent(parent) {
+        const key = this._makeCacheKey(chartConst.TREEMAP_PARENT_KEY_PREFIX, parent);
 
-        return this._findSeriesItems(key, function(seriesItem) {
-            return seriesItem.parent === parent;
-        });
-    },
+        return this._findSeriesItems(key, seriesItem => (seriesItem.parent === parent));
+    }
 
     /**
      * Find leaf SeriesItems.
      * @param {number} [group] - tree group
      * @returns {Array.<SeriesItem>}
      */
-    findLeafSeriesItems: function(group) {
-        var self = this;
-        var key = this._makeCacheKey(chartConst.TREEMAP_LEAF_KEY_PREFIX, group);
+    findLeafSeriesItems(group) {
+        const key = this._makeCacheKey(chartConst.TREEMAP_LEAF_KEY_PREFIX, group);
 
-        return this._findSeriesItems(key, function(seriesItem) {
-            return !seriesItem.hasChild && self._isValidGroup(seriesItem.group, group);
-        });
-    },
+        return this._findSeriesItems(key, seriesItem => (
+            !seriesItem.hasChild && this._isValidGroup(seriesItem.group, group)
+        ));
+    }
 
     /**
      * Find parent by depth.
@@ -292,22 +274,20 @@ var SeriesDataModelForTreeMap = snippet.defineClass(SeriesDataModel, /** @lends 
      * @param {number} depth - depth
      * @returns {SeriesItem|null}
      */
-    findParentByDepth: function(id, depth) {
-        var seriesItem = this.seriesItemMap[id] || null;
+    findParentByDepth(id, depth) {
+        let seriesItem = this.seriesItemMap[id] || null;
 
         if (seriesItem && seriesItem.depth !== depth) {
             seriesItem = this.findParentByDepth(seriesItem.parent, depth);
         }
 
         return seriesItem;
-    },
+    }
 
     /**
      * Initialize foundSeriesItemsMap.
      */
-    initSeriesItemsMap: function() {
+    initSeriesItemsMap() {
         this.foundSeriesItemsMap = null;
     }
-});
-
-module.exports = SeriesDataModelForTreeMap;
+}

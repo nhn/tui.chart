@@ -4,21 +4,20 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../../const';
+import Series from './series';
+import CoordinateTypeSeriesBase from './coordinateTypeSeriesBase';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../../const');
-var Series = require('./series');
-var CoordinateTypeSeriesBase = require('./coordinateTypeSeriesBase');
-var snippet = require('tui-code-snippet');
-
-var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
+class BubbleChartSeries extends Series {
     /**
      * Bubble chart series component.
      * @constructs BubbleChartSeries
      * @private
      * @extends Series
      */
-    init: function() {
+    constructor(...args) {
+        super(...args);
         /**
          * previous clicked index.
          * @type {?number}
@@ -32,23 +31,21 @@ var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries
         this.maxRadius = null;
 
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
-
-        Series.apply(this, arguments);
-    },
+    }
 
     /**
      * Calculate step value for label axis.
      * @returns {number}
      * @private
      */
-    _calculateStep: function() {
-        var step = 0;
-        var dimension, size, len;
-        var hasVerticalCategory = this.dataProcessor.isXCountGreaterThanYCount(this.chartType);
+    _calculateStep() {
+        const hasVerticalCategory = this.dataProcessor.isXCountGreaterThanYCount(this.chartType);
+        let step = 0;
 
         if (this.dataProcessor.hasCategories(hasVerticalCategory)) {
-            dimension = this.layout.dimension;
-            len = this.dataProcessor.getCategoryCount(hasVerticalCategory);
+            const {dimension} = this.layout;
+            const len = this.dataProcessor.getCategoryCount(hasVerticalCategory);
+            let size;
 
             if (hasVerticalCategory) {
                 size = dimension.height;
@@ -60,7 +57,7 @@ var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries
         }
 
         return step;
-    },
+    }
 
     /**
      * Make bound for bubble chart.
@@ -70,41 +67,39 @@ var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries
      * @returns {{left: number, top: number, radius: number}}
      * @private
      */
-    _makeBound: function(ratioMap, positionByStep, maxRadius) {
-        var dimension = this.layout.dimension;
-        var position = this.layout.position;
-        var left = snippet.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
-        var top = snippet.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
+    _makeBound(ratioMap, positionByStep, maxRadius) {
+        const {dimension: {width, height}, position} = this.layout;
+        const left = snippet.isExisty(ratioMap.x) ? (ratioMap.x * width) : positionByStep;
+        const top = snippet.isExisty(ratioMap.y) ? (ratioMap.y * height) : positionByStep;
 
         return {
             left: position.left + left,
-            top: position.top + dimension.height - top,
+            top: position.top + height - top,
             radius: Math.max(maxRadius * ratioMap.r, 2)
         };
-    },
+    }
 
     /**
      * Make bounds for bubble chart.
      * @returns {Array.<Array.<{left: number, top: number, radius: number}>>} positions
      * @private
      */
-    _makeBounds: function() {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var maxRadius = this.maxRadius;
-        var step = this._calculateStep();
-        var start = step ? step / 2 : 0;
+    _makeBounds() {
+        const seriesDataModel = this._getSeriesDataModel();
+        const {maxRadius} = this;
+        const step = this._calculateStep();
+        const start = step ? step / 2 : 0;
 
-        return seriesDataModel.map(function(seriesGroup, index) {
-            var positionByStep = start + (step * index);
+        return seriesDataModel.map((seriesGroup, index) => {
+            const positionByStep = start + (step * index);
 
-            return seriesGroup.map(function(seriesItem) {
-                var hasRationMap = (seriesItem && seriesItem.ratioMap);
+            return seriesGroup.map(seriesItem => {
+                const hasRationMap = (seriesItem && seriesItem.ratioMap);
 
-                return hasRationMap ? self._makeBound(seriesItem.ratioMap, positionByStep, maxRadius) : null;
+                return hasRationMap ? this._makeBound(seriesItem.ratioMap, positionByStep, maxRadius) : null;
             });
         });
-    },
+    }
 
     /**
      * Set data for rendering.
@@ -126,17 +121,22 @@ var BubbleChartSeries = snippet.defineClass(Series, /** @lends BubbleChartSeries
      * }} data - data for rendering
      * @private
      */
-    _setDataForRendering: function(data) {
+    _setDataForRendering(data) {
         this.maxRadius = data.maxRadius;
         Series.prototype._setDataForRendering.call(this, data);
     }
-});
+}
 
 CoordinateTypeSeriesBase.mixin(BubbleChartSeries);
 
-function bubbleSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
+/**
+ * bubbleSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} bubble series instanse
+ * @ignore
+ */
+export default function bubbleSeriesFactory(params) {
+    const {chartOptions: {libType}, chartTheme} = params;
 
     params.libType = libType;
     params.chartType = 'bubble';
@@ -147,5 +147,3 @@ function bubbleSeriesFactory(params) {
 
 bubbleSeriesFactory.componentType = 'series';
 bubbleSeriesFactory.BubbleChartSeries = BubbleChartSeries;
-
-module.exports = bubbleSeriesFactory;

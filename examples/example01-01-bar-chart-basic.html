@@ -8,6 +8,7 @@
     <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
     <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+
 </head>
 <body>
 <div class='wrap'>
@@ -64,7 +65,10 @@ var options = {
         min: 0,
         max: 9000,
         suffix: '$'
-    }
+    },
+     series: {
+         showLabel: true
+     }
 };
 var theme = {
     series: {

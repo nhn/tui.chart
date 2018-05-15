@@ -4,19 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import ChartBase from './chartBase';
+import rawDataHandler from '../models/data/rawDataHandler';
 
-var ChartBase = require('./chartBase');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var snippet = require('tui-code-snippet');
-
-var BoxplotChart = snippet.defineClass(ChartBase, /** @lends BoxplotChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-boxplot-chart',
-
+export default class BoxplotChart extends ChartBase {
     /**
      * Boxplot chart.
      * @constructs BoxplotChart
@@ -26,23 +17,29 @@ var BoxplotChart = snippet.defineClass(ChartBase, /** @lends BoxplotChart.protot
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
         rawDataHandler.appendOutliersToSeriesData(rawData);
 
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true,
             isVertical: true
         });
-    },
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-boxplot-chart';
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -55,25 +52,25 @@ var BoxplotChart = snippet.defineClass(ChartBase, /** @lends BoxplotChart.protot
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
 
     /**
      * Get scale option.
      * @returns {{xAxis: boolean}}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         return {
             yAxis: true
         };
-    },
+    }
 
     /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
-    onChangeCheckedLegends: function(checkedLegends) {
-        var boundParams;
+    onChangeCheckedLegends(checkedLegends) {
+        let boundParams;
 
         if (this.hasRightYAxis) {
             boundParams = {
@@ -81,20 +78,17 @@ var BoxplotChart = snippet.defineClass(ChartBase, /** @lends BoxplotChart.protot
             };
         }
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, null, boundParams);
-    },
+    }
 
     /**
      * Add data ratios.
      * @override
      * modified from axisTypeMixer
      */
-    addDataRatios: function(limitMap) {
-        var seriesOption = this.options.series || {};
-        var chartType = this.chartType;
-        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+    addDataRatios(limitMap) {
+        const {options: {series: seriesOption = {}}, chartType} = this;
+        const {stackType} = (seriesOption[chartType] || seriesOption);
 
         this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
-});
-
-module.exports = BoxplotChart;
+}

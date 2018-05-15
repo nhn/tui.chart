@@ -3,19 +3,16 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import barSeriesFactory from '../../../src/js/components/series/barChartSeries';
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
+import renderUtil from '../../../src/js/helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
-'use strict';
+describe('BarChartSeries', () => {
+    let series, dataProcessor;
 
-var barSeriesFactory = require('../../../src/js/components/series/barChartSeries');
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModel');
-var SeriesGroup = require('../../../src/js/models/data/seriesGroup');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-describe('BarChartSeries', function() {
-    var series, dataProcessor;
-
-    beforeAll(function() {
+    beforeAll(() => {
         // Rendered width, height is different according to browser
         // Spy these functions so that make same test environment
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
@@ -26,7 +23,7 @@ describe('BarChartSeries', function() {
         dataProcessor.getFormatFunctions.and.returnValue([]);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         series = new barSeriesFactory.BarChartSeries({
             chartType: 'bar',
             theme: {
@@ -37,7 +34,7 @@ describe('BarChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor,
+            dataProcessor,
             eventBus: new snippet.CustomEvents()
         });
         series.layout = {
@@ -48,37 +45,36 @@ describe('BarChartSeries', function() {
         };
     });
 
-    describe('_makeBound()', function() {
-        it('should make bounds having start and end property, by adding startLeft, endLeft, endWidth to baseBound.', function() {
-            var width = 40,
-                height = 30,
-                top = 10,
-                startLeft = 10,
-                endLeft = 10,
-                actual = series._makeBound(width, height, top, startLeft, endLeft),
-                expected = {
-                    start: {
-                        left: 10,
-                        top: 10,
-                        width: 0,
-                        height: 30
-                    },
-                    end: {
-                        left: 10,
-                        top: 10,
-                        width: 40,
-                        height: 30
-                    }
-                };
+    describe('_makeBound()', () => {
+        it('should make bounds having start and end property, by adding startLeft, endLeft, endWidth to baseBound.', () => {
+            const width = 40;
+            const height = 30;
+            const top = 10;
+            const startLeft = 10;
+            const endLeft = 10;
+            const actual = series._makeBound(width, height, top, startLeft, endLeft);
+            const expected = {
+                start: {
+                    left: 10,
+                    top: 10,
+                    width: 0,
+                    height: 30
+                },
+                end: {
+                    left: 10,
+                    top: 10,
+                    width: 40,
+                    height: 30
+                }
+            };
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_calculateAdditionalLeft()', function() {
-        it('should calculate additional left position by adding additional yAxis and OVERLAPPING_WIDTH when divided option and value is more than 0.', function() {
-            var value = 10;
-            var actual, expected;
+    describe('_calculateAdditionalLeft()', () => {
+        it('should calculate additional left position by adding additional yAxis and OVERLAPPING_WIDTH when divided option and value is more than 0.', () => {
+            const value = 10;
 
             series.dimensionMap = {
                 yAxis: {
@@ -86,79 +82,77 @@ describe('BarChartSeries', function() {
                 }
             };
             series.options.divided = true;
-            actual = series._calculateAdditionalLeft(value);
-            expected = 51;
+            const actual = series._calculateAdditionalLeft(value);
+            const expected = 51;
 
             expect(actual).toEqual(expected);
         });
 
-        it('should return 0 if divided option is not exist.', function() {
-            var value = 10;
-            var actual = series._calculateAdditionalLeft(value);
-            var expected = 0;
+        it('should return 0 if divided option is not exist.', () => {
+            const value = 10;
+            const actual = series._calculateAdditionalLeft(value);
+            const expected = 0;
 
             expect(actual).toEqual(expected);
         });
 
-        it('should return 0, if negative value althoght there is divided option.', function() {
-            var value = -10;
-            var actual, expected;
+        it('should return 0, if negative value althoght there is divided option.', () => {
+            const value = -10;
 
             series.options.divided = true;
-            actual = series._calculateAdditionalLeft(value);
-            expected = 0;
+            const actual = series._calculateAdditionalLeft(value);
+            const expected = 0;
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makeBarChartBound()', function() {
-        it('should make bar chart bound of emtpy option.', function() {
-            var baseData = {
-                    baseBarSize: 100,
-                    basePosition: 10,
-                    barSize: 20,
-                    pointInterval: 20,
-                    additionalPosition: 0,
-                    itemCount: 4
+    describe('_makeBarChartBound()', () => {
+        it('should make bar chart bound of emtpy option.', () => {
+            const baseData = {
+                baseBarSize: 100,
+                basePosition: 10,
+                barSize: 20,
+                pointInterval: 20,
+                additionalPosition: 0,
+                itemCount: 4
+            };
+            const iterationData = {
+                baseTop: 10,
+                top: 0,
+                plusLeft: 0
+            };
+            const isStacked = false;
+            const seriesItem = {
+                value: 10,
+                startRatio: 0,
+                ratioDistance: 0.4
+            };
+            const index = 0;
+            const actual = series._makeBarChartBound(baseData, iterationData, isStacked, seriesItem, index);
+            const expected = {
+                start: {
+                    top: 20,
+                    left: 10,
+                    width: 0,
+                    height: 20
                 },
-                iterationData = {
-                    baseTop: 10,
-                    top: 0,
-                    plusLeft: 0
-                },
-                isStacked = false,
-                seriesItem = {
-                    value: 10,
-                    startRatio: 0,
-                    ratioDistance: 0.4
-                },
-                index = 0,
-                actual = series._makeBarChartBound(baseData, iterationData, isStacked, seriesItem, index),
-                expected = {
-                    start: {
-                        top: 20,
-                        left: 10,
-                        width: 0,
-                        height: 20
-                    },
-                    end: {
-                        top: 20,
-                        left: 10,
-                        width: 40,
-                        height: 20
-                    }
-                };
+                end: {
+                    top: 20,
+                    left: 10,
+                    width: 40,
+                    height: 20
+                }
+            };
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makeBounds()', function() {
-        it('should make bar chart bounds of empty option.', function() {
-            var seriesDataModel, actual, expected;
+    describe('_makeBounds()', () => {
+        it('should make bar chart bounds of empty option.', () => {
+            const seriesDataModel = new SeriesDataModel();
 
-            seriesDataModel = new SeriesDataModel();
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
                 new SeriesGroup([{
@@ -186,8 +180,8 @@ describe('BarChartSeries', function() {
                 itemCount: 4
             });
 
-            actual = series._makeBounds();
-            expected = [[
+            const actual = series._makeBounds();
+            const expected = [[
                 {
                     start: {
                         top: 20,
@@ -221,13 +215,13 @@ describe('BarChartSeries', function() {
         });
     });
 
-    describe('_calculateTopPositionOfSumLabel()', function() {
-        it('alculate top position of sum label', function() {
-            var actual = series._calculateTopPositionOfSumLabel({
-                    top: 10,
-                    height: 30
-                }, 20),
-                expected = 16;
+    describe('_calculateTopPositionOfSumLabel()', () => {
+        it('alculate top position of sum label', () => {
+            const actual = series._calculateTopPositionOfSumLabel({
+                top: 10,
+                height: 30
+            }, 20);
+            const expected = 16;
             expect(actual).toBe(expected);
         });
     });

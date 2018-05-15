@@ -3,23 +3,18 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import SeriesItem from '../../../src/js/models/data/seriesItem';
 
-'use strict';
+describe('Test for SeriesItem', () => {
+    let seriesItem;
 
-var SeriesItem = require('../../../src/js/models/data/seriesItem');
-
-describe('Test for SeriesItem', function() {
-    var seriesItem;
-
-    beforeEach(function() {
+    beforeEach(() => {
         seriesItem = new SeriesItem({});
     });
 
-    describe('_initValues()', function() {
-        it('initialize values of item, when raw value is number', function() {
-            seriesItem.formatFunctions = [function(value) {
-                return '00' + value;
-            }];
+    describe('_initValues()', () => {
+        it('initialize values of item, when raw value is number', () => {
+            seriesItem.formatFunctions = [value => `00${value}`];
             seriesItem._initValues(10);
 
             expect(seriesItem.value).toBe(10);
@@ -28,7 +23,7 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.endLabel).toBe('0010');
             expect(seriesItem.isRange).toBe(false);
         });
-        it('initialize values of item, when raw value is null', function() {
+        it('initialize values of item, when raw value is null', () => {
             seriesItem._initValues(null);
 
             expect(seriesItem.value).toBe(null);
@@ -39,10 +34,8 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.startLabel).toBe(null);
             expect(seriesItem.isRange).toBe(false);
         });
-        it('initialize values of item, when raw value is array', function() {
-            seriesItem.formatFunctions = [function(value) {
-                return '00' + value;
-            }];
+        it('initialize values of item, when raw value is array', () => {
+            seriesItem.formatFunctions = [value => `00${value}`];
             seriesItem._initValues([10, 40]);
 
             expect(seriesItem.value).toBe(40);
@@ -54,7 +47,7 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.isRange).toBe(true);
         });
 
-        it('if diverging chart, label is plus value', function() {
+        it('if diverging chart, label is plus value', () => {
             seriesItem.isDivergingChart = true;
             seriesItem._initValues(-10);
 
@@ -63,24 +56,24 @@ describe('Test for SeriesItem', function() {
         });
     });
 
-    describe('_createValues()', function() {
-        it('should create arrays sorted in descending order', function() {
-            var actual = seriesItem._createValues([3, 1, 2, 10]),
-                expected = [10, 3, 2, 1];
+    describe('_createValues()', () => {
+        it('should create arrays sorted in descending order', () => {
+            const actual = seriesItem._createValues([3, 1, 2, 10]);
+            const expected = [10, 3, 2, 1];
 
             expect(actual).toEqual(expected);
         });
 
-        it('should sorted in descending order, when inputs are negative', function() {
-            var actual = seriesItem._createValues([3, 1, -2, 10]),
-                expected = [10, 3, 1, -2];
+        it('should sorted in descending order, when inputs are negative', () => {
+            const actual = seriesItem._createValues([3, 1, -2, 10]);
+            const expected = [10, 3, 1, -2];
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('addRatio()', function() {
-        it('should set calculated value ratio to ratio and endRatio', function() {
+    describe('addRatio()', () => {
+        it('should set calculated value ratio to ratio and endRatio', () => {
             seriesItem.value = 40;
             seriesItem.addRatio(100);
 
@@ -88,7 +81,7 @@ describe('Test for SeriesItem', function() {
             expect(seriesItem.endRatio).toBe(0.4);
         });
 
-        it('should calculated start ratio to startRatio', function() {
+        it('should calculated start ratio to startRatio', () => {
             seriesItem.hasStart = true;
             seriesItem.start = 20;
             seriesItem.value = 40;

@@ -4,16 +4,14 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import MouseEventDetectorBase from './mouseEventDetectorBase';
+import chartConst from '../../const';
+import eventListener from '../../helpers/eventListener';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
-var MouseEventDetectorBase = require('./mouseEventDetectorBase');
-var chartConst = require('../../const');
-var eventListener = require('../../helpers/eventListener');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @lends MapChartEventDetector.prototype */ {
+class MapChartEventDetector extends MouseEventDetectorBase {
     /**
      * MapChartEventDetector is mouse event detector for map chart.
      * @param {object} params parameters
@@ -22,7 +20,9 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @extends MouseEventDetectorBase
      */
-    init: function(params) {
+    constructor(params) {
+        super();
+
         /**
          * chart type
          * {string}
@@ -43,24 +43,24 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
         this.isDown = false;
 
         this.drawingType = chartConst.COMPONENT_TYPE_DOM;
-    },
+    }
 
     /**
      * Render event handle layer area
      * @param {HTMLElement} mouseEventDetectorContainer mouse event detector container element
      * @private
      */
-    _renderMouseEventDetectorArea: function(mouseEventDetectorContainer) {
+    _renderMouseEventDetectorArea(mouseEventDetectorContainer) {
         renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
         renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
-    },
+    }
 
     /**
      * On click.
      * @private
      * @override
      */
-    _onClick: function() {},
+    _onClick() {}
 
     /**
      * Call 'dragStartMapSeries' event, when occur mouse down event.
@@ -68,23 +68,23 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @override
      */
-    _onMousedown: function(e) {
+    _onMousedown(e) {
         this.isDown = true;
         this.eventBus.fire('dragStartMapSeries', {
             left: e.clientX,
             top: e.clientY
         });
-    },
+    }
 
     /**
      * Drag end.
      * @private
      */
-    _dragEnd: function() {
+    _dragEnd() {
         this.isDrag = false;
         dom.removeClass(this.mouseEventDetectorContainer, 'drag');
         this.eventBus.fire('dragEndMapSeries');
-    },
+    }
 
     /**
      * If drag, call dragEnd function.
@@ -93,7 +93,7 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @override
      */
-    _onMouseup: function(e) {
+    _onMouseup(e) {
         this.isDown = false;
 
         if (this.isDrag) {
@@ -103,7 +103,7 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
         }
 
         this.isMove = false;
-    },
+    }
 
     /**
      * If mouse downed, set drag mode.
@@ -112,7 +112,7 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @override
      */
-    _onMousemove: function(e) {
+    _onMousemove(e) {
         if (this.isDown) {
             if (!this.isDrag) {
                 dom.addClass(this.mouseEventDetectorContainer, 'drag');
@@ -126,7 +126,7 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
             this.isMove = true;
             this._onMouseEvent('move', e);
         }
-    },
+    }
 
     /**
      * If drag mode, call dragEnd.
@@ -134,14 +134,14 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @private
      * @override
      */
-    _onMouseout: function(e) {
+    _onMouseout(e) {
         if (this.isDrag) {
             this._dragEnd();
         } else {
             this._onMouseEvent('move', e);
         }
         this.isDown = false;
-    },
+    }
 
     /**
      * On mouse wheel.
@@ -149,8 +149,8 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
      * @returns {?boolean}
      * @private
      */
-    _onMousewheel: function(e) {
-        var wheelDelta = e.wheelDelta || e.detail * chartConst.FF_WHEELDELTA_ADJUSTING_VALUE;
+    _onMousewheel(e) {
+        const wheelDelta = e.wheelDelta || e.detail * chartConst.FF_WHEELDELTA_ADJUSTING_VALUE;
 
         this.eventBus.fire('wheel', wheelDelta, {
             left: e.clientX,
@@ -162,14 +162,14 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
         }
 
         return false;
-    },
+    }
 
     /**
      * Attach event.
      * @param {HTMLElement} target target element
      * @override
      */
-    attachEvent: function(target) {
+    attachEvent(target) {
         MouseEventDetectorBase.prototype.attachEvent.call(this, target);
 
         if (snippet.browser.firefox) {
@@ -178,12 +178,16 @@ var MapChartEventDetector = snippet.defineClass(MouseEventDetectorBase, /** @len
             eventListener.on(target, 'mousewheel', this._onMousewheel, this);
         }
     }
-});
+}
 
-function mapChartEventDetectorFactory(params) {
+/**
+ * mapChartEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} map chart event detector instanse
+ * @ignore
+ */
+export default function mapChartEventDetectorFactory(params) {
     return new MapChartEventDetector(params);
 }
 
 mapChartEventDetectorFactory.componentType = 'mouseEventDetector';
-
-module.exports = mapChartEventDetectorFactory;

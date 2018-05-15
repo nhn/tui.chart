@@ -3,25 +3,22 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import treemapSeriesFactory from '../../../src/js/components/series/treemapChartSeries.js';
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModelForTreemap';
+import chartConst from '../../../src/js/const';
+import renderUtil from '../../../src/js/helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
-'use strict';
+describe('TreemapChartSeries', () => {
+    const rootId = chartConst.TREEMAP_ROOT_ID;
+    let series, seriesDataModel;
 
-var treemapSeriesFactory = require('../../../src/js/components/series/treemapChartSeries.js');
-var SeriesDataModel = require('../../../src/js/models/data/seriesDataModelForTreemap');
-var chartConst = require('../../../src/js/const');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-describe('TreemapChartSeries', function() {
-    var rootId = chartConst.TREEMAP_ROOT_ID;
-    var series, seriesDataModel;
-
-    beforeAll(function() {
+    beforeAll(() => {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(30);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         series = new treemapSeriesFactory.TreemapChartSeries({
             chartType: 'treemap',
             theme: {
@@ -47,10 +44,8 @@ describe('TreemapChartSeries', function() {
         spyOn(series, '_getSeriesDataModel').and.returnValue(seriesDataModel);
     });
 
-    describe('_makeBoundMap()', function() {
-        it('make bound map by dimension', function() {
-            var actual, expected;
-
+    describe('_makeBoundMap()', () => {
+        it('make bound map by dimension', () => {
             seriesDataModel.rawSeriesData = [
                 {
                     id: 'id_0',
@@ -82,8 +77,8 @@ describe('TreemapChartSeries', function() {
                 }
             ];
 
-            actual = series._makeBoundMap(rootId);
-            expected = {
+            const actual = series._makeBoundMap(rootId);
+            const expected = {
                 'id_0': {left: 0, top: 0, width: 200, height: 400},
                 'id_1': {left: 200, top: 0, width: 400, height: 200},
                 'id_3': {left: 200, top: 200, width: 200, height: 200},
@@ -94,8 +89,8 @@ describe('TreemapChartSeries', function() {
         });
     });
 
-    describe('_makeBounds()', function() {
-        beforeEach(function() {
+    describe('_makeBounds()', () => {
+        beforeEach(() => {
             seriesDataModel.rawSeriesData = [
                 {
                     label: 'label1',
@@ -130,14 +125,13 @@ describe('TreemapChartSeries', function() {
             ];
         });
 
-        it('make bounds for rendering graph, when zoomable', function() {
-            var boundMap, actual;
+        it('make bounds for rendering graph, when zoomable', () => {
+            const boundMap = series._makeBoundMap(rootId);
 
-            boundMap = series._makeBoundMap(rootId);
             series.options.zoomable = true;
             series.startDepth = 1;
 
-            actual = series._makeBounds(boundMap);
+            const actual = series._makeBounds(boundMap);
 
             expect(actual.length).toBe(1);
             expect(actual[0].length).toBe(7);
@@ -150,14 +144,12 @@ describe('TreemapChartSeries', function() {
             expect(actual[0][6]).toBeNull();
         });
 
-        it('make bounds for rendering graph, when not zoomable', function() {
-            var boundMap, actual;
-
-            boundMap = series._makeBoundMap(rootId);
+        it('make bounds for rendering graph, when not zoomable', () => {
+            const boundMap = series._makeBoundMap(rootId);
             series.options.zoomable = false;
             series.startDepth = 1;
 
-            actual = series._makeBounds(boundMap);
+            const actual = series._makeBounds(boundMap);
 
             expect(actual.length).toBe(1);
             expect(actual[0].length).toBe(7);
@@ -171,8 +163,8 @@ describe('TreemapChartSeries', function() {
         });
     });
 
-    describe('_zoom()', function() {
-        it('should be animated after zooming.', function() {
+    describe('_zoom()', () => {
+        it('should be animated after zooming.', () => {
             series._renderSeriesArea = jasmine.createSpy('_renderSeriesArea');
             series.animateComponent = jasmine.createSpy('animateComponent');
             series._zoom(rootId, 2, 0);

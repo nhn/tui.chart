@@ -4,31 +4,29 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import themeManager from '../../src/js/themes/themeManager';
+import chartConst from '../../src/js/const';
+import defaultTheme from '../../src/js/themes/defaultTheme';
 
-var themeManager = require('../../src/js/themes/themeManager');
-var chartConst = require('../../src/js/const');
-var defaultTheme = require('../../src/js/themes/defaultTheme');
-
-describe('Test for themeManager', function() {
-    describe('_pickSeriesNames()', function() {
-        it('pick series names from raw series data, when single chart', function() {
-            var chartType = chartConst.CHART_TYPE_BAR;
-            var actual = themeManager._pickSeriesNames(chartType);
+describe('Test for themeManager', () => {
+    describe('_pickSeriesNames()', () => {
+        it('pick series names from raw series data, when single chart', () => {
+            const chartType = chartConst.CHART_TYPE_BAR;
+            const actual = themeManager._pickSeriesNames(chartType);
 
             expect(actual).toEqual([chartConst.CHART_TYPE_BAR]);
         });
     });
 
-    describe('_overwriteTheme()', function() {
-        it('overwrite theme to toTheme from fromTheme', function() {
-            var fromTheme = {
+    describe('_overwriteTheme()', () => {
+        it('overwrite theme to toTheme from fromTheme', () => {
+            const fromTheme = {
                 series: {
                     color: ['blue'],
                     borderColor: 'black'
                 }
             };
-            var toTheme = {
+            const toTheme = {
                 series: {
                     color: ['red']
                 }
@@ -44,9 +42,9 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_pickValidTheme()', function() {
-        it('pick valid theme properties, when series component', function() {
-            var theme = {
+    describe('_pickValidTheme()', () => {
+        it('pick valid theme properties, when series component', () => {
+            const theme = {
                 column: {
                     label: {}
                 },
@@ -54,8 +52,8 @@ describe('Test for themeManager', function() {
                 colors: [],
                 borderColor: ''
             };
-            var componentType = 'series';
-            var actual = themeManager._pickValidTheme(theme, componentType);
+            const componentType = 'series';
+            const actual = themeManager._pickValidTheme(theme, componentType);
 
             expect(actual).toEqual({
                 label: {},
@@ -64,8 +62,8 @@ describe('Test for themeManager', function() {
             });
         });
 
-        it('pick valid theme properties, when yAxis component', function() {
-            var theme = {
+        it('pick valid theme properties, when yAxis component', () => {
+            const theme = {
                 column: {
                     label: {}
                 },
@@ -73,8 +71,8 @@ describe('Test for themeManager', function() {
                 title: {},
                 tickColor: ''
             };
-            var componentType = 'yAxis';
-            var actual = themeManager._pickValidTheme(theme, componentType);
+            const componentType = 'yAxis';
+            const actual = themeManager._pickValidTheme(theme, componentType);
 
             expect(actual).toEqual({
                 label: {},
@@ -84,10 +82,10 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_createComponentThemeWithSeriesName()', function() {
-        it('create component theme with series name, when fromTheme map has key of series name', function() {
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
-            var fromTheme = {
+    describe('_createComponentThemeWithSeriesName()', () => {
+        it('create component theme with series name, when fromTheme map has key of series name', () => {
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN];
+            const fromTheme = {
                 column: {
                     label: {
                         fontSize: 15
@@ -97,22 +95,22 @@ describe('Test for themeManager', function() {
                     }
                 }
             };
-            var toTheme = {};
-            var componentType = 'yAxis';
-            var actual = themeManager._createComponentThemeWithSeriesName(
+            const toTheme = {};
+            const componentType = 'yAxis';
+            const actual = themeManager._createComponentThemeWithSeriesName(
                 seriesTypes, fromTheme, toTheme, componentType
             );
-            var expected = JSON.parse(JSON.stringify(defaultTheme[componentType]));
+            const expected = JSON.parse(JSON.stringify(defaultTheme[componentType]));
 
             themeManager._overwriteTheme(fromTheme.column, expected);
 
             expect(actual.column).toEqual(expected);
         });
 
-        it('create component theme with series name, when fromTheme map has not key of series name', function() {
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
-            var fromTheme = {};
-            var toTheme = {
+        it('create component theme with series name, when fromTheme map has not key of series name', () => {
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN];
+            const fromTheme = {};
+            const toTheme = {
                 label: {
                     fontSize: 15,
                     color: '#000000'
@@ -121,11 +119,11 @@ describe('Test for themeManager', function() {
                     fontSize: 18
                 }
             };
-            var componentType = 'yAxis';
-            var actual = themeManager._createComponentThemeWithSeriesName(
+            const componentType = 'yAxis';
+            const actual = themeManager._createComponentThemeWithSeriesName(
                 seriesTypes, fromTheme, toTheme, componentType
             );
-            var expected = {
+            const expected = {
                 column: toTheme
             };
 
@@ -133,36 +131,36 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_makeEachSeriesColor()', function() {
-        it('Make color data with given theme data', function() {
-            var colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 3);
+    describe('_makeEachSeriesColor()', () => {
+        it('Make color data with given theme data', () => {
+            const colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 3);
 
             expect(colors).toEqual(['a', 'b', 'c']);
         });
 
-        it('Make color data from start of given theme data if there has not enought colors', function() {
-            var colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 6);
+        it('Make color data from start of given theme data if there has not enought colors', () => {
+            const colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 6);
 
             expect(colors).toEqual(['a', 'b', 'c', 'd', 'a', 'b']);
         });
 
-        it('Make color data from given data index', function() {
-            var colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 6, 2);
+        it('Make color data from given data index', () => {
+            const colors = themeManager._makeEachSeriesColors(['a', 'b', 'c', 'd'], 6, 2);
 
             expect(colors).toEqual(['c', 'd', 'a', 'b', 'c', 'd']);
         });
     });
 
-    describe('_setSeriesColors()', function() {
-        it('set series colors theme, when single series', function() {
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
-            var seriesThemeMap = {
+    describe('_setSeriesColors()', () => {
+        it('set series colors theme, when single series', () => {
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN];
+            const seriesThemeMap = {
                 column: {}
             };
-            var rawSeriesThemeMap = {
+            const rawSeriesThemeMap = {
                 colors: ['a', 'b', 'c']
             };
-            var rawSeriesData = {
+            const rawSeriesData = {
                 column: [1, 2, 3, 4, 5]
             };
 
@@ -173,14 +171,14 @@ describe('Test for themeManager', function() {
             });
         });
 
-        it('set series colors theme, when combo series with defaultTheme', function() {
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
-            var seriesThemeMap = {
+        it('set series colors theme, when combo series with defaultTheme', () => {
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            const seriesThemeMap = {
                 column: {},
                 line: {}
             };
-            var rawSeriesThemeMap = {};
-            var rawSeriesData = {
+            const rawSeriesThemeMap = {};
+            const rawSeriesData = {
                 column: [{}, {}, {}, {}, {}, {}],
                 line: [{}, {}, {}, {}]
             };
@@ -197,13 +195,13 @@ describe('Test for themeManager', function() {
             });
         });
 
-        it('set series colors theme, when combo series', function() {
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
-            var seriesThemeMap = {
+        it('set series colors theme, when combo series', () => {
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            const seriesThemeMap = {
                 column: {},
                 line: {}
             };
-            var rawSeriesThemeMap = {
+            const rawSeriesThemeMap = {
                 column: {
                     colors: ['red', 'green', 'blue']
                 },
@@ -211,7 +209,7 @@ describe('Test for themeManager', function() {
                     colors: ['white', 'block']
                 }
             };
-            var rawSeriesData = {
+            const rawSeriesData = {
                 column: [{}, {}, {}, {}, {}],
                 line: [{}, {}, {}]
             };
@@ -226,18 +224,18 @@ describe('Test for themeManager', function() {
                 }
             });
         });
-        it('set series colors theme with default and user theme color', function() {
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
-            var seriesThemeMap = {
+        it('set series colors theme with default and user theme color', () => {
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            const seriesThemeMap = {
                 column: {},
                 line: {}
             };
-            var rawSeriesThemeMap = {
+            const rawSeriesThemeMap = {
                 line: {
                     colors: ['white', 'block']
                 }
             };
-            var rawSeriesData = {
+            const rawSeriesData = {
                 column: [{}, {}, {}, {}, {}],
                 line: [{}, {}, {}]
             };
@@ -254,10 +252,10 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_initTheme()', function() {
-        it('init theme', function() {
-            var themeName = 'newTheme';
-            var rawTheme = {
+    describe('_initTheme()', () => {
+        it('init theme', () => {
+            const themeName = 'newTheme';
+            const rawTheme = {
                 series: {
                     colors: ['gray'],
                     label: {
@@ -265,15 +263,15 @@ describe('Test for themeManager', function() {
                     }
                 }
             };
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN];
-            var actual = themeManager._initTheme(themeName, rawTheme, seriesTypes, {column: []});
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN];
+            const actual = themeManager._initTheme(themeName, rawTheme, seriesTypes, {column: []});
 
             expect(actual.series.column.colors).toEqual([]);
         });
 
-        it('init theme, when combo chart', function() {
-            var themeName = 'newTheme';
-            var rawTheme = {
+        it('init theme, when combo chart', () => {
+            const themeName = 'newTheme';
+            const rawTheme = {
                 series: {
                     column: {
                         colors: ['red', 'green', 'blue']
@@ -286,21 +284,21 @@ describe('Test for themeManager', function() {
                     }
                 }
             };
-            var seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
-            var rawSeriesData = {
+            const seriesTypes = [chartConst.CHART_TYPE_COLUMN, chartConst.CHART_TYPE_LINE];
+            const rawSeriesData = {
                 column: [{}, {}, {}, {}, {}],
                 line: [{}, {}, {}]
             };
-            var actual = themeManager._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
+            const actual = themeManager._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
 
             expect(actual.series.column.colors).toEqual(['red', 'green', 'blue', 'red', 'green']);
             expect(actual.series.line.colors).toEqual(['white', 'block', 'white']);
         });
     });
 
-    describe('_createTargetThemesForFontInherit()', function() {
-        it('create target theme for font inherit, when single chart', function() {
-            var theme = {
+    describe('_createTargetThemesForFontInherit()', () => {
+        it('create target theme for font inherit, when single chart', () => {
+            const theme = {
                 title: {},
                 xAxis: {
                     title: {},
@@ -324,7 +322,7 @@ describe('Test for themeManager', function() {
                     label: {}
                 }
             };
-            var actual = themeManager._createTargetThemesForFontInherit(theme);
+            const actual = themeManager._createTargetThemesForFontInherit(theme);
 
             expect(actual).toEqual([
                 theme.title,
@@ -338,8 +336,8 @@ describe('Test for themeManager', function() {
             ]);
         });
 
-        it('create target theme for font inherit, when combo chart', function() {
-            var theme = {
+        it('create target theme for font inherit, when combo chart', () => {
+            const theme = {
                 title: {},
                 xAxis: {
                     title: {},
@@ -370,7 +368,7 @@ describe('Test for themeManager', function() {
                     label: {}
                 }
             };
-            var actual = themeManager._createTargetThemesForFontInherit(theme);
+            const actual = themeManager._createTargetThemesForFontInherit(theme);
 
             expect(actual).toEqual([
                 theme.title,
@@ -388,9 +386,9 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_inheritThemeFont', function() {
-        it('inherit theme font', function() {
-            var theme = {
+    describe('_inheritThemeFont', () => {
+        it('inherit theme font', () => {
+            const theme = {
                 chart: {
                     fontFamily: 'Verdana'
                 },
@@ -416,14 +414,14 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_copySeriesColorTheme()', function() {
-        it('copy color theme to otherTheme from seriesTheme', function() {
-            var seriesTheme = {
+    describe('_copySeriesColorTheme()', () => {
+        it('copy color theme to otherTheme from seriesTheme', () => {
+            const seriesTheme = {
                 colors: ['red', 'orange'],
                 borderColor: 'blue',
                 selectionColor: 'yellow'
             };
-            var otherTheme = {};
+            const otherTheme = {};
 
             themeManager._copySeriesColorTheme(seriesTheme, otherTheme, chartConst.CHART_TYPE_COLUMN);
 
@@ -437,9 +435,9 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('_copySeriesColorThemeToOther()', function() {
-        it('copy series color theme to other components', function() {
-            var theme = {
+    describe('_copySeriesColorThemeToOther()', () => {
+        it('copy series color theme to other components', () => {
+            const theme = {
                 series: {
                     column: {
                         colors: ['red', 'orange'],
@@ -471,8 +469,8 @@ describe('Test for themeManager', function() {
         });
     });
 
-    describe('get()', function() {
-        beforeEach(function() {
+    describe('get()', () => {
+        beforeEach(() => {
             themeManager.register('newTheme', {
                 plot: {
                     lineColor: '#e5dbc4',
@@ -486,14 +484,13 @@ describe('Test for themeManager', function() {
             });
         });
 
-        it('get theme', function() {
-            var themeName = 'newTheme';
-            var chartType = chartConst.CHART_TYPE_COLUMN;
-            var rawSeriesData = {
-                column: [{}, {}]
-            };
+        it('get theme', () => {
+            const themeName = 'newTheme';
+            const chartType = chartConst.CHART_TYPE_COLUMN;
+            const rawSeriesData = {
+                column: [{}, {}]};
 
-            var theme = themeManager.get(themeName, chartType, rawSeriesData);
+            const theme = themeManager.get(themeName, chartType, rawSeriesData);
 
             expect(theme.plot).toEqual({
                 lineColor: '#e5dbc4',
@@ -502,8 +499,8 @@ describe('Test for themeManager', function() {
             });
         });
 
-        it('get theme, when not exist theme', function() {
-            expect(function() {
+        it('get theme, when not exist theme', () => {
+            expect(() => {
                 themeManager.get('newTheme1');
             }).toThrowError('Not exist newTheme1 theme.');
         });

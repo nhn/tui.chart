@@ -4,36 +4,43 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import seriesTemplate from './seriesTemplate';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import eventListener from '../../helpers/eventListener';
+import predicate from '../../helpers/predicate';
 
-var snippet = require('tui-code-snippet');
-var IS_MSIE_VERSION_LTE_THAN_8 = snippet.browser.msie && snippet.browser.version <= 8;
+const {
+    COMPONENT_TYPE_DOM,
+    MAP_CHART_ZOOM_AREA_HEIGHT,
+    MAP_CHART_ZOOM_AREA_WIDTH,
+    CHART_PADDING
+} = chartConst;
 
-var seriesTemplate = require('./seriesTemplate');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var eventListener = require('../../helpers/eventListener');
-var predicate = require('../../helpers/predicate');
+const IS_MSIE_VERSION_LTE_THAN_8 = snippet.browser.msie && snippet.browser.version <= 8;
 
-var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
-    /**
-     * zoom component className
-     * @type {string}
-     */
-    className: 'tui-chart-zoom-area',
+class Zoom {
     /**
      * Zoom component.
      * @param {{eventBus: object}} params - parameters
      * @constructs Zoom
      * @private
      */
-    init: function(params) {
-        var seriesTypes = params.seriesTypes;
-        var isMapChart = (seriesTypes && seriesTypes.length) ? predicate.isMapChart(seriesTypes[0]) : false;
-        var legendOption = params.dataProcessor.options.legend;
-        var isLegendTop = predicate.isLegendAlignTop(legendOption.align);
-        var isLegendVisible = legendOption.visible !== false;
+    constructor(params) {
+        /**
+         * zoom component className
+         * @type {string}
+         */
+        this.className = 'tui-chart-zoom-area';
+
+        const {seriesTypes} = params;
+        const isMapChart = (seriesTypes && seriesTypes.length) ? predicate.isMapChart(seriesTypes[0]) : false;
+        const legendOption = params.dataProcessor.options.legend;
+        const isLegendTop = predicate.isLegendAlignTop(legendOption.align);
+        const isLegendVisible = legendOption.visible !== false;
 
         this.isMapLegendTop = (isMapChart && isLegendTop && isLegendVisible);
 
@@ -55,40 +62,41 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
          */
         this.stackedWheelDelta = 0;
 
-        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
+        this.drawingType = COMPONENT_TYPE_DOM;
 
         this._attachToEventBus();
-    },
+    }
 
     /**
      * Attach to event bus.
      * @private
      */
-    _attachToEventBus: function() {
+    _attachToEventBus() {
         this.eventBus.on('wheel', this.onWheel, this);
-    },
+    }
 
     /**
      * Render.
      * @param {{positionMap: {series: {left: number, top: number}}}} data - data for rendering
      * @returns {HTMLElement} zoom container
      */
-    render: function(data) {
-        var container;
-        var positionTop;
-        var position;
+    render(data) {
+        let container;
 
         if (!IS_MSIE_VERSION_LTE_THAN_8) {
-            positionTop = data.positionMap.series.top
-                - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT + chartConst.MAP_CHART_ZOOM_AREA_WIDTH;
+            let positionTop = calculator.sum([
+                data.positionMap.series.top,
+                -MAP_CHART_ZOOM_AREA_HEIGHT,
+                MAP_CHART_ZOOM_AREA_WIDTH
+            ]);
 
             if (this.isMapLegendTop) {
-                positionTop = data.positionMap.legend.top - chartConst.MAP_CHART_ZOOM_AREA_WIDTH;
+                positionTop = data.positionMap.legend.top - MAP_CHART_ZOOM_AREA_WIDTH;
             }
 
-            position = {
+            const position = {
                 top: positionTop,
-                right: chartConst.CHART_PADDING
+                right: CHART_PADDING
             };
 
             container = dom.create('DIV', this.className);
@@ -99,7 +107,7 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
         }
 
         return container;
-    },
+    }
 
     /**
      * Find button element.
@@ -107,16 +115,16 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
      * @returns {?HTMLElement} button element
      * @private
      */
-    _findBtnElement: function(target) {
-        var btnClassName = 'tui-chart-zoom-btn',
-            btnElement = target;
+    _findBtnElement(target) {
+        const btnClassName = 'tui-chart-zoom-btn';
+        let btnElement = target;
 
         if (!dom.hasClass(target, btnClassName)) {
             btnElement = dom.findParentByClass(target, btnClassName);
         }
 
         return btnElement;
-    },
+    }
 
     /**
      * Zoom
@@ -124,9 +132,9 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
      * @param {?{left: number, top: number}} position mouse position
      * @private
      */
-    _zoom: function(magn, position) {
+    _zoom(magn, position) {
         this.eventBus.fire('zoomMap', magn, position);
-    },
+    }
 
     /**
      * On click.
@@ -134,11 +142,11 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
      * @returns {?boolean} prevent default for ie
      * @private
      */
-    _onClick: function(e) {
-        var target = e.target || e.srcElement;
-        var btnElement = this._findBtnElement(target);
-        var zoomDirection = btnElement.getAttribute('data-magn');
-        var magn = this._calculateMagn(zoomDirection);
+    _onClick(e) {
+        const target = e.target || e.srcElement;
+        const btnElement = this._findBtnElement(target);
+        const zoomDirection = btnElement.getAttribute('data-magn');
+        const magn = this._calculateMagn(zoomDirection);
 
         if (magn > 5) {
             this.magn = 5;
@@ -153,16 +161,16 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
         }
 
         return false;
-    },
+    }
 
     /**
      * Attach event.
      * @param {HTMLElement} target target element
      * @private
      */
-    _attachEvent: function(target) {
+    _attachEvent(target) {
         eventListener.on(target, 'click', this._onClick, this);
-    },
+    }
 
     /**
      * Calculate magnification from zoomDirection.
@@ -170,7 +178,7 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
      * @returns {number} magnification
      * @private
      */
-    _calculateMagn: function(zoomDirection) {
+    _calculateMagn(zoomDirection) {
         if (zoomDirection > 0) {
             this.magn += 0.1;
         } else if (zoomDirection < 0) {
@@ -178,15 +186,15 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
         }
 
         return this.magn;
-    },
+    }
 
     /**
      * On wheel.
      * @param {number} wheelDelta wheelDelta
      * @param {{left: number, top: number}} position mouse position
      */
-    onWheel: function(wheelDelta, position) {
-        var magn = this._calculateMagn(wheelDelta);
+    onWheel(wheelDelta, position) {
+        const magn = this._calculateMagn(wheelDelta);
 
         if (magn > 5) {
             this.magn = 5;
@@ -196,12 +204,16 @@ var Zoom = snippet.defineClass(/** @lends Zoom.prototype */{
             this._zoom(magn, position);
         }
     }
-});
+}
 
-function zoomFactory(params) {
+/**
+ * zoomFactory
+ * @param {object} params chart options
+ * @returns {object} zoom instanse
+ * @ignore
+ */
+export default function zoomFactory(params) {
     return new Zoom(params);
 }
 
 zoomFactory.componentType = 'zoom';
-
-module.exports = zoomFactory;

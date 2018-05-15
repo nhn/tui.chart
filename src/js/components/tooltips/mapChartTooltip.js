@@ -4,27 +4,26 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var TooltipBase = require('./tooltipBase');
-var singleTooltipMixer = require('./singleTooltipMixer');
-var tooltipTemplate = require('./tooltipTemplate');
-var snippet = require('tui-code-snippet');
+import chartConst from '../../const';
+import TooltipBase from './tooltipBase';
+import singleTooltipMixer from './singleTooltipMixer';
+import tooltipTemplate from './tooltipTemplate';
+import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc MapChartTooltip component.
  * @class MapChartTooltip
  * @private
  */
-var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartTooltip.prototype */ {
+class MapChartTooltip extends TooltipBase {
     /**
      * Map chart tooltip component.
      * @constructs MapChartTooltip
      * @private
      * @override
      */
-    init: function(params) {
+    constructor(params) {
+        super(params);
         /**
          * Map model
          * @type {MapChartMapModel}
@@ -36,9 +35,7 @@ var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartToolti
          * @type {ColorSpectrum}
          */
         this.colorSpectrum = params.colorSpectrum;
-
-        TooltipBase.apply(this, arguments);
-    },
+    }
 
     /**
      * Make tooltip html.
@@ -46,9 +43,9 @@ var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartToolti
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(datum) {
+    _makeTooltipHtml(datum) {
         return tooltipTemplate.tplMapChartDefault(datum);
-    },
+    }
 
     /**
      * Make single tooltip html.
@@ -57,17 +54,17 @@ var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartToolti
      * @returns {string} tooltip html
      * @private
      */
-    _makeSingleTooltipHtml: function(chartType, indexes) {
-        var datum = this.mapModel.getDatum(indexes.index),
-            suffix = this.options.suffix ? ' ' + this.options.suffix : '';
+    _makeSingleTooltipHtml(chartType, indexes) {
+        const datum = this.mapModel.getDatum(indexes.index);
+        const suffix = this.options.suffix ? ` ${this.options.suffix}` : '';
 
         return this.templateFunc({
             name: datum.name || datum.code,
             value: datum.label,
-            suffix: suffix,
-            cssText: 'background-color: ' + this.colorSpectrum.getColor(datum.ratio)
+            suffix,
+            cssText: `background-color: ${this.colorSpectrum.getColor(datum.ratio)}`
         });
-    },
+    }
 
     /**
      * Make parameters for show tooltip user event.
@@ -76,11 +73,9 @@ var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartToolti
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip
      * @private
      */
-    _makeShowTooltipParams: function(indexes, additionParams) {
-        var datum = this.mapModel.getDatum(indexes.index),
-            params;
-
-        params = snippet.extend({
+    _makeShowTooltipParams(indexes, additionParams) {
+        const datum = this.mapModel.getDatum(indexes.index);
+        const params = snippet.extend({
             chartType: this.chartType,
             code: datum.code,
             name: datum.name,
@@ -89,26 +84,30 @@ var MapChartTooltip = snippet.defineClass(TooltipBase, /** @lends MapChartToolti
         }, additionParams);
 
         return params;
-    },
+    }
 
     /**
      * Set default align option of tooltip.
      * @private
      * @override
      */
-    _setDefaultTooltipPositionOption: function() {
+    _setDefaultTooltipPositionOption() {
         if (!this.options.align) {
             this.options.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
     }
-});
+}
 
 singleTooltipMixer.mixin(MapChartTooltip);
 
-function mapChartTooltipFactory(params) {
+/**
+ * mapChartTooltipFactory
+ * @param {object} params chart options
+ * @returns {object} mapChart tooptip instanse
+ * @ignore
+ */
+export default function mapChartTooltipFactory(params) {
     return new MapChartTooltip(params);
 }
 
 mapChartTooltipFactory.componentType = 'tooltip';
-
-module.exports = mapChartTooltipFactory;

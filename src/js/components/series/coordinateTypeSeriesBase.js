@@ -3,11 +3,9 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var snippet = require('tui-code-snippet');
-var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeriesBase.prototype */ {
+export default class CoordinateTypeSeriesBase {
     /**
      * Make series data.
      * @returns {{
@@ -15,19 +13,16 @@ var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeri
      *      seriesDataModel: SeriesDataModel
      * }} series data
      * @private
-     * @override
-     */
-    _makeSeriesData: function() {
-        var groupBounds = this._makeBounds();
+     * @override */
+    _makeSeriesData() {
+        const groupBounds = this._makeBounds();
 
         return {
-            groupBounds: groupBounds,
+            groupBounds,
             seriesDataModel: this._getSeriesDataModel(),
-            isAvailable: function() {
-                return groupBounds && groupBounds.length > 0;
-            }
+            isAvailable: () => (groupBounds && groupBounds.length > 0)
         };
-    },
+    }
 
     /**
      * showTooltip is callback of mouseover event to series element.
@@ -38,22 +33,22 @@ var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeri
      * @param {number} index index
      * @param {{left: number, top: number}} mousePosition mouse position
      */
-    showTooltip: function(params, bound, groupIndex, index, mousePosition) {
+    showTooltip(params, bound, groupIndex, index, mousePosition) {
         this.eventBus.fire('showTooltip', snippet.extend({
             indexes: {
-                groupIndex: groupIndex,
-                index: index
+                groupIndex,
+                index
             },
-            mousePosition: mousePosition
+            mousePosition
         }, params));
-    },
+    }
 
     /**
      * hideTooltip is callback of mouseout event to series element.
      */
-    hideTooltip: function() {
+    hideTooltip() {
         this.eventBus.fire('hideTooltip');
-    },
+    }
 
     /**
      * Render raphael graph.
@@ -63,32 +58,31 @@ var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeri
      * @private
      * @override
      */
-    _renderGraph: function(dimension, seriesData, paper) {
-        var showTooltip = snippet.bind(this.showTooltip, this, {
+    _renderGraph(dimension, seriesData, paper) {
+        const showTooltip = this.showTooltip.bind(this, {
             chartType: this.chartType
         });
-        var callbacks = {
-            showTooltip: showTooltip,
-            hideTooltip: snippet.bind(this.hideTooltip, this)
+        const callbacks = {
+            showTooltip,
+            hideTooltip: this.hideTooltip.bind(this)
         };
-        var params = this._makeParamsForGraphRendering(dimension, seriesData);
+        const params = this._makeParamsForGraphRendering(dimension, seriesData);
 
         return this.graphRenderer.render(paper, params, callbacks);
-    },
+    }
 
     /**
      * If click series, showing selected state.
      * @param {{left: number, top: number}} position - mouse position
      */
-    onClickSeries: function(position) {
-        var indexes = this._executeGraphRenderer(position, 'findIndexes');
-        var prevIndexes = this.prevClickedIndexes;
-        var allowSelect = this.options.allowSelect;
-        var shouldSelect;
+    onClickSeries(position) {
+        const indexes = this._executeGraphRenderer(position, 'findIndexes');
+        const prevIndexes = this.prevClickedIndexes;
+        const {options: {allowSelect}, chartType} = this;
 
         if (indexes && prevIndexes) {
             this.onUnselectSeries({
-                chartType: this.chartType,
+                chartType,
                 indexes: prevIndexes
             });
             this.prevClickedIndexes = null;
@@ -98,29 +92,27 @@ var CoordinateTypeSeriesBase = snippet.defineClass(/** @lends CoordinateTypeSeri
             return;
         }
 
-        shouldSelect = !prevIndexes ||
+        const shouldSelect = !prevIndexes ||
             (indexes.index !== prevIndexes.index) || (indexes.groupIndex !== prevIndexes.groupIndex);
 
         if (allowSelect && shouldSelect) {
             this.onSelectSeries({
-                chartType: this.chartType,
-                indexes: indexes
+                chartType,
+                indexes
             }, shouldSelect);
             this.prevClickedIndexes = indexes;
         }
-    },
+    }
 
     /**
      * If mouse move series, call 'moveMouseOnSeries' of graph render.
      * @param {{left: number, top: number}} position mouse position
      */
-    onMoveSeries: function(position) {
+    onMoveSeries(position) {
         this._executeGraphRenderer(position, 'moveMouseOnSeries');
     }
-});
+}
 
 CoordinateTypeSeriesBase.mixin = function(func) {
-    snippet.extend(func.prototype, CoordinateTypeSeriesBase.prototype);
+    Object.assign(func.prototype, CoordinateTypeSeriesBase.prototype);
 };
-
-module.exports = CoordinateTypeSeriesBase;

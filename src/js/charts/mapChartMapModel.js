@@ -4,20 +4,18 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import chartConst from '../const';
+import arrayUtil from '../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
-var chartConst = require('../const');
-var arrayUtil = require('../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
-
-var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype */ {
+export default class MapChartMapModel {
     /**
      * MapChartMapModel is map model of map chart.
      * @constructs MapChartMapModel
      * @param {MapChartDataProcessor} dataProcessor Map chart data processor
      * @param {Array.<{name: string, path: string, labelCoordinate: ?{x: number, y:number}}>} rawMapData raw map data
      */
-    init: function(dataProcessor, rawMapData) {
+    constructor(dataProcessor, rawMapData) {
         /**
          * Command function map.
          * @type {{
@@ -70,7 +68,7 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
          * @type {null|Array.<object>}
          */
         this.mapData = null;
-    },
+    }
 
     /**
      * Split coordinate string.
@@ -78,18 +76,18 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{x: number, y: number}} coordinate map
      * @private
      */
-    _splitCoordinate: function(coordinateStr) {
-        var coordinates = coordinateStr.split(','),
-            result = {
-                x: parseFloat(coordinates[0])
-            };
+    _splitCoordinate(coordinateStr) {
+        const coordinates = coordinateStr.split(',');
+        const result = {
+            x: parseFloat(coordinates[0])
+        };
 
         if (coordinates[1]) {
             result.y = parseFloat(coordinates[1]);
         }
 
         return result;
-    },
+    }
 
     /**
      * Make coordinate
@@ -97,9 +95,9 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{x: number, y: number}} coordinate
      * @private
      */
-    _makeCoordinate: function(coordinateStr) {
+    _makeCoordinate(coordinateStr) {
         return this._splitCoordinate(coordinateStr);
-    },
+    }
 
     /**
      * Make coordinate from relative coordinate.
@@ -108,14 +106,14 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{x: number, y: number}} coordinate
      * @private
      */
-    _makeCoordinateFromRelativeCoordinate: function(coordinateStr, prevCoordinate) {
-        var coordinate = this._splitCoordinate(coordinateStr);
+    _makeCoordinateFromRelativeCoordinate(coordinateStr, prevCoordinate) {
+        const coordinate = this._splitCoordinate(coordinateStr);
 
         return {
             x: coordinate.x + prevCoordinate.x,
             y: coordinate.y + prevCoordinate.y
         };
-    },
+    }
 
     /**
      * Make x coordinate.
@@ -123,13 +121,13 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{x: number}} x coordinate
      * @private
      */
-    _makeXCoordinate: function(coordinateStr) {
-        var coordinate = this._splitCoordinate(coordinateStr);
+    _makeXCoordinate(coordinateStr) {
+        const coordinate = this._splitCoordinate(coordinateStr);
 
         return {
             x: coordinate.x
         };
-    },
+    }
 
     /**
      * Make x coordinate from relative coordinate.
@@ -138,13 +136,13 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{x: number}} x coordinate
      * @private
      */
-    _makeXCoordinateFroRelativeCoordinate: function(coordinateStr, prevCoordinate) {
-        var coordinate = this._splitCoordinate(coordinateStr);
+    _makeXCoordinateFroRelativeCoordinate(coordinateStr, prevCoordinate) {
+        const coordinate = this._splitCoordinate(coordinateStr);
 
         return {
             x: coordinate.x + prevCoordinate.x
         };
-    },
+    }
 
     /**
      * Make y coordinate.
@@ -152,13 +150,13 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{y: number}} y coordinate
      * @private
      */
-    _makeYCoordinate: function(coordinateStr) {
-        var coordinate = this._splitCoordinate(coordinateStr);
+    _makeYCoordinate(coordinateStr) {
+        const coordinate = this._splitCoordinate(coordinateStr);
 
         return {
             y: coordinate.x
         };
-    },
+    }
 
     /**
      * Make y coordinate from relative coordinate.
@@ -167,13 +165,13 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{y: number}} y coordinate
      * @private
      */
-    _makeYCoordinateFromRelativeCoordinate: function(coordinateStr, prevCoordinate) {
-        var coordinate = this._splitCoordinate(coordinateStr);
+    _makeYCoordinateFromRelativeCoordinate(coordinateStr, prevCoordinate) {
+        const coordinate = this._splitCoordinate(coordinateStr);
 
         return {
             y: coordinate.x + prevCoordinate.y
         };
-    },
+    }
 
     /**
      * Split path.
@@ -181,20 +179,19 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {Array.<{type: string, coordinate: string}>} splitted path data
      * @private
      */
-    _splitPath: function(path) {
-        var i = 0,
-            len = path.length,
-            pathData = [],
-            coordinate = '',
-            chr, commandType;
+    _splitPath(path) {
+        const len = path.length;
+        const pathData = [];
+        let coordinate = '';
+        let commandType;
 
-        for (; i < len; i += 1) {
-            chr = path.charAt(i);
+        for (let i = 0; i < len; i += 1) {
+            const chr = path.charAt(i);
             if (this.commandFuncMap[chr]) {
                 if (commandType && coordinate) {
                     pathData.push({
                         type: commandType,
-                        coordinate: coordinate
+                        coordinate
                     });
                 }
                 commandType = chr;
@@ -204,15 +201,30 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
             }
         }
 
+        this._addCommandPath(pathData, {
+            commandType,
+            coordinate
+        });
+
+        return pathData;
+    }
+
+    /**
+     * Add command path for Split path.
+     * @param {Array} pathData svg path array
+     * @param {Object} pathInfos svg path infos
+     *   @param {string} commandType svg command type
+     *   @param {string} coordinate path string
+     * @private
+     */
+    _addCommandPath(pathData, {commandType, coordinate} = {}) {
         if (commandType && coordinate) {
             pathData.push({
                 type: commandType,
-                coordinate: coordinate
+                coordinate
             });
         }
-
-        return pathData;
-    },
+    }
 
     /**
      * Make coordinates from path.
@@ -220,23 +232,22 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {Array.<{x: number, y: number}>} coordinates
      * @private
      */
-    _makeCoordinatesFromPath: function(path) {
-        var self = this,
-            pathData = this._splitPath(path),
-            prevCoordinate = {
-                x: 0,
-                y: 0
-            };
+    _makeCoordinatesFromPath(path) {
+        const pathData = this._splitPath(path);
+        const prevCoordinate = {
+            x: 0,
+            y: 0
+        };
 
-        return snippet.map(pathData, function(datum) {
-            var commandFunc = self.commandFuncMap[datum.type],
-                coordinate = commandFunc(datum.coordinate, prevCoordinate);
+        return pathData.map(datum => {
+            const commandFunc = this.commandFuncMap[datum.type];
+            const coordinate = commandFunc(datum.coordinate, prevCoordinate);
 
             snippet.extend(prevCoordinate, coordinate);
 
             return coordinate;
         });
-    },
+    }
 
     /**
      * Find bound from coordinates.
@@ -244,17 +255,13 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{dimension: {width: number, height: number}, position: {top: number, left: number}}} bound
      * @private
      */
-    _findBoundFromCoordinates: function(coordinates) {
-        var xs = snippet.filter(snippet.pluck(coordinates, 'x'), function(x) {
-                return !snippet.isUndefined(x);
-            }),
-            ys = snippet.filter(snippet.pluck(coordinates, 'y'), function(y) {
-                return !snippet.isUndefined(y);
-            }),
-            maxLeft = arrayUtil.max(xs),
-            minLeft = arrayUtil.min(xs),
-            maxTop = arrayUtil.max(ys),
-            minTop = arrayUtil.min(ys);
+    _findBoundFromCoordinates(coordinates) {
+        const xs = snippet.pluck(coordinates, 'x').filter(x => (!snippet.isUndefined(x)));
+        const ys = snippet.pluck(coordinates, 'y').filter(y => (!snippet.isUndefined(y)));
+        const maxLeft = arrayUtil.max(xs);
+        const minLeft = arrayUtil.min(xs);
+        const maxTop = arrayUtil.max(ys);
+        const minTop = arrayUtil.min(ys);
 
         return {
             dimension: {
@@ -266,7 +273,7 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
                 top: minTop
             }
         };
-    },
+    }
 
     /**
      * Make label position.
@@ -275,14 +282,14 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {{left: number, top: number}} label position
      * @private
      */
-    _makeLabelPosition: function(bound, positionRatio) {
+    _makeLabelPosition(bound, positionRatio) {
         positionRatio = positionRatio || chartConst.MAP_CHART_LABEL_DEFAULT_POSITION_RATIO;
 
         return {
             left: bound.position.left + (bound.dimension.width * positionRatio.x),
             top: bound.position.top + (bound.dimension.height * positionRatio.y)
         };
-    },
+    }
 
     /**
      * Create map data.
@@ -290,14 +297,12 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {Array.<object>}
      * @private
      */
-    _createMapData: function(rawMapData) {
-        var self = this;
-
-        return snippet.map(rawMapData, function(datum) {
-            var coordinate = self._makeCoordinatesFromPath(datum.path),
-                bound = self._findBoundFromCoordinates(coordinate),
-                userData = self.dataProcessor.getValueMapDatum(datum.code),
-                name, labelCoordinate, label, ratio, resultData;
+    _createMapData(rawMapData) {
+        return rawMapData.map(datum => {
+            const coordinate = this._makeCoordinatesFromPath(datum.path);
+            const bound = this._findBoundFromCoordinates(coordinate);
+            const userData = this.dataProcessor.getValueMapDatum(datum.code);
+            let name, labelCoordinate, label, ratio;
 
             if (userData) {
                 label = userData.label;
@@ -306,12 +311,12 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
                 labelCoordinate = userData.labelCoordinate || datum.labelCoordinate;
             }
 
-            resultData = {
+            const resultData = {
                 code: datum.code,
-                name: name,
+                name,
                 path: datum.path,
-                bound: bound,
-                labelPosition: self._makeLabelPosition(bound, labelCoordinate)
+                bound,
+                labelPosition: this._makeLabelPosition(bound, labelCoordinate)
             };
 
             if (label) {
@@ -324,28 +329,28 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
 
             return resultData;
         });
-    },
+    }
 
     /**
      * Get map data.
      * @returns {Array.<object>}
      */
-    getMapData: function() {
+    getMapData() {
         if (!this.mapData) {
             this.mapData = this._createMapData(this.rawMapData);
         }
 
         return this.mapData;
-    },
+    }
 
     /**
      * Get map datum.
      * @param {number} index - index
      * @returns {object}
      */
-    getDatum: function(index) {
+    getDatum(index) {
         return this.getMapData()[index];
-    },
+    }
 
     /**
      * Get label data.
@@ -353,61 +358,46 @@ var MapChartMapModel = snippet.defineClass(/** @lends MapChartMapModel.prototype
      * @returns {Array.<{name: string, bound: {dimension: {width: number, height: number},
      *          position: {top: number, left: number}}, labelPosition: {width: number, height: number}}>} map data
      */
-    getLabelData: function(ratio) {
-        var self = this;
-        var mapData = this.getMapData();
-        var labelData = snippet.filter(mapData, function(datum) {
-            return self.dataProcessor.getValueMapDatum(datum.code);
-        });
+    getLabelData(ratio) {
+        const mapData = this.getMapData();
+        const labelData = mapData.filter(datum => this.dataProcessor.getValueMapDatum(datum.code));
 
-        return snippet.map(labelData, function(datum) {
-            return {
-                name: datum.name,
-                labelPosition: {
-                    left: datum.labelPosition.left * ratio,
-                    top: datum.labelPosition.top * ratio
-                }
-            };
-        });
-    },
+        return labelData.map(datum => ({
+            name: datum.name,
+            labelPosition: {
+                left: datum.labelPosition.left * ratio,
+                top: datum.labelPosition.top * ratio
+            }
+        }));
+    }
 
     /**
      * Make map dimension
      * @returns {{width: number, height: number}} map dimension
      * @private
      */
-    _makeMapDimension: function() {
-        var mapData = this.getMapData();
-        var lefts = snippet.map(mapData, function(datum) {
-            return datum.bound.position.left;
-        });
-        var rights = snippet.map(mapData, function(datum) {
-            return datum.bound.position.left + datum.bound.dimension.width;
-        });
-        var tops = snippet.map(mapData, function(datum) {
-            return datum.bound.position.top;
-        });
-        var bottoms = snippet.map(mapData, function(datum) {
-            return datum.bound.position.top + datum.bound.dimension.height;
-        });
+    _makeMapDimension() {
+        const mapData = this.getMapData();
+        const lefts = mapData.map(datum => datum.bound.position.left);
+        const rights = mapData.map(datum => (datum.bound.position.left + datum.bound.dimension.width));
+        const tops = mapData.map(datum => datum.bound.position.top);
+        const bottoms = mapData.map(datum => datum.bound.position.top + datum.bound.dimension.height);
 
         return {
             width: arrayUtil.max(rights) - arrayUtil.min(lefts),
             height: arrayUtil.max(bottoms) - arrayUtil.min(tops)
         };
-    },
+    }
 
     /**
      * Get map dimension.
      * @returns {{width: number, height: number}} map dimension
      */
-    getMapDimension: function() {
+    getMapDimension() {
         if (!this.mapDimension) {
             this.mapDimension = this._makeMapDimension();
         }
 
         return this.mapDimension;
     }
-});
-
-module.exports = MapChartMapModel;
+}

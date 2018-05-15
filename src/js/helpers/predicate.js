@@ -4,23 +4,21 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../const');
-var arrayUtil = require('./arrayUtil');
+import chartConst from '../const';
+import arrayUtil from './arrayUtil';
 
 /**
  * predicate.
  * @module predicate
  * @private */
-var predicate = {
+const predicate = {
     /**
      * Whether bar chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isBarChart: function(chartType) {
+    isBarChart(chartType) {
         return chartType === chartConst.CHART_TYPE_BAR;
     },
 
@@ -30,7 +28,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isColumnChart: function(chartType) {
+    isColumnChart(chartType) {
         return chartType === chartConst.CHART_TYPE_COLUMN;
     },
 
@@ -40,7 +38,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isBarTypeChart: function(chartType) {
+    isBarTypeChart(chartType) {
         return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
     },
 
@@ -51,7 +49,7 @@ var predicate = {
      * @param {Array.<string>} seriesTypes - type of series
      * @returns {boolean}
      */
-    isColumnTypeChart: function(chartType, seriesTypes) {
+    isColumnTypeChart(chartType, seriesTypes) {
         return predicate.isHeatmapChart(chartType) ||
             predicate.isColumnChart(chartType) ||
             predicate.isBoxplotChart(chartType) ||
@@ -64,7 +62,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isBoxplotChart: function(chartType) {
+    isBoxplotChart(chartType) {
         return chartType === chartConst.CHART_TYPE_BOXPLOT;
     },
 
@@ -74,7 +72,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isBulletChart: function(chartType) {
+    isBulletChart(chartType) {
         return chartType === chartConst.CHART_TYPE_BULLET;
     },
 
@@ -84,7 +82,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isRadialChart: function(chartType) {
+    isRadialChart(chartType) {
         return chartType === chartConst.CHART_TYPE_RADIAL;
     },
 
@@ -95,7 +93,7 @@ var predicate = {
      * @param {boolean} diverging - whether has diverging or not
      * @returns {*|boolean}
      */
-    isDivergingChart: function(chartType, diverging) {
+    isDivergingChart(chartType, diverging) {
         return this.isBarTypeChart(chartType) && diverging;
     },
 
@@ -106,9 +104,9 @@ var predicate = {
      * @returns {boolean}
      * @private
      */
-    isNormalStackChart: function(chartType, stackType) {
-        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-        var isNormalStack = predicate.isNormalStack(stackType);
+    isNormalStackChart(chartType, stackType) {
+        const isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+        const isNormalStack = predicate.isNormalStack(stackType);
 
         return isAllowedStackOption && isNormalStack;
     },
@@ -120,9 +118,9 @@ var predicate = {
      * @returns {boolean}
      * @private
      */
-    isPercentStackChart: function(chartType, stackType) {
-        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-        var isPercentStack = predicate.isPercentStack(stackType);
+    isPercentStackChart(chartType, stackType) {
+        const isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+        const isPercentStack = predicate.isPercentStack(stackType);
 
         return isAllowedStackOption && isPercentStack;
     },
@@ -133,7 +131,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isComboChart: function(chartType) {
+    isComboChart(chartType) {
         return chartType === chartConst.CHART_TYPE_COMBO;
     },
 
@@ -144,10 +142,10 @@ var predicate = {
      * @param {Array.<string>} subChartTypes - types of chart
      * @returns {boolean}
      */
-    isLineColumnComboChart: function(chartType, subChartTypes) {
-        var isLineOrColumn = arrayUtil.all(subChartTypes || [], function(subChartType) {
-            return predicate.isLineChart(subChartType) || predicate.isColumnChart(subChartType);
-        });
+    isLineColumnComboChart(chartType, subChartTypes) {
+        const isLineOrColumn = arrayUtil.all(subChartTypes || [], subChartType => (
+            predicate.isLineChart(subChartType) || predicate.isColumnChart(subChartType)
+        ));
 
         return predicate.isComboChart(chartType) && isLineOrColumn;
     },
@@ -159,10 +157,10 @@ var predicate = {
      * @param {Array.<string>} subChartTypes - types of chart
      * @returns {boolean}
      */
-    isPieDonutComboChart: function(chartType, subChartTypes) {
-        var isAllPieType = arrayUtil.all(subChartTypes, function(subChartType) {
-            return predicate.isPieChart(subChartType);
-        });
+    isPieDonutComboChart(chartType, subChartTypes) {
+        const isAllPieType = arrayUtil.all(subChartTypes, subChartType => (
+            predicate.isPieChart(subChartType)
+        ));
 
         return predicate.isComboChart(chartType) && isAllPieType;
     },
@@ -173,7 +171,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isLineChart: function(chartType) {
+    isLineChart(chartType) {
         return chartType === chartConst.CHART_TYPE_LINE;
     },
 
@@ -183,7 +181,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isAreaChart: function(chartType) {
+    isAreaChart(chartType) {
         return chartType === chartConst.CHART_TYPE_AREA;
     },
 
@@ -194,10 +192,10 @@ var predicate = {
      * @param {Array.<string>} subChartTypes - types of chart
      * @returns {boolean}
      */
-    isLineAreaComboChart: function(chartType, subChartTypes) {
-        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
-            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
-        });
+    isLineAreaComboChart(chartType, subChartTypes) {
+        const isAllLineType = arrayUtil.all(subChartTypes || [], subChartType => (
+            predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType)
+        ));
 
         return predicate.isComboChart(chartType) && isAllLineType;
     },
@@ -209,10 +207,8 @@ var predicate = {
      * @param {Array.<string>} subChartTypes - types of chart
      * @returns {boolean}
      */
-    hasLineChart: function(chartType, subChartTypes) {
-        var hasLineType = arrayUtil.any(subChartTypes || [], function(subChartType) {
-            return predicate.isLineChart(subChartType);
-        });
+    hasLineChart(chartType, subChartTypes) {
+        const hasLineType = arrayUtil.any(subChartTypes || [], subChartType => predicate.isLineChart(subChartType));
 
         return predicate.isComboChart(chartType) && hasLineType;
     },
@@ -224,10 +220,10 @@ var predicate = {
      * @param {Array.<string>} subChartTypes - types of chart
      * @returns {boolean}
      */
-    isLineScatterComboChart: function(chartType, subChartTypes) {
-        var isAllLineType = arrayUtil.all(subChartTypes || [], function(subChartType) {
-            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
-        });
+    isLineScatterComboChart(chartType, subChartTypes) {
+        const isAllLineType = arrayUtil.all(subChartTypes || [], subChartType => (
+            predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType)
+        ));
 
         return predicate.isComboChart(chartType) && isAllLineType;
     },
@@ -239,7 +235,7 @@ var predicate = {
      * @param {Array.<string>} [subChartTypes] - types of chart
      * @returns {boolean}
      */
-    isLineTypeChart: function(chartType, subChartTypes) {
+    isLineTypeChart(chartType, subChartTypes) {
         return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
             || predicate.isLineAreaComboChart(chartType, subChartTypes);
     },
@@ -250,7 +246,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isBubbleChart: function(chartType) {
+    isBubbleChart(chartType) {
         return chartType === chartConst.CHART_TYPE_BUBBLE;
     },
 
@@ -260,7 +256,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isScatterChart: function(chartType) {
+    isScatterChart(chartType) {
         return chartType === chartConst.CHART_TYPE_SCATTER;
     },
 
@@ -270,7 +266,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isHeatmapChart: function(chartType) {
+    isHeatmapChart(chartType) {
         return chartType === chartConst.CHART_TYPE_HEATMAP;
     },
 
@@ -280,7 +276,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isTreemapChart: function(chartType) {
+    isTreemapChart(chartType) {
         return chartType === chartConst.CHART_TYPE_TREEMAP;
     },
 
@@ -290,7 +286,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isBoxTypeChart: function(chartType) {
+    isBoxTypeChart(chartType) {
         return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
     },
 
@@ -300,7 +296,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isMapTypeChart: function(chartType) {
+    isMapTypeChart(chartType) {
         return (this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType));
     },
 
@@ -310,7 +306,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isPieChart: function(chartType) {
+    isPieChart(chartType) {
         // change to indexOf for handling alias
         return chartType && chartType.indexOf(chartConst.CHART_TYPE_PIE) !== -1;
     },
@@ -321,7 +317,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isMapChart: function(chartType) {
+    isMapChart(chartType) {
         return chartType === chartConst.CHART_TYPE_MAP;
     },
 
@@ -331,7 +327,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isCoordinateTypeChart: function(chartType) {
+    isCoordinateTypeChart(chartType) {
         return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
     },
 
@@ -341,7 +337,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    allowMinusPointRender: function(chartType) {
+    allowMinusPointRender(chartType) {
         return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
             predicate.isBoxTypeChart(chartType) || predicate.isBulletChart(chartType);
     },
@@ -352,7 +348,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isChartToDetectMouseEventOnSeries: function(chartType) {
+    isChartToDetectMouseEventOnSeries(chartType) {
         return predicate.isPieChart(chartType) || predicate.isMapChart(chartType)
             || predicate.isCoordinateTypeChart(chartType);
     },
@@ -363,7 +359,7 @@ var predicate = {
      * @param {string} align - align of legend
      * @returns {boolean}
      */
-    isLabelAlignOuter: function(align) {
+    isLabelAlignOuter(align) {
         return align === chartConst.LABEL_ALIGN_OUTER;
     },
 
@@ -372,7 +368,7 @@ var predicate = {
      * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
      * @returns {boolean}
      */
-    isShowLabel: function(options) {
+    isShowLabel(options) {
         return options.showLabel || options.showLegend;
     },
 
@@ -381,7 +377,7 @@ var predicate = {
      * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
      * @returns {*|boolean}
      */
-    isShowOuterLabel: function(options) {
+    isShowOuterLabel(options) {
         return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
     },
 
@@ -391,7 +387,7 @@ var predicate = {
      * @param {string} align - align of legend
      * @returns {boolean}
      */
-    isLegendAlignLeft: function(align) {
+    isLegendAlignLeft(align) {
         return align === chartConst.LEGEND_ALIGN_LEFT;
     },
 
@@ -401,7 +397,7 @@ var predicate = {
      * @param {string} align - align of legend
      * @returns {boolean}
      */
-    isLegendAlignTop: function(align) {
+    isLegendAlignTop(align) {
         return align === chartConst.LEGEND_ALIGN_TOP;
     },
 
@@ -411,7 +407,7 @@ var predicate = {
      * @param {string} align - align of legend
      * @returns {boolean}
      */
-    isLegendAlignBottom: function(align) {
+    isLegendAlignBottom(align) {
         return align === chartConst.LEGEND_ALIGN_BOTTOM;
     },
 
@@ -421,7 +417,7 @@ var predicate = {
      * @param {string} align - align option for legend
      * @returns {boolean}
      */
-    isHorizontalLegend: function(align) {
+    isHorizontalLegend(align) {
         return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
     },
 
@@ -431,7 +427,7 @@ var predicate = {
      * @param {string} align - align option for legend
      * @returns {boolean}
      */
-    isVerticalLegend: function(align) {
+    isVerticalLegend(align) {
         return !predicate.isHorizontalLegend(align);
     },
 
@@ -441,7 +437,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isAllowedStackOption: function(chartType) {
+    isAllowedStackOption(chartType) {
         return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType)
             || predicate.isAreaChart(chartType);
     },
@@ -452,7 +448,7 @@ var predicate = {
      * @param {boolean} stackType - stackType option
      * @returns {boolean}
      */
-    isNormalStack: function(stackType) {
+    isNormalStack(stackType) {
         return stackType === chartConst.NORMAL_STACK_TYPE;
     },
 
@@ -462,7 +458,7 @@ var predicate = {
      * @param {boolean} stackType - stackType option
      * @returns {boolean}
      */
-    isPercentStack: function(stackType) {
+    isPercentStack(stackType) {
         return stackType === chartConst.PERCENT_STACK_TYPE;
     },
 
@@ -472,7 +468,7 @@ var predicate = {
      * @param {boolean} stackType - stackType option
      * @returns {boolean}
      */
-    isValidStackOption: function(stackType) {
+    isValidStackOption(stackType) {
         return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
     },
 
@@ -482,7 +478,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isAllowRangeData: function(chartType) {
+    isAllowRangeData(chartType) {
         return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
     },
 
@@ -493,7 +489,7 @@ var predicate = {
      * @param {string} alignOption - align option of yAxis.
      * @returns {boolean} whether - align center or not.
      */
-    isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
+    isYAxisAlignCenter(hasRightYAxis, alignOption) {
         return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
     },
 
@@ -503,7 +499,7 @@ var predicate = {
      * @param {{min: number, max: number}} limit - limit
      * @returns {boolean}
      */
-    isMinusLimit: function(limit) {
+    isMinusLimit(limit) {
         return limit.min <= 0 && limit.max <= 0;
     },
 
@@ -512,7 +508,7 @@ var predicate = {
      * @param {string} [tickInterval] - tick interval option
      * @returns {boolean}
      */
-    isAutoTickInterval: function(tickInterval) {
+    isAutoTickInterval(tickInterval) {
         return tickInterval === chartConst.TICK_INTERVAL_AUTO;
     },
 
@@ -522,7 +518,7 @@ var predicate = {
      * @param {string} [tickInterval] - tick interval option
      * @returns {*|boolean}
      */
-    isValidLabelInterval: function(labelInterval, tickInterval) {
+    isValidLabelInterval(labelInterval, tickInterval) {
         return labelInterval && labelInterval > 1 && !tickInterval;
     },
 
@@ -531,7 +527,7 @@ var predicate = {
      * @param {string} type - type
      * @returns {boolean}
      */
-    isDatetimeType: function(type) {
+    isDatetimeType(type) {
         return type === chartConst.AXIS_TYPE_DATETIME;
     },
 
@@ -539,7 +535,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean} - whether it support ChartBase#showTooltip API
      */
-    isSupportPublicShowTooptipAPI: function(chartType) {
+    isSupportPublicShowTooptipAPI(chartType) {
         return this.isBarChart(chartType) ||
             this.isColumnChart(chartType) ||
             this.isLineChart(chartType) ||
@@ -551,7 +547,7 @@ var predicate = {
      * @param {string} chartType - type of chart
      * @returns {boolean} - whether it support ChartBase#hideTooltip API
      */
-    isSupportPublicHideTooptipAPI: function(chartType) {
+    isSupportPublicHideTooptipAPI(chartType) {
         return this.isBarChart(chartType) ||
             this.isColumnChart(chartType) ||
             this.isLineChart(chartType) ||
@@ -560,4 +556,4 @@ var predicate = {
     }
 };
 
-module.exports = predicate;
+export default predicate;

@@ -4,16 +4,15 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import chartConst from '../../const';
+import snippet from 'tui-code-snippet';
 
-var Series = require('./series');
-var chartConst = require('../../const');
-var snippet = require('tui-code-snippet');
+const {browser} = snippet;
+const IS_LTE_IE8 = browser.msie && browser.version <= 8;
+const {TOOLTIP_GAP, PUBLIC_EVENT_PREFIX} = chartConst;
 
-var browser = snippet.browser;
-var IS_LTE_IE8 = browser.msie && browser.version <= 8;
-
-var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.prototype */ {
+class MapChartSeries extends Series {
     /**
      * Map chart series component.
      * @constructs MapChartSeries
@@ -24,7 +23,9 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      *      @param {object} params.theme series theme
      *      @param {MapChartDataProcessor} params.dataProcessor data processor for map chart
      */
-    init: function(params) {
+    constructor(params) {
+        super(params);
+
         /**
          * Base position.
          * @type {{left: number, top: number}}
@@ -93,15 +94,13 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
          * @type {?{left: number, top: number}}
          */
         this.startPosition = null;
-
-        Series.call(this, params);
-    },
+    }
 
     /**
      * Attach to event bus.
      * @private
      */
-    _attachToEventBus: function() {
+    _attachToEventBus() {
         Series.prototype._attachToEventBus.call(this);
 
         if (!IS_LTE_IE8) {
@@ -112,79 +111,79 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
                 zoomMap: this.onZoomMap
             }, this);
         }
-    },
+    }
 
     /**
      * Set map ratio.
      * @param {object} [graphDimension] graph dimension
      * @private
      */
-    _setMapRatio: function(graphDimension) {
-        var seriesDimension = this.layout.dimension;
-        var mapDimension = graphDimension || this.mapModel.getMapDimension();
-        var widthRatio = seriesDimension.width / mapDimension.width;
-        var heightRatio = seriesDimension.height / mapDimension.height;
+    _setMapRatio(graphDimension) {
+        const seriesDimension = this.layout.dimension;
+        const mapDimension = graphDimension || this.mapModel.getMapDimension();
+        const widthRatio = seriesDimension.width / mapDimension.width;
+        const heightRatio = seriesDimension.height / mapDimension.height;
 
         this.mapRatio = Math.min(widthRatio, heightRatio);
-    },
+    }
 
     /**
      * Set graph dimension.
      * @private
      */
-    _setGraphDimension: function() {
-        var seriesDimension = this.layout.dimension;
+    _setGraphDimension() {
+        const {width, height} = this.layout.dimension;
 
         this.graphDimension = {
-            width: seriesDimension.width * this.zoomMagn,
-            height: seriesDimension.height * this.zoomMagn
+            width: width * this.zoomMagn,
+            height: height * this.zoomMagn
         };
-    },
+    }
 
     /**
      * Render series component.
      * @param {object} data data for rendering
      */
-    render: function(data) {
+    render(data) {
         Series.prototype.render.call(this, data);
         this.seriesSet = this.graphRenderer.sectorSet;
         this._setMapRatio();
-    },
+    }
 
-    rerender: function(data) {
+    rerender(data) {
         Series.prototype.rerender.call(this, data);
         this.seriesSet = this.graphRenderer.sectorSet;
         this._setMapRatio();
-    },
+    }
 
     /**
      * Resize series component.
      * @param {object} data data for rendering
      */
-    resize: function(data) {
+    resize(data) {
         this.rerender(data);
-    },
+    }
 
     /**
      * Set limit position to move map.
      * @private
      */
-    _setLimitPositionToMoveMap: function() {
-        var seriesDimension = this.layout.dimension;
-        var graphDimension = this.graphDimension;
+    _setLimitPositionToMoveMap() {
+        const seriesDimension = this.layout.dimension;
+        const {graphDimension} = this;
 
         this.limitPosition = {
             left: seriesDimension.width - graphDimension.width,
             top: seriesDimension.height - graphDimension.height
         };
-    },
+    }
 
     /**
      * Render raphael graph.
      * @private
      * @override
      */
-    _renderGraph: function() {
+    _renderGraph() {
         this._setGraphDimension();
 
         this._setLimitPositionToMoveMap();
@@ -195,18 +194,18 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
             layout: this.layout,
             theme: this.theme
         });
-    },
+    }
 
     /**
      * Render series label.
      * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function() {
-        var labelData = this.mapModel.getLabelData(this.zoomMagn * this.mapRatio);
+    _renderSeriesLabel() {
+        const labelData = this.mapModel.getLabelData(this.zoomMagn * this.mapRatio);
 
         return this.graphRenderer.renderSeriesLabels(this.paper, labelData, this.theme.label);
-    },
+    }
 
     /**
      * Render series area.
@@ -215,9 +214,9 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @param {function} funcRenderGraph function for graph rendering
      * @private
      */
-    _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
+    _renderSeriesArea(seriesContainer, data, funcRenderGraph) {
         Series.prototype._renderSeriesArea.call(this, seriesContainer, data, funcRenderGraph);
-    },
+    }
 
     /**
      * Adjust map position.
@@ -225,12 +224,12 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @returns {{left: number, top: number}} adjusted position
      * @private
      */
-    _adjustMapPosition: function(targetPosition) {
+    _adjustMapPosition(targetPosition) {
         return {
             left: Math.max(Math.min(targetPosition.left, 0), this.limitPosition.left),
             top: Math.max(Math.min(targetPosition.top, 0), this.limitPosition.top)
         };
-    },
+    }
 
     /**
      * Update base position for zoom.
@@ -239,17 +238,17 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @param {number} changedRatio changed ratio
      * @private
      */
-    _updateBasePositionForZoom: function(prevDimension, prevLimitPosition, changedRatio) {
-        var prevBasePosition = this.basePosition,
-            prevLeft = prevBasePosition.left - (prevLimitPosition.left / 2),
-            prevTop = prevBasePosition.top - (prevLimitPosition.top / 2),
-            newBasePosition = {
-                left: (prevLeft * changedRatio) + (this.limitPosition.left / 2),
-                top: (prevTop * changedRatio) + (this.limitPosition.top / 2)
-            };
+    _updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio) {
+        const prevBasePosition = this.basePosition;
+        const prevLeft = prevBasePosition.left - (prevLimitPosition.left / 2);
+        const prevTop = prevBasePosition.top - (prevLimitPosition.top / 2);
+        const newBasePosition = {
+            left: (prevLeft * changedRatio) + (this.limitPosition.left / 2),
+            top: (prevTop * changedRatio) + (this.limitPosition.top / 2)
+        };
 
         this.basePosition = this._adjustMapPosition(newBasePosition);
-    },
+    }
 
     /**
      * Zoom.
@@ -257,9 +256,9 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @param {object} position position
      * @private
      */
-    _zoom: function(changedRatio, position) {
-        var prevDimension = this.graphDimension,
-            prevLimitPosition = this.limitPosition;
+    _zoom(changedRatio, position) {
+        const prevDimension = this.graphDimension;
+        const prevLimitPosition = this.limitPosition;
 
         this._setGraphDimension();
 
@@ -269,29 +268,29 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
         this._setMapRatio(this.graphDimension);
 
         this.graphRenderer.scaleMapPaths(changedRatio, position, this.mapRatio, prevDimension, prevDimension);
-    },
+    }
 
     /**
      * Update positions to resize.
      * @param {number} prevMapRatio previous ratio
      * @private
      */
-    _updatePositionsToResize: function(prevMapRatio) {
-        var changedRatio = this.mapRatio / prevMapRatio;
+    _updatePositionsToResize(prevMapRatio) {
+        const changedRatio = this.mapRatio / prevMapRatio;
 
         this.basePosition.left *= changedRatio;
         this.basePosition.top *= changedRatio;
 
         this.limitPosition.left *= changedRatio;
         this.limitPosition.top *= changedRatio;
-    },
+    }
 
     /**
      * If click series, showing selected state.
      * @param {{left: number, top: number}} position - mouse position
      */
-    onClickSeries: function(position) {
-        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
+    onClickSeries(position) {
+        const foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 
         if (!snippet.isNull(foundIndex)) {
             this.eventBus.fire('selectSeries', {
@@ -300,7 +299,7 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
                 code: this.mapModel.getDatum(foundIndex).code
             });
         }
-    },
+    }
 
     /**
      * Whether changed position or not.
@@ -309,22 +308,22 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @returns {boolean} result boolean
      * @private
      */
-    _isChangedPosition: function(prevPosition, position) {
+    _isChangedPosition(prevPosition, position) {
         return !prevPosition || prevPosition.left !== position.left || prevPosition.top !== position.top;
-    },
+    }
 
     /**
      * Show wedge of spectrum legend.
      * @param {number} index map data index
      * @private
      */
-    _showWedge: function(index) {
-        var datum = this.mapModel.getDatum(index);
+    _showWedge(index) {
+        const {ratio, label} = this.mapModel.getDatum(index);
 
-        if (!snippet.isUndefined(datum.ratio)) {
-            this.eventBus.fire('showWedge', datum.ratio, datum.label);
+        if (!snippet.isUndefined(ratio)) {
+            this.eventBus.fire('showWedge', ratio, label);
         }
-    },
+    }
 
     /**
      * Show tooltip.
@@ -332,25 +331,25 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @param {{left: number, top: number}} mousePosition mouse position
      * @private
      */
-    _showTooltip: function(index, mousePosition) {
+    _showTooltip(index, {left, top}) {
         this.eventBus.fire('showTooltip', {
             chartType: this.chartType,
             indexes: {
-                index: index
+                index
             },
             mousePosition: {
-                left: mousePosition.left,
-                top: mousePosition.top - chartConst.TOOLTIP_GAP
+                left,
+                top: top - TOOLTIP_GAP
             }
         });
-    },
+    }
 
     /**
      * On move series.
      * @param {{left: number, top: number}} position position
      */
-    onMoveSeries: function(position) {
-        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
+    onMoveSeries(position) {
+        const foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 
         if (!snippet.isNull(foundIndex)) {
             if (this.prevMovedIndex !== foundIndex) {
@@ -377,18 +376,18 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
             this.prevMovedIndex = null;
         }
         this.prevPosition = position;
-    },
+    }
 
     /**
      * On drag start series.
      * @param {{left: number, top: number}} position position
      */
-    onDragStartMapSeries: function(position) {
+    onDragStartMapSeries(position) {
         this.startPosition = {
             left: position.left,
             top: position.top
         };
-    },
+    }
 
     /**
      * Move position.
@@ -396,20 +395,20 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      * @param {{left: number, top: number}} endPosition end position
      * @private
      */
-    _movePosition: function(startPosition, endPosition) {
-        var movementPosition = {
+    _movePosition(startPosition, endPosition) {
+        const movementPosition = {
             x: (endPosition.left - startPosition.left) * this.mapRatio,
             y: (endPosition.top - startPosition.top) * this.mapRatio
         };
 
         this.graphRenderer.moveMapPaths(movementPosition, this.graphDimension);
-    },
+    }
 
     /**
      * On drag series.
      * @param {{left: number, top: number}} position position
      */
-    onDragMapSeries: function(position) {
+    onDragMapSeries(position) {
         this._movePosition(this.startPosition, position);
 
         this.startPosition = position;
@@ -418,37 +417,37 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
             this.isDrag = true;
             this.eventBus.fire('hideTooltip');
         }
-    },
+    }
 
     /**
      * On drag end series.
      */
-    onDragEndMapSeries: function() {
+    onDragEndMapSeries() {
         this.isDrag = false;
-    },
+    }
 
     /**
      * On zoom map.
      * @param {number} newMagn new zoom magnification
      * @param {?{left: number, top: number}} position mouse position
      */
-    onZoomMap: function(newMagn, position) {
-        var changedRatio = newMagn / this.zoomMagn;
-        var positions = this.layout.position;
-        var layerPosition = position ? position : {
-            left: this.layout.dimension.width / 2,
-            top: this.layout.dimension.height / 2
+    onZoomMap(newMagn, position) {
+        const changedRatio = newMagn / this.zoomMagn;
+        const {position: {top, left}, dimension: {width, height}} = this.layout;
+        const layerPosition = position ? position : {
+            left: width / 2,
+            top: height / 2
         };
 
         this.zoomMagn = newMagn;
 
         this._zoom(changedRatio, {
-            left: layerPosition.left - positions.left,
-            top: layerPosition.top - positions.top
+            left: layerPosition.left - left,
+            top: layerPosition.top - top
         });
 
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'zoom', newMagn);
-    },
+        this.eventBus.fire(`${PUBLIC_EVENT_PREFIX}zoom`, newMagn);
+    }
 
     /**
      * Make exportation data for public event of series type.
@@ -460,15 +459,19 @@ var MapChartSeries = snippet.defineClass(Series, /** @lends MapChartSeries.proto
      *     }}
      * @private
      */
-    _makeExportationSeriesData: function(seriesData) {
+    _makeExportationSeriesData(seriesData) {
         return seriesData;
     }
-});
+}
 
-function mapSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-
-    params.libType = libType;
+/**
+ * mapSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} mapChart series instanse
+ * @ignore
+ */
+export default function mapSeriesFactory(params) {
+    params.libType = params.chartOptions.libType;
     params.chartType = 'map';
 
     return new MapChartSeries(params);
@@ -476,5 +479,3 @@ function mapSeriesFactory(params) {
 
 mapSeriesFactory.componentType = 'series';
 mapSeriesFactory.MapChartSeries = MapChartSeries;
-
-module.exports = mapSeriesFactory;

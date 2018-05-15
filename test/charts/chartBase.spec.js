@@ -4,21 +4,19 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import ChartBase from '../../src/js/charts/chartBase';
+import DataProcessor from '../../src/js/models/data/dataProcessor';
 
-var snippet = require('tui-code-snippet');
-var ChartBase = require('../../src/js/charts/chartBase'),
-    DataProcessor = require('../../src/js/models/data/dataProcessor');
+describe('Test for ChartBase', () => {
+    let chartBase, chartBaseOption, componentManager, boundsModel;
 
-describe('Test for ChartBase', function() {
-    var chartBase, chartBaseOption, componentManager, boundsModel;
-
-    beforeAll(function() {
+    beforeAll(() => {
         componentManager = jasmine.createSpyObj('componentManager', ['where']);
         boundsModel = jasmine.createSpyObj('boundsModel', ['initBoundsData', 'getDimension']);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         chartBaseOption = {
             chartType: 'chartType',
             rawData: {
@@ -61,9 +59,9 @@ describe('Test for ChartBase', function() {
         chartBase.boundsModel = boundsModel;
     });
 
-    describe('_setOffsetProperty()', function() {
-        it('set offset property', function() {
-            var options = {
+    describe('_setOffsetProperty()', () => {
+        it('set offset property', () => {
+            const options = {
                 offsetX: 10
             };
 
@@ -76,8 +74,8 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('if not included fromProperty in option, this function is not working', function() {
-            var options = {
+        it('if not included fromProperty in option, this function is not working', () => {
+            const options = {
                 offsetY: 10
             };
 
@@ -89,9 +87,9 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('initializeOffset', function() {
-        it('initialize offset', function() {
-            var options = {
+    describe('initializeOffset', () => {
+        it('initialize offset', () => {
+            const options = {
                 offsetX: 10,
                 offsetY: 20
             };
@@ -106,8 +104,8 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('initialize offset, when has only offsetX property', function() {
-            var options = {
+        it('initialize offset, when has only offsetX property', () => {
+            const options = {
                 offsetX: 10
             };
 
@@ -121,9 +119,9 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_initializeTitleOptions()', function() {
-        it('initialize title options, when options.title is string type', function() {
-            var options = {
+    describe('_initializeTitleOptions()', () => {
+        it('initialize title options, when options.title is string type', () => {
+            const options = {
                 title: 'Title'
             };
 
@@ -136,8 +134,8 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('initialize title options, when has offsetX or offsetY property', function() {
-            var options = {
+        it('initialize title options, when has offsetX or offsetY property', () => {
+            const options = {
                 title: {
                     text: 'Title',
                     offsetX: 10,
@@ -158,8 +156,8 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('initialize title options, when has two options', function() {
-            var optionsSet = [{
+        it('initialize title options, when has two options', () => {
+            const optionsSet = [{
                 title: {
                     text: 'Title1',
                     offsetX: 10,
@@ -195,9 +193,9 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_initializeTooltipOptions()', function() {
-        it('initialize tooltip options. when had grouped property', function() {
-            var options = {
+    describe('_initializeTooltipOptions()', () => {
+        it('initialize tooltip options. when had grouped property', () => {
+            const options = {
                 grouped: true
             };
 
@@ -208,8 +206,8 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('initialize tooltip options, when has offsetX or offsetY property', function() {
-            var options = {
+        it('initialize tooltip options, when has offsetX or offsetY property', () => {
+            const options = {
                 offsetX: 10,
                 offsetY: 20
             };
@@ -225,8 +223,8 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('(deprecated) initialize tooltip options, when has both (offsetX or offsetY) and position', function() {
-            var options = {
+        it('(deprecated) initialize tooltip options, when has both (offsetX or offsetY) and position', () => {
+            const options = {
                 offsetX: 50,
                 position: {
                     left: 20,
@@ -245,11 +243,10 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_makeProcessedData()', function() {
-        it('should create easy-to-use data from user data', function() {
-            var actual;
-            actual = chartBase._createDataProcessor({
-                DataProcessor: DataProcessor,
+    describe('_makeProcessedData()', () => {
+        it('should create easy-to-use data from user data', () => {
+            const actual = chartBase._createDataProcessor({
+                DataProcessor,
                 rawData: {
                     categories: ['a', 'b', 'c']
                 },
@@ -262,8 +259,8 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_updateChartDimension()', function() {
-        it('should update chart width and height using passed dimension', function() {
+    describe('_updateChartDimension()', () => {
+        it('should update chart width and height using passed dimension', () => {
             chartBase.options = {
                 chart: {}
             };
@@ -276,8 +273,8 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('resize()', function() {
-        it('should not update dimension, when resize is called without dimension', function() {
+    describe('resize()', () => {
+        it('should not update dimension, when resize is called without dimension', () => {
             spyOn(chartBase, 'readyForRender');
 
             chartBase.resize();
@@ -285,7 +282,7 @@ describe('Test for ChartBase', function() {
             expect(chartBase.readyForRender).not.toHaveBeenCalled();
         });
 
-        it('should update dimension, when resize is called with dimension', function() {
+        it('should update dimension, when resize is called with dimension', () => {
             spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
 
             chartBase.resize({
@@ -299,7 +296,7 @@ describe('Test for ChartBase', function() {
             });
         });
 
-        it('should not update dimension, when dimension infomation does not change', function() {
+        it('should not update dimension, when dimension infomation does not change', () => {
             spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
             spyOn(chartBase, 'readyForRender');
 
@@ -312,28 +309,28 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_findSeriesIndexByLabel()', function() {
-        it('should return index, if found same label', function() {
-            var actual = chartBase._findSeriesIndexByLabel('chartType', 'Legend2');
+    describe('_findSeriesIndexByLabel()', () => {
+        it('should return index, if found same label', () => {
+            const actual = chartBase._findSeriesIndexByLabel('chartType', 'Legend2');
 
             expect(actual).toBe(1);
         });
 
-        it('should return -1, if not found', function() {
-            var actual = chartBase._findSeriesIndexByLabel('chartType', 'legend2');
+        it('should return -1, if not found', () => {
+            const actual = chartBase._findSeriesIndexByLabel('chartType', 'legend2');
 
             expect(actual).toBe(-1);
         });
     });
 
-    describe('_sendHostName()', function() {
-        it('without usageStatistics option, image ping should occur.', function() {
+    describe('_sendHostName()', () => {
+        it('without usageStatistics option, image ping should occur.', () => {
             spyOn(snippet, 'imagePing');
             chartBase = new ChartBase(chartBaseOption);
             expect(snippet.imagePing).toHaveBeenCalled();
         });
 
-        it('usageStatistics is false, then image ping should not occur.', function() {
+        it('usageStatistics is false, then image ping should not occur.', () => {
             spyOn(snippet, 'imagePing');
             chartBaseOption.options.usageStatistics = false;
             chartBase = new ChartBase(chartBaseOption);

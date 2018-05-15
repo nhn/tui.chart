@@ -3,14 +3,11 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import ChartExportMenu from '../../../src/js/components/chartExportMenu/chartExportMenu';
 
-'use strict';
-
-var ChartExportMenu = require('../../../src/js/components/chartExportMenu/chartExportMenu');
-
-describe('chartExportMenu', function() {
-    it('chartTitle should have the option specified by the user.', function() {
-        var chartExportMenu = new ChartExportMenu({
+describe('chartExportMenu', () => {
+    it('chartTitle should have the option specified by the user.', () => {
+        const chartExportMenu = new ChartExportMenu({
             options: {visible: true},
             chartOptions: {
                 chartExportMenu: {

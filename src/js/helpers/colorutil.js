@@ -3,9 +3,7 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+const hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 
 /**
  * Color map.
@@ -14,7 +12,7 @@ var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
  * @type {object}
  * @ignore
  */
-var colorMap = {
+const colorMap = {
     'aliceblue': '#f0f8ff',
     'antiquewhite': '#faebd7',
     'aqua': '#00ffff',
@@ -157,22 +155,21 @@ var colorMap = {
     'yellowgreen': '#9acd32'
 };
 
-var colorutil = {
+export default {
     /**
      * pad left zero characters.
      * @param {number} number number value to pad zero.
      * @param {number} length pad length to want.
      * @returns {string} padded string.
      */
-    leadingZero: function(number, length) {
-        var zero = '',
-            i = 0;
+    leadingZero(number, length) {
+        let zero = '';
 
         if (String(number).length > length) {
             return String(number);
         }
 
-        for (; i < (length - 1); i += 1) {
+        for (let i = 0; i < (length - 1); i += 1) {
             zero += '0';
         }
 
@@ -184,7 +181,7 @@ var colorutil = {
      * @param {string} str - rgb hex string
      * @returns {boolean} return true when supplied str is valid RGB hex string
      */
-    isValidRGB: function(str) {
+    isValidRGB(str) {
         return hexRX.test(str);
     },
 
@@ -195,18 +192,16 @@ var colorutil = {
      * @param {string} hexStr - hex string
      * @returns {number[]} rgb numbers
      */
-    hexToRGB: function(hexStr) {
-        var r, g, b;
-
-        if (!colorutil.isValidRGB(hexStr)) {
+    hexToRGB(hexStr) {
+        if (!this.isValidRGB(hexStr)) {
             return false;
         }
 
         hexStr = hexStr.substring(1);
 
-        r = parseInt(hexStr.substr(0, 2), 16);
-        g = parseInt(hexStr.substr(2, 2), 16);
-        b = parseInt(hexStr.substr(4, 2), 16);
+        const r = parseInt(hexStr.substr(0, 2), 16);
+        const g = parseInt(hexStr.substr(2, 2), 16);
+        const b = parseInt(hexStr.substr(4, 2), 16);
 
         return [r, g, b];
     },
@@ -218,13 +213,14 @@ var colorutil = {
      * @param {number} b - blue
      * @returns {string|boolean} return false when supplied rgb number is not valid. otherwise, converted hex string
      */
-    rgbToHEX: function(r, g, b) {
-        var hexStr = '#' +
-            colorutil.leadingZero(r.toString(16), 2) +
-            colorutil.leadingZero(g.toString(16), 2) +
-            colorutil.leadingZero(b.toString(16), 2);
+    rgbToHEX(r, g, b) {
+        const hexPreFix = '#';
+        const hexStr = hexPreFix +
+            this.leadingZero(r.toString(16), 2) +
+            this.leadingZero(g.toString(16), 2) +
+            this.leadingZero(b.toString(16), 2);
 
-        if (colorutil.isValidRGB(hexStr)) {
+        if (this.isValidRGB(hexStr)) {
             return hexStr;
         }
 
@@ -236,9 +232,8 @@ var colorutil = {
      * @param {string} colorName color name
      * @returns {string} hex
      */
-    colorNameToHex: function(colorName) {
+    colorNameToHex(colorName) {
         return colorMap[colorName.toLowerCase()] || colorName;
     }
 };
 
-module.exports = colorutil;

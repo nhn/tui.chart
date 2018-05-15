@@ -3,16 +3,13 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import DynamicDataHelper from '../../src/js/charts/dynamicDataHelper';
+import chartConst from '../../src/js/const';
 
-'use strict';
+describe('Test for DynamicDataHelper', () => {
+    let dataProcessor, componentManager, ddh;
 
-var DynamicDataHelper = require('../../src/js/charts/dynamicDataHelper');
-var chartConst = require('../../src/js/const');
-
-describe('Test for DynamicDataHelper', function() {
-    var dataProcessor, componentManager, ddh;
-
-    beforeEach(function() {
+    beforeEach(() => {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['getCategoryCount', 'shiftData', 'addDataFromDynamicData',
                 'addDataFromRemainDynamicData', 'getValues', 'isCoordinateType']);
@@ -20,49 +17,47 @@ describe('Test for DynamicDataHelper', function() {
         componentManager = jasmine.createSpyObj('componentManager', ['render']);
 
         ddh = new DynamicDataHelper({
-            dataProcessor: dataProcessor,
-            componentManager: componentManager,
+            dataProcessor,
+            componentManager,
             options: {
                 series: {},
                 xAxis: {}
             },
-            on: function() {},
+            on: () => {},
             readyForRender: jasmine.createSpy('readyForRender'),
             _renderComponents: jasmine.createSpy('_renderComponents)')
         });
     });
 
-    describe('_calculateAnimateTickSize()', function() {
-        it('calculate animate tick size, when is coordinateType chart', function() {
-            var xAxisWidth = 300;
-            var actual;
+    describe('_calculateAnimateTickSize()', () => {
+        it('calculate animate tick size, when is coordinateType chart', () => {
+            const xAxisWidth = 300;
 
             dataProcessor.isCoordinateType.and.returnValue(true);
             dataProcessor.getValues.and.returnValue([10, 20, 30, 40]);
             ddh.chart.chartType = chartConst.CHART_TYPE_LINE;
 
-            actual = ddh._calculateAnimateTickSize(xAxisWidth);
+            const actual = ddh._calculateAnimateTickSize(xAxisWidth);
 
             expect(dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_LINE, 'x');
             expect(actual).toBe(100);
         });
 
-        it('if not coordinateType data, get tickCount from dataProcessor.getCategoryCount function', function() {
-            var xAxisWidth = 300;
-            var actual;
+        it('if not coordinateType data, get tickCount from dataProcessor.getCategoryCount function', () => {
+            const xAxisWidth = 300;
 
             dataProcessor.isCoordinateType.and.returnValue(false);
             dataProcessor.getCategoryCount.and.returnValue(4);
 
-            actual = ddh._calculateAnimateTickSize(xAxisWidth);
+            const actual = ddh._calculateAnimateTickSize(xAxisWidth);
 
             expect(dataProcessor.getCategoryCount).toHaveBeenCalledWith(false);
             expect(actual).toBe(100);
         });
     });
 
-    describe('_animateForAddingData()', function() {
-        beforeEach(function() {
+    describe('_animateForAddingData()', () => {
+        beforeEach(() => {
             dataProcessor.getCategoryCount.and.returnValue(5);
             dataProcessor.isCoordinateType.and.returnValue(false);
 
@@ -80,7 +75,7 @@ describe('Test for DynamicDataHelper', function() {
             });
         });
 
-        it('should increase addesDataCount', function() {
+        it('should increase addesDataCount', () => {
             expect(ddh.addedDataCount).toBe(0);
 
             ddh._animateForAddingData();
@@ -88,14 +83,14 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh.addedDataCount).toBe(1);
         });
 
-        it('should call readyForRender()', function() {
+        it('should call readyForRender()', () => {
             ddh._animateForAddingData();
 
             expect(ddh.chart.readyForRender).toHaveBeenCalled();
         });
 
-        it('should call animateForAddingData() with tickSize and shifting option for each component', function() {
-            var boundsAndScale = {
+        it('should call animateForAddingData() with tickSize and shifting option for each component', () => {
+            const boundsAndScale = {
                 dimensionMap: {
                     xAxis: {
                         width: 200
@@ -103,9 +98,7 @@ describe('Test for DynamicDataHelper', function() {
                 }
             };
 
-            ddh.chart.readyForRender.and.callFake(function() {
-                return boundsAndScale;
-            });
+            ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
 
             ddh._animateForAddingData();
 
@@ -115,7 +108,7 @@ describe('Test for DynamicDataHelper', function() {
             });
         });
 
-        it('should call dataProcessor.shiftData(), when there is shifting option', function() {
+        it('should call dataProcessor.shiftData(), when there is shifting option', () => {
             ddh.chart.options.series.shifting = true;
             ddh._animateForAddingData();
 
@@ -123,23 +116,21 @@ describe('Test for DynamicDataHelper', function() {
         });
     });
 
-    describe('_rerenderForAddingData()', function() {
-        it('should call readyForRender()', function() {
+    describe('_rerenderForAddingData()', () => {
+        it('should call readyForRender()', () => {
             ddh._rerenderForAddingData();
 
             expect(ddh.chart.readyForRender).toHaveBeenCalled();
         });
 
-        it('should call rerender() with animatable of false value', function() {
-            var boundsAndScale = {dimensionMap: {
+        it('should call rerender() with animatable of false value', () => {
+            const boundsAndScale = {dimensionMap: {
                 xAxis: {
                     width: 200
                 }
             }};
 
-            ddh.chart.readyForRender.and.callFake(function() {
-                return boundsAndScale;
-            });
+            ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
 
             ddh._rerenderForAddingData();
 
@@ -147,9 +138,9 @@ describe('Test for DynamicDataHelper', function() {
         });
     });
 
-    describe('_checkForAddedData()', function() {
-        beforeEach(function() {
-            var boundsAndScale = {
+    describe('_checkForAddedData()', () => {
+        beforeEach(() => {
+            const boundsAndScale = {
                 dimensionMap: {
                     xAxis: {
                         width: 200
@@ -157,11 +148,9 @@ describe('Test for DynamicDataHelper', function() {
                 }
             };
 
-            ddh.chart.readyForRender.and.callFake(function() {
-                return boundsAndScale;
-            });
+            ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
         });
-        it('should append dynamic data when some dynamic data added, and then call _animateForAddingData()', function() {
+        it('should append dynamic data when some dynamic data added, and then call _animateForAddingData()', () => {
             dataProcessor.addDataFromDynamicData.and.returnValue(true);
             spyOn(ddh, '_animateForAddingData');
 
@@ -171,7 +160,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh._animateForAddingData).toHaveBeenCalled();
         });
 
-        it('we should not animate for added data if initial render have not completed', function() {
+        it('we should not animate for added data if initial render have not completed', () => {
             dataProcessor.addDataFromDynamicData.and.returnValue(true);
             spyOn(ddh, '_animateForAddingData');
 
@@ -181,18 +170,18 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh._animateForAddingData).toHaveBeenCalled();
         });
 
-        it('should call _rerenderForAddingData, _checkForAddedData 0.4 sec after dynamic data detection', function(done) {
+        it('should call _rerenderForAddingData, _checkForAddedData 0.4 sec after dynamic data detection', done => {
             dataProcessor.addDataFromDynamicData.and.returnValue(true);
             spyOn(ddh, '_rerenderForAddingData');
 
             ddh._checkForAddedData();
-            setTimeout(function() {
+            setTimeout(() => {
                 expect(ddh._rerenderForAddingData).toHaveBeenCalled();
                 done();
             }, 1000);
         });
 
-        it('should quit lookupping and appending data, when there is no dynamic data', function() {
+        it('should quit lookupping and appending data, when there is no dynamic data', () => {
             dataProcessor.addDataFromDynamicData.and.returnValue(false);
             spyOn(ddh, '_animateForAddingData');
 
@@ -202,7 +191,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh._animateForAddingData).not.toHaveBeenCalled();
         });
 
-        it('should not append data even thought it has dynamic data, when paused is true', function() {
+        it('should not append data even thought it has dynamic data, when paused is true', () => {
             dataProcessor.addDataFromDynamicData.and.returnValue(false);
             spyOn(ddh, '_animateForAddingData');
             ddh.paused = true;
@@ -213,8 +202,8 @@ describe('Test for DynamicDataHelper', function() {
         });
     });
 
-    describe('pauseAnimation()', function() {
-        it('should set paused true', function() {
+    describe('pauseAnimation()', () => {
+        it('should set paused true', () => {
             ddh._initForAutoTickInterval = jasmine.createSpy('_initForAutoTickInterval');
 
             ddh.paused = false;
@@ -223,7 +212,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(ddh.paused).toBe(true);
         });
 
-        it('should stop timer, when there is this.rerenderingDelayTimerId value.', function() {
+        it('should stop timer, when there is this.rerenderingDelayTimerId value.', () => {
             spyOn(window, 'clearTimeout');
 
             ddh.rerenderingDelayTimerId = 1;
@@ -233,7 +222,7 @@ describe('Test for DynamicDataHelper', function() {
             expect(window.clearTimeout).toHaveBeenCalled();
         });
 
-        it('should shift data, when shifting option is true and rerendering is on', function() {
+        it('should shift data, when shifting option is true and rerendering is on', () => {
             spyOn(window, 'clearTimeout');
 
             ddh.chart.options.series.shifting = true;
@@ -245,25 +234,25 @@ describe('Test for DynamicDataHelper', function() {
         });
     });
 
-    describe('_changeCheckedLegends()', function() {
-        beforeEach(function() {
+    describe('_changeCheckedLegends()', () => {
+        beforeEach(() => {
             ddh.pauseAnimation = jasmine.createSpy('pauseAnimation');
             ddh.chart._rerender = jasmine.createSpy('_rerender');
             ddh.restartAnimation = jasmine.createSpy('restartAnimation');
             ddh.chart.rerender = jasmine.createSpy('rerender');
         });
 
-        it('should stop adding data animation and rerender graph, if it is not paused', function() {
+        it('should stop adding data animation and rerender graph, if it is not paused', () => {
             ddh.changeCheckedLegends();
 
             expect(ddh.pauseAnimation).toHaveBeenCalled();
             expect(ddh.chart.rerender).toHaveBeenCalled();
         });
 
-        it('should restart andding data animation after 0.7s, if it is not paused', function(done) {
+        it('should restart andding data animation after 0.7s, if it is not paused', done => {
             ddh.changeCheckedLegends();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect(ddh.restartAnimation).toHaveBeenCalled();
                 done();
             }, 700);

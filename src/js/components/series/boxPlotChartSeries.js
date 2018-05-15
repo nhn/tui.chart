@@ -4,16 +4,14 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import BarTypeSeriesBase from './barTypeSeriesBase';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+const {SERIES_EXPAND_SIZE, TEXT_PADDING} = chartConst;
 
-var Series = require('./series');
-var BarTypeSeriesBase = require('./barTypeSeriesBase');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-var BoxplotChartSeries = snippet.defineClass(Series, /** @lends BoxplotChartSeries.prototype */ {
+class BoxplotChartSeries extends Series {
     /**
      * Boxplot chart series component.
      * @constructs BoxplotChartSeries
@@ -24,15 +22,15 @@ var BoxplotChartSeries = snippet.defineClass(Series, /** @lends BoxplotChartSeri
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
-    init: function() {
-        Series.apply(this, arguments);
+    constructor(...args) {
+        super(...args);
 
         /**
          * whether series label is supported
          * @type {boolean}
          */
         this.supportSeriesLable = false;
-    },
+    }
 
     /**
      * Make boxplot chart bound.
@@ -60,15 +58,16 @@ var BoxplotChartSeries = snippet.defineClass(Series, /** @lends BoxplotChartSeri
      * }}
      * @private
      */
-    _makeBoxplotChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
-        var boxHeight = Math.abs(baseData.baseBarSize * seriesItem.ratioDistance);
-        var boxStartTop = baseData.baseBarSize * (1 - seriesItem.lqRatio);
-        var startTop = baseData.basePosition + boxStartTop + chartConst.SERIES_EXPAND_SIZE;
-        var baseTopPosition = baseData.basePosition + chartConst.SERIES_EXPAND_SIZE;
-        var pointCount, endTop, boundLeft, outliers;
+    _makeBoxplotChartBound(baseData, iterationData, isStackType, seriesItem, index) {
+        const {pointInterval, barSize, baseBarSize, basePosition} = baseData;
+        const boxHeight = Math.abs(baseBarSize * seriesItem.ratioDistance);
+        const boxStartTop = baseBarSize * (1 - seriesItem.lqRatio);
+        const startTop = basePosition + boxStartTop + SERIES_EXPAND_SIZE;
+        const baseTopPosition = basePosition + SERIES_EXPAND_SIZE;
+        const pointCount = index;
+        let endTop;
 
-        pointCount = index;
-        iterationData.left = iterationData.baseLeft + (baseData.pointInterval * pointCount);
+        iterationData.left = iterationData.baseLeft + (pointInterval * pointCount);
         iterationData.plusTop = 0;
         iterationData.minusTop = 0;
 
@@ -80,76 +79,72 @@ var BoxplotChartSeries = snippet.defineClass(Series, /** @lends BoxplotChartSeri
             iterationData.minusTop += boxHeight;
         }
 
-        boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
-
-        outliers = snippet.map(seriesItem.outliers, function(outlier) {
-            return {
-                top: (baseData.baseBarSize * (1 - outlier.ratio)) + baseTopPosition,
-                left: boundLeft + (baseData.barSize / 2)
-            };
-        });
+        const boundLeft = iterationData.left + pointInterval - (barSize / 2);
+        const outliers = (seriesItem.outliers || []).map(outlier => ({
+            top: (baseBarSize * (1 - outlier.ratio)) + baseTopPosition,
+            left: boundLeft + (barSize / 2)
+        }));
 
         return {
             start: {
                 top: startTop,
                 left: boundLeft,
-                width: baseData.barSize,
+                width: barSize,
                 height: 0
             },
             end: {
                 top: endTop,
                 left: boundLeft,
-                width: baseData.barSize,
+                width: barSize,
                 height: boxHeight
             },
             min: {
-                top: (baseData.baseBarSize * (1 - seriesItem.minRatio)) + baseTopPosition,
+                top: (baseBarSize * (1 - seriesItem.minRatio)) + baseTopPosition,
                 left: boundLeft,
-                width: baseData.barSize,
+                width: barSize,
                 height: 0
             },
             max: {
-                top: (baseData.baseBarSize * (1 - seriesItem.maxRatio)) + baseTopPosition,
+                top: (baseBarSize * (1 - seriesItem.maxRatio)) + baseTopPosition,
                 left: boundLeft,
-                width: baseData.barSize,
+                width: barSize,
                 height: 0
             },
             median: {
-                top: (baseData.baseBarSize * (1 - seriesItem.medianRatio)) + baseTopPosition,
+                top: (baseBarSize * (1 - seriesItem.medianRatio)) + baseTopPosition,
                 left: boundLeft,
-                width: baseData.barSize,
+                width: barSize,
                 height: 0
             },
-            outliers: outliers
+            outliers
         };
-    },
+    }
 
     /**
      * Make bounds of boxplot chart.
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */
-    _makeBounds: function() {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var isStackType = predicate.isValidStackOption(this.options.stackType);
-        var dimension = this.layout.dimension;
-        var baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
+    _makeBounds() {
+        const seriesDataModel = this._getSeriesDataModel();
+        const isStackType = predicate.isValidStackOption(this.options.stackType);
+        const {width, height} = this.layout.dimension;
+        const baseData = this._makeBaseDataForMakingBound(width, height);
 
-        return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var baseLeft = (groupIndex * baseData.groupSize) + self.layout.position.left;
-            var iterationData = {
-                baseLeft: baseLeft,
+        return seriesDataModel.map((seriesGroup, groupIndex) => {
+            const baseLeft = (groupIndex * baseData.groupSize) + this.layout.position.left;
+            const iterationData = {
+                baseLeft,
                 left: baseLeft,
                 plusTop: 0,
                 minusTop: 0,
                 prevStack: null
             };
-            var iteratee = snippet.bind(self._makeBoxplotChartBound, self, baseData, iterationData, isStackType);
+            const iteratee = this._makeBoxplotChartBound.bind(this, baseData, iterationData, isStackType);
 
             return seriesGroup.map(iteratee);
         });
-    },
+    }
 
     /**
      * Calculate left position of sum label.
@@ -158,18 +153,23 @@ var BoxplotChartSeries = snippet.defineClass(Series, /** @lends BoxplotChartSeri
      * @returns {number} left position value
      * @private
      */
-    _calculateLeftPositionOfSumLabel: function(bound, formattedSum) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
+    _calculateLeftPositionOfSumLabel({left, width}, formattedSum) {
+        const labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
 
-        return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
+        return left + ((width - labelWidth + TEXT_PADDING) / 2);
     }
-});
+}
 
 BarTypeSeriesBase.mixin(BoxplotChartSeries);
 
-function boxplotSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
+/**
+ * boxplotSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} boxplot series instanse
+ * @ignore
+ */
+export default function boxplotSeriesFactory(params) {
+    const {chartOptions: {libType}, chartTheme} = params;
 
     params.libType = libType;
     params.chartType = 'boxplot';
@@ -180,5 +180,3 @@ function boxplotSeriesFactory(params) {
 
 boxplotSeriesFactory.componentType = 'series';
 boxplotSeriesFactory.BoxplotChartSeries = BoxplotChartSeries;
-
-module.exports = boxplotSeriesFactory;

@@ -4,16 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import BarTypeSeriesBase from './barTypeSeriesBase';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
 
-var Series = require('./series');
-var BarTypeSeriesBase = require('./barTypeSeriesBase');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
+class ColumnChartSeries extends Series {
     /**
      * Column chart series component.
      * @constructs ColumnChartSeries
@@ -24,9 +21,6 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
-    init: function() {
-        Series.apply(this, arguments);
-    },
 
     /**
      * Make bound of column chart.
@@ -41,22 +35,22 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
      * }} column chart bound
      * @private
      */
-    _makeBound: function(width, height, left, startTop, endTop) {
+    _makeBound(width, height, left, startTop, endTop) {
         return {
             start: {
                 top: startTop,
-                left: left,
-                width: width,
+                left,
+                width,
                 height: 0
             },
             end: {
                 top: endTop,
-                left: left,
-                width: width,
-                height: height
+                left,
+                width,
+                height
             }
         };
-    },
+    }
 
     /**
      * Make column chart bound.
@@ -84,17 +78,18 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
      * }}
      * @private
      */
-    _makeColumnChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
-        var barHeight = Math.abs(baseData.baseBarSize * seriesItem.ratioDistance);
-        var barStartTop = baseData.baseBarSize * seriesItem.startRatio;
-        var startTop = baseData.basePosition + barStartTop + chartConst.SERIES_EXPAND_SIZE;
-        var changedStack = (seriesItem.stack !== iterationData.prevStack);
-        var pointCount, endTop, bound, boundLeft;
-        var isOverLapBar = (baseData.barSize * baseData.itemCount > baseData.groupSize);
-        var columnInterval = isOverLapBar ? baseData.pointInterval : baseData.barSize;
+    _makeColumnChartBound(baseData, iterationData, isStackType, seriesItem, index) {
+        const {baseBarSize, basePosition, barSize, itemCount, groupSize, pointInterval} = baseData;
+        const barHeight = Math.abs(baseBarSize * seriesItem.ratioDistance);
+        const barStartTop = baseBarSize * seriesItem.startRatio;
+        const startTop = basePosition + barStartTop + chartConst.SERIES_EXPAND_SIZE;
+        const changedStack = (seriesItem.stack !== iterationData.prevStack);
+        const isOverLapBar = (barSize * itemCount > groupSize);
+        const columnInterval = isOverLapBar ? pointInterval : barSize;
+        let endTop, boundLeft;
 
         if (!isStackType || (!this.options.diverging && changedStack)) {
-            pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
+            const pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
             iterationData.left = iterationData.baseLeft + (columnInterval * pointCount);
             iterationData.plusTop = 0;
             iterationData.minusTop = 0;
@@ -111,43 +106,40 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
         iterationData.prevStack = seriesItem.stack;
 
         if (isOverLapBar) {
-            boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2);
+            boundLeft = iterationData.left + pointInterval - (barSize / 2);
         } else {
-            boundLeft = iterationData.left + baseData.pointInterval - (baseData.barSize / 2)
-                + ((baseData.pointInterval - baseData.barSize) / 2 * (baseData.itemCount - 1));
+            boundLeft = iterationData.left + pointInterval - (barSize / 2)
+                + ((pointInterval - barSize) / 2 * (itemCount - 1));
         }
 
-        bound = this._makeBound(baseData.barSize, barHeight, boundLeft, startTop, endTop);
-
-        return bound;
-    },
+        return this._makeBound(barSize, barHeight, boundLeft, startTop, endTop);
+    }
 
     /**
      * Make bounds of column chart.
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */
-    _makeBounds: function() {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var isStackType = predicate.isValidStackOption(this.options.stackType);
-        var dimension = this.layout.dimension;
-        var baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
+    _makeBounds() {
+        const seriesDataModel = this._getSeriesDataModel();
+        const isStackType = predicate.isValidStackOption(this.options.stackType);
+        const {width, height} = this.layout.dimension;
+        const baseData = this._makeBaseDataForMakingBound(width, height);
 
-        return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var baseLeft = (groupIndex * baseData.groupSize) + self.layout.position.left;
-            var iterationData = {
-                baseLeft: baseLeft,
+        return seriesDataModel.map((seriesGroup, groupIndex) => {
+            const baseLeft = (groupIndex * baseData.groupSize) + this.layout.position.left;
+            const iterationData = {
+                baseLeft,
                 left: baseLeft,
                 plusTop: 0,
                 minusTop: 0,
                 prevStack: null
             };
-            var iteratee = snippet.bind(self._makeColumnChartBound, self, baseData, iterationData, isStackType);
+            const iteratee = this._makeColumnChartBound.bind(this, baseData, iterationData, isStackType);
 
             return seriesGroup.map(iteratee);
         });
-    },
+    }
 
     /**
      * Calculate left position of sum label.
@@ -156,28 +148,28 @@ var ColumnChartSeries = snippet.defineClass(Series, /** @lends ColumnChartSeries
      * @returns {number} left position value
      * @private
      */
-    _calculateLeftPositionOfSumLabel: function(bound, formattedSum) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
+    _calculateLeftPositionOfSumLabel({left, width}, formattedSum) {
+        const labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
 
-        return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
+        return left + ((width - labelWidth + chartConst.TEXT_PADDING) / 2);
     }
-
-});
+}
 
 BarTypeSeriesBase.mixin(ColumnChartSeries);
 
-function columnSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
-
-    params.libType = libType;
+/**
+ * columnSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} column series instanse
+ * @ignore
+ */
+export default function columnSeriesFactory(params) {
+    params.libType = params.chartOptions.libType;
     params.chartType = 'column';
-    params.chartBackground = chartTheme.chart.background;
+    params.chartBackground = params.chartTheme.chart.background;
 
     return new ColumnChartSeries(params);
 }
 
 columnSeriesFactory.componentType = 'series';
 columnSeriesFactory.ColumnChartSeries = ColumnChartSeries;
-
-module.exports = columnSeriesFactory;

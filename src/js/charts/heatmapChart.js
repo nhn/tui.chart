@@ -5,20 +5,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import ChartBase from './chartBase';
+import ColorSpectrum from './colorSpectrum';
+import chartConst from '../const';
 
-var ChartBase = require('./chartBase');
-var ColorSpectrum = require('./colorSpectrum');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
-
-var HeatmapChart = snippet.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
-    /**
-     *
-     * className
-     * @type {string}
-     */
-    className: 'tui-heatmap-chart',
+export default class HeatmapChart extends ChartBase {
     /**
      * Heatmap chart is a graphical representation of data where the individual values contained
      *      in a matrix are represented as colors.
@@ -29,7 +20,7 @@ var HeatmapChart = snippet.defineClass(ChartBase, /** @lends HeatmapChart.protot
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
 
         if (!options.tooltip.align) {
@@ -38,22 +29,29 @@ var HeatmapChart = snippet.defineClass(ChartBase, /** @lends HeatmapChart.protot
 
         options.tooltip.grouped = false;
 
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true,
             isVertical: true
         });
-    },
+
+        /**
+         *
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-heatmap-chart';
+    }
 
     /**
      * Add components.
      * @private
      */
-    _addComponents: function() {
-        var seriesTheme = this.theme.series[this.chartType];
-        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+    _addComponents() {
+        const seriesTheme = this.theme.series[this.chartType];
+        const colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
         this._addComponentsForAxisType({
             axis: [
@@ -68,68 +66,60 @@ var HeatmapChart = snippet.defineClass(ChartBase, /** @lends HeatmapChart.protot
             legend: {
                 classType: 'spectrumLegend',
                 additionalParams: {
-                    colorSpectrum: colorSpectrum
+                    colorSpectrum
                 }
             },
             series: [
                 {
                     name: 'heatmapSeries',
                     data: {
-                        colorSpectrum: colorSpectrum
+                        colorSpectrum
                     }
                 }
             ],
             tooltip: true,
             mouseEventDetector: true
         });
-    },
+    }
 
     /**
      * Get scale option.
      * @returns {{legend: boolean}}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         return {
             legend: true
         };
-    },
+    }
 
     /**
      * Add data ratios.
      * @override
      */
-    addDataRatios: function(limitMap) {
+    addDataRatios(limitMap) {
         this.dataProcessor.addDataRatios(limitMap.legend, null, this.chartType);
-    },
+    }
 
     /**
      * Add components.
      * @override
      * @private
      */
-    addComponents: function() {
-        var seriesTheme = this.theme.series[this.chartType];
-        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+    addComponents() {
+        const seriesTheme = this.theme.series[this.chartType];
+        const colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
         this.componentManager.register('title', 'title');
-        this.componentManager.register('legend', 'spectrumLegend', {
-            colorSpectrum: colorSpectrum
-        });
+        this.componentManager.register('legend', 'spectrumLegend', {colorSpectrum});
 
-        this.componentManager.register('heatmapSeries', 'heatmapSeries', {
-            colorSpectrum: colorSpectrum
-        });
+        this.componentManager.register('heatmapSeries', 'heatmapSeries', {colorSpectrum});
 
         this.componentManager.register('xAxis', 'axis');
         this.componentManager.register('yAxis', 'axis');
 
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
-        this.componentManager.register('tooltip', 'tooltip', {
-            colorSpectrum: colorSpectrum
-        });
+        this.componentManager.register('tooltip', 'tooltip', {colorSpectrum});
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
-});
-
-module.exports = HeatmapChart;
+}

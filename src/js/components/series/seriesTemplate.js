@@ -3,12 +3,9 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import templateMaker from '../../helpers/templateMaker';
 
-'use strict';
-
-var templateMaker = require('../../helpers/templateMaker');
-
-var htmls = {
+const htmls = {
     HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}"{{ rangeLabelAttribute }}>' +
         '{{ label }}</div>',
     TEXT_CSS_TEXT: 'left:{{ left }}px;top:{{ top }}px;font-family:{{ fontFamily }};' +
@@ -20,7 +17,7 @@ var htmls = {
     HTML_SERIES_BLOCK: '<div class="tui-chart-series-block" style="{{ cssText }}">{{ label }}</div>'
 };
 
-module.exports = {
+export default {
     tplSeriesLabel: templateMaker.template(htmls.HTML_SERIES_LABEL),
     tplCssText: templateMaker.template(htmls.TEXT_CSS_TEXT),
     tplCssTextForLineType: templateMaker.template(htmls.TEXT_CSS_TEXT_FOR_LINE_TYPE),

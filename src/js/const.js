@@ -4,15 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 /**
  * Chart const
  * @readonly
  * @enum {number|string}
  * @private
  */
-var chartConst = {
+export default {
     /** tui class names
      * @type {string}
      */
@@ -355,6 +353,7 @@ var chartConst = {
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
     CIRCLE_LEGEND_PADDING: 10,
     HALF_RATIO: 0.5,
+    AXIS_BACKGROUND_RIGHT_PADDING: 4,
     /** X-AXIS LABEL PADDING */
     X_AXIS_LABEL_PADDING: 7,
     /** X-AXIS title padding */
@@ -469,4 +468,3 @@ var chartConst = {
     BULLET_MARKERS_HEIGHT_RATIO: 0.55,
     BULLET_MARKER_DETECT_PADDING: 3
 };
-module.exports = chartConst;

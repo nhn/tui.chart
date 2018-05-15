@@ -2,21 +2,17 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  * @fileoverview webpack configuration file
  */
-
-'use strict';
-
 var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
-
 var SafeUmdPlugin = require('safe-umd-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var BUNDLE_PATH = path.join(__dirname, 'dist/');
-
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
-
+var babelPolyfill = require('babel-polyfill');
+var es3ifyPlugin = require('es3ify-webpack-plugin');
 var FILENAME = pkg.name + (isProduction && isMinified ? '.min' : '');
 
 module.exports = (function() {
@@ -34,7 +30,7 @@ module.exports = (function() {
         eslint: {
             failOnError: isProduction
         },
-        entry: './src/js/index.js',
+        entry: ['babel-polyfill', './src/js/index.js'],
         debug: false,
         output: {
             library: ['tui', 'chart'],
@@ -64,15 +60,23 @@ module.exports = (function() {
                 exclude: /(node_modules|bower_components)/,
                 loader: 'eslint'
             }],
-            loaders: [{
-                test: /\.less$/,
-                loader: ExtractTextPlugin.extract('css-loader!less?paths=src/less/')
-            }]
+            loaders: [
+                {
+                    test: /\.js$/,
+                    exclude: /(node_modules|bower_components)/,
+                    loader: 'babel-loader?cacheDirectory'
+                },
+                {
+                    test: /\.less$/,
+                    loader: ExtractTextPlugin.extract('css-loader!less?paths=src/less/')
+                }
+            ]
         },
         plugins: [
             new SafeUmdPlugin(),
             new webpack.BannerPlugin(BANNER, {entryOnly: true}),
-            new ExtractTextPlugin(FILENAME + '.css')
+            new ExtractTextPlugin(FILENAME + '.css'),
+            new es3ifyPlugin()
         ],
         cache: false
     };

@@ -4,20 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import ChartBase from './chartBase';
+import chartConst from '../const';
+import rawDataHandler from '../models/data/rawDataHandler';
+import predicate from '../helpers/predicate';
+import snippet from 'tui-code-snippet';
 
-var ChartBase = require('./chartBase');
-var chartConst = require('../const');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var predicate = require('../helpers/predicate');
-var snippet = require('tui-code-snippet');
-
-var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-bar-chart',
+export default class BarChart extends ChartBase {
     /**
      * Bar chart.
      * @constructs BarChart
@@ -27,26 +20,31 @@ var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
         rawDataHandler.updateRawSeriesDataByOptions(rawData, options.series);
-        this._updateOptionsRelatedDiverging(options);
 
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
+        super({
+            rawData,
+            theme,
+            options,
             hasAxes: true
         });
-    },
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-bar-chart';
+
+        this._updateOptionsRelatedDiverging(options);
+    }
 
     /**
      * Update options related diverging option.
      * @param {object} options - options
      * @private
      */
-    _updateOptionsRelatedDiverging: function(options) {
-        var isCenter;
-
+    _updateOptionsRelatedDiverging(options) {
         options.series = options.series || {};
 
         /**
@@ -63,20 +61,20 @@ var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
             options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
             this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
 
-            isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
+            const isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
 
             options.yAxis.isCenter = isCenter;
             options.xAxis.divided = isCenter;
             options.series.divided = isCenter;
             options.plot.divided = isCenter;
         }
-    },
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -93,25 +91,25 @@ var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
 
     /**
      * Get scale option.
      * @returns {{xAxis: boolean}}
      * @override
      */
-    getScaleOption: function() {
+    getScaleOption() {
         return {
             xAxis: true
         };
-    },
+    }
 
     /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
-    onChangeCheckedLegends: function(checkedLegends) {
-        var boundParams;
+    onChangeCheckedLegends(checkedLegends) {
+        let boundParams;
 
         if (this.hasRightYAxis) {
             boundParams = {
@@ -119,19 +117,17 @@ var BarChart = snippet.defineClass(ChartBase, /** @lends BarChart.prototype */ {
             };
         }
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, null, boundParams);
-    },
+    }
+
     /**
      * Add data ratios.
      * @override
      * modified from axisTypeMixer
      */
-    addDataRatios: function(limitMap) {
-        var seriesOption = this.options.series || {};
-        var chartType = this.chartType;
-        var stackType = (seriesOption[chartType] || seriesOption).stackType;
+    addDataRatios(limitMap) {
+        const {options: {series: seriesOption = {}}, chartType} = this;
+        const {stackType} = (seriesOption[chartType] || seriesOption);
 
         this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
-});
-
-module.exports = BarChart;
+}

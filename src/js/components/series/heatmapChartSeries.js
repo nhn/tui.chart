@@ -4,13 +4,10 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import Series from './series';
+import labelHelper from './renderingLabelHelper';
 
-var Series = require('./series');
-var labelHelper = require('./renderingLabelHelper');
-var snippet = require('tui-code-snippet');
-
-var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
+class HeatmapChartSeries extends Series {
     /**
      * Series component for rendering graph of heatmap chart.
      * @constructs HeatmapChartSeries
@@ -18,15 +15,15 @@ var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeri
      * @param {object} params - parameters
      * @extends Series
      */
-    init: function(params) {
+    constructor(params) {
+        super(params);
+
         /**
          * Color spectrum
          * @type {ColorSpectrum}
          */
         this.colorSpectrum = params.colorSpectrum;
-
-        Series.call(this, params);
-    },
+    }
 
     /**
      * Make series data for rendering graph and sending to mouse event detector.
@@ -37,19 +34,17 @@ var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeri
      * @private
      * @override
      */
-    _makeSeriesData: function() {
-        var groupBounds = this._makeBounds();
-        var seriesDataModel = this._getSeriesDataModel();
+    _makeSeriesData() {
+        const groupBounds = this._makeBounds();
+        const seriesDataModel = this._getSeriesDataModel();
 
         return {
             colorSpectrum: this.colorSpectrum,
-            groupBounds: groupBounds,
-            seriesDataModel: seriesDataModel,
-            isAvailable: function() {
-                return groupBounds && groupBounds.length > 0;
-            }
+            groupBounds,
+            seriesDataModel,
+            isAvailable: () => (groupBounds && groupBounds.length > 0)
         };
-    },
+    }
 
     /**
      * Make bound for graph rendering.
@@ -60,51 +55,45 @@ var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeri
      * @returns {{end: {left: number, top: number, width: number, height: number}}}
      * @private
      */
-    _makeBound: function(blockWidth, blockHeight, x, y) {
-        var height = this.layout.dimension.height;
-        var left = (blockWidth * x) + this.layout.position.left;
-        var top = height - (blockHeight * (y + 1)) + this.layout.position.top;
+    _makeBound(blockWidth, blockHeight, x, y) {
+        const {dimension: {height}, position: {top, left}} = this.layout;
 
         return {
             end: {
-                left: left,
-                top: top,
+                left: left + (blockWidth * x),
+                top: top + height - (blockHeight * (y + 1)),
                 width: blockWidth,
                 height: blockHeight
             }
         };
-    },
+    }
 
     /**
      * Make bounds for graph rendering.
      * @returns {Array.<Array.<{left: number, top: number, radius: number}>>} positions
      * @private
      */
-    _makeBounds: function() {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var dimension = this.layout.dimension;
-        var blockWidth = dimension.width / this.dataProcessor.getCategoryCount(false);
-        var blockHeight = dimension.height / this.dataProcessor.getCategoryCount(true);
+    _makeBounds() {
+        const seriesDataModel = this._getSeriesDataModel();
+        const {width, height} = this.layout.dimension;
+        const blockWidth = width / this.dataProcessor.getCategoryCount(false);
+        const blockHeight = height / this.dataProcessor.getCategoryCount(true);
 
-        return seriesDataModel.map(function(seriesGroup, x) {
-            return seriesGroup.map(function(seriesItem, y) {
-                return self._makeBound(blockWidth, blockHeight, x, y);
-            });
-        });
-    },
+        return seriesDataModel.map((seriesGroup, x) => (
+            seriesGroup.map((seriesItem, y) => this._makeBound(blockWidth, blockHeight, x, y))
+        ));
+    }
 
     /**
      * Call showWedge event of spectrum legend, when call showTooltip event.
      * @param {{indexes: {groupIndex: number, index: number}}} params - parameters
      */
-    onShowTooltip: function(params) {
-        var seriesDataModel = this._getSeriesDataModel();
-        var indexes = params.indexes;
-        var item = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index);
+    onShowTooltip({indexes}) {
+        const seriesDataModel = this._getSeriesDataModel();
+        const {ratio, label} = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index);
 
-        this.eventBus.fire('showWedge', item.ratio, item.label);
-    },
+        this.eventBus.fire('showWedge', ratio, label);
+    }
 
     /**
      * Render series label.
@@ -112,28 +101,26 @@ var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeri
      * @returns {Array.<object>}
      * @private
      */
-    _renderSeriesLabel: function(paper) {
-        var sdm = this._getSeriesDataModel();
-        var boundsSet = this.seriesData.groupBounds;
-        var labelTheme = this.theme.label;
-        var selectedIndex = this.selectedLegendIndex;
-        var positionsSet = labelHelper.boundsToLabelPositions(sdm, boundsSet, labelTheme);
-        var labels = sdm.map(function(datum) {
-            return datum.valuesMap.value;
-        });
+    _renderSeriesLabel(paper) {
+        const sdm = this._getSeriesDataModel();
+        const boundsSet = this.seriesData.groupBounds;
+        const labelTheme = this.theme.label;
+        const selectedIndex = this.selectedLegendIndex;
+        const positionsSet = labelHelper.boundsToLabelPositions(sdm, boundsSet, labelTheme);
+        const labels = sdm.map(datum => datum.valuesMap.value);
 
         return this.graphRenderer.renderSeriesLabel(paper, positionsSet, labels, labelTheme, selectedIndex);
-    },
+    }
 
     /**
      * Resize.
      * @override
      */
-    resize: function() {
+    resize(...args) {
         this.boundMap = null;
 
-        Series.prototype.resize.apply(this, arguments);
-    },
+        Series.prototype.resize.apply(this, args);
+    }
 
     /**
      * Make exportation data for public event of series type.
@@ -141,18 +128,22 @@ var HeatmapChartSeries = snippet.defineClass(Series, /** @lends HeatmapChartSeri
      * @returns {{x: number, y: number}}
      * @private
      */
-    _makeExportationSeriesData: function(seriesData) {
+    _makeExportationSeriesData({indexes}) {
         return {
-            x: seriesData.indexes.groupIndex,
-            y: seriesData.indexes.index
+            x: indexes.groupIndex,
+            y: indexes.index
         };
     }
-});
+}
 
-function heatmapChartSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-
-    params.libType = libType;
+/**
+ * heatmapChartSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} heatmapChart series instanse
+ * @ignore
+ */
+export default function heatmapChartSeriesFactory(params) {
+    params.libType = params.chartOptions.libType;
     params.chartType = 'heatmap';
 
     return new HeatmapChartSeries(params);
@@ -160,5 +151,3 @@ function heatmapChartSeriesFactory(params) {
 
 heatmapChartSeriesFactory.componentType = 'series';
 heatmapChartSeriesFactory.HeatmapChartSeries = HeatmapChartSeries;
-
-module.exports = heatmapChartSeriesFactory;

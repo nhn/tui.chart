@@ -4,16 +4,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import Series from './series';
+import BarTypeSeriesBase from './barTypeSeriesBase';
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
 
-'use strict';
+const {OVERLAPPING_WIDTH, TEXT_PADDING} = chartConst;
 
-var Series = require('./series');
-var BarTypeSeriesBase = require('./barTypeSeriesBase');
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var snippet = require('tui-code-snippet');
-
-var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.prototype */ {
+class BarChartSeries extends Series {
     /**
      * Bar chart series component.
      * @constructs BarChartSeries
@@ -24,9 +22,6 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
-    init: function() {
-        Series.apply(this, arguments);
-    },
 
     /**
      * Make bound of bar chart.
@@ -41,22 +36,22 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
      * }} column chart bound
      * @private
      */
-    _makeBound: function(width, height, top, startLeft, endLeft) {
+    _makeBound(width, height, top, startLeft, endLeft) {
         return {
             start: {
-                top: top,
+                top,
                 left: startLeft,
                 width: 0,
-                height: height
+                height
             },
             end: {
-                top: top,
+                top,
                 left: endLeft,
-                width: width,
-                height: height
+                width,
+                height
             }
         };
-    },
+    }
 
     /**
      * Calculate additional left for divided option.
@@ -64,15 +59,15 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
      * @returns {number}
      * @private
      */
-    _calculateAdditionalLeft: function(value) {
-        var additionalLeft = 0;
+    _calculateAdditionalLeft(value) {
+        let additionalLeft = 0;
 
         if (this.options.divided && value > 0) {
-            additionalLeft = this.dimensionMap.yAxis.width + chartConst.OVERLAPPING_WIDTH;
+            additionalLeft = this.dimensionMap.yAxis.width + OVERLAPPING_WIDTH;
         }
 
         return additionalLeft;
-    },
+    }
 
     /**
      * Make bar chart bound.
@@ -100,24 +95,27 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
      * }}
      * @private
      */
-    _makeBarChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
-        var barWidth = baseData.baseBarSize * seriesItem.ratioDistance;
-        var additionalLeft = this._calculateAdditionalLeft(seriesItem.value);
-        var barStartLeft = baseData.baseBarSize * seriesItem.startRatio;
-        var startLeft = baseData.basePosition + barStartLeft + additionalLeft;
-        var changedStack = (seriesItem.stack !== iterationData.prevStack);
-        var pointCount, endLeft, bound, boundTop;
-        var isOverLapBar = (baseData.barSize * baseData.itemCount > baseData.groupSize);
-        var barInterval = isOverLapBar ? baseData.pointInterval : baseData.barSize;
+    _makeBarChartBound(baseData, iterationData, isStackType, seriesItem, index) {
+        const {baseBarSize, basePosition, barSize, itemCount, groupSize, pointInterval} = baseData;
+        const {ratioDistance, value, startRatio, stack} = seriesItem;
+
+        const barWidth = baseBarSize * ratioDistance;
+        const additionalLeft = this._calculateAdditionalLeft(value);
+        const barStartLeft = baseBarSize * startRatio;
+        const startLeft = basePosition + barStartLeft + additionalLeft;
+        const changedStack = (stack !== iterationData.prevStack);
+        const isOverLapBar = (barSize * itemCount > groupSize);
+        const barInterval = isOverLapBar ? pointInterval : barSize;
+        let endLeft;
 
         if (!isStackType || (!this.options.diverging && changedStack)) {
-            pointCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
+            const pointCount = isStackType ? this.dataProcessor.findStackIndex(stack) : index;
             iterationData.top = iterationData.baseTop + (barInterval * pointCount);
             iterationData.plusLeft = 0;
             iterationData.minusLeft = 0;
         }
 
-        if (seriesItem.value >= 0) {
+        if (value >= 0) {
             endLeft = startLeft + iterationData.plusLeft;
             iterationData.plusLeft += barWidth;
         } else {
@@ -125,46 +123,41 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
             endLeft = startLeft + iterationData.minusLeft;
         }
 
-        iterationData.prevStack = seriesItem.stack;
+        iterationData.prevStack = stack;
 
-        if (isOverLapBar) {
-            boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2);
-        } else {
-            boundTop = iterationData.top + baseData.pointInterval - (baseData.barSize / 2)
-                + ((baseData.pointInterval - baseData.barSize) / 2 * (baseData.itemCount - 1));
+        let boundTop = iterationData.top + pointInterval - (barSize / 2);
+        if (!isOverLapBar) {
+            boundTop += ((pointInterval - barSize) / 2 * (itemCount - 1));
         }
 
-        bound = this._makeBound(barWidth, baseData.barSize, boundTop, startLeft, endLeft);
-
-        return bound;
-    },
+        return this._makeBound(barWidth, barSize, boundTop, startLeft, endLeft);
+    }
 
     /**
      * Make series bounds for rendering
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */
-    _makeBounds: function() {
-        var self = this;
-        var seriesDataModel = this._getSeriesDataModel();
-        var isStacked = predicate.isValidStackOption(this.options.stackType);
-        var dimension = this.layout.dimension;
-        var baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
+    _makeBounds() {
+        const seriesDataModel = this._getSeriesDataModel();
+        const isStacked = predicate.isValidStackOption(this.options.stackType);
+        const {dimension: {width, height}, position: {top}} = this.layout;
+        const baseData = this._makeBaseDataForMakingBound(height, width);
 
-        return seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var baseTop = (groupIndex * baseData.groupSize) + self.layout.position.top;
-            var iterationData = {
-                baseTop: baseTop,
+        return seriesDataModel.map((seriesGroup, groupIndex) => {
+            const baseTop = (groupIndex * baseData.groupSize) + top;
+            const iterationData = {
+                baseTop,
                 top: baseTop,
                 plusLeft: 0,
                 minusLeft: 0,
                 prevStack: null
             };
-            var iteratee = snippet.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
+            const iteratee = this._makeBarChartBound.bind(this, baseData, iterationData, isStacked);
 
             return seriesGroup.map(iteratee);
         });
-    },
+    }
 
     /**
      * Calculate top position of sum label.
@@ -173,16 +166,21 @@ var BarChartSeries = snippet.defineClass(Series, /** @lends BarChartSeries.proto
      * @returns {number} top position value
      * @private
      */
-    _calculateTopPositionOfSumLabel: function(bound, labelHeight) {
-        return bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
+    _calculateTopPositionOfSumLabel(bound, labelHeight) {
+        return bound.top + ((bound.height - labelHeight + TEXT_PADDING) / 2);
     }
-});
+}
 
 BarTypeSeriesBase.mixin(BarChartSeries);
 
-function barSeriesFactory(params) {
-    var libType = params.chartOptions.libType;
-    var chartTheme = params.chartTheme;
+/**
+ * barSeriesFactory
+ * @param {object} params chart options
+ * @returns {object} bar series instanse
+ * @ignore
+ */
+export default function barSeriesFactory(params) {
+    const {chartTheme, chartOptions: {libType}} = params;
 
     params.libType = libType;
     params.chartType = 'bar';
@@ -194,5 +192,3 @@ function barSeriesFactory(params) {
 // @todo let's find better way
 barSeriesFactory.componentType = 'series';
 barSeriesFactory.BarChartSeries = BarChartSeries;
-
-module.exports = barSeriesFactory;

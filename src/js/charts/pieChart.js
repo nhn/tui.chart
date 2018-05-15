@@ -3,20 +3,10 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import ChartBase from './chartBase';
+import chartConst from '../const';
 
-'use strict';
-
-var ChartBase = require('./chartBase');
-var chartConst = require('../const');
-var snippet = require('tui-code-snippet');
-
-var PieChart = snippet.defineClass(ChartBase, /** @lends PieChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-pie-chart',
-
+export default class PieChart extends ChartBase {
     /**
      * Pie chart.
      * @constructs PieChart
@@ -25,25 +15,31 @@ var PieChart = snippet.defineClass(ChartBase, /** @lends PieChart.prototype */ {
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(rawData, theme, options) {
+    constructor(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
 
         if (!options.tooltip.align) {
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
 
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options
+        super({
+            rawData,
+            theme,
+            options
         });
-    },
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-pie-chart';
+    }
 
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('legend', 'legend');
 
@@ -52,15 +48,13 @@ var PieChart = snippet.defineClass(ChartBase, /** @lends PieChart.prototype */ {
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
 
     /**
      * Add data ratios.
      * @override
      */
-    addDataRatios: function() {
+    addDataRatios() {
         this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
     }
-});
-
-module.exports = PieChart;
+}

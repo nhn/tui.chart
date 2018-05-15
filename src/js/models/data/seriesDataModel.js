@@ -6,8 +6,6 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 /*
  * Raw series datum.
  * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
@@ -33,17 +31,17 @@
  * SeriesItem has processed terminal data like value, ratio, etc.
  */
 
-var SeriesGroup = require('./seriesGroup');
-var SeriesItem = require('./seriesItem');
-var SeriesItemForCoordinateType = require('./seriesItemForCoordinateType');
-var predicate = require('../../helpers/predicate');
-var calculator = require('../../helpers/calculator');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
+import SeriesGroup from './seriesGroup';
+import SeriesItem from './seriesItem';
+import SeriesItemForCoordinateType from './seriesItemForCoordinateType';
+import predicate from '../../helpers/predicate';
+import calculator from '../../helpers/calculator';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
 
-var concat = Array.prototype.concat;
+const {concat} = Array.prototype;
 
-var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype */{
+export default class SeriesDataModel {
     /**
      * SeriesDataModel is base model for drawing graph of chart series area,
      *      and create from rawSeriesData by user.
@@ -56,7 +54,7 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {Array.<function>} formatFunctions - format functions
      * @param {boolean} isCoordinateType - whether coordinate type or not
      */
-    init: function(rawSeriesData, chartType, options, formatFunctions, isCoordinateType) {
+    constructor(rawSeriesData, chartType, options, formatFunctions, isCoordinateType) {
         /**
          * chart type
          * @type {string}
@@ -115,32 +113,32 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
         this.valuesMap = {};
 
         this._removeRangeValue();
-    },
+    }
 
     /**
      * Remove range value of item, if has stackType option.
      * @private
      */
-    _removeRangeValue: function() {
-        var seriesOption = snippet.pick(this.options, 'series') || {};
-        var allowRange = predicate.isAllowRangeData(this.chartType) &&
+    _removeRangeValue() {
+        const seriesOption = snippet.pick(this.options, 'series') || {};
+        const allowRange = predicate.isAllowRangeData(this.chartType) &&
                 !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline;
 
         if (allowRange || this.isCoordinateType) {
             return;
         }
 
-        snippet.forEachArray(this.rawSeriesData, function(rawItem) {
+        Object.values(this.rawSeriesData).forEach(rawItem => {
             if (!snippet.isArray(rawItem.data)) {
                 return;
             }
-            snippet.forEachArray(rawItem.data, function(value, index) {
+            rawItem.data.forEach((value, index) => {
                 if (snippet.isExisty(value)) {
-                    rawItem.data[index] = concat.apply(value)[0];
+                    ([rawItem.data[index]] = concat.apply(value));
                 }
             });
         });
-    },
+    }
 
     /**
      * Create base groups.
@@ -148,35 +146,30 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @returns {Array.<Array.<(SeriesItem | SeriesItemForCoordinateType)>>}
      * @private
      */
-    _createBaseGroups: function() {
-        var chartType = this.chartType;
-        var formatFunctions = this.formatFunctions;
-        var xAxisOption = this.options.xAxis;
-        var isDivergingChart = this.isDivergingChart;
-        var isCoordinateType = this.isCoordinateType;
-        var isPieChart = predicate.isPieChart(this.chartType);
-        var hasRawDatumAsArray = predicate.isHeatmapChart(this.chartType) || predicate.isTreemapChart(this.chartType);
-        var sortValues, SeriesItemClass;
+    _createBaseGroups() {
+        const {chartType, formatFunctions, isDivergingChart, isCoordinateType} = this;
+        const xAxisOption = this.options.xAxis;
+        const isPieChart = predicate.isPieChart(this.chartType);
+        const hasRawDatumAsArray = predicate.isHeatmapChart(this.chartType) || predicate.isTreemapChart(this.chartType);
+        let sortValues, SeriesItemClass;
 
         if (isCoordinateType) {
             SeriesItemClass = SeriesItemForCoordinateType;
             sortValues = function(items) {
-                items.sort(function(a, b) {
-                    return a.x - b.x;
-                });
+                items.sort((a, b) => (a.x - b.x));
             };
         } else {
             SeriesItemClass = SeriesItem;
             sortValues = function() {};
         }
 
-        return snippet.map(this.rawSeriesData, function(rawDatum) {
-            var stack, data, legendName, items;
+        return this.rawSeriesData.map(rawDatum => {
+            let stack, data, legendName;
 
             data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
 
             if (!hasRawDatumAsArray) {
-                stack = rawDatum.stack;
+                ({stack} = rawDatum);
             }
             if (rawDatum.name) {
                 legendName = rawDatum.name;
@@ -186,37 +179,37 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
                 data = snippet.filter(data, snippet.isExisty);
             }
 
-            items = snippet.map(data, function(datum, index) {
-                return new SeriesItemClass({
-                    datum: datum,
-                    chartType: chartType,
-                    formatFunctions: formatFunctions,
-                    index: index,
-                    legendName: legendName,
-                    stack: stack,
-                    isDivergingChart: isDivergingChart,
+            const items = data.map((datum, index) => (
+                new SeriesItemClass({
+                    datum,
+                    chartType,
+                    formatFunctions,
+                    index,
+                    legendName,
+                    stack,
+                    isDivergingChart,
                     xAxisType: xAxisOption.type,
                     dateFormat: xAxisOption.dateFormat
-                });
-            });
+                })
+            ));
             sortValues(items);
 
             return items;
         });
-    },
+    }
 
     /**
      * Get base groups.
      * @returns {Array.Array.<SeriesItem>}
      * @private
      */
-    _getBaseGroups: function() {
+    _getBaseGroups() {
         if (!this.baseGroups) {
             this.baseGroups = this._createBaseGroups();
         }
 
         return this.baseGroups;
-    },
+    }
 
     /**
      * Create SeriesGroups from rawData.series.
@@ -224,50 +217,48 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @returns {Array.<SeriesGroup>}
      * @private
      */
-    _createSeriesGroupsFromRawData: function(isPivot) {
-        var baseGroups = this._getBaseGroups();
+    _createSeriesGroupsFromRawData(isPivot) {
+        let baseGroups = this._getBaseGroups();
 
         if (isPivot) {
             baseGroups = arrayUtil.pivot(baseGroups);
         }
 
-        return snippet.map(baseGroups, function(items) {
-            return new SeriesGroup(items);
-        });
-    },
+        return baseGroups.map(items => new SeriesGroup(items));
+    }
 
     /**
      * Get SeriesGroups.
      * @returns {(Array.<SeriesGroup>|object)}
      * @private
      */
-    _getSeriesGroups: function() {
+    _getSeriesGroups() {
         if (!this.groups) {
             this.groups = this._createSeriesGroupsFromRawData(true);
         }
 
         return this.groups;
-    },
+    }
 
     /**
      * Get group count.
      * @returns {Number}
      */
-    getGroupCount: function() {
+    getGroupCount() {
         return this._getSeriesGroups().length;
-    },
+    }
 
     /**
      * Get pivot groups.
      * @returns {(Array.<SeriesGroup>|object)}
      */
-    _getPivotGroups: function() {
+    _getPivotGroups() {
         if (!this.pivotGroups) {
             this.pivotGroups = this._createSeriesGroupsFromRawData();
         }
 
         return this.pivotGroups;
-    },
+    }
 
     /**
      * Get SeriesGroup.
@@ -275,26 +266,26 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {boolean} [isPivot] - whether pivot or not
      * @returns {SeriesGroup}
      */
-    getSeriesGroup: function(index, isPivot) {
+    getSeriesGroup(index, isPivot) {
         return isPivot ? this._getPivotGroups()[index] : this._getSeriesGroups()[index];
-    },
+    }
 
     /**
      * Get first SeriesGroup.
      * @param {boolean} [isPivot] - whether pivot or not
      * @returns {SeriesGroup}
      */
-    getFirstSeriesGroup: function(isPivot) {
+    getFirstSeriesGroup(isPivot) {
         return this.getSeriesGroup(0, isPivot);
-    },
+    }
 
     /**
      * Get first label of SeriesItem.
      * @returns {string} formatted value
      */
-    getFirstItemLabel: function() {
+    getFirstItemLabel() {
         return this.getFirstSeriesGroup().getFirstSeriesItem().label;
-    },
+    }
 
     /**
      * Get series item.
@@ -303,17 +294,17 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {boolean} [isPivot] - whether pivot or not
      * @returns {SeriesItem}
      */
-    getSeriesItem: function(groupIndex, index, isPivot) {
+    getSeriesItem(groupIndex, index, isPivot) {
         return this.getSeriesGroup(groupIndex, isPivot).getSeriesItem(index);
-    },
+    }
 
     /**
      * Get first series item.
      * @returns {SeriesItem}
      */
-    getFirstSeriesItem: function() {
+    getFirstSeriesItem() {
         return this.getSeriesItem(0, 0);
-    },
+    }
 
     /**
      * Get value.
@@ -321,27 +312,27 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {number} index - index of series items
      * @returns {number} value
      */
-    getValue: function(groupIndex, index) {
+    getValue(groupIndex, index) {
         return this.getSeriesItem(groupIndex, index).value;
-    },
+    }
 
     /**
      * Get minimum value.
      * @param {string} valueType - value type like value, x, y, r.
      * @returns {number}
      */
-    getMinValue: function(valueType) {
+    getMinValue(valueType) {
         return arrayUtil.min(this.getValues(valueType));
-    },
+    }
 
     /**
      * Get maximum value.
      * @param {string} valueType - value type like value, x, y, r.
      * @returns {number}
      */
-    getMaxValue: function(valueType) {
+    getMaxValue(valueType) {
         return arrayUtil.max(this.getValues(valueType));
-    },
+    }
 
     /**
      * Traverse seriesGroups, and returns to found SeriesItem by result of execution seriesGroup.find with condition.
@@ -349,17 +340,17 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @returns {SeriesItem}
      * @private
      */
-    _findSeriesItem: function(condition) {
-        var foundItem;
+    _findSeriesItem(condition) {
+        let foundItem;
 
-        this.each(function(seriesGroup) {
+        this.each(seriesGroup => {
             foundItem = seriesGroup.find(condition);
 
             return !foundItem;
         });
 
         return foundItem;
-    },
+    }
 
     /**
      * Find SeriesItem by value.
@@ -369,15 +360,15 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @returns {SeriesItem}
      * @private
      */
-    _findSeriesItemByValue: function(valueType, value, condition) {
+    _findSeriesItemByValue(valueType, value, condition) {
         condition = condition || function() {
             return null;
         };
 
-        return this._findSeriesItem(function(seriesItem) {
-            return seriesItem && (seriesItem[valueType] === value) && condition(seriesItem);
-        });
-    },
+        return this._findSeriesItem(seriesItem => (
+            seriesItem && (seriesItem[valueType] === value) && condition(seriesItem)
+        ));
+    }
 
     /**
      * Find minimum SeriesItem.
@@ -385,11 +376,11 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {function} condition - condition function
      * @returns {SeriesItem}
      */
-    findMinSeriesItem: function(valueType, condition) {
-        var minValue = this.getMinValue(valueType);
+    findMinSeriesItem(valueType, condition) {
+        const minValue = this.getMinValue(valueType);
 
         return this._findSeriesItemByValue(valueType, minValue, condition);
-    },
+    }
 
     /**
      * Find maximum SeriesItem.
@@ -397,11 +388,11 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {function} condition - condition function
      * @returns {*|SeriesItem}
      */
-    findMaxSeriesItem: function(valueType, condition) {
-        var maxValue = this.getMaxValue(valueType);
+    findMaxSeriesItem(valueType, condition) {
+        const maxValue = this.getMaxValue(valueType);
 
         return this._findSeriesItemByValue(valueType, maxValue, condition);
-    },
+    }
 
     /**
      * Create values that picked value from SeriesItems of SeriesGroups.
@@ -409,93 +400,87 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @returns {Array.<number>}
      * @private
      */
-    _createValues: function(valueType) {
-        var values = this.map(function(seriesGroup) {
-            return seriesGroup.getValues(valueType);
-        });
+    _createValues(valueType) {
+        let values = this.map(seriesGroup => seriesGroup.getValues(valueType));
 
-        values = concat.apply([], values);
+        values = [].concat(...values);
 
-        return snippet.filter(values, function(value) {
-            return !isNaN(value);
-        });
-    },
+        return values.filter(value => !isNaN(value));
+    }
 
     /**
      * Get values form valuesMap.
      * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      */
-    getValues: function(valueType) {
-        valueType = valueType || 'value';
-
+    getValues(valueType = 'value') {
         if (!this.valuesMap[valueType]) {
             this.valuesMap[valueType] = this._createValues(valueType);
         }
 
         return this.valuesMap[valueType];
-    },
+    }
 
     /**
      * Whether count of x values greater than count of y values.
      * @returns {boolean}
      */
-    isXCountGreaterThanYCount: function() {
+    isXCountGreaterThanYCount() {
         return this.getValues('x').length > this.getValues('y').length;
-    },
+    }
 
     /**
      * Add ratios, when has normal stackType option.
      * @param {{min: number, max: number}} limit - axis limit
      * @private
      */
-    _addRatiosWhenNormalStacked: function(limit) {
-        var distance = Math.abs(limit.max - limit.min);
+    _addRatiosWhenNormalStacked(limit) {
+        const distance = Math.abs(limit.max - limit.min);
 
-        this.each(function(seriesGroup) {
+        this.each(seriesGroup => {
             seriesGroup.addRatios(distance);
         });
-    },
+    }
 
     /**
      * Calculate base ratio for calculating ratio of item.
      * @returns {number}
      * @private
      */
-    _calculateBaseRatio: function() {
-        var values = this.getValues(),
-            plusSum = calculator.sumPlusValues(values),
-            minusSum = Math.abs(calculator.sumMinusValues(values)),
-            ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
+    _calculateBaseRatio() {
+        const values = this.getValues();
+        const plusSum = calculator.sumPlusValues(values);
+        const minusSum = Math.abs(calculator.sumMinusValues(values));
+        const ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
 
         return ratio;
-    },
+    }
 
     /**
      * Add ratios, when has percent stackType option.
      * @private
      */
-    _addRatiosWhenPercentStacked: function() {
-        var baseRatio = this._calculateBaseRatio();
+    _addRatiosWhenPercentStacked() {
+        const baseRatio = this._calculateBaseRatio();
 
-        this.each(function(seriesGroup) {
+        this.each(seriesGroup => {
             seriesGroup.addRatiosWhenPercentStacked(baseRatio);
         });
-    },
+    }
 
     /**
      * Add ratios, when has diverging stackType option.
      * @private
      */
-    _addRatiosWhenDivergingStacked: function() {
-        this.each(function(seriesGroup) {
-            var values = seriesGroup.pluck('value'),
-                plusSum = calculator.sumPlusValues(values),
-                minusSum = Math.abs(calculator.sumMinusValues(values));
+    _addRatiosWhenDivergingStacked() {
+        this.each(seriesGroup => {
+            const values = seriesGroup.pluck('value');
+            const plusSum = calculator.sumPlusValues(values);
+            const minusSum = Math.abs(calculator.sumMinusValues(values));
 
             seriesGroup.addRatiosWhenDivergingStacked(plusSum, minusSum);
         });
-    },
+    }
 
     /**
      * Make subtraction value for making ratio of no option chart.
@@ -503,9 +488,9 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @returns {number}
      * @private
      */
-    _makeSubtractionValue: function(limit) {
-        var allowMinusPointRender = predicate.allowMinusPointRender(this.chartType),
-            subValue = 0;
+    _makeSubtractionValue(limit) {
+        const allowMinusPointRender = predicate.allowMinusPointRender(this.chartType);
+        let subValue = 0;
 
         if (!allowMinusPointRender && predicate.isMinusLimit(limit)) {
             subValue = limit.max;
@@ -514,21 +499,21 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
         }
 
         return subValue;
-    },
+    }
 
     /**
      * Add ratios, when has not option.
      * @param {{min: number, max: number}} limit - axis limit
      * @private
      */
-    _addRatios: function(limit) {
-        var distance = Math.abs(limit.max - limit.min),
-            subValue = this._makeSubtractionValue(limit);
+    _addRatios(limit) {
+        const distance = Math.abs(limit.max - limit.min);
+        const subValue = this._makeSubtractionValue(limit);
 
-        this.each(function(seriesGroup) {
+        this.each(seriesGroup => {
             seriesGroup.addRatios(distance, subValue);
         });
-    },
+    }
 
     /**
      * Add data ratios.
@@ -536,8 +521,8 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {string} stackType - stackType option
      * @private
      */
-    addDataRatios: function(limit, stackType) {
-        var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType);
+    addDataRatios(limit, stackType) {
+        const isAllowedStackOption = predicate.isAllowedStackOption(this.chartType);
 
         if (isAllowedStackOption && predicate.isNormalStack(stackType)) {
             this._addRatiosWhenNormalStacked(limit);
@@ -550,29 +535,29 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
         } else {
             this._addRatios(limit);
         }
-    },
+    }
 
     /**
      * Add data ratios of pie chart.
      */
-    addDataRatiosOfPieChart: function() {
-        this.each(function(seriesGroup) {
-            var sum = calculator.sum(seriesGroup.pluck('value'));
+    addDataRatiosOfPieChart() {
+        this.each(seriesGroup => {
+            const sum = calculator.sum(seriesGroup.pluck('value'));
 
             seriesGroup.addRatios(sum);
         });
-    },
+    }
 
     /**
      * Add ratios of data for chart of coordinate type.
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
      * @param {boolean} [hasRadius] - whether has radius or not
      */
-    addDataRatiosForCoordinateType: function(limitMap, hasRadius) {
-        var xLimit = limitMap.xAxis;
-        var yLimit = limitMap.yAxis;
-        var maxRadius = hasRadius ? arrayUtil.max(this.getValues('r')) : 0;
-        var xDistance, xSubValue, yDistance, ySubValue;
+    addDataRatiosForCoordinateType(limitMap, hasRadius) {
+        const xLimit = limitMap.xAxis;
+        const yLimit = limitMap.yAxis;
+        const maxRadius = hasRadius ? arrayUtil.max(this.getValues('r')) : 0;
+        let xDistance, xSubValue, yDistance, ySubValue;
 
         if (xLimit) {
             xDistance = Math.abs(xLimit.max - xLimit.min);
@@ -584,8 +569,8 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
             ySubValue = this._makeSubtractionValue(yLimit);
         }
 
-        this.each(function(seriesGroup) {
-            seriesGroup.each(function(item) {
+        this.each(seriesGroup => {
+            seriesGroup.each(item => {
                 if (!item) {
                     return;
                 }
@@ -599,46 +584,44 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
                 }
             });
         });
-    },
+    }
 
     /**
      * Add start to all series item.
      * @param {number} start - start value
      */
-    addStartValueToAllSeriesItem: function(start) {
-        this.each(function(seriesGroup) {
+    addStartValueToAllSeriesItem(start) {
+        this.each(seriesGroup => {
             seriesGroup.addStartValueToAllSeriesItem(start);
         });
-    },
+    }
 
     /**
      * Whether has range data or not.
      * @returns {boolean}
      */
-    hasRangeData: function() {
-        var hasRangeData = false;
+    hasRangeData() {
+        let hasRangeData = false;
 
-        this.each(function(seriesGroup) {
+        this.each(seriesGroup => {
             hasRangeData = seriesGroup.hasRangeData();
 
             return !hasRangeData;
         });
 
         return hasRangeData;
-    },
+    }
 
     /**
      * Traverse groups, and executes iteratee function.
      * @param {function} iteratee - iteratee function
      * @param {boolean} isPivot - whether pivot or not
      */
-    each: function(iteratee, isPivot) {
-        var groups = isPivot ? this._getPivotGroups() : this._getSeriesGroups();
+    each(iteratee, isPivot) {
+        const groups = isPivot ? this._getPivotGroups() : this._getSeriesGroups();
 
-        snippet.forEachArray(groups, function(seriesGroup, index) {
-            return iteratee(seriesGroup, index);
-        });
-    },
+        groups.forEach((seriesGroup, index) => iteratee(seriesGroup, index));
+    }
 
     /**
      * Traverse groups, and returns to result of execution about iteratee function.
@@ -646,15 +629,13 @@ var SeriesDataModel = snippet.defineClass(/** @lends SeriesDataModel.prototype *
      * @param {boolean} isPivot - whether pivot or not
      * @returns {Array}
      */
-    map: function(iteratee, isPivot) {
-        var results = [];
+    map(iteratee, isPivot) {
+        const results = [];
 
-        this.each(function(seriesGroup, index) {
+        this.each((seriesGroup, index) => {
             results.push(iteratee(seriesGroup, index));
         }, isPivot);
 
         return results;
     }
-});
-
-module.exports = SeriesDataModel;
+}

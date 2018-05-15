@@ -4,36 +4,34 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var arrayUtil = require('../../helpers/arrayUtil');
-var renderUtil = require('../../helpers/renderUtil');
-var calculator = require('../../helpers/calculator');
-var snippet = require('tui-code-snippet');
+import arrayUtil from '../../helpers/arrayUtil';
+import renderUtil from '../../helpers/renderUtil';
+import calculator from '../../helpers/calculator';
+import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc data processor base.
  * @class DataProcessorBase
  * @private
  */
-var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototype */{
+export default class DataProcessorBase {
     /**
      * Initialize.
      */
-    baseInit: function() {
+    baseInit() {
         /**
          * functions for formatting
          * @type {Array.<function>}
          */
         this.formatFunctions = null;
-    },
+    }
 
     /**
      * Get values.
      * @abstract
      * @returns {Array}
      */
-    getValues: function() {},
+    getValues() {}
 
     /**
      * Get max value.
@@ -41,9 +39,9 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @param {?string} valueType - type of value like value, x, y, r
      * @returns {number}
      */
-    getMaxValue: function(chartType, valueType) {
+    getMaxValue(chartType, valueType) {
         return arrayUtil.max(this.getValues(chartType, valueType));
-    },
+    }
 
     /**
      * Get max value.
@@ -51,9 +49,9 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @param {?string} valueType - type of value like value, x, y, r
      * @returns {number}
      */
-    getMinValue: function(chartType, valueType) {
+    getMinValue(chartType, valueType) {
         return arrayUtil.min(this.getValues(chartType, valueType));
-    },
+    }
 
     /**
      * Get formatted max value.
@@ -62,18 +60,18 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @param {?string} valueType - type of value like value, x, y, r
      * @returns {string | number}
      */
-    getFormattedMaxValue: function(chartType, areaType, valueType) {
-        var maxValue = this.getMaxValue(chartType, valueType);
-        var formatFunctions = this.getFormatFunctions();
+    getFormattedMaxValue(chartType, areaType, valueType) {
+        const maxValue = this.getMaxValue(chartType, valueType);
+        const formatFunctions = this.getFormatFunctions();
 
         return renderUtil.formatValue({
             value: maxValue,
-            formatFunctions: formatFunctions,
-            chartType: chartType,
-            areaType: areaType,
-            valueType: valueType
+            formatFunctions,
+            chartType,
+            areaType,
+            valueType
         });
-    },
+    }
 
     /**
      * Get formatted max value.
@@ -82,18 +80,18 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @param {?string} valueType - type of value like value, x, y, r
      * @returns {string | number}
      */
-    getFormattedMinValue: function(chartType, areaType, valueType) {
-        var maxValue = this.getMinValue(chartType, valueType);
-        var formatFunctions = this.getFormatFunctions();
+    getFormattedMinValue(chartType, areaType, valueType) {
+        const maxValue = this.getMinValue(chartType, valueType);
+        const formatFunctions = this.getFormatFunctions();
 
         return renderUtil.formatValue({
             value: maxValue,
-            formatFunctions: formatFunctions,
-            chartType: chartType,
-            areaType: areaType,
-            valueType: valueType
+            formatFunctions,
+            chartType,
+            areaType,
+            valueType
         });
-    },
+    }
 
     /**
      * Pick max length under point.
@@ -101,18 +99,18 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @returns {number} max length under point
      * @private
      */
-    _pickMaxLenUnderPoint: function(values) {
-        var max = 0;
+    _pickMaxLenUnderPoint(values) {
+        let max = 0;
 
-        snippet.forEachArray(values, function(value) {
-            var len = calculator.getDecimalLength(value);
+        values.forEach(value => {
+            const len = calculator.getDecimalLength(value);
             if (len > max) {
                 max = len;
             }
         });
 
         return max;
-    },
+    }
 
     /**
      * Whether zero fill format or not.
@@ -120,9 +118,9 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @returns {boolean} result boolean
      * @private
      */
-    _isZeroFill: function(format) {
+    _isZeroFill(format) {
         return format.length > 2 && format.charAt(0) === '0';
-    },
+    }
 
     /**
      * Whether decimal format or not.
@@ -130,11 +128,11 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @returns {boolean} result boolean
      * @private
      */
-    _isDecimal: function(format) {
-        var indexOf = format.indexOf('.');
+    _isDecimal(format) {
+        const indexOf = format.indexOf('.');
 
         return indexOf > -1 && indexOf < format.length - 1;
-    },
+    }
 
     /**
      * Whether comma format or not.
@@ -142,9 +140,9 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @returns {boolean} result boolean
      * @private
      */
-    _isComma: function(format) {
+    _isComma(format) {
         return format.indexOf(',') > -1;
-    },
+    }
 
     /**
      * Format to zero fill.
@@ -153,13 +151,13 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @returns {string} formatted value
      * @private
      */
-    _formatToZeroFill: function(len, value) {
-        var isMinus = value < 0;
+    _formatToZeroFill(len, value) {
+        const isMinus = value < 0;
 
         value = renderUtil.formatToZeroFill(Math.abs(value), len);
 
         return (isMinus ? '-' : '') + value;
-    },
+    }
 
     /**
      * Format to Decimal.
@@ -168,18 +166,18 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
      * @returns {string} formatted value
      * @private
      */
-    _formatToDecimal: function(len, value) {
+    _formatToDecimal(len, value) {
         return renderUtil.formatToDecimal(value, len);
-    },
+    }
 
     /**
      * Find simple type format functions.
      * @param {string} format - simple format
      * @returns {Array.<function>}
      */
-    _findSimpleTypeFormatFunctions: function(format) {
-        var funcs = [];
-        var len;
+    _findSimpleTypeFormatFunctions(format) {
+        let funcs = [];
+        let len;
 
         if (this._isDecimal(format)) {
             len = this._pickMaxLenUnderPoint([format]);
@@ -196,15 +194,15 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
         }
 
         return funcs;
-    },
+    }
 
     /**
      * Find format functions.
      * @returns {function[]} functions
      */
-    _findFormatFunctions: function() {
-        var format = snippet.pick(this.options, 'chart', 'format');
-        var funcs = [];
+    _findFormatFunctions() {
+        const format = snippet.pick(this.options, 'chart', 'format');
+        let funcs = [];
 
         if (snippet.isFunction(format)) {
             funcs = [format];
@@ -213,19 +211,17 @@ var DataProcessorBase = snippet.defineClass(/** @lends DataProcessorBase.prototy
         }
 
         return funcs;
-    },
+    }
 
     /**
      * Get format functions.
      * @returns {Array.<function>} functions
      */
-    getFormatFunctions: function() {
+    getFormatFunctions() {
         if (!this.formatFunctions) {
             this.formatFunctions = this._findFormatFunctions();
         }
 
         return this.formatFunctions;
     }
-});
-
-module.exports = DataProcessorBase;
+}

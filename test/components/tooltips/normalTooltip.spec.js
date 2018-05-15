@@ -4,45 +4,43 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import snippet from 'tui-code-snippet';
+import normalTooltipFactory from '../../../src/js/components/tooltips/normalTooltip';
+import DataProcessor from '../../../src/js/models/data/dataProcessor';
+import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
+import SeriesGroup from '../../../src/js/models/data/seriesGroup';
 
-var snippet = require('tui-code-snippet');
-var normalTooltipFactory = require('../../../src/js/components/tooltips/normalTooltip'),
-    DataProcessor = require('../../../src/js/models/data/dataProcessor'),
-    SeriesDataModel = require('../../../src/js/models/data/seriesDataModel'),
-    SeriesGroup = require('../../../src/js/models/data/seriesGroup');
+describe('NormalTooltip', () => {
+    let tooltip, dataProcessor;
 
-describe('NormalTooltip', function() {
-    var tooltip, dataProcessor;
-
-    beforeAll(function() {
+    beforeAll(() => {
         dataProcessor = new DataProcessor({}, '', {});
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         tooltip = new normalTooltipFactory.NormalTooltip({
             chartType: 'column',
-            dataProcessor: dataProcessor,
+            dataProcessor,
             eventBus: new snippet.CustomEvents(),
             options: {}
         });
     });
 
-    describe('_makeTooltipDatum()', function() {
-        it('should make tooltip datum ratioLabel for data percentage and label for raw data value.', function() {
-            var actual, expected, seriesItem;
-            var legendLabels = {
+    describe('_makeTooltipDatum()', () => {
+        it('should make tooltip datum ratioLabel for data percentage and label for raw data value.', () => {
+            let seriesItem;
+            const legendLabels = {
                 'pie': ['legend1']
             };
 
             tooltip = new normalTooltipFactory.NormalTooltip({
                 chartType: 'pie',
-                dataProcessor: dataProcessor,
+                dataProcessor,
                 eventBus: new snippet.CustomEvents(),
                 options: {},
-                labelFormatter: function(seriesDatum, tooltipDatum) {
+                labelFormatter: (seriesDatum, tooltipDatum) => {
                     tooltipDatum.label = seriesDatum.label;
-                    tooltipDatum.ratioLabel = ':&nbsp;' + (seriesItem.ratio * 100) + '&nbsp;%&nbsp;';
+                    tooltipDatum.ratioLabel = `:&nbsp;${(seriesItem.ratio * 100)}&nbsp;%&nbsp;`;
 
                     return tooltipDatum;
                 }
@@ -54,35 +52,33 @@ describe('NormalTooltip', function() {
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels.pie[0], '', seriesItem);
-            expected = 'label1';
+            const actual = tooltip._makeTooltipDatum(legendLabels.pie[0], '', seriesItem);
+            const expected = 'label1';
 
             expect(actual.label).toBe(expected);
             expect(actual.ratioLabel).toBe(':&nbsp;35&nbsp;%&nbsp;');
         });
 
-        it('should make labels without prefix, if only seriesItem.label exists and no legend.', function() {
-            var actual, expected;
-            var legendLabels = {
+        it('should make labels without prefix, if only seriesItem.label exists and no legend.', () => {
+            const legendLabels = {
                 'column': []
             };
-            var seriesItem = {
+            const seriesItem = {
                 label: 'label1',
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({})
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels.column[0], '', seriesItem);
-            expected = 'label1';
+            const actual = tooltip._makeTooltipDatum(legendLabels.column[0], '', seriesItem);
+            const expected = 'label1';
 
             expect(actual.label).toBe(expected);
         });
 
-        it('should add label inside return value, if seriesItem.pickValueMapForTooltip() returns valueMap.', function() {
-            var actual, expected;
-            var legendLabels = {
+        it('should add label inside return value, if seriesItem.pickValueMapForTooltip() returns valueMap.', () => {
+            const legendLabels = {
                 'column': ['legend1']
             };
-            var seriesItem = {
+            const seriesItem = {
                 label: 'label1',
                 pickValueMapForTooltip: jasmine.createSpy('pickValueMapForTooltip').and.returnValue({
                     x: '10',
@@ -91,8 +87,8 @@ describe('NormalTooltip', function() {
                 })
             };
 
-            actual = tooltip._makeTooltipDatum(legendLabels.column[0], 'category1', seriesItem);
-            expected = {
+            const actual = tooltip._makeTooltipDatum(legendLabels.column[0], 'category1', seriesItem);
+            const expected = {
                 category: 'category1',
                 legend: 'legend1',
                 label: 'label1',
@@ -105,11 +101,10 @@ describe('NormalTooltip', function() {
         });
     });
 
-    describe('makeTooltipData()', function() {
-        it('should create data for tooltip rendering.', function() {
-            var actual, expected;
-            var seriesDataModel = new SeriesDataModel();
-            var pickValueMapForTooltip = jasmine.createSpy('pickValueMapForTooltip').and.returnValue({});
+    describe('makeTooltipData()', () => {
+        it('should create data for tooltip rendering.', () => {
+            const seriesDataModel = new SeriesDataModel();
+            const pickValueMapForTooltip = jasmine.createSpy('pickValueMapForTooltip').and.returnValue({});
 
             spyOn(dataProcessor, 'makeTooltipCategory').and.returnValue('Silver');
             spyOn(dataProcessor, 'getLegendLabels').and.returnValue(['Density1', 'Density2']);
@@ -117,10 +112,10 @@ describe('NormalTooltip', function() {
                 new SeriesGroup([
                     {
                         label: '10',
-                        pickValueMapForTooltip: pickValueMapForTooltip
+                        pickValueMapForTooltip
                     }, {
                         label: '20',
-                        pickValueMapForTooltip: pickValueMapForTooltip
+                        pickValueMapForTooltip
                     }
                 ])
             ];
@@ -131,8 +126,8 @@ describe('NormalTooltip', function() {
             tooltip.chartType = 'column';
             tooltip.isVertical = true;
 
-            actual = tooltip.makeTooltipData();
-            expected = {
+            const actual = tooltip.makeTooltipData();
+            const expected = {
                 column: [[
                     {category: 'Silver', label: '10', legend: 'Density1'},
                     {category: 'Silver', label: '20', legend: 'Density2'}
@@ -143,9 +138,8 @@ describe('NormalTooltip', function() {
         });
     });
 
-    describe('_makeSingleTooltipHtml()', function() {
-        it('should create tooltip HTML.', function() {
-            var actual, expected;
+    describe('_makeSingleTooltipHtml()', () => {
+        it('should create tooltip HTML.', () => {
             tooltip.data = {
                 'column': [[
                     {category: 'Silver', label: '10', legend: 'Density1'},
@@ -161,20 +155,19 @@ describe('NormalTooltip', function() {
                 'column': ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white']
             };
 
-            actual = tooltip._makeSingleTooltipHtml('column', {
+            const actual = tooltip._makeSingleTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
 
-            expected = '<div class="tui-chart-default-tooltip">' +
+            const expected = '<div class="tui-chart-default-tooltip">' +
                 '<div class="tui-chart-tooltip-head show">Silver</div>' +
                 '<div class="tui-chart-tooltip-body"><span class="tui-chart-legend-rect column" style="background-color: blue"></span><span>Density2</span><span class="tui-chart-tooltip-value">20suffix</span></div>' +
                 '</div>';
             expect(actual).toBe(expected);
         });
 
-        it('should create tooltip HTML by custom template.', function() {
-            var actual, expected;
+        it('should create tooltip HTML by custom template.', () => {
             tooltip.data = {
                 'column': [[
                     {category: 'Silver', label: '10', legend: 'Density1'},
@@ -189,14 +182,14 @@ describe('NormalTooltip', function() {
             tooltip.tooltipColors = {
                 'column': ['red', 'blue', 'green', 'yellow', 'brown', 'black', 'white']
             };
-            tooltip.templateFunc = function(category, series) {
-                return '<div>' + category + '</div><div>' + series.label + '</div><div>' + series.legend + '</div>';
-            };
-            actual = tooltip._makeSingleTooltipHtml('column', {
+            tooltip.templateFunc = (category, series) => (
+                `<div>${category}</div><div>${series.label}</div><div>${series.legend}</div>`
+            );
+            const actual = tooltip._makeSingleTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
-            expected = '<div>Silver</div><div>20</div><div>Density2</div>';
+            const expected = '<div>Silver</div><div>20</div><div>Density2</div>';
             expect(actual).toBe(expected);
         });
     });

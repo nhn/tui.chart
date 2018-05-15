@@ -3,12 +3,9 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import templateMaker from '../../helpers/templateMaker';
 
-'use strict';
-
-var templateMaker = require('../../helpers/templateMaker');
-
-var htmls = {
+const htmls = {
     HTML_CHECKBOX: '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox"' +
         ' type="checkbox" value="{{ index }}"{{ checked }} /></div>',
     HTML_LEGEND: '<div class="tui-chart-legend{{ unselected }}" style="height:{{ height }}px">' +
@@ -21,7 +18,7 @@ var htmls = {
             ' style="left: {{ left }}px;top: {{ top }}px">{{ label }}</div>'
 };
 
-module.exports = {
+export default {
     tplCheckbox: templateMaker.template(htmls.HTML_CHECKBOX),
     tplLegend: templateMaker.template(htmls.HTML_LEGEND),
     tplTick: templateMaker.template(htmls.HTML_TICK),

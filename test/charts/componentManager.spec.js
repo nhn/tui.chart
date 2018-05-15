@@ -3,43 +3,38 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import ComponentManager from '../../src/js/charts/componentManager';
+import snippet from 'tui-code-snippet';
 
-'use strict';
+describe('Test for ComponentManager', () => {
+    let componentManager;
 
-var ComponentManager = require('../../src/js/charts/componentManager');
-var snippet = require('tui-code-snippet');
-
-describe('Test for ComponentManager', function() {
-    var componentManager;
-
-    beforeEach(function() {
+    beforeEach(() => {
         componentManager = new ComponentManager({
             options: {}
         });
     });
 
-    describe('register()', function() {
-        it('should have plot, after register plot', function() {
-            var plot;
+    describe('register()', () => {
+        it('should have plot, after register plot', () => {
             componentManager.options = {
                 xAxis: {}
             };
             componentManager.register('plot', 'plot');
 
-            plot = componentManager.componentMap.plot;
+            const {plot} = componentManager.componentMap;
             expect(plot).toBeTruthy();
             expect(plot.componentType).toEqual('plot');
             expect(snippet.inArray('plot', snippet.pluck(componentManager.components, 'componentName'))).toBe(0);
         });
 
-        it('should not have plot component, before register plot', function() {
+        it('should not have plot component, before register plot', () => {
             expect(componentManager.componentMap.plot).toBeFalsy();
         });
     });
 
-    describe('where()', function() {
-        it('should filter components by parameter\'s key value', function() {
-            var actual, expected;
+    describe('where()', () => {
+        it('should filter components by parameter\'s key value', () => {
             componentManager.components.push({
                 name: 'columnSeries',
                 componentType: 'series'
@@ -53,8 +48,8 @@ describe('Test for ComponentManager', function() {
                 componentType: 'tooltip'
             });
 
-            actual = componentManager.where({componentType: 'series'});
-            expected = [{
+            const actual = componentManager.where({componentType: 'series'});
+            const expected = [{
                 name: 'columnSeries',
                 componentType: 'series'
             },

@@ -6,8 +6,6 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
 /*
  * Raw series datum.
  * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
@@ -33,13 +31,13 @@
  * SeriesItem has processed terminal data like value, ratio, etc.
  */
 
-var SeriesItemForBoxplot = require('./seriesItemForBoxplot');
-var SeriesDataModel = require('./seriesDataModel');
-var snippet = require('tui-code-snippet');
+import SeriesItemForBoxplot from './seriesItemForBoxplot';
+import SeriesDataModel from './seriesDataModel';
+import snippet from 'tui-code-snippet';
 
-var concat = Array.prototype.concat;
+const {concat} = Array.prototype;
 
-var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends SeriesDataModelForBoxplot.prototype */{
+export default class SeriesDataModelForBoxplot extends SeriesDataModel {
     /**
      * SeriesDataModelForBoxplot is series model for boxplot chart
      * SeriesDataModel.groups has SeriesGroups.
@@ -49,7 +47,9 @@ var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends 
      * @param {object} options - options
      * @param {Array.<function>} formatFunctions - format functions
      */
-    init: function(rawSeriesData, chartType, options, formatFunctions) {
+    constructor(rawSeriesData, chartType, options, formatFunctions) {
+        super();
+
         /**
          * chart type
          * @type {string}
@@ -94,7 +94,7 @@ var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends 
          * @type {object.<string, Array.<number>>}
          */
         this.valuesMap = {};
-    },
+    }
 
     /**
      * Create base groups.
@@ -103,25 +103,24 @@ var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends 
      * @private
      * @override
      */
-    _createBaseGroups: function() {
-        var chartType = this.chartType;
-        var formatFunctions = this.formatFunctions;
+    _createBaseGroups() {
+        const {chartType, formatFunctions} = this;
 
-        return snippet.map(this.rawSeriesData, function(rawDatum) {
-            var data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
-            var items = snippet.map(data, function(datum, index) {
-                return new SeriesItemForBoxplot({
-                    datum: datum,
-                    chartType: chartType,
-                    formatFunctions: formatFunctions,
-                    index: index,
+        return this.rawSeriesData.map(rawDatum => {
+            const data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+            const items = data.map((datum, index) => (
+                new SeriesItemForBoxplot({
+                    datum,
+                    chartType,
+                    formatFunctions,
+                    index,
                     legendName: rawDatum.name
-                });
-            });
+                })
+            ));
 
             return items;
         });
-    },
+    }
 
     /**
      * Create values that picked value from SeriesItems of SeriesGroups.
@@ -129,24 +128,20 @@ var SeriesDataModelForBoxplot = snippet.defineClass(SeriesDataModel, /** @lends 
      * @private
      * * @override
      */
-    _createValues: function() {
-        var values = [];
-        this.map(function(seriesGroup) {
-            return snippet.forEach(seriesGroup.items, function(group) {
+    _createValues() {
+        let values = [];
+        this.map(seriesGroup => (
+            seriesGroup.items.forEach(group => {
                 values.push(group.min);
                 values.push(group.max);
                 values.push(group.uq);
                 values.push(group.lq);
                 values.push(group.median);
-            });
-        });
+            })
+        ));
 
         values = concat.apply([], values);
 
-        return snippet.filter(values, function(value) {
-            return !isNaN(value);
-        });
+        return values.filter(value => !isNaN(value));
     }
-});
-
-module.exports = SeriesDataModelForBoxplot;
+}

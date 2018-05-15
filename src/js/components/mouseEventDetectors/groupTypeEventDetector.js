@@ -3,15 +3,12 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import chartConst from '../../const';
+import EventDetectorBase from './mouseEventDetectorBase';
+import zoomMixer from './zoomMixer';
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var chartConst = require('../../const');
-var EventDetectorBase = require('./mouseEventDetectorBase');
-var zoomMixer = require('./zoomMixer');
-var snippet = require('tui-code-snippet');
-
-var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends GroupTypeEventDetector.prototype */ {
+class GroupTypeEventDetector extends EventDetectorBase {
     /**
      * GroupTypeEventDetector is mouse event detector for grouped tooltip.
      * @param {object} params parameters
@@ -19,8 +16,8 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
      * @private
      * @extends EventDetectorBase
      */
-    init: function(params) {
-        EventDetectorBase.call(this, params);
+    constructor(params) {
+        super(params);
 
         /**
          * previous index of group data
@@ -44,20 +41,20 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
             snippet.extend(this, zoomMixer);
             this._initForZoom(params.zoomable);
         }
-    },
+    }
 
     /**
      * Initialize data of mouse event detector
      * @param {Array.<object>} seriesInfos series infos
      * @override
      */
-    initMouseEventDetectorData: function(seriesInfos) {
+    initMouseEventDetectorData(seriesInfos) {
         EventDetectorBase.prototype.initMouseEventDetectorData.call(this, seriesInfos);
 
         if (this.zoomable) {
             this._showTooltipAfterZoom();
         }
-    },
+    }
 
     /**
      * Find data by client position.
@@ -66,9 +63,9 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
      * @returns {object}
      * @private
      */
-    _findGroupData: function(clientX, clientY) {
-        var layerPosition = this._calculateLayerPosition(clientX, clientY, true);
-        var pointValue;
+    _findGroupData(clientX, clientY) {
+        const layerPosition = this._calculateLayerPosition(clientX, clientY, true);
+        let pointValue;
 
         if (this.isVertical) {
             pointValue = layerPosition.x;
@@ -81,7 +78,7 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
                 groupIndex: this.tickBaseCoordinateModel.findIndex(pointValue)
             }
         };
-    },
+    }
 
     /**
      * Find data by client position for zoomable
@@ -90,35 +87,35 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
      * @returns {object}
      * @private
      */
-    _findDataForZoomable: function(clientX, clientY) {
+    _findDataForZoomable(clientX, clientY) {
         return this._findGroupData(clientX, clientY);
-    },
+    }
 
     /**
      * Get first data.
      * @returns {{indexes: {groupIndex: number}}} - data
      * @private
      */
-    _getFirstData: function() {
+    _getFirstData() {
         return {
             indexes: {
                 groupIndex: 0
             }
         };
-    },
+    }
 
     /**
      * Get last data.
      * @returns {{indexes: {groupIndex: number}}} - data
      * @private
      */
-    _getLastData: function() {
+    _getLastData() {
         return {
             indexes: {
                 groupIndex: this.tickBaseCoordinateModel.getLastIndex()
             }
         };
-    },
+    }
 
     /**
      * Whether outer position or not.
@@ -127,17 +124,13 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
      * @returns {boolean} result boolean
      * @private
      */
-    _isOuterPosition: function(layerX, layerY) {
-        var dimension = this.dimension;
-        var width = dimension.width;
-        var height = dimension.height;
-        var position = this.layout.position;
-        var top = position.top;
-        var left = position.left;
+    _isOuterPosition(layerX, layerY) {
+        const {width, height} = this.dimension;
+        const {top, left} = this.layout.position;
 
         return layerX < left || layerX > left + width ||
             layerY < top || layerY > top + height;
-    },
+    }
 
     /**
      * Show tooltip.
@@ -145,9 +138,9 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
      * @param {boolean} [isMoving] - whether moving or not
      * @private
      */
-    _showTooltip: function(foundData, isMoving) {
-        var index = foundData.indexes.groupIndex;
-        var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top)
+    _showTooltip(foundData, isMoving) {
+        const index = foundData.indexes.groupIndex;
+        const positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top)
             - chartConst.CHART_PADDING;
 
         /**
@@ -156,26 +149,26 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
          */
         if (this.tickBaseCoordinateModel.data.length > index) {
             this.eventBus.fire('showTooltip', {
-                index: index,
+                index,
                 range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
                 size: this.dimension[this.sizeType],
                 isVertical: this.isVertical,
-                isMoving: isMoving,
+                isMoving,
                 silent: foundData.silent
             });
             this.prevIndex = index;
         }
-    },
+    }
 
     /**
      * Hide tooltip
      * @param {{silent: {boolean}}} [options] - options for hiding tooltip
      * @private
      */
-    _hideTooltip: function(options) {
+    _hideTooltip(options) {
         this.eventBus.fire('hideTooltip', this.prevIndex, options);
         this.prevIndex = null;
-    },
+    }
 
     /**
      * If found position data by client position, show tooltip.
@@ -184,43 +177,42 @@ var GroupTypeEventDetector = snippet.defineClass(EventDetectorBase, /** @lends G
      * @private
      * @override
      */
-    _onMousemove: function(e) {
-        var foundData, index;
-
+    _onMousemove(e) {
         if (this.zoomable && this._isAfterDragMouseup()) {
             return;
         }
 
-        foundData = this._findGroupData(e.clientX, e.clientY);
-
-        index = foundData.indexes.groupIndex;
+        const foundData = this._findGroupData(e.clientX, e.clientY);
+        const index = foundData.indexes.groupIndex;
 
         if (index === -1) {
             this._onMouseout(e);
         } else if (this.prevIndex !== index) {
             this._showTooltip(foundData);
         }
-    },
+    }
 
     /**
      * If mouse position gets out mouse event detector area, hide tooltip.
      * @override
      */
-    _onMouseout: function(e) {
-        var layerPosition;
+    _onMouseout(e) {
+        const {x, y} = this._calculateLayerPosition(e.clientX, e.clientY, false);
 
-        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
-
-        if (this._isOuterPosition(layerPosition.x, layerPosition.y) && !snippet.isNull(this.prevIndex)) {
+        if (this._isOuterPosition(x, y) && !snippet.isNull(this.prevIndex)) {
             this._hideTooltip();
         }
     }
-});
+}
 
-function groupTypeEventDetectorFactory(params) {
+/**
+ * groupTypeEventDetectorFactory
+ * @param {object} params chart options
+ * @returns {object} group type event detector instanse
+ * @ignore
+ */
+export default function groupTypeEventDetectorFactory(params) {
     return new GroupTypeEventDetector(params);
 }
 
 groupTypeEventDetectorFactory.componentType = 'mouseEventDetector';
-
-module.exports = groupTypeEventDetectorFactory;

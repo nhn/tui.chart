@@ -3,17 +3,14 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import circleLegendCalculator from '../../../src/js/models/bounds/circleLegendCalculator';
+import chartConst from '../../../src/js/const';
+import renderUtil from '../../../src/js/helpers/renderUtil';
 
-'use strict';
-
-var circleLegendCalculator = require('../../../src/js/models/bounds/circleLegendCalculator');
-var chartConst = require('../../../src/js/const');
-var renderUtil = require('../../../src/js/helpers/renderUtil');
-
-describe('Test for circleLegendCalculator', function() {
-    describe('_calculatePixelStep()', function() {
-        it('calculate pixel step, when axis data is label type', function() {
-            var actual = circleLegendCalculator._calculatePixelStep({
+describe('Test for circleLegendCalculator', () => {
+    describe('_calculatePixelStep()', () => {
+        it('calculate pixel step, when axis data is label type', () => {
+            const actual = circleLegendCalculator._calculatePixelStep({
                 tickCount: 4,
                 isLabelAxis: true
             }, 240);
@@ -21,8 +18,8 @@ describe('Test for circleLegendCalculator', function() {
             expect(actual).toBe(30);
         });
 
-        it('when axis data is not label type', function() {
-            var actual = circleLegendCalculator._calculatePixelStep({
+        it('when axis data is not label type', () => {
+            const actual = circleLegendCalculator._calculatePixelStep({
                 tickCount: 4
             }, 240);
 
@@ -30,13 +27,13 @@ describe('Test for circleLegendCalculator', function() {
         });
     });
 
-    describe('_calculateRadiusByAxisData()', function() {
-        it('calculate radius by axis data', function() {
-            var seriesDimension = {
+    describe('_calculateRadiusByAxisData()', () => {
+        it('calculate radius by axis data', () => {
+            const seriesDimension = {
                 width: 400,
                 height: 240
             };
-            var axisDataMap = {
+            const axisDataMap = {
                 xAxis: {
                     tickCount: 5
                 },
@@ -44,21 +41,20 @@ describe('Test for circleLegendCalculator', function() {
                     tickCount: 4
                 }
             };
-            var actual = circleLegendCalculator._calculateRadiusByAxisData(seriesDimension, axisDataMap);
+            const actual = circleLegendCalculator._calculateRadiusByAxisData(seriesDimension, axisDataMap);
 
             expect(actual).toBe(80);
         });
     });
 
-    describe('_getCircleLegendLabelMaxWidth()', function() {
-        it('get max width of label for circle legend', function() {
-            var maxLabel = '1,000';
-            var fontFamily = 'Verdana';
-            var actual;
+    describe('_getCircleLegendLabelMaxWidth()', () => {
+        it('get max width of label for circle legend', () => {
+            const maxLabel = '1,000';
+            const fontFamily = 'Verdana';
 
             spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
 
-            actual = circleLegendCalculator._getCircleLegendLabelMaxWidth(maxLabel, fontFamily);
+            const actual = circleLegendCalculator._getCircleLegendLabelMaxWidth(maxLabel, fontFamily);
 
             expect(renderUtil.getRenderedLabelWidth).toHaveBeenCalledWith('1,000', {
                 fontSize: chartConst.CIRCLE_LEGEND_LABEL_FONT_SIZE,
@@ -68,13 +64,13 @@ describe('Test for circleLegendCalculator', function() {
         });
     });
 
-    describe('calculateCircleLegendWidth()', function() {
-        it('calculate width of circle legend', function() {
-            var seriesDimension = {
+    describe('calculateCircleLegendWidth()', () => {
+        it('calculate width of circle legend', () => {
+            const seriesDimension = {
                 width: 400,
                 height: 240
             };
-            var axisDataMap = {
+            const axisDataMap = {
                 xAxis: {
                     tickCount: 5,
                     isLabelAxis: true
@@ -83,11 +79,10 @@ describe('Test for circleLegendCalculator', function() {
                     tickCount: 4
                 }
             };
-            var maxLabel = '1,000';
-            var fontFamily = 'Verdana';
-            var actual;
+            const maxLabel = '1,000';
+            const fontFamily = 'Verdana';
 
-            actual = circleLegendCalculator.calculateCircleLegendWidth(
+            const actual = circleLegendCalculator.calculateCircleLegendWidth(
                 seriesDimension, axisDataMap, maxLabel, fontFamily
             );
 
@@ -95,9 +90,9 @@ describe('Test for circleLegendCalculator', function() {
         });
     });
 
-    describe('calculateMaxRadius()', function() {
-        it('maxRadius should be calculated normally even without circlelegend.', function() {
-            var axisDataMap = {
+    describe('calculateMaxRadius()', () => {
+        it('maxRadius should be calculated normally even without circlelegend.', () => {
+            const axisDataMap = {
                 xAxis: {
                     tickCount: 4
                 },
@@ -105,7 +100,7 @@ describe('Test for circleLegendCalculator', function() {
                     tickCount: 4
                 }
             };
-            var dimensionMap = {
+            const dimensionMap = {
                 circleLegend: {
                     width: 0
                 },

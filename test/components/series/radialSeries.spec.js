@@ -4,15 +4,13 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import radialSeriesFactory from '../../../src/js/components/series/radialSeries';
+import snippet from 'tui-code-snippet';
 
-var radialSeriesFactory = require('../../../src/js/components/series/radialSeries');
-var snippet = require('tui-code-snippet');
+describe('Test for RadialSeries', () => {
+    let series;
 
-describe('Test for RadialSeries', function() {
-    var series;
-
-    beforeEach(function() {
+    beforeEach(() => {
         series = new radialSeriesFactory.RadialChartSeries({
             chartType: 'radial',
             theme: {
@@ -29,9 +27,7 @@ describe('Test for RadialSeries', function() {
         });
     });
 
-    it('_makePositions should make point positions', function() {
-        var positions;
-
+    it('_makePositions should make point positions', () => {
         series.layout = {
             dimension: {
                 width: 100,
@@ -43,7 +39,7 @@ describe('Test for RadialSeries', function() {
             }
         };
 
-        positions = series._makePositionsForRadial([
+        const positions = series._makePositionsForRadial([
             [
                 {
                     ratio: 1

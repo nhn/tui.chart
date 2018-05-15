@@ -3,22 +3,20 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import renderUtil from '../../helpers/renderUtil';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
+import circleLegendCalculator from './circleLegendCalculator';
+import axisCalculator from './axisCalculator';
+import legendCalculator from './legendCalculator';
+import seriesCalculator from './seriesCalculator';
+import spectrumLegendCalculator from './spectrumLegendCalculator';
+import snippet from 'tui-code-snippet';
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var renderUtil = require('../../helpers/renderUtil');
-var raphaelRenderUtil = require('../../plugins/raphaelRenderUtil');
-var circleLegendCalculator = require('./circleLegendCalculator');
-var axisCalculator = require('./axisCalculator');
-var legendCalculator = require('./legendCalculator');
-var seriesCalculator = require('./seriesCalculator');
-var spectrumLegendCalculator = require('./spectrumLegendCalculator');
-var snippet = require('tui-code-snippet');
-var browser = snippet.browser;
-var IS_LTE_IE8 = browser.msie && browser.version <= 8;
-var LEGEND_AREA_H_PADDING = chartConst.LEGEND_AREA_H_PADDING;
+const {browser} = snippet;
+const {LEGEND_AREA_H_PADDING} = chartConst;
+const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 
 /**
  * Dimension.
@@ -38,14 +36,14 @@ var LEGEND_AREA_H_PADDING = chartConst.LEGEND_AREA_H_PADDING;
  * @private
  */
 
-var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
+export default class BoundsModel {
     /**
      * Bounds maker.
      * @constructs BoundsModel
      * @private
      * @param {object} params parameters
      */
-    init: function(params) {
+    constructor(params) {
         /**
          * options
          * @type {object}
@@ -84,12 +82,12 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         this.dataProcessor = params.dataProcessor;
 
         this.initBoundsData();
-    },
+    }
 
     /**
      * Initialize bounds data.
      */
-    initBoundsData: function() {
+    initBoundsData() {
         this.dimensionMap = {
             legend: {
                 width: 0
@@ -124,7 +122,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         this._registerChartDimension();
         this._registerTitleDimension();
         this._registerChartExportMenuDimension();
-    },
+    }
 
     /**
      * Register dimension.
@@ -132,21 +130,21 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      * @param {dimension} dimension component dimension
      * @private
      */
-    _registerDimension: function(name, dimension) {
+    _registerDimension(name, dimension) {
         this.dimensionMap[name] = snippet.extend(this.dimensionMap[name] || {}, dimension);
-    },
+    }
 
     /**
      * Get bound.
      * @param {string} name component name
      * @returns {bound} component bound
      */
-    getBound: function(name) {
+    getBound(name) {
         return {
             dimension: this.dimensionMap[name] || {},
             position: this.positionMap[name] || {}
         };
-    },
+    }
 
     /**
      * Set bound.
@@ -154,92 +152,91 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      * @param {bound} bound component bound
      * @private
      */
-    _setBound: function(name, bound) {
+    _setBound(name, bound) {
         this.dimensionMap[name] = bound.dimension;
         this.positionMap[name] = bound.position;
-    },
+    }
 
     /**
      * Get dimension.
      * @param {string} name component name
      * @returns {dimension} component dimension
      */
-    getDimension: function(name) {
+    getDimension(name) {
         return this.dimensionMap[name];
-    },
+    }
 
     /**
      * Get dimension map.
      * @param {string} types - dimension type names
      * @returns {object}
      */
-    getDimensionMap: function(types) {
-        var self = this;
-        var dimensionMap = {};
+    getDimensionMap(types) {
+        let dimensionMap = {};
 
         if (types && types.length) {
-            snippet.forEachArray(types, function(type) {
-                dimensionMap[type] = self.dimensionMap[type];
+            types.forEach(type => {
+                dimensionMap[type] = this.dimensionMap[type];
             });
         } else {
-            dimensionMap = this.dimensionMap;
+            ({dimensionMap} = this);
         }
 
         return JSON.parse(JSON.stringify((dimensionMap)));
-    },
+    }
 
     /**
      * Get position.
      * @param {string} name component name
      * @returns {position} component position
      */
-    getPosition: function(name) {
+    getPosition(name) {
         return this.positionMap[name];
-    },
+    }
 
     /**
      * Register chart dimension
      * @private
      */
-    _registerChartDimension: function() {
-        var chartOptions = this.options.chart || {},
-            dimension = {
-                width: chartOptions.width || chartConst.CHART_DEFAULT_WIDTH,
-                height: chartOptions.height || chartConst.CHART_DEFAULT_HEIGHT
-            };
+    _registerChartDimension() {
+        const chartOptions = this.options.chart || {};
+        const dimension = {
+            width: chartOptions.width || chartConst.CHART_DEFAULT_WIDTH,
+            height: chartOptions.height || chartConst.CHART_DEFAULT_HEIGHT
+        };
 
         this._registerDimension('chart', dimension);
-    },
+    }
 
     /**
      * Register title dimension
      * @private
      */
-    _registerTitleDimension: function() {
-        var chartOptions = this.options.chart || {};
-        var hasTitleOption = snippet.isExisty(chartOptions.title);
-        var titleTheme = this.theme.title;
-        var titleHeight = hasTitleOption ?
+    _registerTitleDimension() {
+        const chartOptions = this.options.chart || {};
+        const hasTitleOption = snippet.isExisty(chartOptions.title);
+        const titleTheme = this.theme.title;
+        const titleHeight = hasTitleOption ?
             raphaelRenderUtil.getRenderedTextSize(
                 chartOptions.title.text,
                 titleTheme.fontSize,
                 titleTheme.fontFamily
             ).height : 0;
-        var height = titleHeight || 0;
+        let height = titleHeight || 0;
 
         if (height) {
             height += (chartConst.TITLE_PADDING);
         }
 
-        this._registerDimension('title', {height: height});
-    },
+        this._registerDimension('title', {height});
+    }
 
     /**
      * Register chartExportMenu dimension
      * @private
      */
-    _registerChartExportMenuDimension: function() {
-        var dimension;
+    _registerChartExportMenuDimension() {
+        let dimension;
 
         if (this.options.chartExportMenu.visible === false) {
             dimension = {
@@ -253,44 +250,44 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
             };
         }
         this._registerDimension('chartExportMenu', dimension);
-    },
+    }
 
     /**
      * Register height for x axis component.
      */
-    registerXAxisHeight: function() {
+    registerXAxisHeight() {
         this._registerDimension('xAxis', {
             height: axisCalculator.calculateXAxisHeight(this.options.xAxis, this.theme.xAxis)
         });
-    },
+    }
 
     /**
      * Register dimension for legend component.
      */
-    registerLegendDimension: function() {
-        var legendLabels = snippet.pluck(this.dataProcessor.getOriginalLegendData(), 'label');
-        var legendOptions = this.options.legend;
-        var labelTheme = this.theme.legend.label;
-        var chartWidth = this.getDimension('chart').width;
-        var legendDimension = legendCalculator.calculate(legendOptions, labelTheme, legendLabels, chartWidth);
+    registerLegendDimension() {
+        const legendLabels = snippet.pluck(this.dataProcessor.getOriginalLegendData(), 'label');
+        const legendOptions = this.options.legend;
+        const labelTheme = this.theme.legend.label;
+        const chartWidth = this.getDimension('chart').width;
+        const legendDimension = legendCalculator.calculate(legendOptions, labelTheme, legendLabels, chartWidth);
 
         this._registerDimension('legend', legendDimension);
-    },
+    }
 
     /**
      * Register dimension for spectrum legend component.
      * @param {object} limit - min and maximum value
      */
-    registerSpectrumLegendDimension: function(limit) {
-        var maxValue = limit ? limit.max : this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
-        var minValue = limit ? limit.min : '';
-        var labelTheme = this.theme.label;
-        var align = this.options.legend.align;
-        var dimension, isBoxType, isTopLegend;
+    registerSpectrumLegendDimension(limit) {
+        const maxValue = limit ? limit.max : this.dataProcessor.getFormattedMaxValue(this.chartType, 'legend');
+        const minValue = limit ? limit.min : '';
+        const labelTheme = this.theme.label;
+        const {align} = this.options.legend;
+        let dimension;
 
         if (predicate.isHorizontalLegend(align)) {
-            isBoxType = predicate.isBoxTypeChart(this.chartType);
-            isTopLegend = predicate.isLegendAlignTop(align);
+            const isBoxType = predicate.isBoxTypeChart(this.chartType);
+            const isTopLegend = predicate.isLegendAlignTop(align);
             dimension = spectrumLegendCalculator._makeHorizontalDimension(maxValue, labelTheme, isBoxType, isTopLegend);
         } else {
             dimension = spectrumLegendCalculator._makeVerticalDimension(maxValue, minValue, labelTheme);
@@ -298,7 +295,7 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
         this._registerDimension('legend', dimension);
         this.useSpectrumLegend = true;
-    },
+    }
 
     /**
      * Register dimension for y axis.
@@ -310,15 +307,10 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      *     @param {Array} dimensionInfos.yAxisLabels - them for y axis
      *     @param {boolean} dimensionInfos.isVertical - whether vertical or not
      */
-    registerYAxisDimension: function(dimensionInfos) {
-        var limit = dimensionInfos.limit;
-        var componentName = dimensionInfos.axisName;
-        var options = dimensionInfos.options;
-        var theme = dimensionInfos.theme;
-        var yAxisLabels = dimensionInfos.yAxisLabels;
-        var isVertical = dimensionInfos.isVertical;
-        var isDiverging = this.options.series && this.options.series.diverging;
-        var categories, yAxisOptions;
+    registerYAxisDimension(dimensionInfos) {
+        const {limit, options, theme, yAxisLabels, isVertical, axisName: componentName} = dimensionInfos;
+        const isDiverging = this.options.series && this.options.series.diverging;
+        let categories, yAxisOptions;
 
         if (limit) {
             categories = [limit.min, limit.max];
@@ -337,46 +329,45 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         this._registerDimension(componentName, {
             width: axisCalculator.calculateYAxisWidth(categories, yAxisOptions, theme, yAxisLabels, isDiverging)
         });
-    },
+    }
 
     /**
      * Create series width.
      * @returns {number} series width
      */
-    calculateSeriesWidth: function() {
-        var seriesWidth;
-        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'series', 'value');
-        var dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
-        var maxLabelWidth = 0;
+    calculateSeriesWidth() {
+        const maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'series', 'value');
+        const dimensionMap = this.getDimensionMap(['chart', 'yAxis', 'legend', 'rightYAxis']);
+        let maxLabelWidth = 0;
         if (!predicate.isColumnTypeChart(this.chartType)) {
             maxLabelWidth = renderUtil.getRenderedLabelHeight(maxLabel, this.theme.title);
         }
-        seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend, maxLabelWidth);
+        let seriesWidth = seriesCalculator.calculateWidth(dimensionMap, this.options.legend, maxLabelWidth);
 
         if (predicate.isMapChart(this.chartType) && !IS_LTE_IE8) {
             seriesWidth -= (chartConst.MAP_CHART_ZOOM_AREA_WIDTH + LEGEND_AREA_H_PADDING);
         }
 
         return seriesWidth;
-    },
+    }
 
     /**
      * Create series height
      * @returns {number} series height
      */
-    calculateSeriesHeight: function() {
-        var dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis', 'chartExportMenu']);
-        var yAxisTitleAreaHeight = 0;
+    calculateSeriesHeight() {
+        const dimensionMap = this.getDimensionMap(['chart', 'title', 'legend', 'xAxis', 'chartExportMenu']);
+        let yAxisTitleAreaHeight = 0;
 
         if (this.options.yAxis && this.options.yAxis.title) {
             yAxisTitleAreaHeight = renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.title);
         }
 
         return seriesCalculator.calculateHeight(dimensionMap, this.options.legend, yAxisTitleAreaHeight);
-    },
+    }
 
-    getBaseSizeForLimit: function(isVertical) {
-        var baseSize;
+    getBaseSizeForLimit(isVertical) {
+        let baseSize;
 
         if (isVertical) {
             baseSize = this.calculateSeriesHeight();
@@ -385,28 +376,28 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         return baseSize;
-    },
+    }
 
     /**
      * Make series dimension.
      * @returns {{width: number, height: number}} series dimension
      * @private
      */
-    _makeSeriesDimension: function() {
+    _makeSeriesDimension() {
         return {
             width: this.calculateSeriesWidth(),
             height: this.calculateSeriesHeight()
         };
-    },
+    }
 
     /**
      * Register series dimension.
      */
-    registerSeriesDimension: function() {
-        var seriesDimension = this._makeSeriesDimension();
+    registerSeriesDimension() {
+        const seriesDimension = this._makeSeriesDimension();
 
         this._registerDimension('series', seriesDimension);
-    },
+    }
 
     /**
      * Update width of legend and series of BoundsModel.
@@ -414,8 +405,8 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
      * @param {number} diffWidth - difference width
      * @private
      */
-    _updateLegendAndSeriesWidth: function(circleLegendWidth, diffWidth) {
-        var legendOptions = this.options.legend;
+    _updateLegendAndSeriesWidth(circleLegendWidth, diffWidth) {
+        const legendOptions = this.options.legend;
 
         if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             this._registerDimension('legend', {
@@ -426,30 +417,33 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         this._registerDimension('series', {
             width: this.getDimension('series').width - diffWidth
         });
-    },
+    }
 
     /**
      * Register dimension of circle legend.
      * @param {object} axisDataMap - axisData map
-     * @private
      */
-    registerCircleLegendDimension: function(axisDataMap) {
-        var seriesDimension = this.getDimension('series');
-        var legendOptions = this.options.legend;
-        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
-        var fontFamily = this.theme.chart.fontFamily;
-        var circleLegendWidth = circleLegendCalculator.calculateCircleLegendWidth(seriesDimension, axisDataMap,
-            maxLabel, fontFamily);
-        var legendWidth, diffWidth;
+    registerCircleLegendDimension(axisDataMap) {
+        const seriesDimension = this.getDimension('series');
+        const {legend: legendOptions} = this.options;
+        const maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
+        const {chart: {fontFamily}} = this.theme;
+        let circleLegendWidth = circleLegendCalculator.calculateCircleLegendWidth(
+            seriesDimension,
+            axisDataMap,
+            maxLabel,
+            fontFamily
+        );
+        let legendWidth;
 
         if (predicate.isVerticalLegend(legendOptions.align) && legendOptions.visible) {
             legendWidth = this.getDimension('legend').width;
         } else {
             legendWidth = 0;
         }
-
         circleLegendWidth = Math.min(circleLegendWidth, Math.max(legendWidth, chartConst.MIN_LEGEND_WIDTH));
-        diffWidth = circleLegendWidth - legendWidth;
+
+        const diffWidth = circleLegendWidth - legendWidth;
 
         this._registerDimension('circleLegend', {
             width: circleLegendWidth,
@@ -468,39 +462,39 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
              */
             this._updateLegendAndSeriesWidth(circleLegendWidth, diffWidth);
         }
-    },
+    }
 
     /**
      * Make plot dimention
      * @returns {{width: number, height: number}} plot dimension
      * @private
      */
-    _makePlotDimension: function() {
-        var seriesDimension = this.getDimension('series');
+    _makePlotDimension() {
+        const seriesDimension = this.getDimension('series');
 
         return {
             width: seriesDimension.width,
             height: seriesDimension.height + chartConst.OVERLAPPING_WIDTH
         };
-    },
+    }
 
     /**
      * Register center components dimension.
      * @private
      */
-    _registerCenterComponentsDimension: function() {
-        var seriesDimension = this.getDimension('series');
+    _registerCenterComponentsDimension() {
+        const seriesDimension = this.getDimension('series');
 
         this._registerDimension('tooltip', seriesDimension);
         this._registerDimension('mouseEventDetector', seriesDimension);
-    },
+    }
 
     /**
      * Register axis components dimension.
      * @private
      */
-    _registerAxisComponentsDimension: function() {
-        var plotDimension = this._makePlotDimension();
+    _registerAxisComponentsDimension() {
+        const plotDimension = this._makePlotDimension();
 
         this._registerDimension('plot', plotDimension);
 
@@ -515,31 +509,31 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         this._registerDimension('rightYAxis', {
             height: plotDimension.height
         });
-    },
+    }
 
     /**
      * Update width of dimensions.
      * @param {object} overflowInfo overflowLeft, overflowRight
      * @private
      */
-    _updateDimensionsWidth: function(overflowInfo) {
-        var overflowLeft = Math.max(overflowInfo.overflowLeft, 0);
-        var overflowRight = overflowInfo.overflowRight ? Math.max(overflowInfo.overflowRight, 0) : 0;
-        var margin = overflowLeft + overflowRight;
+    _updateDimensionsWidth(overflowInfo) {
+        const overflowLeft = Math.max(overflowInfo.overflowLeft, 0);
+        const overflowRight = overflowInfo.overflowRight ? Math.max(overflowInfo.overflowRight, 0) : 0;
+        const margin = overflowLeft + overflowRight;
 
         this.chartLeftPadding += overflowLeft;
         this.dimensionMap.plot.width -= margin;
         this.dimensionMap.series.width -= margin;
         this.dimensionMap.mouseEventDetector.width -= margin;
         this.dimensionMap.xAxis.width -= margin;
-    },
+    }
 
     /**
      * Update height of dimensions.
      * @param {number} diffHeight diff height
      * @private
      */
-    _updateDimensionsHeight: function(diffHeight) {
+    _updateDimensionsHeight(diffHeight) {
         this.dimensionMap.plot.height -= diffHeight;
         this.dimensionMap.series.height -= diffHeight;
         this.dimensionMap.mouseEventDetector.height -= diffHeight;
@@ -547,14 +541,14 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         this.dimensionMap.yAxis.height -= diffHeight;
         this.dimensionMap.rightYAxis.height -= diffHeight;
         this.dimensionMap.xAxis.height += diffHeight;
-    },
+    }
 
     /**
      * Update dimensions for label of x axis.
      * @param {?object} xAxisData - axis data for x axis.
      * @private
      */
-    _updateDimensionsForXAxisLabel: function(xAxisData) {
+    _updateDimensionsForXAxisLabel(xAxisData) {
         if (xAxisData.overflowRight > 0 || xAxisData.overflowLeft > 0) {
             this._updateDimensionsWidth(xAxisData);
         }
@@ -562,18 +556,18 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         if (xAxisData.overflowHeight) {
             this._updateDimensionsHeight(xAxisData.overflowHeight);
         }
-    },
+    }
 
     /**
      * Register axes type component positions.
      * @param {number} leftLegendWidth legend width
      * @private
      */
-    _registerAxisComponentsPosition: function(leftLegendWidth) {
-        var seriesPosition = this.getPosition('series'),
-            seriesDimension = this.getDimension('series'),
-            yAxisWidth = this.getDimension('yAxis').width,
-            leftAreaWidth = leftLegendWidth + yAxisWidth + seriesDimension.width;
+    _registerAxisComponentsPosition(leftLegendWidth) {
+        const seriesPosition = this.getPosition('series');
+        const seriesDimension = this.getDimension('series');
+        const yAxisWidth = this.getDimension('yAxis').width;
+        const leftAreaWidth = leftLegendWidth + yAxisWidth + seriesDimension.width;
 
         this.positionMap.plot = {
             top: seriesPosition.top,
@@ -594,20 +588,20 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
             top: seriesPosition.top,
             left: this.chartLeftPadding + leftAreaWidth - chartConst.OVERLAPPING_WIDTH
         };
-    },
+    }
 
     /**
      * Make legend position.
      * @returns {{top: number, left: number}} legend bound
      * @private
      */
-    _makeLegendPosition: function() {
-        var dimensionMap = this.dimensionMap;
-        var seriesDimension = dimensionMap.series;
-        var seriesPositionTop = this.getPosition('series').top;
-        var legendOption = this.options.legend;
-        var top = 0;
-        var yAxisAreaWidth, left;
+    _makeLegendPosition() {
+        const {dimensionMap} = this;
+        const seriesDimension = dimensionMap.series;
+        const seriesPositionTop = this.getPosition('series').top;
+        const legendOption = this.options.legend;
+        let top = 0;
+        let yAxisAreaWidth, left;
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
@@ -627,23 +621,23 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         return {
-            top: top,
-            left: left
+            top,
+            left
         };
-    },
+    }
 
     /**
      * make spectrum legend position
      * @returns {{top: number, left: number}} legend bound
      * @private
      */
-    _makeSpectrumLegendPosition: function() {
-        var legendOption = this.options.legend;
-        var align = this.options.legend.align;
-        var seriesPosition = this.getPosition('series');
-        var seriesDimension = this.getDimension('series');
-        var legendDimension = this.getDimension('legend');
-        var top, left, right, position;
+    _makeSpectrumLegendPosition() {
+        const legendOption = this.options.legend;
+        const {align} = this.options.legend;
+        const seriesPosition = this.getPosition('series');
+        const seriesDimension = this.getDimension('series');
+        const legendDimension = this.getDimension('legend');
+        let top, left, right;
 
         if (predicate.isHorizontalLegend(align)) {
             left = (this.getDimension('chart').width - legendDimension.width) / 2;
@@ -662,15 +656,15 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
             }
 
             if (predicate.isBoxTypeChart(this.chartType)) {
-                top = seriesPosition.top;
+                ({top} = seriesPosition);
             } else {
                 top = seriesPosition.top + (chartConst.MAP_CHART_ZOOM_AREA_HEIGHT * 0.75);
             }
         }
 
-        position = {
-            top: top,
-            left: left
+        const position = {
+            top,
+            left
         };
 
         if (right) {
@@ -678,33 +672,33 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         return position;
-    },
+    }
 
     /**
      * Make chartExportMenu position.
      * @returns {{top: number, left: number}}
      * @private
      */
-    _makeChartExportMenuPosition: function() {
-        var top = this.getPosition('series').top - chartConst.SERIES_AREA_V_PADDING - chartConst.CHART_EXPORT_MENU_SIZE;
+    _makeChartExportMenuPosition() {
+        const top = this.getPosition('series').top - chartConst.SERIES_AREA_V_PADDING - chartConst.CHART_EXPORT_MENU_SIZE;
 
         return {
-            top: top,
+            top,
             right: chartConst.CHART_PADDING
         };
-    },
+    }
 
     /**
      * Make CircleLegend position.
      * @returns {{top: number, left: number}}
      * @private
      */
-    _makeCircleLegendPosition: function() {
-        var seriesPosition = this.getPosition('series');
-        var seriesDimension = this.getDimension('series');
-        var circleDimension = this.getDimension('circleLegend');
-        var legendOptions = this.options.legend;
-        var left, legendWidth;
+    _makeCircleLegendPosition() {
+        const seriesPosition = this.getPosition('series');
+        const seriesDimension = this.getDimension('series');
+        const circleDimension = this.getDimension('circleLegend');
+        const legendOptions = this.options.legend;
+        let left, legendWidth;
 
         if (predicate.isLegendAlignLeft(legendOptions.align)) {
             left = 0;
@@ -719,34 +713,34 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
 
         return {
             top: seriesPosition.top + seriesDimension.height - circleDimension.height,
-            left: left
+            left
         };
-    },
+    }
 
     /**
      * Whether need expansion series or not.
      * @returns {boolean}
      * @private
      */
-    _isNeedExpansionSeries: function() {
-        var chartType = this.chartType;
+    _isNeedExpansionSeries() {
+        const {chartType} = this;
 
         return !(predicate.isPieChart(chartType) || predicate.isMapChart(chartType))
             && !predicate.isTreemapChart(chartType)
             && !predicate.isRadialChart(chartType)
             && !predicate.isPieDonutComboChart(chartType, this.seriesTypes);
-    },
+    }
 
     /**
      * Register essential components positions.
      * Essential components is all components except components for axis.
      * @private
      */
-    _registerEssentialComponentsPositions: function() {
-        var seriesPosition = this.getPosition('series');
-        var tooltipPosition;
+    _registerEssentialComponentsPositions() {
+        const seriesPosition = this.getPosition('series');
+        let tooltipPosition;
 
-        this.positionMap.mouseEventDetector = snippet.extend({}, seriesPosition);
+        this.positionMap.mouseEventDetector = Object.assign({}, seriesPosition);
         this.positionMap.legend
             = this.useSpectrumLegend ? this._makeSpectrumLegendPosition() : this._makeLegendPosition();
         this.positionMap.chartExportMenu = this._makeChartExportMenuPosition();
@@ -765,31 +759,42 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         this.positionMap.tooltip = tooltipPosition;
-    },
+    }
 
     /**
      * Register positions.
      * @private
      */
-    _registerPositions: function() {
-        var alignOption = this.options.legend.align;
-        var isVisibleLegend = this.options.legend.visible;
-        var legendDimension = this.getDimension('legend');
-        var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
-        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
-        var titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
-        var yAxisTitlePadding = (this.options.yAxis.title && !this.useSpectrumLegend) ?
-            ((renderUtil.getRenderedLabelHeight(this.options.yAxis.title, this.theme.yAxis.title)
-                + chartConst.Y_AXIS_TITLE_PADDING)) : 0;
-        var seriesTop = (titleOrExportMenuHeight
-            + Math.max(0, (Math.max(topLegendHeight, yAxisTitlePadding) - chartConst.TITLE_PADDING)));
-        var seriesPosition = {};
+    _registerPositions() {
+        const alignOption = this.options.legend.align;
+        const isVisibleLegend = this.options.legend.visible;
+        const legendDimension = this.getDimension('legend');
+        const isLegendAlignTop = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend);
+        const isLegendAlignLeft = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend);
+        const topLegendHeight = (isLegendAlignTop) ? legendDimension.height : 0;
+        const leftLegendWidth = (isLegendAlignLeft) ? legendDimension.width : 0;
+        const titleOrExportMenuHeight = Math.max(this.getDimension('title').height, this.getDimension('chartExportMenu').height);
+        const yAxisTitlePadding = (() => {
+            if (this.options.yAxis.title && !this.useSpectrumLegend) {
+                const titlePadding = renderUtil.getRenderedLabelHeight(
+                    this.options.yAxis.title,
+                    this.theme.yAxis.title
+                );
+
+                return titlePadding + chartConst.Y_AXIS_TITLE_PADDING;
+            }
+
+            return 0;
+        })();
+
+        const seriesPadding = Math.max(0, (Math.max(topLegendHeight, yAxisTitlePadding) - chartConst.TITLE_PADDING));
+        let seriesTop = titleOrExportMenuHeight + seriesPadding;
 
         if (!titleOrExportMenuHeight) {
             seriesTop = Math.max(topLegendHeight, yAxisTitlePadding);
         }
 
-        seriesPosition = {
+        const seriesPosition = {
             top: seriesTop + chartConst.CHART_PADDING,
             left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
         };
@@ -801,30 +806,30 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         }
 
         this._registerEssentialComponentsPositions();
-    },
+    }
 
     /**
      * Register bound of extended series for rendering.
      * @private
      */
-    _registerExtendedSeriesBound: function() {
-        var seriesBound = this.getBound('series');
+    _registerExtendedSeriesBound() {
+        let seriesBound = this.getBound('series');
         if (this._isNeedExpansionSeries()) {
             seriesBound = renderUtil.expandBound(seriesBound);
         }
 
         this._setBound('extendedSeries', seriesBound);
-    },
+    }
 
     /**
      * Update bounds(positions, dimensions) of components for center option of yAxis.
      * @private
      */
-    _updateBoundsForYAxisCenterOption: function() {
-        var yAxisWidth = this.getDimension('yAxis').width;
-        var yAxisExtensibleLeft = Math.floor((this.getDimension('series').width / 2)) + chartConst.OVERLAPPING_WIDTH;
-        var xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH;
-        var additionalLeft = renderUtil.isOldBrowser() ? 1 : 0;
+    _updateBoundsForYAxisCenterOption() {
+        const yAxisWidth = this.getDimension('yAxis').width;
+        const yAxisExtensibleLeft = Math.floor((this.getDimension('series').width / 2)) + chartConst.OVERLAPPING_WIDTH;
+        const xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH;
+        const additionalLeft = renderUtil.isOldBrowser() ? 1 : 0;
 
         this.dimensionMap.extendedSeries.width += yAxisWidth;
         this.dimensionMap.xAxis.width += chartConst.OVERLAPPING_WIDTH;
@@ -839,13 +844,13 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         this.positionMap.xAxis.left -= xAxisDecreasingLeft;
         this.positionMap.mouseEventDetector.left -= xAxisDecreasingLeft;
         this.positionMap.tooltip.left -= xAxisDecreasingLeft;
-    },
+    }
 
     /**
      * Register bounds data.
      * @param {?object} xAxisData - axis data for x axis.
      */
-    registerBoundsData: function(xAxisData) {
+    registerBoundsData(xAxisData) {
         this._registerCenterComponentsDimension();
 
         if (this.useSpectrumLegend) {
@@ -863,16 +868,16 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
         if (this.options.yAxis.isCenter) {
             this._updateBoundsForYAxisCenterOption();
         }
-    },
+    }
 
     /**
      * Update spectrum legend dimension, to prevent overflow
      * @private
      */
-    _updateDimensionsForSpectrumLegend: function() {
-        var legendAlignOption = this.options.legend.align;
-        var legendDimension = this.getDimension('legend');
-        var seriesDimension = this.getDimension('series');
+    _updateDimensionsForSpectrumLegend() {
+        const legendAlignOption = this.options.legend.align;
+        const legendDimension = this.getDimension('legend');
+        const seriesDimension = this.getDimension('series');
 
         if (predicate.isHorizontalLegend(legendAlignOption) &&
             (legendDimension.width > seriesDimension.width)) {
@@ -884,19 +889,17 @@ var BoundsModel = snippet.defineClass(/** @lends BoundsModel.prototype */{
                 legendDimension.height = seriesDimension.height - chartConst.MAP_CHART_ZOOM_AREA_HEIGHT;
             }
         }
-    },
+    }
 
     /**
      * Calculate max radius.
      * @param {object} axisDataMap - axisData map
      * @returns {number}
      */
-    calculateMaxRadius: function(axisDataMap) {
-        var dimensionMap = this.getDimensionMap(['series', 'circleLegend']);
-        var circleLegendVisible = this.options.circleLegend ? this.options.circleLegend.visible : false;
+    calculateMaxRadius(axisDataMap) {
+        const dimensionMap = this.getDimensionMap(['series', 'circleLegend']);
+        const circleLegendVisible = this.options.circleLegend ? this.options.circleLegend.visible : false;
 
         return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap, circleLegendVisible);
     }
-});
-
-module.exports = BoundsModel;
+}

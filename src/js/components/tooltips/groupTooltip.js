@@ -4,35 +4,39 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var TooltipBase = require('./tooltipBase');
-var GroupTooltipPositionModel = require('./groupTooltipPositionModel');
-var chartConst = require('../../const');
-var dom = require('../../helpers/domHandler');
-var renderUtil = require('../../helpers/renderUtil');
-var defaultTheme = require('../../themes/defaultTheme');
-var tooltipTemplate = require('./tooltipTemplate');
-var snippet = require('tui-code-snippet');
-var predicate = require('../../helpers/predicate');
+import TooltipBase from './tooltipBase';
+import GroupTooltipPositionModel from './groupTooltipPositionModel';
+import chartConst from '../../const';
+import dom from '../../helpers/domHandler';
+import renderUtil from '../../helpers/renderUtil';
+import defaultTheme from '../../themes/defaultTheme';
+import tooltipTemplate from './tooltipTemplate';
+import snippet from 'tui-code-snippet';
+import predicate from '../../helpers/predicate';
+const {
+    TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION,
+    TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION,
+    SERIES_EXPAND_SIZE,
+    PUBLIC_EVENT_PREFIX
+} = chartConst;
 
 /**
  * @classdesc GroupTooltip component.
  * @class GroupTooltip
  * @private
  */
-var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
+class GroupTooltip extends TooltipBase {
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
      * @private
      * @override
      */
-    init: function(params) {
+    constructor(params) {
+        super(params);
         this.prevIndex = null;
         this.isBullet = predicate.isBulletChart(params.chartType);
-        TooltipBase.call(this, params);
-    },
+    }
 
     /**
      * Make tooltip html.
@@ -43,18 +47,19 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(category, items, rawCategory, groupIndex) {
-        var template = tooltipTemplate.tplGroupItem;
-        var cssTextTemplate = tooltipTemplate.tplGroupCssText;
-        var colorByPoint = (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType))
-            && this.dataProcessor.options.series.colorByPoint;
-        var colors = this._makeColors(this.theme, groupIndex);
-        var prevType, itemsHtml;
+    _makeTooltipHtml(category, items, rawCategory, groupIndex) {
+        const template = tooltipTemplate.tplGroupItem;
+        const cssTextTemplate = tooltipTemplate.tplGroupCssText;
+        const isBar = predicate.isBarTypeChart(this.chartType);
+        const isBoxplot = predicate.isBoxplotChart(this.chartType);
+        const colorByPoint = (isBar || isBoxplot) && this.dataProcessor.options.series.colorByPoint;
+        const colors = this._makeColors(this.theme, groupIndex);
+        let prevType;
 
-        itemsHtml = snippet.map(items, function(item, index) {
-            var type = item.type;
-            var typeVisible = (type !== 'data') && (prevType !== type);
-            var itemHtml = '';
+        const itemsHtml = items.map((item, index) => {
+            const {type} = item;
+            const typeVisible = (type !== 'data') && (prevType !== type);
+            let itemHtml = '';
 
             prevType = type;
 
@@ -64,7 +69,7 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
 
             if (typeVisible) {
                 itemHtml = tooltipTemplate.tplGroupType({
-                    type: type
+                    type
                 });
             }
 
@@ -76,37 +81,37 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         }).join('');
 
         return tooltipTemplate.tplGroup({
-            category: category,
+            category,
             items: itemsHtml
         });
-    },
+    }
 
     /**
      * Set default align option of tooltip.
      * @private
      * @override
      */
-    _setDefaultTooltipPositionOption: function() {
+    _setDefaultTooltipPositionOption() {
         if (this.options.align) {
             return;
         }
 
         if (this.isVertical) {
-            this.options.align = chartConst.TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION;
+            this.options.align = TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION;
         } else {
-            this.options.align = chartConst.TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION;
+            this.options.align = TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION;
         }
-    },
+    }
 
     /**
      * Render tooltip component.
      * @returns {HTMLElement}
      * @override
      */
-    render: function(data) {
-        var container = TooltipBase.prototype.render.call(this, data);
-        var chartDimension = this.dimensionMap.chart;
-        var bound = this.layout;
+    render(data) {
+        const container = TooltipBase.prototype.render.call(this, data);
+        const chartDimension = this.dimensionMap.chart;
+        const bound = this.layout;
 
         if (data.checkedLegends) {
             this.theme = this._updateLegendTheme(data.checkedLegends);
@@ -115,29 +120,29 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
 
         return container;
-    },
+    }
 
     /**
      * Rerender.
      * @param {{checkedLegends: Array.<boolean>}} data rendering data
      * @override
      */
-    rerender: function(data) {
+    rerender(data) {
         TooltipBase.prototype.rerender.call(this, data);
         this.prevIndex = null;
 
         if (data.checkedLegends) {
             this.theme = this._updateLegendTheme(data.checkedLegends);
         }
-    },
+    }
 
     /**
      * Zoom.
      */
-    zoom: function() {
+    zoom() {
         this.prevIndex = null;
         TooltipBase.prototype.zoom.call(this);
-    },
+    }
 
     /**
      * Update legend theme.
@@ -145,47 +150,45 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {{colors: Array.<string>}} legend theme
      * @private
      */
-    _updateLegendTheme: function(checkedLegends) {
-        var colors = [];
-        var chartTypes = snippet.keys(this.originalTheme);
+    _updateLegendTheme(checkedLegends) {
+        const colors = [];
+        const chartTypes = Object.keys(this.originalTheme);
 
-        snippet.forEachArray(chartTypes, function(chartType) {
-            var chartColors = this.originalTheme[chartType].colors;
-            snippet.forEachArray(chartColors, function(color, index) {
-                var _checkedLegends = checkedLegends[chartType] || checkedLegends;
+        chartTypes.forEach(chartType => {
+            const chartColors = this.originalTheme[chartType].colors;
+            chartColors.forEach((color, index) => {
+                const _checkedLegends = checkedLegends[chartType] || checkedLegends;
                 if (_checkedLegends[index]) {
                     colors.push(color);
                 }
-            }, this);
-        }, this);
+            });
+        });
 
         return {
-            colors: colors
+            colors
         };
-    },
+    }
 
     /**
      * Make tooltip data.
      * @returns {Array.<object>} tooltip data
      * @override
      */
-    makeTooltipData: function() {
-        var length = this.dataProcessor.getCategoryCount(this.isVertical);
+    makeTooltipData() {
+        const length = this.dataProcessor.getCategoryCount(this.isVertical);
 
-        return snippet.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
-            var values = seriesGroup.map(function(item) {
-                return {
-                    type: item.type || 'data',
-                    label: item.label
-                };
-            });
+        return this.dataProcessor.getSeriesGroups().map((seriesGroup, index) => {
+            const values = seriesGroup.map(item => ({
+                type: item.type || 'data',
+                label: item.label
+            }));
 
             return {
                 category: this.dataProcessor.makeTooltipCategory(index, length - index, this.isVertical),
-                values: values
+                values
             };
-        }, this);
-    },
+        });
+    }
 
     /**
      * Make colors.
@@ -194,10 +197,10 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {Array.<string>} colors
      * @private
      */
-    _makeColors: function(theme, groupIndex) {
-        var colorIndex = 0,
-            legendLabels = this.dataProcessor.getLegendData(),
-            defaultColors, colors, prevChartType;
+    _makeColors(theme, groupIndex) {
+        let colorIndex = 0;
+        const legendLabels = this.dataProcessor.getLegendData();
+        let colors, prevChartType;
 
         if (this.isBullet) {
             return this.dataProcessor.getGraphColors()[groupIndex];
@@ -207,23 +210,21 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
             return theme.colors;
         }
 
-        defaultColors = defaultTheme.series.colors.slice(0, legendLabels.length);
+        const defaultColors = defaultTheme.series.colors.slice(0, legendLabels.length);
 
-        return snippet.map(snippet.pluck(legendLabels, 'chartType'), function(chartType) {
-            var color;
-
+        return snippet.pluck(legendLabels, 'chartType').map(chartType => {
             if (prevChartType !== chartType) {
                 colors = theme[chartType] ? theme[chartType].colors : defaultColors;
                 colorIndex = 0;
             }
 
             prevChartType = chartType;
-            color = colors[colorIndex];
+            const color = colors[colorIndex];
             colorIndex += 1;
 
             return color;
         });
-    },
+    }
 
     /**
      * Make rendering data about legend item.
@@ -232,18 +233,17 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
      * @private
      */
-    _makeItemRenderingData: function(values, groupIndex) {
-        var dataProcessor = this.dataProcessor,
-            suffix = this.suffix;
+    _makeItemRenderingData(values, groupIndex) {
+        const {dataProcessor, suffix} = this;
 
-        return snippet.map(values, function(data, index) {
-            var item = {
+        return values.map((data, index) => {
+            const item = {
                 value: data.label,
                 type: data.type,
-                suffix: suffix,
+                suffix,
                 legend: ''
             };
-            var legendLabel;
+            let legendLabel;
 
             if (this.isBullet) {
                 legendLabel = dataProcessor.getLegendItem(groupIndex);
@@ -255,8 +255,8 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
             item.chartType = legendLabel.chartType;
 
             return item;
-        }, this);
-    },
+        });
+    }
 
     /**
      * Make tooltip.
@@ -264,33 +264,31 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {string} tooltip html
      * @private
      */
-    _makeGroupTooltipHtml: function(groupIndex) {
-        var data = this.data[groupIndex];
-        var items, htmlString = '';
+    _makeGroupTooltipHtml(groupIndex) {
+        const data = this.data[groupIndex];
+        let htmlString = '';
 
         if (data) {
-            items = this._makeItemRenderingData(data.values, groupIndex);
+            const items = this._makeItemRenderingData(data.values, groupIndex);
             htmlString = this.templateFunc(data.category, items, this.getRawCategory(groupIndex), groupIndex);
         }
 
         return htmlString;
-    },
+    }
 
     /**
      * Get tooltip sector element.
      * @returns {HTMLElement} sector element
      * @private
      */
-    _getTooltipSectorElement: function() {
-        var groupTooltipSector;
-
+    _getTooltipSectorElement() {
         if (!this.groupTooltipSector) {
-            this.groupTooltipSector = groupTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
+            const groupTooltipSector = this.groupTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
             dom.append(this.tooltipContainer, groupTooltipSector);
         }
 
         return this.groupTooltipSector;
-    },
+    }
 
     /**
      * Make bound about tooltip sector of vertical type chart.
@@ -300,8 +298,8 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound
      * @private
      */
-    _makeVerticalTooltipSectorBound: function(height, range, isLine) {
-        var width;
+    _makeVerticalTooltipSectorBound(height, range, isLine) {
+        let width;
 
         if (isLine) {
             width = 1;
@@ -311,15 +309,15 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
 
         return {
             dimension: {
-                width: width,
-                height: height
+                width,
+                height
             },
             position: {
                 left: range.start,
-                top: chartConst.SERIES_EXPAND_SIZE
+                top: SERIES_EXPAND_SIZE
             }
         };
-    },
+    }
 
     /**
      * Make bound about tooltip sector of horizontal type chart.
@@ -328,18 +326,18 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound
      * @private
      */
-    _makeHorizontalTooltipSectorBound: function(width, range) {
+    _makeHorizontalTooltipSectorBound(width, range) {
         return {
             dimension: {
-                width: width,
+                width,
                 height: range.end - range.start
             },
             position: {
-                left: chartConst.SERIES_EXPAND_SIZE,
+                left: SERIES_EXPAND_SIZE,
                 top: range.start
             }
         };
-    },
+    }
 
     /**
      * Make bound about tooltip sector.
@@ -350,17 +348,13 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @returns {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound
      * @private
      */
-    _makeTooltipSectorBound: function(size, range, isVertical, isLine) {
-        var bound;
-
+    _makeTooltipSectorBound(size, range, isVertical, isLine) {
         if (isVertical) {
-            bound = this._makeVerticalTooltipSectorBound(size, range, isLine);
-        } else {
-            bound = this._makeHorizontalTooltipSectorBound(size, range);
+            return this._makeVerticalTooltipSectorBound(size, range, isLine);
         }
 
-        return bound;
-    },
+        return this._makeHorizontalTooltipSectorBound(size, range);
+    }
 
     /**
      * Show tooltip sector.
@@ -371,10 +365,10 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @param {boolean} [isMoving] whether moving or not
      * @private
      */
-    _showTooltipSector: function(size, range, isVertical, index, isMoving) {
-        var groupTooltipSector = this._getTooltipSectorElement(),
-            isLine = (range.start === range.end),
-            bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
+    _showTooltipSector(size, range, isVertical, index, isMoving) {
+        const groupTooltipSector = this._getTooltipSectorElement();
+        const isLine = (range.start === range.end);
+        const bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
 
         if (isLine) {
             this.eventBus.fire('showGroupTooltipLine', bound);
@@ -389,15 +383,15 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         }
 
         this.eventBus.fire('showGroupAnimation', index);
-    },
+    }
 
     /**
      * Hide tooltip sector.
      * @param {number} index index
      * @private
      */
-    _hideTooltipSector: function(index) {
-        var groupTooltipSector = this._getTooltipSectorElement();
+    _hideTooltipSector(index) {
+        const groupTooltipSector = this._getTooltipSectorElement();
 
         if (!dom.hasClass(groupTooltipSector, 'show')) {
             this.eventBus.fire('hideGroupTooltipLine');
@@ -406,7 +400,7 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
         }
         this.eventBus.fire('hideGroupAnimation', index);
         this.eventBus.fire('hideGroupTooltipLine');
-    },
+    }
 
     /**
      * Show tooltip.
@@ -417,9 +411,7 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @param {{left: number, top: number}} prevPosition prev position
      * @private
      */
-    _showTooltip: function(elTooltip, params, prevPosition) {
-        var dimension, position;
-
+    _showTooltip(elTooltip, params, prevPosition) {
         if (!snippet.isNull(this.prevIndex)) {
             this.eventBus.fire('hideGroupAnimation', this.prevIndex);
         }
@@ -436,18 +428,18 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
 
         this._showTooltipSector(params.size, params.range, params.isVertical, params.index, params.isMoving);
 
-        dimension = this.getTooltipDimension(elTooltip);
-        position = this.positionModel.calculatePosition(dimension, params.range);
+        const dimension = this.getTooltipDimension(elTooltip);
+        const position = this.positionModel.calculatePosition(dimension, params.range);
 
         this._moveToPosition(elTooltip, position, prevPosition);
 
         this._fireAfterShowTooltipPublicEvent(params.index, params.range, {
             element: elTooltip,
-            position: position
+            position
         }, params.silent);
 
         this.prevIndex = params.index;
-    },
+    }
 
     /**
      * To call beforeShowTooltip callback of public event.
@@ -456,17 +448,17 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireBeforeShowTooltipPublicEvent: function(index, range, silent) {
+    _fireBeforeShowTooltipPublicEvent(index, range, silent) {
         if (silent) {
             return;
         }
 
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeShowTooltip', {
+        this.eventBus.fire(`${PUBLIC_EVENT_PREFIX}beforeShowTooltip`, {
             chartType: this.chartType,
-            index: index,
-            range: range
+            index,
+            range
         });
-    },
+    }
 
     /**
      * To call afterShowTooltip callback of public event.
@@ -476,16 +468,16 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @param {boolean} [silent] - whether invoke a public beforeHideTooltip event or not
      * @private
      */
-    _fireAfterShowTooltipPublicEvent: function(index, range, additionParams, silent) {
+    _fireAfterShowTooltipPublicEvent(index, range, additionParams, silent) {
         if (silent) {
             return;
         }
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'afterShowTooltip', snippet.extend({
+        this.eventBus.fire(`${PUBLIC_EVENT_PREFIX}afterShowTooltip`, Object.assign({
             chartType: this.chartType,
-            index: index,
-            range: range
+            index,
+            range
         }, additionParams));
-    },
+    }
 
     /**
      * Hide tooltip.
@@ -494,14 +486,14 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @param {object} [options] - options for hiding tooltip
      * @private
      */
-    _hideTooltip: function(tooltipElement, prevFoundIndex, options) {
-        var silent = !!(options && options.silent);
+    _hideTooltip(tooltipElement, prevFoundIndex, options) {
+        const silent = !!(options && options.silent);
         this.prevIndex = null;
         this._fireBeforeHideTooltipPublicEvent(prevFoundIndex, silent);
         this._hideTooltipSector(prevFoundIndex);
         dom.removeClass(tooltipElement, 'show');
         tooltipElement.style.cssText = '';
-    },
+    }
 
     /**
      * To call beforeHideTooltip callback of public event.
@@ -509,23 +501,27 @@ var GroupTooltip = snippet.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @param {boolean} [silent] - options for hiding tooltip
      * @private
      */
-    _fireBeforeHideTooltipPublicEvent: function(index, silent) {
+    _fireBeforeHideTooltipPublicEvent(index, silent) {
         if (silent) {
             return;
         }
 
-        this.eventBus.fire(chartConst.PUBLIC_EVENT_PREFIX + 'beforeHideTooltip', {
+        this.eventBus.fire(`${PUBLIC_EVENT_PREFIX}beforeHideTooltip`, {
             chartType: this.chartType,
-            index: index
+            index
         });
     }
-});
+}
 
-function groupTooltipFactory(params) {
+/**
+ * groupTooltipFactory
+ * @param {object} params chart options
+ * @returns {object} group tooltip instanse
+ * @ignore
+ */
+export default function groupTooltipFactory(params) {
     return new GroupTooltip(params);
 }
 
 groupTooltipFactory.componentType = 'tooltip';
 groupTooltipFactory.GroupTooltip = GroupTooltip;
-
-module.exports = groupTooltipFactory;

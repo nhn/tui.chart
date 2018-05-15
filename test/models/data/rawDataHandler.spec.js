@@ -3,16 +3,13 @@
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
+import rawDataHandler from '../../../src/js/models/data/rawDataHandler.js';
+import chartConst from '../../../src/js/const';
 
-'use strict';
-
-var rawDataHandler = require('../../../src/js/models/data/rawDataHandler.js');
-var chartConst = require('../../../src/js/const');
-
-describe('Test for rawDataHandler', function() {
-    describe('_pickStacks', function() {
-        it('should pick stack from rawSeriesData.', function() {
-            var rawSeriesData = [{
+describe('Test for rawDataHandler', () => {
+    describe('_pickStacks', () => {
+        it('should pick stack from rawSeriesData.', () => {
+            const rawSeriesData = [{
                     data: [],
                     stack: 'stack1'
                 },
@@ -25,8 +22,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should append DEFAULT_STACK, when there is no stack value', function() {
-            var rawSeriesData = [{
+        it('should append DEFAULT_STACK, when there is no stack value', () => {
+            const rawSeriesData = [{
                     data: []
                 },
                 {
@@ -38,8 +35,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should return values in input order, and no duplication', function() {
-            var rawSeriesData = [{
+        it('should return values in input order, and no duplication', () => {
+            const rawSeriesData = [{
                     data: [],
                     stack: 'stack1'
                 },
@@ -56,8 +53,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should not limit a number of stacks, when there is not divergingOption.', function() {
-            var rawSeriesData = [{
+        it('should not limit a number of stacks, when there is not divergingOption.', () => {
+            const rawSeriesData = [{
                     data: [],
                     stack: 'stack1'
                 },
@@ -74,8 +71,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should use values up to 2, when diversingOption is true', function() {
-            var rawSeriesData = [
+        it('should use values up to 2, when diversingOption is true', () => {
+            const rawSeriesData = [
                 {
                     data: [],
                     stack: 'stack1'
@@ -89,14 +86,14 @@ describe('Test for rawDataHandler', function() {
                     stack: 'stack3'
                 }
             ];
-            var divergingOption = true;
-            var actual = rawDataHandler.pickStacks(rawSeriesData, divergingOption);
-            var expected = ['stack1', 'stack2'];
+            const divergingOption = true;
+            const actual = rawDataHandler.pickStacks(rawSeriesData, divergingOption);
+            const expected = ['stack1', 'stack2'];
             expect(actual).toEqual(expected);
         });
 
-        it('should return arrays with DEFAULT_STACK, when all data does not have stack property', function() {
-            var rawSeriesData = [{
+        it('should return arrays with DEFAULT_STACK, when all data does not have stack property', () => {
+            const rawSeriesData = [{
                     data: []
                 },
                 {
@@ -108,9 +105,9 @@ describe('Test for rawDataHandler', function() {
         });
     });
 
-    describe('_sortSeriesData()', function() {
-        it('should sort series data order by stacks', function() {
-            var rawSriesData = [{
+    describe('_sortSeriesData()', () => {
+        it('should sort series data order by stacks', () => {
+            const rawSriesData = [{
                     data: [1, 2, 3],
                     stack: 'st1'
                 }, {
@@ -137,23 +134,22 @@ describe('Test for rawDataHandler', function() {
         });
     });
 
-    describe('removeSeriesStack()', function() {
-        it('should delete stack property from seriesData', function() {
-            var rawSriesData = [{
-                    data: [1, 2, 3],
-                    stack: 'st1'
-                }, {
-                    data: [4, 5, 6],
-                    stack: 'st2'
-                }, {
-                    data: [9, 8, 7],
-                    stack: 'st1'
-                }],
-                actual, expected;
+    describe('removeSeriesStack()', () => {
+        it('should delete stack property from seriesData', () => {
+            const rawSriesData = [{
+                data: [1, 2, 3],
+                stack: 'st1'
+            }, {
+                data: [4, 5, 6],
+                stack: 'st2'
+            }, {
+                data: [9, 8, 7],
+                stack: 'st1'
+            }];
 
             rawDataHandler.removeSeriesStack(rawSriesData);
-            actual = rawSriesData;
-            expected = [{
+            const actual = rawSriesData;
+            const expected = [{
                 data: [1, 2, 3]
             }, {
                 data: [4, 5, 6]
@@ -165,9 +161,9 @@ describe('Test for rawDataHandler', function() {
         });
     });
 
-    describe('_makeNormalDivergingrawSeriesDataData()', function() {
-        it('should use data upto second element, when data have not stack property.', function() {
-            var rawSeriesData = [
+    describe('_makeNormalDivergingrawSeriesDataData()', () => {
+        it('should use data upto second element, when data have not stack property.', () => {
+            const rawSeriesData = [
                 {
                     data: [1, 2, 3]
                 },
@@ -178,8 +174,8 @@ describe('Test for rawDataHandler', function() {
                     data: [7, 8, 9]
                 }
             ];
-            var actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
-            var expected = [
+            const actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            const expected = [
                 {
                     data: [-1, -2, -3]
                 },
@@ -191,14 +187,14 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should change data of index 0, by making positives to negatives, and negatives to 0', function() {
-            var rawSeriesData = [
+        it('should change data of index 0, by making positives to negatives, and negatives to 0', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3]
                 }
             ];
-            var actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
-            var expected = [
+            const actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            const expected = [
                 {
                     data: [-1, 0, -3]
                 }
@@ -207,8 +203,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should change data of index 1, by making negatives to 0', function() {
-            var rawSeriesData = [
+        it('should change data of index 1, by making negatives to 0', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3]
                 },
@@ -216,8 +212,8 @@ describe('Test for rawDataHandler', function() {
                     data: [-4, 5, 6]
                 }
             ];
-            var actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
-            var expected = [
+            const actual = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            const expected = [
                 {
                     data: [-1, 0, -3]
                 },
@@ -230,16 +226,16 @@ describe('Test for rawDataHandler', function() {
         });
     });
 
-    describe('_makeRawSeriesDataForStackedDiverging()', function() {
-        it('should change data of index 0, by making positives to negatives, negatives to 0', function() {
-            var rawSeriesData = [
+    describe('_makeRawSeriesDataForStackedDiverging()', () => {
+        it('should change data of index 0, by making positives to negatives, negatives to 0', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3],
                     stack: 'stack1'
                 }
             ];
-            var actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
-            var expected = [
+            const actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+            const expected = [
                 {
                     data: [-1, 0, -3],
                     stack: 'stack1'
@@ -248,8 +244,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should change data of index 1, by making negatives to zero', function() {
-            var rawSeriesData = [
+        it('should change data of index 1, by making negatives to zero', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3],
                     stack: 'stack1'
@@ -259,8 +255,8 @@ describe('Test for rawDataHandler', function() {
                     stack: 'stack2'
                 }
             ];
-            var actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
-            var expected = [
+            const actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+            const expected = [
                 {
                     data: [-1, 0, -3],
                     stack: 'stack1'
@@ -274,8 +270,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should change data without stack property, by making negatives to 0', function() {
-            var rawSeriesData = [
+        it('should change data without stack property, by making negatives to 0', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3],
                     stack: 'stack1'
@@ -284,8 +280,8 @@ describe('Test for rawDataHandler', function() {
                     data: [-4, 5, 6]
                 }
             ];
-            var actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
-            var expected = [
+            const actual = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+            const expected = [
                 {
                     data: [-1, 0, -3],
                     stack: 'stack1'
@@ -299,9 +295,9 @@ describe('Test for rawDataHandler', function() {
         });
     });
 
-    describe('_makeRawSeriesDataForDiverging()', function() {
-        it('should call _makeNormalDivergingRawSeriesData() when there is not stackType option', function() {
-            var rawSeriesData = [
+    describe('_makeRawSeriesDataForDiverging()', () => {
+        it('should call _makeNormalDivergingRawSeriesData() when there is not stackType option', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3],
                     stack: 'stack1'
@@ -315,14 +311,14 @@ describe('Test for rawDataHandler', function() {
                     stack: 'stack1'
                 }
             ];
-            var actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData);
-            var expected = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            const actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData);
+            const expected = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
 
             expect(actual).toEqual(expected);
         });
 
-        it('should return value of _makeRawSeriesDataForStackedDiverging(), when stackType option is valid', function() {
-            var rawSeriesData = [
+        it('should return value of _makeRawSeriesDataForStackedDiverging(), when stackType option is valid', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3],
                     stack: 'stack1'
@@ -336,14 +332,14 @@ describe('Test for rawDataHandler', function() {
                     stack: 'stack1'
                 }
             ];
-            var actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData, 'normal');
-            var expected = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
+            const actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData, 'normal');
+            const expected = rawDataHandler._makeRawSeriesDataForStackedDiverging(rawSeriesData);
 
             expect(actual).toEqual(expected);
         });
 
-        it('should return value of _makeNormalDivergingRawSeriesData(), when stackType option is invalid.', function() {
-            var rawSeriesData = [
+        it('should return value of _makeNormalDivergingRawSeriesData(), when stackType option is invalid.', () => {
+            const rawSeriesData = [
                 {
                     data: [1, -2, 3],
                     stack: 'stack1'
@@ -357,29 +353,29 @@ describe('Test for rawDataHandler', function() {
                     stack: 'stack1'
                 }
             ];
-            var actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData, true);
-            var expected = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
+            const actual = rawDataHandler._makeRawSeriesDataForDiverging(rawSeriesData, true);
+            const expected = rawDataHandler._makeNormalDivergingRawSeriesData(rawSeriesData);
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('filterCheckedRawData()', function() {
-        it('should filter rawData of which legend is checked', function() {
-            var actual = rawDataHandler.filterCheckedRawData({
+    describe('filterCheckedRawData()', () => {
+        it('should filter rawData of which legend is checked', () => {
+            const actual = rawDataHandler.filterCheckedRawData({
                 series: {
                     line: ['a', 'b', 'c', 'd']
                 }
             }, {line: [null, true, true]});
-            var expected = {
+            const expected = {
                 line: ['b', 'c']
             };
 
             expect(actual.series).toEqual(expected);
         });
 
-        it('should filter rawData by each chart type', function() {
-            var actual = rawDataHandler.filterCheckedRawData({
+        it('should filter rawData by each chart type', () => {
+            const actual = rawDataHandler.filterCheckedRawData({
                 series: {
                     column: ['a', 'b', 'c', 'd'],
                     line: ['e', 'f', 'g']
@@ -388,7 +384,7 @@ describe('Test for rawDataHandler', function() {
                 column: [null, true, null, true],
                 line: [true]
             });
-            var expected = {
+            const expected = {
                 column: ['b', 'd'],
                 line: ['e']
             };
@@ -396,8 +392,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual.series).toEqual(expected);
         });
 
-        it('should filter categories of rawData by checkedLegends, if it is a bullet chart and fillSeriesName option is enabled', function() {
-            var actual = rawDataHandler.filterCheckedRawData({
+        it('should filter categories of rawData by checkedLegends, if it is a bullet chart and fillSeriesName option is enabled', () => {
+            const actual = rawDataHandler.filterCheckedRawData({
                 categories: ['a', 'b', 'c', 'd'],
                 series: {
                     bullet: ['a', 'b', 'c', 'd']
@@ -407,7 +403,7 @@ describe('Test for rawDataHandler', function() {
             }, {
                 fillSeriesName: true
             });
-            var expected = {
+            const expected = {
                 categories: ['b', 'd'],
                 series: {
                     bullet: ['b', 'd']
@@ -418,8 +414,8 @@ describe('Test for rawDataHandler', function() {
             expect(actual.series).toEqual(expected.series);
         });
 
-        it('should not filter categories of rawData by checkedLegends, when it is a bullet chart, and fillSeriesName option is disabled', function() {
-            var actual = rawDataHandler.filterCheckedRawData({
+        it('should not filter categories of rawData by checkedLegends, when it is a bullet chart, and fillSeriesName option is disabled', () => {
+            const actual = rawDataHandler.filterCheckedRawData({
                 categories: ['a', 'b'],
                 series: {
                     column: ['a', 'b', 'c', 'd']
@@ -427,7 +423,7 @@ describe('Test for rawDataHandler', function() {
             }, {
                 column: [null, true, null, true]
             });
-            var expected = {
+            const expected = {
                 categories: ['a', 'b'],
                 series: {
                     column: ['b', 'd']
@@ -439,12 +435,12 @@ describe('Test for rawDataHandler', function() {
         });
     });
 
-    describe('_makeRawSeriesDataForBulletChart', function() {
-        it('should fill categories to empty array, if there isn\'t categories property on rawData', function() {
-            var rawData1 = {
+    describe('_makeRawSeriesDataForBulletChart', () => {
+        it('should fill categories to empty array, if there isn\'t categories property on rawData', () => {
+            const rawData1 = {
                 series: {}
             };
-            var rawData2 = {
+            const rawData2 = {
                 series: {}
             };
             rawDataHandler._makeRawSeriesDataForBulletChart(rawData1);
@@ -454,8 +450,8 @@ describe('Test for rawDataHandler', function() {
             expect(rawData2.categories).toEqual([]);
         });
 
-        it('should overwrite categories, when it is bullet chart', function() {
-            var rawData = {
+        it('should overwrite categories, when it is bullet chart', () => {
+            const rawData = {
                 categories: ['category-0'],
                 series: {
                     bullet: [

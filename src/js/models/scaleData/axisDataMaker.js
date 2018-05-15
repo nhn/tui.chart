@@ -4,24 +4,22 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
-
-var chartConst = require('../../const');
-var predicate = require('../../helpers/predicate');
-var geomatric = require('../../helpers/geometric');
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var arrayUtil = require('../../helpers/arrayUtil');
-var snippet = require('tui-code-snippet');
-var AUTO_INTERVAL_MIN_WIDTH = 90;
-var AUTO_INTERVAL_MAX_WIDTH = 121;
-var AUTO_INTERVAL_RANGE_STEP = 5;
+import chartConst from '../../const';
+import predicate from '../../helpers/predicate';
+import geomatric from '../../helpers/geometric';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import arrayUtil from '../../helpers/arrayUtil';
+import snippet from 'tui-code-snippet';
+const AUTO_INTERVAL_MIN_WIDTH = 90;
+const AUTO_INTERVAL_MAX_WIDTH = 121;
+const AUTO_INTERVAL_RANGE_STEP = 5;
 
 /**
  * Axis data maker.
  * @module axisDataMaker
  * @private */
-var axisDataMaker = {
+const axisDataMaker = {
     /**
      * Makes labels by labelInterval option.
      * @param {Array.<string>} labels - labels
@@ -30,9 +28,9 @@ var axisDataMaker = {
      * @returns {Array.<string>} labels
      * @private
      */
-    _makeLabelsByIntervalOption: function(labels, labelInterval, addedDataCount) {
+    _makeLabelsByIntervalOption(labels, labelInterval, addedDataCount) {
         addedDataCount = addedDataCount || 0;
-        labels = snippet.map(labels, function(label, index) {
+        labels = labels.map((label, index) => {
             if (((index + addedDataCount) % labelInterval) !== 0) {
                 label = chartConst.EMPTY_AXIS_LABEL;
             }
@@ -62,10 +60,10 @@ var axisDataMaker = {
      *      aligned: boolean
      * }}
      */
-    makeLabelAxisData: function(params) {
-        var tickCount = params.labels.length;
-        var options = params.options || {};
-        var labels = params.labels;
+    makeLabelAxisData(params) {
+        const {options = {}} = params;
+        let tickCount = params.labels.length;
+        let {labels} = params;
 
         if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)
                 && params.labels.length > options.labelInterval) {
@@ -81,11 +79,11 @@ var axisDataMaker = {
         }
 
         return {
-            labels: labels,
-            tickCount: tickCount,
+            labels,
+            tickCount,
             validTickCount: tickCount,
             isLabelAxis: true,
-            options: options,
+            options,
             isVertical: !!params.isVertical,
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned
@@ -107,22 +105,22 @@ var axisDataMaker = {
      *      isVertical: boolean
      * }} axis data
      */
-    makeValueAxisData: function(params) {
-        var labels = params.labels;
-        var tickCount = params.tickCount;
-        var limit = params.limit;
-        var axisData = {
-            labels: labels,
-            tickCount: tickCount,
+    makeValueAxisData(params) {
+        const {labels, tickCount, limit} = params;
+        const {step, options, isVertical, isPositionRight, aligned} = params;
+
+        const axisData = {
+            labels,
+            tickCount,
+            limit,
+            step,
+            options,
             validTickCount: tickCount,
-            limit: limit,
             dataMin: limit.min,
             distance: limit.max - limit.min,
-            step: params.step,
-            options: params.options,
-            isVertical: !!params.isVertical,
-            isPositionRight: !!params.isPositionRight,
-            aligned: !!params.aligned
+            isVertical: !!isVertical,
+            isPositionRight: !!isPositionRight,
+            aligned: !!aligned
         };
 
         return axisData;
@@ -144,14 +142,12 @@ var axisDataMaker = {
      *      sizeRatio: number
      * }}
      */
-    makeAdditionalDataForCoordinateLineType: function(labels, values, limit, step, tickCount) {
-        var sizeRatio = 1;
-        var positionRatio = 0;
-        var min = arrayUtil.min(values);
-        var max = arrayUtil.max(values);
-        var distance;
-
-        distance = max - min;
+    makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount) {
+        const min = arrayUtil.min(values);
+        const max = arrayUtil.max(values);
+        const distance = max - min;
+        let positionRatio = 0;
+        let sizeRatio = 1;
 
         if (distance) {
             if (limit.min < min) {
@@ -171,14 +167,14 @@ var axisDataMaker = {
         }
 
         return {
-            labels: labels,
-            tickCount: tickCount,
+            labels,
+            tickCount,
+            limit,
+            distance,
+            positionRatio,
+            sizeRatio,
             validTickCount: tickCount,
-            limit: limit,
-            dataMin: min,
-            distance: distance,
-            positionRatio: positionRatio,
-            sizeRatio: sizeRatio
+            dataMin: min
         };
     },
 
@@ -190,12 +186,12 @@ var axisDataMaker = {
      * @returns {null | {blockCount: number, beforeRemainBlockCount: number, interval: number}}
      * @private
      */
-    _makeAdjustingIntervalInfo: function(beforeBlockCount, seriesWidth, blockSize) {
-        var newBlockCount = parseInt(seriesWidth / blockSize, 10);
+    _makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize) {
+        let remainCount;
+        let newBlockCount = parseInt(seriesWidth / blockSize, 10);
+        let intervalInfo = null;
         // interval : number of previous blocks in a new block(spaces between tick and tick)
-        var interval = parseInt(beforeBlockCount / newBlockCount, 10);
-        var intervalInfo = null;
-        var remainCount;
+        const interval = parseInt(beforeBlockCount / newBlockCount, 10);
 
         if (interval > 1) {
             // remainCount : remaining block count after filling new blocks
@@ -212,7 +208,7 @@ var axisDataMaker = {
             intervalInfo = {
                 blockCount: newBlockCount,
                 beforeRemainBlockCount: remainCount,
-                interval: interval
+                interval
             };
         }
 
@@ -226,32 +222,32 @@ var axisDataMaker = {
      * @returns {Array.<{newBlockCount: number, remainBlockCount: number, interval: number}>}
      * @private
      */
-    _makeCandidatesForAdjustingInterval: function(beforeBlockCount, seriesWidth) {
-        var blockSizeRange;
-        var self = this;
-        var candidates = [];
-        var candidateInterval = calculator.divisors(beforeBlockCount);
-        snippet.forEach(candidateInterval, function(interval) {
-            var intervalWidth = (interval / beforeBlockCount) * seriesWidth;
+    _makeCandidatesForAdjustingInterval(beforeBlockCount, seriesWidth) {
+        let candidates = [];
+        const candidateInterval = calculator.divisors(beforeBlockCount);
+        candidateInterval.forEach(interval => {
+            const intervalWidth = (interval / beforeBlockCount) * seriesWidth;
             if (intervalWidth >= AUTO_INTERVAL_MIN_WIDTH && intervalWidth <= AUTO_INTERVAL_MAX_WIDTH) {
                 candidates.push({
+                    interval,
                     blockCount: beforeBlockCount / interval,
-                    interval: interval,
                     beforeRemainBlockCount: 0
                 });
             }
         });
 
         if (candidates.length === 0) {
-            blockSizeRange = snippet.range(AUTO_INTERVAL_MIN_WIDTH, AUTO_INTERVAL_MAX_WIDTH, AUTO_INTERVAL_RANGE_STEP);
-            candidates = snippet.map(blockSizeRange, function(blockSize) {
-                return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
-            });
+            const blockSizeRange = snippet.range(
+                AUTO_INTERVAL_MIN_WIDTH,
+                AUTO_INTERVAL_MAX_WIDTH,
+                AUTO_INTERVAL_RANGE_STEP
+            );
+            candidates = blockSizeRange.map(blockSize => (
+                this._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize)
+            ));
         }
 
-        return snippet.filter(candidates, function(info) {
-            return !!info;
-        });
+        return candidates.filter(info => !!info);
     },
 
     /**
@@ -261,14 +257,12 @@ var axisDataMaker = {
      * @returns {{newBlockCount: number, remainBlockCount: number, interval: number}}
      * @private
      */
-    _calculateAdjustingIntervalInfo: function(curBlockCount, seriesWidth) {
-        var candidates = this._makeCandidatesForAdjustingInterval(curBlockCount, seriesWidth);
-        var intervalInfo = null;
+    _calculateAdjustingIntervalInfo(curBlockCount, seriesWidth) {
+        const candidates = this._makeCandidatesForAdjustingInterval(curBlockCount, seriesWidth);
+        let intervalInfo = null;
 
         if (candidates.length) {
-            intervalInfo = arrayUtil.max(candidates, function(candidate) {
-                return candidate.blockCount;
-            });
+            intervalInfo = arrayUtil.max(candidates, candidate => candidate.blockCount);
         }
 
         return intervalInfo;
@@ -282,10 +276,8 @@ var axisDataMaker = {
      * @returns {Array.<string>}
      * @private
      */
-    _makeFilteredLabelsByInterval: function(labels, startIndex, interval) {
-        return snippet.filter(labels.slice(startIndex), function(label, index) {
-            return index % interval === 0;
-        });
+    _makeFilteredLabelsByInterval(labels, startIndex, interval) {
+        return labels.slice(startIndex).filter((label, index) => (index % interval === 0));
     },
 
     /**
@@ -295,28 +287,18 @@ var axisDataMaker = {
      * @param {?number} addedDataCount - added data count
      * @param {?boolean} addingDataMode - whether adding data mode or not
      */
-    updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount, addingDataMode) {
-        var beforeBlockCount, intervalInfo, lastLabelValue;
-        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex, tickCount;
-
+    updateLabelAxisDataForAutoTickInterval(axisData, seriesWidth, addedDataCount, addingDataMode) {
         if (addingDataMode) {
             axisData.tickCount -= 1;
             axisData.labels.pop();
         }
 
-        beforeBlockCount = axisData.tickCount - 1;
-
-        intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
+        const beforeBlockCount = axisData.tickCount - 1;
+        const intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
 
         if (!intervalInfo) {
             return;
         }
-
-        adjustingBlockCount = intervalInfo.blockCount;
-        interval = intervalInfo.interval;
-        beforeRemainBlockCount = intervalInfo.beforeRemainBlockCount;
-        axisData.eventTickCount = axisData.tickCount;
-        tickCount = adjustingBlockCount + 1;
 
         // startIndex: (remaing block count / 2) - current moved tick index
         // |     |     |     |*|*|*|    - * remaing block
@@ -327,8 +309,14 @@ var axisDataMaker = {
         //     startIndex += interval;
         // }
         // Fixed to 0 due to issues. (https://github.com/nhnent/tui.chart/issues/56)
-        startIndex = 0;
-        lastLabelValue = axisData.labels[axisData.labels.length - 1];
+
+        axisData.eventTickCount = axisData.tickCount;
+
+        const adjustingBlockCount = intervalInfo.blockCount;
+        const {beforeRemainBlockCount, interval} = intervalInfo;
+        const tickCount = adjustingBlockCount + 1;
+        const startIndex = 0;
+        const lastLabelValue = axisData.labels[axisData.labels.length - 1];
         axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
 
         if (beforeRemainBlockCount > 0) {
@@ -336,11 +324,11 @@ var axisDataMaker = {
         }
 
         snippet.extend(axisData, {
-            startIndex: startIndex,
-            tickCount: tickCount,
+            startIndex,
+            tickCount,
+            interval,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            interval: interval,
             remainLastBlockInterval: beforeRemainBlockCount
         });
     },
@@ -351,13 +339,12 @@ var axisDataMaker = {
      * @param {object} prevUpdatedData - previous updated axisData
      * @param {number} firstTickCount - calculated first tick count
      */
-    updateLabelAxisDataForStackingDynamicData: function(axisData, prevUpdatedData, firstTickCount) {
-        var interval = prevUpdatedData.interval;
-        var startIndex = prevUpdatedData.startIndex;
-        var beforeBlockCount = axisData.tickCount - 1;
-        var newBlockCount = beforeBlockCount / interval;
-        var firstBlockCount = firstTickCount ? firstTickCount - 1 : 0;
-        var beforeRemainBlockCount;
+    updateLabelAxisDataForStackingDynamicData(axisData, prevUpdatedData, firstTickCount) {
+        let {interval} = prevUpdatedData;
+        const {startIndex} = prevUpdatedData;
+        const beforeBlockCount = axisData.tickCount - 1;
+        const firstBlockCount = firstTickCount ? firstTickCount - 1 : 0;
+        let newBlockCount = beforeBlockCount / interval;
 
         // twice interval, if new block count is greater than twice of new block count
         if (firstBlockCount && ((firstBlockCount * 2) <= newBlockCount)) {
@@ -366,15 +353,15 @@ var axisDataMaker = {
 
         axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
         newBlockCount = axisData.labels.length - 1;
-        beforeRemainBlockCount = beforeBlockCount - (interval * newBlockCount);
+        const beforeRemainBlockCount = beforeBlockCount - (interval * newBlockCount);
 
         snippet.extend(axisData, {
-            startIndex: startIndex,
+            startIndex,
+            interval,
             eventTickCount: axisData.tickCount,
             tickCount: axisData.labels.length,
             positionRatio: startIndex / beforeBlockCount,
-            sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            interval: interval
+            sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount)
         });
     },
 
@@ -386,7 +373,7 @@ var axisDataMaker = {
      * @returns {number} limit width
      * @private
      */
-    _calculateXAxisLabelAreaWidth: function(isLabelAxis, seriesWidth, labelCount) {
+    _calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, labelCount) {
         if (!isLabelAxis) {
             labelCount -= 1;
         }
@@ -402,19 +389,19 @@ var axisDataMaker = {
      * @returns {string}
      * @private
      */
-    _createMultilineLabel: function(label, limitWidth, theme) {
-        var words = String(label).split(/\s+/);
-        var lineWords = words[0];
-        var lines = [];
+    _createMultilineLabel(label, limitWidth, theme) {
+        const words = String(label).split(/\s+/);
+        const lines = [];
+        let [lineWords] = words;
 
-        snippet.forEachArray(words.slice(1), function(word) {
-            var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
+        words.slice(1).forEach(word => {
+            const width = renderUtil.getRenderedLabelWidth(`${lineWords} ${word}`, theme);
 
             if (width > limitWidth) {
                 lines.push(lineWords);
                 lineWords = word;
             } else {
-                lineWords += ' ' + word;
+                lineWords += ` ${word}`;
             }
         });
 
@@ -433,12 +420,10 @@ var axisDataMaker = {
      * @returns {Array}
      * @private
      */
-    _createMultilineLabels: function(labels, labelTheme, labelAreaWidth) {
-        var _createMultilineLabel = this._createMultilineLabel;
+    _createMultilineLabels(labels, labelTheme, labelAreaWidth) {
+        const {_createMultilineLabel} = this;
 
-        return snippet.map(labels, function(label) {
-            return _createMultilineLabel(label, labelAreaWidth, labelTheme);
-        });
+        return labels.map(label => _createMultilineLabel(label, labelAreaWidth, labelTheme));
     },
 
     /**
@@ -449,9 +434,9 @@ var axisDataMaker = {
      * @returns {number}
      * @private
      */
-    _calculateMultilineHeight: function(multilineLabels, labelTheme, labelAreaWidth) {
-        return renderUtil.getRenderedLabelsMaxHeight(multilineLabels, snippet.extend({
-            cssText: 'line-height:1.2;width:' + labelAreaWidth + 'px'
+    _calculateMultilineHeight(multilineLabels, labelTheme, labelAreaWidth) {
+        return renderUtil.getRenderedLabelsMaxHeight(multilineLabels, Object.assign({
+            cssText: `line-height:1.2;width:${labelAreaWidth}px`
         }, labelTheme));
     },
 
@@ -464,15 +449,15 @@ var axisDataMaker = {
      * @param {{series: {width: number}, yAxis: {width: number}}} dimensionMap - dimension map
      * @returns {number}
      */
-    makeAdditionalDataForMultilineLabels: function(labels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
-        var seriesWidth = dimensionMap.series.width;
-        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
-        var multilineLabels = this._createMultilineLabels(labels, labelTheme, seriesWidth);
-        var multilineHeight = this._calculateMultilineHeight(multilineLabels, labelTheme, labelAreaWidth);
-        var labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
+    makeAdditionalDataForMultilineLabels(labels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
+        const seriesWidth = dimensionMap.series.width;
+        const labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
+        const multilineLabels = this._createMultilineLabels(labels, labelTheme, seriesWidth);
+        const multilineHeight = this._calculateMultilineHeight(multilineLabels, labelTheme, labelAreaWidth);
+        const labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
 
         return {
-            multilineLabels: multilineLabels,
+            multilineLabels,
             overflowHeight: multilineHeight - labelHeight,
             overflowLeft: (labelAreaWidth / 2) - dimensionMap.yAxis.width
         };
@@ -486,11 +471,11 @@ var axisDataMaker = {
      * @returns {number}
      * @private
      */
-    _findRotationDegree: function(labelAreaWidth, labelWidth, labelHeight) {
-        var foundDegree = null;
+    _findRotationDegree(labelAreaWidth, labelWidth, labelHeight) {
+        let foundDegree = null;
 
-        snippet.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
-            var compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
+        chartConst.DEGREE_CANDIDATES.every(degree => {
+            const compareWidth = geomatric.calculateRotatedWidth(degree, labelWidth, labelHeight);
             foundDegree = degree;
 
             if (compareWidth <= labelAreaWidth) {
@@ -512,9 +497,9 @@ var axisDataMaker = {
      * @returns {number}
      * @private
      */
-    _calculateRotatedWidth: function(degree, firstLabel, labelHeight, labelTheme) {
-        var firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, labelTheme);
-        var newLabelWidth = geomatric.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
+    _calculateRotatedWidth(degree, firstLabel, labelHeight, labelTheme) {
+        const firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, labelTheme);
+        let newLabelWidth = geomatric.calculateRotatedWidth(degree, firstLabelWidth, labelHeight);
 
         // when checking overflow, calculation should be based on right top angle
         newLabelWidth -= geomatric.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2);
@@ -530,8 +515,8 @@ var axisDataMaker = {
      * @returns {number}
      * @private
      */
-    _calculateLimitWidth: function(yAxisWidth, isLabelAxis, labelAreaWidth) {
-        var limitWidth = yAxisWidth;
+    _calculateLimitWidth(yAxisWidth, isLabelAxis, labelAreaWidth) {
+        let limitWidth = yAxisWidth;
 
         if (isLabelAxis) {
             limitWidth += (labelAreaWidth / 2);
@@ -550,25 +535,24 @@ var axisDataMaker = {
      * @param {{series: {width: number}, yAxis: {width: number}}} dimensionMap - dimension map
      * @returns {{degree: number, overflowHeight: number, overflowLeft: number}}
      */
-    makeAdditionalDataForRotatedLabels: function(validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
-        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(validLabels, labelTheme);
-        var seriesWidth = dimensionMap.series.width;
-        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
-        var additionalData = null;
-        var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0;
-        var degree, labelHeight, rotatedHeight, limitWidth, rotatedWidth;
-        var contentWidth = (chartConst.CHART_PADDING * 2) + yAxisAreaWidth + seriesWidth;
+    makeAdditionalDataForRotatedLabels(validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
+        const maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(validLabels, labelTheme);
+        const seriesWidth = dimensionMap.series.width;
+        const yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0;
+        let labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
+        let additionalData = null;
+        let contentWidth = (chartConst.CHART_PADDING * 2) + yAxisAreaWidth + seriesWidth;
 
         if (labelAreaWidth < maxLabelWidth) {
-            labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);
-            degree = this._findRotationDegree(labelAreaWidth, maxLabelWidth, labelHeight);
-            rotatedHeight = geomatric.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
-            rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
-            limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
+            const labelHeight = renderUtil.getRenderedLabelsMaxHeight(validLabels, labelTheme);
+            const degree = this._findRotationDegree(labelAreaWidth, maxLabelWidth, labelHeight);
+            const rotatedHeight = geomatric.calculateRotatedHeight(degree, maxLabelWidth, labelHeight);
+            const rotatedWidth = this._calculateRotatedWidth(degree, validLabels[0], labelHeight, labelTheme);
+            const limitWidth = this._calculateLimitWidth(dimensionMap.yAxis.width, isLabelAxis, labelAreaWidth);
             contentWidth += rotatedWidth; // add spaces to render maybe one label
 
             additionalData = {
-                degree: degree,
+                degree,
                 overflowHeight: rotatedHeight - labelHeight,
                 overflowLeft: rotatedWidth - limitWidth,
                 overflowRight: contentWidth - dimensionMap.chart.width
@@ -587,4 +571,4 @@ var axisDataMaker = {
     }
 };
 
-module.exports = axisDataMaker;
+export default axisDataMaker;

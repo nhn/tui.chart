@@ -4,21 +4,14 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import ChartBase from './chartBase';
+import rawDataHandler from '../models/data/rawDataHandler';
+import predicate from '../helpers/predicate';
+import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
+import DynamicDataHelper from './dynamicDataHelper';
+import snippet from 'tui-code-snippet';
 
-var ChartBase = require('./chartBase');
-var rawDataHandler = require('../models/data/rawDataHandler');
-var predicate = require('../helpers/predicate');
-var validTypeMakerForYAxisOptions = require('./validTypeMakerForYAxisOptions');
-var DynamicDataHelper = require('./dynamicDataHelper');
-var snippet = require('tui-code-snippet');
-
-var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaComboChart.prototype */ {
-    /**
-     * className
-     * @type {string}
-     */
-    className: 'tui-combo-chart',
+export default class LineAreaComboChart extends ChartBase {
     /**
      * Line and Area Combo chart.
      * @constructs LineAreaComboChart
@@ -27,23 +20,24 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @param {object} theme - chart theme
      * @param {object} options - chart options
      */
-    init: function(rawData, theme, options) {
-        var typeData = validTypeMakerForYAxisOptions({
+    constructor(rawData, theme, options) {
+        const typeData = validTypeMakerForYAxisOptions({
             rawSeriesData: rawData.series,
             yAxisOptions: options.yAxis
         });
 
-        /**
-         * chart types
-         * @type {Object}
-         */
-        this.chartTypes = typeData.chartTypes;
+        options.tooltip = options.tooltip || {};
+        options.tooltip.grouped = true;
 
-        /**
-         * series types
-         * @type {Object|Array.<T>}
-         */
-        this.seriesTypes = typeData.seriesTypes;
+        super({
+            rawData,
+            theme,
+            options,
+            seriesTypes: typeData.seriesTypes,
+            chartTypes: typeData.chartTypes,
+            hasAxes: true,
+            isVertical: true
+        });
 
         /**
          * yAxis options
@@ -57,40 +51,36 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
          */
         this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
 
-        options.tooltip = options.tooltip || {};
-        options.tooltip.grouped = true;
-
-        ChartBase.call(this, {
-            rawData: rawData,
-            theme: theme,
-            options: options,
-            hasAxes: true,
-            isVertical: true
-        });
-
         this._dynamicDataHelper = new DynamicDataHelper(this);
-    },
+
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-combo-chart';
+    }
 
     /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
-    onChangeCheckedLegends: function(checkedLegends) {
-        var zoomedRawData = this.dataProcessor.getZoomedRawData();
-        var rawData = rawDataHandler.filterCheckedRawData(zoomedRawData, checkedLegends);
-        var typeData = validTypeMakerForYAxisOptions({
+    onChangeCheckedLegends(checkedLegends) {
+        const zoomedRawData = this.dataProcessor.getZoomedRawData();
+        const rawData = rawDataHandler.filterCheckedRawData(zoomedRawData, checkedLegends);
+        const typeData = validTypeMakerForYAxisOptions({
             rawSeriesData: rawData.series,
             yAxisOptions: this.options.yAxis
         });
 
         this._dynamicDataHelper.reset();
         this._dynamicDataHelper.changeCheckedLegends(checkedLegends, rawData, typeData);
-    },
+    }
+
     /**
      * Add components
      * @override
      */
-    addComponents: function() {
+    addComponents() {
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
@@ -108,7 +98,8 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
         this.componentManager.register('chartExportMenu', 'chartExportMenu');
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    },
+    }
+
     /**
      * Get scale option.
      * @returns {{
@@ -117,8 +108,8 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * }}
      * @override
      */
-    getScaleOption: function() {
-        var scaleOption = {
+    getScaleOption() {
+        const scaleOption = {
             yAxis: this._makeYAxisScaleOption('yAxis', this.chartTypes[0], !this.hasRightYAxis)
         };
 
@@ -127,7 +118,8 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
         }
 
         return scaleOption;
-    },
+    }
+
     /**
      * Make y axis scale option.
      * @param {string} name - component name
@@ -137,9 +129,9 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @private
      * from verticalTypeComboMixer
      */
-    _makeYAxisScaleOption: function(name, chartType, isSingleYAxis) {
-        var yAxisOption = this.yAxisOptions[chartType];
-        var additionalOptions = {
+    _makeYAxisScaleOption(name, chartType, isSingleYAxis) {
+        const yAxisOption = this.yAxisOptions[chartType];
+        const additionalOptions = {
             isSingleYAxis: !!isSingleYAxis
         };
 
@@ -150,10 +142,11 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
         return {
             options: yAxisOption,
             areaType: 'yAxis',
-            chartType: chartType,
-            additionalOptions: additionalOptions
+            chartType,
+            additionalOptions
         };
-    },
+    }
+
     /**
      * Make yAxis options.
      * @param {Array.<string>} chartTypes chart types
@@ -162,40 +155,39 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @private
      * from verticalTypeComboMixer
      */
-    _makeYAxisOptions: function(chartTypes, yAxisOptions) {
-        var options = {};
-        yAxisOptions = yAxisOptions || {};
-        snippet.forEachArray(chartTypes, function(chartType, index) {
+    _makeYAxisOptions(chartTypes, yAxisOptions = {}) {
+        const options = {};
+        chartTypes.forEach((chartType, index) => {
             options[chartType] = yAxisOptions[index] || yAxisOptions;
         });
 
         return options;
-    },
+    }
+
     /**
      * Add data.
      * @param {string} category - category
      * @param {Array} values - values
      */
-    addData: function(category, values) {
+    addData(category, values) {
         this._dynamicDataHelper.addData(category, values);
-    },
+    }
+
     /**
      * Set additional parameter for making y axis scale option.
      * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
      * @private
      * from verticalTypeComboMixer
      */
-    _setAdditionalOptions: function(additionalOptions) {
-        var dataProcessor = this.dataProcessor;
+    _setAdditionalOptions(additionalOptions) {
+        const {dataProcessor} = this;
 
-        snippet.forEach(this.options.series, function(seriesOption, seriesType) {
-            var chartType;
-
+        Object.entries(this.options.series).forEach(([seriesType, seriesOption]) => {
             if (!seriesOption.stackType) {
                 return;
             }
 
-            chartType = dataProcessor.findChartType(seriesType);
+            const chartType = dataProcessor.findChartType(seriesType);
 
             if (!predicate.isAllowedStackOption(chartType)) {
                 return;
@@ -204,31 +196,31 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
             additionalOptions.chartType = chartType;
             additionalOptions.stackType = seriesOption.stackType;
         });
-    },
+    }
+
     /**
      * Add data ratios.
      * @override
      */
-    addDataRatios: function(limitMap) {
-        var self = this;
-        var chartTypes = this.chartTypes || [this.chartType];
-        var seriesOption = this.options.series || {};
-        var addDataRatio;
+    addDataRatios(limitMap) {
+        const chartTypes = this.chartTypes || [this.chartType];
+        const seriesOption = this.options.series || {};
+        let addDataRatio;
 
         if (this.dataProcessor.isCoordinateType()) {
-            addDataRatio = function(chartType) {
-                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+            addDataRatio = chartType => {
+                this.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
             };
         } else {
-            addDataRatio = function(chartType) {
-                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+            addDataRatio = chartType => {
+                const {stackType} = (seriesOption[chartType] || seriesOption);
 
-                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+                this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
             };
         }
 
         snippet.forEachArray(chartTypes, addDataRatio);
-    },
+    }
 
     /**
      * Add plot line.
@@ -236,9 +228,9 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @override
      * @api
      */
-    addPlotLine: function(data) {
+    addPlotLine(data) {
         this.componentManager.get('plot').addPlotLine(data);
-    },
+    }
 
     /**
      * Add plot band.
@@ -246,9 +238,9 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @override
      * @api
      */
-    addPlotBand: function(data) {
+    addPlotBand(data) {
         this.componentManager.get('plot').addPlotBand(data);
-    },
+    }
 
     /**
      * Remove plot line.
@@ -256,9 +248,9 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @override
      * @api
      */
-    removePlotLine: function(id) {
+    removePlotLine(id) {
         this.componentManager.get('plot').removePlotLine(id);
-    },
+    }
 
     /**
      * Remove plot band.
@@ -266,9 +258,9 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @override
      * @api
      */
-    removePlotBand: function(id) {
+    removePlotBand(id) {
         this.componentManager.get('plot').removePlotBand(id);
-    },
+    }
 
     /**
      * Render for zoom.
@@ -276,13 +268,11 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @param {boolean} isResetZoom - whether reset zoom or not
      * @private
      */
-    _renderForZoom: function(isResetZoom) {
-        var boundsAndScale = this.readyForRender();
+    _renderForZoom(isResetZoom) {
+        const boundsAndScale = this.readyForRender();
 
-        this.componentManager.render('zoom', boundsAndScale, {
-            isResetZoom: isResetZoom
-        });
-    },
+        this.componentManager.render('zoom', boundsAndScale, {isResetZoom});
+    }
 
     /**
      * On zoom.
@@ -290,19 +280,19 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
      * @param {Array.<number>} indexRange - index range for zoom
      * @override
      */
-    onZoom: function(indexRange) {
+    onZoom(indexRange) {
         this._dynamicDataHelper.pauseAnimation();
         this.dataProcessor.updateRawDataForZoom(indexRange);
         this._renderForZoom(false);
-    },
+    }
 
     /**
      * On reset zoom.
      * from chart/zoomMixer
      * @override
      */
-    onResetZoom: function() {
-        var rawData = this.dataProcessor.getOriginalRawData();
+    onResetZoom() {
+        let rawData = this.dataProcessor.getOriginalRawData();
 
         if (this._dynamicDataHelper.checkedLegends) {
             rawData = rawDataHandler.filterCheckedRawData(rawData, this._dynamicDataHelper.checkedLegends);
@@ -314,6 +304,4 @@ var LineAreaComboChart = snippet.defineClass(ChartBase, /** @lends LineAreaCombo
         this._renderForZoom(true);
         this._dynamicDataHelper.restartAnimation();
     }
-});
-
-module.exports = LineAreaComboChart;
+}

@@ -4,13 +4,11 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
-'use strict';
+import calculator from '../../helpers/calculator';
+import renderUtil from '../../helpers/renderUtil';
+import snippet from 'tui-code-snippet';
 
-var calculator = require('../../helpers/calculator');
-var renderUtil = require('../../helpers/renderUtil');
-var snippet = require('tui-code-snippet');
-
-var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.prototype */{
+export default class SeriesItemForTreemap {
     /**
      * SeriesItem for treemap.
      * @constructs SeriesItemForTreemap
@@ -19,7 +17,7 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
      * @param {?Array.<function>} formatFunctions - format functions
      * @param {string} chartType - type of chart
      */
-    init: function(rawSeriesDatum, formatFunctions, chartType) {
+    constructor(rawSeriesDatum, formatFunctions, chartType) {
         /**
          * type of chart
          * @type {string}
@@ -42,39 +40,34 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
         this.hasChild = !!rawSeriesDatum.hasChild;
         this.indexes = rawSeriesDatum.indexes;
         this.fillOpacity = rawSeriesDatum.fillOpacity;
-    },
+    }
 
     /**
      * Add ratio.
      * @param {number} divNumber - number for division
      * @param {?number} subNumber - number for subtraction
      */
-    addRatio: function(divNumber, subNumber) {
-        divNumber = divNumber || 1;
-        subNumber = subNumber || 0;
-
+    addRatio(divNumber = 1, subNumber = 0) {
         this.colorRatio = calculator.calculateRatio(this.colorValue, divNumber, subNumber, 1) || -1;
-    },
+    }
 
     /**
      * Pick value map for tooltip.
      * @returns {{value: number, label: string}}
      */
-    pickValueMapForTooltip: function() {
-        var formatFunctions = this.formatFunctions;
-        var chartType = this.chartType;
-        var colorValue = this.colorValue;
-        var formattedValue = renderUtil.formatValue({
+    pickValueMapForTooltip() {
+        const {formatFunctions, chartType, colorValue} = this;
+        const formattedValue = renderUtil.formatValue({
             value: this.value,
-            formatFunctions: formatFunctions,
-            chartType: chartType,
+            formatFunctions,
+            chartType,
             areaType: 'tooltipValue'
         });
-        var label = formattedValue;
-        var valueMap = {
+        const label = formattedValue;
+        const valueMap = {
             legend: this.label || '',
             value: formattedValue,
-            label: label,
+            label,
             ratio: this.ratio,
             tooltipColorIndex: this.indexes[0]
         };
@@ -82,23 +75,23 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
         if (snippet.isExisty(colorValue)) {
             valueMap.colorValue = renderUtil.formatValue({
                 value: colorValue,
-                formatFunctions: formatFunctions,
-                chartType: chartType,
+                formatFunctions,
+                chartType,
                 areaType: 'tooltipColorValue'
             });
             valueMap.colorRatio = this.colorRatio;
         }
 
         return valueMap;
-    },
+    }
 
     /**
      * Pick data for label template.
      * @param {number} total - value total
      * @returns {{value: number, ratio: number, label: string, colorValue: ?number, colorValueRatio: ?number}}
      */
-    pickLabelTemplateData: function() {
-        var templateData = {
+    pickLabelTemplateData() {
+        const templateData = {
             value: this.value,
             ratio: this.ratio,
             label: this.label
@@ -111,6 +104,4 @@ var SeriesItemForTreemap = snippet.defineClass(/** @lends SeriesItemForTreemap.p
 
         return templateData;
     }
-});
-
-module.exports = SeriesItemForTreemap;
+}
