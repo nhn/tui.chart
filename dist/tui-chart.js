@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.2.0
+ * @version 3.1.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue May 15 2018 10:31:28 GMT+0900 (KST)"
+ * bundle created at "Tue May 15 2018 11:02:57 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
