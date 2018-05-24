@@ -78,6 +78,15 @@ export default class RaphaelLineChart extends RaphaelLineBase {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }
+
+        if (options.icons.length) {
+            this.icons = this._renderIcons({
+                paper,
+                groupPositions,
+                options
+            });
+        }
+
         this.colors = colors;
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;

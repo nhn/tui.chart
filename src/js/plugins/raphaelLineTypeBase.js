@@ -379,6 +379,85 @@ export default class RaphaelLineTypeBase {
     }
 
     /**
+     * Render icons.
+     * @param {object} params parameter
+     * @param {object} params.paper raphael paper
+     * @param {Array.<Array.<object>>} params.groupPositions positions
+     * @param {object} params.options series options
+     * @returns {object} icons
+     * @private
+     */
+    _renderIcons(params) {
+        const {paper, groupPositions, options} = params;
+        const icons = {};
+
+        options.icons.map(icon => {
+            const {name, value, range} = icon;
+            let result = groupPositions.map(positions => Object.values(positions).reduce((prev, curr) => {
+                if (value === 'min' && prev.top > curr.top) {
+                    return prev;
+                }
+
+                if (value === 'max' && prev.top < curr.top) {
+                    return prev;
+                }
+
+                return curr;
+            }));
+
+            if (range && range === 'all') {
+                result = result.reduce((prev, curr) => {
+                    if (value === 'min' && prev.top > curr.top) {
+                        return prev;
+                    }
+
+                    if (value === 'max' && prev.top < curr.top) {
+                        return prev;
+                    }
+
+                    return curr;
+                });
+                icons[name] = [result];
+            } else {
+                icons[name] = result;
+            }
+
+            icons[name] = icons[name].map(position => this.renderIcon({
+                paper,
+                position,
+                icon
+            }));
+
+            return result;
+        });
+
+        return icons;
+    }
+
+    /**
+     * Render icon.
+     * @param {object} params parameter
+     * @param {object} params.paper raphael papaer
+     * @param {{left: number, top: number}} position icon position
+     * @param {{name: string, url: string, width: number, height: number}} icon icon info
+     * @returns {object} raphael icon
+     */
+    renderIcon(params) {
+        const {paper, position, icon} = params;
+        const {name, url = '', width = 0, height = 0} = icon;
+
+        return {
+            icon: paper.image(
+                url ? url : `/assets/images/icons/${name}.png`,
+                position.left - `${(width ? width / 2 : 12)}`,
+                position.top - `${(height ? height / 2 : 12)}`,
+                width ? width : 24,
+                height ? height : 24
+            )
+        };
+    }
+
+    /**
      * Get center position
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
