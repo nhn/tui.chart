@@ -53,7 +53,8 @@ export default class LineTypeSeriesBase {
                 if (!snippet.isNull(seriesItem.end)) {
                     position = {
                         left: baseLeft + (step * index),
-                        top: baseTop + height - (seriesItem.ratio * height)
+                        top: baseTop + height - (seriesItem.ratio * height),
+                        value: seriesItem.value
                     };
 
                     if (snippet.isExisty(seriesItem.startRatio)) {
@@ -94,7 +95,8 @@ export default class LineTypeSeriesBase {
                 if (!snippet.isNull(seriesItem.end)) {
                     position = {
                         left: baseLeft + (seriesItem.ratioMap.x * width) + additionalLeft,
-                        top: baseTop + height - (seriesItem.ratioMap.y * height)
+                        top: baseTop + height - (seriesItem.ratioMap.y * height),
+                        value: seriesItem.value
                     };
 
                     if (snippet.isExisty(seriesItem.ratioMap.start)) {
