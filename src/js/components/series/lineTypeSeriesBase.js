@@ -36,6 +36,7 @@ export default class LineTypeSeriesBase {
         const width = seriesWidth || dimensionWidth || 0;
         const len = seriesDataModel.getGroupCount();
         const baseTop = this.layout.position.top;
+        const {yAxis} = this.axisDataMap;
         let baseLeft = this.layout.position.left;
         let step;
 
@@ -51,9 +52,10 @@ export default class LineTypeSeriesBase {
                 let position;
 
                 if (!snippet.isNull(seriesItem.end)) {
+                    const distance = seriesItem.ratio * height;
                     position = {
                         left: baseLeft + (step * index),
-                        top: baseTop + height - (seriesItem.ratio * height)
+                        top: baseTop + (yAxis.options.invert === true ? distance : height - distance)
                     };
 
                     if (snippet.isExisty(seriesItem.startRatio)) {

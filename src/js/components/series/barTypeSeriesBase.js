@@ -121,7 +121,8 @@ export default class BarTypeSeriesBase {
             barSize = this._getBarWidthOptionSize(pointInterval, optionSize) || barSize;
 
             if (predicate.isColumnChart(this.chartType)) {
-                basePosition = baseBarSize - basePosition;
+                basePosition = this.axisDataMap.yAxis.options.invert === true ?
+                    -positionValue : baseBarSize - basePosition;
             }
 
             if (predicate.isBoxplotChart(this.chartType) && zeroToMin) {

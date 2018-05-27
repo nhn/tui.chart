@@ -449,13 +449,16 @@ class Axis {
     _renderLabelArea(size, tickCount, categories, additionalSize) {
         const {sizeRatio = 1, remainLastBlockInterval} = this.data;
         const remainLastBlockIntervalPosition = (remainLastBlockInterval) ? size : 0;
-        const tickPixelPositions = calculator.makeTickPixelPositions(
+        let tickPixelPositions = calculator.makeTickPixelPositions(
             (size * sizeRatio),
             tickCount,
             0,
             remainLastBlockIntervalPosition
         );
         const labelDistance = tickPixelPositions[1] - tickPixelPositions[0];
+        if (this.isYAxis === true && this.options.invert === true) {
+            tickPixelPositions = tickPixelPositions.reverse();
+        }
 
         this._renderLabels(tickPixelPositions, categories, labelDistance, (additionalSize || 0));
     }
