@@ -55,7 +55,8 @@ export default class LineTypeSeriesBase {
                     const distance = seriesItem.ratio * height;
                     position = {
                         left: baseLeft + (step * index),
-                        top: baseTop + (yAxis.options.invert === true ? distance : height - distance)
+                        top: baseTop + (yAxis.options.invert === true ? distance : height - distance),
+                        value: seriesItem.value
                     };
 
                     if (snippet.isExisty(seriesItem.startRatio)) {
@@ -96,7 +97,8 @@ export default class LineTypeSeriesBase {
                 if (!snippet.isNull(seriesItem.end)) {
                     position = {
                         left: baseLeft + (seriesItem.ratioMap.x * width) + additionalLeft,
-                        top: baseTop + height - (seriesItem.ratioMap.y * height)
+                        top: baseTop + height - (seriesItem.ratioMap.y * height),
+                        value: seriesItem.value
                     };
 
                     if (snippet.isExisty(seriesItem.ratioMap.start)) {

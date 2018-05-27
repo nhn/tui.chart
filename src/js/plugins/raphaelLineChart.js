@@ -50,11 +50,14 @@ export default class RaphaelLineChart extends RaphaelLineBase {
         const {dimension, groupPositions, theme, options, position} = data;
         const {colors} = theme;
         const opacity = options.showDot ? 1 : 0;
+        const imgs = options.images;
         const isSpline = options.spline;
         const lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
         const borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
         const outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
         let groupPaths;
+
+        const groupDotImgPositions = this._makeImageDotPositions(groupPositions, imgs);
 
         if (isSpline) {
             groupPaths = this._getSplineLinesPath(groupPositions, options.connectNulls);
@@ -72,7 +75,7 @@ export default class RaphaelLineChart extends RaphaelLineBase {
 
         this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
+        this.groupDots = this._renderDots(paper, groupDotImgPositions, colors, opacity);
 
         if (options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
@@ -91,6 +94,39 @@ export default class RaphaelLineChart extends RaphaelLineBase {
         }
 
         return paper.setFinish();
+    }
+
+    /**
+     * find & set groupPosition image property
+     * @param {Array.<Array.<object>>} groupPositions positions
+     * @param {Array.<Array.<object>>} images images option
+     * @returns {Object} splited dot and img positions
+     * @private
+     */
+    _makeImageDotPositions(groupPositions, images) {
+        if (snippet.isUndefined(images)) {
+            return groupPositions;
+        }
+        const results = [];
+        groupPositions.forEach(positions => {
+            const ps = [];
+            positions.forEach(position => {
+                images.every(obj => {
+                    let isNotImgPos = true;
+                    if (obj.value === position.value) {
+                        position.image = obj.path;
+                        position.radius = obj.radius;
+                        isNotImgPos = false;
+                    }
+
+                    return isNotImgPos;
+                });
+                ps.push(position);
+            });
+            results.push(ps);
+        });
+
+        return results;
     }
 
     appendShadowFilterToDefs() {
