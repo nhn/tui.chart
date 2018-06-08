@@ -116,21 +116,8 @@ class NormalTooltip extends TooltipBase {
      */
     _makeSingleTooltipHtml(chartType, indexes) {
         const {groupIndex} = indexes;
-        let data = Object.assign({}, snippet.pick(this.data, chartType, indexes.groupIndex, indexes.index));
-        const isbar = predicate.isBarTypeChart(this.chartType);
-        const isboxplot = predicate.isBoxplotChart(this.chartType);
-        const colorByPoint = (
-            (isbar || isboxplot) && this.dataProcessor.options.series.colorByPoint
-        );
-        let seriesIndex = indexes.index;
-
-        if (predicate.isBulletChart(this.chartType)) {
-            seriesIndex = groupIndex;
-        } else if (predicate.isTreemapChart(this.chartType)) {
-            seriesIndex = data.tooltipColorIndex;
-        }
-
-        let color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
+        let data = this._findTooltipData(chartType, indexes);
+        let color = this._findTooltipColor(chartType, indexes, data);
 
         if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
             data.outlierIndex = indexes.outlierIndex;
@@ -147,6 +134,51 @@ class NormalTooltip extends TooltipBase {
         data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
 
         return this.templateFunc(data.category, data, this.getRawCategory(groupIndex));
+    }
+
+    /**
+     * Find data for tooltip
+     * @param {string} chartType chart type
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @returns {string} data for tooltip
+     * @private
+     */
+    _findTooltipData(chartType, indexes) {
+        const chartData = this.data[chartType];
+        let selectIndex = indexes.groupIndex;
+
+        if (predicate.isRadialChart(chartType) && chartData.length === selectIndex) {
+            selectIndex = 0;
+        }
+
+        return Object.assign({}, snippet.pick(chartData, selectIndex, indexes.index));
+    }
+
+    /**
+     * Find data for tooltip
+     * @param {string} chartType - chart type
+     * @param {{groupIndex: number, index: number}} indexes - indexes
+     * @param {Object} data - data for tooltip render
+     * @returns {string} color hex string
+     * @private
+     */
+    _findTooltipColor(chartType, indexes, data) {
+        const isbar = predicate.isBarTypeChart(this.chartType);
+        const isboxplot = predicate.isBoxplotChart(this.chartType);
+        const colorByPoint = (
+            (isbar || isboxplot) && this.dataProcessor.options.series.colorByPoint
+        );
+
+        const {groupIndex} = indexes;
+        let {index: seriesIndex} = indexes;
+
+        if (predicate.isBulletChart(this.chartType)) {
+            seriesIndex = groupIndex;
+        } else if (predicate.isTreemapChart(this.chartType)) {
+            seriesIndex = data.tooltipColorIndex;
+        }
+
+        return colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
     }
 
     /**

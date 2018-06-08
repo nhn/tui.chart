@@ -366,7 +366,6 @@ export default class TooltipBase {
                 top: tooltipElement.offsetTop
             };
         }
-
         this._showTooltip(tooltipElement, params, prevPosition);
     }
 
