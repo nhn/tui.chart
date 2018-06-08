@@ -78,5 +78,13 @@ describe('Test for calculator', () => {
 
             expect(actual).toEqual(expected);
         });
+
+        it('should return 0 when divNumber is 0', () => {
+            const divNumber = 0;
+            const actual = calculator.calculateRatio(10, divNumber, 2, 0.5);
+            const expected = 0;
+
+            expect(actual).toEqual(expected);
+        });
     });
 });
