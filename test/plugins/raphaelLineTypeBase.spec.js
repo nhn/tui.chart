@@ -245,4 +245,18 @@ describe('RaphaelLineTypeBase', () => {
             expect(dotSetArgs.stroke).toBe('#D95576');
         });
     });
+
+    describe('_findDotItem()', () => {
+        it('index that is equal to the length of the data in the radial chart, you should look for the index at position 0.', () => {
+            lineTypeBase.chartType = 'radial';
+
+            const data = [
+                'item1', 'item2'
+            ];
+            const index = data.length;
+            const actual = lineTypeBase._findDotItem(data, index);
+
+            expect(actual).toBe('item1');
+        });
+    });
 });

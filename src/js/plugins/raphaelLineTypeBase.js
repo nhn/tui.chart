@@ -5,6 +5,7 @@
  */
 import raphaelRenderUtil from './raphaelRenderUtil';
 import renderUtil from '../helpers/renderUtil';
+import predicate from '../helpers/predicate';
 import arrayUtil from '../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
 
@@ -509,9 +510,10 @@ export default class RaphaelLineTypeBase {
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation(data) {
-        const index = data.groupIndex;
         const groupIndex = data.index;
-        const item = this.groupDots[groupIndex][index];
+        const groupDot = this.groupDots[groupIndex];
+        const item = this._findDotItem(groupDot, data.groupIndex);
+
         let line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
         let strokeWidth, startLine;
 
@@ -538,6 +540,24 @@ export default class RaphaelLineTypeBase {
         if (item.startDot) {
             this._showDot(item.startDot, groupIndex);
         }
+    }
+
+    /**
+     * Find dot item
+     * @param {Array.<Object>} groupDot - groupDot info
+     * @param {number} index - dot index
+     * @returns {Object} - raphael object
+     * @private
+     */
+    _findDotItem(groupDot = [], index) {
+        const isRadialChart = predicate.isRadialChart(this.chartType);
+
+        // For radial charts, the position path is one more than the length of the data.
+        if (isRadialChart && groupDot.length === index) {
+            index = 0;
+        }
+
+        return groupDot[index];
     }
 
     /**
@@ -651,14 +671,14 @@ export default class RaphaelLineTypeBase {
         const index = data.groupIndex; // Line chart has pivot values.
         const groupIndex = data.index;
         const groupDot = this.groupDots[groupIndex];
+        const item = this._findDotItem(groupDot, index);
+
         let line, strokeWidth, startLine;
         let opacity = this.dotOpacity;
 
-        if (!groupDot || !groupDot[index]) {
+        if (!item) {
             return;
         }
-
-        const item = groupDot[index];
 
         line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
 
