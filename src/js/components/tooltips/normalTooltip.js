@@ -9,6 +9,7 @@ import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import tooltipTemplate from './tooltipTemplate';
 import snippet from 'tui-code-snippet';
+const DEFALUT_TOOLTIP_COLOR = '#aaa';
 
 /**
  * @classdesc NormalTooltip component.
@@ -156,18 +157,16 @@ class NormalTooltip extends TooltipBase {
 
     /**
      * Find data for tooltip
-     * @param {string} chartType - chart type
+     * @param {string} hoveredChartType - chart type
      * @param {{groupIndex: number, index: number}} indexes - indexes
      * @param {Object} data - data for tooltip render
      * @returns {string} color hex string
      * @private
      */
-    _findTooltipColor(chartType, indexes, data) {
-        const isbar = predicate.isBarTypeChart(this.chartType);
-        const isboxplot = predicate.isBoxplotChart(this.chartType);
-        const colorByPoint = (
-            (isbar || isboxplot) && this.dataProcessor.options.series.colorByPoint
-        );
+    _findTooltipColor(hoveredChartType, indexes, data) {
+        const isBar = predicate.isBarTypeChart(this.chartType);
+        const isBoxplot = predicate.isBoxplotChart(this.chartType);
+        const colorByPoint = (isBar || isBoxplot) && this.dataProcessor.options.series.colorByPoint;
 
         const {groupIndex} = indexes;
         let {index: seriesIndex} = indexes;
@@ -178,7 +177,7 @@ class NormalTooltip extends TooltipBase {
             seriesIndex = data.tooltipColorIndex;
         }
 
-        return colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
+        return colorByPoint ? DEFALUT_TOOLTIP_COLOR : this.tooltipColors[hoveredChartType][seriesIndex];
     }
 
     /**
