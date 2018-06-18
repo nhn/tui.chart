@@ -552,6 +552,7 @@ export default class RaphaelLineTypeBase {
     _findDotItem(groupDot = [], index) {
         const isRadialChart = predicate.isRadialChart(this.chartType);
 
+        // For radial charts, the position path is one more than the length of the data.
         if (isRadialChart && groupDot.length === index) {
             index = 0;
         }
