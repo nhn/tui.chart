@@ -11,7 +11,7 @@ import Series from '../components/series/lineChartSeries';
 import rawDataHandler from '../models/data/rawDataHandler';
 import snippet from 'tui-code-snippet';
 
-export default class LineChart extends ChartBase {
+class LineChart extends ChartBase {
     /**
      * Line chart.
      * @param {Array.<Array>} rawData - raw data
@@ -240,3 +240,5 @@ export default class LineChart extends ChartBase {
         this._dynamicDataHelper.restartAnimation();
     }
 }
+
+export default LineChart;

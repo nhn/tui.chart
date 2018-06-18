@@ -12,7 +12,7 @@ const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LINE_WIDTH = 6;
 
-export default class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
+class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
     /**
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelRadialLineSeries
@@ -188,3 +188,5 @@ export default class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
         });
     }
 }
+
+export default RaphaelRadialLineSeries;

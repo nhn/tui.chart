@@ -8,7 +8,7 @@ import chartConst from '../const';
 import arrayUtil from '../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
 
-export default class MapChartMapModel {
+class MapChartMapModel {
     /**
      * MapChartMapModel is map model of map chart.
      * @constructs MapChartMapModel
@@ -401,3 +401,5 @@ export default class MapChartMapModel {
         return this.mapDimension;
     }
 }
+
+export default MapChartMapModel;

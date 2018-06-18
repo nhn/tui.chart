@@ -20,7 +20,7 @@ import snippet from 'tui-code-snippet';
  * @private
  */
 
-export default class MapChartDataProcessor extends DataProcessorBase {
+class MapChartDataProcessor extends DataProcessorBase {
     /**
      * Data processor for map chart.
      * @param {rawData} rawData raw data
@@ -146,3 +146,5 @@ export default class MapChartDataProcessor extends DataProcessorBase {
         return null;
     }
 }
+
+export default MapChartDataProcessor;

@@ -14,7 +14,7 @@ import snippet from 'tui-code-snippet';
  * @class DataProcessorBase
  * @private
  */
-export default class DataProcessorBase {
+class DataProcessorBase {
     /**
      * Initialize.
      */
@@ -174,6 +174,7 @@ export default class DataProcessorBase {
      * Find simple type format functions.
      * @param {string} format - simple format
      * @returns {Array.<function>}
+     * @private
      */
     _findSimpleTypeFormatFunctions(format) {
         let funcs = [];
@@ -199,6 +200,7 @@ export default class DataProcessorBase {
     /**
      * Find format functions.
      * @returns {function[]} functions
+     * @private
      */
     _findFormatFunctions() {
         const format = snippet.pick(this.options, 'chart', 'format');
@@ -225,3 +227,5 @@ export default class DataProcessorBase {
         return this.formatFunctions;
     }
 }
+
+export default DataProcessorBase;

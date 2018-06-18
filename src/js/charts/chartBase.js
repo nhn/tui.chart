@@ -15,7 +15,7 @@ import boundsAndScaleBuilder from '../models/boundsAndScaleBuilder.js';
 import predicate from '../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
-export default class ChartBase {
+class ChartBase {
     /**
      * Chart base.
      * @constructs ChartBase
@@ -715,3 +715,5 @@ export default class ChartBase {
         }
     }
 }
+
+export default ChartBase;

@@ -12,7 +12,7 @@ import dom from '../../helpers/domHandler';
 import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
 
-export default class TooltipBase {
+class TooltipBase {
     /**
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
@@ -533,3 +533,5 @@ export default class TooltipBase {
         return rawCategory;
     }
 }
+
+export default TooltipBase;

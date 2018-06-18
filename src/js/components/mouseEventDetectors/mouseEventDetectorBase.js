@@ -14,7 +14,7 @@ import renderUtil from '../../helpers/renderUtil';
 
 import snippet from 'tui-code-snippet';
 
-export default class MouseEventDetectorBase {
+class MouseEventDetectorBase {
     /**
      * MouseEventDetectorBase is base class for mouse event detector components.
      * @constructs MouseEventDetectorBase
@@ -462,6 +462,7 @@ export default class MouseEventDetectorBase {
     /**
      * Set prevClientPosition by MouseEvent
      * @param {?MouseEvent} event - mouse event
+     * @private
      */
     _setPrevClientPosition(event) {
         if (!event) {
@@ -476,3 +477,5 @@ export default class MouseEventDetectorBase {
 }
 
 snippet.CustomEvents.mixin(MouseEventDetectorBase);
+
+export default MouseEventDetectorBase;

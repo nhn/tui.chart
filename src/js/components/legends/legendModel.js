@@ -5,7 +5,7 @@
  */
 import snippet from 'tui-code-snippet';
 
-export default class LegendModel {
+class LegendModel {
     /**
      * LegendModel is legend model.
      * @constructs LegendModel
@@ -275,6 +275,7 @@ export default class LegendModel {
     /**
      * Add sending datum.
      * @param {number} index legend index
+     * @private
      */
     _addSendingDatum(index) {
         const legendDatum = this.getDatum(index);
@@ -324,3 +325,4 @@ export default class LegendModel {
     }
 }
 
+export default LegendModel;

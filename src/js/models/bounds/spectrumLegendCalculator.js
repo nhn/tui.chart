@@ -23,6 +23,7 @@ const {
 /**
  * Calculator for spectrum legend.
  * @module spectrumLegendCalculator
+ * @private
  */
 export default {
     /**

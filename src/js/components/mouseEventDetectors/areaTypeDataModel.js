@@ -7,7 +7,7 @@ import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
 
-export default class AreaTypeDataModel {
+class AreaTypeDataModel {
     /**
      * AreaTypeDataModel is data mode for mouse event detector of area type.
      * @constructs AreaTypeDataModel
@@ -154,3 +154,5 @@ export default class AreaTypeDataModel {
         return this.findDataByIndexes(indexes);
     }
 }
+
+export default AreaTypeDataModel;

@@ -37,7 +37,7 @@ import snippet from 'tui-code-snippet';
 
 const {concat} = Array.prototype;
 
-export default class SeriesDataModelForBoxplot extends SeriesDataModel {
+class SeriesDataModelForBoxplot extends SeriesDataModel {
     /**
      * SeriesDataModelForBoxplot is series model for boxplot chart
      * SeriesDataModel.groups has SeriesGroups.
@@ -145,3 +145,5 @@ export default class SeriesDataModelForBoxplot extends SeriesDataModel {
         return values.filter(value => !isNaN(value));
     }
 }
+
+export default SeriesDataModelForBoxplot;

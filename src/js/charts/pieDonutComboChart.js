@@ -8,7 +8,7 @@ import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
 import snippet from 'tui-code-snippet';
 
-export default class PieDonutComboChart extends ChartBase {
+class PieDonutComboChart extends ChartBase {
     /**
      * Pie and Donut Combo chart.
      * @constructs PieDonutComboChart
@@ -76,3 +76,5 @@ export default class PieDonutComboChart extends ChartBase {
         });
     }
 }
+
+export default PieDonutComboChart;

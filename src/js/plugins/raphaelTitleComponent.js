@@ -6,7 +6,7 @@
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import chartConst from './../const';
-export default class RaphaelTitleComponent {
+class RaphaelTitleComponent {
     /**
      * Render title
      * @param {object} renderInfo infos for render
@@ -94,3 +94,5 @@ export default class RaphaelTitleComponent {
         });
     }
 }
+
+export default RaphaelTitleComponent;

@@ -9,7 +9,7 @@ import ChartBase from './chartBase';
 import ColorSpectrum from './colorSpectrum';
 import chartConst from '../const';
 
-export default class HeatmapChart extends ChartBase {
+class HeatmapChart extends ChartBase {
     /**
      * Heatmap chart is a graphical representation of data where the individual values contained
      *      in a matrix are represented as colors.
@@ -123,3 +123,5 @@ export default class HeatmapChart extends ChartBase {
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
 }
+
+export default HeatmapChart;

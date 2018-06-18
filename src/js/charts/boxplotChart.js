@@ -7,7 +7,7 @@
 import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
 
-export default class BoxplotChart extends ChartBase {
+class BoxplotChart extends ChartBase {
     /**
      * Boxplot chart.
      * @constructs BoxplotChart
@@ -82,8 +82,8 @@ export default class BoxplotChart extends ChartBase {
 
     /**
      * Add data ratios.
-     * @override
      * modified from axisTypeMixer
+     * @override
      */
     addDataRatios(limitMap) {
         const {options: {series: seriesOption = {}}, chartType} = this;
@@ -92,3 +92,5 @@ export default class BoxplotChart extends ChartBase {
         this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
 }
+
+export default BoxplotChart;

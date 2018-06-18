@@ -10,7 +10,7 @@ import predicate from '../helpers/predicate';
 import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
 import snippet from 'tui-code-snippet';
 
-export default class ColumnLineComboChart extends ChartBase {
+class ColumnLineComboChart extends ChartBase {
     /**
      * Column and Line Combo chart.
      * @constructs ColumnLineComboChart
@@ -53,11 +53,11 @@ export default class ColumnLineComboChart extends ChartBase {
 
     /**
      * Make yAxis options.
+     * from verticalTypeComboMixer
      * @param {Array.<string>} chartTypes chart types
      * @param {?object} yAxisOptions yAxis options
      * @returns {{column: ?object, line: ?object}} options map
      * @private
-     * from verticalTypeComboMixer
      */
     _makeYAxisOptions(chartTypes, yAxisOptions) {
         const options = {};
@@ -139,7 +139,6 @@ export default class ColumnLineComboChart extends ChartBase {
      * @param {boolean} isSingleYAxis - whether single y axis or not
      * @returns {{options: object, areaType: string, chartType: string, additionalParams: object}}
      * @private
-     * from verticalTypeComboMixer
      */
     _makeYAxisScaleOption(name, chartType, isSingleYAxis) {
         const yAxisOption = this.yAxisOptions[chartType];
@@ -163,7 +162,6 @@ export default class ColumnLineComboChart extends ChartBase {
      * Set additional parameter for making y axis scale option.
      * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
      * @private
-     * from verticalTypeComboMixer
      */
     _setAdditionalOptions(additionalOptions) {
         const {dataProcessor} = this;
@@ -187,7 +185,6 @@ export default class ColumnLineComboChart extends ChartBase {
     /**
      * Add data ratios.
      * @override
-     * from axisTypeMixer
      */
     addDataRatios(limitMap) {
         const chartTypes = this.chartTypes || [this.chartType];
@@ -201,3 +198,5 @@ export default class ColumnLineComboChart extends ChartBase {
         chartTypes.forEach(addDataRatio);
     }
 }
+
+export default ColumnLineComboChart;

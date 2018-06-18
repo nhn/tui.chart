@@ -10,7 +10,7 @@ import MapChartMapModel from './mapChartMapModel';
 import MapChartDataProcessor from '../models/data/mapChartDataProcessor';
 import ColorSpectrum from './colorSpectrum';
 
-export default class MapChart extends ChartBase {
+class MapChart extends ChartBase {
     /**
      * Map chart.
      * @constructs MapChart
@@ -87,3 +87,5 @@ export default class MapChart extends ChartBase {
         this.dataProcessor.addDataRatios(limitMap.legend);
     }
 }
+
+export default MapChart;

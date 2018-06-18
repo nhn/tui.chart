@@ -7,7 +7,7 @@
 import ChartBase from './chartBase';
 import snippet from 'tui-code-snippet';
 
-export default class LineScatterComboChart extends ChartBase {
+class LineScatterComboChart extends ChartBase {
     /**
      * Line and Scatter Combo chart.
      * @constructs LineScatterComboChart
@@ -82,3 +82,5 @@ export default class LineScatterComboChart extends ChartBase {
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
 }
+
+export default LineScatterComboChart;

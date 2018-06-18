@@ -19,7 +19,7 @@ const WEDGE_BASE_HALF = 2.5; // half of wedge triagle base
  * @class RaphaelMapLegend
  * @private
  */
-export default class RaphaelMapLegend {
+class RaphaelMapLegend {
     constructor() {
         /**
          * Vertical base path
@@ -185,6 +185,7 @@ export default class RaphaelMapLegend {
      * @param {object} position - position
      * @param {object} theme - legend label theme
      * @returns {SVGTextElement} - wedge text
+     * @private
      */
     _renderWedgeText(paper, position, theme) {
         if (this.isLeftLegend) {
@@ -407,3 +408,5 @@ export default class RaphaelMapLegend {
         ]);
     }
 }
+
+export default RaphaelMapLegend;

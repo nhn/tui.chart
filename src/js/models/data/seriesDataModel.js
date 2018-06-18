@@ -41,7 +41,7 @@ import snippet from 'tui-code-snippet';
 
 const {concat} = Array.prototype;
 
-export default class SeriesDataModel {
+class SeriesDataModel {
     /**
      * SeriesDataModel is base model for drawing graph of chart series area,
      *      and create from rawSeriesData by user.
@@ -639,3 +639,5 @@ export default class SeriesDataModel {
         return results;
     }
 }
+
+export default SeriesDataModel;

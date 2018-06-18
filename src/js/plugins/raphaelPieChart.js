@@ -24,7 +24,7 @@ const TOOLTIP_OFFSET_VALUE = 20;
  * @class RaphaelPieChart
  * @private
  */
-export default class RaphaelPieChart {
+class RaphaelPieChart {
     /**
      * Render function of pie chart.
      * @param {object} paper Raphael paper
@@ -628,3 +628,5 @@ export default class RaphaelPieChart {
         }
     }
 }
+
+export default RaphaelPieChart;

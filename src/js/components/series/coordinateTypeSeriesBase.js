@@ -5,7 +5,7 @@
  */
 import snippet from 'tui-code-snippet';
 
-export default class CoordinateTypeSeriesBase {
+class CoordinateTypeSeriesBase {
     /**
      * Make series data.
      * @returns {{
@@ -116,3 +116,5 @@ export default class CoordinateTypeSeriesBase {
 CoordinateTypeSeriesBase.mixin = function(func) {
     Object.assign(func.prototype, CoordinateTypeSeriesBase.prototype);
 };
+
+export default CoordinateTypeSeriesBase;

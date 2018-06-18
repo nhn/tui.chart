@@ -7,7 +7,7 @@
 import ChartBase from './chartBase';
 import chartConst from '../const';
 
-export default class ScatterChart extends ChartBase {
+class ScatterChart extends ChartBase {
     /**
      * Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
      *  to display values for typically two variables for a set of data.
@@ -84,3 +84,5 @@ export default class ScatterChart extends ChartBase {
         this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, false);
     }
 }
+
+export default ScatterChart;

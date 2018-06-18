@@ -8,7 +8,7 @@ import ChartBase from './chartBase';
 import ColorSpectrum from './colorSpectrum';
 import snippet from 'tui-code-snippet';
 
-export default class TreemapChart extends ChartBase {
+class TreemapChart extends ChartBase {
     /**
      * Treemap chart is graphical representation of hierarchical data by using rectangles.
      * @constructs TreemapChart
@@ -88,3 +88,5 @@ export default class TreemapChart extends ChartBase {
         this.componentManager.render('zoom', null, {index});
     }
 }
+
+export default TreemapChart;
