@@ -193,4 +193,26 @@ describe('NormalTooltip', () => {
             expect(actual).toBe(expected);
         });
     });
+
+    describe('_findTooltipData()', () => {
+        it('groupIndex that is equal to the length of the data in the radial chart, you should look for the groupIndex at position 0.', () => {
+            tooltip.data = {
+                'radial': [[
+                    {category: 'Silver', label: '10', legend: 'Density1'},
+                    {category: 'Silver', label: '20', legend: 'Density2'}
+                ],
+                [
+                    {category: 'Silver', label: '30', legend: 'Density3'},
+                    {category: 'Silver', label: '40', legend: 'Density4'}
+                ]]
+            };
+
+            const actual = tooltip._findTooltipData('radial', {
+                groupIndex: 2,
+                index: 1
+            });
+
+            expect(actual).toEqual({category: 'Silver', label: '20', legend: 'Density2'});
+        });
+    });
 });

@@ -5,13 +5,13 @@
  */
 import colorutil from '../helpers/colorutil';
 
-export default class ColorSpectrum {
+class ColorSpectrum {
     /**
      * ColorSpectrum create a color spectrum and provide color value.
      * @constructs ColorSpectrum
-     * @private
      * @param {string} startColor hex color
      * @param {string} endColor hex color
+     * @private
      */
     constructor(startColor, endColor) {
         this.start = colorutil.colorNameToHex(startColor);
@@ -37,7 +37,7 @@ export default class ColorSpectrum {
     /**
      * Get hex color.
      * @param {number} ratio ratio
-     * @returns {string} hex color
+     * @returns {string} hexcolor
      */
     getColor(ratio) {
         let hexColor = this.colorMap[ratio];
@@ -53,3 +53,5 @@ export default class ColorSpectrum {
         return hexColor || null;
     }
 }
+
+export default ColorSpectrum;

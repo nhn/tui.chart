@@ -1,7 +1,7 @@
 import chartConst from '../const';
 import predicate from '../helpers/predicate';
 
-export default class DynamicDataHelper {
+class DynamicDataHelper {
     constructor(chart) {
         const firstRenderCheck = () => {
             this.isInitRenderCompleted = true;
@@ -234,3 +234,5 @@ export default class DynamicDataHelper {
         }
     }
 }
+
+export default DynamicDataHelper;

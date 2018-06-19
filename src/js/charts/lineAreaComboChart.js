@@ -11,7 +11,7 @@ import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
 import DynamicDataHelper from './dynamicDataHelper';
 import snippet from 'tui-code-snippet';
 
-export default class LineAreaComboChart extends ChartBase {
+class LineAreaComboChart extends ChartBase {
     /**
      * Line and Area Combo chart.
      * @constructs LineAreaComboChart
@@ -305,3 +305,5 @@ export default class LineAreaComboChart extends ChartBase {
         this._dynamicDataHelper.restartAnimation();
     }
 }
+
+export default LineAreaComboChart;

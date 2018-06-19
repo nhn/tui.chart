@@ -23,7 +23,7 @@ const renderers = {
     }
 };
 
-export default class DrawingToolPicker {
+class DrawingToolPicker {
     /**
      * DrawingToolPicker initializer
      * @param {{width:number, height:number}} dimension dimension
@@ -65,3 +65,5 @@ export default class DrawingToolPicker {
         renderers[componentType] = callback;
     }
 }
+
+export default DrawingToolPicker;

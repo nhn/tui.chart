@@ -143,7 +143,7 @@ const calculator = {
      * @returns {number}
      */
     calculateRatio(value, divNumber, subNumber, baseRatio) {
-        return ((value - subNumber) / divNumber) * baseRatio;
+        return divNumber ? ((value - subNumber) / divNumber * baseRatio) : 0;
     }
 };
 

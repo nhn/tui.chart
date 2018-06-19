@@ -8,6 +8,7 @@ import chartConst from '../../const';
 import labelHelper from './renderingLabelHelper';
 import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
+
 import renderUtil from '../../helpers/renderUtil';
 import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
@@ -15,7 +16,7 @@ import snippet from 'tui-code-snippet';
 const {CHART_PADDING, LEGEND_LABEL_LEFT_PADDING} = chartConst;
 const DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.85;
 
-export default class BarTypeSeriesBase {
+class BarTypeSeriesBase {
     /**
      * Make series data.
      * @returns {object} add data
@@ -183,6 +184,7 @@ export default class BarTypeSeriesBase {
      * Make sum values.
      * @param {Array.<number>} values values
      * @returns {number} sum result.
+     * @private
      */
     _makeSumValues(values) {
         return renderUtil.formatValue({
@@ -355,3 +357,5 @@ export default class BarTypeSeriesBase {
 BarTypeSeriesBase.mixin = function(func) {
     Object.assign(func.prototype, BarTypeSeriesBase.prototype);
 };
+
+export default BarTypeSeriesBase;

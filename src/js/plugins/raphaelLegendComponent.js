@@ -26,7 +26,7 @@ function getIconWidth() {
 }
 
 // const RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
-export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */ 
+class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */ 
     constructor() {
         /**
          * @type {number}
@@ -287,6 +287,7 @@ export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.
     /**
      * @param {object} position - position top, left
      * @returns {SVGElement} - svg element
+     * @private
      */
     _renderPaginationRect(position) {
         const BUTTON_SIZE = chartConst.LEGEND_PAGINATION_BUTTON_WIDTH;
@@ -377,6 +378,7 @@ export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.
      * Render checkbox
      * @param {object} position left, top
      * @param {object} data rendering data
+     * @private
      */
     _renderCheckbox(position, data) {
         const {left} = position;
@@ -490,6 +492,7 @@ export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.
     /**
      * get checkbox area's width depends on checkbox visibility
      * @returns {number} - checkbox region's width
+     * @private
      */
     _getCheckboxWidth() {
         return this._showCheckbox ? (this._checkBoxWidth + chartConst.LEGEND_LABEL_LEFT_PADDING) : 0;
@@ -500,6 +503,7 @@ export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.
      * Otherwise, returns maximum width of labels
      * @param {number} [index] - legend index
      * @returns {number} - maximum label width  label width
+     * @private
      */
     _getLabelWidth(index) {
         let labelWidth;
@@ -515,6 +519,7 @@ export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.
     /**
      * calulate a whole legend width before start rendering
      * @returns {number} - calculate label
+     * @private
      */
     _calculateLegendWidth() {
         return this._calculateSingleLegendWidth();
@@ -524,6 +529,7 @@ export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.
      * calculate a single legend width of index `legendIndex`
      * @param {number} legendIndex - index of legend label
      * @returns {number} - calculate single legend width
+     * @private
      */
     _calculateSingleLegendWidth(legendIndex) {
         return chartConst.LEGEND_AREA_H_PADDING
@@ -536,9 +542,12 @@ export default class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.
     /**
      * set component dimension by comparaing label height and icon height
      * @param {number} labelHeight - label height
+     * @private
      */
     _setComponentDimensionsBaseOnLabelHeight(labelHeight) {
         this._legendItemHeight = Math.max(labelHeight, chartConst.LEGEND_CHECKBOX_SIZE);
         this._checkBoxWidth = this._checkBoxHeight = chartConst.LEGEND_CHECKBOX_SIZE;
     }
 }
+
+export default RaphaelLegendComponent;

@@ -15,7 +15,7 @@ const STEP_LEFT_ADJUSTMENT = 3;
  * @class RaphaelRadialPlot
  * @private
  */
-export default class RaphaelRadialPlot {
+class RaphaelRadialPlot {
     /**
      * Render function of map chart legend.
      * @param {object} params parameters
@@ -233,3 +233,5 @@ export default class RaphaelRadialPlot {
         return path;
     }
 }
+
+export default RaphaelRadialPlot;

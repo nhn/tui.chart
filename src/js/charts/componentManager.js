@@ -74,7 +74,7 @@ const COMPONENT_FACTORY_MAP = {
     title
 };
 
-export default class ComponentManager {
+class ComponentManager {
     /**
      * ComponentManager manages components of chart.
      * @param {object} params parameters
@@ -373,3 +373,5 @@ export default class ComponentManager {
         return !!this.get(name);
     }
 }
+
+export default ComponentManager;

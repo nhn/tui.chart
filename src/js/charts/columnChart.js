@@ -8,7 +8,7 @@ import ChartBase from './chartBase';
 import chartConst from '../const';
 import rawDataHandler from '../models/data/rawDataHandler';
 
-export default class ColumnChart extends ChartBase {
+class ColumnChart extends ChartBase {
     /**
      * Column chart.
      * @constructs ColumnChart
@@ -83,8 +83,8 @@ export default class ColumnChart extends ChartBase {
 
     /**
      * Add data ratios.
-     * @override
      * modified from axisTypeMixer
+     * @override
      */
     addDataRatios(limitMap) {
         const {series: seriesOption = {}} = this.options;
@@ -94,3 +94,5 @@ export default class ColumnChart extends ChartBase {
         this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
 }
+
+export default ColumnChart;

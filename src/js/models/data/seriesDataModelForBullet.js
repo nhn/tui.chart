@@ -7,7 +7,7 @@ import SeriesItem from './seriesItem';
 import SeriesDataModel from './seriesDataModel';
 import chartConst from '../../const';
 
-export default class SeriesDataModelForBullet extends SeriesDataModel {
+class SeriesDataModelForBullet extends SeriesDataModel {
     /**
      * SeriesDataModelForBullet is series model for boxplot chart
      * SeriesDataModel.groups has SeriesGroups.
@@ -86,3 +86,5 @@ export default class SeriesDataModelForBullet extends SeriesDataModel {
         return SeriesDataModel.prototype._createSeriesGroupsFromRawData.call(this);
     }
 }
+
+export default SeriesDataModelForBullet;

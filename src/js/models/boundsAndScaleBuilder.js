@@ -12,6 +12,7 @@ import predicate from '../helpers/predicate';
 /**
  * Bounds and scale data builder.
  * @module boundsAndScaleBuilder
+ * @private
  */
 export default {
     /**

@@ -6,7 +6,7 @@
 import ChartBase from './chartBase';
 import chartConst from '../const';
 
-export default class PieChart extends ChartBase {
+class PieChart extends ChartBase {
     /**
      * Pie chart.
      * @constructs PieChart
@@ -58,3 +58,5 @@ export default class PieChart extends ChartBase {
         this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
     }
 }
+
+export default PieChart;

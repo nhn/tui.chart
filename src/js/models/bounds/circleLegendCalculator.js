@@ -10,6 +10,7 @@ import renderUtil from '../../helpers/renderUtil';
 /**
  * Calculator for circle legend.
  * @module circleLegendCalculator
+ * @private
  */
 export default {
     /**

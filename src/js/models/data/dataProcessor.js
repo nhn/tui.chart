@@ -52,7 +52,7 @@ const {isUndefined} = snippet;
  * SeriesGroup.items has SeriesItem.
  */
 
-export default class DataProcessor extends DataProcessorBase {
+class DataProcessor extends DataProcessorBase {
     /**
      * Data processor.
      * @constructs DataProcessor
@@ -1392,3 +1392,5 @@ export default class DataProcessor extends DataProcessorBase {
         return (seriesOptions && seriesOptions.pie2 && seriesOptions.pie2.labelAlign === 'outer');
     }
 }
+
+export default DataProcessor;

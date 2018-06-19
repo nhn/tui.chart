@@ -8,7 +8,7 @@ import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
 
-export default class TickBaseDataModel {
+class TickBaseDataModel {
     /**
      * TickBaseDataModel is tick base data model.
      * @param {{
@@ -178,3 +178,5 @@ export default class TickBaseDataModel {
         return range;
     }
 }
+
+export default TickBaseDataModel;

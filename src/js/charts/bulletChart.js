@@ -7,7 +7,7 @@
 import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
 
-export default class BulletChart extends ChartBase {
+class BulletChart extends ChartBase {
     /**
      * Bullet chart.
      * @constructs BulletChart
@@ -73,8 +73,8 @@ export default class BulletChart extends ChartBase {
 
     /**
      * Add data ratios.
-     * @override
      * modified from axisTypeMixer
+     * @override
      */
     addDataRatios(limitMap) {
         this.dataProcessor.addDataRatios(
@@ -84,3 +84,5 @@ export default class BulletChart extends ChartBase {
         );
     }
 }
+
+export default BulletChart;

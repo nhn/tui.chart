@@ -49,7 +49,7 @@ import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
 
-export default class BoundsBaseCoordinateModel {
+class BoundsBaseCoordinateModel {
     /**
      * BoundsBaseCoordinateModel is data mode for mouse event detector of bounds type.
      * @constructs BoundsBaseCoordinateModel
@@ -350,6 +350,7 @@ export default class BoundsBaseCoordinateModel {
      *  outlierIndex: {number}
      * }} indexes - indexe of series item displaying a tooltip
      * @returns {object} - outlier tooltip data
+     * @private
      */
     _findOutlierDataByIndexes(indexes) {
         let foundData = null;
@@ -369,3 +370,5 @@ export default class BoundsBaseCoordinateModel {
         return foundData;
     }
 }
+
+export default BoundsBaseCoordinateModel;

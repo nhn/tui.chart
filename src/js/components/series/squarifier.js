@@ -17,6 +17,7 @@ export default {
 
     /**
      * Make base bound for calculating bounds.
+
      * @param {{width: number, height: number, left: number, top: number}} layout - layout
      * @returns {{width: number, height: number, left: number, top: number}}
      * @private

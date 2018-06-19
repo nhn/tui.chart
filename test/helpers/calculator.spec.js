@@ -74,9 +74,15 @@ describe('Test for calculator', () => {
     describe('calculateRatio()', () => {
         it('should set ratito to (input value - subNumber) / divNumber * baseRatio.', () => {
             const actual = calculator.calculateRatio(10, 2, 2, 0.5);
-            const expected = 2;
 
-            expect(actual).toEqual(expected);
+            expect(actual).toEqual(2);
+        });
+
+        it('should return 0 when divNumber is 0', () => {
+            const divNumber = 0;
+            const actual = calculator.calculateRatio(10, divNumber, 2, 0.5);
+
+            expect(actual).toEqual(0);
         });
     });
 });

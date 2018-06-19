@@ -9,7 +9,7 @@ import rawDataHandler from '../models/data/rawDataHandler';
 import Series from '../components/series/areaChartSeries';
 import snippet from 'tui-code-snippet';
 
-export default class AreaChart extends ChartBase {
+class AreaChart extends ChartBase {
     /**
      * Area chart.
      * @constructs AreaChart
@@ -69,8 +69,8 @@ export default class AreaChart extends ChartBase {
 
     /**
      * Add data ratios.
-     * @override
      * from axisTypeMixer
+     * @override
      */
     addDataRatios(limitMap) {
         const chartTypes = this.chartTypes || [this.chartType];
@@ -216,3 +216,5 @@ export default class AreaChart extends ChartBase {
         this._dynamicDataHelper.restartAnimation();
     }
 }
+
+export default AreaChart;

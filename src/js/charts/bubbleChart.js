@@ -7,7 +7,7 @@ import ChartBase from './chartBase';
 import chartConst from '../const';
 import snippet from 'tui-code-snippet';
 
-export default class BubbleChart extends ChartBase {
+class BubbleChart extends ChartBase {
     /**
      * Bubble chart.
      * @constructs BubbleChart
@@ -111,3 +111,5 @@ export default class BubbleChart extends ChartBase {
         this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);
     }
 }
+
+export default BubbleChart;

@@ -36,7 +36,7 @@ const IS_LTE_IE8 = browser.msie && browser.version <= 8;
  * @private
  */
 
-export default class BoundsModel {
+class BoundsModel {
     /**
      * Bounds maker.
      * @constructs BoundsModel
@@ -903,3 +903,5 @@ export default class BoundsModel {
         return circleLegendCalculator.calculateMaxRadius(dimensionMap, axisDataMap, circleLegendVisible);
     }
 }
+
+export default BoundsModel;

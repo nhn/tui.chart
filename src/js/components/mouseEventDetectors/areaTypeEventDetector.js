@@ -211,6 +211,7 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
     /**
      * Set prevClientPosition by MouseEvent
      * @param {?MouseEvent} event - mouse event
+     * @private
      */
     _setPrevClientPosition(event) {
         if (!event) {

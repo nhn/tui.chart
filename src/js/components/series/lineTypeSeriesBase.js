@@ -23,7 +23,7 @@ const {
  * @private
  * @mixin
  * @private */
-export default class LineTypeSeriesBase {
+class LineTypeSeriesBase {
     /**
      * Make positions for default data type.
      * @param {number} [seriesWidth] - width of series area
@@ -382,3 +382,5 @@ export default class LineTypeSeriesBase {
 LineTypeSeriesBase.mixin = function(func) {
     snippet.extend(func.prototype, LineTypeSeriesBase.prototype);
 };
+
+export default LineTypeSeriesBase;

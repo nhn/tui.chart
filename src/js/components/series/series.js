@@ -19,7 +19,7 @@ import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
 const {COMPONENT_TYPE_RAPHAEL, PUBLIC_EVENT_PREFIX, CLASS_NAME_SERIES_LABEL} = chartConst;
 
-export default class Series {
+class Series {
     /*
      * Series base component.
      * @constructs Series
@@ -792,3 +792,5 @@ export default class Series {
         return !!(seriesData && seriesData.isAvailable());
     }
 }
+
+export default Series;

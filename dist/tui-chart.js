@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.1.1
+ * @version 3.1.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue May 15 2018 11:02:57 GMT+0900 (KST)"
+ * bundle created at "Tue Jun 19 2018 10:11:13 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8970,23 +8970,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _raphaelLineChart2 = _interopRequireDefault(_raphaelLineChart);
 	
-	var _raphaelAreaChart = __webpack_require__(342);
+	var _raphaelAreaChart = __webpack_require__(343);
 	
 	var _raphaelAreaChart2 = _interopRequireDefault(_raphaelAreaChart);
 	
-	var _raphaelPieChart = __webpack_require__(344);
+	var _raphaelPieChart = __webpack_require__(345);
 	
 	var _raphaelPieChart2 = _interopRequireDefault(_raphaelPieChart);
 	
-	var _raphaelRadialLineSeries = __webpack_require__(345);
+	var _raphaelRadialLineSeries = __webpack_require__(346);
 	
 	var _raphaelRadialLineSeries2 = _interopRequireDefault(_raphaelRadialLineSeries);
 	
-	var _raphaelCoordinateTypeChart = __webpack_require__(346);
+	var _raphaelCoordinateTypeChart = __webpack_require__(347);
 	
 	var _raphaelCoordinateTypeChart2 = _interopRequireDefault(_raphaelCoordinateTypeChart);
 	
-	var _raphaelBoxTypeChart = __webpack_require__(347);
+	var _raphaelBoxTypeChart = __webpack_require__(348);
 	
 	var _raphaelBoxTypeChart2 = _interopRequireDefault(_raphaelBoxTypeChart);
 	
@@ -13195,7 +13195,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	
-	exports['default'] = RaphaelBulletChart;
 	function createClipPathRectWithLayout(paper, position, dimension, id) {
 	    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
 	    var rect = paper.rect(position.left, position.top, dimension.width, dimension.height);
@@ -13208,6 +13207,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    return rect;
 	}
+	
+	exports['default'] = RaphaelBulletChart;
 
 /***/ }),
 /* 340 */
@@ -13626,6 +13627,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _renderUtil = __webpack_require__(334);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
+	
+	var _predicate = __webpack_require__(342);
+	
+	var _predicate2 = _interopRequireDefault(_predicate);
 	
 	var _arrayUtil = __webpack_require__(337);
 	
@@ -14200,9 +14205,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    RaphaelLineTypeBase.prototype.showAnimation = function showAnimation(data) {
-	        var index = data.groupIndex;
 	        var groupIndex = data.index;
-	        var item = this.groupDots[groupIndex][index];
+	        var groupDot = this.groupDots[groupIndex];
+	        var item = this._findDotItem(groupDot, data.groupIndex);
+	
 	        var line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
 	        var strokeWidth = void 0,
 	            startLine = void 0;
@@ -14233,6 +14239,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (item.startDot) {
 	            this._showDot(item.startDot, groupIndex);
 	        }
+	    };
+	
+	    /**
+	     * Find dot item
+	     * @param {Array.<Object>} groupDot - groupDot info
+	     * @param {number} index - dot index
+	     * @returns {Object} - raphael object
+	     * @private
+	     */
+	
+	
+	    RaphaelLineTypeBase.prototype._findDotItem = function _findDotItem() {
+	        var groupDot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	        var index = arguments[1];
+	
+	        var isRadialChart = _predicate2['default'].isRadialChart(this.chartType);
+	
+	        // For radial charts, the position path is one more than the length of the data.
+	        if (isRadialChart && groupDot.length === index) {
+	            index = 0;
+	        }
+	
+	        return groupDot[index];
 	    };
 	
 	    /**
@@ -14361,16 +14390,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var index = data.groupIndex; // Line chart has pivot values.
 	        var groupIndex = data.index;
 	        var groupDot = this.groupDots[groupIndex];
+	        var item = this._findDotItem(groupDot, index);
+	
 	        var line = void 0,
 	            strokeWidth = void 0,
 	            startLine = void 0;
 	        var opacity = this.dotOpacity;
 	
-	        if (!groupDot || !groupDot[index]) {
+	        if (!item) {
 	            return;
 	        }
-	
-	        var item = groupDot[index];
 	
 	        line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
 	
@@ -14741,7 +14770,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	
-	exports['default'] = RaphaelLineTypeBase;
 	function createClipPathRectWithLayout(paper, position, dimension, id) {
 	    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
 	    var rect = paper.rect(position.left - 10, position.top - 10, 0, dimension.height);
@@ -14754,9 +14782,622 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    return rect;
 	}
+	
+	exports['default'] = RaphaelLineTypeBase;
 
 /***/ }),
 /* 342 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	var _const = __webpack_require__(335);
+	
+	var _const2 = _interopRequireDefault(_const);
+	
+	var _arrayUtil = __webpack_require__(337);
+	
+	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * predicate.
+	 * @module predicate
+	 * @private */
+	/**
+	 * @fileoverview Predicate.
+	 * @author NHN Ent.
+	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 */
+	
+	var predicate = {
+	    /**
+	     * Whether bar chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBarChart: function isBarChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_BAR;
+	    },
+	
+	
+	    /**
+	     * Whether column chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isColumnChart: function isColumnChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_COLUMN;
+	    },
+	
+	
+	    /**
+	     * Whether bar type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBarTypeChart: function isBarTypeChart(chartType) {
+	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether column type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} seriesTypes - type of series
+	     * @returns {boolean}
+	     */
+	    isColumnTypeChart: function isColumnTypeChart(chartType, seriesTypes) {
+	        return predicate.isHeatmapChart(chartType) || predicate.isColumnChart(chartType) || predicate.isBoxplotChart(chartType) || predicate.isLineColumnComboChart(chartType, seriesTypes);
+	    },
+	
+	
+	    /**
+	     * Whether boxplot chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBoxplotChart: function isBoxplotChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_BOXPLOT;
+	    },
+	
+	
+	    /**
+	     * Whether bullet chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBulletChart: function isBulletChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_BULLET;
+	    },
+	
+	
+	    /**
+	     * Whether radial type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isRadialChart: function isRadialChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_RADIAL;
+	    },
+	
+	
+	    /**
+	     * Whether diverging chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {boolean} diverging - whether has diverging or not
+	     * @returns {*|boolean}
+	     */
+	    isDivergingChart: function isDivergingChart(chartType, diverging) {
+	        return this.isBarTypeChart(chartType) && diverging;
+	    },
+	
+	
+	    /**
+	     * Whether normal stack chart or not.
+	     * @param {string} chartType - type of chart
+	     * @param {string} stackType - type of stack
+	     * @returns {boolean}
+	     * @private
+	     */
+	    isNormalStackChart: function isNormalStackChart(chartType, stackType) {
+	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+	        var isNormalStack = predicate.isNormalStack(stackType);
+	
+	        return isAllowedStackOption && isNormalStack;
+	    },
+	
+	
+	    /**
+	     * Whether percent stack chart or not.
+	     * @param {string} chartType - type of chart
+	     * @param {string} stackType - type of stack
+	     * @returns {boolean}
+	     * @private
+	     */
+	    isPercentStackChart: function isPercentStackChart(chartType, stackType) {
+	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
+	        var isPercentStack = predicate.isPercentStack(stackType);
+	
+	        return isAllowedStackOption && isPercentStack;
+	    },
+	
+	
+	    /**
+	     * Whether combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isComboChart: function isComboChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_COMBO;
+	    },
+	
+	
+	    /**
+	     * Whether line and column combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineColumnComboChart: function isLineColumnComboChart(chartType, subChartTypes) {
+	        var isLineOrColumn = _arrayUtil2['default'].all(subChartTypes || [], function (subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isColumnChart(subChartType);
+	        });
+	
+	        return predicate.isComboChart(chartType) && isLineOrColumn;
+	    },
+	
+	
+	    /**
+	     * Whether pie and donut combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isPieDonutComboChart: function isPieDonutComboChart(chartType, subChartTypes) {
+	        var isAllPieType = _arrayUtil2['default'].all(subChartTypes, function (subChartType) {
+	            return predicate.isPieChart(subChartType);
+	        });
+	
+	        return predicate.isComboChart(chartType) && isAllPieType;
+	    },
+	
+	
+	    /**
+	     * Whether line chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isLineChart: function isLineChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_LINE;
+	    },
+	
+	
+	    /**
+	     * Whether area chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isAreaChart: function isAreaChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_AREA;
+	    },
+	
+	
+	    /**
+	     * Whether line and area combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineAreaComboChart: function isLineAreaComboChart(chartType, subChartTypes) {
+	        var isAllLineType = _arrayUtil2['default'].all(subChartTypes || [], function (subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
+	        });
+	
+	        return predicate.isComboChart(chartType) && isAllLineType;
+	    },
+	
+	
+	    /**
+	     * Whether line and area combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    hasLineChart: function hasLineChart(chartType, subChartTypes) {
+	        var hasLineType = _arrayUtil2['default'].any(subChartTypes || [], function (subChartType) {
+	            return predicate.isLineChart(subChartType);
+	        });
+	
+	        return predicate.isComboChart(chartType) && hasLineType;
+	    },
+	
+	
+	    /**
+	     * Whether line and scatter combo chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} subChartTypes - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineScatterComboChart: function isLineScatterComboChart(chartType, subChartTypes) {
+	        var isAllLineType = _arrayUtil2['default'].all(subChartTypes || [], function (subChartType) {
+	            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
+	        });
+	
+	        return predicate.isComboChart(chartType) && isAllLineType;
+	    },
+	
+	
+	    /**
+	     * Whether line type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @param {Array.<string>} [subChartTypes] - types of chart
+	     * @returns {boolean}
+	     */
+	    isLineTypeChart: function isLineTypeChart(chartType, subChartTypes) {
+	        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType) || predicate.isLineAreaComboChart(chartType, subChartTypes);
+	    },
+	
+	
+	    /**
+	     * Whether bubble chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isBubbleChart: function isBubbleChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_BUBBLE;
+	    },
+	
+	
+	    /**
+	     * Whether scatter chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isScatterChart: function isScatterChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_SCATTER;
+	    },
+	
+	
+	    /**
+	     * Whether heatmap chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isHeatmapChart: function isHeatmapChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_HEATMAP;
+	    },
+	
+	
+	    /**
+	     * Whether treemap chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isTreemapChart: function isTreemapChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_TREEMAP;
+	    },
+	
+	
+	    /**
+	     * Whether box type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isBoxTypeChart: function isBoxTypeChart(chartType) {
+	        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether map type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isMapTypeChart: function isMapTypeChart(chartType) {
+	        return this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether pie chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isPieChart: function isPieChart(chartType) {
+	        // change to indexOf for handling alias
+	        return chartType && chartType.indexOf(_const2['default'].CHART_TYPE_PIE) !== -1;
+	    },
+	
+	
+	    /**
+	     * Whether map chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isMapChart: function isMapChart(chartType) {
+	        return chartType === _const2['default'].CHART_TYPE_MAP;
+	    },
+	
+	
+	    /**
+	     * Whether coordinate type chart or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isCoordinateTypeChart: function isCoordinateTypeChart(chartType) {
+	        return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether allow rendering for minus point in area of series.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    allowMinusPointRender: function allowMinusPointRender(chartType) {
+	        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) || predicate.isBoxTypeChart(chartType) || predicate.isBulletChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether chart to detect mouse events on series or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isChartToDetectMouseEventOnSeries: function isChartToDetectMouseEventOnSeries(chartType) {
+	        return predicate.isPieChart(chartType) || predicate.isMapChart(chartType) || predicate.isCoordinateTypeChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether align of label is outer or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLabelAlignOuter: function isLabelAlignOuter(align) {
+	        return align === _const2['default'].LABEL_ALIGN_OUTER;
+	    },
+	
+	
+	    /**
+	     * Whether show label or not.
+	     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
+	     * @returns {boolean}
+	     */
+	    isShowLabel: function isShowLabel(options) {
+	        return options.showLabel || options.showLegend;
+	    },
+	
+	
+	    /**
+	     * Whether show outer label or not.
+	     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
+	     * @returns {*|boolean}
+	     */
+	    isShowOuterLabel: function isShowOuterLabel(options) {
+	        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
+	    },
+	
+	
+	    /**
+	     * Whether align of legend is left or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignLeft: function isLegendAlignLeft(align) {
+	        return align === _const2['default'].LEGEND_ALIGN_LEFT;
+	    },
+	
+	
+	    /**
+	     * Whether align of legend is top or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignTop: function isLegendAlignTop(align) {
+	        return align === _const2['default'].LEGEND_ALIGN_TOP;
+	    },
+	
+	
+	    /**
+	     * Whether align of legend is bottom or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align of legend
+	     * @returns {boolean}
+	     */
+	    isLegendAlignBottom: function isLegendAlignBottom(align) {
+	        return align === _const2['default'].LEGEND_ALIGN_BOTTOM;
+	    },
+	
+	
+	    /**
+	     * Whether horizontal legend or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align option for legend
+	     * @returns {boolean}
+	     */
+	    isHorizontalLegend: function isHorizontalLegend(align) {
+	        return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
+	    },
+	
+	
+	    /**
+	     * Whether vertical legend or not.
+	     * @memberOf module:predicate
+	     * @param {string} align - align option for legend
+	     * @returns {boolean}
+	     */
+	    isVerticalLegend: function isVerticalLegend(align) {
+	        return !predicate.isHorizontalLegend(align);
+	    },
+	
+	
+	    /**
+	     * Whether allowed stackType option or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean}
+	     */
+	    isAllowedStackOption: function isAllowedStackOption(chartType) {
+	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType) || predicate.isAreaChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether normal stack type or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isNormalStack: function isNormalStack(stackType) {
+	        return stackType === _const2['default'].NORMAL_STACK_TYPE;
+	    },
+	
+	
+	    /**
+	     * Whether percent stack type or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isPercentStack: function isPercentStack(stackType) {
+	        return stackType === _const2['default'].PERCENT_STACK_TYPE;
+	    },
+	
+	
+	    /**
+	     * Whether valid stackType option or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} stackType - stackType option
+	     * @returns {boolean}
+	     */
+	    isValidStackOption: function isValidStackOption(stackType) {
+	        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
+	    },
+	
+	
+	    /**
+	     * Whether allow range data or not.
+	     * @memberOf module:predicate
+	     * @param {string} chartType - chart type
+	     * @returns {boolean}
+	     */
+	    isAllowRangeData: function isAllowRangeData(chartType) {
+	        return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
+	    },
+	
+	
+	    /**
+	     * Whether align of yAxis is center or not.
+	     * @memberOf module:predicate
+	     * @param {boolean} hasRightYAxis - whether has right yAxis.
+	     * @param {string} alignOption - align option of yAxis.
+	     * @returns {boolean} whether - align center or not.
+	     */
+	    isYAxisAlignCenter: function isYAxisAlignCenter(hasRightYAxis, alignOption) {
+	        return !hasRightYAxis && alignOption === _const2['default'].YAXIS_ALIGN_CENTER;
+	    },
+	
+	
+	    /**
+	     * Whether minus limit or not.
+	     * @memberOf module:predicate
+	     * @param {{min: number, max: number}} limit - limit
+	     * @returns {boolean}
+	     */
+	    isMinusLimit: function isMinusLimit(limit) {
+	        return limit.min <= 0 && limit.max <= 0;
+	    },
+	
+	
+	    /**
+	     * Whether auto tick interval or not.
+	     * @param {string} [tickInterval] - tick interval option
+	     * @returns {boolean}
+	     */
+	    isAutoTickInterval: function isAutoTickInterval(tickInterval) {
+	        return tickInterval === _const2['default'].TICK_INTERVAL_AUTO;
+	    },
+	
+	
+	    /**
+	     * Whether valid label interval or not.
+	     * @param {number} [labelInterval] - label interval option
+	     * @param {string} [tickInterval] - tick interval option
+	     * @returns {*|boolean}
+	     */
+	    isValidLabelInterval: function isValidLabelInterval(labelInterval, tickInterval) {
+	        return labelInterval && labelInterval > 1 && !tickInterval;
+	    },
+	
+	
+	    /**
+	     * Whether datetime type or not.
+	     * @param {string} type - type
+	     * @returns {boolean}
+	     */
+	    isDatetimeType: function isDatetimeType(type) {
+	        return type === _const2['default'].AXIS_TYPE_DATETIME;
+	    },
+	
+	
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#showTooltip API
+	     */
+	    isSupportPublicShowTooptipAPI: function isSupportPublicShowTooptipAPI(chartType) {
+	        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isLineChart(chartType) || this.isAreaChart(chartType) || this.isBoxplotChart(chartType);
+	    },
+	
+	
+	    /**
+	     * @param {string} chartType - type of chart
+	     * @returns {boolean} - whether it support ChartBase#hideTooltip API
+	     */
+	    isSupportPublicHideTooptipAPI: function isSupportPublicHideTooptipAPI(chartType) {
+	        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isLineChart(chartType) || this.isAreaChart(chartType) || this.isBoxplotChart(chartType);
+	    }
+	};
+	
+	exports['default'] = predicate;
+
+/***/ }),
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14781,7 +15422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _consoleUtil = __webpack_require__(343);
+	var _consoleUtil = __webpack_require__(344);
 	
 	var _consoleUtil2 = _interopRequireDefault(_consoleUtil);
 	
@@ -15385,7 +16026,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelAreaChart;
 
 /***/ }),
-/* 343 */
+/* 344 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -15413,7 +16054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 344 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16123,7 +16764,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelPieChart;
 
 /***/ }),
-/* 345 */
+/* 346 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16374,7 +17015,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelRadialLineSeries;
 
 /***/ }),
-/* 346 */
+/* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16909,7 +17550,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelBubbleChart;
 
 /***/ }),
-/* 347 */
+/* 348 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16924,7 +17565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -17456,617 +18097,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelBoxTypeChart;
 
 /***/ }),
-/* 348 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	var _const = __webpack_require__(335);
-	
-	var _const2 = _interopRequireDefault(_const);
-	
-	var _arrayUtil = __webpack_require__(337);
-	
-	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	/**
-	 * predicate.
-	 * @module predicate
-	 * @private */
-	/**
-	 * @fileoverview Predicate.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
-	
-	var predicate = {
-	    /**
-	     * Whether bar chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBarChart: function isBarChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_BAR;
-	    },
-	
-	
-	    /**
-	     * Whether column chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isColumnChart: function isColumnChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_COLUMN;
-	    },
-	
-	
-	    /**
-	     * Whether bar type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBarTypeChart: function isBarTypeChart(chartType) {
-	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether column type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} seriesTypes - type of series
-	     * @returns {boolean}
-	     */
-	    isColumnTypeChart: function isColumnTypeChart(chartType, seriesTypes) {
-	        return predicate.isHeatmapChart(chartType) || predicate.isColumnChart(chartType) || predicate.isBoxplotChart(chartType) || predicate.isLineColumnComboChart(chartType, seriesTypes);
-	    },
-	
-	
-	    /**
-	     * Whether boxplot chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBoxplotChart: function isBoxplotChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_BOXPLOT;
-	    },
-	
-	
-	    /**
-	     * Whether bullet chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBulletChart: function isBulletChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_BULLET;
-	    },
-	
-	
-	    /**
-	     * Whether radial type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isRadialChart: function isRadialChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_RADIAL;
-	    },
-	
-	
-	    /**
-	     * Whether diverging chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {boolean} diverging - whether has diverging or not
-	     * @returns {*|boolean}
-	     */
-	    isDivergingChart: function isDivergingChart(chartType, diverging) {
-	        return this.isBarTypeChart(chartType) && diverging;
-	    },
-	
-	
-	    /**
-	     * Whether normal stack chart or not.
-	     * @param {string} chartType - type of chart
-	     * @param {string} stackType - type of stack
-	     * @returns {boolean}
-	     * @private
-	     */
-	    isNormalStackChart: function isNormalStackChart(chartType, stackType) {
-	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-	        var isNormalStack = predicate.isNormalStack(stackType);
-	
-	        return isAllowedStackOption && isNormalStack;
-	    },
-	
-	
-	    /**
-	     * Whether percent stack chart or not.
-	     * @param {string} chartType - type of chart
-	     * @param {string} stackType - type of stack
-	     * @returns {boolean}
-	     * @private
-	     */
-	    isPercentStackChart: function isPercentStackChart(chartType, stackType) {
-	        var isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-	        var isPercentStack = predicate.isPercentStack(stackType);
-	
-	        return isAllowedStackOption && isPercentStack;
-	    },
-	
-	
-	    /**
-	     * Whether combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isComboChart: function isComboChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_COMBO;
-	    },
-	
-	
-	    /**
-	     * Whether line and column combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineColumnComboChart: function isLineColumnComboChart(chartType, subChartTypes) {
-	        var isLineOrColumn = _arrayUtil2['default'].all(subChartTypes || [], function (subChartType) {
-	            return predicate.isLineChart(subChartType) || predicate.isColumnChart(subChartType);
-	        });
-	
-	        return predicate.isComboChart(chartType) && isLineOrColumn;
-	    },
-	
-	
-	    /**
-	     * Whether pie and donut combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isPieDonutComboChart: function isPieDonutComboChart(chartType, subChartTypes) {
-	        var isAllPieType = _arrayUtil2['default'].all(subChartTypes, function (subChartType) {
-	            return predicate.isPieChart(subChartType);
-	        });
-	
-	        return predicate.isComboChart(chartType) && isAllPieType;
-	    },
-	
-	
-	    /**
-	     * Whether line chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isLineChart: function isLineChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_LINE;
-	    },
-	
-	
-	    /**
-	     * Whether area chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isAreaChart: function isAreaChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_AREA;
-	    },
-	
-	
-	    /**
-	     * Whether line and area combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineAreaComboChart: function isLineAreaComboChart(chartType, subChartTypes) {
-	        var isAllLineType = _arrayUtil2['default'].all(subChartTypes || [], function (subChartType) {
-	            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
-	        });
-	
-	        return predicate.isComboChart(chartType) && isAllLineType;
-	    },
-	
-	
-	    /**
-	     * Whether line and area combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    hasLineChart: function hasLineChart(chartType, subChartTypes) {
-	        var hasLineType = _arrayUtil2['default'].any(subChartTypes || [], function (subChartType) {
-	            return predicate.isLineChart(subChartType);
-	        });
-	
-	        return predicate.isComboChart(chartType) && hasLineType;
-	    },
-	
-	
-	    /**
-	     * Whether line and scatter combo chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} subChartTypes - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineScatterComboChart: function isLineScatterComboChart(chartType, subChartTypes) {
-	        var isAllLineType = _arrayUtil2['default'].all(subChartTypes || [], function (subChartType) {
-	            return predicate.isLineChart(subChartType) || predicate.isScatterChart(subChartType);
-	        });
-	
-	        return predicate.isComboChart(chartType) && isAllLineType;
-	    },
-	
-	
-	    /**
-	     * Whether line type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @param {Array.<string>} [subChartTypes] - types of chart
-	     * @returns {boolean}
-	     */
-	    isLineTypeChart: function isLineTypeChart(chartType, subChartTypes) {
-	        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType) || predicate.isLineAreaComboChart(chartType, subChartTypes);
-	    },
-	
-	
-	    /**
-	     * Whether bubble chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isBubbleChart: function isBubbleChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_BUBBLE;
-	    },
-	
-	
-	    /**
-	     * Whether scatter chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isScatterChart: function isScatterChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_SCATTER;
-	    },
-	
-	
-	    /**
-	     * Whether heatmap chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isHeatmapChart: function isHeatmapChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_HEATMAP;
-	    },
-	
-	
-	    /**
-	     * Whether treemap chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isTreemapChart: function isTreemapChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_TREEMAP;
-	    },
-	
-	
-	    /**
-	     * Whether box type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isBoxTypeChart: function isBoxTypeChart(chartType) {
-	        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether map type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isMapTypeChart: function isMapTypeChart(chartType) {
-	        return this.isMapChart(chartType) || this.isHeatmapChart(chartType) || this.isTreemapChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether pie chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isPieChart: function isPieChart(chartType) {
-	        // change to indexOf for handling alias
-	        return chartType && chartType.indexOf(_const2['default'].CHART_TYPE_PIE) !== -1;
-	    },
-	
-	
-	    /**
-	     * Whether map chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isMapChart: function isMapChart(chartType) {
-	        return chartType === _const2['default'].CHART_TYPE_MAP;
-	    },
-	
-	
-	    /**
-	     * Whether coordinate type chart or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isCoordinateTypeChart: function isCoordinateTypeChart(chartType) {
-	        return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether allow rendering for minus point in area of series.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    allowMinusPointRender: function allowMinusPointRender(chartType) {
-	        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) || predicate.isBoxTypeChart(chartType) || predicate.isBulletChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether chart to detect mouse events on series or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isChartToDetectMouseEventOnSeries: function isChartToDetectMouseEventOnSeries(chartType) {
-	        return predicate.isPieChart(chartType) || predicate.isMapChart(chartType) || predicate.isCoordinateTypeChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether align of label is outer or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLabelAlignOuter: function isLabelAlignOuter(align) {
-	        return align === _const2['default'].LABEL_ALIGN_OUTER;
-	    },
-	
-	
-	    /**
-	     * Whether show label or not.
-	     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
-	     * @returns {boolean}
-	     */
-	    isShowLabel: function isShowLabel(options) {
-	        return options.showLabel || options.showLegend;
-	    },
-	
-	
-	    /**
-	     * Whether show outer label or not.
-	     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
-	     * @returns {*|boolean}
-	     */
-	    isShowOuterLabel: function isShowOuterLabel(options) {
-	        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
-	    },
-	
-	
-	    /**
-	     * Whether align of legend is left or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignLeft: function isLegendAlignLeft(align) {
-	        return align === _const2['default'].LEGEND_ALIGN_LEFT;
-	    },
-	
-	
-	    /**
-	     * Whether align of legend is top or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignTop: function isLegendAlignTop(align) {
-	        return align === _const2['default'].LEGEND_ALIGN_TOP;
-	    },
-	
-	
-	    /**
-	     * Whether align of legend is bottom or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align of legend
-	     * @returns {boolean}
-	     */
-	    isLegendAlignBottom: function isLegendAlignBottom(align) {
-	        return align === _const2['default'].LEGEND_ALIGN_BOTTOM;
-	    },
-	
-	
-	    /**
-	     * Whether horizontal legend or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align option for legend
-	     * @returns {boolean}
-	     */
-	    isHorizontalLegend: function isHorizontalLegend(align) {
-	        return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
-	    },
-	
-	
-	    /**
-	     * Whether vertical legend or not.
-	     * @memberOf module:predicate
-	     * @param {string} align - align option for legend
-	     * @returns {boolean}
-	     */
-	    isVerticalLegend: function isVerticalLegend(align) {
-	        return !predicate.isHorizontalLegend(align);
-	    },
-	
-	
-	    /**
-	     * Whether allowed stackType option or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean}
-	     */
-	    isAllowedStackOption: function isAllowedStackOption(chartType) {
-	        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType) || predicate.isAreaChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether normal stack type or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isNormalStack: function isNormalStack(stackType) {
-	        return stackType === _const2['default'].NORMAL_STACK_TYPE;
-	    },
-	
-	
-	    /**
-	     * Whether percent stack type or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isPercentStack: function isPercentStack(stackType) {
-	        return stackType === _const2['default'].PERCENT_STACK_TYPE;
-	    },
-	
-	
-	    /**
-	     * Whether valid stackType option or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} stackType - stackType option
-	     * @returns {boolean}
-	     */
-	    isValidStackOption: function isValidStackOption(stackType) {
-	        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
-	    },
-	
-	
-	    /**
-	     * Whether allow range data or not.
-	     * @memberOf module:predicate
-	     * @param {string} chartType - chart type
-	     * @returns {boolean}
-	     */
-	    isAllowRangeData: function isAllowRangeData(chartType) {
-	        return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
-	    },
-	
-	
-	    /**
-	     * Whether align of yAxis is center or not.
-	     * @memberOf module:predicate
-	     * @param {boolean} hasRightYAxis - whether has right yAxis.
-	     * @param {string} alignOption - align option of yAxis.
-	     * @returns {boolean} whether - align center or not.
-	     */
-	    isYAxisAlignCenter: function isYAxisAlignCenter(hasRightYAxis, alignOption) {
-	        return !hasRightYAxis && alignOption === _const2['default'].YAXIS_ALIGN_CENTER;
-	    },
-	
-	
-	    /**
-	     * Whether minus limit or not.
-	     * @memberOf module:predicate
-	     * @param {{min: number, max: number}} limit - limit
-	     * @returns {boolean}
-	     */
-	    isMinusLimit: function isMinusLimit(limit) {
-	        return limit.min <= 0 && limit.max <= 0;
-	    },
-	
-	
-	    /**
-	     * Whether auto tick interval or not.
-	     * @param {string} [tickInterval] - tick interval option
-	     * @returns {boolean}
-	     */
-	    isAutoTickInterval: function isAutoTickInterval(tickInterval) {
-	        return tickInterval === _const2['default'].TICK_INTERVAL_AUTO;
-	    },
-	
-	
-	    /**
-	     * Whether valid label interval or not.
-	     * @param {number} [labelInterval] - label interval option
-	     * @param {string} [tickInterval] - tick interval option
-	     * @returns {*|boolean}
-	     */
-	    isValidLabelInterval: function isValidLabelInterval(labelInterval, tickInterval) {
-	        return labelInterval && labelInterval > 1 && !tickInterval;
-	    },
-	
-	
-	    /**
-	     * Whether datetime type or not.
-	     * @param {string} type - type
-	     * @returns {boolean}
-	     */
-	    isDatetimeType: function isDatetimeType(type) {
-	        return type === _const2['default'].AXIS_TYPE_DATETIME;
-	    },
-	
-	
-	    /**
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean} - whether it support ChartBase#showTooltip API
-	     */
-	    isSupportPublicShowTooptipAPI: function isSupportPublicShowTooptipAPI(chartType) {
-	        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isLineChart(chartType) || this.isAreaChart(chartType) || this.isBoxplotChart(chartType);
-	    },
-	
-	
-	    /**
-	     * @param {string} chartType - type of chart
-	     * @returns {boolean} - whether it support ChartBase#hideTooltip API
-	     */
-	    isSupportPublicHideTooptipAPI: function isSupportPublicHideTooptipAPI(chartType) {
-	        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isLineChart(chartType) || this.isAreaChart(chartType) || this.isBoxplotChart(chartType);
-	    }
-	};
-	
-	exports['default'] = predicate;
-
-/***/ }),
 /* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18447,7 +18477,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	
-	exports['default'] = RaphaelMapChart;
 	function createGElement(paper, sectorSet, id) {
 	    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 	    g.id = id;
@@ -18460,6 +18489,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    return g;
 	}
+	
+	exports['default'] = RaphaelMapChart;
 
 /***/ }),
 /* 350 */
@@ -18786,6 +18817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * @param {object} position - position top, left
 	     * @returns {SVGElement} - svg element
+	     * @private
 	     */
 	
 	
@@ -18886,6 +18918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Render checkbox
 	     * @param {object} position left, top
 	     * @param {object} data rendering data
+	     * @private
 	     */
 	
 	
@@ -18999,6 +19032,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * get checkbox area's width depends on checkbox visibility
 	     * @returns {number} - checkbox region's width
+	     * @private
 	     */
 	
 	
@@ -19011,6 +19045,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Otherwise, returns maximum width of labels
 	     * @param {number} [index] - legend index
 	     * @returns {number} - maximum label width  label width
+	     * @private
 	     */
 	
 	
@@ -19028,6 +19063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * calulate a whole legend width before start rendering
 	     * @returns {number} - calculate label
+	     * @private
 	     */
 	
 	
@@ -19039,6 +19075,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * calculate a single legend width of index `legendIndex`
 	     * @param {number} legendIndex - index of legend label
 	     * @returns {number} - calculate single legend width
+	     * @private
 	     */
 	
 	
@@ -19049,6 +19086,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * set component dimension by comparaing label height and icon height
 	     * @param {number} labelHeight - label height
+	     * @private
 	     */
 	
 	
@@ -19236,7 +19274,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number}
 	     */
 	    calculateRatio: function calculateRatio(value, divNumber, subNumber, baseRatio) {
-	        return (value - subNumber) / divNumber * baseRatio;
+	        return divNumber ? (value - subNumber) / divNumber * baseRatio : 0;
 	    }
 	};
 	
@@ -19415,7 +19453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -19629,6 +19667,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} position - position
 	     * @param {object} theme - legend label theme
 	     * @returns {SVGTextElement} - wedge text
+	     * @private
 	     */
 	
 	
@@ -20590,7 +20629,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	
-	exports['default'] = RaphaelAxisComponent;
 	function getTextHeight(text, theme) {
 	    var titleSize = _raphaelRenderUtil2['default'].getRenderedTextSize(text, theme.fontSize, theme.fontFamily);
 	
@@ -20628,6 +20666,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        position.top += offset.y;
 	    }
 	}
+	
+	exports['default'] = RaphaelAxisComponent;
 
 /***/ }),
 /* 356 */
@@ -22548,7 +22588,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -22640,7 +22680,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -23032,7 +23072,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -24030,7 +24070,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -24174,8 +24214,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Add data ratios.
-	     * @override
 	     * modified from axisTypeMixer
+	     * @override
 	     */
 	
 	
@@ -24235,7 +24275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _boundsAndScaleBuilder2 = _interopRequireDefault(_boundsAndScaleBuilder);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -25577,7 +25617,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -26434,7 +26474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -28048,7 +28088,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -29443,7 +29483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -30229,6 +30269,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Add sending datum.
 	     * @param {number} index legend index
+	     * @private
 	     */
 	
 	
@@ -30307,7 +30348,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -30966,7 +31007,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _mapChartTooltip2 = _interopRequireDefault(_mapChartTooltip);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -31070,7 +31111,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -31095,11 +31136,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
+	var DEFALUT_TOOLTIP_COLOR = '#aaa';
+	
 	/**
 	 * @classdesc NormalTooltip component.
 	 * @class NormalTooltip
 	 * @private
 	 */
+	
 	var NormalTooltip = function (_TooltipBase) {
 	    _inherits(NormalTooltip, _TooltipBase);
 	
@@ -31217,19 +31261,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    NormalTooltip.prototype._makeSingleTooltipHtml = function _makeSingleTooltipHtml(chartType, indexes) {
 	        var groupIndex = indexes.groupIndex;
 	
-	        var data = Object.assign({}, _tuiCodeSnippet2['default'].pick(this.data, chartType, indexes.groupIndex, indexes.index));
-	        var isbar = _predicate2['default'].isBarTypeChart(this.chartType);
-	        var isboxplot = _predicate2['default'].isBoxplotChart(this.chartType);
-	        var colorByPoint = (isbar || isboxplot) && this.dataProcessor.options.series.colorByPoint;
-	        var seriesIndex = indexes.index;
-	
-	        if (_predicate2['default'].isBulletChart(this.chartType)) {
-	            seriesIndex = groupIndex;
-	        } else if (_predicate2['default'].isTreemapChart(this.chartType)) {
-	            seriesIndex = data.tooltipColorIndex;
-	        }
-	
-	        var color = colorByPoint ? '#aaa' : this.tooltipColors[chartType][seriesIndex];
+	        var data = this._findTooltipData(chartType, indexes);
+	        var color = this._findTooltipColor(chartType, indexes, data);
 	
 	        if (_predicate2['default'].isBoxplotChart(this.chartType) && _tuiCodeSnippet2['default'].isNumber(indexes.outlierIndex)) {
 	            data.outlierIndex = indexes.outlierIndex;
@@ -31246,6 +31279,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	        data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
 	
 	        return this.templateFunc(data.category, data, this.getRawCategory(groupIndex));
+	    };
+	
+	    /**
+	     * Find data for tooltip
+	     * @param {string} chartType chart type
+	     * @param {{groupIndex: number, index: number}} indexes indexes
+	     * @returns {string} data for tooltip
+	     * @private
+	     */
+	
+	
+	    NormalTooltip.prototype._findTooltipData = function _findTooltipData(chartType, indexes) {
+	        var chartData = this.data[chartType];
+	        var selectIndex = indexes.groupIndex;
+	
+	        if (_predicate2['default'].isRadialChart(chartType) && chartData.length === selectIndex) {
+	            selectIndex = 0;
+	        }
+	
+	        return Object.assign({}, _tuiCodeSnippet2['default'].pick(chartData, selectIndex, indexes.index));
+	    };
+	
+	    /**
+	     * Find data for tooltip
+	     * @param {string} hoveredChartType - chart type
+	     * @param {{groupIndex: number, index: number}} indexes - indexes
+	     * @param {Object} data - data for tooltip render
+	     * @returns {string} color hex string
+	     * @private
+	     */
+	
+	
+	    NormalTooltip.prototype._findTooltipColor = function _findTooltipColor(hoveredChartType, indexes, data) {
+	        var isBar = _predicate2['default'].isBarTypeChart(this.chartType);
+	        var isBoxplot = _predicate2['default'].isBoxplotChart(this.chartType);
+	        var colorByPoint = (isBar || isBoxplot) && this.dataProcessor.options.series.colorByPoint;
+	
+	        var groupIndex = indexes.groupIndex;
+	        var seriesIndex = indexes.index;
+	
+	
+	        if (_predicate2['default'].isBulletChart(this.chartType)) {
+	            seriesIndex = groupIndex;
+	        } else if (_predicate2['default'].isTreemapChart(this.chartType)) {
+	            seriesIndex = data.tooltipColorIndex;
+	        }
+	
+	        return colorByPoint ? DEFALUT_TOOLTIP_COLOR : this.tooltipColors[hoveredChartType][seriesIndex];
 	    };
 	
 	    /**
@@ -31425,7 +31506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -31826,7 +31907,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                top: tooltipElement.offsetTop
 	            };
 	        }
-	
 	        this._showTooltip(tooltipElement, params, prevPosition);
 	    };
 	
@@ -32041,7 +32121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -32779,7 +32859,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -34333,7 +34413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -34857,6 +34937,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Set prevClientPosition by MouseEvent
 	     * @param {?MouseEvent} event - mouse event
+	     * @private
 	     */
 	
 	
@@ -34874,10 +34955,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return MouseEventDetectorBase;
 	}();
 	
-	exports['default'] = MouseEventDetectorBase;
-	
-	
 	_tuiCodeSnippet2['default'].CustomEvents.mixin(MouseEventDetectorBase);
+	
+	exports['default'] = MouseEventDetectorBase;
 
 /***/ }),
 /* 398 */
@@ -34887,7 +34967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.__esModule = true;
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -35111,7 +35191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -35497,6 +35577,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *  outlierIndex: {number}
 	     * }} indexes - indexe of series item displaying a tooltip
 	     * @returns {object} - outlier tooltip data
+	     * @private
 	     */
 	
 	
@@ -35531,7 +35612,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = mouseEventDetectorFactory;
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -35871,6 +35952,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Set prevClientPosition by MouseEvent
 	     * @param {?MouseEvent} event - mouse event
+	     * @private
 	     */
 	
 	
@@ -36378,7 +36460,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.__esModule = true;
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -37010,7 +37092,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -37330,7 +37412,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -37589,7 +37671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -38496,7 +38578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _renderingLabelHelper2 = _interopRequireDefault(_renderingLabelHelper);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -38717,6 +38799,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Make sum values.
 	     * @param {Array.<number>} values values
 	     * @returns {number} sum result.
+	     * @private
 	     */
 	
 	
@@ -38909,12 +38992,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return BarTypeSeriesBase;
 	}();
 	
-	exports['default'] = BarTypeSeriesBase;
-	
-	
 	BarTypeSeriesBase.mixin = function (func) {
 	    Object.assign(func.prototype, BarTypeSeriesBase.prototype);
 	};
+	
+	exports['default'] = BarTypeSeriesBase;
 
 /***/ }),
 /* 410 */
@@ -39171,7 +39253,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -39527,7 +39609,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -39971,12 +40053,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return LineTypeSeriesBase;
 	}();
 	
-	exports['default'] = LineTypeSeriesBase;
-	
-	
 	LineTypeSeriesBase.mixin = function (func) {
 	    _tuiCodeSnippet2['default'].extend(func.prototype, LineTypeSeriesBase.prototype);
 	};
+	
+	exports['default'] = LineTypeSeriesBase;
 
 /***/ }),
 /* 414 */
@@ -40203,7 +40284,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _lineTypeSeriesBase2 = _interopRequireDefault(_lineTypeSeriesBase);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -40743,12 +40824,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return CoordinateTypeSeriesBase;
 	}();
 	
-	exports['default'] = CoordinateTypeSeriesBase;
-	
-	
 	CoordinateTypeSeriesBase.mixin = function (func) {
 	    Object.assign(func.prototype, CoordinateTypeSeriesBase.prototype);
 	};
+	
+	exports['default'] = CoordinateTypeSeriesBase;
 
 /***/ }),
 /* 418 */
@@ -41473,7 +41553,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -42620,7 +42700,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -43050,7 +43130,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Make base bound for calculating bounds.
-	     * @param {{width: number, height: number, left: number, top: number}} layout - layout
+	      * @param {{width: number, height: number, left: number, top: number}} layout - layout
 	     * @returns {{width: number, height: number, left: number, top: number}}
 	     * @private
 	     */
@@ -43336,7 +43416,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -44045,7 +44125,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -44355,7 +44435,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -46203,6 +46283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Find simple type format functions.
 	     * @param {string} format - simple format
 	     * @returns {Array.<function>}
+	     * @private
 	     */
 	
 	
@@ -46230,6 +46311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Find format functions.
 	     * @returns {function[]} functions
+	     * @private
 	     */
 	
 	
@@ -46287,7 +46369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _seriesItemForCoordinateType2 = _interopRequireDefault(_seriesItemForCoordinateType);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -47403,7 +47485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -47720,7 +47802,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -49176,7 +49258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -49185,6 +49267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Bounds and scale data builder.
 	 * @module boundsAndScaleBuilder
+	 * @private
 	 */
 	/**
 	 * @fileoverview Bounds and scale data builder.
@@ -49438,7 +49521,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -50482,6 +50565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Calculator for circle legend.
 	 * @module circleLegendCalculator
+	 * @private
 	 */
 	/**
 	 * @fileoverview Calculator for circle legend.
@@ -50589,7 +50673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -50698,7 +50782,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -50955,7 +51039,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -51079,6 +51163,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Calculator for spectrum legend.
 	 * @module spectrumLegendCalculator
+	 * @private
 	 */
 	/**
 	 * @fileoverview Calculator for spectrum legend.
@@ -51150,7 +51235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _axisDataMaker2 = _interopRequireDefault(_axisDataMaker);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -51652,7 +51737,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -52273,7 +52358,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.__esModule = true;
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -52401,7 +52486,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -53147,8 +53232,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Add data ratios.
-	     * @override
 	     * modified from axisTypeMixer
+	     * @override
 	     */
 	
 	
@@ -53180,7 +53265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -53491,7 +53576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -53878,8 +53963,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Add data ratios.
-	     * @override
 	     * from axisTypeMixer
+	     * @override
 	     */
 	
 	
@@ -54072,7 +54157,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -54144,11 +54229,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Make yAxis options.
+	     * from verticalTypeComboMixer
 	     * @param {Array.<string>} chartTypes chart types
 	     * @param {?object} yAxisOptions yAxis options
 	     * @returns {{column: ?object, line: ?object}} options map
 	     * @private
-	     * from verticalTypeComboMixer
 	     */
 	
 	
@@ -54238,7 +54323,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {boolean} isSingleYAxis - whether single y axis or not
 	     * @returns {{options: object, areaType: string, chartType: string, additionalParams: object}}
 	     * @private
-	     * from verticalTypeComboMixer
 	     */
 	
 	
@@ -54264,7 +54348,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Set additional parameter for making y axis scale option.
 	     * @param {{isSingleYAxis: boolean}} additionalOptions - additional options
 	     * @private
-	     * from verticalTypeComboMixer
 	     */
 	
 	
@@ -54295,7 +54378,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Add data ratios.
 	     * @override
-	     * from axisTypeMixer
 	     */
 	
 	
@@ -54567,7 +54649,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(348);
+	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -55617,9 +55699,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * ColorSpectrum create a color spectrum and provide color value.
 	     * @constructs ColorSpectrum
-	     * @private
 	     * @param {string} startColor hex color
 	     * @param {string} endColor hex color
+	     * @private
 	     */
 	    function ColorSpectrum(startColor, endColor) {
 	        _classCallCheck(this, ColorSpectrum);
@@ -55651,7 +55733,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Get hex color.
 	     * @param {number} ratio ratio
-	     * @returns {string} hex color
+	     * @returns {string} hexcolor
 	     */
 	
 	
@@ -57103,8 +57185,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Add data ratios.
-	     * @override
 	     * modified from axisTypeMixer
+	     * @override
 	     */
 	
 	
@@ -57227,8 +57309,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Add data ratios.
-	     * @override
 	     * modified from axisTypeMixer
+	     * @override
 	     */
 	
 	

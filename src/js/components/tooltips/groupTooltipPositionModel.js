@@ -5,7 +5,7 @@
  */
 import chartConst from '../../const';
 
-export default class GroupTooltipPositionModel {
+class GroupTooltipPositionModel {
     /**
      * GroupTooltipPositionModel is position model for group tooltip.
      * @constructs GroupTooltipPositionModel
@@ -461,3 +461,4 @@ export default class GroupTooltipPositionModel {
     }
 }
 
+export default GroupTooltipPositionModel;

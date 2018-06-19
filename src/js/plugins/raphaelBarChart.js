@@ -20,7 +20,7 @@ const SERIES_EXTRA_VISUAL_OPACITY_FOR_ZERO = 0.4;
  * @class RaphaelBarChart
  * @private
  */
-export default class RaphaelBarChart {
+class RaphaelBarChart {
     /**
      * Render function of bar chart
      * @param {object} paper paper object
@@ -607,3 +607,5 @@ export default class RaphaelBarChart {
         return labelSet;
     }
 }
+
+export default RaphaelBarChart;

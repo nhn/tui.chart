@@ -7,7 +7,7 @@
 import ChartBase from './chartBase';
 import Series from '../components/series/lineChartSeries';
 
-export default class RadialChart extends ChartBase {
+class RadialChart extends ChartBase {
     /**
      * Radial chart.
      * @constructs RadialChart
@@ -78,3 +78,5 @@ export default class RadialChart extends ChartBase {
         };
     }
 }
+
+export default RadialChart;

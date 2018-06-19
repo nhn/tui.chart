@@ -10,7 +10,7 @@ import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
-export default class BarChart extends ChartBase {
+class BarChart extends ChartBase {
     /**
      * Bar chart.
      * @constructs BarChart
@@ -121,8 +121,8 @@ export default class BarChart extends ChartBase {
 
     /**
      * Add data ratios.
-     * @override
      * modified from axisTypeMixer
+     * @override
      */
     addDataRatios(limitMap) {
         const {options: {series: seriesOption = {}}, chartType} = this;
@@ -131,3 +131,5 @@ export default class BarChart extends ChartBase {
         this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
     }
 }
+
+export default BarChart;

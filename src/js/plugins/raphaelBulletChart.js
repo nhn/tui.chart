@@ -22,7 +22,7 @@ const EVENT_DETECTOR_PADDING = 20;
  * @class RaphaelBulletChart
  * @private
  */
-export default class RaphaelBulletChart {
+class RaphaelBulletChart {
     /**
      * Render function of bar chart
      * @param {object} paper paper object
@@ -460,3 +460,5 @@ function createClipPathRectWithLayout(paper, position, dimension, id) {
 
     return rect;
 }
+
+export default RaphaelBulletChart;
