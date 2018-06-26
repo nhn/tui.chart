@@ -35,8 +35,6 @@ class BarChart extends ChartBase {
          * @type {string}
          */
         this.className = 'tui-bar-chart';
-
-        this._updateOptionsRelatedDiverging(options);
     }
 
     /**
