@@ -44,7 +44,9 @@ class BarChart extends ChartBase {
      * @param {object} options - options
      * @private
      */
-    _updateOptionsRelatedDiverging(options) {
+    _updateOptionsRelatedDiverging() {
+        const {options} = this;
+
         options.series = options.series || {};
 
         /**
@@ -75,6 +77,8 @@ class BarChart extends ChartBase {
      * @override
      */
     addComponents() {
+        this._updateOptionsRelatedDiverging();
+
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
