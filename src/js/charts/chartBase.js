@@ -86,6 +86,14 @@ class ChartBase {
          */
         this.componentManager = this._createComponentManager();
 
+        // 보조축을 위한 코드를 추가하자.
+        /**
+         * Whether has right y axis or not.
+         * @type {boolean}
+         */
+        this.hasRightYAxis = false;
+        this.hasRightYAxis = snippet.isArray(this.options.yAxis) && this.options.yAxis.length > 1;
+
         this.addComponents();
 
         this._attachToEventBus();

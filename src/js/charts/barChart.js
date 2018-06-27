@@ -46,20 +46,12 @@ class BarChart extends ChartBase {
         const {options} = this;
 
         options.series = options.series || {};
-
-        /**
-         * Whether has right y axis or not.
-         * @type {boolean}
-         */
-        this.hasRightYAxis = false;
-
         if (options.series.diverging) {
             options.yAxis = options.yAxis || {};
             options.xAxis = options.xAxis || {};
             options.plot = options.plot || {};
 
             options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
-            this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
 
             const isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
 
