@@ -8,7 +8,6 @@ import ChartBase from './chartBase';
 import chartConst from '../const';
 import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
 class BarChart extends ChartBase {
     /**

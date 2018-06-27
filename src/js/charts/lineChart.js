@@ -110,6 +110,11 @@ class LineChart extends ChartBase {
         this.componentManager.register('lineSeries', 'lineSeries');
 
         this.componentManager.register('xAxis', 'axis');
+
+        if (this.hasRightYAxis) {
+            this.componentManager.register('rightYAxis', 'axis');
+        }
+
         this.componentManager.register('yAxis', 'axis');
 
         this.componentManager.register('legend', 'legend');
@@ -129,6 +134,7 @@ class LineChart extends ChartBase {
     getScaleOption() {
         const scaleOption = {};
         const xAxisOption = this.options.xAxis;
+        const yAxisOption = this.options.yAxis;
         let hasDateFormat, isDateTimeTypeXAxis;
 
         if (this.dataProcessor.isCoordinateType()) {
@@ -150,11 +156,31 @@ class LineChart extends ChartBase {
             scaleOption.yAxis = {
                 valueType: 'y'
             };
+        } else if (this.hasRightYAxis) {
+            scaleOption.yAxis = this._makeYAxisScaleOption('yAxis', this.chartType, !this.hasRightYAxis, yAxisOption[0]);
+            scaleOption.rightYAxis = this._makeYAxisScaleOption('yAxis', this.chartType, !this.hasRightYAxis, yAxisOption[1]);
         } else {
             scaleOption.yAxis = true;
         }
 
         return scaleOption;
+    }
+
+    _makeYAxisScaleOption(name, chartType, isSingleYAxis, yAxisOption) {
+        const additionalOptions = {
+            isSingleYAxis: !!isSingleYAxis
+        };
+
+        if (isSingleYAxis && this.options.series) {
+            this._setAdditionalOptions(additionalOptions);
+        }
+
+        return {
+            options: yAxisOption,
+            areaType: 'yAxis',
+            chartType,
+            additionalOptions
+        };
     }
 
     /**

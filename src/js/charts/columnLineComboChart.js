@@ -8,7 +8,6 @@ import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
 import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
-import snippet from 'tui-code-snippet';
 
 class ColumnLineComboChart extends ChartBase {
     /**
@@ -43,12 +42,6 @@ class ColumnLineComboChart extends ChartBase {
          * @type {object}
          */
         this.yAxisOptions = this._makeYAxisOptions(this.chartTypes, options.yAxis);
-
-        /**
-         * whether has right y axis or not
-         * @type {boolean}
-         */
-        this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
     }
 
     /**
