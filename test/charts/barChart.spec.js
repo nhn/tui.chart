@@ -32,7 +32,7 @@ describe('Test for BarChart', () => {
         });
 
         it('After the instance is created, the hasRightYAxis property must be set.', () => {
-            expect(barInstance.hasRightYAxis).toBe(false);
+            expect(barInstance.hasRightYAxis).toEqual(jasmine.any(Boolean));
         });
     });
 });
