@@ -41,7 +41,7 @@ describe('Test for BarChart', () => {
             expect(barInstance.hasRightYAxis).toEqual(jasmine.any(Boolean));
         });
 
-        it('rightYAxis component must be registered.', () => {
+        it('When the second yAxis option is present, the rightYaxis component must be registered.', () => {
             const allCallForRegistComponent = barInstance.componentManager.register.calls.allArgs();
 
             expect(allCallForRegistComponent.some(callArgs => callArgs[0] === 'rightYAxis')).toBe(true);

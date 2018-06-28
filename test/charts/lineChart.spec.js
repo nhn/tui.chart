@@ -38,7 +38,7 @@ describe('Test for lineChart', () => {
             expect(lineInstance.hasRightYAxis).toEqual(jasmine.any(Boolean));
         });
 
-        it('rightYAxis component must be registered.', () => {
+        it('When the second yAxis option is present, the rightYaxis component must be registered.', () => {
             const allCallForRegistComponent = lineInstance.componentManager.register.calls.allArgs();
 
             expect(allCallForRegistComponent.some(callArgs => callArgs[0] === 'rightYAxis')).toBe(true);
