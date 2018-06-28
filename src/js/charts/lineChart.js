@@ -128,7 +128,7 @@ class LineChart extends ChartBase {
     /**
      * Get scale option.
      * from lineTypeMixer
-     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
+     * @returns {{xAxis: ?{valueType:string} , yAxis: ?(boolean|{valueType:string})}}
      * @override
      */
     getScaleOption() {
@@ -157,8 +157,8 @@ class LineChart extends ChartBase {
                 valueType: 'y'
             };
         } else if (this.hasRightYAxis) {
-            scaleOption.yAxis = this._makeYAxisScaleOption('yAxis', this.chartType, !this.hasRightYAxis, yAxisOption[0]);
-            scaleOption.rightYAxis = this._makeYAxisScaleOption('yAxis', this.chartType, !this.hasRightYAxis, yAxisOption[1]);
+            scaleOption.yAxis = this._makeYAxisScaleOption('yAxis', yAxisOption[0]);
+            scaleOption.rightYAxis = this._makeYAxisScaleOption('yAxis', yAxisOption[1]);
         } else {
             scaleOption.yAxis = true;
         }
@@ -166,20 +166,10 @@ class LineChart extends ChartBase {
         return scaleOption;
     }
 
-    _makeYAxisScaleOption(name, chartType, isSingleYAxis, yAxisOption) {
-        const additionalOptions = {
-            isSingleYAxis: !!isSingleYAxis
-        };
-
-        if (isSingleYAxis && this.options.series) {
-            this._setAdditionalOptions(additionalOptions);
-        }
-
+    _makeYAxisScaleOption(name, yAxisOption) {
         return {
             options: yAxisOption,
-            areaType: 'yAxis',
-            chartType,
-            additionalOptions
+            areaType: 'yAxis'
         };
     }
 

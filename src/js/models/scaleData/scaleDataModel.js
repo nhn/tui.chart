@@ -227,6 +227,7 @@ class ScaleDataModel {
      */
     _createLabelAxisData(axisOptions, labelTheme, aligned, isVertical, isPositionRight) {
         const labels = axisOptions.categories || this.dataProcessor.getCategories(isVertical);
+
         return axisDataMaker.makeLabelAxisData({
             labels,
             options: axisOptions,
