@@ -302,11 +302,24 @@ class RaphaelLineTypeBase {
         let raphaelDot;
 
         if (position) {
-            const dot = paper.circle(
-                position.left,
-                position.top,
-                (!snippet.isUndefined(dotTheme.radius)) ? dotTheme.radius : DEFAULT_DOT_RADIUS
-            );
+            let dot;
+            const radius = (!snippet.isUndefined(dotTheme.radius)) ? dotTheme.radius : DEFAULT_DOT_RADIUS;
+            if (snippet.isUndefined(position.image)) {
+                dot = paper.circle(
+                    position.left,
+                    position.top,
+                    radius
+                );
+            } else {
+                const posRedius = (!snippet.isUndefined(position.radius)) ? position.radius : radius;
+                dot = paper.image(
+                    position.image,
+                    (position.left - posRedius),
+                    (position.top - posRedius),
+                    (posRedius * 2),
+                    (posRedius * 2)
+                );
+            }
             const dotStyle = {
                 fill: dotTheme.fillColor || color,
                 'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,

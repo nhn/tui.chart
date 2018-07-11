@@ -86,6 +86,7 @@ class ColumnChartSeries extends Series {
         const changedStack = (seriesItem.stack !== iterationData.prevStack);
         const isOverLapBar = (barSize * itemCount > groupSize);
         const columnInterval = isOverLapBar ? pointInterval : barSize;
+        const isYaxisInvert = this.axisDataMap.yAxis.options.invert;
         let endTop, boundLeft;
 
         if (!isStackType || (!this.options.diverging && changedStack)) {
@@ -97,9 +98,9 @@ class ColumnChartSeries extends Series {
 
         if (seriesItem.value >= 0) {
             iterationData.plusTop -= barHeight;
-            endTop = startTop + iterationData.plusTop;
+            endTop = startTop + (isYaxisInvert === true ? 0 : iterationData.plusTop);
         } else {
-            endTop = startTop + iterationData.minusTop;
+            endTop = startTop + (isYaxisInvert === true ? 0 : iterationData.minusTop);
             iterationData.minusTop += barHeight;
         }
 
