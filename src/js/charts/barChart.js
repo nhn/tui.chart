@@ -39,11 +39,10 @@ class BarChart extends ChartBase {
 
     /**
      * Update options related diverging option.
-     * @param {object} options - options
      * @private
      */
     _updateOptionsRelatedDiverging() {
-        const {options} = this;
+        const options = this.options; // eslint-disable-line
 
         options.series = options.series || {};
 
