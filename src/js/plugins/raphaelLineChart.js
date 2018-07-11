@@ -51,6 +51,7 @@ class RaphaelLineChart extends RaphaelLineBase {
         const {colors} = theme;
         const opacity = options.showDot ? 1 : 0;
         const isSpline = options.spline;
+        const {icons = []} = options;
         const lineWidth = this.lineWidth = (snippet.isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth);
         const borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
         const outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
@@ -78,6 +79,15 @@ class RaphaelLineChart extends RaphaelLineBase {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }
+
+        if (icons.length) {
+            this.icons = this._renderIcons({
+                paper,
+                groupPositions,
+                options
+            });
+        }
+
         this.colors = colors;
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;

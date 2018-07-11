@@ -80,7 +80,17 @@ var options = {
     },
     series: {
         showDot: false,
-        zoomable: true
+        zoomable: true,
+        icons: [{
+            name: 'sun',
+            value: 'max',
+            range: 'all',
+            url: 'https://image.ibb.co/fwBq1T/sun.png'
+        },{
+            name: 'cloud',
+            value: 'min',
+            range: 'all'
+        }]
     },
     tooltip: {
         suffix: '°C'

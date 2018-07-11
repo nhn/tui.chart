@@ -19,6 +19,9 @@ module.exports = {
       'prefer-destructuring': ['error', {
           VariableDeclarator: {array: true, object: true},
           AssignmentExpression: {array: false, object: false}
-      }]
+      }],
+      'linebreak-style': 0,
+      complexity: 0,
+      'newline-before-return': 0
   }
 };
