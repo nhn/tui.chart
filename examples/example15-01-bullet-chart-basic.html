@@ -52,16 +52,6 @@ var data = {
         data: 11,
         markers: [20],
         ranges: [[0, 8], [8, 15]]
-    }, {
-        name: 'World',
-        data: 30,
-        markers: [25],
-        ranges: [[0, 10], [10, 19], [19, 28]]
-    }, {
-        name: 'Income',
-        data: 23,
-        markers: [],
-        ranges: [[19, 25], [13, 19], [0, 13]]
     }]
 };
 var options = {
@@ -96,7 +86,32 @@ var theme = {
 tui.chart.registerTheme('myTheme', theme);
 options.theme = 'myTheme';
 
-tui.chart.bulletChart(container, data, options);
+var chart = tui.chart.bulletChart(container, data, options);
+
+ setTimeout(function(){
+     chart.resize({
+         width: document.body.offsetWidth
+         // height: document.body.offsetHeight
+     });
+ }, 2000);
+
+ setTimeout(function(){
+     chart.resize({
+         width: 500
+         // height: document.body.offsetHeight
+     });
+ }, 4000);
+
+window.onresize = function(event) {
+     chart.resize({
+         width: document.body.offsetWidth
+         // height: document.body.offsetHeight
+     });
+};
+
+ /*
+ */
+
 </script>
 
 <!--For tutorial page-->

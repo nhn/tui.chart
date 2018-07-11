@@ -30,6 +30,7 @@ class RaphaelBulletChart {
      * @returns {Array.<object>} seriesSet
      */
     render(paper, data) {
+        console.log('a');
         const {groupBounds, seriesDataModel} = data;
 
         if (!groupBounds || !groupBounds.length) {
@@ -47,6 +48,8 @@ class RaphaelBulletChart {
         this.seriesDataModel = seriesDataModel;
         this.maxRangeCount = seriesDataModel.maxRangeCount;
         this.maxMarkerCount = seriesDataModel.maxMarkerCount;
+
+        this._graphColors = [];
 
         this.rangeOpacities = {};
 
@@ -290,8 +293,6 @@ class RaphaelBulletChart {
         this.groupBounds = groupBounds;
         this.resizeClipRect(width, height);
         this.paper.setSize(width, height);
-
-        this._renderBounds(groupBounds);
     }
 
     /**
@@ -420,22 +421,26 @@ class RaphaelBulletChart {
      * @returns {Array.<object>} - color and opacity of series
      */
     getGraphColors() {
-        return this.groupBars.map((barSet, groupIndex) => {
-            const barColors = [];
-            const markerCount = this.groupLines[groupIndex].length;
+        if (!this._graphColors.length) {
+            this._graphColors = this.groupBars.map((barSet, groupIndex) => {
+                const barColors = [];
+                const markerCount = this.groupLines[groupIndex].length;
 
-            barSet.forEach(item => {
-                barColors.push(item.attrs.fill);
+                barSet.forEach(item => {
+                    barColors.push(item.attrs.fill);
+                });
+
+                const legendColor = barColors[barColors.length - 1];
+
+                for (let i = 0; i <= markerCount; i += 1) {
+                    barColors.push(legendColor);
+                }
+
+                return barColors;
             });
+        }
 
-            const legendColor = barColors[barColors.length - 1];
-
-            for (let i = 0; i <= markerCount; i += 1) {
-                barColors.push(legendColor);
-            }
-
-            return barColors;
-        });
+        return this._graphColors;
     }
 }
 
