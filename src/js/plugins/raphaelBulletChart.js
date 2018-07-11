@@ -30,7 +30,6 @@ class RaphaelBulletChart {
      * @returns {Array.<object>} seriesSet
      */
     render(paper, data) {
-        console.log('a');
         const {groupBounds, seriesDataModel} = data;
 
         if (!groupBounds || !groupBounds.length) {
