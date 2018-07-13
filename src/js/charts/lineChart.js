@@ -128,7 +128,7 @@ class LineChart extends ChartBase {
     /**
      * Get scale option.
      * from lineTypeMixer
-     * @returns {{xAxis: ?{valueType:string} , yAxis: ?(boolean|{valueType:string})}}
+     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @override
      */
     getScaleOption() {

@@ -34,6 +34,8 @@ class BarChart extends ChartBase {
          * @type {string}
          */
         this.className = 'tui-bar-chart';
+
+        this._updateOptionsRelatedDiverging();
     }
 
     /**
@@ -41,7 +43,7 @@ class BarChart extends ChartBase {
      * @private
      */
     _updateOptionsRelatedDiverging() {
-        const options = this.options; // eslint-disable-line
+        const {options} = this;
 
         options.series = options.series || {};
         if (options.series.diverging) {
@@ -65,8 +67,6 @@ class BarChart extends ChartBase {
      * @override
      */
     addComponents() {
-        this._updateOptionsRelatedDiverging();
-
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');
