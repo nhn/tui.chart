@@ -301,10 +301,16 @@ class RaphaelBulletChart {
      */
     resizeClipRect(width, height) {
         const clipRect = this.paper.getById(`${this._getClipRectId()}_rect`);
-        clipRect.attr({
-            width,
-            height
-        });
+
+        // Animation was implemented using <clipPath> SVG element
+        // As Browser compatibility of <clipPath> is IE9+,
+        // No Animation on IE8
+        if (clipRect) {
+            clipRect.attr({
+                width,
+                height
+            });
+        }
     }
 
     /**
