@@ -413,27 +413,8 @@ class RaphaelPieChart {
      */
     resize(params) {
         const {dimension, circleBound} = params;
-        const {sectorName, labelSet} = this;
-
         this.circleBound = circleBound;
         this.paper.setSize(dimension.width, dimension.height);
-
-        this.sectorInfos.forEach((sectorInfo, index) => {
-            const {angles} = sectorInfo;
-            const attrs = {};
-
-            attrs[sectorName] = [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle];
-            sectorInfo.sector.attr(attrs);
-
-            if (labelSet && labelSet.length) {
-                const bBox = sectorInfo.sector.getBBox();
-
-                labelSet[index].attr({
-                    x: bBox.x + (bBox.width / 2),
-                    y: bBox.y + (bBox.height / 2)
-                });
-            }
-        });
     }
 
     findSectorInfo(position) {
