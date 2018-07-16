@@ -30,8 +30,6 @@ const dataExporter = {
     downloadData(fileName, extension, rawData, downloadOption) {
         const chartData2DArray = _get2DArrayFromRawData(rawData);
         const contentType = DATA_URI_HEADERS[extension].replace(/(data:|;base64,|,%EF%BB%BF)/g, '');
-        // console.log('RAWDATA', rawData);
-        // console.log('CHARTDATA2DARRAY', chartData2DArray);
         let content = DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
 
         if (this._isNeedDataEncodeing()) {
