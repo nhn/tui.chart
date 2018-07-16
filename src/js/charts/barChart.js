@@ -8,7 +8,6 @@ import ChartBase from './chartBase';
 import chartConst from '../const';
 import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
 class BarChart extends ChartBase {
     /**
@@ -35,6 +34,8 @@ class BarChart extends ChartBase {
          * @type {string}
          */
         this.className = 'tui-bar-chart';
+
+        this._updateOptionsRelatedDiverging();
     }
 
     /**
@@ -45,20 +46,12 @@ class BarChart extends ChartBase {
         const options = this.options; // eslint-disable-line
 
         options.series = options.series || {};
-
-        /**
-         * Whether has right y axis or not.
-         * @type {boolean}
-         */
-        this.hasRightYAxis = false;
-
         if (options.series.diverging) {
             options.yAxis = options.yAxis || {};
             options.xAxis = options.xAxis || {};
             options.plot = options.plot || {};
 
             options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
-            this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
 
             const isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
 
@@ -74,8 +67,6 @@ class BarChart extends ChartBase {
      * @override
      */
     addComponents() {
-        this._updateOptionsRelatedDiverging();
-
         this.componentManager.register('title', 'title');
         this.componentManager.register('plot', 'plot');
         this.componentManager.register('legend', 'legend');

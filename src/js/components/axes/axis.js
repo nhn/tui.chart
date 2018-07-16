@@ -258,6 +258,7 @@ class Axis {
         this.layout = layout;
         this.dimensionMap = dimensionMap;
         this.limitMap = limitMap;
+
         this.data = axisDataMap[this.componentName];
         this.options = this.data.options;
     }

@@ -75,12 +75,18 @@ var options = {
         height: 540,
         title: '24-hr Average Temperature'
     },
-    yAxis: {
-        title: 'Temperature (Celsius)'
-    },
-    xAxis: {
+    yAxis: [{
+       title: 'Temperature (Celsius)',
+       chartType: 'column',
+       labelMargin: 15
+    }, {
+       title: 'Average',
+       chartType: 'line',
+       labelMargin: 15
+    }],
+    xAxis: [{
         title: 'Month'
-    },
+    }],
     series: {
         line: {
             showDot: true

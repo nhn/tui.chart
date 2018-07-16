@@ -86,6 +86,12 @@ class ChartBase {
          */
         this.componentManager = this._createComponentManager();
 
+        /**
+         * Whether has right y axis or not.
+         * @type {boolean}
+         */
+        this.hasRightYAxis = snippet.isArray(this.options.yAxis) && (this.options.yAxis.length > 1);
+
         this.addComponents();
 
         this._attachToEventBus();
