@@ -98,7 +98,9 @@ function _get2DArrayFromRawData(rawData) {
 
         Object.values((rawData.series || {})).forEach(seriesDatum => {
             seriesDatum.forEach(seriesItem => {
-                resultArray.push([seriesItem.name, ...seriesItem.data]);
+                const data = (snippet.isArray(seriesItem.data)) ? seriesItem.data : [seriesItem.data];
+
+                resultArray.push([seriesItem.name, ...data]);
             });
         });
     }

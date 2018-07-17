@@ -125,7 +125,7 @@ function _createChart(container, rawData = {}, options, chartType) {
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
- *      @param {object} options.yAxis - options for y axis component
+ *      @param {object|Array} options.yAxis - options for y axis component
  *          @param {string | object} options.yAxis.title - title text or title object
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x
@@ -330,7 +330,7 @@ function columnChart(container, rawData, options) {
  *              @param {number} options.chart.title.offsetX - title offset x
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
- *      @param {object} options.yAxis - options for y axis component
+ *      @param {object|Array} options.yAxis - options for y axis component
  *          @param {string | object} options.yAxis.title - title text or title object
  *              @param {string} options.yAxis.title.text - title text
  *              @param {number} options.yAxis.title.offsetX - title offset x

@@ -17,6 +17,9 @@
   "example01-06-bar-chart-range-data": {
     "title": "1.6 [Bar Chart] range data"
   },
+  "example01-07-bar-chart-secondary-axis": {
+    "title": "1.7 [Bar Chart] secondary axis"
+  },
   "example02-01-column-chart-basic": {
     "title": "2.1 [Column Chart] basic"
   },
@@ -46,6 +49,9 @@
   },
   "example03-05-line-chart-synchronized-tooltip": {
     "title": "3.5 [Line Chart] synchronized tooltip"
+  },
+  "example03-06-line-chart-secondary-axis": {
+    "title": "3.6 [Line Chart] secondary axis"
   },
   "example04-01-area-chart-basic": {
     "title": "4.1 [Area Chart] basic"

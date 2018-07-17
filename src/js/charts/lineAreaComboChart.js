@@ -45,12 +45,6 @@ class LineAreaComboChart extends ChartBase {
          */
         this.yAxisOptions = this._makeYAxisOptions(this.chartTypes, options.yAxis);
 
-        /**
-         * whether has right y axis or not
-         * @type {boolean}
-         */
-        this.hasRightYAxis = snippet.isArray(options.yAxis) && options.yAxis.length > 1;
-
         this._dynamicDataHelper = new DynamicDataHelper(this);
 
         /**

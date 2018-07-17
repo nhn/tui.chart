@@ -75,6 +75,21 @@ describe('Test for ScaleDataModel', () => {
             });
             expect(actual).toBe(expected);
         });
+
+        it('Must label it with the category data in the option when option has a category property.', () => {
+            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
+            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
+            scaleDataModel.options.series = {};
+
+            scaleDataModel._createAxisData(null, {
+                categories: ['cate3', 'cate4']
+            }, 'labelTheme');
+
+            const actual = axisDataMaker.makeLabelAxisData.calls.mostRecent().args[0].labels;
+
+            expect(actual).toEqual(['cate3', 'cate4']);
+        });
     });
 
     describe('updateXAxisDataForAutoTickInterval()', () => {

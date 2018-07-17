@@ -53,6 +53,7 @@ export default {
         let maxLabelWidth = 0;
         let width = 0;
 
+        labels = options.categories || labels;
         labels = renderUtil.addPrefixSuffix(labels, prefix, suffix);
         yAxisLabels = renderUtil.addPrefixSuffix(yAxisLabels, prefix, suffix);
 

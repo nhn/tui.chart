@@ -65,5 +65,18 @@ describe('Test for axisCalculator', () => {
 
             expect(actual).toBe(17);
         });
+
+        it('When an option has a category, it must be reflected in the category label of the option when calculating the maxwidth.', () => {
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth');
+            axisCalculator.calculateYAxisWidth(['label1', 'label12'], {
+                title: 'Axis Title',
+                categories: ['label3', 'label4'],
+                showLabel: true
+            }, {}, []);
+
+            const [actual] = renderUtil.getRenderedLabelsMaxWidth.calls.mostRecent().args;
+
+            expect(actual).toEqual(['label3', 'label4']);
+        });
     });
 });

@@ -85,6 +85,7 @@ class ScaleDataModel {
             typeMap.valueType,
             typeMap.areaType
         );
+
         const baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
         const options = Object.assign(baseOptions, {
             isVertical,
@@ -182,6 +183,7 @@ class ScaleDataModel {
         const isCoordinateLineType = !isVertical && !hasCategories && aligned;
         const {labels, limit, step} = scaleData;
         const tickCount = labels.length;
+
         const axisData = axisDataMaker.makeValueAxisData({
             labels,
             tickCount: labels.length,
@@ -224,8 +226,10 @@ class ScaleDataModel {
      * @private
      */
     _createLabelAxisData(axisOptions, labelTheme, aligned, isVertical, isPositionRight) {
+        const labels = axisOptions.categories || this.dataProcessor.getCategories(isVertical);
+
         return axisDataMaker.makeLabelAxisData({
-            labels: this.dataProcessor.getCategories(isVertical),
+            labels,
             options: axisOptions,
             labelTheme,
             aligned,
@@ -275,7 +279,9 @@ class ScaleDataModel {
             dataMap.rightYAxis = this._createAxisData(
                 scaleDataMap.rightYAxis, yAxisOptions[1], theme.yAxis.label, true, true
             );
-            dataMap.rightYAxis.aligned = dataMap.xAxis.aligned;
+            if (!dataMap.rightYAxis.aligned) {
+                dataMap.rightYAxis.aligned = dataMap.yAxis.aligned;
+            }
         }
 
         return dataMap;

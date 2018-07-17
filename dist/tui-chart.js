@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.1.2
+ * @version 3.2.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Jun 19 2018 10:11:13 GMT+0900 (KST)"
+ * bundle created at "Tue Jul 17 2018 11:47:11 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -12731,6 +12731,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.maxRangeCount = seriesDataModel.maxRangeCount;
 	        this.maxMarkerCount = seriesDataModel.maxMarkerCount;
 	
+	        this._graphColors = [];
+	
 	        this.rangeOpacities = {};
 	
 	        this.paper.setStart();
@@ -13010,8 +13012,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.groupBounds = groupBounds;
 	        this.resizeClipRect(width, height);
 	        this.paper.setSize(width, height);
-	
-	        this._renderBounds(groupBounds);
 	    };
 	
 	    /**
@@ -13023,10 +13023,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    RaphaelBulletChart.prototype.resizeClipRect = function resizeClipRect(width, height) {
 	        var clipRect = this.paper.getById(this._getClipRectId() + '_rect');
-	        clipRect.attr({
-	            width: width,
-	            height: height
-	        });
+	
+	        // Animation was implemented using <clipPath> SVG element
+	        // As Browser compatibility of <clipPath> is IE9+,
+	        // No Animation on IE8
+	        if (clipRect) {
+	            clipRect.attr({
+	                width: width,
+	                height: height
+	            });
+	        }
 	    };
 	
 	    /**
@@ -13163,22 +13169,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RaphaelBulletChart.prototype.getGraphColors = function getGraphColors() {
 	        var _this5 = this;
 	
-	        return this.groupBars.map(function (barSet, groupIndex) {
-	            var barColors = [];
-	            var markerCount = _this5.groupLines[groupIndex].length;
+	        if (!this._graphColors.length) {
+	            this._graphColors = this.groupBars.map(function (barSet, groupIndex) {
+	                var barColors = [];
+	                var markerCount = _this5.groupLines[groupIndex].length;
 	
-	            barSet.forEach(function (item) {
-	                barColors.push(item.attrs.fill);
+	                barSet.forEach(function (item) {
+	                    barColors.push(item.attrs.fill);
+	                });
+	
+	                var legendColor = barColors[barColors.length - 1];
+	
+	                for (var i = 0; i <= markerCount; i += 1) {
+	                    barColors.push(legendColor);
+	                }
+	
+	                return barColors;
 	            });
+	        }
 	
-	            var legendColor = barColors[barColors.length - 1];
-	
-	            for (var i = 0; i <= markerCount; i += 1) {
-	                barColors.push(legendColor);
-	            }
-	
-	            return barColors;
-	        });
+	        return this._graphColors;
 	    };
 	
 	    return RaphaelBulletChart;
@@ -16517,30 +16527,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RaphaelPieChart.prototype.resize = function resize(params) {
 	        var dimension = params.dimension,
 	            circleBound = params.circleBound;
-	        var sectorName = this.sectorName,
-	            labelSet = this.labelSet;
-	
 	
 	        this.circleBound = circleBound;
 	        this.paper.setSize(dimension.width, dimension.height);
-	
-	        this.sectorInfos.forEach(function (sectorInfo, index) {
-	            var angles = sectorInfo.angles;
-	
-	            var attrs = {};
-	
-	            attrs[sectorName] = [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle];
-	            sectorInfo.sector.attr(attrs);
-	
-	            if (labelSet && labelSet.length) {
-	                var bBox = sectorInfo.sector.getBBox();
-	
-	                labelSet[index].attr({
-	                    x: bBox.x + bBox.width / 2,
-	                    y: bBox.y + bBox.height / 2
-	                });
-	            }
-	        });
 	    };
 	
 	    RaphaelPieChart.prototype.findSectorInfo = function findSectorInfo(position) {
@@ -21121,7 +21110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
-	 *      @param {object} options.yAxis - options for y axis component
+	 *      @param {object|Array} options.yAxis - options for y axis component
 	 *          @param {string | object} options.yAxis.title - title text or title object
 	 *              @param {string} options.yAxis.title.text - title text
 	 *              @param {number} options.yAxis.title.offsetX - title offset x
@@ -21332,7 +21321,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {number} options.chart.title.offsetX - title offset x
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
-	 *      @param {object} options.yAxis - options for y axis component
+	 *      @param {object|Array} options.yAxis - options for y axis component
 	 *          @param {string | object} options.yAxis.title - title text or title object
 	 *              @param {string} options.yAxis.title.text - title text
 	 *              @param {number} options.yAxis.title.offsetX - title offset x
@@ -24074,10 +24063,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _tuiCodeSnippet = __webpack_require__(333);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24120,33 +24105,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        _this.className = 'tui-bar-chart';
 	
-	        _this._updateOptionsRelatedDiverging(options);
+	        _this._updateOptionsRelatedDiverging();
 	        return _this;
 	    }
 	
 	    /**
 	     * Update options related diverging option.
-	     * @param {object} options - options
 	     * @private
 	     */
 	
 	
-	    BarChart.prototype._updateOptionsRelatedDiverging = function _updateOptionsRelatedDiverging(options) {
+	    BarChart.prototype._updateOptionsRelatedDiverging = function _updateOptionsRelatedDiverging() {
+	        var options = this.options; // eslint-disable-line
+	
 	        options.series = options.series || {};
-	
-	        /**
-	         * Whether has right y axis or not.
-	         * @type {boolean}
-	         */
-	        this.hasRightYAxis = false;
-	
 	        if (options.series.diverging) {
 	            options.yAxis = options.yAxis || {};
 	            options.xAxis = options.xAxis || {};
 	            options.plot = options.plot || {};
 	
 	            options.series.stackType = options.series.stackType || _const2['default'].NORMAL_STACK_TYPE;
-	            this.hasRightYAxis = _tuiCodeSnippet2['default'].isArray(options.yAxis) && options.yAxis.length > 1;
 	
 	            var isCenter = _predicate2['default'].isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
 	
@@ -24363,6 +24341,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {ComponentManager}
 	         */
 	        this.componentManager = this._createComponentManager();
+	
+	        /**
+	         * Whether has right y axis or not.
+	         * @type {boolean}
+	         */
+	        this.hasRightYAxis = _tuiCodeSnippet2['default'].isArray(this.options.yAxis) && this.options.yAxis.length > 1;
 	
 	        this.addComponents();
 	
@@ -25927,6 +25911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.layout = layout;
 	        this.dimensionMap = dimensionMap;
 	        this.limitMap = limitMap;
+	
 	        this.data = axisDataMap[this.componentName];
 	        this.options = this.data.options;
 	    };
@@ -28737,7 +28722,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        Object.values(rawData.series || {}).forEach(function (seriesDatum) {
 	            seriesDatum.forEach(function (seriesItem) {
-	                resultArray.push([seriesItem.name].concat(_toConsumableArray(seriesItem.data)));
+	                var data = _tuiCodeSnippet2['default'].isArray(seriesItem.data) ? seriesItem.data : [seriesItem.data];
+	
+	                resultArray.push([seriesItem.name].concat(_toConsumableArray(data)));
 	            });
 	        });
 	    }
@@ -50738,6 +50725,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var maxLabelWidth = 0;
 	        var width = 0;
 	
+	        labels = options.categories || labels;
 	        labels = _renderUtil2['default'].addPrefixSuffix(labels, prefix, suffix);
 	        yAxisLabels = _renderUtil2['default'].addPrefixSuffix(yAxisLabels, prefix, suffix);
 	
@@ -51336,6 +51324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var isVertical = typeMap.areaType !== 'xAxis';
 	        var baseValues = this.dataProcessor.createBaseValuesForLimit(chartType, additionalOptions.isSingleYAxis, baseOptions.stackType, typeMap.valueType, typeMap.areaType);
+	
 	        var baseSize = this.boundsModel.getBaseSizeForLimit(isVertical);
 	        var options = Object.assign(baseOptions, {
 	            isVertical: isVertical,
@@ -51440,6 +51429,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            step = scaleData.step;
 	
 	        var tickCount = labels.length;
+	
 	        var axisData = _axisDataMaker2['default'].makeValueAxisData({
 	            labels: labels,
 	            tickCount: labels.length,
@@ -51483,8 +51473,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    ScaleDataModel.prototype._createLabelAxisData = function _createLabelAxisData(axisOptions, labelTheme, aligned, isVertical, isPositionRight) {
+	        var labels = axisOptions.categories || this.dataProcessor.getCategories(isVertical);
+	
 	        return _axisDataMaker2['default'].makeLabelAxisData({
-	            labels: this.dataProcessor.getCategories(isVertical),
+	            labels: labels,
 	            options: axisOptions,
 	            labelTheme: labelTheme,
 	            aligned: aligned,
@@ -51539,7 +51531,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        if (this.hasRightYAxis) {
 	            dataMap.rightYAxis = this._createAxisData(scaleDataMap.rightYAxis, yAxisOptions[1], theme.yAxis.label, true, true);
-	            dataMap.rightYAxis.aligned = dataMap.xAxis.aligned;
+	            if (!dataMap.rightYAxis.aligned) {
+	                dataMap.rightYAxis.aligned = dataMap.yAxis.aligned;
+	            }
 	        }
 	
 	        return dataMap;
@@ -53412,6 +53406,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.componentManager.register('lineSeries', 'lineSeries');
 	
 	        this.componentManager.register('xAxis', 'axis');
+	
+	        if (this.hasRightYAxis) {
+	            this.componentManager.register('rightYAxis', 'axis');
+	        }
+	
 	        this.componentManager.register('yAxis', 'axis');
 	
 	        this.componentManager.register('legend', 'legend');
@@ -53433,6 +53432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LineChart.prototype.getScaleOption = function getScaleOption() {
 	        var scaleOption = {};
 	        var xAxisOption = this.options.xAxis;
+	        var yAxisOption = this.options.yAxis;
 	        var hasDateFormat = void 0,
 	            isDateTimeTypeXAxis = void 0;
 	
@@ -53455,11 +53455,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            scaleOption.yAxis = {
 	                valueType: 'y'
 	            };
+	        } else if (this.hasRightYAxis) {
+	            scaleOption.yAxis = this._makeYAxisScaleOption('yAxis', yAxisOption[0]);
+	            scaleOption.rightYAxis = this._makeYAxisScaleOption('yAxis', yAxisOption[1]);
 	        } else {
 	            scaleOption.yAxis = true;
 	        }
 	
 	        return scaleOption;
+	    };
+	
+	    LineChart.prototype._makeYAxisScaleOption = function _makeYAxisScaleOption(name, yAxisOption) {
+	        return {
+	            options: yAxisOption,
+	            areaType: 'yAxis'
+	        };
 	    };
 	
 	    /**
@@ -54165,10 +54175,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _validTypeMakerForYAxisOptions2 = _interopRequireDefault(_validTypeMakerForYAxisOptions);
 	
-	var _tuiCodeSnippet = __webpack_require__(333);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -54218,12 +54224,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }));
 	
 	        _this.yAxisOptions = _this._makeYAxisOptions(_this.chartTypes, options.yAxis);
-	
-	        /**
-	         * whether has right y axis or not
-	         * @type {boolean}
-	         */
-	        _this.hasRightYAxis = _tuiCodeSnippet2['default'].isArray(options.yAxis) && options.yAxis.length > 1;
 	        return _this;
 	    }
 	
@@ -54714,12 +54714,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }));
 	
 	        _this.yAxisOptions = _this._makeYAxisOptions(_this.chartTypes, options.yAxis);
-	
-	        /**
-	         * whether has right y axis or not
-	         * @type {boolean}
-	         */
-	        _this.hasRightYAxis = _tuiCodeSnippet2['default'].isArray(options.yAxis) && options.yAxis.length > 1;
 	
 	        _this._dynamicDataHelper = new _dynamicDataHelper2['default'](_this);
 	

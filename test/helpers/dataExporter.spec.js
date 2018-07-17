@@ -98,8 +98,8 @@ describe('Test for dataExporter', () => {
     });
 
     describe('_get2DArrayFromRawData()', () => {
-        const result = [['', 'jan', 'feb'], ['john', 10, 20], ['jane', 30, 25]];
         it('should create 2D array from rawData.', () => {
+            const result = [['', 'jan', 'feb'], ['john', 10, 20], ['jane', 30, 25]];
             expect(dataExporter._get2DArrayFromRawData({
                 categories: ['jan', 'feb'],
                 series: {
@@ -109,6 +109,22 @@ describe('Test for dataExporter', () => {
                     }, {
                         name: 'jane',
                         data: [30, 25]
+                    }]
+                }
+            })).toEqual(result);
+        });
+
+        it('even if the data is not an array, it must be a normal concat.', () => {
+            const result = [['', 'jan', 'feb'], ['john', 10], ['jane', 30]];
+            expect(dataExporter._get2DArrayFromRawData({
+                categories: ['jan', 'feb'],
+                series: {
+                    line: [{
+                        name: 'john',
+                        data: 10
+                    }, {
+                        name: 'jane',
+                        data: 30
                     }]
                 }
             })).toEqual(result);
