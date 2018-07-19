@@ -56,23 +56,13 @@ export default {
      */
     calculateHeight(dimensionMap, legendOptions, yAxisTitleAreaHeight) {
         const chartHeight = dimensionMap.chart.height;
-        const titleHeight = dimensionMap.title.height;
-        const hasTitle = titleHeight > 0;
-        const chartExportMenuHeight = dimensionMap.chartExportMenu.height;
+        const titleHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
         const legendHeight = legendOptions.visible ? dimensionMap.legend.height : 0;
         const topLegendHeight = predicate.isLegendAlignTop(legendOptions.align) ? legendHeight : 0;
-        const topAreaExceptTitleHeight = Math.max(yAxisTitleAreaHeight, topLegendHeight);
-
-        let topAreaHeight = Math.max(dimensionMap.title.height, chartExportMenuHeight);
-        let bottomAreaHeight = dimensionMap.xAxis.height;
-
-        if (hasTitle) {
-            topAreaHeight = titleHeight + Math.max(0, topAreaExceptTitleHeight - chartConst.TITLE_PADDING);
-        } else {
-            topAreaHeight = Math.max(chartExportMenuHeight, topAreaExceptTitleHeight);
-        }
-
-        bottomAreaHeight += (predicate.isLegendAlignBottom(legendOptions.align) ? legendHeight : 0);
+        const topAreaPadding = Math.max(0, Math.max(yAxisTitleAreaHeight, topLegendHeight) - chartConst.TITLE_PADDING);
+        const topAreaHeight = titleHeight + topAreaPadding;
+        const bottomLegendHeight = predicate.isLegendAlignBottom(legendOptions.align) ? legendHeight : 0;
+        const bottomAreaHeight = dimensionMap.xAxis.height + bottomLegendHeight;
 
         return chartHeight - (chartConst.CHART_PADDING * 2) - topAreaHeight - bottomAreaHeight;
     }
