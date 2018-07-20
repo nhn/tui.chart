@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.2.0
+ * @version 3.2.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Jul 17 2018 11:47:11 GMT+0900 (KST)"
+ * bundle created at "Fri Jul 20 2018 14:38:23 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -51093,23 +51093,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    calculateHeight: function calculateHeight(dimensionMap, legendOptions, yAxisTitleAreaHeight) {
 	        var chartHeight = dimensionMap.chart.height;
-	        var titleHeight = dimensionMap.title.height;
-	        var hasTitle = titleHeight > 0;
-	        var chartExportMenuHeight = dimensionMap.chartExportMenu.height;
+	        var titleHeight = Math.max(dimensionMap.title.height, dimensionMap.chartExportMenu.height);
 	        var legendHeight = legendOptions.visible ? dimensionMap.legend.height : 0;
 	        var topLegendHeight = _predicate2['default'].isLegendAlignTop(legendOptions.align) ? legendHeight : 0;
-	        var topAreaExceptTitleHeight = Math.max(yAxisTitleAreaHeight, topLegendHeight);
-	
-	        var topAreaHeight = Math.max(dimensionMap.title.height, chartExportMenuHeight);
-	        var bottomAreaHeight = dimensionMap.xAxis.height;
-	
-	        if (hasTitle) {
-	            topAreaHeight = titleHeight + Math.max(0, topAreaExceptTitleHeight - _const2['default'].TITLE_PADDING);
-	        } else {
-	            topAreaHeight = Math.max(chartExportMenuHeight, topAreaExceptTitleHeight);
-	        }
-	
-	        bottomAreaHeight += _predicate2['default'].isLegendAlignBottom(legendOptions.align) ? legendHeight : 0;
+	        var topAreaPadding = Math.max(0, Math.max(yAxisTitleAreaHeight, topLegendHeight) - _const2['default'].TITLE_PADDING);
+	        var topAreaHeight = titleHeight + topAreaPadding;
+	        var bottomLegendHeight = _predicate2['default'].isLegendAlignBottom(legendOptions.align) ? legendHeight : 0;
+	        var bottomAreaHeight = dimensionMap.xAxis.height + bottomLegendHeight;
 	
 	        return chartHeight - _const2['default'].CHART_PADDING * 2 - topAreaHeight - bottomAreaHeight;
 	    }

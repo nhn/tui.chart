@@ -202,6 +202,34 @@ describe('Test for seriesCalculator', () => {
             expect(actual).toBe(250);
         });
 
+        it('calculate height, when align option is top and text is empty', () => {
+            const dimensionMap = {
+                chart: {
+                    height: 400
+                },
+                title: {
+                    height: 0
+                },
+                legend: {
+                    height: 50
+                },
+                xAxis: {
+                    height: 50
+                },
+                chartExportMenu: {
+                    height: 30
+                }
+            };
+            const legendOption = {
+                align: chartConst.LEGEND_ALIGN_TOP,
+                visible: true
+            };
+            const yAxisTitleAreaHeight = 20;
+            const actual = seriesCalculator.calculateHeight(dimensionMap, legendOption, yAxisTitleAreaHeight);
+
+            expect(actual).toBe(270);
+        });
+
         it('calculate height, when align option is bottom', () => {
             const dimensionMap = {
                 chart: {
