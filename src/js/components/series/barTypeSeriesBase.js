@@ -150,7 +150,6 @@ class BarTypeSeriesBase {
      * @private
      */
     _renderNormalSeriesLabel(paper) {
-        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
         const {graphRenderer} = this;
         const seriesDataModel = this._getSeriesDataModel();
         const boundsSet = this.seriesData.groupBounds;
@@ -159,17 +158,11 @@ class BarTypeSeriesBase {
         const groupLabels = seriesDataModel.map(seriesGroup => (
             seriesGroup.map(({start, startLabel, endLabel}) => {
                 const label = {
-                    end: renderUtil.addPrefixSuffixItem(endLabel, {
-                        prefix,
-                        suffix
-                    })
+                    end: this.decorateLabel(endLabel)
                 };
 
                 if (snippet.isExisty(start)) {
-                    label.start = renderUtil.addPrefixSuffixItem(startLabel, {
-                        prefix,
-                        suffix
-                    });
+                    label.start = this.decorateLabel(startLabel);
                 }
 
                 return label;
@@ -242,15 +235,11 @@ class BarTypeSeriesBase {
     }
 
     getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues) {
-        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
         const isNormalStack = predicate.isNormalStack(this.options.stackType);
 
         return seriesDataModel.map(seriesGroup => {
             const labels = seriesGroup.map(seriesDatum => ({
-                end: renderUtil.addPrefixSuffixItem(seriesDatum.endLabel, {
-                    prefix,
-                    suffix
-                })
+                end: this.decorateLabel(seriesDatum.endLabel)
             }));
 
             if (isNormalStack) {
@@ -286,7 +275,6 @@ class BarTypeSeriesBase {
         const sumMinusValues = [];
         const labelTheme = this.theme.label;
         const {groupBounds} = this.seriesData;
-        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
         const seriesDataModel = this._getSeriesDataModel();
         const groupPositions = this.getGroupPositions(seriesDataModel, groupBounds);
         const groupLabels = this.getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues);
@@ -307,18 +295,12 @@ class BarTypeSeriesBase {
                 }
 
                 labels.push({
-                    end: renderUtil.addPrefixSuffixItem(renderUtil.formatToComma(plusSumValue), {
-                        prefix,
-                        suffix
-                    })
+                    end: this.decorateLabel(renderUtil.formatToComma(plusSumValue))
                 });
 
                 if (sumMinusValues.length) {
                     labels.push({
-                        end: renderUtil.addPrefixSuffixItem(renderUtil.formatToComma(minusSumValue), {
-                            prefix,
-                            suffix
-                        })
+                        end: this.decorateLabel(renderUtil.formatToComma(minusSumValue))
                     });
                 }
             });

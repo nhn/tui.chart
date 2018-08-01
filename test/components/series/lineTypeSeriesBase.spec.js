@@ -4,6 +4,7 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 import LineTypeSeriesBase from '../../../src/js/components/series/lineTypeSeriesBase';
+import Series from '../../../src/js/components/series/series.js';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
 import renderUtil from '../../../src/js/helpers/renderUtil';
@@ -42,6 +43,7 @@ describe('LineTypeSeriesBase', () => {
         beforeEach(() => {
             spyOn(series, '_getLabelPositions').and.returnValue({});
 
+            series.decorateLabel = Series.prototype.decorateLabel;
             series.theme = {};
             series.options = {};
 

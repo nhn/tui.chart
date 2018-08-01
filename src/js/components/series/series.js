@@ -186,6 +186,19 @@ class Series {
     }
 
     /**
+     * Add suffix prefix
+     * @param {sting|array} targetLabel - target label
+     * @returns {string|array} - decorated label
+     */
+    decorateLabel(targetLabel) {
+        const {labelPrefix = '', labelSuffix = ''} = this.options;
+        const {addPrefixSuffix, addPrefixSuffixItem} = renderUtil;
+        const decorateFunc = snippet.isArray(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem;
+
+        return decorateFunc.apply(renderUtil, [targetLabel, labelPrefix, labelSuffix]);
+    }
+
+    /**
      * Attach to event bus.
      * @private
      */

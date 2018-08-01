@@ -8,7 +8,6 @@ import Series from './series';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import snippet from 'tui-code-snippet';
-import renderUtil from '../../helpers/renderUtil';
 import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
 const {
@@ -646,7 +645,6 @@ class PieChartSeries extends Series {
      */
     _renderSeriesLabel(paper) {
         let positions = [];
-        const {labelPrefix, labelSuffix} = this.options;
         const renderOption = {};
         const labelSet = paper.set();
 
@@ -675,7 +673,7 @@ class PieChartSeries extends Series {
 
         if (this.options.showLabel) {
             renderOption.positions = this._pickPositionsFromSectorData('centerPosition', 'value');
-            graphRenderLabel('value', renderUtil.addPrefixSuffix(this.valueLabels, labelPrefix, labelSuffix));
+            graphRenderLabel('value', this.decorateLabel(this.valueLabels));
         }
         if (this.options.showLegend) {
             const legendLabelPosition = this.isLabelAlignOuter ? 'outerPosition' : 'centerPosition';

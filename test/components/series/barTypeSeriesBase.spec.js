@@ -5,6 +5,7 @@
  */
 
 import raphael from 'raphael';
+import Series from '../../../src/js/components/series/series.js';
 import BarTypeSeriesBase from '../../../src/js/components/series/barTypeSeriesBase.js';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
@@ -173,6 +174,7 @@ describe('BarTypeSeriesBase', () => {
         const seriesDataModel = new SeriesDataModel();
 
         beforeEach(() => {
+            series.decorateLabel = Series.prototype.decorateLabel;
             series.options = {};
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
