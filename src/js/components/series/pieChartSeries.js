@@ -646,7 +646,7 @@ class PieChartSeries extends Series {
      */
     _renderSeriesLabel(paper) {
         let positions = [];
-        const {labelPrefix = '', labelSuffix = ''} = this.options;
+        const {labelPrefix, labelSuffix} = this.options;
         const renderOption = {};
         const labelSet = paper.set();
 

@@ -150,7 +150,7 @@ class BarTypeSeriesBase {
      * @private
      */
     _renderNormalSeriesLabel(paper) {
-        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
         const {graphRenderer} = this;
         const seriesDataModel = this._getSeriesDataModel();
         const boundsSet = this.seriesData.groupBounds;
@@ -242,7 +242,7 @@ class BarTypeSeriesBase {
     }
 
     getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues) {
-        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
         const isNormalStack = predicate.isNormalStack(this.options.stackType);
 
         return seriesDataModel.map(seriesGroup => {
@@ -286,7 +286,7 @@ class BarTypeSeriesBase {
         const sumMinusValues = [];
         const labelTheme = this.theme.label;
         const {groupBounds} = this.seriesData;
-        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
         const seriesDataModel = this._getSeriesDataModel();
         const groupPositions = this.getGroupPositions(seriesDataModel, groupBounds);
         const groupLabels = this.getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues);

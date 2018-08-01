@@ -200,7 +200,7 @@ class LineTypeSeriesBase {
      * @private
      */
     _getLabelTexts(seriesDataModel) {
-        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
 
         return seriesDataModel.map(seriesGroup => (
             seriesGroup.map(({endLabel, isRange, startLabel}) => {

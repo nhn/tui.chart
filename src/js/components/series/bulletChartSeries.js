@@ -285,7 +285,7 @@ class BulletChartSeries extends Series {
      * @private
      */
     _getLabelTexts(seriesDataModel) {
-        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
 
         return seriesDataModel.map(seriesGroup => {
             const seriesLabels = [];

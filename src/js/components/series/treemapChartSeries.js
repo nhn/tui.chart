@@ -198,7 +198,7 @@ class TreemapChartSeries extends Series {
      * @private
      */
     _renderSeriesLabel(paper) {
-        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+        const {labelPrefix: prefix, labelSuffix: suffix} = this.options;
         const seriesDataModel = this._getSeriesDataModel();
         const boundMap = this._getBoundMap();
         const labelTheme = this.theme.label;

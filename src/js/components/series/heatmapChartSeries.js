@@ -103,7 +103,7 @@ class HeatmapChartSeries extends Series {
      * @private
      */
     _renderSeriesLabel(paper) {
-        const {labelPrefix = '', labelSuffix = ''} = this.options;
+        const {labelPrefix, labelSuffix} = this.options;
         const sdm = this._getSeriesDataModel();
         const boundsSet = this.seriesData.groupBounds;
         const labelTheme = this.theme.label;

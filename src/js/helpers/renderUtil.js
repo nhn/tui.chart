@@ -626,7 +626,7 @@ const renderUtil = {
      * @returns {array}
      * @memberof module:renderUtil
      */
-    addPrefixSuffix(labels, prefix, suffix) {
+    addPrefixSuffix(labels, prefix = '', suffix = '') {
         prefix = this._perseString(prefix);
         suffix = this._perseString(suffix);
 
@@ -649,7 +649,7 @@ const renderUtil = {
      * @returns {string}
      * @memberof module:renderUtil
      */
-    addPrefixSuffixItem(label, {prefix, suffix}) {
+    addPrefixSuffixItem(label, {prefix = '', suffix = ''}) {
         prefix = this._perseString(prefix);
         suffix = this._perseString(suffix);
 
