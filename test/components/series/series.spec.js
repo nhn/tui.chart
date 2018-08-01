@@ -29,6 +29,24 @@ describe('Series', () => {
         });
     });
 
+    describe('decorateLabel()', () => {
+        it('Target is an array label, it must be fully applied to the array.', () => {
+            series.options.labelPrefix = '^';
+            series.options.labelSuffix = '$';
+            const result = series.decorateLabel(['label1', 'label2', 'label3']);
+
+            expect(result).toEqual(['^label1$', '^label2$', '^label3$']);
+        });
+
+        it('target is a string, it must be applied to the string.', () => {
+            series.options.labelPrefix = '^';
+            series.options.labelSuffix = '$';
+            const result = series.decorateLabel('stringLabel');
+
+            expect(result).toEqual('^stringLabel$');
+        });
+    });
+
     describe('_getLimitDistanceFromZeroPoint()', () => {
         it('should calculate limit distance from zero, if 0 is between min, max value.', () => {
             const result = series._getLimitDistanceFromZeroPoint(100, {

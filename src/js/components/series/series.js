@@ -193,9 +193,9 @@ class Series {
     decorateLabel(targetLabel) {
         const {labelPrefix = '', labelSuffix = ''} = this.options;
         const {addPrefixSuffix, addPrefixSuffixItem} = renderUtil;
-        const decorateFunc = snippet.isArray(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem;
+        const decorateFunc = (snippet.isArray(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem).bind(renderUtil);
 
-        return decorateFunc.apply(renderUtil, [targetLabel, labelPrefix, labelSuffix]);
+        return decorateFunc(targetLabel, labelPrefix, labelSuffix);
     }
 
     /**
