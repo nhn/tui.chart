@@ -6,6 +6,7 @@
 
 import Series from './series';
 import labelHelper from './renderingLabelHelper';
+import renderUtil from '../../helpers/renderUtil';
 
 class HeatmapChartSeries extends Series {
     /**
@@ -102,12 +103,13 @@ class HeatmapChartSeries extends Series {
      * @private
      */
     _renderSeriesLabel(paper) {
+        const {labelPrefix = '', labelSuffix = ''} = this.options;
         const sdm = this._getSeriesDataModel();
         const boundsSet = this.seriesData.groupBounds;
         const labelTheme = this.theme.label;
         const selectedIndex = this.selectedLegendIndex;
         const positionsSet = labelHelper.boundsToLabelPositions(sdm, boundsSet, labelTheme);
-        const labels = sdm.map(datum => datum.valuesMap.value);
+        const labels = sdm.map(datum => renderUtil.addPrefixSuffix(datum.valuesMap.value, labelPrefix, labelSuffix));
 
         return this.graphRenderer.renderSeriesLabel(paper, positionsSet, labels, labelTheme, selectedIndex);
     }

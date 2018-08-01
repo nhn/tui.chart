@@ -6,6 +6,7 @@
 import Series from './series';
 import squarifier from './squarifier';
 import labelHelper from './renderingLabelHelper';
+import renderUtil from '../../helpers/renderUtil';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import snippet from 'tui-code-snippet';
@@ -197,6 +198,7 @@ class TreemapChartSeries extends Series {
      * @private
      */
     _renderSeriesLabel(paper) {
+        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
         const seriesDataModel = this._getSeriesDataModel();
         const boundMap = this._getBoundMap();
         const labelTheme = this.theme.label;
@@ -212,7 +214,10 @@ class TreemapChartSeries extends Series {
         const labels = seriesItems.map(seriesItem => {
             const labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
 
-            return labelText;
+            return renderUtil.addPrefixSuffixItem(labelText, {
+                prefix,
+                suffix
+            });
         });
 
         const positions = labelHelper.boundsToLabelPostionsForTreemap(seriesItems, boundMap, labelTheme);

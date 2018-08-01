@@ -200,14 +200,22 @@ class LineTypeSeriesBase {
      * @private
      */
     _getLabelTexts(seriesDataModel) {
+        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+
         return seriesDataModel.map(seriesGroup => (
             seriesGroup.map(({endLabel, isRange, startLabel}) => {
                 const label = {
-                    end: endLabel
+                    end: renderUtil.addPrefixSuffixItem(endLabel, {
+                        prefix,
+                        suffix
+                    })
                 };
 
                 if (isRange) {
-                    label.start = startLabel;
+                    label.start = renderUtil.addPrefixSuffixItem(startLabel, {
+                        prefix,
+                        suffix
+                    });
                 }
 
                 return label;

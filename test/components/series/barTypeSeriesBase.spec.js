@@ -169,25 +169,23 @@ describe('BarTypeSeriesBase', () => {
     });
 
     describe('_renderSeriesLabel()', () => {
-        it('should call _renderNormalSeriesLabel(), if there is not stack option.', () => {
-            const elLabelArea = dom.create('div');
-            const paper = raphael(elLabelArea, 100, 100);
-            const seriesDataModel = new SeriesDataModel();
+        const paper = raphael(dom.create('div'), 100, 100);
+        const seriesDataModel = new SeriesDataModel();
 
-            spyOn(series, '_renderNormalSeriesLabel');
+        beforeEach(() => {
+            series.options = {};
 
             series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
                 new SeriesGroup([{
                     value: -1.5,
-                    label: '-1.5'
+                    endLabel: '-1.5'
                 }, {
                     value: -2.2,
-                    label: '-2.2'
+                    endLabel: '-2.2'
                 }])
             ];
 
-            series.options = {};
             series.seriesData = {
                 groupBounds: [
                     [
@@ -200,6 +198,34 @@ describe('BarTypeSeriesBase', () => {
                     ]
                 ]
             };
+        });
+
+        it('labelPrefix option should be applied.', () => {
+            series.options.showLabel = true;
+            series.options.labelPrefix = '^';
+
+            series.graphRenderer = {
+                renderSeriesLabel: jasmine.createSpy('renderSeriesLabel')
+            };
+
+            series._renderNormalSeriesLabel(paper);
+            expect(series.graphRenderer.renderSeriesLabel.calls.mostRecent().args[2][0][0].end).toBe('^-1.5');
+        });
+
+        it('labelSuffix option should be applied.', () => {
+            series.options.showLabel = true;
+            series.options.labelSuffix = '$';
+
+            series.graphRenderer = {
+                renderSeriesLabel: jasmine.createSpy('renderSeriesLabel')
+            };
+
+            series._renderNormalSeriesLabel(paper);
+            expect(series.graphRenderer.renderSeriesLabel.calls.mostRecent().args[2][0][0].end).toBe('-1.5$');
+        });
+
+        it('should call _renderNormalSeriesLabel(), if there is not stack option.', () => {
+            spyOn(series, '_renderNormalSeriesLabel');
 
             series._renderSeriesLabel(paper);
 
@@ -207,38 +233,8 @@ describe('BarTypeSeriesBase', () => {
         });
 
         it('should call _renderStackedSeriesLabel() if there is stack option.', () => {
-            const elLabelArea = dom.create('div');
-            const paper = raphael(elLabelArea, 100, 100);
-            const seriesDataModel = new SeriesDataModel();
-
             spyOn(series, '_renderStackedSeriesLabel');
-
-            series._getSeriesDataModel.and.returnValue(seriesDataModel);
-            seriesDataModel.groups = [
-                new SeriesGroup([{
-                    value: -1.5,
-                    label: '-1.5'
-                }, {
-                    value: -2.2,
-                    label: '-2.2'
-                }])
-            ];
-
-            series.options = {
-                stackType: 'normal'
-            };
-            series.seriesData = {
-                groupBounds: [
-                    [
-                        {
-                            end: {}
-                        },
-                        {
-                            end: {}
-                        }
-                    ]
-                ]
-            };
+            series.options.stackType = 'normal';
 
             series._renderSeriesLabel(paper);
 

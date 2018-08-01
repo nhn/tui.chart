@@ -285,12 +285,17 @@ class BulletChartSeries extends Series {
      * @private
      */
     _getLabelTexts(seriesDataModel) {
+        const {labelPrefix: prefix = '', labelSuffix: suffix = ''} = this.options;
+
         return seriesDataModel.map(seriesGroup => {
             const seriesLabels = [];
 
             seriesGroup.each(seriesDatum => {
                 if (seriesDatum.type !== BULLET_TYPE_RANGE) {
-                    seriesLabels.push(seriesDatum.endLabel);
+                    seriesLabels.push(renderUtil.addPrefixSuffixItem(seriesDatum.endLabel, {
+                        prefix,
+                        suffix
+                    }));
                 }
             });
 
