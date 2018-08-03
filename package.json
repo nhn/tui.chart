@@ -8,7 +8,10 @@
   "scripts": {
     "serve": "webpack-dev-server --inline --hot -d",
     "serve:ie8": "webpack-dev-server -d",
-    "deploy": "webpack --production & webpack --production --minify && cp -R ./maps ./dist",
+    "deploy": "npm run deploy:all && npm run deploy:babelpolyfill && npm run deploy:nodepth && cp -R ./maps ./dist",
+    "deploy:nodepth": "webpack --production --nodepth && webpack --production --nodepth --minify",
+    "deploy:all": "webpack --production --alldepth && webpack --production --alldepth --minify",
+    "deploy:babelpolyfill": "webpack --production --babelpolyfill && webpack --production --babelpolyfill --minify",
     "test": "karma start",
     "test:ne": "KARMA_SERVER=ne karma start",
     "doc": "jsdoc -c ./jsdoc.conf.json && git checkout gh-pages && npm run update",

@@ -71,12 +71,6 @@ module.exports = function(config) {
 
     if (process.env.KARMA_SERVER === 'ne') {
         defaultConfig.customLaunchers = {
-            'IE8': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: '8'
-            },
             'IE9': {
                 base: 'WebDriver',
                 config: webdriverConfig,
@@ -118,7 +112,6 @@ module.exports = function(config) {
         };
 
         defaultConfig.browsers = [
-            'IE8',
             'IE9',
             'IE10',
             'IE11',
