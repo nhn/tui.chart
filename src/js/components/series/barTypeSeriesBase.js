@@ -158,11 +158,11 @@ class BarTypeSeriesBase {
         const groupLabels = seriesDataModel.map(seriesGroup => (
             seriesGroup.map(({start, startLabel, endLabel}) => {
                 const label = {
-                    end: endLabel
+                    end: this.decorateLabel(endLabel)
                 };
 
                 if (snippet.isExisty(start)) {
-                    label.start = startLabel;
+                    label.start = this.decorateLabel(startLabel);
                 }
 
                 return label;
@@ -239,7 +239,7 @@ class BarTypeSeriesBase {
 
         return seriesDataModel.map(seriesGroup => {
             const labels = seriesGroup.map(seriesDatum => ({
-                end: seriesDatum.endLabel
+                end: this.decorateLabel(seriesDatum.endLabel)
             }));
 
             if (isNormalStack) {
@@ -295,12 +295,12 @@ class BarTypeSeriesBase {
                 }
 
                 labels.push({
-                    end: renderUtil.formatToComma(plusSumValue)
+                    end: this.decorateLabel(renderUtil.formatToComma(plusSumValue))
                 });
 
                 if (sumMinusValues.length) {
                     labels.push({
-                        end: renderUtil.formatToComma(minusSumValue)
+                        end: this.decorateLabel(renderUtil.formatToComma(minusSumValue))
                     });
                 }
             });

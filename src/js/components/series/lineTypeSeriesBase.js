@@ -203,11 +203,11 @@ class LineTypeSeriesBase {
         return seriesDataModel.map(seriesGroup => (
             seriesGroup.map(({endLabel, isRange, startLabel}) => {
                 const label = {
-                    end: endLabel
+                    end: this.decorateLabel(endLabel)
                 };
 
                 if (isRange) {
-                    label.start = startLabel;
+                    label.start = this.decorateLabel(startLabel);
                 }
 
                 return label;

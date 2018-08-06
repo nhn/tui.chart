@@ -4,9 +4,12 @@
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 import LineTypeSeriesBase from '../../../src/js/components/series/lineTypeSeriesBase';
+import Series from '../../../src/js/components/series/series.js';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
 import renderUtil from '../../../src/js/helpers/renderUtil';
+import dom from '../../../src/js/helpers/domHandler.js';
+import raphael from 'raphael';
 
 describe('LineTypeSeriesBase', () => {
     let series, dataProcessor;
@@ -31,6 +34,53 @@ describe('LineTypeSeriesBase', () => {
                 left: 0
             }
         };
+    });
+
+    describe('_renderSeriesLabel()', () => {
+        const paper = raphael(dom.create('div'), 100, 100);
+        const seriesDataModel = new SeriesDataModel();
+
+        beforeEach(() => {
+            spyOn(series, '_getLabelPositions').and.returnValue({});
+
+            series.decorateLabel = Series.prototype.decorateLabel;
+            series.theme = {};
+            series.options = {};
+
+            series.graphRenderer = {
+                renderSeriesLabel: jasmine.createSpy('renderSeriesLabel')
+            };
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.groups = [
+                new SeriesGroup([{
+                    endLabel: '-1.5'
+                }, {
+                    endLabel: '-2.2'
+                }])
+            ];
+
+            series.seriesData = {
+                groupBounds: [[{end: {}}, {end: {}}]]
+            };
+        });
+
+        it('labelPrefix option should be applied.', () => {
+            series.options.showLabel = true;
+            series.options.labelPrefix = '^';
+
+            series._renderSeriesLabel(paper);
+
+            expect(series.graphRenderer.renderSeriesLabel.calls.mostRecent().args[2][0][0].end).toBe('^-1.5');
+        });
+
+        it('labelSuffix option should be applied.', () => {
+            series.options.showLabel = true;
+            series.options.labelSuffix = '$';
+
+            series._renderSeriesLabel(paper);
+
+            expect(series.graphRenderer.renderSeriesLabel.calls.mostRecent().args[2][0][0].end).toBe('-1.5$');
+        });
     });
 
     describe('_makePositionsForDefaultType()', () => {

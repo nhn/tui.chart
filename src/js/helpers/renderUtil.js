@@ -626,15 +626,30 @@ const renderUtil = {
      * @returns {array}
      * @memberof module:renderUtil
      */
-    addPrefixSuffix(labels, prefix, suffix) {
+    addPrefixSuffix(labels, prefix = '', suffix = '') {
         prefix = this._perseString(prefix);
         suffix = this._perseString(suffix);
 
         if (!(prefix === '' && suffix === '')) {
-            return snippet.map(labels, label => prefix + label + suffix);
+            return snippet.map(labels, label => this.addPrefixSuffixItem(label, prefix, suffix));
         }
 
         return labels;
+    },
+
+    /**
+     * Add prefix or suffix for one item
+     * @param {string} label - labels
+     * @param {string} prefix - string
+     * @param {string} suffix - string
+     * @returns {string}
+     * @memberof module:renderUtil
+     */
+    addPrefixSuffixItem(label, prefix = '', suffix = '') {
+        prefix = this._perseString(prefix);
+        suffix = this._perseString(suffix);
+
+        return prefix + label + suffix;
     },
 
     /**

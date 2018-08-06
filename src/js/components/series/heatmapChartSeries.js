@@ -107,7 +107,7 @@ class HeatmapChartSeries extends Series {
         const labelTheme = this.theme.label;
         const selectedIndex = this.selectedLegendIndex;
         const positionsSet = labelHelper.boundsToLabelPositions(sdm, boundsSet, labelTheme);
-        const labels = sdm.map(datum => datum.valuesMap.value);
+        const labels = sdm.map(datum => this.decorateLabel(datum.valuesMap.value));
 
         return this.graphRenderer.renderSeriesLabel(paper, positionsSet, labels, labelTheme, selectedIndex);
     }
