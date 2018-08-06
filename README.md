@@ -141,6 +141,11 @@ The TOAST UI Chart is available over a CDN.
 <script src="https://uicdn.toast.com/tui.chart/latest/tui-chart.min.js"></script>
 ```
 
+- The types of distribution files are classified into three types depending on whether or not they exist in the code of the dependency file.
+    1. `tui-cahrt.js` - `tui-chart.js` does not include dependency modules in the code.
+    2. `tui-cahrt-all.js` - Includes all dependency modules, including 'babel-polyfill', in bundle file code
+    3. `tui-cahrt-polyfill.js` - 'tui-chart-polyfill.js' contains the babel-polyfill in the code.
+
 - Within the download you'll find the following directories
 
 ```
@@ -148,6 +153,10 @@ tui.chart/
 ├─ latest
 │  ├─ tui-chart.js
 │  ├─ tui-chart.min.js
+│  ├─ tui-chart-all.js
+│  ├─ tui-chart-all.min.js
+│  ├─ tui-chart-polyfill.js
+│  ├─ tui-chart-polyfill.min.js
 │  ├─ tui-chart.css
 │  ├─ tui-chart.min.css
 │  ├─ maps/
