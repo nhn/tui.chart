@@ -290,7 +290,7 @@ class BulletChartSeries extends Series {
 
             seriesGroup.each(seriesDatum => {
                 if (seriesDatum.type !== BULLET_TYPE_RANGE) {
-                    seriesLabels.push(seriesDatum.endLabel);
+                    seriesLabels.push(this.decorateLabel(seriesDatum.endLabel));
                 }
             });
 

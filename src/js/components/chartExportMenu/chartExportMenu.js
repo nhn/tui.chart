@@ -274,10 +274,11 @@ class ChartExportMenu {
      */
     _onClick(e) {
         const elTarget = e.target || e.srcElement;
-        const [svgElement] = this.container.parentNode.getElementsByTagName('svg');
 
         if (dom.hasClass(elTarget, CLASS_NAME_CHART_EXPORT_MENU_ITEM)) {
             if (elTarget.id) {
+                const svgElement = this._getMainSvgElemenmt(this.container.parentNode);
+
                 this.eventBus.fire('beforeImageDownload');
 
                 chartExporter.exportChart(this.exportFilename, elTarget.id,
@@ -294,6 +295,25 @@ class ChartExportMenu {
         } else {
             this._hideChartExportMenu();
         }
+    }
+
+    /**
+     * Return chart svg
+     * @param {HTMLElement} mainContainer - chart container element
+     * @returns {HTMLElement} - chart main svg element
+     * @private
+     */
+    _getMainSvgElemenmt(mainContainer) {
+        const svgElements = Array.from(mainContainer.getElementsByTagName('svg'));
+        let svgElement;
+
+        svgElements.forEach(svg => {
+            if (mainContainer === svg.parentNode) {
+                svgElement = svg;
+            }
+        });
+
+        return svgElement;
     }
 
     /**

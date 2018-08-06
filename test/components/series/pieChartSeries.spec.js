@@ -591,6 +591,30 @@ describe('PieChartSeries', () => {
             series.valueLabels = ['10', '20', '30'];
         });
 
+        it('labelPrefix option should be applied.', () => {
+            series.options.showLabel = true;
+            series.options.labelPrefix = '^';
+
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._renderSeriesLabel(paper, {});
+
+            expect(series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels[0]).toBe('^10');
+
+            paper.remove();
+        });
+
+        it('labelSuffix option should be applied.', () => {
+            series.options.showLabel = true;
+            series.options.labelSuffix = '$';
+
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._renderSeriesLabel(paper, {});
+
+            expect(series.graphRenderer.renderLabels.calls.allArgs()[0][0].labels[0]).toBe('10$');
+
+            paper.remove();
+        });
+
         it('showLabel and showLegend options are both true, they should all be displayed.', () => {
             series.options.showLabel = true;
             series.options.showLegend = true;

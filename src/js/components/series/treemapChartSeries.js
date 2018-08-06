@@ -212,7 +212,7 @@ class TreemapChartSeries extends Series {
         const labels = seriesItems.map(seriesItem => {
             const labelText = labelTemplate ? labelTemplate(seriesItem.pickLabelTemplateData()) : seriesItem.label;
 
-            return labelText;
+            return this.decorateLabel(labelText);
         });
 
         const positions = labelHelper.boundsToLabelPostionsForTreemap(seriesItems, boundMap, labelTheme);

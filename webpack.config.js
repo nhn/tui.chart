@@ -11,9 +11,17 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var BUNDLE_PATH = path.join(__dirname, 'dist/');
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
+
+var isBabelpolyfill = process.argv.indexOf('--babelpolyfill') >= 0;
+var isAlldepth = process.argv.indexOf('--alldepth') >= 0;
+var isNodepth = process.argv.indexOf('--nodepth') >= 0;
+
 var babelPolyfill = require('babel-polyfill');
 var es3ifyPlugin = require('es3ify-webpack-plugin');
-var FILENAME = pkg.name + (isProduction && isMinified ? '.min' : '');
+
+var FILENAME = pkg.name + (isAlldepth ? '-all' : '') + (isBabelpolyfill ? '-polyfill' : '') + (isProduction && isMinified ? '.min' : '');
+
+var FILENAME_CSS = pkg.name + (isProduction && isMinified ? '.min' : '');
 
 module.exports = (function() {
     var readableTimestamp = (new Date()).toString();
@@ -30,7 +38,7 @@ module.exports = (function() {
         eslint: {
             failOnError: isProduction
         },
-        entry: ['babel-polyfill', './src/js/index.js'],
+        entry: ['./src/js/index.js'],
         debug: false,
         output: {
             library: ['tui', 'chart'],
@@ -75,7 +83,7 @@ module.exports = (function() {
         plugins: [
             new SafeUmdPlugin(),
             new webpack.BannerPlugin(BANNER, {entryOnly: true}),
-            new ExtractTextPlugin(FILENAME + '.css'),
+            new ExtractTextPlugin(FILENAME_CSS + '.css'),
             new es3ifyPlugin()
         ],
         cache: false
@@ -97,6 +105,19 @@ module.exports = (function() {
                 },
                 disableHostCheck: true
             }
+        });
+    } else if (isNodepth) { // default
+        Object.assign(config, {
+            entry: ['./src/js/index.js']
+        });
+    } else if (isAlldepth) {
+        Object.assign(config, {
+            entry: ['babel-polyfill', './src/js/index.js'],
+            externals: {}
+        });
+    } else if (isBabelpolyfill) {
+        Object.assign(config, {
+            entry: ['babel-polyfill', './src/js/index.js']
         });
     }
 

@@ -647,6 +647,7 @@ class PieChartSeries extends Series {
         let positions = [];
         const renderOption = {};
         const labelSet = paper.set();
+
         const graphRenderLabel = function(dataType, labels) {
             let colors;
             const theme = Object.assign({}, this.theme.label);
@@ -672,7 +673,7 @@ class PieChartSeries extends Series {
 
         if (this.options.showLabel) {
             renderOption.positions = this._pickPositionsFromSectorData('centerPosition', 'value');
-            graphRenderLabel('value', this.valueLabels);
+            graphRenderLabel('value', this.decorateLabel(this.valueLabels));
         }
         if (this.options.showLegend) {
             const legendLabelPosition = this.isLabelAlignOuter ? 'outerPosition' : 'centerPosition';
