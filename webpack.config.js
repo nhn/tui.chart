@@ -19,7 +19,7 @@ var isNodepth = process.argv.indexOf('--nodepth') >= 0;
 var babelPolyfill = require('babel-polyfill');
 var es3ifyPlugin = require('es3ify-webpack-plugin');
 
-var FILENAME = pkg.name + (isAlldepth ? '-all' : '') + (isBabelpolyfill ? '-babelpolyfill' : '') + (isProduction && isMinified ? '.min' : '');
+var FILENAME = pkg.name + (isAlldepth ? '-all' : '') + (isBabelpolyfill ? '-polyfill' : '') + (isProduction && isMinified ? '.min' : '');
 
 var FILENAME_CSS = pkg.name + (isProduction && isMinified ? '.min' : '');
 
