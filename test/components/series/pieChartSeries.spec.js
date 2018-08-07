@@ -568,6 +568,23 @@ describe('PieChartSeries', () => {
             expect(positions[2].end.left).toBe(80);
         });
     });
+    describe('_pickPositionsFromSectorData()', () => {
+        it('Should return Object even if the ratio value is zero.', () => {
+            series.seriesData = {
+                sectorData: [{
+                    ratio: 0,
+                    centerPosition: {left: 463.44849855259173, top: 287.3915761608463}
+                }, {
+                    ratio: 10,
+                    centerPosition: {left: 404.3042587679865, top: 501.44603132368695}
+                }]
+            };
+
+            const result = series._pickPositionsFromSectorData('centerPosition', 'value');
+
+            expect(result[0]).toEqual({});
+        });
+    });
 
     describe('_renderSeriesLabel()', () => {
         let seriesDataModel, paper;
