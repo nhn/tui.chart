@@ -570,6 +570,10 @@ describe('PieChartSeries', () => {
     });
     describe('_pickPositionsFromSectorData()', () => {
         it('Should return Object even if the ratio value is zero.', () => {
+            series.options = {
+                showLabel: true,
+                showLegend: true
+            };
             series.seriesData = {
                 sectorData: [{
                     ratio: 0,
