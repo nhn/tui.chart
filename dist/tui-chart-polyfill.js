@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.3.0
+ * @version 3.3.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Aug 06 2018 11:17:18 GMT+0900 (KST)"
+ * bundle created at "Tue Aug 07 2018 12:41:09 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -42272,8 +42272,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return (this.seriesData.sectorData || []).map(function (datum) {
 	            var position = datum.ratio ? Object.assign({}, datum[positionType]) : null;
+	            var isReCalculatePosition = position && showLegend && showLabel && !_this5.isLabelAlignOuter;
 	
-	            if (showLegend && showLabel && !_this5.isLabelAlignOuter) {
+	            if (isReCalculatePosition) {
 	                if (dataType === 'value') {
 	                    position.top -= valueLabelHeight / 2;
 	                } else if (dataType === 'legend') {
