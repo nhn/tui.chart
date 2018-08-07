@@ -558,8 +558,9 @@ class PieChartSeries extends Series {
 
         return (this.seriesData.sectorData || []).map(datum => {
             const position = datum.ratio ? Object.assign({}, datum[positionType]) : null;
+            const isReCalculatePosition = position && showLegend && showLabel && !this.isLabelAlignOuter;
 
-            if (showLegend && showLabel && !this.isLabelAlignOuter) {
+            if (isReCalculatePosition) {
                 if (dataType === 'value') {
                     position.top -= valueLabelHeight / 2;
                 } else if (dataType === 'legend') {
