@@ -569,7 +569,7 @@ describe('PieChartSeries', () => {
         });
     });
     describe('_pickPositionsFromSectorData()', () => {
-        it('Should return Object even if the ratio value is zero.', () => {
+        it('Should return null even if the ratio value is zero.', () => {
             series.options = {
                 showLabel: true,
                 showLegend: true
@@ -586,7 +586,7 @@ describe('PieChartSeries', () => {
 
             const result = series._pickPositionsFromSectorData('centerPosition', 'value');
 
-            expect(result[0]).toEqual({});
+            expect(result[0]).toBe(null);
         });
     });
 
