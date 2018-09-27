@@ -300,8 +300,7 @@ class LegendModel {
      */
     getCheckedIndexes() {
         return Object.keys(this.checkedIndexesMap).reduce((booleanizeObject, chartType) => {
-            const chartChecekdInfos = this.checkedIndexesMap[chartType];
-            booleanizeObject[chartType] = Array.from(chartChecekdInfos, checked => !!checked);
+            booleanizeObject[chartType] = Array.from(this.checkedIndexesMap[chartType], checked => !!checked);
 
             return booleanizeObject;
         }, {});
