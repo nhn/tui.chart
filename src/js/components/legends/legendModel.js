@@ -299,7 +299,12 @@ class LegendModel {
      * @returns {object} object data that whether series has checked or not
      */
     getCheckedIndexes() {
-        return this.checkedIndexesMap;
+        return Object.keys(this.checkedIndexesMap).reduce((booleanizeObject, chartType) => {
+            const chartChecekdInfos = this.checkedIndexesMap[chartType];
+            booleanizeObject[chartType] = Array.from(chartChecekdInfos, checked => !!checked);
+
+            return booleanizeObject;
+        }, {});
     }
 
     /**
@@ -326,3 +331,4 @@ class LegendModel {
 }
 
 export default LegendModel;
+
