@@ -198,12 +198,16 @@ class DataProcessor extends DataProcessorBase {
      * Initialize data.
      * @param {rawData} rawData raw data
      */
-    initData(rawData) {
+    initData(rawData, originalChange = false) {
         /**
          * raw data
          * @type {rawData}
          */
         this.rawData = rawData;
+
+        if (originalChange) {
+            this.originalRawData = this.rawData;
+        }
 
         /**
          * categoriesMap
@@ -228,6 +232,9 @@ class DataProcessor extends DataProcessorBase {
          * @type {object.<string, SeriesDataModel>}
          */
         this.seriesDataModelMap = {};
+
+        this.legendVisibilities = null;
+        this.zoomedRawData = null;
 
         /**
          * SeriesGroups

@@ -172,6 +172,10 @@ class TooltipBase {
         this._attachToEventBus();
     }
 
+    init({theme = this.theme}) {
+        this.theme = theme;
+    }
+
     /**
      * Attach to event bus.
      * @private

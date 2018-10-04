@@ -80,6 +80,10 @@ class Plot {
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     }
 
+    init({theme = this.theme}) {
+        this.theme = theme;
+    }
+
     /**
      * Render plot area.
      * @param {object} paper paper object

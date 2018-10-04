@@ -12,6 +12,7 @@ import dom from '../helpers/domHandler';
 import renderUtil from '../helpers/renderUtil';
 import objectUtil from '../helpers/objectUtil';
 import boundsAndScaleBuilder from '../models/boundsAndScaleBuilder.js';
+import themeManager from '../themes/themeManager';
 import predicate from '../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
@@ -99,6 +100,10 @@ class ChartBase {
         if (this.options.usageStatistics) {
             this._sendHostName();
         }
+    }
+
+    setTheme(theme) {
+        this.theme = theme;
     }
 
     /**
@@ -381,11 +386,11 @@ class ChartBase {
 
         const boundsAndScale = this.readyForRender();
 
+        console.log('SERIESVISIBILITYMAP - ', seriesVisibilityMap);
         renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
         componentManager.render('render', boundsAndScale, {
             checkedLegends: seriesVisibilityMap
         }, container);
-
         this.chartContainer = container;
         this.paper = raphaelPaper;
     }
@@ -406,6 +411,33 @@ class ChartBase {
         }
 
         this.dataProcessor.initData(rawData);
+
+        const boundsAndScale = this.readyForRender();
+
+        this.componentManager.render('rerender', boundsAndScale, {checkedLegends}, this.chartContainer);
+    }
+
+    setData({checkedLegends = null, rawData = null}) {
+        const {dataProcessor} = this;
+
+        if (!rawData) {
+            rawData = rawDataHandler.filterCheckedRawData(
+                dataProcessor.getZoomedRawData(),
+                checkedLegends
+            );
+        }
+
+        if (!checkedLegends) {
+            checkedLegends = dataProcessor.getLegendVisibility();
+        }
+
+        console.log("11111111111111",rawData);
+        this.dataProcessor.initData(rawData, true);
+
+        const theme = themeManager.get(this.options.theme, this.options.chartType, rawData.series);
+        this.setTheme(theme);
+        this.componentManager.init(theme);
+
 
         const boundsAndScale = this.readyForRender();
 
