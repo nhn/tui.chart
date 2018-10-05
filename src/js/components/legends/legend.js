@@ -158,7 +158,6 @@ class Legend {
      */
     rerender(data) {
         this.legendSet.remove();
-        console.log("LAYOUT - ", data.layout);
 
         this._render(data);
     }

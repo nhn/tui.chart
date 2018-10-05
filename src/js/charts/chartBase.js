@@ -102,10 +102,6 @@ class ChartBase {
         }
     }
 
-    setTheme(theme) {
-        this.theme = theme;
-    }
-
     /**
      * Image ping for ga tracking
      * @private
@@ -395,11 +391,12 @@ class ChartBase {
     }
 
     /**
-     * Rerender.
+     * _Rerender.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
+     * @private
      */
-    rerender(checkedLegends, rawData) {
+    _rerender(checkedLegends, rawData) {
         const {dataProcessor} = this;
 
         if (!rawData) {
@@ -416,7 +413,25 @@ class ChartBase {
         this.componentManager.render('rerender', boundsAndScale, {checkedLegends}, this.chartContainer);
     }
 
-    setData({rawData = null}) {
+    rerender(checkedLegends = null, rawData) {
+        let seriesData = rawData.series;
+        seriesData = Object.keys(seriesData).reduce((result, item) => {
+            const series = seriesData[item];
+            const checkedInfo = checkedLegends[item];
+
+            result[item] = series.map((seriesItem, index) => {
+                seriesItem.visible = checkedInfo[index];
+
+                return seriesItem;
+            });
+
+            return result;
+        }, {});
+
+        this.setData(rawData);
+    }
+
+    setData(rawData = null) {
         const {dataProcessor} = this;
 
         rawDataHandler.updateRawSeriesDataByOptions(rawData, this.options.series);
@@ -425,13 +440,12 @@ class ChartBase {
         }
 
         this.dataProcessor.initData(rawData, true);
-        const checkedLegends = dataProcessor.getLegendVisibility();
 
         const theme = themeManager.get(this.options.theme, this.options.chartType, rawData.series);
-        this.setTheme(theme);
+        this.theme = theme;
         this.componentManager.init(theme);
 
-        this.rerender(checkedLegends);
+        this._rerender(dataProcessor.getLegendVisibility());
     }
 
     /**
@@ -441,7 +455,7 @@ class ChartBase {
      * @param {?object} boundsParams addition params for calculating bounds
      */
     onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
-        this.rerender(checkedLegends, rawData, boundsParams);
+        this._rerender(checkedLegends, rawData, boundsParams);
     }
 
     /**
