@@ -620,6 +620,8 @@ class BoundsModel {
             top = seriesPositionTop + chartConst.SERIES_AREA_V_PADDING;
         }
 
+        console.log('TOP-LEFT-', top, left);
+
         return {
             top,
             left

@@ -207,6 +207,7 @@ class DataProcessor extends DataProcessorBase {
 
         if (originalChange) {
             this.originalRawData = objectUtil.deepCopy(rawData);
+            this.originalLegendData = null;
         }
 
         /**
@@ -1181,6 +1182,8 @@ class DataProcessor extends DataProcessorBase {
             seriesTypes = this.seriesTypes;
             legendLabelsMap = legendLabels;
         }
+
+        console.log("SERIESTYPES - ", this.seriesTypes);
 
         const legendData = seriesTypes.map(chartType => (
             legendLabelsMap[chartType].map((label, index) => {

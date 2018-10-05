@@ -386,7 +386,6 @@ class ChartBase {
 
         const boundsAndScale = this.readyForRender();
 
-        console.log('SERIESVISIBILITYMAP - ', seriesVisibilityMap);
         renderUtil.renderDimension(container, boundsAndScale.dimensionMap.chart);
         componentManager.render('render', boundsAndScale, {
             checkedLegends: seriesVisibilityMap
@@ -418,11 +417,12 @@ class ChartBase {
     }
 
     setData({rawData = null}) {
-        console.log("CHARTCONTAINER - ", this.chartContainer);
-        /*
         const {dataProcessor} = this;
 
         rawDataHandler.updateRawSeriesDataByOptions(rawData, this.options.series);
+        if (this.options.chartType === 'boxplot') {
+            rawDataHandler.appendOutliersToSeriesData(rawData);
+        }
 
         this.dataProcessor.initData(rawData, true);
         const checkedLegends = dataProcessor.getLegendVisibility();
@@ -432,7 +432,6 @@ class ChartBase {
         this.componentManager.init(theme);
 
         this.rerender(checkedLegends);
-        */
     }
 
     /**

@@ -200,6 +200,9 @@ class Series {
     init({theme = this.orgTheme}) {
         this.orgTheme = theme;
         this.theme = theme;
+        if (this.chartType === 'treemap') {
+            this.boundMap = null;
+        }
     }
 
     /**

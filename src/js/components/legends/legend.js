@@ -145,8 +145,9 @@ class Legend {
      * @param {object} data - bounds data
      */
     render(data) {
-        console.log('LEGEND-RENDER', data);
         this._render(data);
+
+        console.log("LAYOUT - ", data.layout);
 
         this._listenEvents();
     }
@@ -157,6 +158,7 @@ class Legend {
      */
     rerender(data) {
         this.legendSet.remove();
+        console.log("LAYOUT - ", data.layout);
 
         this._render(data);
     }

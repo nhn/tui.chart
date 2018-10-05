@@ -173,8 +173,8 @@ class TooltipBase {
     }
 
     init({theme = this.theme}) {
-        console.log('mm');
         this.theme = theme;
+        this.originalTheme = objectUtil.deepCopy(theme);
     }
 
     /**
