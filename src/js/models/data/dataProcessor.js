@@ -206,7 +206,7 @@ class DataProcessor extends DataProcessorBase {
         this.rawData = rawData;
 
         if (originalChange) {
-            this.originalRawData = this.rawData;
+            this.originalRawData = objectUtil.deepCopy(rawData);
         }
 
         /**

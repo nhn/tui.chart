@@ -69,7 +69,6 @@ var options = {
     },
     yAxis: {
         title: 'Amount',
-        max: 24000,
         pointOnColumn: true
     },
     xAxis: {
@@ -98,7 +97,37 @@ var theme = {
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
 
-tui.chart.areaChart(container, data, options);
+var chart = tui.chart.areaChart(container, data, options);
+
+setTimeout(function() {
+    chart.setData({
+        rawData: {
+            categories: ['June', 'July', 'Aug'],
+            series: {
+                area: [
+                    {
+                        name: 'Budget-jjj',
+                        data: [5000, 3000, 5000],
+                        visible: false
+                    },
+                    {
+                        name: 'Income',
+                        data: [8000, 4000, 7000]
+                    },
+                    {
+                        name: 'Expenses-1',
+                        data: [4000, 4000, 6000]
+                    },
+                    {
+                        name: 'Expenses-2',
+                        data: [14000, 14000, 16000]
+                    }
+                ]
+            }
+        }
+    });
+}, 1000);
+
 </script>
 <!--For tutorial page-->
 <script src='../node_modules/codemirror/lib/codemirror.js'></script>

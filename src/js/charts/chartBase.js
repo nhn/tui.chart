@@ -417,31 +417,22 @@ class ChartBase {
         this.componentManager.render('rerender', boundsAndScale, {checkedLegends}, this.chartContainer);
     }
 
-    setData({checkedLegends = null, rawData = null}) {
+    setData({rawData = null}) {
+        console.log("CHARTCONTAINER - ", this.chartContainer);
+        /*
         const {dataProcessor} = this;
 
-        if (!rawData) {
-            rawData = rawDataHandler.filterCheckedRawData(
-                dataProcessor.getZoomedRawData(),
-                checkedLegends
-            );
-        }
+        rawDataHandler.updateRawSeriesDataByOptions(rawData, this.options.series);
 
-        if (!checkedLegends) {
-            checkedLegends = dataProcessor.getLegendVisibility();
-        }
-
-        console.log("11111111111111",rawData);
         this.dataProcessor.initData(rawData, true);
+        const checkedLegends = dataProcessor.getLegendVisibility();
 
         const theme = themeManager.get(this.options.theme, this.options.chartType, rawData.series);
         this.setTheme(theme);
         this.componentManager.init(theme);
 
-
-        const boundsAndScale = this.readyForRender();
-
-        this.componentManager.render('rerender', boundsAndScale, {checkedLegends}, this.chartContainer);
+        this.rerender(checkedLegends);
+        */
     }
 
     /**

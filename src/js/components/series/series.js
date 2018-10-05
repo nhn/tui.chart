@@ -310,6 +310,7 @@ class Series {
 
         if (this.hasDataForRendering(seriesData) || this.chartType === 'map') {
             if (funcRenderGraph) {
+                console.log('FUNCRENDERGRAPH - ', funcRenderGraph);
                 this.seriesSet = funcRenderGraph(dimension, seriesData, paper);
             }
 

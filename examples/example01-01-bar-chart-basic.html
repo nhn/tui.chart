@@ -91,9 +91,6 @@ var chart = tui.chart.barChart(container, data, options);
 
 setTimeout(function() {
      chart.setData({
-         checkedLegends: {
-             bar: [true, true, true, true]
-         },
          rawData: {
              categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
              series: {
@@ -104,7 +101,8 @@ setTimeout(function() {
                      },
                      {
                          name: 'Income',
-                         data: [1000, 7000, 2000, 5000, 3000, 1000]
+                         data: [1000, 7000, 2000, 5000, 3000, 1000],
+                         visible: false
                      },
                      {
                          name: 'jinwoo1',
@@ -118,7 +116,7 @@ setTimeout(function() {
              }
          }
      });
-}, 3000);
+}, 1000);
 
 </script>
 
