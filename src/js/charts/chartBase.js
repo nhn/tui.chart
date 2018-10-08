@@ -415,11 +415,11 @@ class ChartBase {
 
     /**
      * protectedRerender
-     * @param {{column: ?Array.<string>, line: ?Array.<string>}} checkedLegends data that whether series has checked or not
+     * @param {{column: Array.<string>, line: Array.<string>}} checkedLegends data that whether series has checked or not
      * @param {object} rawData rawData
      * @api
      */
-    rerender(checkedLegends = null, rawData) {
+    rerender(checkedLegends, rawData) {
         let seriesData = rawData.series;
         seriesData = Object.keys(seriesData).reduce((result, item) => {
             const series = seriesData[item];

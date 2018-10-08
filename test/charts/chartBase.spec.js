@@ -294,7 +294,7 @@ describe('Test for ChartBase', () => {
             spyOn(chartBase, 'protectedRerender');
         });
 
-        it('dataProcessor.initData 실행되어야 한다', () => {
+        it('dataProcessor must reflect rawData.', () => {
             spyOn(chartBase.dataProcessor, 'initData');
 
             chartBase.setData(rawData);
@@ -302,13 +302,13 @@ describe('Test for ChartBase', () => {
             expect(chartBase.dataProcessor.initData).toHaveBeenCalled();
         });
 
-        it('componentMananger.reset이 실행되어야 한다', () => {
+        it('componentManager should be running reset.', () => {
             chartBase.setData(rawData);
 
             expect(componentManager.reSet).toHaveBeenCalled();
         });
 
-        it('protectedRerender() 실행되어야 한다.', () => {
+        it('protectedRerender () must be executed.', () => {
             chartBase.setData(rawData);
 
             expect(chartBase.protectedRerender).toHaveBeenCalled();

@@ -29,6 +29,31 @@ describe('Series', () => {
         });
     });
 
+    describe('reSet()', () => {
+        const theme = {
+            label: {
+                fontFamily: 'Verdana',
+                fontSize: 11,
+                fontWeight: 'normal'
+            },
+            colors: ['blue']
+        };
+
+        it('orgTheme theme should be reflected.', () => {
+            series.reSet(theme);
+
+            expect(series.theme).toEqual(theme);
+            expect(series.orgTheme).toEqual(theme);
+        });
+
+        it('If this chart type is treemap, the boundMap must be initialized.', () => {
+            series.chartType = 'treemap';
+            series.reSet(theme);
+
+            expect(series.boundMap).toBe(null);
+        });
+    });
+
     describe('decorateLabel()', () => {
         it('Target is an array label, it must be fully applied to the array.', () => {
             series.options.labelPrefix = '^';

@@ -40,8 +40,10 @@ describe('Test for ComponentManager', () => {
 
     describe('reSet()', () => {
         beforeEach(() => {
+            spyOn(componentManager, '_makeTheme');
+        });
+        it('reset puhaha', () => {
             const reSetMethod = jasmine.createSpy('reSet');
-
             componentManager.components = [
                 {reSet: reSetMethod},
                 {reSet: reSetMethod},
@@ -49,11 +51,8 @@ describe('Test for ComponentManager', () => {
             ];
 
             componentManager.reSet();
-            console.log(reSetMethod.calls.count());
-        });
 
-        it('reset puhaha', () => {
-
+            expect(reSetMethod.calls.count()).toBe(3);
         });
     });
 

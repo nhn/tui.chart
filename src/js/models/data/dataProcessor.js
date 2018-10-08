@@ -1219,7 +1219,6 @@ class DataProcessor extends DataProcessorBase {
 
         if (!this.originalLegendData) {
             this.originalLegendData = this.legendData;
-            console.log(this.originalLegendData);
         }
 
         return this.legendData;

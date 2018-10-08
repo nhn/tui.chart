@@ -529,4 +529,21 @@ describe('Test for Plot', () => {
             expect(result).toBe(false);
         });
     });
+
+    describe('reSet()', () => {
+        const theme = {
+            label: {
+                fontFamily: 'Verdana',
+                fontSize: 11,
+                fontWeight: 'normal'
+            },
+            colors: ['blue']
+        };
+
+        it('theme should be reflected.', () => {
+            plot.reSet(theme);
+
+            expect(plot.theme).toEqual(theme);
+        });
+    });
 });
