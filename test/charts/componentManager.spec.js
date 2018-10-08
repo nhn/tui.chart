@@ -11,7 +11,12 @@ describe('Test for ComponentManager', () => {
 
     beforeEach(() => {
         componentManager = new ComponentManager({
-            options: {}
+            options: {},
+            dataProcessor: {
+                seriesType: 'bar',
+                getLegendLabels: () => {},
+                getLegendData: () => {}
+            }
         });
     });
 
@@ -30,6 +35,25 @@ describe('Test for ComponentManager', () => {
 
         it('should not have plot component, before register plot', () => {
             expect(componentManager.componentMap.plot).toBeFalsy();
+        });
+    });
+
+    describe('reSet()', () => {
+        beforeEach(() => {
+            const reSetMethod = jasmine.createSpy('reSet');
+
+            componentManager.components = [
+                {reSet: reSetMethod},
+                {reSet: reSetMethod},
+                {reSet: reSetMethod}
+            ];
+
+            componentManager.reSet();
+            console.log(reSetMethod.calls.count());
+        });
+
+        it('reset puhaha', () => {
+
         });
     });
 

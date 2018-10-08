@@ -223,6 +223,8 @@ class ComponentManager {
      * @ignore
      */
     reSet(theme) {
+
+        console.log('a');
         this.theme = theme;
         this.components.forEach(component => {
             if (component.reSet) {

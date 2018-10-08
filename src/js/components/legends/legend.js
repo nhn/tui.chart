@@ -393,6 +393,7 @@ snippet.CustomEvents.mixin(Legend);
  * @ignore
  */
 export default function legendFactory(params) {
+    console.log(params);
     const {
         options,
         dataProcessor: {seriesTypes},
