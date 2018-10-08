@@ -392,7 +392,7 @@ class ChartBase {
 
     /**
      * protectedRerender
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {{line: Array.<boolean>, column: Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      * @private
      */
@@ -413,6 +413,12 @@ class ChartBase {
         this.componentManager.render('rerender', boundsAndScale, {checkedLegends}, this.chartContainer);
     }
 
+    /**
+     * protectedRerender
+     * @param {{column: ?Array.<string>, line: ?Array.<string>}} checkedLegends data that whether series has checked or not
+     * @param {object} rawData rawData
+     * @api
+     */
     rerender(checkedLegends = null, rawData) {
         let seriesData = rawData.series;
         seriesData = Object.keys(seriesData).reduce((result, item) => {
@@ -431,6 +437,11 @@ class ChartBase {
         this.setData(rawData);
     }
 
+    /**
+     * setData
+     * @param {object} rawData rawData
+     * @api
+     */
     setData(rawData = null) {
         const data = this._initializeRawData(rawData);
         const {dataProcessor} = this;
@@ -443,6 +454,24 @@ class ChartBase {
         this.protectedRerender(dataProcessor.getLegendVisibility());
     }
 
+    /**
+     * Get checked indexes.
+     * @returns {{column: ?Array.<string>, line: ?Array.<string>}} object data that whether series has checked or not
+     * @api
+     */
+    getCheckedLegend() {
+        const {componentManager, dataProcessor} = this;
+        const hasLegendComponent = componentManager.has('legend');
+
+        return hasLegendComponent ? componentManager.get('legend').getCheckedIndexes() : dataProcessor.getLegendVisibility();
+    }
+
+    /**
+     * initialize rawData
+     * @param {object} rawData rawData
+     * @returns {object} - remaked rawData
+     * @private
+     */
     _initializeRawData(rawData) {
         const data = objectUtil.deepCopy(rawData);
         const {chartType} = this.options;
@@ -454,18 +483,12 @@ class ChartBase {
         }
 
         rawDataHandler.updateRawSeriesDataByOptions(data, this.options.series);
+
         if (this.options.chartType === 'boxplot') {
             rawDataHandler.appendOutliersToSeriesData(data);
         }
 
         return data;
-    }
-
-    getCheckedLegend() {
-        const {componentManager, dataProcessor} = this;
-        const hasLegendComponent = componentManager.has('legend');
-
-        return hasLegendComponent ? componentManager.get('legend').getCheckedIndexes() : dataProcessor.getLegendVisibility();
     }
 
     /**

@@ -235,7 +235,16 @@ class DataProcessor extends DataProcessorBase {
          */
         this.seriesDataModelMap = {};
 
+        /**
+         * legendVisiblities
+         * @type {{column: Array.<string>, line: Array.<string> | Array.<string>}}
+         */
         this.legendVisibilities = null;
+
+        /**
+         * zoomed raw data
+         * @type {object} zoomed raw data
+         */
         this.zoomedRawData = null;
 
         /**

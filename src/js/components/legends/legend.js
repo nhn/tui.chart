@@ -99,7 +99,12 @@ class Legend {
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     }
 
-    reSet({theme = this.theme}) {
+    /**
+     * Reset components
+     * @param {object} theme theme object
+     * @ignore
+     */
+    reSet(theme = this.theme) {
         this.theme = theme;
 
         this.legendModel = new LegendModel({
@@ -315,6 +320,11 @@ class Legend {
         return checkedIndexes;
     }
 
+    /**
+     * Get checked indexes.
+     * @returns {{column: ?Array.<string>, line: ?Array.<string>}} object data that whether series has checked or not
+     * @ignore
+     */
     getCheckedIndexes() {
         return this.legendModel.getCheckedIndexes();
     }

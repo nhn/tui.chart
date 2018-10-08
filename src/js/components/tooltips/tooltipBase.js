@@ -172,7 +172,12 @@ class TooltipBase {
         this._attachToEventBus();
     }
 
-    reSet({theme = this.theme}) {
+    /**
+     * Reset components
+     * @param {object} theme theme object
+     * @ignore
+     */
+    reSet(theme = this.theme) {
         this.theme = theme;
         this.originalTheme = objectUtil.deepCopy(theme);
     }

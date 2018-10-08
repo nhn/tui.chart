@@ -180,6 +180,7 @@ class ComponentManager {
      * @param {string} name component name
      * @param {string} classType component factory name
      * @param {object} [params={}] optional params that for alternative charts
+     * @ignore
      */
     register(name, classType, params = {}) {
         const index = params.index || 0;
@@ -216,6 +217,11 @@ class ComponentManager {
         }
     }
 
+    /**
+     * Reset components
+     * @param {object} theme theme object
+     * @ignore
+     */
     reSet(theme) {
         this.theme = theme;
         this.components.forEach(component => {
@@ -223,13 +229,19 @@ class ComponentManager {
                 const {componentType, componentName} = component;
                 const optionKey = this._getOptionKey(componentType, componentName);
 
-                component.reSet({
-                    theme: this._makeTheme(optionKey, componentName)
-                });
+                component.reSet(this._makeTheme(optionKey, componentName));
             }
         });
     }
 
+    /**
+     * Make option
+     * @param {string} optionKey Key on which to create the option.
+     * @param {string} name name of component
+     * @param {number} index index of chart for series option
+     * @returns {object} option
+     * @private
+     */
     _makeOptions(optionKey, name, index) {
         let options = this.options[optionKey];
 
@@ -256,19 +268,33 @@ class ComponentManager {
         return options;
     }
 
-    _getOptionKey(componentType, name) {
+    /**
+     * Make option key
+     * @param {string} type type of component
+     * @param {name} name name of component
+     * @returns {string} optionKey Key on which to create the option.
+     * @private
+     */
+    _getOptionKey(type, name) {
         let optionKey = null;
-        if (componentType === 'axis') {
+        if (type === 'axis') {
             // Get theme and options by axis name
             // As axis has 3 types(xAxis, yAxis, rightYAxis)
             optionKey = name;
         } else {
-            optionKey = componentType;
+            optionKey = type;
         }
 
         return optionKey;
     }
 
+    /**
+     * Make theme
+     * @param {string} optionKey Key on which to create the option.
+     * @param {string} name name of component
+     * @returns {object} theme
+     * @private
+     */
     _makeTheme(optionKey, name) {
         let theme = this.theme[optionKey];
 

@@ -80,7 +80,12 @@ class Plot {
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     }
 
-    reSet({theme = this.theme}) {
+    /**
+     * Reset components
+     * @param {object} theme theme object
+     * @ignore
+     */
+    reSet(theme = this.theme) {
         this.theme = theme;
     }
 

@@ -197,7 +197,12 @@ class Series {
         return decorateFunc(targetLabel, labelPrefix, labelSuffix);
     }
 
-    reSet({theme = this.orgTheme}) {
+    /**
+     * Reset components
+     * @param {object} theme theme object
+     * @ignore
+     */
+    reSet(theme = this.orgTheme) {
         this.orgTheme = theme;
         this.theme = theme;
         if (this.chartType === 'treemap') {
