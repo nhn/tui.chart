@@ -99,12 +99,9 @@ class Legend {
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     }
 
-    init({theme = this.theme}) {
+    reSet({theme = this.theme}) {
         this.theme = theme;
 
-        /**
-         * legend model
-         */
         this.legendModel = new LegendModel({
             theme: this.theme,
             labels: this.dataProcessor.getLegendLabels(),
@@ -146,9 +143,6 @@ class Legend {
      */
     render(data) {
         this._render(data);
-
-        console.log("LAYOUT - ", data.layout);
-
         this._listenEvents();
     }
 
@@ -215,7 +209,6 @@ class Legend {
      */
     _renderLegendArea(paper) {
         const legendData = this.legendModel.getData();
-        console.log('LEGENDDATA - ', legendData);
         const {graphRenderer} = this;
         const isHorizontal = predicate.isHorizontalLegend(this.options.align);
         const basePosition = this.layout.position;
@@ -320,6 +313,10 @@ class Legend {
         });
 
         return checkedIndexes;
+    }
+
+    getCheckedIndexes() {
+        return this.legendModel.getCheckedIndexes();
     }
 
     /**

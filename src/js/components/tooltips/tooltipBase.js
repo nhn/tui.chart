@@ -172,7 +172,7 @@ class TooltipBase {
         this._attachToEventBus();
     }
 
-    init({theme = this.theme}) {
+    reSet({theme = this.theme}) {
         this.theme = theme;
         this.originalTheme = objectUtil.deepCopy(theme);
     }

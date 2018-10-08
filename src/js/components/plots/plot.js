@@ -80,7 +80,7 @@ class Plot {
         this.drawingType = chartConst.COMPONENT_TYPE_RAPHAEL;
     }
 
-    init({theme = this.theme}) {
+    reSet({theme = this.theme}) {
         this.theme = theme;
     }
 

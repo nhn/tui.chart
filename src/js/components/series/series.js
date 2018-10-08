@@ -197,7 +197,7 @@ class Series {
         return decorateFunc(targetLabel, labelPrefix, labelSuffix);
     }
 
-    init({theme = this.orgTheme}) {
+    reSet({theme = this.orgTheme}) {
         this.orgTheme = theme;
         this.theme = theme;
         if (this.chartType === 'treemap') {
@@ -313,7 +313,6 @@ class Series {
 
         if (this.hasDataForRendering(seriesData) || this.chartType === 'map') {
             if (funcRenderGraph) {
-                console.log('FUNCRENDERGRAPH - ', funcRenderGraph);
                 this.seriesSet = funcRenderGraph(dimension, seriesData, paper);
             }
 
@@ -390,7 +389,6 @@ class Series {
      * @param {object} data - data for rendering
      */
     render(data) {
-        console.log("RENDER -- RENDER");
         this.paper = data.paper;
         this._setDataForRendering(data);
         this._clearSeriesContainer();
@@ -399,7 +397,6 @@ class Series {
         if (data.checkedLegends) {
             const checkedLegends = data.checkedLegends[this.seriesType];
             if (!this.options.colorByPoint) {
-                console.log("ORG - ORG", this.orgTheme);
                 this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
             }
         }
@@ -424,7 +421,6 @@ class Series {
         }
 
         const cloneTheme = JSON.parse(JSON.stringify(theme));
-        console.log("CLONETHEME - ", cloneTheme);
         cloneTheme.colors = cloneTheme.colors.filter((color, index) => checkedLegends[index]);
 
         return cloneTheme;
@@ -456,15 +452,11 @@ class Series {
      * @param {object} data - data for rendering
      */
     rerender(data) {
-
-        console.log("RERENDER -- RERENDER", data);
         let checkedLegends;
 
         if (this.seriesType === 'map' || this.dataProcessor.getGroupCount(this.seriesType)) {
             if (data.checkedLegends) {
                 checkedLegends = data.checkedLegends[this.seriesType];
-                console.log("v1v2v3", checkedLegends);
-                console.log("THEMETHEME - ", this.orgTheme, checkedLegends);
                 this.theme = this._getCheckedSeriesTheme(this.orgTheme, checkedLegends);
             }
 

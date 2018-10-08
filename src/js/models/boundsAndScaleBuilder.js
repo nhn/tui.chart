@@ -238,7 +238,6 @@ export default {
             boundsAndScale.legendScaleData = scaleDataModel.scaleDataMap.legend;
         }
 
-
         return boundsAndScale;
     }
 };

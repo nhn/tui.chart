@@ -164,7 +164,7 @@ class DynamicDataHelper {
         }
 
         this.checkedLegends = checkedLegends;
-        chart._rerender(checkedLegends, rawData, boundsParams);
+        chart.protectedRerender(checkedLegends, rawData, boundsParams);
 
         if (!pastPaused) {
             setTimeout(() => {

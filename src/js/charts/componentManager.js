@@ -216,14 +216,14 @@ class ComponentManager {
         }
     }
 
-    init(theme) {
+    reSet(theme) {
         this.theme = theme;
-        this.components.map(component => {
-            if (component.init) {
+        this.components.forEach(component => {
+            if (component.reSet) {
                 const {componentType, componentName} = component;
                 const optionKey = this._getOptionKey(componentType, componentName);
 
-                component.init({
+                component.reSet({
                     theme: this._makeTheme(optionKey, componentName)
                 });
             }

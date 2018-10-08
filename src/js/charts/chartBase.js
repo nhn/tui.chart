@@ -391,12 +391,12 @@ class ChartBase {
     }
 
     /**
-     * _Rerender.
+     * protectedRerender
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      * @private
      */
-    _rerender(checkedLegends, rawData) {
+    protectedRerender(checkedLegends, rawData) {
         const {dataProcessor} = this;
 
         if (!rawData) {
@@ -432,20 +432,40 @@ class ChartBase {
     }
 
     setData(rawData = null) {
+        const data = this._initializeRawData(rawData);
         const {dataProcessor} = this;
+        this.dataProcessor.initData(data, true);
 
-        rawDataHandler.updateRawSeriesDataByOptions(rawData, this.options.series);
-        if (this.options.chartType === 'boxplot') {
-            rawDataHandler.appendOutliersToSeriesData(rawData);
+        const theme = themeManager.get(this.options.theme, this.options.chartType, data.series);
+
+        this.theme = theme;
+        this.componentManager.reSet(theme);
+        this.protectedRerender(dataProcessor.getLegendVisibility());
+    }
+
+    _initializeRawData(rawData) {
+        const data = objectUtil.deepCopy(rawData);
+        const {chartType} = this.options;
+
+        if (chartType !== 'combo' && snippet.isArray(data.series)) {
+            const temp = data.series;
+            data.series = {};
+            data.series[chartType] = temp;
         }
 
-        this.dataProcessor.initData(rawData, true);
+        rawDataHandler.updateRawSeriesDataByOptions(data, this.options.series);
+        if (this.options.chartType === 'boxplot') {
+            rawDataHandler.appendOutliersToSeriesData(data);
+        }
 
-        const theme = themeManager.get(this.options.theme, this.options.chartType, rawData.series);
-        this.theme = theme;
-        this.componentManager.init(theme);
+        return data;
+    }
 
-        this._rerender(dataProcessor.getLegendVisibility());
+    getCheckedLegend() {
+        const {componentManager, dataProcessor} = this;
+        const hasLegendComponent = componentManager.has('legend');
+
+        return hasLegendComponent ? componentManager.get('legend').getCheckedIndexes() : dataProcessor.getLegendVisibility();
     }
 
     /**
@@ -455,7 +475,7 @@ class ChartBase {
      * @param {?object} boundsParams addition params for calculating bounds
      */
     onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
-        this._rerender(checkedLegends, rawData, boundsParams);
+        this.protectedRerender(checkedLegends, rawData, boundsParams);
     }
 
     /**
