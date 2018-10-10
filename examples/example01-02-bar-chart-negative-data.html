@@ -80,37 +80,10 @@ var theme = {
         ]
     }
 };
-
 // For apply theme
-
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
-
-var chart = tui.chart.barChart(container, data, options);
-
- setTimeout(function() {
-     chart.setData({
-         checkedLegends: {
-             bar: [true, true, true]
-         },
-         rawData: {
-             categories: ['May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-             series: {
-                 bar: [
-                     {
-                         name: 'Budget',
-                         data: [4000, 5000, 3000, 5000, 7000, 6000, 4000, 1000]
-                     },
-                     {
-                         name: 'Expenses',
-                         data: [-5000, -4000, -4000, -6000, -3000, -4000, -5000, -7000]
-                     }
-                 ]
-             }
-         }
-     });
- }, 3000);
-
+tui.chart.barChart(container, data, options);
 </script>
 
 <!--For tutorial page-->

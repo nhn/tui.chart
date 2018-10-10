@@ -85,41 +85,10 @@ var theme = {
         ]
     }
 };
-
 // For apply theme
-
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
-
-var chart = tui.chart.lineChart(container, data, options);
-
-setTimeout(function() {
-    chart.setData({
-        rawData: {
-            categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'ss'],
-            series: {
-                line: [
-                    {
-                        name: 'Budget',
-                        data: [5000, 3000, 6000, 3000, 6000, 4000, 12]
-                    },
-                    {
-                        name: 'Income',
-                        data: [8000, 1000, 7000, 2000, 5000, 3000, 12]
-                    },
-                    {
-                        name: 'Outgo',
-                        data: [900, 6000, 1000, 9000, 3000, 1000, 12]
-                    },
-                    {
-                        name: 'JJJJ123123',
-                        data: [1900, 16000, 1700, 9000, 3000, 1000, 12]
-                    }
-                ]
-            }
-        }
-    });
-}, 1000);
+tui.chart.lineChart(container, data, options);
 </script>
 <!--For tutorial page-->
 <script src='../node_modules/codemirror/lib/codemirror.js'></script>

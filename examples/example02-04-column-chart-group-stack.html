@@ -95,75 +95,10 @@ var theme = {
         ]
     }
 };
-
 // For apply theme
-
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
-
-var chart = tui.chart.columnChart(container, data, options);
-
-setTimeout(function() {
-    chart.setData({
-        rawData: {
-            categories: ["0 ~ 9", "10 ~ 19", "20 ~ 29", "30 ~ 39", "40 ~ 49", "50 ~ 59", "60 ~ 69", "70 ~ 79", "80 ~ 89", "90 ~ 99", "100 ~"],
-            series: {
-                column: [
-                    {
-                        name: 'Male - Seoul',
-                        data: [400718, 506749, 722122, 835851, 850007, 773094, 496232, 267037, 67004, 7769, 1314],
-                        stack: 'Male'
-                    },
-                    {
-                        name: 'Female - Seoul',
-                        data: [380595, 472893, 724408, 829149, 853032, 812687, 548381, 316142, 127406, 22177, 3770],
-                        stack: 'Female',
-                        visible: false
-                    },
-                    {
-                        name: 'Male - Incheon',
-                        data: [139283, 167132, 209256, 233977, 261195, 251151, 127721, 61452, 17138, 1974, 194],
-                        stack: 'Male',
-                        visible: false
-                    },
-                    {
-                        name: 'Female - Incheon',
-                        data: [132088, 155895, 192760, 221250, 255601, 243374, 130406, 80763, 38005, 6057, 700000],
-                        stack: 'Female'
-                    },
-                    {
-                        name: 'Female - Incheonsss',
-                        data: [132088, 155895, 192760, 221250, 255601, 243374, 130406, 80763, 38005, 6057, 700000],
-                        stack: 'Female'
-                    }
-                ]
-            }
-        }
-    });
-}, 1000);
-
-setTimeout(function() {
-    chart.setData({
-        rawData: {
-            categories: ["0 ~ 9", "10 ~ 19", "20 ~ 29", "30 ~ 39", "40 ~ 49", "50 ~ 59", "60 ~ 69", "70 ~ 79", "80 ~ 89", "90 ~ 99", "100 ~"],
-            series: {
-                column: [
-                    {
-                        name: 'Male - Seoul',
-                        data: [400718, 506749, 722122, 835851, 850007, 773094, 496232, 267037, 67004, 7769, 1314],
-                        stack: 'Male'
-                    },
-                    {
-                        name: 'Female - Seoul',
-                        data: [380595, 472893, 724408, 829149, 853032, 812687, 548381, 316142, 127406, 22177, 3770],
-                        stack: 'Female'
-                    },
-                ]
-            }
-        }
-    });
-}, 3000);
-
+tui.chart.columnChart(container, data, options);
 </script>
 
 <!--For tutorial page-->
