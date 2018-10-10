@@ -17,7 +17,7 @@ describe('Test for DataProcessor', () => {
     });
 
     describe('initData()', () => {
-        it('originalChange 인자가 true이면 오리지널 데이터를 초기화 해야 한다.', () => {
+        it('original data must be initialized when originalChange argument is true', () => {
             const rawData = {
                 categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
                 series: {bar: [{data: [1, 2, 3, 4, 5]}, {data: [11, 12, 13, 14, 15]}]}

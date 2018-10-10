@@ -42,7 +42,7 @@ describe('Test for ComponentManager', () => {
         beforeEach(() => {
             spyOn(componentManager, '_makeTheme');
         });
-        it('reset puhaha', () => {
+        it('reSet of the objects registered in components should be executed.', () => {
             const reSetMethod = jasmine.createSpy('reSet');
             componentManager.components = [
                 {reSet: reSetMethod},
