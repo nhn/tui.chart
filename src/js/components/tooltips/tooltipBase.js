@@ -173,11 +173,11 @@ class TooltipBase {
     }
 
     /**
-     * Reset components
+     * Preset components for setData
      * @param {object} theme theme object
      * @ignore
      */
-    reSet(theme = this.theme) {
+    presetForChangeData(theme = this.theme) {
         this.theme = theme;
         this.originalTheme = objectUtil.deepCopy(theme);
     }

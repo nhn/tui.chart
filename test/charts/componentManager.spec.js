@@ -38,19 +38,19 @@ describe('Test for ComponentManager', () => {
         });
     });
 
-    describe('reSet()', () => {
+    describe('presetForChangeData()', () => {
         beforeEach(() => {
             spyOn(componentManager, '_makeTheme');
         });
-        it('reSet of the objects registered in components should be executed.', () => {
+        it('presetForChangeData of the objects registered in components should be executed.', () => {
             const reSetMethod = jasmine.createSpy('reSet');
             componentManager.components = [
-                {reSet: reSetMethod},
-                {reSet: reSetMethod},
-                {reSet: reSetMethod}
+                {presetForChangeData: reSetMethod},
+                {presetForChangeData: reSetMethod},
+                {presetForChangeData: reSetMethod}
             ];
 
-            componentManager.reSet();
+            componentManager.presetForChangeData();
 
             expect(reSetMethod.calls.count()).toBe(3);
         });

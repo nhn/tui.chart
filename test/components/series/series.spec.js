@@ -29,7 +29,7 @@ describe('Series', () => {
         });
     });
 
-    describe('reSet()', () => {
+    describe('presetForChangeData()', () => {
         const theme = {
             label: {
                 fontFamily: 'Verdana',
@@ -40,7 +40,7 @@ describe('Series', () => {
         };
 
         it('orgTheme theme should be reflected.', () => {
-            series.reSet(theme);
+            series.presetForChangeData(theme);
 
             expect(series.theme).toEqual(theme);
             expect(series.orgTheme).toEqual(theme);
@@ -48,7 +48,7 @@ describe('Series', () => {
 
         it('If this chart type is treemap, the boundMap must be initialized.', () => {
             series.chartType = 'treemap';
-            series.reSet(theme);
+            series.presetForChangeData(theme);
 
             expect(series.boundMap).toBe(null);
         });

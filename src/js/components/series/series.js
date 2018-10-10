@@ -198,11 +198,11 @@ class Series {
     }
 
     /**
-     * Reset components
+     * Preset components for setData
      * @param {object} theme theme object
      * @ignore
      */
-    reSet(theme = this.orgTheme) {
+    presetForChangeData(theme = this.orgTheme) {
         this.orgTheme = theme;
         this.theme = theme;
         if (this.chartType === 'treemap') {

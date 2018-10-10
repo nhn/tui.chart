@@ -530,7 +530,7 @@ describe('Test for Plot', () => {
         });
     });
 
-    describe('reSet()', () => {
+    describe('presetForChangeData()', () => {
         const theme = {
             label: {
                 fontFamily: 'Verdana',
@@ -541,7 +541,7 @@ describe('Test for Plot', () => {
         };
 
         it('theme should be reflected.', () => {
-            plot.reSet(theme);
+            plot.presetForChangeData(theme);
 
             expect(plot.theme).toEqual(theme);
         });

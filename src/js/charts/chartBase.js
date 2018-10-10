@@ -414,7 +414,7 @@ class ChartBase {
     }
 
     /**
-     * protectedRerender
+     * rerender
      * @param {{column: Array.<string>, line: Array.<string>}} checkedLegends data that whether series has checked or not
      * @param {object} rawData rawData
      * @api
@@ -424,8 +424,9 @@ class ChartBase {
         checkedLegends = checkedLegends || this.getCheckedLegend();
         rawData = rawData || this.dataProcessor.getOriginalRawData();
 
-        let seriesData = rawData.series;
-        seriesData = Object.keys(seriesData).reduce((result, item) => {
+        const seriesData = rawData.series;
+
+        rawData.series = Object.keys(seriesData).reduce((result, item) => {
             const series = seriesData[item];
             const checkedInfo = checkedLegends[item];
 
@@ -449,12 +450,14 @@ class ChartBase {
     setData(rawData = null) {
         const data = this._initializeRawData(rawData);
         const {dataProcessor} = this;
-        this.dataProcessor.initData(data, true);
+        const {chartType, theme: themeOptions} = this.options;
 
-        const theme = themeManager.get(this.options.theme, this.options.chartType, data.series);
+        dataProcessor.initData(data, true);
+
+        const theme = themeManager.get(themeOptions, chartType, data.series);
 
         this.theme = theme;
-        this.componentManager.reSet(theme);
+        this.componentManager.presetForChangeData(theme);
         this.protectedRerender(dataProcessor.getLegendVisibility());
     }
 
@@ -478,17 +481,17 @@ class ChartBase {
      */
     _initializeRawData(rawData) {
         const data = objectUtil.deepCopy(rawData);
-        const {chartType} = this.options;
+        const {chartType, series: seriesOption} = this.options;
 
         if (chartType !== 'combo' && snippet.isArray(data.series)) {
-            const temp = data.series;
+            const clonedSeries = data.series;
             data.series = {};
-            data.series[chartType] = temp;
+            data.series[chartType] = clonedSeries;
         }
 
-        rawDataHandler.updateRawSeriesDataByOptions(data, this.options.series);
+        rawDataHandler.updateRawSeriesDataByOptions(data, seriesOption);
 
-        if (this.options.chartType === 'boxplot') {
+        if (chartType === 'boxplot') {
             rawDataHandler.appendOutliersToSeriesData(data);
         }
 

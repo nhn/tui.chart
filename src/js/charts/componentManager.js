@@ -218,18 +218,18 @@ class ComponentManager {
     }
 
     /**
-     * Reset components
+     * Preset components for setData
      * @param {object} theme theme object
      * @ignore
      */
-    reSet(theme) {
+    presetForChangeData(theme) {
         this.theme = theme;
         this.components.forEach(component => {
-            if (component.reSet) {
+            if (component.presetForChangeData) {
                 const {componentType, componentName} = component;
                 const optionKey = this._getOptionKey(componentType, componentName);
 
-                component.reSet(this._makeTheme(optionKey, componentName));
+                component.presetForChangeData(this._makeTheme(optionKey, componentName));
             }
         });
     }
@@ -276,16 +276,7 @@ class ComponentManager {
      * @private
      */
     _getOptionKey(type, name) {
-        let optionKey = null;
-        if (type === 'axis') {
-            // Get theme and options by axis name
-            // As axis has 3 types(xAxis, yAxis, rightYAxis)
-            optionKey = name;
-        } else {
-            optionKey = type;
-        }
-
-        return optionKey;
+        return (type === 'axis' ? name : type);
     }
 
     /**
@@ -298,7 +289,7 @@ class ComponentManager {
     _makeTheme(optionKey, name) {
         let theme = this.theme[optionKey];
 
-        if (!theme && optionKey === 'rightYAxis') {
+        if (!theme && (optionKey === 'rightYAxis')) {
             theme = this.theme.yAxis;
         }
 

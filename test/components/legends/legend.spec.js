@@ -125,7 +125,7 @@ describe('Test for Legend', () => {
         });
     });
 
-    describe('reSet()', () => {
+    describe('presetForChangeData()', () => {
         const theme = {
             label: {
                 fontFamily: 'Verdana',
@@ -137,14 +137,14 @@ describe('Test for Legend', () => {
 
         it('theme should be reflected.', () => {
             spyOn(LegendModel.prototype, '_setData');
-            legend.reSet(theme);
+            legend.presetForChangeData(theme);
 
             expect(legend.theme).toEqual(theme);
         });
 
         it('legendModel should be reflected.', () => {
             spyOn(LegendModel.prototype, '_setData');
-            legend.reSet(theme);
+            legend.presetForChangeData(theme);
 
             expect(LegendModel.prototype._setData).toHaveBeenCalled();
         });
