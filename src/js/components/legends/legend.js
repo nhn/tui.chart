@@ -257,6 +257,14 @@ class Legend {
     }
 
     /**
+     * Fire changeCheckedLegends public event.
+     * @private
+     */
+    _fireChangeCheckedLegendsPublicEvent() {
+        this.eventBus.fire(`${PUBLIC_EVENT_PREFIX}changeCheckedLegends`, this.legendModel.getCheckedIndexes());
+    }
+
+    /**
      * Fire selectLegend event.
      * @param {{chartType: string, index: number}} data data
      * @private
@@ -341,6 +349,7 @@ class Legend {
         }
 
         this._fireChangeCheckedLegendsEvent();
+        this._fireChangeCheckedLegendsPublicEvent();
 
         if (selectedData) {
             this._fireSelectLegendEvent(selectedData);

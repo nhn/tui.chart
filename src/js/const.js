@@ -442,6 +442,7 @@ export default {
         beforeShowTooltip: true,
         afterShowTooltip: true,
         beforeHideTooltip: true,
+        changeCheckedLegends: true,
         zoom: true
     },
     /** for radial */

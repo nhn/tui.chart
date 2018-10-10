@@ -91,6 +91,19 @@ describe('Test for Legend', () => {
         });
     });
 
+    describe('_fireChangeCheckedLegendsPublicEvent()', () => {
+        it('fire selectLegend public event', () => {
+            spyOn(legend.legendModel, 'getCheckedIndexes').and.returnValue({
+                column: [true, false, true]
+            });
+
+            legend._fireChangeCheckedLegendsPublicEvent();
+
+            expect(legend.eventBus.fire).toHaveBeenCalledWith(
+                `${chartConst.PUBLIC_EVENT_PREFIX}changeCheckedLegends`, {column: [true, false, true]});
+        });
+    });
+
     describe('_fireSelectLegendEvent()', () => {
         it('fire selectLegend event', () => {
             const data = {

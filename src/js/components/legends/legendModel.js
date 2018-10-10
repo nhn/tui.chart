@@ -301,7 +301,11 @@ class LegendModel {
      * @returns {object} object data that whether series has checked or not
      */
     getCheckedIndexes() {
-        return this.checkedIndexesMap;
+        return Object.keys(this.checkedIndexesMap).reduce((booleanizeObject, chartType) => {
+            booleanizeObject[chartType] = Array.from(this.checkedIndexesMap[chartType], checked => !!checked);
+
+            return booleanizeObject;
+        }, {});
     }
 
     /**
@@ -328,3 +332,4 @@ class LegendModel {
 }
 
 export default LegendModel;
+
