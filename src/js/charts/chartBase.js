@@ -394,7 +394,7 @@ class ChartBase {
      * protectedRerender
      * @param {{line: Array.<boolean>, column: Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
-     * @private
+     * @ignore
      */
     protectedRerender(checkedLegends, rawData) {
         const {dataProcessor} = this;
@@ -418,6 +418,7 @@ class ChartBase {
      * @param {{column: Array.<string>, line: Array.<string>}} checkedLegends data that whether series has checked or not
      * @param {object} rawData rawData
      * @api
+     * @deprecated
      */
     rerender(checkedLegends, rawData) {
         let seriesData = rawData.series;
