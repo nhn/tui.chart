@@ -16,17 +16,19 @@ describe('Test for LegendModel', () => {
 
     beforeEach(() => {
         legendModel = new LegendModel({
-            labels: [
-                'legend1',
-                'legend2'
-            ],
+            labels: {
+                column: ['legend1', 'legend2'],
+                line: ['legend3']
+            },
             legendData: [
                 {
                     label: 'legend1',
+                    chartType: 'column',
                     visible: true
                 },
                 {
                     label: 'legend2',
+                    chartType: 'column',
                     visible: true
                 }
             ],
@@ -44,6 +46,10 @@ describe('Test for LegendModel', () => {
 
     describe('_addSendingDatum()', () => {
         it('add sending data of column, index 1', () => {
+            legendModel.data[0] = {
+                chartType: 'column',
+                index: 0
+            };
             legendModel.data[1] = {
                 chartType: 'column',
                 index: 1
@@ -232,7 +238,7 @@ describe('Test for LegendModel', () => {
         it('should update checkbox check data', () => {
             const checkedIndexes = [];
             const checkedIndexesMap = {
-                column: [true],
+                column: [true, false],
                 line: [true]
             };
 

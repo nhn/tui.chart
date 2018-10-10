@@ -100,6 +100,23 @@ class Legend {
     }
 
     /**
+     * Preset components for setData
+     * @param {object} theme theme object
+     * @ignore
+     */
+    presetForChangeData(theme = this.theme) {
+        this.theme = theme;
+
+        this.legendModel = new LegendModel({
+            theme: this.theme,
+            labels: this.dataProcessor.getLegendLabels(),
+            legendData: this.dataProcessor.getLegendData(),
+            seriesTypes: this.seriesTypes,
+            chartType: this.chartType
+        });
+    }
+
+    /**
      * Set data for rendering.
      * @param {{
      *      layout: {
@@ -131,7 +148,6 @@ class Legend {
      */
     render(data) {
         this._render(data);
-
         this._listenEvents();
     }
 
@@ -302,6 +318,15 @@ class Legend {
         });
 
         return checkedIndexes;
+    }
+
+    /**
+     * Get checked indexes.
+     * @returns {{column: ?Array.<string>, line: ?Array.<string>}} object data that whether series has checked or not
+     * @ignore
+     */
+    getCheckedIndexes() {
+        return this.legendModel.getCheckedIndexes();
     }
 
     /**

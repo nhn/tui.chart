@@ -197,13 +197,19 @@ class DataProcessor extends DataProcessorBase {
     /**
      * Initialize data.
      * @param {rawData} rawData raw data
+     * @param {boolean} originalChange whether the original has changed
      */
-    initData(rawData) {
+    initData(rawData, originalChange = false) {
         /**
          * raw data
          * @type {rawData}
          */
         this.rawData = rawData;
+
+        if (originalChange) {
+            this.originalRawData = objectUtil.deepCopy(rawData);
+            this.originalLegendData = null;
+        }
 
         /**
          * categoriesMap
@@ -228,6 +234,18 @@ class DataProcessor extends DataProcessorBase {
          * @type {object.<string, SeriesDataModel>}
          */
         this.seriesDataModelMap = {};
+
+        /**
+         * legendVisiblities
+         * @type {{column: Array.<string>, line: Array.<string> | Array.<string>}}
+         */
+        this.legendVisibilities = null;
+
+        /**
+         * zoomed raw data
+         * @type {object} zoomed raw data
+         */
+        this.zoomedRawData = null;
 
         /**
          * SeriesGroups

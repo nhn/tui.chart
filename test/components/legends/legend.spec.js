@@ -8,6 +8,7 @@ import snippet from 'tui-code-snippet';
 import legendFactory from '../../../src/js/components/legends/legend';
 import chartConst from '../../../src/js/const';
 import renderUtil from '../../../src/js/helpers/renderUtil';
+import LegendModel from '../../../src/js/components/legends/legendModel';
 
 describe('Test for Legend', () => {
     let legend, dataProcessor;
@@ -121,6 +122,31 @@ describe('Test for Legend', () => {
                 chartType: 'bar',
                 index: 1
             });
+        });
+    });
+
+    describe('presetForChangeData()', () => {
+        const theme = {
+            label: {
+                fontFamily: 'Verdana',
+                fontSize: 11,
+                fontWeight: 'normal'
+            },
+            colors: ['blue']
+        };
+
+        it('theme should be reflected.', () => {
+            spyOn(LegendModel.prototype, '_setData');
+            legend.presetForChangeData(theme);
+
+            expect(legend.theme).toEqual(theme);
+        });
+
+        it('legendModel should be reflected.', () => {
+            spyOn(LegendModel.prototype, '_setData');
+            legend.presetForChangeData(theme);
+
+            expect(LegendModel.prototype._setData).toHaveBeenCalled();
         });
     });
 });

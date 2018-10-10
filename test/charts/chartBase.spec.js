@@ -7,12 +7,13 @@
 import snippet from 'tui-code-snippet';
 import ChartBase from '../../src/js/charts/chartBase';
 import DataProcessor from '../../src/js/models/data/dataProcessor';
+import themeManager from '../../src/js/themes/themeManager';
 
 describe('Test for ChartBase', () => {
     let chartBase, chartBaseOption, componentManager, boundsModel;
 
     beforeAll(() => {
-        componentManager = jasmine.createSpyObj('componentManager', ['where']);
+        componentManager = jasmine.createSpyObj('componentManager', ['where', 'presetForChangeData']);
         boundsModel = jasmine.createSpyObj('boundsModel', ['initBoundsData', 'getDimension']);
     });
 
@@ -270,6 +271,47 @@ describe('Test for ChartBase', () => {
             });
             expect(chartBase.options.chart.width).toBe(200);
             expect(chartBase.options.chart.height).toBe(100);
+        });
+    });
+
+    describe('setData()', () => {
+        const rawData = {
+            categories: ['cate1', 'cate2', 'cate3'],
+            series: {
+                'chartType': [
+                    {name: 'Legend1', data: [20, 30, 50]},
+                    {name: 'Legend2', data: [40, 40, 60]}
+                ]
+            }
+        };
+        beforeEach(() => {
+            chartBase.options = {
+                chartType: 'line',
+                theme: 'default'
+            };
+
+            spyOn(themeManager, 'get');
+            spyOn(chartBase, 'protectedRerender');
+        });
+
+        it('dataProcessor must reflect rawData.', () => {
+            spyOn(chartBase.dataProcessor, 'initData');
+
+            chartBase.setData(rawData);
+
+            expect(chartBase.dataProcessor.initData).toHaveBeenCalled();
+        });
+
+        it('componentManager should be running presetForChangeData.', () => {
+            chartBase.setData(rawData);
+
+            expect(componentManager.presetForChangeData).toHaveBeenCalled();
+        });
+
+        it('protectedRerender () must be executed.', () => {
+            chartBase.setData(rawData);
+
+            expect(chartBase.protectedRerender).toHaveBeenCalled();
         });
     });
 

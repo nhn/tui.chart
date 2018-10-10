@@ -239,14 +239,14 @@ describe('Test for DynamicDataHelper', () => {
             ddh.pauseAnimation = jasmine.createSpy('pauseAnimation');
             ddh.chart._rerender = jasmine.createSpy('_rerender');
             ddh.restartAnimation = jasmine.createSpy('restartAnimation');
-            ddh.chart.rerender = jasmine.createSpy('rerender');
+            ddh.chart.protectedRerender = jasmine.createSpy('protectedRerender');
         });
 
         it('should stop adding data animation and rerender graph, if it is not paused', () => {
             ddh.changeCheckedLegends();
 
             expect(ddh.pauseAnimation).toHaveBeenCalled();
-            expect(ddh.chart.rerender).toHaveBeenCalled();
+            expect(ddh.chart.protectedRerender).toHaveBeenCalled();
         });
 
         it('should restart andding data animation after 0.7s, if it is not paused', done => {

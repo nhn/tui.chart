@@ -279,10 +279,12 @@ class LegendModel {
      */
     _addSendingDatum(index) {
         const legendDatum = this.getDatum(index);
-        if (!this.checkedIndexesMap[legendDatum.chartType]) {
-            this.checkedIndexesMap[legendDatum.chartType] = [];
+        const {chartType, index: chartIndex} = legendDatum;
+
+        if (!this.checkedIndexesMap[chartType]) {
+            this.checkedIndexesMap[chartType] = new Array(this.labels[chartType].length).fill(false);
         }
-        this.checkedIndexesMap[legendDatum.chartType][legendDatum.index] = true;
+        this.checkedIndexesMap[chartType][chartIndex] = true;
     }
 
     /**

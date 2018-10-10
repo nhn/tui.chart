@@ -180,10 +180,9 @@ class ComponentManager {
      * @param {string} name component name
      * @param {string} classType component factory name
      * @param {object} [params={}] optional params that for alternative charts
+     * @ignore
      */
     register(name, classType, params = {}) {
-        let optionKey;
-
         const index = params.index || 0;
         const componentFactory = COMPONENT_FACTORY_MAP[classType];
         const {componentType} = componentFactory;
@@ -193,41 +192,10 @@ class ComponentManager {
         params.chartOptions = this.options;
         params.seriesTypes = this.seriesTypes;
 
-        if (componentType === 'axis') {
-            // Get theme and options by axis name
-            // As axis has 3 types(xAxis, yAxis, rightYAxis)
-            optionKey = name;
-        } else {
-            optionKey = componentType;
-        }
+        const optionKey = this._getOptionKey(componentType, name);
 
-        params.theme = this.theme[optionKey];
-        params.options = this.options[optionKey];
-
-        if (!params.theme && optionKey === 'rightYAxis') {
-            params.theme = this.theme.yAxis;
-        }
-
-        if (!params.options && optionKey === 'rightYAxis') {
-            params.options = this.options.yAxis;
-        }
-
-        if (optionKey === 'series') {
-            this.seriesTypes.forEach(seriesType => {
-                if (name.indexOf(seriesType) === 0) {
-                    params.options = params.options[seriesType] || params.options; // For combo chart, options are set for each chart
-                    params.theme = params.theme[seriesType]; // For combo, single chart, themes are set for each chart
-
-                    if (snippet.isArray(params.options)) {
-                        params.options = params.options[index] || {};
-                    }
-
-                    return false;
-                }
-
-                return true;
-            });
-        }
+        params.theme = this._makeTheme(optionKey, name);
+        params.options = this._makeOptions(optionKey, name, index);
 
         params.dataProcessor = this.dataProcessor;
         params.hasAxes = this.hasAxes;
@@ -247,6 +215,97 @@ class ComponentManager {
             this.components.push(component);
             this.componentMap[name] = component;
         }
+    }
+
+    /**
+     * Preset components for setData
+     * @param {object} theme theme object
+     * @ignore
+     */
+    presetForChangeData(theme) {
+        this.theme = theme;
+        this.components.forEach(component => {
+            if (component.presetForChangeData) {
+                const {componentType, componentName} = component;
+                const optionKey = this._getOptionKey(componentType, componentName);
+
+                component.presetForChangeData(this._makeTheme(optionKey, componentName));
+            }
+        });
+    }
+
+    /**
+     * Make option
+     * @param {string} optionKey Key on which to create the option.
+     * @param {string} name name of component
+     * @param {number} index index of chart for series option
+     * @returns {object} option
+     * @private
+     */
+    _makeOptions(optionKey, name, index) {
+        let options = this.options[optionKey];
+
+        if (!options && optionKey === 'rightYAxis') {
+            options = this.options.yAxis;
+        }
+
+        if (optionKey === 'series') {
+            this.seriesTypes.forEach(seriesType => {
+                if (name.indexOf(seriesType) === 0) {
+                    options = options[seriesType] || options; // For combo chart, options are set for each chart
+
+                    if (snippet.isArray(options)) {
+                        options = options[index] || {};
+                    }
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        return options;
+    }
+
+    /**
+     * Make option key
+     * @param {string} type type of component
+     * @param {name} name name of component
+     * @returns {string} optionKey Key on which to create the option.
+     * @private
+     */
+    _getOptionKey(type, name) {
+        return (type === 'axis' ? name : type);
+    }
+
+    /**
+     * Make theme
+     * @param {string} optionKey Key on which to create the option.
+     * @param {string} name name of component
+     * @returns {object} theme
+     * @private
+     */
+    _makeTheme(optionKey, name) {
+        let theme = this.theme[optionKey];
+
+        if (!theme && (optionKey === 'rightYAxis')) {
+            theme = this.theme.yAxis;
+        }
+
+        if (optionKey === 'series') {
+            this.seriesTypes.forEach(seriesType => {
+                if (name.indexOf(seriesType) === 0) {
+                    theme = theme[seriesType]; // For combo, single chart, themes are set for each chart
+
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        return theme;
     }
 
     /**

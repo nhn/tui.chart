@@ -11,7 +11,12 @@ describe('Test for ComponentManager', () => {
 
     beforeEach(() => {
         componentManager = new ComponentManager({
-            options: {}
+            options: {},
+            dataProcessor: {
+                seriesType: 'bar',
+                getLegendLabels: () => {},
+                getLegendData: () => {}
+            }
         });
     });
 
@@ -30,6 +35,24 @@ describe('Test for ComponentManager', () => {
 
         it('should not have plot component, before register plot', () => {
             expect(componentManager.componentMap.plot).toBeFalsy();
+        });
+    });
+
+    describe('presetForChangeData()', () => {
+        beforeEach(() => {
+            spyOn(componentManager, '_makeTheme');
+        });
+        it('presetForChangeData of the objects registered in components should be executed.', () => {
+            const reSetMethod = jasmine.createSpy('reSet');
+            componentManager.components = [
+                {presetForChangeData: reSetMethod},
+                {presetForChangeData: reSetMethod},
+                {presetForChangeData: reSetMethod}
+            ];
+
+            componentManager.presetForChangeData();
+
+            expect(reSetMethod.calls.count()).toBe(3);
         });
     });
 

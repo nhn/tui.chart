@@ -12,6 +12,7 @@ import dom from '../helpers/domHandler';
 import renderUtil from '../helpers/renderUtil';
 import objectUtil from '../helpers/objectUtil';
 import boundsAndScaleBuilder from '../models/boundsAndScaleBuilder.js';
+import themeManager from '../themes/themeManager';
 import predicate from '../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
@@ -385,17 +386,17 @@ class ChartBase {
         componentManager.render('render', boundsAndScale, {
             checkedLegends: seriesVisibilityMap
         }, container);
-
         this.chartContainer = container;
         this.paper = raphaelPaper;
     }
 
     /**
-     * Rerender.
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * protectedRerender
+     * @param {{line: Array.<boolean>, column: Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
+     * @ignore
      */
-    rerender(checkedLegends, rawData) {
+    protectedRerender(checkedLegends, rawData) {
         const {dataProcessor} = this;
 
         if (!rawData) {
@@ -413,13 +414,98 @@ class ChartBase {
     }
 
     /**
+     * rerender
+     * @param {{column: Array.<string>, line: Array.<string>}} checkedLegends data that whether series has checked or not
+     * @param {object} rawData rawData
+     * @api
+     * @deprecated
+     */
+    rerender(checkedLegends, rawData) {
+        checkedLegends = checkedLegends || this.getCheckedLegend();
+        rawData = rawData || this.dataProcessor.getOriginalRawData();
+
+        const seriesData = rawData.series;
+
+        rawData.series = Object.keys(seriesData).reduce((result, item) => {
+            const series = seriesData[item];
+            const checkedInfo = checkedLegends[item];
+
+            result[item] = series.map((seriesItem, index) => {
+                seriesItem.visible = checkedInfo[index];
+
+                return seriesItem;
+            });
+
+            return result;
+        }, {});
+
+        this.setData(rawData);
+    }
+
+    /**
+     * setData
+     * @param {object} rawData rawData
+     * @api
+     */
+    setData(rawData = null) {
+        const data = this._initializeRawData(rawData);
+        const {dataProcessor} = this;
+        const {chartType, theme: themeOptions} = this.options;
+
+        dataProcessor.initData(data, true);
+
+        const theme = themeManager.get(themeOptions, chartType, data.series);
+
+        this.theme = theme;
+        this.componentManager.presetForChangeData(theme);
+        this.protectedRerender(dataProcessor.getLegendVisibility());
+    }
+
+    /**
+     * Get checked indexes.
+     * @returns {{column: ?Array.<string>, line: ?Array.<string>}} object data that whether series has checked or not
+     * @api
+     */
+    getCheckedLegend() {
+        const {componentManager, dataProcessor} = this;
+        const hasLegendComponent = componentManager.has('legend');
+
+        return hasLegendComponent ? componentManager.get('legend').getCheckedIndexes() : dataProcessor.getLegendVisibility();
+    }
+
+    /**
+     * initialize rawData
+     * @param {object} rawData rawData
+     * @returns {object} - remaked rawData
+     * @private
+     */
+    _initializeRawData(rawData) {
+        const data = objectUtil.deepCopy(rawData);
+        const {chartType, series: seriesOption} = this.options;
+
+        if (chartType !== 'combo' && snippet.isArray(data.series)) {
+            const clonedSeries = data.series;
+            data.series = {};
+            data.series[chartType] = clonedSeries;
+        }
+
+        rawDataHandler.updateRawSeriesDataByOptions(data, seriesOption);
+
+        if (chartType === 'boxplot') {
+            rawDataHandler.appendOutliersToSeriesData(data);
+        }
+
+        return data;
+    }
+
+    /**
      * On change checked legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
      */
     onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
-        this.rerender(checkedLegends, rawData, boundsParams);
+        this.protectedRerender(checkedLegends, rawData, boundsParams);
     }
 
     /**

@@ -77,7 +77,7 @@ class ColumnLineComboChart extends ChartBase {
         this.chartTypes = typeData.chartTypes;
         this.seriesTypes = typeData.seriesTypes;
 
-        this.rerender(checkedLegends, rawData, typeData);
+        this.protectedRerender(checkedLegends, rawData, typeData);
     }
 
     /**

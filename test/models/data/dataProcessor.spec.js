@@ -16,6 +16,30 @@ describe('Test for DataProcessor', () => {
         dataProcessor = new DataProcessor({}, '', {});
     });
 
+    describe('initData()', () => {
+        it('original data must be initialized when originalChange argument is true', () => {
+            const rawData = {
+                categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
+                series: {bar: [{data: [1, 2, 3, 4, 5]}, {data: [11, 12, 13, 14, 15]}]}
+            };
+            dataProcessor.originalLegendData = {
+                chartType: 'bar',
+                index: 1,
+                label: 'Income',
+                seriesIndex: 1,
+                theme: {color: '#458a3f'},
+                visible: true
+            };
+
+            dataProcessor.originalRawData = rawData;
+
+            dataProcessor.initData(rawData, true);
+
+            expect(dataProcessor.originalLegendData).toBe(null);
+            expect(dataProcessor.originalRawData).toEqual(rawData);
+        });
+    });
+
     describe('_filterSeriesDataByIndexRange()', () => {
         it('filter seriesData by index range', () => {
             const seriesData = [

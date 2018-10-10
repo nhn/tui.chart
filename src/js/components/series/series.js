@@ -83,7 +83,6 @@ class Series {
          * Theme
          * @type {object}
          */
-
         this.orgTheme = this.theme = params.theme;
 
         /**
@@ -196,6 +195,19 @@ class Series {
         const decorateFunc = (snippet.isArray(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem).bind(renderUtil);
 
         return decorateFunc(targetLabel, labelPrefix, labelSuffix);
+    }
+
+    /**
+     * Preset components for setData
+     * @param {object} theme theme object
+     * @ignore
+     */
+    presetForChangeData(theme = this.orgTheme) {
+        this.orgTheme = theme;
+        this.theme = theme;
+        if (this.chartType === 'treemap') {
+            this.boundMap = null;
+        }
     }
 
     /**

@@ -81,6 +81,15 @@ class Plot {
     }
 
     /**
+     * Preset components for setData
+     * @param {object} theme theme object
+     * @ignore
+     */
+    presetForChangeData(theme = this.theme) {
+        this.theme = theme;
+    }
+
+    /**
      * Render plot area.
      * @param {object} paper paper object
      * @private

@@ -173,6 +173,16 @@ class TooltipBase {
     }
 
     /**
+     * Preset components for setData
+     * @param {object} theme theme object
+     * @ignore
+     */
+    presetForChangeData(theme = this.theme) {
+        this.theme = theme;
+        this.originalTheme = objectUtil.deepCopy(theme);
+    }
+
+    /**
      * Attach to event bus.
      * @private
      */
