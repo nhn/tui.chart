@@ -421,6 +421,9 @@ class ChartBase {
      * @deprecated
      */
     rerender(checkedLegends, rawData) {
+        checkedLegends = checkedLegends || this.getCheckedLegend();
+        rawData = rawData || this.dataProcessor.getOriginalRawData();
+
         let seriesData = rawData.series;
         seriesData = Object.keys(seriesData).reduce((result, item) => {
             const series = seriesData[item];

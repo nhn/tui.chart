@@ -205,7 +205,6 @@ class Series {
     reSet(theme = this.orgTheme) {
         this.orgTheme = theme;
         this.theme = theme;
-        console.log(this.chartType);
         if (this.chartType === 'treemap') {
             this.boundMap = null;
         }
