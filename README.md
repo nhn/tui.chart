@@ -38,8 +38,7 @@
 
 ## Collect statistics on the use of open source
 
-TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
-To disable GA, use the following `usageStatistics` option when creating charts.
+TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` option when creating charts.
 
 ```js
 var options = {
@@ -50,7 +49,7 @@ var options = {
 tui.chart.barChart(container, data, options);
 ```
 
-Or, Dependency module **code-snippet** From **version v1.4.0**, it is possible to do as follows.
+Or, include tui-code-snippet.js(**v1.4.0 or later**) and then immediately write the options as follows:
 
 ```js
     tui.usageStatistics = false;
