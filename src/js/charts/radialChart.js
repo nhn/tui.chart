@@ -39,6 +39,7 @@ class RadialChart extends ChartBase {
         /**
          * Series class
          * @type {function}
+         * @ignore
          */
         this.Series = Series;
     }

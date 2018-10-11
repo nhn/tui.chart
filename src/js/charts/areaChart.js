@@ -40,6 +40,7 @@ class AreaChart extends ChartBase {
         /**
          * Series class
          * @type {function}
+         * @ignore
          */
         this.Series = Series;
 
@@ -50,6 +51,7 @@ class AreaChart extends ChartBase {
      * Add data.
      * @param {string} category - category
      * @param {Array} values - values
+     * @api
      */
     addData(category, values) {
         this._dynamicDataHelper.addData(category, values);
@@ -61,6 +63,7 @@ class AreaChart extends ChartBase {
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
      * @override
+     * @ignore
      */
     onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
         this._dynamicDataHelper.reset();
@@ -71,6 +74,7 @@ class AreaChart extends ChartBase {
      * Add data ratios.
      * from axisTypeMixer
      * @override
+     * @ignore
      */
     addDataRatios(limitMap) {
         const chartTypes = this.chartTypes || [this.chartType];
@@ -94,6 +98,7 @@ class AreaChart extends ChartBase {
     /**
      * Add components
      * @override
+     * @ignore
      */
     addComponents() {
         this.componentManager.register('title', 'title');
@@ -115,6 +120,7 @@ class AreaChart extends ChartBase {
      * from lineTypeMixer
      * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
      * @override
+     * @ignore
      */
     getScaleOption() {
         const scaleOption = {};
@@ -190,6 +196,7 @@ class AreaChart extends ChartBase {
      * nnfrom chart/zoomMixer
      * @param {Array.<number>} indexRange - index range for zoom
      * @override
+     * @ignore
      */
     onZoom(indexRange) {
         this._dynamicDataHelper.pauseAnimation();
@@ -201,6 +208,7 @@ class AreaChart extends ChartBase {
      * On reset zoom.
      * from chart/zoomMixer
      * @override
+     * @ignore
      */
     onResetZoom() {
         let rawData = this.dataProcessor.getOriginalRawData();

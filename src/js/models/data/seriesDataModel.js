@@ -53,6 +53,7 @@ class SeriesDataModel {
      * @param {object} options - options
      * @param {Array.<function>} formatFunctions - format functions
      * @param {boolean} isCoordinateType - whether coordinate type or not
+     * @private
      */
     constructor(rawSeriesData, chartType, options, formatFunctions, isCoordinateType) {
         /**

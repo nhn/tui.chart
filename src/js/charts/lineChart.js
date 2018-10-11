@@ -56,6 +56,7 @@ class LineChart extends ChartBase {
      * Add data.
      * @param {string} category - category
      * @param {Array} values - values
+     * @api
      */
     addData(category, values) {
         this._dynamicDataHelper.addData(category, values);

@@ -15,6 +15,7 @@ class Title {
      *      @param {object} params.theme title theme
      *      @param {object} params.options title options
      *      @param {object} params.text title text content
+     * @ignore
      */
     constructor(params) {
         /**

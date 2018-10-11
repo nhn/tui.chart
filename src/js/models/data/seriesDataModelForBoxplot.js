@@ -46,6 +46,7 @@ class SeriesDataModelForBoxplot extends SeriesDataModel {
      * @param {string} chartType - chart type
      * @param {object} options - options
      * @param {Array.<function>} formatFunctions - format functions
+     * @private
      */
     constructor(rawSeriesData, chartType, options, formatFunctions) {
         super();
