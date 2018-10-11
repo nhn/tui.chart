@@ -378,13 +378,5 @@ describe('Test for ChartBase', () => {
             chartBase = new ChartBase(chartBaseOption);
             expect(snippet.sendHostname).not.toHaveBeenCalled();
         });
-
-        it('imagePing should be executed when sendHostname does not exist', () => {
-            delete snippet.sendHostname;
-            spyOn(snippet, 'imagePing');
-
-            chartBase = new ChartBase(chartBaseOption);
-            expect(snippet.imagePing).toHaveBeenCalled();
-        });
     });
 });
