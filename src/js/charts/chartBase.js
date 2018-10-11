@@ -32,6 +32,7 @@ class ChartBase {
         /**
          * theme
          * @type {object}
+         * @ignore
          */
         this.theme = params.theme;
 
@@ -54,42 +55,49 @@ class ChartBase {
         /**
          * whether chart has axes or not
          * @type {boolean}
+         * @ignore
          */
         this.hasAxes = params.hasAxes;
 
         /**
          * whether vertical or not
          * @type {boolean}
+         * @ignore
          */
         this.isVertical = !!params.isVertical;
 
         /**
          * data processor
          * @type {DataProcessor}
+         * @ignore
          */
         this.dataProcessor = this._createDataProcessor(params);
 
         /**
          * event bus for transmitting message
          * @type {object}
+         * @ignore
          */
         this.eventBus = new snippet.CustomEvents();
 
         /**
          * previous xAxis data
          * @type {null|object}
+         * @ignore
          */
         this.prevXAxisData = null;
 
         /**
          * component manager
          * @type {ComponentManager}
+         * @ignore
          */
         this.componentManager = this._createComponentManager();
 
         /**
          * Whether has right y axis or not.
          * @type {boolean}
+         * @ignore
          */
         this.hasRightYAxis = snippet.isArray(this.options.yAxis) && (this.options.yAxis.length > 1);
 
@@ -107,15 +115,7 @@ class ChartBase {
      * @private
      */
     _sendHostName() {
-        const {hostname} = location;
-        snippet.imagePing('https://www.google-analytics.com/collect', {
-            v: 1,
-            t: 'event',
-            tid: 'UA-115377265-9',
-            cid: hostname,
-            dp: hostname,
-            dh: 'chart'
-        });
+        snippet.sendHostname('chart');
     }
 
     /**
@@ -273,12 +273,14 @@ class ChartBase {
     /**
      * Add components.
      * @abstract
+     * @ignore
      */
     addComponents() {}
 
     /**
      * Get scale option.
      * @abstract
+     * @ignore
      */
     getScaleOption() {}
 
@@ -341,6 +343,7 @@ class ChartBase {
     /**
      * Add data ratios.
      * @abstract
+     * @ignore
      */
     addDataRatios() {}
 
@@ -348,6 +351,7 @@ class ChartBase {
      * Make chart ready for render, it should be invoked before render, rerender, resize and zoom.
      * @param {?boolean} addingDataMode - whether adding data mode or not
      * @returns {object} Bounds and scale data
+     * @ignore
      */
     readyForRender(addingDataMode) {
         const boundsAndScale = this._buildBoundsAndScaleData(this.prevXAxisData, addingDataMode);
@@ -364,6 +368,7 @@ class ChartBase {
     /**
      * Render chart.
      * @param {HTMLElement} wrapper chart wrapper element
+     * @ignore
      */
     render(wrapper) {
         const container = dom.create('DIV', `tui-chart ${this.className}`);
@@ -503,6 +508,7 @@ class ChartBase {
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
+     * @ignore
      */
     onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
         this.protectedRerender(checkedLegends, rawData, boundsParams);
@@ -510,6 +516,7 @@ class ChartBase {
 
     /**
      * Animate chart.
+     * @ignore
      */
     animateChart() {
         this.componentManager.execute('animateComponent');
@@ -519,6 +526,7 @@ class ChartBase {
      * Register of user event.
      * @param {string} eventName event name
      * @param {function} func event callback
+     * @ignore
      */
     on(eventName, func) {
         if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
@@ -530,6 +538,7 @@ class ChartBase {
      * Remove user event.
      * @param {string} eventName event name
      * @param {function} func event callback
+     * @ignore
      */
     off(eventName, func) {
         if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
@@ -754,6 +763,7 @@ class ChartBase {
      * @param {number} index - category index
      * @param {number} seriesIndex - series index
      * @returns {object}
+     * @private
      */
     _findDataByIndexes(index, seriesIndex) {
         return this.componentManager.get('mouseEventDetector').findDataByIndexes(index, seriesIndex);

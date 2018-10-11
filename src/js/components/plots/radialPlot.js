@@ -24,6 +24,7 @@ class RadialPlot {
      *      @param {number} params.vTickCount vertical tick count
      *      @param {number} params.hTickCount horizontal tick count
      *      @param {object} params.theme axis theme
+     * @ignore
      */
     constructor(params) {
         /**

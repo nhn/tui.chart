@@ -17,6 +17,7 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
      * RaphaelLineCharts is graph renderer for line chart.
      * @constructs RaphaelRadialLineSeries
      * @extends RaphaelLineTypeBase
+     * @ignore
      */
     constructor() {
         super();

@@ -42,6 +42,7 @@ class LineAreaComboChart extends ChartBase {
         /**
          * yAxis options
          * @type {object}
+         * @ignore
          */
         this.yAxisOptions = this._makeYAxisOptions(this.chartTypes, options.yAxis);
 
@@ -57,6 +58,7 @@ class LineAreaComboChart extends ChartBase {
     /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @ignore
      */
     onChangeCheckedLegends(checkedLegends) {
         const zoomedRawData = this.dataProcessor.getZoomedRawData();
@@ -162,6 +164,7 @@ class LineAreaComboChart extends ChartBase {
      * Add data.
      * @param {string} category - category
      * @param {Array} values - values
+     * @api
      */
     addData(category, values) {
         this._dynamicDataHelper.addData(category, values);

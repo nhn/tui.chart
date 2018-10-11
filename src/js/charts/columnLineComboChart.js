@@ -65,6 +65,7 @@ class ColumnLineComboChart extends ChartBase {
     /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @ignore
      */
     onChangeCheckedLegends(checkedLegends) {
         const originalRawData = this.dataProcessor.getOriginalRawData();

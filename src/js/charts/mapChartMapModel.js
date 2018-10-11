@@ -14,6 +14,7 @@ class MapChartMapModel {
      * @constructs MapChartMapModel
      * @param {MapChartDataProcessor} dataProcessor Map chart data processor
      * @param {Array.<{name: string, path: string, labelCoordinate: ?{x: number, y:number}}>} rawMapData raw map data
+     * @ignore
      */
     constructor(dataProcessor, rawMapData) {
         /**
