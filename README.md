@@ -10,6 +10,7 @@
 
 
 ## 🚩 Table of Contents
+* [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
 * [Browser Support](#-browser-support)
 * [True Cross Browser Charts](#-true-cross-browser-charts)
 * [Features](#-features)
@@ -35,6 +36,25 @@
 * [TOAST UI Family](#-toast-ui-family)
 * [License](#-license)
 
+## Collect statistics on the use of open source
+
+TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
+To disable GA, use the following `usageStatistics` option when creating charts.
+
+```js
+var options = {
+    ...
+    usageStatistics: false
+}
+
+tui.chart.barChart(container, data, options);
+```
+
+Or, Dependency module **code-snippet** From **version v1.4.0**, it is possible to do as follows.
+
+```js
+    tui.usageStatistics = false;
+```
 
 ## 🌏 Browser Support
 | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
@@ -59,9 +79,9 @@ With over 50 releases since June 2015 under MIT License, the TOAST UI Chart is t
 
 ## 🎨 Features
 
-- Intuitive and easy to apply.  
-- Is an open-source JavaScript library.  
-- Can be used in legacy browsers including IE8.  
+- Intuitive and easy to apply.
+- Is an open-source JavaScript library.
+- Can be used in legacy browsers including IE8.
 - Change the chart in detail using many options and custom themes.
 
 

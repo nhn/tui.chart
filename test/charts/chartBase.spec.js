@@ -366,17 +366,25 @@ describe('Test for ChartBase', () => {
     });
 
     describe('_sendHostName()', () => {
-        it('without usageStatistics option, image ping should occur.', () => {
-            spyOn(snippet, 'imagePing');
+        it('without usageStatistics option, sendHostName should occur.', () => {
+            spyOn(snippet, 'sendHostname');
             chartBase = new ChartBase(chartBaseOption);
-            expect(snippet.imagePing).toHaveBeenCalled();
+            expect(snippet.sendHostname).toHaveBeenCalled();
         });
 
-        it('usageStatistics is false, then image ping should not occur.', () => {
-            spyOn(snippet, 'imagePing');
+        it('usageStatistics is false, then sendHostName should not occur.', () => {
+            spyOn(snippet, 'sendHostname');
             chartBaseOption.options.usageStatistics = false;
             chartBase = new ChartBase(chartBaseOption);
-            expect(snippet.imagePing).not.toHaveBeenCalled();
+            expect(snippet.sendHostname).not.toHaveBeenCalled();
+        });
+
+        it('imagePing should be executed when sendHostname does not exist', () => {
+            delete snippet.sendHostname;
+            spyOn(snippet, 'imagePing');
+
+            chartBase = new ChartBase(chartBaseOption);
+            expect(snippet.imagePing).toHaveBeenCalled();
         });
     });
 });

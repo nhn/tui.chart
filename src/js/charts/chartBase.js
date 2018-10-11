@@ -108,14 +108,18 @@ class ChartBase {
      */
     _sendHostName() {
         const {hostname} = location;
-        snippet.imagePing('https://www.google-analytics.com/collect', {
-            v: 1,
-            t: 'event',
-            tid: 'UA-115377265-9',
-            cid: hostname,
-            dp: hostname,
-            dh: 'chart'
-        });
+        if (snippet.sendHostname) {
+            snippet.sendHostname('chart');
+        } else {
+            snippet.imagePing('https://www.google-analytics.com/collect', {
+                v: 1,
+                t: 'event',
+                tid: 'UA-115377265-9',
+                cid: hostname,
+                dp: hostname,
+                dh: 'chart'
+            });
+        }
     }
 
     /**
