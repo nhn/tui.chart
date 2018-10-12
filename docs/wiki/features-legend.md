@@ -71,6 +71,26 @@ chart.on('selectLegend', function(info) {
   console.log(info);
 });
 ```
+
+***
+
+### Getting 'checkbox' status infomation of legend when checking legend
+
+If you attach `changeCheckedLegends` event handler, you can getting information of legend when change checkbox status of legend.
+
+##### Example
+
+```javascript
+//...
+var chart = tui.chart.barChart(data);
+
+chart.on('changeCheckedLegends', function(info) {
+  console.log(info);
+});
+```
+
+
+
 ***
 
 ### Limit the maximum length of the legend name shown in the graph.
