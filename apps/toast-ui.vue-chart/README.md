@@ -1,6 +1,6 @@
 # Vue wrapper for TOAST UI Chart
 
-> This is Vue component wrapping [TOAST UI Chart](https://github.nhnent.com/fe/tui.chart).
+> This is Vue component wrapping [TOAST UI Chart](https://github.com/nhnent/tui.chart).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 [![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-chart.svg)](https://github.com/nhnent/toast-ui.vue-chart/releases/latest)
