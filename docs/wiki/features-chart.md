@@ -173,7 +173,8 @@ chart.setData({
     series: [
         {
             name: 'Budget',
-            data: [5000, 3000, 5000, 7000, 6000, 4000]
+            data: [5000, 3000, 5000, 7000, 6000, 4000],
+            visible: false
         },
         {
             name: 'Income',
