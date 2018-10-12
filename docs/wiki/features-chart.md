@@ -195,8 +195,6 @@ Using `.getCheckedLegend` method, you can get the `checkbox` status information 
 
 ```javascript
 //...
-
-//...
 var chart = tui.chart.barChart(data);
 
 var checkedLegendInfo = chart.getCheckedLegend();
