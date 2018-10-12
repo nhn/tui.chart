@@ -155,3 +155,51 @@ chart.resize({
     height: 800
 });
 ```
+
+***
+
+### Change the data in the chart.
+
+Using `.setData` method, you can change the data in the chart.
+
+##### Example
+
+```javascript
+//...
+var chart = tui.chart.barChart(data);
+
+chart.setData({
+    categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+    series: [
+        {
+            name: 'Budget',
+            data: [5000, 3000, 5000, 7000, 6000, 4000]
+        },
+        {
+            name: 'Income',
+            data: [8000, 1000, 7000, 2000, 5000, 3000]
+        }
+    ]
+});
+```
+
+
+***
+
+### Getting 'checkbox' status information of the legend.
+
+Using `.getCheckedLegend` method, you can get the `checkbox` status information of the legend.
+
+##### Example
+
+```javascript
+//...
+
+//...
+var chart = tui.chart.barChart(data);
+
+var checkedLegendInfo = chart.getCheckedLegend();
+
+console.log(checkedLegendInfo);
+```
+
