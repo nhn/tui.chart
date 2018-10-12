@@ -6,17 +6,15 @@
     "docs:docCopyToLatest": "cp -r ./doc/* ./latest && cd ./latest && mkdir dist",
     "docs:docCopyToCurrentVersion": "mkdir -p $(node versionPicker.js)/dist && cp -r ./doc/* ./$(node versionPicker.js)",
     "docs:docRemove": "rm -rf ./doc",
-    "copy": "npm run copy:distToLatest && npm run copy:distToCurrentVersion && npm run copy:codemirrorToCurrentVersion && npm run copy:codemirrorToLatest && npm run copy:corejsToLatest && npm run copy:removeBowerComponents && npm run copy:removeNodeModules",
+    "copy": "npm run copy:distToLatest && npm run copy:distToCurrentVersion && npm run copy:codemirrorToCurrentVersion && npm run copy:codemirrorToLatest && npm run copy:removeBowerComponents && npm run copy:removeNodeModules",
     "copy:distToLatest": "cp -r ./bower_components/tui-chart/dist/ ./latest/dist",
     "copy:distToCurrentVersion": "cp -r ./bower_components/tui-chart/dist/ ./$(node versionPicker.js)/dist",
     "copy:codemirrorToLatest": "mkdir -p latest/node_modules/codemirror && cp -R ./node_modules/codemirror/ ./latest/node_modules/codemirror",
-    "copy:corejsToLatest": "mkdir -p latest/node_modules/core-js && cp -R ./node_modules/core-js/ ./latest/node_modules/core-js",
     "copy:codemirrorToCurrentVersion": "mkdir -p $(node versionPicker.js)/node_modules/codemirror && cp -R ./node_modules/codemirror/ ./$(node versionPicker.js)/node_modules/codemirror",
     "copy:removeBowerComponents": "rm -rf ./bower_components",
     "copy:removeNodeModules": "rm -rf ./node_modules"
   },
   "dependencies": {
-    "codemirror": "5.24.0",
-    "core-js": "2.5.7"
+    "codemirror": "5.24.0"
   }
 }
