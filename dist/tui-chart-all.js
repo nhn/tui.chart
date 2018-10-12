@@ -2,10 +2,10 @@
  * tui-chart-all
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.3.1
+ * @version 3.4.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Aug 07 2018 12:40:22 GMT+0900 (KST)"
+ * bundle created at "Fri Oct 12 2018 10:29:38 GMT+0900 (KST)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -15871,6 +15871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    beforeShowTooltip: true,
 	    afterShowTooltip: true,
 	    beforeHideTooltip: true,
+	    changeCheckedLegends: true,
 	    zoom: true
 	  },
 	  /** for radial */
@@ -21160,6 +21161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * RaphaelLineCharts is graph renderer for line chart.
 	     * @constructs RaphaelRadialLineSeries
 	     * @extends RaphaelLineTypeBase
+	     * @ignore
 	     */
 	    function RaphaelRadialLineSeries() {
 	        _classCallCheck(this, RaphaelRadialLineSeries);
@@ -28541,6 +28543,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * On change selected legend.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+	     * @ignore
 	     */
 	
 	
@@ -28618,6 +28621,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _boundsAndScaleBuilder2 = _interopRequireDefault(_boundsAndScaleBuilder);
 	
+	var _themeManager = __webpack_require__(361);
+	
+	var _themeManager2 = _interopRequireDefault(_themeManager);
+	
 	var _predicate = __webpack_require__(342);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
@@ -28652,6 +28659,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * theme
 	         * @type {object}
+	         * @ignore
 	         */
 	        this.theme = params.theme;
 	
@@ -28674,42 +28682,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * whether chart has axes or not
 	         * @type {boolean}
+	         * @ignore
 	         */
 	        this.hasAxes = params.hasAxes;
 	
 	        /**
 	         * whether vertical or not
 	         * @type {boolean}
+	         * @ignore
 	         */
 	        this.isVertical = !!params.isVertical;
 	
 	        /**
 	         * data processor
 	         * @type {DataProcessor}
+	         * @ignore
 	         */
 	        this.dataProcessor = this._createDataProcessor(params);
 	
 	        /**
 	         * event bus for transmitting message
 	         * @type {object}
+	         * @ignore
 	         */
 	        this.eventBus = new _tuiCodeSnippet2['default'].CustomEvents();
 	
 	        /**
 	         * previous xAxis data
 	         * @type {null|object}
+	         * @ignore
 	         */
 	        this.prevXAxisData = null;
 	
 	        /**
 	         * component manager
 	         * @type {ComponentManager}
+	         * @ignore
 	         */
 	        this.componentManager = this._createComponentManager();
 	
 	        /**
 	         * Whether has right y axis or not.
 	         * @type {boolean}
+	         * @ignore
 	         */
 	        this.hasRightYAxis = _tuiCodeSnippet2['default'].isArray(this.options.yAxis) && this.options.yAxis.length > 1;
 	
@@ -28729,17 +28744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    ChartBase.prototype._sendHostName = function _sendHostName() {
-	        var _location = location,
-	            hostname = _location.hostname;
-	
-	        _tuiCodeSnippet2['default'].imagePing('https://www.google-analytics.com/collect', {
-	            v: 1,
-	            t: 'event',
-	            tid: 'UA-115377265-9',
-	            cid: hostname,
-	            dp: hostname,
-	            dh: 'chart'
-	        });
+	        _tuiCodeSnippet2['default'].sendHostname('chart');
 	    };
 	
 	    /**
@@ -28916,6 +28921,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Add components.
 	     * @abstract
+	     * @ignore
 	     */
 	
 	
@@ -28924,6 +28930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Get scale option.
 	     * @abstract
+	     * @ignore
 	     */
 	
 	
@@ -28990,6 +28997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Add data ratios.
 	     * @abstract
+	     * @ignore
 	     */
 	
 	
@@ -28999,6 +29007,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Make chart ready for render, it should be invoked before render, rerender, resize and zoom.
 	     * @param {?boolean} addingDataMode - whether adding data mode or not
 	     * @returns {object} Bounds and scale data
+	     * @ignore
 	     */
 	
 	
@@ -29017,6 +29026,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Render chart.
 	     * @param {HTMLElement} wrapper chart wrapper element
+	     * @ignore
 	     */
 	
 	
@@ -29043,19 +29053,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        componentManager.render('render', boundsAndScale, {
 	            checkedLegends: seriesVisibilityMap
 	        }, container);
-	
 	        this.chartContainer = container;
 	        this.paper = raphaelPaper;
 	    };
 	
 	    /**
-	     * Rerender.
-	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+	     * protectedRerender
+	     * @param {{line: Array.<boolean>, column: Array.<boolean>}} checkedLegends checked legends
 	     * @param {?object} rawData rawData
+	     * @ignore
 	     */
 	
 	
-	    ChartBase.prototype.rerender = function rerender(checkedLegends, rawData) {
+	    ChartBase.prototype.protectedRerender = function protectedRerender(checkedLegends, rawData) {
 	        var dataProcessor = this.dataProcessor;
 	
 	
@@ -29071,19 +29081,124 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
+	     * rerender
+	     * @param {{column: Array.<string>, line: Array.<string>}} checkedLegends data that whether series has checked or not
+	     * @param {object} rawData rawData
+	     * @api
+	     * @deprecated
+	     */
+	
+	
+	    ChartBase.prototype.rerender = function rerender(checkedLegends, rawData) {
+	        checkedLegends = checkedLegends || this.getCheckedLegend();
+	        rawData = rawData || this.dataProcessor.getOriginalRawData();
+	
+	        var seriesData = rawData.series;
+	
+	        rawData.series = Object.keys(seriesData).reduce(function (result, item) {
+	            var series = seriesData[item];
+	            var checkedInfo = checkedLegends[item];
+	
+	            result[item] = series.map(function (seriesItem, index) {
+	                seriesItem.visible = checkedInfo[index];
+	
+	                return seriesItem;
+	            });
+	
+	            return result;
+	        }, {});
+	
+	        this.setData(rawData);
+	    };
+	
+	    /**
+	     * setData
+	     * @param {object} rawData rawData
+	     * @api
+	     */
+	
+	
+	    ChartBase.prototype.setData = function setData() {
+	        var rawData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	
+	        var data = this._initializeRawData(rawData);
+	        var dataProcessor = this.dataProcessor;
+	        var _options = this.options,
+	            chartType = _options.chartType,
+	            themeOptions = _options.theme;
+	
+	
+	        dataProcessor.initData(data, true);
+	
+	        var theme = _themeManager2['default'].get(themeOptions, chartType, data.series);
+	
+	        this.theme = theme;
+	        this.componentManager.presetForChangeData(theme);
+	        this.protectedRerender(dataProcessor.getLegendVisibility());
+	    };
+	
+	    /**
+	     * Get checked indexes.
+	     * @returns {{column: ?Array.<string>, line: ?Array.<string>}} object data that whether series has checked or not
+	     * @api
+	     */
+	
+	
+	    ChartBase.prototype.getCheckedLegend = function getCheckedLegend() {
+	        var componentManager = this.componentManager,
+	            dataProcessor = this.dataProcessor;
+	
+	        var hasLegendComponent = componentManager.has('legend');
+	
+	        return hasLegendComponent ? componentManager.get('legend').getCheckedIndexes() : dataProcessor.getLegendVisibility();
+	    };
+	
+	    /**
+	     * initialize rawData
+	     * @param {object} rawData rawData
+	     * @returns {object} - remaked rawData
+	     * @private
+	     */
+	
+	
+	    ChartBase.prototype._initializeRawData = function _initializeRawData(rawData) {
+	        var data = _objectUtil2['default'].deepCopy(rawData);
+	        var _options2 = this.options,
+	            chartType = _options2.chartType,
+	            seriesOption = _options2.series;
+	
+	
+	        if (chartType !== 'combo' && _tuiCodeSnippet2['default'].isArray(data.series)) {
+	            var clonedSeries = data.series;
+	            data.series = {};
+	            data.series[chartType] = clonedSeries;
+	        }
+	
+	        _rawDataHandler2['default'].updateRawSeriesDataByOptions(data, seriesOption);
+	
+	        if (chartType === 'boxplot') {
+	            _rawDataHandler2['default'].appendOutliersToSeriesData(data);
+	        }
+	
+	        return data;
+	    };
+	
+	    /**
 	     * On change checked legend.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
 	     * @param {?object} rawData rawData
 	     * @param {?object} boundsParams addition params for calculating bounds
+	     * @ignore
 	     */
 	
 	
 	    ChartBase.prototype.onChangeCheckedLegends = function onChangeCheckedLegends(checkedLegends, rawData, boundsParams) {
-	        this.rerender(checkedLegends, rawData, boundsParams);
+	        this.protectedRerender(checkedLegends, rawData, boundsParams);
 	    };
 	
 	    /**
 	     * Animate chart.
+	     * @ignore
 	     */
 	
 	
@@ -29095,6 +29210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Register of user event.
 	     * @param {string} eventName event name
 	     * @param {function} func event callback
+	     * @ignore
 	     */
 	
 	
@@ -29108,6 +29224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Remove user event.
 	     * @param {string} eventName event name
 	     * @param {function} func event callback
+	     * @ignore
 	     */
 	
 	
@@ -29370,6 +29487,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} index - category index
 	     * @param {number} seriesIndex - series index
 	     * @returns {object}
+	     * @private
 	     */
 	
 	
@@ -29728,13 +29846,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {string} name component name
 	     * @param {string} classType component factory name
 	     * @param {object} [params={}] optional params that for alternative charts
+	     * @ignore
 	     */
 	
 	
 	    ComponentManager.prototype.register = function register(name, classType) {
 	        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-	
-	        var optionKey = void 0;
 	
 	        var index = params.index || 0;
 	        var componentFactory = COMPONENT_FACTORY_MAP[classType];
@@ -29746,41 +29863,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        params.chartOptions = this.options;
 	        params.seriesTypes = this.seriesTypes;
 	
-	        if (componentType === 'axis') {
-	            // Get theme and options by axis name
-	            // As axis has 3 types(xAxis, yAxis, rightYAxis)
-	            optionKey = name;
-	        } else {
-	            optionKey = componentType;
-	        }
+	        var optionKey = this._getOptionKey(componentType, name);
 	
-	        params.theme = this.theme[optionKey];
-	        params.options = this.options[optionKey];
-	
-	        if (!params.theme && optionKey === 'rightYAxis') {
-	            params.theme = this.theme.yAxis;
-	        }
-	
-	        if (!params.options && optionKey === 'rightYAxis') {
-	            params.options = this.options.yAxis;
-	        }
-	
-	        if (optionKey === 'series') {
-	            this.seriesTypes.forEach(function (seriesType) {
-	                if (name.indexOf(seriesType) === 0) {
-	                    params.options = params.options[seriesType] || params.options; // For combo chart, options are set for each chart
-	                    params.theme = params.theme[seriesType]; // For combo, single chart, themes are set for each chart
-	
-	                    if (_tuiCodeSnippet2['default'].isArray(params.options)) {
-	                        params.options = params.options[index] || {};
-	                    }
-	
-	                    return false;
-	                }
-	
-	                return true;
-	            });
-	        }
+	        params.theme = this._makeTheme(optionKey, name);
+	        params.options = this._makeOptions(optionKey, name, index);
 	
 	        params.dataProcessor = this.dataProcessor;
 	        params.hasAxes = this.hasAxes;
@@ -29800,6 +29886,109 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.components.push(component);
 	            this.componentMap[name] = component;
 	        }
+	    };
+	
+	    /**
+	     * Preset components for setData
+	     * @param {object} theme theme object
+	     * @ignore
+	     */
+	
+	
+	    ComponentManager.prototype.presetForChangeData = function presetForChangeData(theme) {
+	        var _this = this;
+	
+	        this.theme = theme;
+	        this.components.forEach(function (component) {
+	            if (component.presetForChangeData) {
+	                var componentType = component.componentType,
+	                    componentName = component.componentName;
+	
+	                var optionKey = _this._getOptionKey(componentType, componentName);
+	
+	                component.presetForChangeData(_this._makeTheme(optionKey, componentName));
+	            }
+	        });
+	    };
+	
+	    /**
+	     * Make option
+	     * @param {string} optionKey Key on which to create the option.
+	     * @param {string} name name of component
+	     * @param {number} index index of chart for series option
+	     * @returns {object} option
+	     * @private
+	     */
+	
+	
+	    ComponentManager.prototype._makeOptions = function _makeOptions(optionKey, name, index) {
+	        var options = this.options[optionKey];
+	
+	        if (!options && optionKey === 'rightYAxis') {
+	            options = this.options.yAxis;
+	        }
+	
+	        if (optionKey === 'series') {
+	            this.seriesTypes.forEach(function (seriesType) {
+	                if (name.indexOf(seriesType) === 0) {
+	                    options = options[seriesType] || options; // For combo chart, options are set for each chart
+	
+	                    if (_tuiCodeSnippet2['default'].isArray(options)) {
+	                        options = options[index] || {};
+	                    }
+	
+	                    return false;
+	                }
+	
+	                return true;
+	            });
+	        }
+	
+	        return options;
+	    };
+	
+	    /**
+	     * Make option key
+	     * @param {string} type type of component
+	     * @param {name} name name of component
+	     * @returns {string} optionKey Key on which to create the option.
+	     * @private
+	     */
+	
+	
+	    ComponentManager.prototype._getOptionKey = function _getOptionKey(type, name) {
+	        return type === 'axis' ? name : type;
+	    };
+	
+	    /**
+	     * Make theme
+	     * @param {string} optionKey Key on which to create the option.
+	     * @param {string} name name of component
+	     * @returns {object} theme
+	     * @private
+	     */
+	
+	
+	    ComponentManager.prototype._makeTheme = function _makeTheme(optionKey, name) {
+	        var theme = this.theme[optionKey];
+	
+	        if (!theme && optionKey === 'rightYAxis') {
+	            theme = this.theme.yAxis;
+	        }
+	
+	        if (optionKey === 'series') {
+	            this.seriesTypes.forEach(function (seriesType) {
+	                if (name.indexOf(seriesType) === 0) {
+	                    theme = theme[seriesType]; // For combo, single chart, themes are set for each chart
+	
+	                    return false;
+	                }
+	
+	                return true;
+	            });
+	        }
+	
+	        return theme;
 	    };
 	
 	    /**
@@ -29855,7 +30044,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    ComponentManager.prototype.render = function render(funcName, boundsAndScale, additionalData, container) {
-	        var _this = this;
+	        var _this2 = this;
 	
 	        var elements = this.components.map(function (component) {
 	            var element = null;
@@ -29863,8 +30052,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (component[funcName]) {
 	                var name = component.componentName;
 	                var type = component.componentType;
-	                var paper = _this.drawingToolPicker.getPaper(container, component.drawingType);
-	                var data = _this._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
+	                var paper = _this2.drawingToolPicker.getPaper(container, component.drawingType);
+	                var data = _this2._makeDataForRendering(name, type, paper, boundsAndScale, additionalData);
 	
 	                var result = component[funcName](data);
 	
@@ -30853,6 +31042,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *      @param {number} params.vTickCount vertical tick count
 	     *      @param {number} params.hTickCount horizontal tick count
 	     *      @param {object} params.theme axis theme
+	     * @ignore
 	     */
 	    function Plot(params) {
 	        _classCallCheck(this, Plot);
@@ -30916,6 +31106,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this.drawingType = _const2['default'].COMPONENT_TYPE_RAPHAEL;
 	    }
+	
+	    /**
+	     * Preset components for setData
+	     * @param {object} theme theme object
+	     * @ignore
+	     */
+	
+	
+	    Plot.prototype.presetForChangeData = function presetForChangeData() {
+	        var theme = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.theme;
+	
+	        this.theme = theme;
+	    };
 	
 	    /**
 	     * Render plot area.
@@ -31782,6 +31985,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   *      @param {object} params.theme title theme
 	   *      @param {object} params.options title options
 	   *      @param {object} params.text title text content
+	   * @ignore
 	   */
 	  function Title(params) {
 	    _classCallCheck(this, Title);
@@ -31982,6 +32186,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *      @param {number} params.vTickCount vertical tick count
 	     *      @param {number} params.hTickCount horizontal tick count
 	     *      @param {object} params.theme axis theme
+	     * @ignore
 	     */
 	    function RadialPlot(params) {
 	        _classCallCheck(this, RadialPlot);
@@ -33965,6 +34170,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
+	     * Preset components for setData
+	     * @param {object} theme theme object
+	     * @ignore
+	     */
+	
+	
+	    Legend.prototype.presetForChangeData = function presetForChangeData() {
+	        var theme = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.theme;
+	
+	        this.theme = theme;
+	
+	        this.legendModel = new _legendModel2['default']({
+	            theme: this.theme,
+	            labels: this.dataProcessor.getLegendLabels(),
+	            legendData: this.dataProcessor.getLegendData(),
+	            seriesTypes: this.seriesTypes,
+	            chartType: this.chartType
+	        });
+	    };
+	
+	    /**
 	     * Set data for rendering.
 	     * @param {{
 	     *      layout: {
@@ -34002,7 +34228,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    Legend.prototype.render = function render(data) {
 	        this._render(data);
-	
 	        this._listenEvents();
 	    };
 	
@@ -34126,6 +34351,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
+	     * Fire changeCheckedLegends public event.
+	     * @private
+	     */
+	
+	
+	    Legend.prototype._fireChangeCheckedLegendsPublicEvent = function _fireChangeCheckedLegendsPublicEvent() {
+	        this.eventBus.fire(PUBLIC_EVENT_PREFIX + 'changeCheckedLegends', this.legendModel.getCheckedIndexes());
+	    };
+	
+	    /**
 	     * Fire selectLegend event.
 	     * @param {{chartType: string, index: number}} data data
 	     * @private
@@ -34202,6 +34437,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
+	     * Get checked indexes.
+	     * @returns {{column: ?Array.<string>, line: ?Array.<string>}} object data that whether series has checked or not
+	     * @ignore
+	     */
+	
+	
+	    Legend.prototype.getCheckedIndexes = function getCheckedIndexes() {
+	        return this.legendModel.getCheckedIndexes();
+	    };
+	
+	    /**
 	     * Check legend.
 	     * @private
 	     */
@@ -34215,6 +34461,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        this._fireChangeCheckedLegendsEvent();
+	        this._fireChangeCheckedLegendsPublicEvent();
 	
 	        if (selectedData) {
 	            this._fireSelectLegendEvent(selectedData);
@@ -34643,10 +34890,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    LegendModel.prototype._addSendingDatum = function _addSendingDatum(index) {
 	        var legendDatum = this.getDatum(index);
-	        if (!this.checkedIndexesMap[legendDatum.chartType]) {
-	            this.checkedIndexesMap[legendDatum.chartType] = [];
+	        var chartType = legendDatum.chartType,
+	            chartIndex = legendDatum.index;
+	
+	
+	        if (!this.checkedIndexesMap[chartType]) {
+	            this.checkedIndexesMap[chartType] = new Array(this.labels[chartType].length).fill(false);
 	        }
-	        this.checkedIndexesMap[legendDatum.chartType][legendDatum.index] = true;
+	        this.checkedIndexesMap[chartType][chartIndex] = true;
 	    };
 	
 	    /**
@@ -34667,7 +34918,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    LegendModel.prototype.getCheckedIndexes = function getCheckedIndexes() {
-	        return this.checkedIndexesMap;
+	        var _this3 = this;
+	
+	        return Object.keys(this.checkedIndexesMap).reduce(function (booleanizeObject, chartType) {
+	            booleanizeObject[chartType] = Array.from(_this3.checkedIndexesMap[chartType], function (checked) {
+	                return !!checked;
+	            });
+	
+	            return booleanizeObject;
+	        }, {});
 	    };
 	
 	    /**
@@ -34688,12 +34947,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    LegendModel.prototype.updateCheckedLegendsWith = function updateCheckedLegendsWith(indexes) {
-	        var _this3 = this;
+	        var _this4 = this;
 	
 	        this._resetCheckedData();
 	        indexes.forEach(function (index) {
-	            _this3._updateCheckedIndex(index);
-	            _this3._addSendingDatum(index);
+	            _this4._updateCheckedIndex(index);
+	            _this4._addSendingDatum(index);
 	        });
 	        this._setData();
 	    };
@@ -36051,6 +36310,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this._attachToEventBus();
 	    }
+	
+	    /**
+	     * Preset components for setData
+	     * @param {object} theme theme object
+	     * @ignore
+	     */
+	
+	
+	    TooltipBase.prototype.presetForChangeData = function presetForChangeData() {
+	        var theme = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.theme;
+	
+	        this.theme = theme;
+	        this.originalTheme = _objectUtil2['default'].deepCopy(theme);
+	    };
 	
 	    /**
 	     * Attach to event bus.
@@ -42139,7 +42412,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * Theme
 	         * @type {object}
 	         */
-	
 	        this.orgTheme = this.theme = params.theme;
 	
 	        /**
@@ -42260,6 +42532,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var decorateFunc = (_tuiCodeSnippet2['default'].isArray(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem).bind(_renderUtil2['default']);
 	
 	        return decorateFunc(targetLabel, labelPrefix, labelSuffix);
+	    };
+	
+	    /**
+	     * Preset components for setData
+	     * @param {object} theme theme object
+	     * @ignore
+	     */
+	
+	
+	    Series.prototype.presetForChangeData = function presetForChangeData() {
+	        var theme = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.orgTheme;
+	
+	        this.orgTheme = theme;
+	        this.theme = theme;
+	        if (this.chartType === 'treemap') {
+	            this.boundMap = null;
+	        }
 	    };
 	
 	    /**
@@ -49077,15 +49366,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Initialize data.
 	     * @param {rawData} rawData raw data
+	     * @param {boolean} originalChange whether the original has changed
 	     */
 	
 	
 	    DataProcessor.prototype.initData = function initData(rawData) {
+	        var originalChange = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	
 	        /**
 	         * raw data
 	         * @type {rawData}
 	         */
 	        this.rawData = rawData;
+	
+	        if (originalChange) {
+	            this.originalRawData = _objectUtil2['default'].deepCopy(rawData);
+	            this.originalLegendData = null;
+	        }
 	
 	        /**
 	         * categoriesMap
@@ -49110,6 +49407,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {object.<string, SeriesDataModel>}
 	         */
 	        this.seriesDataModelMap = {};
+	
+	        /**
+	         * legendVisiblities
+	         * @type {{column: Array.<string>, line: Array.<string> | Array.<string>}}
+	         */
+	        this.legendVisibilities = null;
+	
+	        /**
+	         * zoomed raw data
+	         * @type {object} zoomed raw data
+	         */
+	        this.zoomedRawData = null;
 	
 	        /**
 	         * SeriesGroups
@@ -50839,6 +51148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} options - options
 	     * @param {Array.<function>} formatFunctions - format functions
 	     * @param {boolean} isCoordinateType - whether coordinate type or not
+	     * @private
 	     */
 	    function SeriesDataModel(rawSeriesData, chartType, options, formatFunctions, isCoordinateType) {
 	        _classCallCheck(this, SeriesDataModel);
@@ -52483,6 +52793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {string} chartType - chart type
 	   * @param {object} options - options
 	   * @param {Array.<function>} formatFunctions - format functions
+	   * @private
 	   */
 	  function SeriesDataModelForBoxplot(rawSeriesData, chartType, options, formatFunctions) {
 	    _classCallCheck(this, SeriesDataModelForBoxplot);
@@ -57747,6 +58058,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Add data.
 	     * @param {string} category - category
 	     * @param {Array} values - values
+	     * @api
 	     */
 	
 	
@@ -58186,7 +58498,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        this.checkedLegends = checkedLegends;
-	        chart.rerender(checkedLegends, rawData, boundsParams);
+	        chart.protectedRerender(checkedLegends, rawData, boundsParams);
 	
 	        if (!pastPaused) {
 	            setTimeout(function () {
@@ -58345,6 +58657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Series class
 	         * @type {function}
+	         * @ignore
 	         */
 	        _this.Series = _areaChartSeries2['default'];
 	
@@ -58356,6 +58669,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Add data.
 	     * @param {string} category - category
 	     * @param {Array} values - values
+	     * @api
 	     */
 	
 	
@@ -58369,6 +58683,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {?object} rawData rawData
 	     * @param {?object} boundsParams addition params for calculating bounds
 	     * @override
+	     * @ignore
 	     */
 	
 	
@@ -58381,6 +58696,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Add data ratios.
 	     * from axisTypeMixer
 	     * @override
+	     * @ignore
 	     */
 	
 	
@@ -58410,6 +58726,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Add components
 	     * @override
+	     * @ignore
 	     */
 	
 	
@@ -58433,6 +58750,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * from lineTypeMixer
 	     * @returns {{xAxis: ?{valueType:string}, yAxis: ?(boolean|{valueType:string})}}
 	     * @override
+	     * @ignore
 	     */
 	
 	
@@ -58520,6 +58838,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * nnfrom chart/zoomMixer
 	     * @param {Array.<number>} indexRange - index range for zoom
 	     * @override
+	     * @ignore
 	     */
 	
 	
@@ -58533,6 +58852,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * On reset zoom.
 	     * from chart/zoomMixer
 	     * @override
+	     * @ignore
 	     */
 	
 	
@@ -58656,6 +58976,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * On change selected legend.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+	     * @ignore
 	     */
 	
 	
@@ -58670,7 +58991,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.chartTypes = typeData.chartTypes;
 	        this.seriesTypes = typeData.seriesTypes;
 	
-	        this.rerender(checkedLegends, rawData, typeData);
+	        this.protectedRerender(checkedLegends, rawData, typeData);
 	    };
 	
 	    /**
@@ -59108,6 +59429,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * yAxis options
 	         * @type {object}
+	         * @ignore
 	         */
 	        var _this = _possibleConstructorReturn(this, _ChartBase.call(this, {
 	            rawData: rawData,
@@ -59134,6 +59456,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * On change selected legend.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+	     * @ignore
 	     */
 	
 	
@@ -59251,6 +59574,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Add data.
 	     * @param {string} category - category
 	     * @param {Array} values - values
+	     * @api
 	     */
 	
 	
@@ -60703,6 +61027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @constructs MapChartMapModel
 	     * @param {MapChartDataProcessor} dataProcessor Map chart data processor
 	     * @param {Array.<{name: string, path: string, labelCoordinate: ?{x: number, y:number}}>} rawMapData raw map data
+	     * @ignore
 	     */
 	    function MapChartMapModel(dataProcessor, rawMapData) {
 	        _classCallCheck(this, MapChartMapModel);
@@ -61420,6 +61745,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Series class
 	         * @type {function}
+	         * @ignore
 	         */
 	        _this.Series = _lineChartSeries2['default'];
 	        return _this;
@@ -61569,6 +61895,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * On change selected legend.
 	     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+	     * @ignore
 	     */
 	
 	
