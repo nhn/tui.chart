@@ -3,7 +3,6 @@
 ## 🚩 Table of Contents
 * [Install](#-install)
     * [Using npm](#using-npm)
-    * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
 * [Usage](#-usage)
     * [Load](#load)
     * [Components](#components)
@@ -25,50 +24,33 @@
 npm install --save @toast-ui/vue-chart
 ```
 
-### Via Contents Delivery Network (CDN)
-
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
-
-You can use the CDN as below.
-
-```html
-<script src="https://uicdn.toast.com/toast-ui.vue-chart/latest/vue-chart.js"></script>
-```
-
 ## 📊 Usage
 
 ### Load
+
+You can use Toast UI Chart for Vue as moudule format or namespace. When using module format, you should load `tui-chart.css` in the script.
+
+* Using Ecmascript module
+
+    ```js
+    import 'tui-chart/dist/tui-chart.css'
+    import { barChart, lineChart } from '@toast-ui/vue-chart'
+    ```
+
+* Using Commonjs module
+
+    ```js
+    require('tui-chart/dist/tui-chart.css');
+    var toastui = require('@toast-ui/vue-chart');
+    var barChart = toastui.barChart;
+    var lineChart = toastui.lineChart;
+    ```
 
 * Using namespace
 
     ```js
     var barChart = toastui.barChart;
-    ```
-
-* Using module
-
-    ```js
-    // es modules
-    import { barChart, lineChart } from '@toast-ui/vue-chart'
-    // commonjs require
-    var ToustUI = require('@toast-ui/vue-chart'); // you can use ToustUI.barChart
-    ```
-
-* Using `<script>`
-  
-    If you just add javascript file to your html, you use CDN or `vue-chart.js` downloaded. Insert `vue-chart.js` with `vue` in your html like this:
-    
-    ```html
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="path/to/vue-chart.js"></script>
-    ```
-
-* Using only Vue wrapper component
-
-    `vue-chart.js` has all of the tui.chart. If you only need vue wrapper component, you can use `@toast-ui/vue-chart/src/index.js` like this:
-
-    ```js
-    import { barChart, lineChart } from '@toast-ui/vue-chart/src/index'
+    var lineChart = toastui.lineChart;
     ```
 
 ### Components
@@ -101,6 +83,7 @@ You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.cha
 2. Load chart component and then add it to the `components` in your component or Vue instance.
 
     ```js
+    import 'tui-chart/dist/tui-chart.css'
     import { barChart } from '@toast-ui/vue-chart'
 
     export default {
@@ -128,6 +111,7 @@ You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.cha
     ```
     or
     ```js
+    import 'tui-chart/dist/tui-chart.css'
     import { barChart } from '@toast-ui/vue-chart'
 
     new Vue({
@@ -178,6 +162,7 @@ For more information, see `rawData` of each types chart in [tui.chart document](
         <line-chart :data="chartData"/>
     </template>
     <script>
+    import 'tui-chart/dist/tui-chart.css'
     import { lineChart } from '@toast-ui/vue-chart';
 
     export default {
@@ -233,6 +218,7 @@ This prop is for [options of tui.chart](http://nhnent.github.io/tui.chart/latest
         <line-chart :data="chartData" :options="chartOptions"/>
     </template>
     <script>
+    import 'tui-chart/dist/tui-chart.css'
     import { lineChart } from '@toast-ui/vue-chart';
 
     export default {
@@ -289,6 +275,7 @@ For more information see [registerTheme of tui.chart](http://nhnent.github.io/tu
         <line-chart :data="chartData" :theme="chartTheme"/>
     </template>
     <script>
+    import 'tui-chart/dist/tui-chart.css'
     import { lineChart } from '@toast-ui/vue-chart';
 
     export default {
@@ -341,6 +328,7 @@ For more information see [registerMap of tui.chart](http://nhnent.github.io/tui.
         <map-chart :data="chartData" map="south-korea"/>
     </template>
     <script>
+    import 'tui-chart/dist/tui-chart.css'
     import { mapChart } from '@toast-ui/vue-chart';
 
     export default {
@@ -380,6 +368,7 @@ For more information see [registerMap of tui.chart](http://nhnent.github.io/tui.
         <map-chart :data="chartData" :map="mapData"/>
     </template>
     <script>
+    import 'tui-chart/dist/tui-chart.css'
     import { mapChart } from '@toast-ui/vue-chart';
 
     export default {
@@ -433,6 +422,7 @@ For more information see [registerMap of tui.chart](http://nhnent.github.io/tui.
         />
     </template>
     <script>
+    import 'tui-chart/dist/tui-chart.css'
     import { barChart } from '@toast-ui/vue-chart'
 
     export default {

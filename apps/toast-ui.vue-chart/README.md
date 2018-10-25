@@ -1,4 +1,4 @@
-# Vue wrapper for TOAST UI Chart
+# TOAST UI Chart for Vue
 
 > This is Vue component wrapping [TOAST UI Chart](https://github.com/nhnent/tui.chart).
 
@@ -7,13 +7,12 @@
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-chart.svg)](https://www.npmjs.com/package/@toast-ui/vue-chart)
 [![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-chart.svg)](https://github.com/nhnent/toast-ui.vue-chart/blob/master/LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-chart/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
+[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 * [Install](#-install)
     * [Using npm](#using-npm)
-    * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
 * [Usage](#-usage)
     * [Load](#load)
     * [Components](#components)
@@ -22,16 +21,23 @@
     * [Event](#event)
     * [Method](#method)
 * [Pull Request Steps](#-pull-request-steps)
-    * [Setup](#setup)
-    * [Develop](#develop)
-    * [Pull Request Steps](#pull-request)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [License](#-license)
 
 ## Collect statistics on the use of open source
 
-Vue Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, include tui-code-snippet.js and then immediately write the options as follows:
+Vue Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` options when declare Vue Wrapper compoent.
+
+```js
+var options = {
+    ...
+    usageStatistics: false
+}
+```
+
+Or, include include `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
+
 ```js
 tui.usageStatistics = false;
 ```
@@ -44,50 +50,33 @@ tui.usageStatistics = false;
 npm install --save @toast-ui/vue-chart
 ```
 
-### Via Contents Delivery Network (CDN)
-
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
-
-You can use the CDN as below.
-
-```html
-<script src="https://uicdn.toast.com/toast-ui.vue-chart/latest/vue-chart.js"></script>
-```
-
 ## 📊 Usage
 
 ### Load
+
+You can use Toast UI Chart for Vue as moudule format or namespace. When using module format, you should load `tui-chart.css` in the script.
+
+* Using Ecmascript module
+
+    ```js
+    import 'tui-chart/dist/tui-chart.css'
+    import { barChart, lineChart } from '@toast-ui/vue-chart'
+    ```
+
+* Using Commonjs module
+
+    ```js
+    require('tui-chart/dist/tui-chart.css');
+    var toastui = require('@toast-ui/vue-chart');
+    var barChart = toastui.barChart;
+    var lineChart = toastui.lineChart;
+    ```
 
 * Using namespace
 
     ```js
     var barChart = toastui.barChart;
-    ```
-
-* Using module
-
-    ```js
-    // es modules
-    import { barChart, lineChart } from '@toast-ui/vue-chart'
-    // commonjs require
-    var ToustUI = require('@toast-ui/vue-chart'); // you can use ToustUI.barChart
-    ```
-
-* Using `<script>`
-  
-    If you just add javascript file to your html, you use CDN or `vue-chart.js` downloaded. Insert `vue-chart.js` with `vue` in your html like this:
-
-    ```html
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="path/to/vue-chart.js"></script>
-    ```
-
-* Using only Vue wrapper component
-
-    `vue-chart.js` has all of the tui.chart. If you only need vue wrapper component, you can use `@toast-ui/vue-chart/src/index.js` like this:
-
-    ```js
-    import { barChart, lineChart } from '@toast-ui/vue-chart/src/index'
+    var lineChart = toastui.lineChart;
     ```
 
 ### Components
@@ -122,6 +111,7 @@ You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.cha
     If you want to use `barChart`, implement like this:
 
     ```js
+    import 'tui-chart/dist/tui-chart.css'
     import { barChart } from '@toast-ui/vue-chart'
 
     export default {
@@ -149,6 +139,7 @@ You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.cha
     ```
     or
     ```js
+    import 'tui-chart/dist/tui-chart.css'
     import { barChart } from '@toast-ui/vue-chart'
 
     new Vue({
