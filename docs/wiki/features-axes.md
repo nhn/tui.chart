@@ -52,6 +52,25 @@ var options = {
 
 ***
 
+### Setting Suffix
+ 
+Useing `xAxis.suffix` and` xAxis.suffix` options to append a suffix to the label value of the axis.
+
+##### Example
+
+``` javascript
+//...
+var options = {
+    // ...
+    xAxis: {
+        suffix: 'Person'
+    }
+};
+tui.chart.barChart(container, data, options);
+```
+
+***
+
 ### Setting min, max
  
 #### Setting min, max at X axis
