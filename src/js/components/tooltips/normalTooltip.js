@@ -42,8 +42,6 @@ class NormalTooltip extends TooltipBase {
     _makeTooltipHtml(category, item) {
         const template = this._getTooltipTemplate(item);
 
-        console.log('MMMMMMMMMMMM', item);
-
         return template(snippet.extend({
             categoryVisible: category ? 'show' : 'hide',
             category

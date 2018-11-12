@@ -146,7 +146,6 @@ class SeriesItem {
      */
     _initValues(rawValue, index) {
         const values = this._createValues(rawValue);
-        const areaType = 'makingSeriesLabel';
         const hasStart = values.length > 1;
         let [value] = values;
 
@@ -157,29 +156,19 @@ class SeriesItem {
             value = Math.abs(value);
         }
 
-        console.log('MAKE INIT VALUE');
-
         if (snippet.isNull(value)) {
             this.label = '';
             this.tooltipLabel = '';
         } else {
-            this.label = renderUtil.formatValue({
-                value,
-                formatFunctions: this.formatFunctions,
-                chartType: this.chartType,
-                areaType,
-                legendName: this.legendName
+            ['label', 'tooltipLabel'].forEach(propName => {
+                this[propName] = renderUtil.formatValue({
+                    value,
+                    formatFunctions: this.formatFunctions,
+                    chartType: this.chartType,
+                    areaType: propName === 'tooltipLabel' ? 'makingTooltipLabel' : 'makingSeriesLabel',
+                    legendName: this.legendName
+                });
             });
-
-            /*
-            this.tooltipLabel = renderUtil.formatValue({
-                value,
-                formatFunctions: this.formatFunctions,
-                chartType: this.chartType,
-                areaType: 'makingTooltipLabel',
-                legendName: this.legendName
-            });
-            */
         }
 
         this.endLabel = this.label;
@@ -237,6 +226,7 @@ class SeriesItem {
      */
     _updateFormattedValueforRange() {
         this.label = `${this.startLabel} ~ ${this.endLabel}`;
+        this.tooltipLabel = `${this.startLabel} ~ ${this.endLabel}`;
     }
 
     /**
