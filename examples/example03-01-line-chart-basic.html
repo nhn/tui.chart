@@ -68,7 +68,18 @@ var options = {
     chart: {
         width: 1160,
         height: 540,
-        title: '24-hr Average Temperature'
+        title: '24-hr Average Temperature',
+        format: function(value, chartType, areaType, valuetype, legendName) {
+            console.log(chartType, areaType, valuetype);
+            if (areaType === 'makingSeriesLabel' && value == 25.2) {
+                return 'min: ' + value;
+                
+            } else if(areaType === 'makingSeriesLabel') {
+                return '';
+            } else {
+                return value;
+            }
+        }
     },
     yAxis: {
         title: 'Temperature (Celsius)',
@@ -81,7 +92,8 @@ var options = {
     },
     series: {
         showDot: false,
-        zoomable: true
+        zoomable: true,
+        showLabel: true
     },
     tooltip: {
         suffix: '°C'

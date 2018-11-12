@@ -68,6 +68,12 @@ class SeriesItem {
         this.label = null;
 
         /**
+         * tooltip label
+         * @type {string}
+         */
+        this.tooltipLabel = null;
+
+        /**
          * ratio of value about distance of limit
          * @type {number}
          */
@@ -151,8 +157,11 @@ class SeriesItem {
             value = Math.abs(value);
         }
 
+        console.log('MAKE INIT VALUE');
+
         if (snippet.isNull(value)) {
             this.label = '';
+            this.tooltipLabel = '';
         } else {
             this.label = renderUtil.formatValue({
                 value,
@@ -161,6 +170,16 @@ class SeriesItem {
                 areaType,
                 legendName: this.legendName
             });
+
+            /*
+            this.tooltipLabel = renderUtil.formatValue({
+                value,
+                formatFunctions: this.formatFunctions,
+                chartType: this.chartType,
+                areaType: 'makingTooltipLabel',
+                legendName: this.legendName
+            });
+            */
         }
 
         this.endLabel = this.label;

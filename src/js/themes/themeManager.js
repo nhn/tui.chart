@@ -182,12 +182,28 @@ export default {
         let seriesCount = 0;
 
         if (rawSeriesDatum && rawSeriesDatum.length) {
+            /*
             if (rawSeriesDatum.colorLength) {
                 seriesCount = rawSeriesDatum.colorLength;
             } else {
                 seriesCount = rawSeriesDatum.length;
             }
+            */
+
+            console.log('RAWSERIESDATUM - ', rawSeriesDatum);
+            if (rawSeriesDatum.colorLength) {
+                console.log('a');
+                seriesCount = rawSeriesDatum.colorLength;
+            } else if (rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length) {
+                console.log('b');
+                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
+            } else {
+                console.log('c');
+                seriesCount = rawSeriesDatum.length;
+            }
         }
+
+        console.log("SERIESCOUNT", seriesCount);
 
         return seriesCount;
     },

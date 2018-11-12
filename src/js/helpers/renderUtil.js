@@ -399,6 +399,10 @@ const renderUtil = {
             chartType
         } = params;
         const fns = [String(value), ...formatFunctions || []];
+
+        // console.log("PARAMS - ", params);
+        // console.log("FORMATFUNCTIONS - ", formatFunctions);
+
         // const fns = [String(value)];
 
         return snippet.reduce(fns, (stored, fn) => fn(stored, chartType, areaType, valueType, legendName));

@@ -38,6 +38,7 @@
 <script type='text/javascript' src='https://rawgit.com/nhnent/raphael/v2.2.0b/raphael.js'></script>
 <script src='../dist/tui-chart.js'></script>
 <script class='code-js' id='code-js'>
+/* min, max를 구하는 함수 */
 var container = document.getElementById('chart-area');
 var data = {
     categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
@@ -70,11 +71,23 @@ var data = {
         ]
     }
 };
+
 var options = {
     chart: {
         width: 1160,
         height: 540,
-        title: '24-hr Average Temperature'
+        title: '24-hr Average Temperature',
+        format: function(value, chartType, areaType, valuetype, legendName) {
+            // console.log(value, chartType, areaType, valuetype, legendName);
+            if (areaType === 'makingSeriesLabel' && value == 19.7) {
+                return 'min: ' + value;
+                
+            } else if(areaType === 'makingSeriesLabel') {
+                return '';
+            } else {
+                return value;
+            }
+        }
     },
     yAxis: [{
        title: 'Temperature (Celsius)',
@@ -90,7 +103,11 @@ var options = {
     }],
     series: {
         line: {
-            showDot: true
+            showDot: true,
+            showLabel: true
+        },
+        column: {
+            showLabel: true
         }
     },
     tooltip: {
