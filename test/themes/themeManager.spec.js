@@ -252,6 +252,20 @@ describe('Test for themeManager', () => {
         });
     });
 
+    describe('_getSeriesThemeColorCount()', () => {
+        it('Must be the same as the data length of one legend when value of isColorByPoint is true.', () => {
+            const rawSeriesDatum = [{
+                name: 'Budget',
+                data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+            }];
+            const isColorByPoint = true;
+
+            const themeCount = themeManager._getSeriesThemeColorCount(rawSeriesDatum, isColorByPoint);
+
+            expect(themeCount).toBe(7);
+        });
+    });
+
     describe('_initTheme()', () => {
         it('init theme', () => {
             const themeName = 'newTheme';
