@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-chart",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "TOAST UI Chart for Vue",
   "main": "dist/toastui-vue-chart.js",
   "files": [
@@ -10,7 +10,8 @@
   "scripts": {
     "lint": "eslint src/**",
     "build": "webpack --mode production",
-    "build:dev": "webpack --mode development"
+    "build:dev": "webpack --mode development",
+    "serve": "vue serve ./example/App.vue"
   },
   "homepage": "https://github.com/nhnent/toast-ui.vue-chart",
   "bugs": "https://github.com/nhnent/toast-ui.vue-chart/issues",
@@ -20,6 +21,8 @@
   "devDependencies": {
     "@babel/core": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "@vue/cli": "^3.1.3",
+    "@vue/cli-service-global": "^3.1.3",
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.4",
     "eslint": "^5.5.0",
