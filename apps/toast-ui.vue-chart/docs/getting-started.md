@@ -404,6 +404,7 @@ For more information see [registerMap of tui.chart](http://nhnent.github.io/tui.
 | afterShowTooltip | This event occurs after tooltip show. |
 | beforeHideTooltip | This event occurs before tooltip hide. |
 | zoom | This event occurs when change rate of zoom. |
+| changeCheckedLegends | This event occurs when the legend's checkbox changes. |
 
 * Example :
 
@@ -419,6 +420,7 @@ For more information see [registerMap of tui.chart](http://nhnent.github.io/tui.
         @afterShowTooltip="onAfterShowTooltip"
         @beforeHideTooltip="onBeforeHideTooltip"
         @zoom="onZoom"
+        @changeCheckedLegends="onChangeCheckedLegends"
         />
     </template>
     <script>
@@ -461,6 +463,9 @@ For more information see [registerMap of tui.chart](http://nhnent.github.io/tui.
             },
             onZoom() {
                 // implement your code
+            },
+            onChangeCheckedLegends() {
+                // implement your code 
             }
         }
     };

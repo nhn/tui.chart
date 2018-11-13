@@ -196,6 +196,7 @@ If you use map chart, you should use `map` prop.
 | afterShowTooltip | This event occurs after tooltip show. |
 | beforeHideTooltip | This event occurs before tooltip hide. |
 | zoom | This event occurs when change rate of zoom. |
+| changeCheckedLegends | This event occurs when the legend's checkbox changes. |
 
 ### Method
 
