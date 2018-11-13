@@ -226,8 +226,7 @@ export default {
                 'setData',
                 remakeDataForLineColumnChart(this.lineColumnData, checkedInfo)
             );
-        },
-        onZoom()
+        }
     }
 };
 </script>
