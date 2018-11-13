@@ -26,7 +26,8 @@ const chartEvents = [
     'beforeShowTooltip',
     'afterShowTooltip',
     'beforeHideTooltip',
-    'zoom'
+    'zoom',
+    'changeCheckedLegends'
 ];
 
 export const createComponent = type => ({
