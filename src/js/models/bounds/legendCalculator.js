@@ -60,16 +60,16 @@ export default {
     /**
      * Divide legend labels.
      * @param {Array.<string>} labels legend labels
-     * @param {number} limitCount division limit count
+     * @param {number} maxRowCount division limit count
      * @returns {Array.<Array.<string>>}
      * @private
      */
-    _divideLegendLabels(labels, limitCount) {
+    _divideLegendLabels(labels, maxRowCount) {
         const results = [];
         let temp = [];
 
         labels.forEach(label => {
-            if (temp.length < limitCount) {
+            if (temp.length < maxRowCount) {
                 temp.push(label);
             } else {
                 results.push(temp);
