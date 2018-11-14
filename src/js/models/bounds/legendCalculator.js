@@ -60,12 +60,11 @@ export default {
     /**
      * Divide legend labels.
      * @param {Array.<string>} labels legend labels
-     * @param {number} count division count
+     * @param {number} limitCount division limit count
      * @returns {Array.<Array.<string>>}
      * @private
      */
-    _divideLegendLabels(labels, count) {
-        const limitCount = Math.round(labels.length / count);
+    _divideLegendLabels(labels, limitCount) {
         const results = [];
         let temp = [];
 
@@ -113,21 +112,20 @@ export default {
      * @private
      */
     _makeDividedLabelsAndMaxLineWidth(labels, chartWidth, labelTheme, checkboxWidth, maxWidth) {
+        let limitCount = Number.MAX_VALUE;
         let divideCount = 1;
         let maxLineWidth = 0;
-        let prevMaxWidth = 0;
         let dividedLabels, prevLabels;
-
         do {
-            dividedLabels = this._divideLegendLabels(labels, divideCount);
+            limitCount = Math.round(labels.length / divideCount);
+            dividedLabels = this._divideLegendLabels(labels, limitCount);
             maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth, maxWidth);
 
-            if (prevMaxWidth === maxLineWidth) {
+            if (limitCount === 1) {
                 dividedLabels = prevLabels;
                 break;
             }
 
-            prevMaxWidth = maxLineWidth;
             prevLabels = dividedLabels;
             divideCount += 1;
         } while (maxLineWidth >= chartWidth);
