@@ -65,12 +65,11 @@ describe('Test for legendCalculator', () => {
         });
 
         it('make divided labels and max line width, when chart width less than label width', () => {
-            const checkboxWidth = chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING;
             const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
-                ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 130, {}, checkboxWidth
+                ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 130, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
             const expected = {
-                labels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
+                labels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
                 maxLineWidth: 120 /* width of a legend item */
             };
 

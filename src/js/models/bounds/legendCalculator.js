@@ -112,21 +112,19 @@ export default {
      * @private
      */
     _makeDividedLabelsAndMaxLineWidth(labels, chartWidth, labelTheme, checkboxWidth, maxWidth) {
-        let limitCount = Number.MAX_VALUE;
+        let maxRowCount = Number.MAX_VALUE;
         let divideCount = 1;
         let maxLineWidth = 0;
-        let dividedLabels, prevLabels;
+        let dividedLabels;
         do {
-            limitCount = Math.round(labels.length / divideCount);
-            dividedLabels = this._divideLegendLabels(labels, limitCount);
+            maxRowCount = Math.round(labels.length / divideCount);
+            dividedLabels = this._divideLegendLabels(labels, maxRowCount);
             maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth, maxWidth);
 
-            if (limitCount === 1) {
-                dividedLabels = prevLabels;
+            if (maxRowCount === 1) {
                 break;
             }
 
-            prevLabels = dividedLabels;
             divideCount += 1;
         } while (maxLineWidth >= chartWidth);
 
