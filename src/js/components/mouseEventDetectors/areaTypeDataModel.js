@@ -77,32 +77,44 @@ class AreaTypeDataModel {
     /**
      * Find Data by layer position.
      * @param {{x: number, y: number}} layerPosition - layer position
-     * @param {number} [distanceLimit] distance limitation to find data
      * @param {number} selectLegendIndex select legend sereis index
      * @returns {object}
      */
-    findData(layerPosition, distanceLimit, selectLegendIndex) {
-        const findFoundMap = {};
-        let min = 100000;
-        let findFound;
-
-        distanceLimit = distanceLimit || Number.MAX_VALUE;
-
-        this.data.forEach(datum => {
-            const xDiff = layerPosition.x - datum.bound.left;
-            const yDiff = layerPosition.y - datum.bound.top;
-            const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-
-            if (distance < distanceLimit && distance <= min) {
-                min = distance;
-                findFound = datum;
-                findFoundMap[datum.indexes.index] = datum;
+    findData(layerPosition, selectLegendIndex) {
+        const {xMinValue} = this.data.reduce((findMinObj, datum) => {
+            const xDiff = Math.abs(layerPosition.x - datum.bound.left);
+            if (xDiff <= findMinObj.xMin) {
+                findMinObj.xMin = xDiff;
+                findMinObj.xMinValue = datum.bound.left;
             }
+
+            return findMinObj;
+        }, {
+            xMin: Number.MAX_VALUE,
+            xMinValue: 0
         });
 
-        if (!snippet.isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
-            findFound = findFoundMap[selectLegendIndex];
-        }
+        const {findFound} = this.data.reduce((findResultObj, datum) => {
+            const yDiff = Math.abs(layerPosition.y - datum.bound.top);
+            let remakeFindObj = {};
+
+            if (datum.bound.left !== xMinValue) {
+                remakeFindObj = findResultObj;
+            } else if (!snippet.isNull(selectLegendIndex) && selectLegendIndex === datum.indexes.index) {
+                remakeFindObj.yMin = Number.MIN_VALUE;
+                remakeFindObj.findFound = datum;
+            } else if (yDiff <= findResultObj.yMin) {
+                remakeFindObj.yMin = yDiff;
+                remakeFindObj.findFound = datum;
+            } else {
+                remakeFindObj = findResultObj;
+            }
+
+            return remakeFindObj;
+        }, {
+            yMin: Number.MAX_VALUE,
+            findFound: null
+        });
 
         return findFound;
     }
