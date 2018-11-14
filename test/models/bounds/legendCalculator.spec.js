@@ -13,14 +13,13 @@ describe('Test for legendCalculator', () => {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    describe('_calculateLegendsWidthSum()', () => {
+    describe('_calculateLegendsWidth()', () => {
         it('calculate sum of legends width', () => {
-            const actual = legendCalculator._calculateLegendsWidthSum(
+            const actual = legendCalculator._calculateLegendsWidth(
                 ['legend1', 'legend2'], {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
-            const expected = 250;
 
-            expect(actual).toBe(expected);
+            expect(actual).toEqual([130, 130]);
         });
     });
 
@@ -56,6 +55,7 @@ describe('Test for legendCalculator', () => {
             const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
                 ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 261, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
+
             const expected = {
                 labels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
                 maxLineWidth: 250 /* max line width */
@@ -68,12 +68,21 @@ describe('Test for legendCalculator', () => {
             const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
                 ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 130, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
+
             const expected = {
                 labels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
                 maxLineWidth: 120 /* width of a legend item */
             };
 
             expect(actual).toEqual(expected);
+        });
+
+        it('Width of a label should not exceed the width of the chart.', () => {
+            const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
+                ['ABC1'], 110, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
+            );
+
+            expect(actual.maxLineWidth).toBe(110);
         });
     });
 
