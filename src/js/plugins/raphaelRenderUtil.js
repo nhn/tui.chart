@@ -7,6 +7,7 @@
 import snippet from 'tui-code-snippet';
 import renderUtil from '../helpers/renderUtil';
 import raphael from 'raphael';
+const characterDimensionMap = {};
 
 /**
  * Util for raphael rendering.
@@ -232,19 +233,53 @@ export default {
      * }}
      */
     getRenderedTextSize(text, fontSize, fontFamily) {
-        const paper = raphael(document.body, 100, 100);
-        const textElement = paper.text(0, 0, text).attr({
-            'font-size': fontSize,
-            'font-family': fontFamily
-        });
-        const bBox = textElement.getBBox();
+        const charactorArray = text.split('');
 
-        textElement.remove();
+        return charactorArray.reduce((accum, c) => {
+            const key = `${c}|${fontSize}${fontFamily}`;
+            const charStore = characterDimensionMap[key];
+            let width = 0;
+            let height = 0;
+
+            if (charStore) {
+                width += charStore.width;
+                height += charStore.height;
+            } else {
+                const charCalculator = this._calculatorDimension(c, fontSize, fontFamily);
+                characterDimensionMap[key] = {
+                    width: charCalculator.width,
+                    height: charCalculator.height
+                };
+                width += charCalculator.width;
+                height += charCalculator.height;
+            }
+
+            accum.width += width;
+            accum.height = (height > accum.height) ? height : accum.height;
+
+            return accum;
+        }, {
+            width: 0,
+            height: 0
+        });
+    },
+
+    _calculatorDimension(oneChar, fontSize, fontFamily) {
+        const paper = raphael(0, 0, 0, 0);
+        paper.canvas.style.visibility = 'hidden';
+
+        const el = paper.text(0, 0, oneChar);
+        el.attr('font-family', fontFamily);
+        el.attr('font-size', fontSize);
+
+        const bBox = el.getBBox();
         paper.remove();
 
+        const {width, height} = bBox;
+
         return {
-            width: bBox.width,
-            height: bBox.height
+            width,
+            height
         };
     },
 
