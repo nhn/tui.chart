@@ -149,7 +149,7 @@ function _createChart(container, rawData = {}, options, chartType) {
  *          @param {number} options.series.barWidth - bar width
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.diverging - whether diverging or not
- *          @param {number} options.series.colorByPoint - whether category Individual colors
+ *          @param {boolean} options.series.colorByPoint - whether category Individual colors
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
@@ -252,7 +252,7 @@ function barChart(container, rawData, options) {
  *          @param {number} options.series.barWidth - bar width
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.diverging - whether diverging or not
- *          @param {number} options.series.colorByPoint - whether category Individual colors
+ *          @param {boolean} options.series.colorByPoint - whether category Individual colors
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip

@@ -184,12 +184,10 @@ export default {
         let seriesCount = 0;
 
         if (rawSeriesDatum && rawSeriesDatum.length) {
-            isColorByPoint = isColorByPoint && rawSeriesDatum[0] &&
-                rawSeriesDatum[0].data && rawSeriesDatum[0].data.length;
+            const existFirstSeriesDataLength = rawSeriesDatum[0] && rawSeriesDatum[0].data &&
+                rawSeriesDatum[0].data.length;
 
-            if (rawSeriesDatum.colorLength) {
-                seriesCount = rawSeriesDatum.colorLength;
-            } else if (isColorByPoint) {
+            if (isColorByPoint && existFirstSeriesDataLength) {
                 seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
             } else {
                 seriesCount = rawSeriesDatum.length;
@@ -199,17 +197,6 @@ export default {
         return seriesCount;
     },
 
-    /**
-     * Init theme.
-     * @param {string} themeName - theme name
-     * @param {object} rawTheme - raw theme
-     * @param {Array.<string>} seriesTypes - series types
-     * @param {object} rawSeriesData - raw series data
-     * @param {boolean} isColorByPoint - check colorByPoint option
-     * @returns {object}
-     * @private
-     * @ignore
-     */
     _initTheme(themeName, rawTheme, seriesTypes, rawSeriesData, isColorByPoint) {
         let theme;
 
