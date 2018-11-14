@@ -58,6 +58,16 @@ describe('Test for SeriesItem', () => {
             expect(seriesItem.label).toBe('10');
             expect(seriesItem.tooltipLabel).toBe('10');
         });
+
+        it('Changes to makingTooltip and changes to makingSeries should be distinguished.', () => {
+            seriesItem.formatFunctions = [(value, chartType, areaType) => (
+                areaType === 'makingSeriesLabel' ? `!!${value}` : `00${value}`
+            )];
+            seriesItem._initValues(10);
+
+            expect(seriesItem.label).toBe('!!10');
+            expect(seriesItem.tooltipLabel).toBe('0010');
+        });
     });
 
     describe('_createValues()', () => {

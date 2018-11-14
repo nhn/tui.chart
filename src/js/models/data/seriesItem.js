@@ -157,15 +157,14 @@ class SeriesItem {
         }
 
         if (snippet.isNull(value)) {
-            this.label = '';
-            this.tooltipLabel = '';
+            this._setLabel('');
         } else {
-            ['label', 'tooltipLabel'].forEach(propName => {
-                this[propName] = renderUtil.formatValue({
+            ['label', 'tooltipLabel'].forEach(labelType => {
+                this[labelType] = renderUtil.formatValue({
                     value,
                     formatFunctions: this.formatFunctions,
                     chartType: this.chartType,
-                    areaType: propName === 'tooltipLabel' ? 'makingTooltipLabel' : 'makingSeriesLabel',
+                    areaType: labelType === 'tooltipLabel' ? 'makingTooltipLabel' : 'makingSeriesLabel',
                     legendName: this.legendName
                 });
             });
@@ -178,6 +177,16 @@ class SeriesItem {
             this._updateFormattedValueforRange();
             this.isRange = true;
         }
+    }
+
+    /**
+     * set label property
+     * @param {string} value set value
+     * @private
+     */
+    _setLabel(value) {
+        this.label = value;
+        this.tooltipLabel = value;
     }
 
     /**
@@ -225,8 +234,7 @@ class SeriesItem {
      * @private
      */
     _updateFormattedValueforRange() {
-        this.label = `${this.startLabel} ~ ${this.endLabel}`;
-        this.tooltipLabel = `${this.startLabel} ~ ${this.endLabel}`;
+        this._setLabel(`${this.startLabel} ~ ${this.endLabel}`);
     }
 
     /**
