@@ -86,6 +86,8 @@ class AreaTypeDataModel {
         let min = 100000;
         let findFound;
 
+        console.log("LAYERPOSITION - ", layerPosition);
+
         distanceLimit = distanceLimit || Number.MAX_VALUE;
 
         this.data.forEach(datum => {
@@ -103,6 +105,8 @@ class AreaTypeDataModel {
         if (!snippet.isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
             findFound = findFoundMap[selectLegendIndex];
         }
+
+        console.log(findFound.bound);
 
         return findFound;
     }
