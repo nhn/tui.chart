@@ -239,9 +239,7 @@ class MouseEventDetectorBase {
         if (checkLimit) {
             const maxLeft = right - expandSize;
             const minLeft = left + expandSize;
-            console.log("AAA - ", clientX);
             clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
-            console.log("BBB - ", clientX);
         }
 
         layerPosition.x = clientX - left + seriesPosition.left - chartConst.CHART_PADDING;

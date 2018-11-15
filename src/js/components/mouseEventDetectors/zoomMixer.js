@@ -233,10 +233,7 @@ export default {
             y: e.clientY
         };
 
-        console.log(':SLDKJSLDKG', e.clientX);
-
-        // this.startLayerX = this._calculateLayerPosition(e.clientX).x;
-        this.startLayerX = e.clientX;
+        this.startLayerX = this._calculateLayerPosition(e.clientX).x;
         this.downTarget = target;
 
         this._bindDragEvent(target);
@@ -248,13 +245,11 @@ export default {
      * @private
      */
     _showDragSelection(clientX) {
-        console.log("PPP - ", clientX);
-        // const layerX = this._calculateLayerPosition(clientX).x;
-        const layerX = clientX;
-        const left = Math.min(layerX, this.startLayerX) - this.layout.position.left;
-
-        console.log('STYLELEFT', layerX, this.startLayerX, this.layout.position.left);
-
+        const {left: eventContainerLeft} = this.mouseEventDetectorContainer.getBoundingClientRect();
+        const layerX = this._calculateLayerPosition(clientX).x;
+        const clientPos = this.startClientPosition;
+        const diffArea = eventContainerLeft - (clientPos.x - this.startLayerX);
+        const left = Math.min(layerX, this.startLayerX) - diffArea;
         const width = Math.abs(layerX - this.startLayerX);
         const element = this.dragSelectionElement;
 
@@ -281,18 +276,13 @@ export default {
         const clientPos = this.startClientPosition;
         const target = e.target || e.srcElement;
 
-        console.log('ON-DRAG');
-
         if (clientPos) {
             const dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
 
             if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
-                console.log('j - ');
                 if (snippet.isNull(this.dragStartIndexes)) {
                     this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
-                    console.log('a - ', this.dragStartIndexes);
                 } else {
-                    console.log('b - ');
                     this._showDragSelection(e.clientX);
                 }
             }
