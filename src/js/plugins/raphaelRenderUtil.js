@@ -8,6 +8,11 @@ import snippet from 'tui-code-snippet';
 import renderUtil from '../helpers/renderUtil';
 import raphael from 'raphael';
 const characterDimensionMap = {};
+let elementForTextSize = null;
+let elementForTextSize2 = null;
+let cacheFontInfo = '';
+let canvasA = null;
+
 
 /**
  * Util for raphael rendering.
@@ -232,7 +237,92 @@ export default {
      *     height: number
      * }}
      */
-    getRenderedTextSize(text, fontSize, fontFamily) {
+    getRenderedTextSize(text, fontSize = 11, fontFamily) {
+        if (!canvasA) {
+            canvasA = document.createElement('canvas');
+        }
+
+        const ctx = canvasA.getContext('2d');
+
+        if (cacheFontInfo !== `${fontSize}px ${fontFamily}`) {
+            cacheFontInfo = `${fontSize}px ${fontFamily}`;
+            ctx.font = cacheFontInfo;
+        }
+
+        const size = ctx.measureText(text);
+        // console.log(Math.round(size.width), Math.round(fontSize * 1.1));
+        
+        return {
+            width: Math.round(size.width),
+            height: Math.round(fontSize * 1.1)
+        };
+
+        /*
+        if (!elementForTextSize) {
+            elementForTextSize = document.createElement('div');
+            elementForTextSize.style = 'visibility: hidden;position: absolute;margin: 0;border: 0;padding: 0;line-height: 1.11;';
+            document.body.appendChild(elementForTextSize);
+        }
+
+        if (cacheFontInfo !== `${fontFamily}${fontSize}`) {
+            const elementStyle = elementForTextSize.style;
+
+            elementStyle.fontFamily = fontFamily;
+            elementStyle.fontSize = `${fontSize}px`;
+
+            cacheFontInfo = `${fontFamily}${fontSize}`;
+        }
+
+        elementForTextSize.innerHTML = text;
+
+        const {clientWidth: width, clientHeight: height} = elementForTextSize;
+
+        const size = {
+            width,
+            height
+        };
+        console.log(size.width, size.height, fontSize);
+
+        return size;
+        */
+
+        /*
+        if (!elementForTextSize) {
+            elementForTextSize = document.createElement('div');
+            elementForTextSize.style = 'visibility: hidden;position: absolute;margin: 0;border: 0;padding: 0;';
+
+            document.body.appendChild(elementForTextSize);
+        }
+
+        if (cacheFontInfo !== `${fontFamily}${fontSize}`) {
+            const elementStyle = elementForTextSize.style;
+
+            elementStyle.fontFamily = fontFamily;
+            elementStyle.fontSize = `${fontSize}px`;
+
+            cacheFontInfo = `${fontFamily}${fontSize}`;
+        }
+
+        let result = null;
+        if (characterDimensionMap[`${text}${fontFamily}${fontSize}`]) {
+            result = characterDimensionMap[`${text}${fontFamily}${fontSize}`];
+        } else {
+            elementForTextSize.innerHTML = text;
+
+            const {offsetWidth: width, offsetHeight: height} = elementForTextSize;
+            const size = {
+                width,
+                height
+            };
+            characterDimensionMap[`${text}${fontFamily}${fontSize}`] = size;
+
+            result = size;
+        }
+
+        return result;
+        */
+
+        /*
         const charactorArray = text.split('');
 
         return charactorArray.reduce((accum, c) => {
@@ -262,9 +352,37 @@ export default {
             width: 0,
             height: 0
         });
+        */
     },
 
     _calculatorDimension(oneChar, fontSize, fontFamily) {
+        if (!elementForTextSize) {
+            elementForTextSize = document.createElement('div');
+            elementForTextSize.style = 'visibility: hidden;position: absolute;margin: 0;border: 0;padding: 0;';
+
+            document.body.appendChild(elementForTextSize);
+        }
+
+        if (cacheFontInfo !== `${fontFamily}${fontSize}`) {
+            const elementStyle = elementForTextSize.style;
+
+            elementStyle.fontFamily = fontFamily;
+            elementStyle.fontSize = `${fontSize}px`;
+
+            cacheFontInfo = `${fontFamily}${fontSize}`;
+        }
+
+        elementForTextSize.innerHTML = oneChar;
+
+        const {offsetWidth: width, offsetHeight: height} = elementForTextSize;
+        const size = {
+            width,
+            height
+        };
+
+        return size;
+
+        /*
         const paper = raphael(0, 0, 0, 0);
         paper.canvas.style.visibility = 'hidden';
 
@@ -281,6 +399,7 @@ export default {
             width,
             height
         };
+        */
     },
 
     /**

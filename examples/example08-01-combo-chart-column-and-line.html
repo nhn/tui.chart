@@ -99,7 +99,7 @@ var data = {
         data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
       },
       {
-        name: 'VJEKJKSEB',
+        name: 'aaaaaaaaa',
         data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
       },
       {
@@ -191,12 +191,13 @@ var options = {
        chartType: 'line',
        labelMargin: 15
     }],
-    xAxis: [{
+    xAxis: {
         title: 'Month'
-    }],
+    },
     series: {
         line: {
-            showDot: true
+            showDot: true,
+            showLabel: false
         }
     },
     tooltip: {
@@ -225,7 +226,7 @@ var theme = {
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
 
-  makeChart(50);
+makeChart(50);
 
 var end = new Date().getTime();
 console.log(end - start);
