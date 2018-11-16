@@ -37,6 +37,7 @@ describe('Test for zoomMixer', () => {
         it('should set left and width using clinetX, layerX', () => {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 100;
+            zoomMixer.startClientPosition = {x: 150};
             zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
@@ -51,6 +52,7 @@ describe('Test for zoomMixer', () => {
         it('should set left to startLayerX, if layerX is greater than startLayerX.', () => {
             zoomMixer.dragSelectionElement = dom.create('DIV');
             zoomMixer.startLayerX = 30;
+            zoomMixer.startClientPosition = {x: 80};
             zoomMixer.mouseEventDetectorContainer.getBoundingClientRect.and.returnValue({
                 left: 50,
                 right: 150
