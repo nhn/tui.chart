@@ -77,8 +77,8 @@ describe('RaphaelAxisComponent', () => {
             positionDiff.x = positionWithOffset.left - positionWithoutOffset.left;
             positionDiff.y = positionWithOffset.top - positionWithoutOffset.top;
 
-            expect(positionDiff.x).toBe(data.offset.x);
-            expect(positionDiff.y).toBe(data.offset.y);
+            expect(Math.round(positionDiff.x)).toBe(data.offset.x);
+            expect(Math.round(positionDiff.y)).toBe(data.offset.y);
         });
 
         it('should not add offset when set rotationInfo.isCenter true', () => {
@@ -105,8 +105,8 @@ describe('RaphaelAxisComponent', () => {
             positionDiff.x = positionWithOffset.left - positionWithoutOffset.left;
             positionDiff.y = positionWithOffset.top - positionWithoutOffset.top;
 
-            expect(positionDiff.x).toBe(data.offset.x);
-            expect(positionDiff.y).toBe(data.offset.y);
+            expect(Math.round(positionDiff.x)).toBe(data.offset.x);
+            expect(Math.round(positionDiff.y)).toBe(data.offset.y);
         });
 
         it('should add offset when set rotationInfo.isVertical true', () => {

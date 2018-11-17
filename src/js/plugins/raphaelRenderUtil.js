@@ -7,12 +7,11 @@
 import snippet from 'tui-code-snippet';
 import renderUtil from '../helpers/renderUtil';
 import raphael from 'raphael';
-const characterDimensionMap = {};
-let elementForTextSize = null;
-let elementForTextSize2 = null;
-let cacheFontInfo = '';
-let canvasA = null;
-
+const storeForGetTextSize = {
+    cacheFontInfo: '',
+    elementForTextSize: null,
+    canvasElement: supportsCanvasText()
+};
 
 /**
  * Util for raphael rendering.
@@ -238,168 +237,68 @@ export default {
      * }}
      */
     getRenderedTextSize(text, fontSize = 11, fontFamily) {
-        if (!canvasA) {
-            canvasA = document.createElement('canvas');
+        const {canvasElement} = storeForGetTextSize;
+
+        if (canvasElement) {
+            return this._getTextSizeUseCanvas(text, fontSize, fontFamily);
         }
 
-        const ctx = canvasA.getContext('2d');
+        return this._getTextSizeUseHtmlElement(text, fontSize, fontFamily);
+    },
 
-        if (cacheFontInfo !== `${fontSize}px ${fontFamily}`) {
-            cacheFontInfo = `${fontSize}px ${fontFamily}`;
-            ctx.font = cacheFontInfo;
+    _getTextSizeUseCanvas(text, fontSize, fontFamily) {
+        const {canvasElement, cacheFontInfo} = storeForGetTextSize;
+        const ctx = canvasElement.getContext('2d');
+        const fontInfo = `${fontSize}px ${fontFamily}`;
+
+        if (cacheFontInfo !== fontInfo) {
+            storeForGetTextSize.cacheFontInfo = fontInfo;
+            ctx.font = fontInfo;
         }
 
-        const size = ctx.measureText(text);
-        // console.log(Math.round(size.width), Math.round(fontSize * 1.1));
-        
         return {
-            width: Math.round(size.width),
-            height: Math.round(fontSize * 1.1)
+            width: ctx.measureText(text).width,
+            height: fontSize * 1.11
         };
+    },
 
-        /*
+    _getTextSizeUseHtmlElement(text, fontSize, fontFamily) {
+        const {cacheFontInfo} = storeForGetTextSize;
+        let {elementForTextSize} = storeForGetTextSize;
         if (!elementForTextSize) {
             elementForTextSize = document.createElement('div');
-            elementForTextSize.style = 'visibility: hidden;position: absolute;margin: 0;border: 0;padding: 0;line-height: 1.11;';
+            elementForTextSize.style = [
+                'visibility: hidden',
+                'position: absolute',
+                'margin: 0',
+                'border: 0',
+                'padding: 0',
+                'line-height: 1.11',
+                'white-space: nowrap'
+            ].join(';');
+
             document.body.appendChild(elementForTextSize);
+            storeForGetTextSize.elementForTextSize = elementForTextSize;
         }
 
-        if (cacheFontInfo !== `${fontFamily}${fontSize}`) {
+        const fontInfo = `${fontSize}px ${fontFamily}`;
+
+        if (cacheFontInfo !== fontInfo) {
             const elementStyle = elementForTextSize.style;
 
+            storeForGetTextSize.cacheFontInfo = fontInfo;
             elementStyle.fontFamily = fontFamily;
             elementStyle.fontSize = `${fontSize}px`;
-
-            cacheFontInfo = `${fontFamily}${fontSize}`;
         }
 
         elementForTextSize.innerHTML = text;
 
         const {clientWidth: width, clientHeight: height} = elementForTextSize;
 
-        const size = {
-            width,
-            height
-        };
-        console.log(size.width, size.height, fontSize);
-
-        return size;
-        */
-
-        /*
-        if (!elementForTextSize) {
-            elementForTextSize = document.createElement('div');
-            elementForTextSize.style = 'visibility: hidden;position: absolute;margin: 0;border: 0;padding: 0;';
-
-            document.body.appendChild(elementForTextSize);
-        }
-
-        if (cacheFontInfo !== `${fontFamily}${fontSize}`) {
-            const elementStyle = elementForTextSize.style;
-
-            elementStyle.fontFamily = fontFamily;
-            elementStyle.fontSize = `${fontSize}px`;
-
-            cacheFontInfo = `${fontFamily}${fontSize}`;
-        }
-
-        let result = null;
-        if (characterDimensionMap[`${text}${fontFamily}${fontSize}`]) {
-            result = characterDimensionMap[`${text}${fontFamily}${fontSize}`];
-        } else {
-            elementForTextSize.innerHTML = text;
-
-            const {offsetWidth: width, offsetHeight: height} = elementForTextSize;
-            const size = {
-                width,
-                height
-            };
-            characterDimensionMap[`${text}${fontFamily}${fontSize}`] = size;
-
-            result = size;
-        }
-
-        return result;
-        */
-
-        /*
-        const charactorArray = text.split('');
-
-        return charactorArray.reduce((accum, c) => {
-            const key = `${c}|${fontSize}${fontFamily}`;
-            const charStore = characterDimensionMap[key];
-            let width = 0;
-            let height = 0;
-
-            if (charStore) {
-                width += charStore.width;
-                height += charStore.height;
-            } else {
-                const charCalculator = this._calculatorDimension(c, fontSize, fontFamily);
-                characterDimensionMap[key] = {
-                    width: charCalculator.width,
-                    height: charCalculator.height
-                };
-                width += charCalculator.width;
-                height += charCalculator.height;
-            }
-
-            accum.width += width;
-            accum.height = (height > accum.height) ? height : accum.height;
-
-            return accum;
-        }, {
-            width: 0,
-            height: 0
-        });
-        */
-    },
-
-    _calculatorDimension(oneChar, fontSize, fontFamily) {
-        if (!elementForTextSize) {
-            elementForTextSize = document.createElement('div');
-            elementForTextSize.style = 'visibility: hidden;position: absolute;margin: 0;border: 0;padding: 0;';
-
-            document.body.appendChild(elementForTextSize);
-        }
-
-        if (cacheFontInfo !== `${fontFamily}${fontSize}`) {
-            const elementStyle = elementForTextSize.style;
-
-            elementStyle.fontFamily = fontFamily;
-            elementStyle.fontSize = `${fontSize}px`;
-
-            cacheFontInfo = `${fontFamily}${fontSize}`;
-        }
-
-        elementForTextSize.innerHTML = oneChar;
-
-        const {offsetWidth: width, offsetHeight: height} = elementForTextSize;
-        const size = {
-            width,
-            height
-        };
-
-        return size;
-
-        /*
-        const paper = raphael(0, 0, 0, 0);
-        paper.canvas.style.visibility = 'hidden';
-
-        const el = paper.text(0, 0, oneChar);
-        el.attr('font-family', fontFamily);
-        el.attr('font-size', fontSize);
-
-        const bBox = el.getBBox();
-        paper.remove();
-
-        const {width, height} = bBox;
-
         return {
             width,
             height
         };
-        */
     },
 
     /**
@@ -433,3 +332,25 @@ export default {
 function isNumber(numberSuspect) {
     return snippet.isExisty(numberSuspect) && typeof numberSuspect === 'number';
 }
+
+/**
+ * check supports canvas text
+ * @returns {?HTMLElement}
+ */
+function supportsCanvasText() {
+    const isSupportCanvas = !!document.createElement('canvas').getContext;
+
+    if (!isSupportCanvas) {
+        return null;
+    }
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    if (typeof context.fillText === 'function') {
+        return canvas;
+    }
+
+    return null;
+}
+

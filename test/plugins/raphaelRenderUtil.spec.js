@@ -15,6 +15,12 @@ describe('RaphaelLineTypeBase', () => {
             expect(actual).toBe('<TESTMESSAGE>');
         });
     });
+    describe('getRenderedTextSize()', () => {
+        it('result of decoding the HTML entity must be applied.', () => {
+            const actual = raphaelRenderUtil.getRenderedTextSize('aAaA', 11, 'Arial');
+            console.log(actual);
+        });
+    });
     describe('makeLinePath()', () => {
         it('should create line path using from and to position', () => {
             const actual = raphaelRenderUtil.makeLinePath(
