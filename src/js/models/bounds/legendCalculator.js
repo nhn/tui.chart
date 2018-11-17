@@ -126,8 +126,9 @@ export default {
             maxRowCount = Math.round(labels.length / divideCount);
             dividedLabels = this._divideLegendLabels(labels, maxRowCount);
             const legendWidthInfo = this._getLegendWidthInfo(dividedLabels, labelTheme, checkboxWidth, maxWidth);
-            lineWidths = legendWidthInfo.legendWidths;
-            labelWidths = legendWidthInfo.labelWidthArr;
+
+            ({legendWidths: lineWidths, labelWidthArr: labelWidths} = legendWidthInfo);
+
             maxLineWidth = arrayUtil.max(lineWidths);
 
             if (maxRowCount === 1) {
@@ -137,7 +138,7 @@ export default {
             divideCount += 1;
         } while (maxLineWidth >= chartWidth);
 
-        maxLineWidth = maxLineWidth > chartWidth ? chartWidth : maxLineWidth;
+        maxLineWidth = Math.min(maxLineWidth, chartWidth);
 
         return {
             labels: this._optimizedHorizontalLegendLabels(labels, labelWidths, maxLineWidth),
@@ -155,13 +156,16 @@ export default {
      */
     _optimizedHorizontalLegendLabels(labels, labelWidths, maxLineWidth) {
         const optimizedDvidedLabels = [];
+        const labelsLastIdx = labels.length - 1;
         let sum = 0;
         let temp = [];
+
         labels.forEach((label, labelIdx) => {
             const labelWidth = labelWidths[labelIdx];
             const paddingWidth = LEGEND_AREA_H_PADDING - LEGEND_H_LABEL_RIGHT_PADDING;
+            const predictedLineWidth = sum + labelWidth + paddingWidth;
 
-            if (sum + labelWidth + paddingWidth <= maxLineWidth) {
+            if (predictedLineWidth <= maxLineWidth) {
                 temp.push(label);
             } else {
                 optimizedDvidedLabels.push(temp);
@@ -171,7 +175,7 @@ export default {
 
             sum += labelWidth;
 
-            if (labels.length - 1 === labelIdx) {
+            if (labelsLastIdx === labelIdx) {
                 optimizedDvidedLabels.push(temp);
             }
         });
