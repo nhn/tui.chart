@@ -99,6 +99,22 @@ describe('Test for Plot', () => {
         });
     });
 
+    describe('_renderHorizontalLines()', () => {
+        it('draw only one line at the top when have only one position.', () => {
+            plot.plotSet = paper.set();
+            spyOn(plot.paper, 'path').and.returnValue({attr: () => {}});
+            spyOn(plot, '_makeVerticalPositions').and.returnValue([300]);
+
+            plot.layout = {
+                dimension: {width: 400, height: 300}, position: {top: 5, left: 5}
+            };
+
+            plot._renderHorizontalLines({height: 30});
+
+            expect(plot.paper.path.calls.mostRecent().args[0]).toBe('M5,5H405');
+        });
+    });
+
     describe('_createOptionalLineValueRange()', () => {
         it('create value range for optional line, when optionalLineData has range property', () => {
             const optionalLineData = {

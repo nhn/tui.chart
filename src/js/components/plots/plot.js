@@ -538,7 +538,7 @@ class Plot {
         const positions = this._makeVerticalPositions(height);
         const {layout, theme: {lineColor}} = this;
         const {position: {left, top}} = layout;
-        const distance = positions[1] - positions[0];
+        const distance = positions.length > 1 ? positions[1] - positions[0] : 0;
 
         positions.forEach((position, index) => {
             const pathString = `M${left},${((distance * index) + top)}H${(left + layout.dimension.width)}`;

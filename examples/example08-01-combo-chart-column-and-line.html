@@ -43,138 +43,33 @@ var start = new Date().getTime();
 
 var container = document.getElementById('chart-area');
 var data = {
-  categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'A', 'B', 'C', 'D', 'E'],
-  series: {
-    column: [
-      {
-        name: 'Seoul1SDLDG',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'as;ldkgjaLSDkjg',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'as;ldkgjas',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'eivjis#L#KJ#',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'S:LIVJEISEV',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: ':SLKDBJSLB',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: ':LEJBS',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'L:SEKHJSLEH',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: ':LVKEWJLEJBLWE',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: ':VLKWEJLKBJWEBW',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: ':VLWKJEVLWKJEKBJWE',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'V:LWSKJEBLSEJB',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: ':LVWKJESEH',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'aaaaaaaaa',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: ':LWKJEGLWKEJ',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: '#$%^&*(',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'L:VWEKJ#JLS',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'SLEKJHLSKEJH',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'LKSEJHLS$U$',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'L:EKJWELGJ#$$',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'VJKEJVKJSEG',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'Seoul',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'Seoul',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'Seoul',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'Seoul',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'Seoul',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'Seoul',
-        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'NewYork',
-        data: [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3, 11, 11, 11, 11, 11]
-
-      },
-      {
-        name: 'Sydney',
-        data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 11, 11, 11, 11, 11]
-      },
-      {
-        name: 'Moskva',
-        data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, 11, 11, 11, 11, 11]
-      }
-    ],
-    line: [
-      {
-        name: 'Average',
-        data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3, 11, 11, 11, 11, 11]
-      }
-    ]
-  }
+    categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
+    series: {
+        column: [
+            {
+                name: 'Seoul',
+                data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9]
+            },
+            {
+                name: 'NewYork',
+                data: [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3]
+            },
+            {
+                name: 'Sydney',
+                data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6]
+            },
+            {
+                name: 'Moskva',
+                data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2]
+            }
+        ],
+        line: [
+            {
+                name: 'Average',
+                data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3]
+            }
+        ]
+    }
 };
 var options = {
     chart: {
@@ -220,24 +115,12 @@ var theme = {
         }
     }
 };
-
 // For apply theme
-
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
 
-makeChart(50);
+var chart = tui.chart.comboChart(container, data, options);
 
-var end = new Date().getTime();
-console.log(end - start);
-
-function makeChart(count) {
-    new Array(count).fill(1).forEach(function() {
-        var element = document.createElement('div');
-        document.body.appendChild(element);
-        var chart = tui.chart.comboChart(element, data, options);
-    });
-}
 </script>
 <!--For tutorial page-->
 <script src='../node_modules/codemirror/lib/codemirror.js'></script>

@@ -8,7 +8,7 @@ import zoomMixer from './zoomMixer';
 import AreaTypeDataModel from './areaTypeDataModel';
 import snippet from 'tui-code-snippet';
 
-const AREA_DETECT_DISTANCE_THRESHHOLD = 50;
+const AREA_DETECT_DISTANCE_THRESHOLD = 50;
 
 class AreaTypeEventDetector extends MouseEventDetectorBase {
     /**
@@ -100,7 +100,7 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
         const layerPosition = this._calculateLayerPosition(clientX, clientY);
         const {selectLegendIndex} = this.dataProcessor;
 
-        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD, selectLegendIndex);
+        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHOLD, selectLegendIndex);
     }
 
     /**

@@ -45,7 +45,7 @@ describe('Test for AreaTypeDataModel', () => {
     });
 
     describe('findData()', () => {
-        it('find data', () => {
+        it('Find the data closest to the x coordinate.', () => {
             dataModel.data = [
                 {
                     bound: {
@@ -64,6 +64,34 @@ describe('Test for AreaTypeDataModel', () => {
                     }
                 }
             ];
+            const actual = dataModel.findData({
+                x: 17,
+                y: 10
+            }, null, null);
+            const [, expected] = dataModel.data;
+            expect(actual).toBe(expected);
+        });
+
+        it('Must be found the data closest to the y-coordinate when x-coordinates are the same.', () => {
+            dataModel.data = [
+                {
+                    bound: {
+                        top: 10,
+                        left: 10
+                    },
+                    indexes: {
+                        groupIndex: 0,
+                        index: 0
+                    }
+                },
+                {
+                    bound: {
+                        top: 20,
+                        left: 10
+                    }
+                }
+            ];
+
             const actual = dataModel.findData({
                 x: 17,
                 y: 10
