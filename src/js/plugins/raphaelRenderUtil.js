@@ -246,6 +246,17 @@ export default {
         return this._getTextSizeUseHtmlElement(text, fontSize, fontFamily);
     },
 
+    /**
+     * Get rendered text element size (Use Canvas)
+     * @param {string} text text content
+     * @param {number} fontSize font-size attribute
+     * @param {string} fontFamily font-family attribute
+     * @returns {{
+     *     width: number,
+     *     height: number
+     * }}
+     * @private
+     */
     _getTextSizeUseCanvas(text, fontSize, fontFamily) {
         const {canvasElement, cacheFontInfo} = storeForGetTextSize;
         const ctx = canvasElement.getContext('2d');
@@ -262,6 +273,17 @@ export default {
         };
     },
 
+    /**
+     * Get rendered text element size (Use HTMLElement)
+     * @param {string} text text content
+     * @param {number} fontSize font-size attribute
+     * @param {string} fontFamily font-family attribute
+     * @returns {{
+     *     width: number,
+     *     height: number
+     * }}
+     * @private
+     */
     _getTextSizeUseHtmlElement(text, fontSize, fontFamily) {
         const {cacheFontInfo} = storeForGetTextSize;
         let {elementForTextSize} = storeForGetTextSize;
