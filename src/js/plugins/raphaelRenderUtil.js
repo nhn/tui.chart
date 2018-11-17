@@ -267,15 +267,13 @@ export default {
         let {elementForTextSize} = storeForGetTextSize;
         if (!elementForTextSize) {
             elementForTextSize = document.createElement('div');
-            elementForTextSize.style = [
-                'visibility: hidden',
-                'position: absolute',
-                'margin: 0',
-                'border: 0',
-                'padding: 0',
-                'line-height: 1.11',
-                'white-space: nowrap'
-            ].join(';');
+            const elementStyle = elementForTextSize.style;
+            elementStyle.visibility = 'hidden';
+            elementStyle.position = 'absolute';
+            elementStyle.margin = 0;
+            elementStyle.padding = 0;
+            elementStyle.lineHeight = 1.11;
+            elementStyle.whiteSpace = 'nowrap';
 
             document.body.appendChild(elementForTextSize);
             storeForGetTextSize.elementForTextSize = elementForTextSize;
