@@ -67,7 +67,7 @@ describe('Test for AreaTypeDataModel', () => {
             const actual = dataModel.findData({
                 x: 17,
                 y: 10
-            }, null);
+            }, null, null);
             const [, expected] = dataModel.data;
             expect(actual).toBe(expected);
         });
@@ -95,7 +95,7 @@ describe('Test for AreaTypeDataModel', () => {
             const actual = dataModel.findData({
                 x: 17,
                 y: 10
-            }, null);
+            }, null, null);
             const [expected] = dataModel.data;
             expect(actual).toBe(expected);
         });

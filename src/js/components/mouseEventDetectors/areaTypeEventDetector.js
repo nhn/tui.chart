@@ -8,6 +8,8 @@ import zoomMixer from './zoomMixer';
 import AreaTypeDataModel from './areaTypeDataModel';
 import snippet from 'tui-code-snippet';
 
+const AREA_DETECT_DISTANCE_THRESHOLD = 50;
+
 class AreaTypeEventDetector extends MouseEventDetectorBase {
     /**
      * AreaTypeEventDetector is mouse event detector for line type chart.
@@ -98,7 +100,7 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
         const layerPosition = this._calculateLayerPosition(clientX, clientY);
         const {selectLegendIndex} = this.dataProcessor;
 
-        return this.dataModel.findData(layerPosition, selectLegendIndex);
+        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHOLD, selectLegendIndex);
     }
 
     /**
