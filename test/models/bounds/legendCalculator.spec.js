@@ -13,14 +13,13 @@ describe('Test for legendCalculator', () => {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
-    describe('_calculateLegendsWidthSum()', () => {
+    describe('_calculateLegendsWidth()', () => {
         it('calculate sum of legends width', () => {
-            const actual = legendCalculator._calculateLegendsWidthSum(
+            const actual = legendCalculator._calculateLegendsWidth(
                 ['legend1', 'legend2'], {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
-            const expected = 250;
 
-            expect(actual).toBe(expected);
+            expect(actual).toEqual([130, 130]);
         });
     });
 
@@ -32,15 +31,15 @@ describe('Test for legendCalculator', () => {
             expect(actual).toEqual(expected);
         });
 
-        it('divide legend labels, when count for dividing is three', () => {
-            const actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 3);
+        it('Should return an array detached with maxRows.', () => {
+            const actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 2);
             const expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']];
 
             expect(actual).toEqual(expected);
         });
 
-        it('if count is one, retuns original labels', () => {
-            const actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 1);
+        it('if maxRows is equal to the number of labels, retuns original labels', () => {
+            const actual = legendCalculator._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 4);
             const expected = [['ABC1', 'ABC2', 'ABC3', 'ABC4']];
 
             expect(actual).toEqual(expected);
@@ -56,6 +55,7 @@ describe('Test for legendCalculator', () => {
             const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
                 ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 261, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
+
             const expected = {
                 labels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
                 maxLineWidth: 250 /* max line width */
@@ -68,12 +68,21 @@ describe('Test for legendCalculator', () => {
             const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
                 ['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 130, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
             );
+
             const expected = {
                 labels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
                 maxLineWidth: 120 /* width of a legend item */
             };
 
             expect(actual).toEqual(expected);
+        });
+
+        it('Width of a label should not exceed the width of the chart.', () => {
+            const actual = legendCalculator._makeDividedLabelsAndMaxLineWidth(
+                ['ABC1'], 110, {}, chartConst.LEGEND_CHECKBOX_SIZE + chartConst.LEGEND_LABEL_LEFT_PADDING
+            );
+
+            expect(actual.maxLineWidth).toBe(110);
         });
     });
 

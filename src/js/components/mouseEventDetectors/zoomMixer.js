@@ -232,6 +232,7 @@ export default {
             x: e.clientX,
             y: e.clientY
         };
+
         this.startLayerX = this._calculateLayerPosition(e.clientX).x;
         this.downTarget = target;
 
@@ -244,8 +245,11 @@ export default {
      * @private
      */
     _showDragSelection(clientX) {
+        const {left: eventContainerLeft} = this.mouseEventDetectorContainer.getBoundingClientRect();
         const layerX = this._calculateLayerPosition(clientX).x;
-        const left = Math.min(layerX, this.startLayerX) - this.layout.position.left;
+        const clientPos = this.startClientPosition;
+        const diffArea = eventContainerLeft - (clientPos.x - this.startLayerX);
+        const left = Math.min(layerX, this.startLayerX) - diffArea;
         const width = Math.abs(layerX - this.startLayerX);
         const element = this.dragSelectionElement;
 

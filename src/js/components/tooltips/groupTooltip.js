@@ -180,7 +180,7 @@ class GroupTooltip extends TooltipBase {
         return this.dataProcessor.getSeriesGroups().map((seriesGroup, index) => {
             const values = seriesGroup.map(item => ({
                 type: item.type || 'data',
-                label: item.label
+                label: item.tooltipLabel || item.label
             }));
 
             return {

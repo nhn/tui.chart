@@ -68,6 +68,12 @@ class SeriesItem {
         this.label = null;
 
         /**
+         * tooltip label
+         * @type {string}
+         */
+        this.tooltipLabel = null;
+
+        /**
          * ratio of value about distance of limit
          * @type {number}
          */
@@ -140,7 +146,6 @@ class SeriesItem {
      */
     _initValues(rawValue, index) {
         const values = this._createValues(rawValue);
-        const areaType = 'makingSeriesLabel';
         const hasStart = values.length > 1;
         let [value] = values;
 
@@ -152,14 +157,16 @@ class SeriesItem {
         }
 
         if (snippet.isNull(value)) {
-            this.label = '';
+            this._setLabel('');
         } else {
-            this.label = renderUtil.formatValue({
-                value,
-                formatFunctions: this.formatFunctions,
-                chartType: this.chartType,
-                areaType,
-                legendName: this.legendName
+            ['label', 'tooltipLabel'].forEach(labelType => {
+                this[labelType] = renderUtil.formatValue({
+                    value,
+                    formatFunctions: this.formatFunctions,
+                    chartType: this.chartType,
+                    areaType: labelType === 'tooltipLabel' ? 'makingTooltipLabel' : 'makingSeriesLabel',
+                    legendName: this.legendName
+                });
             });
         }
 
@@ -170,6 +177,16 @@ class SeriesItem {
             this._updateFormattedValueforRange();
             this.isRange = true;
         }
+    }
+
+    /**
+     * set label property
+     * @param {string} value set value
+     * @private
+     */
+    _setLabel(value) {
+        this.label = value;
+        this.tooltipLabel = value;
     }
 
     /**
@@ -217,7 +234,7 @@ class SeriesItem {
      * @private
      */
     _updateFormattedValueforRange() {
-        this.label = `${this.startLabel} ~ ${this.endLabel}`;
+        this._setLabel(`${this.startLabel} ~ ${this.endLabel}`);
     }
 
     /**
