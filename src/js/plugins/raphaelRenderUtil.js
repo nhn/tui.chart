@@ -290,12 +290,7 @@ export default {
         if (!elementForTextSize) {
             elementForTextSize = document.createElement('div');
             const elementStyle = elementForTextSize.style;
-            elementStyle.visibility = 'hidden';
-            elementStyle.position = 'absolute';
-            elementStyle.margin = 0;
-            elementStyle.padding = 0;
-            elementStyle.lineHeight = 1.11;
-            elementStyle.whiteSpace = 'nowrap';
+            this._setBasicHtmlElementStyleForGetTextSize(elementStyle);
 
             document.body.appendChild(elementForTextSize);
             storeForGetTextSize.elementForTextSize = elementForTextSize;
@@ -319,6 +314,19 @@ export default {
             width,
             height
         };
+    },
+
+    /**
+     * Set basic style for get text size element
+     * @param {object} elementStyle style object for the element to get the text size
+     */
+    _setBasicHtmlElementStyleForGetTextSize(elementStyle) {
+        elementStyle.visibility = 'hidden';
+        elementStyle.position = 'absolute';
+        elementStyle.margin = 0;
+        elementStyle.padding = 0;
+        elementStyle.lineHeight = 1.11;
+        elementStyle.whiteSpace = 'nowrap';
     },
 
     /**
