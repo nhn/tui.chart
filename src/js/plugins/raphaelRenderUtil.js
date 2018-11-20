@@ -7,10 +7,12 @@
 import snippet from 'tui-code-snippet';
 import renderUtil from '../helpers/renderUtil';
 import raphael from 'raphael';
-const storeForGetTextSize = {
+
+const LINE_HEIGHT_FOR_CALCULATE = 1.11;
+const storeForGetTextDimension = {
     cacheFontInfo: '',
     elementForTextSize: null,
-    canvasElement: supportsCanvasText()
+    canvasElement: getCanvasForTextDimension()
 };
 
 /**
@@ -237,13 +239,13 @@ export default {
      * }}
      */
     getRenderedTextSize(text, fontSize = 11, fontFamily) {
-        const {canvasElement} = storeForGetTextSize;
+        const {canvasElement} = storeForGetTextDimension;
 
         if (canvasElement) {
-            return this._getTextSizeUseCanvas(text, fontSize, fontFamily);
+            return this._getTextDimensionWithCanvas(text, fontSize, fontFamily);
         }
 
-        return this._getTextSizeUseHtmlElement(text, fontSize, fontFamily);
+        return this._getTextDimensionUseHtmlElement(text, fontSize, fontFamily);
     },
 
     /**
@@ -257,19 +259,19 @@ export default {
      * }}
      * @private
      */
-    _getTextSizeUseCanvas(text, fontSize, fontFamily) {
-        const {canvasElement, cacheFontInfo} = storeForGetTextSize;
+    _getTextDimensionWithCanvas(text, fontSize, fontFamily) {
+        const {canvasElement, cacheFontInfo} = storeForGetTextDimension;
         const ctx = canvasElement.getContext('2d');
         const fontInfo = `${fontSize}px ${fontFamily}`;
 
         if (cacheFontInfo !== fontInfo) {
-            storeForGetTextSize.cacheFontInfo = fontInfo;
+            storeForGetTextDimension.cacheFontInfo = fontInfo;
             ctx.font = fontInfo;
         }
 
         return {
             width: ctx.measureText(text).width,
-            height: fontSize * 1.11
+            height: fontSize * LINE_HEIGHT_FOR_CALCULATE
         };
     },
 
@@ -284,16 +286,16 @@ export default {
      * }}
      * @private
      */
-    _getTextSizeUseHtmlElement(text, fontSize, fontFamily) {
-        const {cacheFontInfo} = storeForGetTextSize;
-        let {elementForTextSize} = storeForGetTextSize;
+    _getTextDimensionUseHtmlElement(text, fontSize, fontFamily) {
+        const {cacheFontInfo} = storeForGetTextDimension;
+        let {elementForTextSize} = storeForGetTextDimension;
         if (!elementForTextSize) {
             elementForTextSize = document.createElement('div');
             const elementStyle = elementForTextSize.style;
             this._setBasicHtmlElementStyleForGetTextSize(elementStyle);
 
             document.body.appendChild(elementForTextSize);
-            storeForGetTextSize.elementForTextSize = elementForTextSize;
+            storeForGetTextDimension.elementForTextSize = elementForTextSize;
         }
 
         const fontInfo = `${fontSize}px ${fontFamily}`;
@@ -301,31 +303,30 @@ export default {
         if (cacheFontInfo !== fontInfo) {
             const elementStyle = elementForTextSize.style;
 
-            storeForGetTextSize.cacheFontInfo = fontInfo;
             elementStyle.fontFamily = fontFamily;
             elementStyle.fontSize = `${fontSize}px`;
+
+            storeForGetTextDimension.cacheFontInfo = fontInfo;
         }
 
         elementForTextSize.innerHTML = text;
 
-        const {clientWidth: width, clientHeight: height} = elementForTextSize;
-
         return {
-            width,
-            height
+            width: elementForTextSize.clientWidth,
+            height: elementForTextSize.clientHeight
         };
     },
 
     /**
-     * Set basic style for get text size element
-     * @param {object} elementStyle style object for the element to get the text size
+     * Set basic style for get text dimension element
+     * @param {object} elementStyle style object for the element to get the text dimension
      */
     _setBasicHtmlElementStyleForGetTextSize(elementStyle) {
         elementStyle.visibility = 'hidden';
         elementStyle.position = 'absolute';
         elementStyle.margin = 0;
         elementStyle.padding = 0;
-        elementStyle.lineHeight = 1.11;
+        elementStyle.lineHeight = LINE_HEIGHT_FOR_CALCULATE;
         elementStyle.whiteSpace = 'nowrap';
     },
 
@@ -365,10 +366,10 @@ function isNumber(numberSuspect) {
  * check supports canvas text
  * @returns {?HTMLElement}
  */
-function supportsCanvasText() {
-    const isSupportCanvas = !!document.createElement('canvas').getContext;
+function getCanvasForTextDimension() {
+    const isSupportCanvasContext = !!document.createElement('canvas').getContext;
 
-    if (!isSupportCanvas) {
+    if (!isSupportCanvasContext) {
         return null;
     }
 
@@ -381,4 +382,3 @@ function supportsCanvasText() {
 
     return null;
 }
-
