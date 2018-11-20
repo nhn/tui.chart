@@ -8,6 +8,13 @@ import snippet from 'tui-code-snippet';
 import renderUtil from '../helpers/renderUtil';
 import raphael from 'raphael';
 
+const LINE_HEIGHT_FOR_CALCULATE = 1.11;
+const storeForGetTextDimension = {
+    cacheFontInfo: '',
+    elementForTextSize: null,
+    canvasElement: getCanvasForTextDimension()
+};
+
 /**
  * Util for raphael rendering.
  * @module raphaelRenderUtil
@@ -231,21 +238,96 @@ export default {
      *     height: number
      * }}
      */
-    getRenderedTextSize(text, fontSize, fontFamily) {
-        const paper = raphael(document.body, 100, 100);
-        const textElement = paper.text(0, 0, text).attr({
-            'font-size': fontSize,
-            'font-family': fontFamily
-        });
-        const bBox = textElement.getBBox();
+    getRenderedTextSize(text, fontSize = 11, fontFamily) {
+        const {canvasElement} = storeForGetTextDimension;
 
-        textElement.remove();
-        paper.remove();
+        if (canvasElement) {
+            return this._getTextDimensionWithCanvas(text, fontSize, fontFamily);
+        }
+
+        return this._getTextDimensionUseHtmlElement(text, fontSize, fontFamily);
+    },
+
+    /**
+     * Get rendered text element size (Use Canvas)
+     * @param {string} text text content
+     * @param {number} fontSize font-size attribute
+     * @param {string} fontFamily font-family attribute
+     * @returns {{
+     *     width: number,
+     *     height: number
+     * }}
+     * @private
+     */
+    _getTextDimensionWithCanvas(text, fontSize, fontFamily) {
+        const {canvasElement, cacheFontInfo} = storeForGetTextDimension;
+        const ctx = canvasElement.getContext('2d');
+        const fontInfo = `${fontSize}px ${fontFamily}`;
+
+        if (cacheFontInfo !== fontInfo) {
+            storeForGetTextDimension.cacheFontInfo = fontInfo;
+            ctx.font = fontInfo;
+        }
 
         return {
-            width: bBox.width,
-            height: bBox.height
+            width: ctx.measureText(text).width,
+            height: fontSize * LINE_HEIGHT_FOR_CALCULATE
         };
+    },
+
+    /**
+     * Get rendered text element size (Use HTMLElement)
+     * @param {string} text text content
+     * @param {number} fontSize font-size attribute
+     * @param {string} fontFamily font-family attribute
+     * @returns {{
+     *     width: number,
+     *     height: number
+     * }}
+     * @private
+     */
+    _getTextDimensionUseHtmlElement(text, fontSize, fontFamily) {
+        const {cacheFontInfo} = storeForGetTextDimension;
+        let {elementForTextSize} = storeForGetTextDimension;
+        if (!elementForTextSize) {
+            elementForTextSize = document.createElement('div');
+            const elementStyle = elementForTextSize.style;
+            this._setBasicHtmlElementStyleForGetTextSize(elementStyle);
+
+            document.body.appendChild(elementForTextSize);
+            storeForGetTextDimension.elementForTextSize = elementForTextSize;
+        }
+
+        const fontInfo = `${fontSize}px ${fontFamily}`;
+
+        if (cacheFontInfo !== fontInfo) {
+            const elementStyle = elementForTextSize.style;
+
+            elementStyle.fontFamily = fontFamily;
+            elementStyle.fontSize = `${fontSize}px`;
+
+            storeForGetTextDimension.cacheFontInfo = fontInfo;
+        }
+
+        elementForTextSize.innerHTML = text;
+
+        return {
+            width: elementForTextSize.clientWidth,
+            height: elementForTextSize.clientHeight
+        };
+    },
+
+    /**
+     * Set basic style for get text dimension element
+     * @param {object} elementStyle style object for the element to get the text dimension
+     */
+    _setBasicHtmlElementStyleForGetTextSize(elementStyle) {
+        elementStyle.visibility = 'hidden';
+        elementStyle.position = 'absolute';
+        elementStyle.margin = 0;
+        elementStyle.padding = 0;
+        elementStyle.lineHeight = LINE_HEIGHT_FOR_CALCULATE;
+        elementStyle.whiteSpace = 'nowrap';
     },
 
     /**
@@ -278,4 +360,25 @@ export default {
  */
 function isNumber(numberSuspect) {
     return snippet.isExisty(numberSuspect) && typeof numberSuspect === 'number';
+}
+
+/**
+ * check supports canvas text
+ * @returns {?HTMLElement}
+ */
+function getCanvasForTextDimension() {
+    const isSupportCanvasContext = !!document.createElement('canvas').getContext;
+
+    if (!isSupportCanvasContext) {
+        return null;
+    }
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    if (typeof context.fillText === 'function') {
+        return canvas;
+    }
+
+    return null;
 }
