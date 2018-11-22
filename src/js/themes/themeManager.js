@@ -143,9 +143,10 @@ export default {
      * @param {object} seriesThemes - series theme map
      * @param {object} rawSeriesThemes - raw series theme map
      * @param {object} rawSeriesData - raw series data
+     * @param {boolean} isColorByPoint - check colorByPoint option
      * @private
      */
-    _setSeriesColors(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
+    _setSeriesColors(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData, isColorByPoint) {
         let seriesColors, seriesCount, hasOwnColors;
         let colorIndex = 0;
 
@@ -160,7 +161,7 @@ export default {
                 hasOwnColors = false;
             }
 
-            seriesCount = this._getSeriesThemeColorCount(rawSeriesData[seriesType]);
+            seriesCount = this._getSeriesThemeColorCount(rawSeriesData[seriesType], isColorByPoint);
 
             seriesThemes[seriesType].colors = this._makeEachSeriesColors(seriesColors, seriesCount,
                 !hasOwnColors && colorIndex);
@@ -175,15 +176,19 @@ export default {
     /**
      * Get number of series theme color from seriesData
      * @param {object} rawSeriesDatum - raw series data contains series information
+     * @param {boolean} isColorByPoint - check colorByPoint option
      * @returns {number} number of series theme color
      * @private
      */
-    _getSeriesThemeColorCount(rawSeriesDatum) {
+    _getSeriesThemeColorCount(rawSeriesDatum, isColorByPoint) {
         let seriesCount = 0;
 
         if (rawSeriesDatum && rawSeriesDatum.length) {
-            if (rawSeriesDatum.colorLength) {
-                seriesCount = rawSeriesDatum.colorLength;
+            const existFirstSeriesDataLength = rawSeriesDatum[0] && rawSeriesDatum[0].data &&
+                rawSeriesDatum[0].data.length;
+
+            if (isColorByPoint && existFirstSeriesDataLength) {
+                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
             } else {
                 seriesCount = rawSeriesDatum.length;
             }
@@ -192,17 +197,7 @@ export default {
         return seriesCount;
     },
 
-    /**
-     * Init theme.
-     * @param {string} themeName - theme name
-     * @param {object} rawTheme - raw theme
-     * @param {Array.<string>} seriesTypes - series types
-     * @param {object} rawSeriesData - raw series data
-     * @returns {object}
-     * @private
-     * @ignore
-     */
-    _initTheme(themeName, rawTheme, seriesTypes, rawSeriesData) {
+    _initTheme(themeName, rawTheme, seriesTypes, rawSeriesData, isColorByPoint) {
         let theme;
 
         if (themeName !== chartConst.DEFAULT_THEME_NAME) { // customized theme that overrides default theme
@@ -216,7 +211,7 @@ export default {
         theme.yAxis = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.yAxis, theme.yAxis, 'yAxis');
         theme.series = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.series, theme.series, 'series');
 
-        this._setSeriesColors(seriesTypes, theme.series, rawTheme.series, rawSeriesData);
+        this._setSeriesColors(seriesTypes, theme.series, rawTheme.series, rawSeriesData, isColorByPoint);
 
         return theme;
     },
@@ -296,9 +291,10 @@ export default {
      * @param {string} themeName - theme name
      * @param {string} chartType - chart type
      * @param {object} rawSeriesData - raw series data
+     * @param {boolean} isColorByPoint - check colorByPoint option
      * @returns {object}
      */
-    get(themeName, chartType, rawSeriesData) {
+    get(themeName, chartType, rawSeriesData, isColorByPoint) {
         const rawTheme = themes[themeName];
 
         if (!rawTheme) {
@@ -307,7 +303,7 @@ export default {
 
         const seriesTypes = this._pickSeriesNames(chartType, rawSeriesData);
 
-        const theme = this._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
+        const theme = this._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData, isColorByPoint);
 
         this._inheritThemeFont(theme, seriesTypes);
         this._copySeriesColorThemeToOther(theme);

@@ -43,6 +43,9 @@ class AreaTypeDataModel {
 
             lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
 
+            this.leftStepLength =
+                (groupPositions.length > 1) ? groupPositions[1][0].left - groupPositions[0][0].left : 0;
+
             return groupPositions.map((positions, groupIndex) => (
                 positions.map((position, index) => {
                     let datum = null;
@@ -82,7 +85,68 @@ class AreaTypeDataModel {
      * @returns {object}
      */
     findData(layerPosition, distanceLimit, selectLegendIndex) {
-        const findFoundMap = {};
+        if (distanceLimit && distanceLimit < this.leftStepLength) {
+            return this._findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex);
+        }
+
+        return this._findDataForDenseArea(layerPosition, selectLegendIndex);
+    }
+
+    /**
+     * Find Data by layer position at dense area.
+     * @param {{x: number, y: number}} layerPosition - layer position
+     * @param {number} selectLegendIndex select legend sereis index
+     * @returns {object}
+     * @private
+     */
+    _findDataForDenseArea(layerPosition, selectLegendIndex) {
+        const {xMinValue} = this.data.reduce((findMinObj, datum) => {
+            const xDiff = Math.abs(layerPosition.x - datum.bound.left);
+            if (xDiff <= findMinObj.xMin) {
+                findMinObj.xMin = xDiff;
+                findMinObj.xMinValue = datum.bound.left;
+            }
+
+            return findMinObj;
+        }, {
+            xMin: Number.MAX_VALUE,
+            xMinValue: 0
+        });
+
+        const {findFound} = this.data.reduce((findResultObj, datum) => {
+            const yDiff = Math.abs(layerPosition.y - datum.bound.top);
+            let remakeFindObj = {};
+
+            if (datum.bound.left !== xMinValue) {
+                remakeFindObj = findResultObj;
+            } else if (!snippet.isNull(selectLegendIndex) && selectLegendIndex === datum.indexes.index) {
+                remakeFindObj.yMin = Number.MIN_VALUE;
+                remakeFindObj.findFound = datum;
+            } else if (yDiff <= findResultObj.yMin) {
+                remakeFindObj.yMin = yDiff;
+                remakeFindObj.findFound = datum;
+            } else {
+                remakeFindObj = findResultObj;
+            }
+
+            return remakeFindObj;
+        }, {
+            yMin: Number.MAX_VALUE,
+            findFound: null
+        });
+
+        return findFound;
+    }
+
+    /**
+     * Find Data by layer position at loose area.
+     * @param {{x: number, y: number}} layerPosition - layer position
+     * @param {number} [distanceLimit] distance limitation to find data
+     * @param {number} selectLegendIndex select legend sereis index
+     * @returns {object}
+     * @private
+     */
+    _findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex) {
         let min = 100000;
         let findFound;
 
@@ -93,16 +157,19 @@ class AreaTypeDataModel {
             const yDiff = layerPosition.y - datum.bound.top;
             const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-            if (distance < distanceLimit && distance <= min) {
+            if (distance > distanceLimit) {
+                return;
+            }
+
+            if (!snippet.isNull(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
+                return;
+            }
+
+            if (distance <= min) {
                 min = distance;
                 findFound = datum;
-                findFoundMap[datum.indexes.index] = datum;
             }
         });
-
-        if (!snippet.isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
-            findFound = findFoundMap[selectLegendIndex];
-        }
 
         return findFound;
     }

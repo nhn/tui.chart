@@ -44,6 +44,13 @@ class ChartBase {
             this.chartTypes = params.chartTypes;
         }
 
+        /**
+         * chart original options
+         * @type {string}
+         * @ignore
+         */
+        this.originalOptions = objectUtil.deepCopy(params.options);
+
         this._initializeOptions(params.options);
 
         /**
@@ -486,7 +493,7 @@ class ChartBase {
      */
     _initializeRawData(rawData) {
         const data = objectUtil.deepCopy(rawData);
-        const {chartType, series: seriesOption} = this.options;
+        const {chartType, series: seriesOption} = this.originalOptions;
 
         if (chartType !== 'combo' && snippet.isArray(data.series)) {
             const clonedSeries = data.series;
@@ -526,9 +533,103 @@ class ChartBase {
      * Register of user event.
      * @param {string} eventName event name
      * @param {function} func event callback
-     * @ignore
+     * @api
      */
     on(eventName, func) {
+        /**
+         * Selecte legend event
+         * @event ChartBase#selectLegend
+         * @param {object} info selected legend info
+         *   @param {string} legend legend name
+         *   @param {string} chartType chart type
+         *   @param {number} index selected legend index
+         * @api
+         * @example
+         * chart.on('selectLegend', function(info) {
+         *     console.log(info);
+         * });
+         */
+
+        /**
+         * Selecte series event
+         * @event ChartBase#selectSeries
+         * @param {object} info selected series info
+         *   @param {string} legend legend name
+         *   @param {string} chartType chart type
+         *   @param {number} legendIndex selected legend index
+         *   @param {number} index selected category index
+         * @api
+         * @example
+         * chart.on('selectSeries', function(info) {
+         *     console.log(info);
+         * });
+         */
+
+        /**
+         * before show tooltip event
+         * @event ChartBase#beforeShowTooltip
+         * @param {object} info target series info
+         *   @param {string} legend legend name
+         *   @param {string} chartType chart type
+         *   @param {number} legendIndex target legend index
+         *   @param {number} index target category index
+         * @api
+         * @example
+         * chart.on('beforeShowTooltip', function(info) {
+         * });
+         */
+
+        /**
+         * after show tooltip event
+         * @event ChartBase#afterShowTooltip
+         * @param {object} info target series info
+         *   @param {string} legend legend name
+         *   @param {string} chartType chart type
+         *   @param {number} legendIndex target legend index
+         *   @param {number} index target category index
+         *   @param {HTMLElement} element tooltip element
+         *   @param {object} position tooltip position
+         *     @param {number} left tooltip left position
+         *     @param {number} top tooltip left position
+         * @api
+         * @example
+         * chart.on('afterShowTooltip', function(info) {
+         *    console.log(info);
+         * });
+         */
+
+        /**
+         * before hide tooltip event
+         * @event ChartBase#beforeHideTooltip
+         * @api
+         * @example
+         * chart.on('beforeHideTooltip', function() {
+         *     // Create a task at the time of the event.
+         * });
+         */
+
+        /**
+         * change checked legend event
+         * @event ChartBase#changeCheckedLegends
+         * @param {object.<string, array>} info `checked` information that matches the chart type.
+         * @api
+         * @example
+         * chart.on('changeCheckedLegends', function(info) {
+         *    console.log(info);
+         * });
+         */
+
+        /**
+         * Register of user event.
+         * @event MapChart#zoom
+         * @param {string} magnification zoom ratio
+         * @api
+         * @example
+         * chart.on('zoom', function(magnification) {
+         *    console.log(magnification);
+         * });
+         */
+
         if (chartConst.PUBLIC_EVENT_MAP[eventName]) {
             this.eventBus.on(chartConst.PUBLIC_EVENT_PREFIX + eventName, func);
         }

@@ -20,6 +20,7 @@ describe('Test for SeriesItem', () => {
             expect(seriesItem.value).toBe(10);
             expect(seriesItem.end).toBe(10);
             expect(seriesItem.label).toBe('0010');
+            expect(seriesItem.tooltipLabel).toBe('0010');
             expect(seriesItem.endLabel).toBe('0010');
             expect(seriesItem.isRange).toBe(false);
         });
@@ -30,6 +31,7 @@ describe('Test for SeriesItem', () => {
             expect(seriesItem.end).toBe(null);
             expect(seriesItem.start).toBe(null);
             expect(seriesItem.label).toBe('');
+            expect(seriesItem.tooltipLabel).toBe('');
             expect(seriesItem.endLabel).toBe('');
             expect(seriesItem.startLabel).toBe(null);
             expect(seriesItem.isRange).toBe(false);
@@ -42,6 +44,7 @@ describe('Test for SeriesItem', () => {
             expect(seriesItem.end).toBe(40);
             expect(seriesItem.start).toBe(10);
             expect(seriesItem.label).toBe('0010 ~ 0040');
+            expect(seriesItem.tooltipLabel).toBe('0010 ~ 0040');
             expect(seriesItem.endLabel).toBe('0040');
             expect(seriesItem.startLabel).toBe('0010');
             expect(seriesItem.isRange).toBe(true);
@@ -53,6 +56,17 @@ describe('Test for SeriesItem', () => {
 
             expect(seriesItem.value).toBe(-10);
             expect(seriesItem.label).toBe('10');
+            expect(seriesItem.tooltipLabel).toBe('10');
+        });
+
+        it('Changes to makingTooltip and changes to makingSeries should be distinguished.', () => {
+            seriesItem.formatFunctions = [(value, chartType, areaType) => (
+                areaType === 'makingSeriesLabel' ? `!!${value}` : `00${value}`
+            )];
+            seriesItem._initValues(10);
+
+            expect(seriesItem.label).toBe('!!10');
+            expect(seriesItem.tooltipLabel).toBe('0010');
         });
     });
 
