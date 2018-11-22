@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.4.0
+ * @version 3.4.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Oct 12 2018 10:30:18 GMT+0900 (KST)"
+ * bundle created at "Thu Nov 22 2018 11:45:10 GMT+0900 (GMT+09:00)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -9925,6 +9925,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	var LINE_HEIGHT_FOR_CALCULATE = 1.11; /**
+	                                       * @fileoverview Util for raphael rendering.
+	                                       * @author NHN Ent.
+	                                       *         FE Development Lab <dl_javascript@nhnent.com>
+	                                       */
+	
+	var storeForGetTextDimension = {
+	    cacheFontInfo: '',
+	    elementForTextSize: null,
+	    canvasElement: getCanvasForTextDimension()
+	};
+	
 	/**
 	 * Util for raphael rendering.
 	 * @module raphaelRenderUtil
@@ -10160,21 +10172,105 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *     height: number
 	     * }}
 	     */
-	    getRenderedTextSize: function getRenderedTextSize(text, fontSize, fontFamily) {
-	        var paper = (0, _raphael2['default'])(document.body, 100, 100);
-	        var textElement = paper.text(0, 0, text).attr({
-	            'font-size': fontSize,
-	            'font-family': fontFamily
-	        });
-	        var bBox = textElement.getBBox();
+	    getRenderedTextSize: function getRenderedTextSize(text) {
+	        var fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 11;
+	        var fontFamily = arguments[2];
+	        var canvasElement = storeForGetTextDimension.canvasElement;
 	
-	        textElement.remove();
-	        paper.remove();
+	
+	        if (canvasElement) {
+	            return this._getTextDimensionWithCanvas(text, fontSize, fontFamily);
+	        }
+	
+	        return this._getTextDimensionUseHtmlElement(text, fontSize, fontFamily);
+	    },
+	
+	
+	    /**
+	     * Get rendered text element size (Use Canvas)
+	     * @param {string} text text content
+	     * @param {number} fontSize font-size attribute
+	     * @param {string} fontFamily font-family attribute
+	     * @returns {{
+	     *     width: number,
+	     *     height: number
+	     * }}
+	     * @private
+	     */
+	    _getTextDimensionWithCanvas: function _getTextDimensionWithCanvas(text, fontSize, fontFamily) {
+	        var canvasElement = storeForGetTextDimension.canvasElement,
+	            cacheFontInfo = storeForGetTextDimension.cacheFontInfo;
+	
+	        var ctx = canvasElement.getContext('2d');
+	        var fontInfo = fontSize + 'px ' + fontFamily;
+	
+	        if (cacheFontInfo !== fontInfo) {
+	            storeForGetTextDimension.cacheFontInfo = fontInfo;
+	            ctx.font = fontInfo;
+	        }
 	
 	        return {
-	            width: bBox.width,
-	            height: bBox.height
+	            width: ctx.measureText(text).width,
+	            height: fontSize * LINE_HEIGHT_FOR_CALCULATE
 	        };
+	    },
+	
+	
+	    /**
+	     * Get rendered text element size (Use HTMLElement)
+	     * @param {string} text text content
+	     * @param {number} fontSize font-size attribute
+	     * @param {string} fontFamily font-family attribute
+	     * @returns {{
+	     *     width: number,
+	     *     height: number
+	     * }}
+	     * @private
+	     */
+	    _getTextDimensionUseHtmlElement: function _getTextDimensionUseHtmlElement(text, fontSize, fontFamily) {
+	        var cacheFontInfo = storeForGetTextDimension.cacheFontInfo;
+	        var elementForTextSize = storeForGetTextDimension.elementForTextSize;
+	
+	        if (!elementForTextSize) {
+	            elementForTextSize = document.createElement('div');
+	            var elementStyle = elementForTextSize.style;
+	            this._setBasicHtmlElementStyleForGetTextSize(elementStyle);
+	
+	            document.body.appendChild(elementForTextSize);
+	            storeForGetTextDimension.elementForTextSize = elementForTextSize;
+	        }
+	
+	        var fontInfo = fontSize + 'px ' + fontFamily;
+	
+	        if (cacheFontInfo !== fontInfo) {
+	            var _elementStyle = elementForTextSize.style;
+	
+	            _elementStyle.fontFamily = fontFamily;
+	            _elementStyle.fontSize = fontSize + 'px';
+	
+	            storeForGetTextDimension.cacheFontInfo = fontInfo;
+	        }
+	
+	        elementForTextSize.innerHTML = text;
+	
+	        return {
+	            width: elementForTextSize.clientWidth,
+	            height: elementForTextSize.clientHeight
+	        };
+	    },
+	
+	
+	    /**
+	     * Set basic style for get text dimension element
+	     * @param {object} elementStyle style object for the element to get the text dimension
+	     */
+	    _setBasicHtmlElementStyleForGetTextSize: function _setBasicHtmlElementStyleForGetTextSize(elementStyle) {
+	        elementStyle.visibility = 'hidden';
+	        elementStyle.position = 'absolute';
+	        elementStyle.margin = 0;
+	        elementStyle.padding = 0;
+	        elementStyle.lineHeight = LINE_HEIGHT_FOR_CALCULATE;
+	        elementStyle.whiteSpace = 'nowrap';
 	    },
 	
 	
@@ -10206,14 +10302,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {*} numberSuspect number suspect
 	 * @returns {boolean}
 	 */
-	/**
-	 * @fileoverview Util for raphael rendering.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
 	
 	function isNumber(numberSuspect) {
 	    return _tuiCodeSnippet2['default'].isExisty(numberSuspect) && typeof numberSuspect === 'number';
+	}
+	
+	/**
+	 * check supports canvas text
+	 * @returns {?HTMLElement}
+	 */
+	function getCanvasForTextDimension() {
+	    var isSupportCanvasContext = !!document.createElement('canvas').getContext;
+	
+	    if (!isSupportCanvasContext) {
+	        return null;
+	    }
+	
+	    var canvas = document.createElement('canvas');
+	    var context = canvas.getContext('2d');
+	
+	    if (typeof context.fillText === 'function') {
+	        return canvas;
+	    }
+	
+	    return null;
 	}
 
 /***/ }),
@@ -10695,7 +10807,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            chartType = params.chartType;
 	
 	        var fns = [String(value)].concat(_toConsumableArray(formatFunctions || []));
-	        // const fns = [String(value)];
 	
 	        return _tuiCodeSnippet2['default'].reduce(fns, function (stored, fn) {
 	            return fn(stored, chartType, areaType, valueType, legendName);
@@ -21127,7 +21238,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  options.chartType = chartType;
 	  options.theme = options.theme || _const2['default'].DEFAULT_THEME_NAME;
 	
-	  var theme = _themeManager2['default'].get(options.theme, chartType, rawData.series);
+	  var isColorByPoint = options.series && options.series.colorByPoint;
+	  var theme = _themeManager2['default'].get(options.theme, chartType, rawData.series, isColorByPoint);
 	  var chart = _chartFactory2['default'].get(options.chartType, rawData, theme, options);
 	
 	  chart.render(container);
@@ -21177,6 +21289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.series.barWidth - bar width
 	 *          @param {boolean} options.series.allowSelect - whether allow select or not
 	 *          @param {boolean} options.series.diverging - whether diverging or not
+	 *          @param {boolean} options.series.colorByPoint - whether category Individual colors
 	 *      @param {object} options.tooltip - options for tooltip component
 	 *          @param {string} options.tooltip.suffix - suffix for tooltip
 	 *          @param {function} [options.tooltip.template] - template for tooltip
@@ -21285,6 +21398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.series.barWidth - bar width
 	 *          @param {boolean} options.series.allowSelect - whether allow select or not
 	 *          @param {boolean} options.series.diverging - whether diverging or not
+	 *          @param {boolean} options.series.colorByPoint - whether category Individual colors
 	 *      @param {object} options.tooltip - options for tooltip component
 	 *          @param {string} options.tooltip.suffix - suffix for tooltip
 	 *          @param {function} [options.tooltip.template] - template for tooltip
@@ -23267,9 +23381,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} seriesThemes - series theme map
 	     * @param {object} rawSeriesThemes - raw series theme map
 	     * @param {object} rawSeriesData - raw series data
+	     * @param {boolean} isColorByPoint - check colorByPoint option
 	     * @private
 	     */
-	    _setSeriesColors: function _setSeriesColors(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData) {
+	    _setSeriesColors: function _setSeriesColors(seriesTypes, seriesThemes, rawSeriesThemes, rawSeriesData, isColorByPoint) {
 	        var _this3 = this;
 	
 	        var seriesColors = void 0,
@@ -23288,7 +23403,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                hasOwnColors = false;
 	            }
 	
-	            seriesCount = _this3._getSeriesThemeColorCount(rawSeriesData[seriesType]);
+	            seriesCount = _this3._getSeriesThemeColorCount(rawSeriesData[seriesType], isColorByPoint);
 	
 	            seriesThemes[seriesType].colors = _this3._makeEachSeriesColors(seriesColors, seriesCount, !hasOwnColors && colorIndex);
 	
@@ -23303,15 +23418,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Get number of series theme color from seriesData
 	     * @param {object} rawSeriesDatum - raw series data contains series information
+	     * @param {boolean} isColorByPoint - check colorByPoint option
 	     * @returns {number} number of series theme color
 	     * @private
 	     */
-	    _getSeriesThemeColorCount: function _getSeriesThemeColorCount(rawSeriesDatum) {
+	    _getSeriesThemeColorCount: function _getSeriesThemeColorCount(rawSeriesDatum, isColorByPoint) {
 	        var seriesCount = 0;
 	
 	        if (rawSeriesDatum && rawSeriesDatum.length) {
-	            if (rawSeriesDatum.colorLength) {
-	                seriesCount = rawSeriesDatum.colorLength;
+	            var existFirstSeriesDataLength = rawSeriesDatum[0] && rawSeriesDatum[0].data && rawSeriesDatum[0].data.length;
+	
+	            if (isColorByPoint && existFirstSeriesDataLength) {
+	                seriesCount = Math.max(rawSeriesDatum.length, rawSeriesDatum[0].data.length);
 	            } else {
 	                seriesCount = rawSeriesDatum.length;
 	            }
@@ -23319,19 +23437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return seriesCount;
 	    },
-	
-	
-	    /**
-	     * Init theme.
-	     * @param {string} themeName - theme name
-	     * @param {object} rawTheme - raw theme
-	     * @param {Array.<string>} seriesTypes - series types
-	     * @param {object} rawSeriesData - raw series data
-	     * @returns {object}
-	     * @private
-	     * @ignore
-	     */
-	    _initTheme: function _initTheme(themeName, rawTheme, seriesTypes, rawSeriesData) {
+	    _initTheme: function _initTheme(themeName, rawTheme, seriesTypes, rawSeriesData, isColorByPoint) {
 	        var theme = void 0;
 	
 	        if (themeName !== _const2['default'].DEFAULT_THEME_NAME) {
@@ -23347,7 +23453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        theme.yAxis = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.yAxis, theme.yAxis, 'yAxis');
 	        theme.series = this._createComponentThemeWithSeriesName(seriesTypes, rawTheme.series, theme.series, 'series');
 	
-	        this._setSeriesColors(seriesTypes, theme.series, rawTheme.series, rawSeriesData);
+	        this._setSeriesColors(seriesTypes, theme.series, rawTheme.series, rawSeriesData, isColorByPoint);
 	
 	        return theme;
 	    },
@@ -23428,9 +23534,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {string} themeName - theme name
 	     * @param {string} chartType - chart type
 	     * @param {object} rawSeriesData - raw series data
+	     * @param {boolean} isColorByPoint - check colorByPoint option
 	     * @returns {object}
 	     */
-	    get: function get(themeName, chartType, rawSeriesData) {
+	    get: function get(themeName, chartType, rawSeriesData, isColorByPoint) {
 	        var rawTheme = themes[themeName];
 	
 	        if (!rawTheme) {
@@ -23439,7 +23546,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var seriesTypes = this._pickSeriesNames(chartType, rawSeriesData);
 	
-	        var theme = this._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData);
+	        var theme = this._initTheme(themeName, rawTheme, seriesTypes, rawSeriesData, isColorByPoint);
 	
 	        this._inheritThemeFont(theme, seriesTypes);
 	        this._copySeriesColorThemeToOther(theme);
@@ -24348,6 +24455,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.chartTypes = params.chartTypes;
 	        }
 	
+	        /**
+	         * chart original options
+	         * @type {string}
+	         * @ignore
+	         */
+	        this.originalOptions = _objectUtil2['default'].deepCopy(params.options);
+	
 	        this._initializeOptions(params.options);
 	
 	        /**
@@ -24840,9 +24954,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    ChartBase.prototype._initializeRawData = function _initializeRawData(rawData) {
 	        var data = _objectUtil2['default'].deepCopy(rawData);
-	        var _options2 = this.options,
-	            chartType = _options2.chartType,
-	            seriesOption = _options2.series;
+	        var _originalOptions = this.originalOptions,
+	            chartType = _originalOptions.chartType,
+	            seriesOption = _originalOptions.series;
 	
 	
 	        if (chartType !== 'combo' && _tuiCodeSnippet2['default'].isArray(data.series)) {
@@ -24887,11 +25001,105 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Register of user event.
 	     * @param {string} eventName event name
 	     * @param {function} func event callback
-	     * @ignore
+	     * @api
 	     */
 	
 	
 	    ChartBase.prototype.on = function on(eventName, func) {
+	        /**
+	         * Selecte legend event
+	         * @event ChartBase#selectLegend
+	         * @param {object} info selected legend info
+	         *   @param {string} legend legend name
+	         *   @param {string} chartType chart type
+	         *   @param {number} index selected legend index
+	         * @api
+	         * @example
+	         * chart.on('selectLegend', function(info) {
+	         *     console.log(info);
+	         * });
+	         */
+	
+	        /**
+	         * Selecte series event
+	         * @event ChartBase#selectSeries
+	         * @param {object} info selected series info
+	         *   @param {string} legend legend name
+	         *   @param {string} chartType chart type
+	         *   @param {number} legendIndex selected legend index
+	         *   @param {number} index selected category index
+	         * @api
+	         * @example
+	         * chart.on('selectSeries', function(info) {
+	         *     console.log(info);
+	         * });
+	         */
+	
+	        /**
+	         * before show tooltip event
+	         * @event ChartBase#beforeShowTooltip
+	         * @param {object} info target series info
+	         *   @param {string} legend legend name
+	         *   @param {string} chartType chart type
+	         *   @param {number} legendIndex target legend index
+	         *   @param {number} index target category index
+	         * @api
+	         * @example
+	         * chart.on('beforeShowTooltip', function(info) {
+	         * });
+	         */
+	
+	        /**
+	         * after show tooltip event
+	         * @event ChartBase#afterShowTooltip
+	         * @param {object} info target series info
+	         *   @param {string} legend legend name
+	         *   @param {string} chartType chart type
+	         *   @param {number} legendIndex target legend index
+	         *   @param {number} index target category index
+	         *   @param {HTMLElement} element tooltip element
+	         *   @param {object} position tooltip position
+	         *     @param {number} left tooltip left position
+	         *     @param {number} top tooltip left position
+	         * @api
+	         * @example
+	         * chart.on('afterShowTooltip', function(info) {
+	         *    console.log(info);
+	         * });
+	         */
+	
+	        /**
+	         * before hide tooltip event
+	         * @event ChartBase#beforeHideTooltip
+	         * @api
+	         * @example
+	         * chart.on('beforeHideTooltip', function() {
+	         *     // Create a task at the time of the event.
+	         * });
+	         */
+	
+	        /**
+	         * change checked legend event
+	         * @event ChartBase#changeCheckedLegends
+	         * @param {object.<string, array>} info `checked` information that matches the chart type.
+	         * @api
+	         * @example
+	         * chart.on('changeCheckedLegends', function(info) {
+	         *    console.log(info);
+	         * });
+	         */
+	
+	        /**
+	         * Register of user event.
+	         * @event MapChart#zoom
+	         * @param {string} magnification zoom ratio
+	         * @api
+	         * @example
+	         * chart.on('zoom', function(magnification) {
+	         *    console.log(magnification);
+	         * });
+	         */
+	
 	        if (_const2['default'].PUBLIC_EVENT_MAP[eventName]) {
 	            this.eventBus.on(_const2['default'].PUBLIC_EVENT_PREFIX + eventName, func);
 	        }
@@ -27330,7 +27538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            left = _layout$position2.left,
 	            top = _layout$position2.top;
 	
-	        var distance = positions[1] - positions[0];
+	        var distance = positions.length > 1 ? positions[1] - positions[0] : 0;
 	
 	        positions.forEach(function (position, index) {
 	            var pathString = 'M' + left + ',' + (distance * index + top) + 'H' + (left + layout.dimension.width);
@@ -31481,6 +31689,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    NormalTooltip.prototype._makeTooltipHtml = function _makeTooltipHtml(category, item) {
 	        var template = this._getTooltipTemplate(item);
+	
 	        return template(_tuiCodeSnippet2['default'].extend({
 	            categoryVisible: category ? 'show' : 'hide',
 	            category: category
@@ -33385,7 +33594,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var values = seriesGroup.map(function (item) {
 	                return {
 	                    type: item.type || 'data',
-	                    label: item.label
+	                    label: item.tooltipLabel || item.label
 	                };
 	            });
 	
@@ -36038,7 +36247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
-	var AREA_DETECT_DISTANCE_THRESHHOLD = 50;
+	var AREA_DETECT_DISTANCE_THRESHOLD = 50;
 	
 	var AreaTypeEventDetector = function (_MouseEventDetectorBa) {
 	    _inherits(AreaTypeEventDetector, _MouseEventDetectorBa);
@@ -36143,7 +36352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var selectLegendIndex = this.dataProcessor.selectLegendIndex;
 	
 	
-	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHHOLD, selectLegendIndex);
+	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHOLD, selectLegendIndex);
 	    };
 	
 	    /**
@@ -36575,6 +36784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            x: e.clientX,
 	            y: e.clientY
 	        };
+	
 	        this.startLayerX = this._calculateLayerPosition(e.clientX).x;
 	        this.downTarget = target;
 	
@@ -36588,8 +36798,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _showDragSelection: function _showDragSelection(clientX) {
+	        var _mouseEventDetectorCo = this.mouseEventDetectorContainer.getBoundingClientRect(),
+	            eventContainerLeft = _mouseEventDetectorCo.left;
+	
 	        var layerX = this._calculateLayerPosition(clientX).x;
-	        var left = Math.min(layerX, this.startLayerX) - this.layout.position.left;
+	        var clientPos = this.startClientPosition;
+	        var diffArea = eventContainerLeft - (clientPos.x - this.startLayerX);
+	        var left = Math.min(layerX, this.startLayerX) - diffArea;
 	        var width = Math.abs(layerX - this.startLayerX);
 	        var element = this.dragSelectionElement;
 	
@@ -36829,7 +37044,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    AreaTypeDataModel.prototype._makeData = function _makeData(seriesItemBoundsData) {
-	        var _ref, _ref2;
+	        var _this = this,
+	            _ref,
+	            _ref2;
 	
 	        var seriesItemBoundsLength = seriesItemBoundsData.length;
 	        var lastGroupIndex = 0;
@@ -36844,6 +37061,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
+	
+	            _this.leftStepLength = groupPositions.length > 1 ? groupPositions[1][0].left - groupPositions[0][0].left : 0;
 	
 	            return groupPositions.map(function (positions, groupIndex) {
 	                return positions.map(function (position, index) {
@@ -36888,7 +37107,74 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    AreaTypeDataModel.prototype.findData = function findData(layerPosition, distanceLimit, selectLegendIndex) {
-	        var findFoundMap = {};
+	        if (distanceLimit && distanceLimit < this.leftStepLength) {
+	            return this._findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex);
+	        }
+	
+	        return this._findDataForDenseArea(layerPosition, selectLegendIndex);
+	    };
+	
+	    /**
+	     * Find Data by layer position at dense area.
+	     * @param {{x: number, y: number}} layerPosition - layer position
+	     * @param {number} selectLegendIndex select legend sereis index
+	     * @returns {object}
+	     * @private
+	     */
+	
+	
+	    AreaTypeDataModel.prototype._findDataForDenseArea = function _findDataForDenseArea(layerPosition, selectLegendIndex) {
+	        var _data$reduce = this.data.reduce(function (findMinObj, datum) {
+	            var xDiff = Math.abs(layerPosition.x - datum.bound.left);
+	            if (xDiff <= findMinObj.xMin) {
+	                findMinObj.xMin = xDiff;
+	                findMinObj.xMinValue = datum.bound.left;
+	            }
+	
+	            return findMinObj;
+	        }, {
+	            xMin: Number.MAX_VALUE,
+	            xMinValue: 0
+	        }),
+	            xMinValue = _data$reduce.xMinValue;
+	
+	        var _data$reduce2 = this.data.reduce(function (findResultObj, datum) {
+	            var yDiff = Math.abs(layerPosition.y - datum.bound.top);
+	            var remakeFindObj = {};
+	
+	            if (datum.bound.left !== xMinValue) {
+	                remakeFindObj = findResultObj;
+	            } else if (!_tuiCodeSnippet2['default'].isNull(selectLegendIndex) && selectLegendIndex === datum.indexes.index) {
+	                remakeFindObj.yMin = Number.MIN_VALUE;
+	                remakeFindObj.findFound = datum;
+	            } else if (yDiff <= findResultObj.yMin) {
+	                remakeFindObj.yMin = yDiff;
+	                remakeFindObj.findFound = datum;
+	            } else {
+	                remakeFindObj = findResultObj;
+	            }
+	
+	            return remakeFindObj;
+	        }, {
+	            yMin: Number.MAX_VALUE,
+	            findFound: null
+	        }),
+	            findFound = _data$reduce2.findFound;
+	
+	        return findFound;
+	    };
+	
+	    /**
+	     * Find Data by layer position at loose area.
+	     * @param {{x: number, y: number}} layerPosition - layer position
+	     * @param {number} [distanceLimit] distance limitation to find data
+	     * @param {number} selectLegendIndex select legend sereis index
+	     * @returns {object}
+	     * @private
+	     */
+	
+	
+	    AreaTypeDataModel.prototype._findDataForLooseArea = function _findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex) {
 	        var min = 100000;
 	        var findFound = void 0;
 	
@@ -36899,16 +37185,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var yDiff = layerPosition.y - datum.bound.top;
 	            var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 	
-	            if (distance < distanceLimit && distance <= min) {
+	            if (distance > distanceLimit) {
+	                return;
+	            }
+	
+	            if (!_tuiCodeSnippet2['default'].isNull(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
+	                return;
+	            }
+	
+	            if (distance <= min) {
 	                min = distance;
 	                findFound = datum;
-	                findFoundMap[datum.indexes.index] = datum;
 	            }
 	        });
-	
-	        if (!_tuiCodeSnippet2['default'].isNull(selectLegendIndex) && findFoundMap[selectLegendIndex]) {
-	            findFound = findFoundMap[selectLegendIndex];
-	        }
 	
 	        return findFound;
 	    };
@@ -47951,6 +48240,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.label = null;
 	
 	    /**
+	     * tooltip label
+	     * @type {string}
+	     */
+	    this.tooltipLabel = null;
+	
+	    /**
 	     * ratio of value about distance of limit
 	     * @type {number}
 	     */
@@ -48024,8 +48319,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesItem.prototype._initValues = function _initValues(rawValue, index) {
+	    var _this = this;
+	
 	    var values = this._createValues(rawValue);
-	    var areaType = 'makingSeriesLabel';
 	    var hasStart = values.length > 1;
 	
 	    var _values = _slicedToArray(values, 1),
@@ -48039,14 +48335,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    if (_tuiCodeSnippet2['default'].isNull(value)) {
-	      this.label = '';
+	      this._setLabel('');
 	    } else {
-	      this.label = _renderUtil2['default'].formatValue({
-	        value: value,
-	        formatFunctions: this.formatFunctions,
-	        chartType: this.chartType,
-	        areaType: areaType,
-	        legendName: this.legendName
+	      ['label', 'tooltipLabel'].forEach(function (labelType) {
+	        _this[labelType] = _renderUtil2['default'].formatValue({
+	          value: value,
+	          formatFunctions: _this.formatFunctions,
+	          chartType: _this.chartType,
+	          areaType: labelType === 'tooltipLabel' ? 'makingTooltipLabel' : 'makingSeriesLabel',
+	          legendName: _this.legendName
+	        });
 	      });
 	    }
 	
@@ -48057,6 +48355,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this._updateFormattedValueforRange();
 	      this.isRange = true;
 	    }
+	  };
+	
+	  /**
+	   * set label property
+	   * @param {string} value set value
+	   * @private
+	   */
+	
+	
+	  SeriesItem.prototype._setLabel = function _setLabel(value) {
+	    this.label = value;
+	    this.tooltipLabel = value;
 	  };
 	
 	  /**
@@ -48112,7 +48422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesItem.prototype._updateFormattedValueforRange = function _updateFormattedValueforRange() {
-	    this.label = this.startLabel + ' ~ ' + this.endLabel;
+	    this._setLabel(this.startLabel + ' ~ ' + this.endLabel);
 	  };
 	
 	  /**
@@ -51219,10 +51529,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number}
 	     * @private
 	     */
-	    _calculateLegendsWidthSum: function _calculateLegendsWidthSum(labels, labelTheme, checkboxWidth, maxWidth) {
+	    _calculateLegendsWidth: function _calculateLegendsWidth(labels, labelTheme, checkboxWidth, maxWidth) {
 	        var restWidth = _calculator2['default'].sum([LEGEND_AREA_H_PADDING, checkboxWidth, LEGEND_ICON_WIDTH, LEGEND_LABEL_LEFT_PADDING]);
 	
-	        var legendWidth = _calculator2['default'].sum(labels.map(function (label) {
+	        return labels.map(function (label) {
 	            var labelWidth = _renderUtil2['default'].getRenderedLabelWidth(label, labelTheme);
 	
 	            if (maxWidth && labelWidth > maxWidth) {
@@ -51231,28 +51541,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	            labelWidth += restWidth;
 	
 	            return labelWidth + LEGEND_H_LABEL_RIGHT_PADDING;
-	        }));
-	
-	        legendWidth = legendWidth - LEGEND_H_LABEL_RIGHT_PADDING + LEGEND_AREA_H_PADDING;
-	
-	        return legendWidth;
+	        });
 	    },
 	
 	
 	    /**
 	     * Divide legend labels.
 	     * @param {Array.<string>} labels legend labels
-	     * @param {number} count division count
+	     * @param {number} maxRowCount division limit count
 	     * @returns {Array.<Array.<string>>}
 	     * @private
 	     */
-	    _divideLegendLabels: function _divideLegendLabels(labels, count) {
-	        var limitCount = Math.round(labels.length / count);
+	    _divideLegendLabels: function _divideLegendLabels(labels, maxRowCount) {
 	        var results = [];
 	        var temp = [];
 	
 	        labels.forEach(function (label) {
-	            if (temp.length < limitCount) {
+	            if (temp.length < maxRowCount) {
 	                temp.push(label);
 	            } else {
 	                results.push(temp);
@@ -51277,14 +51582,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number}
 	     * @private
 	     */
-	    _getMaxLineWidth: function _getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth, maxWidth) {
+	    _getLegendWidthInfo: function _getLegendWidthInfo(dividedLabels, labelTheme, checkboxWidth, maxWidth) {
 	        var _this = this;
 	
-	        var lineWidths = dividedLabels.map(function (labels) {
-	            return _this._calculateLegendsWidthSum(labels, labelTheme, checkboxWidth, maxWidth);
+	        var labelWidthArr = [];
+	        var legendWidths = dividedLabels.map(function (labels) {
+	            var legendLabelWidthArr = _this._calculateLegendsWidth(labels, labelTheme, checkboxWidth, maxWidth);
+	            var legendWidth = _calculator2['default'].sum(legendLabelWidthArr);
+	
+	            labelWidthArr = labelWidthArr.concat(legendLabelWidthArr);
+	            legendWidth = legendWidth - LEGEND_H_LABEL_RIGHT_PADDING + LEGEND_AREA_H_PADDING;
+	
+	            return legendWidth;
 	        });
 	
-	        return _arrayUtil2['default'].max(lineWidths);
+	        return {
+	            labelWidthArr: labelWidthArr,
+	            legendWidths: legendWidths
+	        };
 	    },
 	
 	
@@ -51299,30 +51614,74 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _makeDividedLabelsAndMaxLineWidth: function _makeDividedLabelsAndMaxLineWidth(labels, chartWidth, labelTheme, checkboxWidth, maxWidth) {
+	        var maxRowCount = Number.MAX_VALUE;
 	        var divideCount = 1;
 	        var maxLineWidth = 0;
-	        var prevMaxWidth = 0;
 	        var dividedLabels = void 0,
-	            prevLabels = void 0;
-	
+	            lineWidths = void 0,
+	            labelWidths = void 0;
 	        do {
-	            dividedLabels = this._divideLegendLabels(labels, divideCount);
-	            maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme, checkboxWidth, maxWidth);
+	            maxRowCount = Math.round(labels.length / divideCount);
+	            dividedLabels = this._divideLegendLabels(labels, maxRowCount);
+	            var legendWidthInfo = this._getLegendWidthInfo(dividedLabels, labelTheme, checkboxWidth, maxWidth);
 	
-	            if (prevMaxWidth === maxLineWidth) {
-	                dividedLabels = prevLabels;
+	            lineWidths = legendWidthInfo.legendWidths;
+	            labelWidths = legendWidthInfo.labelWidthArr;
+	
+	
+	            maxLineWidth = _arrayUtil2['default'].max(lineWidths);
+	
+	            if (maxRowCount === 1) {
 	                break;
 	            }
 	
-	            prevMaxWidth = maxLineWidth;
-	            prevLabels = dividedLabels;
 	            divideCount += 1;
 	        } while (maxLineWidth >= chartWidth);
 	
+	        maxLineWidth = Math.min(maxLineWidth, chartWidth);
+	
 	        return {
-	            labels: dividedLabels,
+	            labels: this._optimizedHorizontalLegendLabels(labels, labelWidths, maxLineWidth),
 	            maxLineWidth: maxLineWidth
 	        };
+	    },
+	
+	
+	    /**
+	     * Make space optimized legend labels
+	     * @param {Array.<string>} labels - labels string
+	     * @param {Array.<number>} labelWidths - labels width
+	     * @param {number} maxLineWidth - max line width
+	     * @returns {Array.<Array.<string>>}
+	     * @private
+	     */
+	    _optimizedHorizontalLegendLabels: function _optimizedHorizontalLegendLabels(labels, labelWidths, maxLineWidth) {
+	        var optimizedDvidedLabels = [];
+	        var labelsLastIdx = labels.length - 1;
+	        var sum = 0;
+	        var temp = [];
+	
+	        labels.forEach(function (label, labelIdx) {
+	            var labelWidth = labelWidths[labelIdx];
+	            var paddingWidth = LEGEND_AREA_H_PADDING - LEGEND_H_LABEL_RIGHT_PADDING;
+	            var predictedLineWidth = sum + labelWidth + paddingWidth;
+	
+	            if (predictedLineWidth <= maxLineWidth) {
+	                temp.push(label);
+	            } else {
+	                optimizedDvidedLabels.push(temp);
+	                temp = [label];
+	                sum = 0;
+	            }
+	
+	            sum += labelWidth;
+	
+	            if (labelsLastIdx === labelIdx) {
+	                optimizedDvidedLabels.push(temp);
+	            }
+	        });
+	
+	        return optimizedDvidedLabels;
 	    },
 	
 	
