@@ -154,8 +154,8 @@ function _createChart(container, rawData = {}, options, chartType) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -166,7 +166,7 @@ function _createChart(container, rawData = {}, options, chartType) {
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
- *      @param {number} options.usageStatistics - send hostname to google analytics
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} bar chart
  * @api
  * @example
@@ -257,8 +257,8 @@ function barChart(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -271,7 +271,7 @@ function barChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} column chart
  * @api
  * @example
@@ -363,8 +363,8 @@ function columnChart(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -377,6 +377,7 @@ function columnChart(container, rawData, options) {
  *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
  *              @param {string} options.plot.bands.color - band color
  *              @param {number} options.plot.bands.opacity - band opacity
+ *              @param {boolean} options.plot.mergeOverlappingRanges - whether show overlapping ranges
  *          @param {Array} options.plot.lines - plot lines
  *              @param {(string|number|date)} options.plot.lines.value - value for matching
  *              @param {string} options.plot.lines.color - band color
@@ -387,8 +388,8 @@ function columnChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} bar chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} line chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -482,8 +483,8 @@ function lineChart(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -496,6 +497,7 @@ function lineChart(container, rawData, options) {
  *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
  *              @param {string} options.plot.bands.color - band color
  *              @param {number} options.plot.bands.opacity - band opacity
+ *              @param {boolean} options.plot.mergeOverlappingRanges - whether show overlapping ranges
  *          @param {Array} options.plot.lines - plot lines
  *              @param {(string|number|date)} options.plot.lines.value - value for matching
  *              @param {string} options.plot.lines.color - band color
@@ -504,8 +506,8 @@ function lineChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} bar chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} area chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -591,8 +593,8 @@ function areaChart(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -606,7 +608,7 @@ function areaChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} bubble chart
  * @api
  * @example
@@ -702,8 +704,8 @@ function bubbleChart(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -715,7 +717,7 @@ function bubbleChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} scatter chart
  * @api
  * @example
@@ -798,8 +800,8 @@ function scatterChart(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
@@ -808,8 +810,8 @@ function scatterChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} scatter chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} heatmap chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -870,8 +872,8 @@ function heatmapChart(container, rawData, options) {
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
- *          @param {object} options.tooltip.offsetX - tooltip offset x
- *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
@@ -880,8 +882,8 @@ function heatmapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} scatter chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} treemap chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -978,8 +980,8 @@ function treemapChart(container, rawData, options) {
  *          @param {?object} options.series.pie - options for pie series component
  *              @param {boolean} options.series.pie.showLabel - whether show label or not
  *              @param {number} options.series.pie.radiusRatio - ratio of radius for pie graph
- *              @param {boolean} options.series.pie.startAngle - start angle
- *              @param {boolean} options.series.pie.endAngle - end angle
+ *              @param {number} options.series.pie.startAngle - start angle
+ *              @param {number} options.series.pie.endAngle - end angle
  *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {boolean} options.series.allowSelect - whether allow select or not
@@ -1005,6 +1007,7 @@ function treemapChart(container, rawData, options) {
  *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
  *              @param {string} options.plot.bands.color - band color
  *              @param {number} options.plot.bands.opacity - band opacity
+ *              @param {boolean} options.plot.mergeOverlappingRanges - whether show overlapping ranges
  *          @param {Array} options.plot.lines - plot lines
  *              @param {(string|number|date)} options.plot.lines.value - value for matching
  *              @param {string} options.plot.lines.color - band color
@@ -1013,8 +1016,8 @@ function treemapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} bar chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} combo chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -1097,13 +1100,14 @@ function comboChart(container, rawData, options) {
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.startAngle - start angle
  *          @param {boolean} options.series.endAngle - end angle
+ *          @param {string} options.series.labelAlign - label align
+ *          @param {Array<string>} options.series.radiusRange: radius range
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offset - tooltip offset
- *              @param {number} options.tooltip.offset.x - offset x
- *              @param {number} options.tooltip.offset.y - offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -1113,8 +1117,8 @@ function comboChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} bar chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} pie chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -1183,8 +1187,8 @@ function pieChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} bar chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} map chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -1246,9 +1250,8 @@ function mapChart(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.offset - tooltip offset
- *              @param {number} options.tooltip.offset.x - offset x
- *              @param {number} options.tooltip.offset.y - offset y
+ *          @param {number} options.tooltip.offsetX - tooltip offset x
+ *          @param {number} options.tooltip.offsetY - tooltip offset y
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -1258,8 +1261,8 @@ function mapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
- *      @param {number} options.usageStatistics - send hostname to google analytics
- * @returns {object} bar chart
+ *      @param {boolean} options.usageStatistics - send hostname to google analytics
+ * @returns {object} radial chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
@@ -1373,7 +1376,7 @@ function boxplotChart(container, rawData, options) {
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData chart data
  * @param {object} options - chart options
- * @returns {object} box plot chart
+ * @returns {object} bullet chart
  * @api
  * @example
  * var chart = tui.chart; // or require('tui-chart');
