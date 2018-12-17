@@ -17,10 +17,11 @@ describe('RaphaelLineTypeBase', () => {
     });
     describe('getRenderedTextSize()', () => {
         it('result of decoding the HTML entity must be applied.', () => {
-            const result = raphaelRenderUtil.getRenderedTextSize('aAaA', 11, 'Arial');
+            const result = raphaelRenderUtil.getRenderedTextSize('aaaa', 11, 'Arial');
             const actual = {width: Math.round(result.width), height: Math.round(result.height)};
 
-            const expected = {width: 27, height: 12};
+            const expected = {width: 24, height: 12};
+
             expect(actual).toEqual(expected);
         });
     });
