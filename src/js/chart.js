@@ -135,6 +135,8 @@ function _createChart(container, rawData = {}, options, chartType) {
  *          @param {string} options.yAxis.align - align option for center y axis
  *          @param {string} options.yAxis.type - type of axis
  *          @param {string} options.yAxis.dateFormat - date format
+ *          @param {string} options.yAxis.prefix - prefix for yAxis
+ *          @param {string} options.yAxis.suffix - suffix for yAxis
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -143,6 +145,9 @@ function _createChart(container, rawData = {}, options, chartType) {
  *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.min - minimum value for x axis
  *          @param {number} options.xAxis.max - maximum value for x axis
+ *          @param {number} options.xAxis.pointOnColumn - Place the label between the ticks.
+ *          @param {string} options.xAxis.prefix - prefix for xAxis
+ *          @param {string} options.xAxis.suffix - suffix for xAxis
  *      @param {object} options.series - options for series component
  *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -236,6 +241,8 @@ function barChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {string} options.yAxis.prefix - prefix for yAxis
+ *          @param {string} options.yAxis.suffix - suffix for yAxis
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -246,6 +253,8 @@ function barChart(container, rawData, options) {
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {string} options.xAxis.type - type of axis
  *          @param {string} options.xAxis.dateFormat - date format
+ *          @param {string} options.xAxis.prefix - prefix for xAxis
+ *          @param {string} options.xAxis.suffix - suffix for xAxis
  *      @param {object} options.series - options for series component
  *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -271,6 +280,7 @@ function barChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} column chart
  * @api
@@ -341,6 +351,8 @@ function columnChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {string} options.yAxis.prefix - prefix for yAxis
+ *          @param {string} options.yAxis.suffix - suffix for yAxis
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -352,6 +364,8 @@ function columnChart(container, rawData, options) {
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {string} options.xAxis.type - type of axis
  *          @param {string} options.xAxis.dateFormat - date format
+ *          @param {string} options.xAxis.prefix - prefix for xAxis
+ *          @param {string} options.xAxis.suffix - suffix for xAxis
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -388,6 +402,7 @@ function columnChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} line chart
  * @api
@@ -461,6 +476,8 @@ function lineChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {string} options.yAxis.prefix - prefix for yAxis
+ *          @param {string} options.yAxis.suffix - suffix for yAxis
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -472,6 +489,9 @@ function lineChart(container, rawData, options) {
  *          @param {string} options.xAxis.tickInterval - tick interval for x axis
  *          @param {string} options.xAxis.type - type of axis
  *          @param {string} options.xAxis.dateFormat - date format
+ *          @param {number} options.xAxis.pointOnColumn - Place the label between the ticks.
+ *          @param {string} options.xAxis.prefix - prefix for xAxis
+ *          @param {string} options.xAxis.suffix - suffix for xAxis
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -506,6 +526,7 @@ function lineChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} area chart
  * @api
@@ -576,6 +597,8 @@ function areaChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {string} options.yAxis.prefix - prefix for yAxis
+ *          @param {string} options.yAxis.suffix - suffix for yAxis
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -586,6 +609,8 @@ function areaChart(container, rawData, options) {
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {number} options.xAxis.min - minimum value for y axis
  *          @param {number} options.xAxis.max - maximum value for y axis
+ *          @param {string} options.xAxis.prefix - prefix for xAxis
+ *          @param {string} options.xAxis.suffix - suffix for xAxis
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {boolean} options.series.allowSelect - whether allow select or not
@@ -608,6 +633,7 @@ function areaChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} bubble chart
  * @api
@@ -717,6 +743,7 @@ function bubbleChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} scatter chart
  * @api
@@ -788,12 +815,16 @@ function scatterChart(container, rawData, options) {
  *              @param {number} options.yAxis.title.offsetX - title offset x
  *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
+ *          @param {string} options.yAxis.prefix - prefix for yAxis
+ *          @param {string} options.yAxis.suffix - suffix for yAxis
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
  *              @param {number} options.xAxis.title.offsetX - title offset x
  *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelMargin - label margin for x axis
+ *          @param {string} options.xAxis.prefix - prefix for xAxis
+ *          @param {string} options.xAxis.suffix - suffix for xAxis
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
  *      @param {object} options.tooltip - options for tooltip component
@@ -810,6 +841,7 @@ function scatterChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} heatmap chart
  * @api
@@ -882,6 +914,7 @@ function heatmapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} treemap chart
  * @api
@@ -956,6 +989,9 @@ function treemapChart(container, rawData, options) {
  *          @param {number} options.yAxis.labelMargin - label margin for y axis
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {string} options.yAxis.prefix - prefix for yAxis
+ *          @param {string} options.yAxis.suffix - suffix for yAxis
+ *          @param {string} options.yAxis.chartType - chart type for combo chart
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string | object} options.xAxis.title - title text or title object
  *              @param {string} options.xAxis.title.text - title text
@@ -964,6 +1000,8 @@ function treemapChart(container, rawData, options) {
  *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *          @param {string} options.xAxis.prefix - prefix for xAxis
+ *          @param {string} options.xAxis.suffix - suffix for xAxis
  *      @param {object} options.series - options for series component
  *          @param {?object} options.series.column - options for column series component
  *              @param {string} options.series.column.stackType - type of stack
@@ -1016,6 +1054,7 @@ function treemapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} combo chart
  * @api
@@ -1096,6 +1135,7 @@ function comboChart(container, rawData, options) {
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.showLegend - whether show legend label or not
  *          @param {number} options.series.radiusRatio - ratio of radius for pie graph
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.startAngle - start angle
@@ -1117,6 +1157,7 @@ function comboChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} pie chart
  * @api
@@ -1187,6 +1228,7 @@ function pieChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} map chart
  * @api
@@ -1261,6 +1303,7 @@ function mapChart(container, rawData, options) {
  *      @param {string} options.libType - type of graph library
  *      @param {object} options.chartExportMenu - options for exporting
  *          @param {string} options.chartExportMenu.filename - export file name
+ *          @param {string} options.chartExportMenu.visible - whether visible or not (default: true)
  *      @param {boolean} options.usageStatistics - send hostname to google analytics
  * @returns {object} radial chart
  * @api
