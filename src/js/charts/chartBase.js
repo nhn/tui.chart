@@ -16,6 +16,8 @@ import themeManager from '../themes/themeManager';
 import predicate from '../helpers/predicate';
 import snippet from 'tui-code-snippet';
 
+const GA_TRACKING_ID = 'UA-129983528-1';
+
 class ChartBase {
     /**
      * Chart base.
@@ -113,16 +115,8 @@ class ChartBase {
         this._attachToEventBus();
 
         if (this.options.usageStatistics) {
-            this._sendHostName();
+            snippet.sendHostname('chart', GA_TRACKING_ID);
         }
-    }
-
-    /**
-     * Image ping for ga tracking
-     * @private
-     */
-    _sendHostName() {
-        snippet.sendHostname('chart');
     }
 
     /**
