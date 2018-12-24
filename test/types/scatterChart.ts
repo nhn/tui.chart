@@ -1,45 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head lang="kr">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>6.1 [Scatter Chart] basic</title>
-    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
-    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
-    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
-</head>
-<body>
-<div class='wrap'>
-    <div class='code-html' id='code-html'>
-        <div id='chart-area'></div>
-    </div>
-</div>
-<div class='custom-area'>
-    <div id='error-dim'>
-        <span id='error-text'></span>
-        <div id='error-stack'></div>
-        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
-    </div>
-    <div style='border: 0.2px solid #aaa;'>
-        <textarea id='code'></textarea>
-    </div>
-
-    <div class='apply-btn-area' style='width: 600px;'>
-        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
-        </button>
-        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
-        </button>
-    </div>
-</div>
-<!--Import chart.js and dependencies-->
-<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.7/core.js'></script>
-<script type='text/javascript' src='https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js'></script>
-<script type='text/javascript' src='https://uicdn.toast.com/tui.chart/latest/raphael.js'></script>
-<script src='../dist/tui-chart.js'></script>
-<script class='code-js' id='code-js'>
-var container = document.getElementById('chart-area');
-var data = {
+import tuiChart from 'tui-chart';
+const elScatter = document.querySelector('.section[data-section="chart"] .scatter');
+const data = {
     series: [
         {
             name: 'male',
@@ -560,7 +521,7 @@ var data = {
         }
     ]
 };
-var options = {
+const scatterOptions = {
     chart: {
         width: 1160,
         height: 540,
@@ -576,44 +537,40 @@ var options = {
         template: function (category, items) {
             return '<div class="tui-chart-default-tooltip">' +
                 '<div class="tui-chart-tooltip-head">' + items.legend + '</div>' +
-                    '<table class="tui-chart-tooltip-body">' +
-                        '<tr>' +
-                            '<td>Weight</td>' +
-                        '<td class="tui-chart-tooltip-value">' + items.x + 'kg</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                        '<td>Height</td>' +
-                            '<td class="tui-chart-tooltip-value">' + items.y + 'cm</td>' +
-                        '</tr>' +
-                    '</table>' +
+                '<table class="tui-chart-tooltip-body">' +
+                '<tr>' +
+                '<td>Weight</td>' +
+                '<td class="tui-chart-tooltip-value">' + items.x + 'kg</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Height</td>' +
+                '<td class="tui-chart-tooltip-value">' + items.y + 'cm</td>' +
+                '</tr>' +
+                '</table>' +
                 '</div>';
         }
     }
 };
-var theme = {
-    series: {
-        colors: [
-            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
-            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
-        ]
-    }
-};
+const scatterChart = tuiChart.scatterChart(elScatter, data, scatterOptions);
+scatterChart.chartType;
+scatterChart.className;
 
-// For apply theme
+scatterChart.getCheckedLegend();
 
-// tui.chart.registerTheme('myTheme', theme);
-// options.theme = 'myTheme';
-
-tui.chart.scatterChart(container, data, options);
-</script>
-<!--For tutorial page-->
-<script src='../node_modules/codemirror/lib/codemirror.js'></script>
-<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
-<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
-<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
-<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
-<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
-<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
-<script src='./js/example.js'></script>
-</body>
-</html>
+scatterChart.on('load', () => {
+    scatterChart.addData('Jan', [2000, 4000, 6000, 8000]);
+});
+scatterChart.resetTooltipAlign();
+scatterChart.resetTooltipOffset();
+scatterChart.resetTooltipPosition();
+scatterChart.resize({
+    width: 500,
+    height: 400,
+});
+scatterChart.setTooltipAlign('right bottom');
+scatterChart.setTooltipOffset({
+    x: 50,
+    y: 50
+});
+scatterChart.showSeriesLabel();
+scatterChart.hideSeriesLabel();

@@ -1,45 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head lang="kr">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>5.1 [Bubble Chart] basic</title>
-    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
-    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
-    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
-</head>
-<body>
-<div class='wrap'>
-    <div class='code-html' id='code-html'>
-        <div id='chart-area'></div>
-    </div>
-</div>
-<div class='custom-area'>
-    <div id='error-dim'>
-        <span id='error-text'></span>
-        <div id='error-stack'></div>
-        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
-    </div>
-    <div style='border: 0.2px solid #aaa;'>
-        <textarea id='code'></textarea>
-    </div>
+import tuiChart from 'tui-chart';
 
-    <div class='apply-btn-area' style='width: 600px;'>
-        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
-        </button>
-        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
-        </button>
-    </div>
-</div>
-<!--Import chart.js and dependencies-->
-<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.7/core.js'></script>
-<script type='text/javascript' src='https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js'></script>
-<script type='text/javascript' src='https://uicdn.toast.com/tui.chart/latest/raphael.js'></script>
-<script src='../dist/tui-chart.js'></script>
-<script class='code-js' id='code-js'>
-var container = document.getElementById('chart-area');
-var data = {
+const elBubble = document.querySelector('.section[data-section="chart"] .bubble');
+
+const data = {
     series: [
         {
             name: 'Africa',
@@ -148,14 +111,14 @@ var data = {
         }
     ]
 };
-var options = {
+const bubbleOptions = {
     chart: {
         width: 1160,
         height: 540,
         title: 'Life Expectancy per GDP',
         format: function (value, chartType, areaType, valueType) {
             if (valueType === 'r' || valueType === 'x') {
-                value = tui.chart.renderUtil.formatToComma(value);
+                value = tuiChart.renderUtil.formatToComma(value);
                 if (valueType === 'x') {
                     value = '$' + value;
                 }
@@ -173,54 +136,51 @@ var options = {
         template: function (category, items) {
             return '<div class="tui-chart-default-tooltip">' +
                 '<div class="tui-chart-tooltip-head">' +
-                    '<span class="tui-chart-legend-rect" style="' + items.cssText + '; width: 10px; height: 10px"></span>' +
-                    '<span>' + items.legend + '</span>' +
-                    '<span>' + items.label + '</span>' +
+                '<span class="tui-chart-legend-rect" style="' + items.cssText + '; width: 10px; height: 10px"></span>' +
+                '<span>' + items.legend + '</span>' +
+                '<span>' + items.label + '</span>' +
                 '</div>' +
                 '<table class="tui-chart-tooltip-body">' +
                 '<tr>' +
-                    '<td>GDP</td>' +
-                    '<td class="tui-chart-tooltip-value">' + items.x + '</td>' +
+                '<td>GDP</td>' +
+                '<td class="tui-chart-tooltip-value">' + items.x + '</td>' +
                 '</tr>' +
                 '<tr>' +
-                    '<td>Life Expectancy</td>' +
-                    '<td class="tui-chart-tooltip-value">' + items.y + '</td>' +
+                '<td>Life Expectancy</td>' +
+                '<td class="tui-chart-tooltip-value">' + items.y + '</td>' +
                 '</tr>' +
                 '<tr>' +
-                    '<td>Population</td>' +
-                    '<td class="tui-chart-tooltip-value">' + items.r + '</td>' +
+                '<td>Population</td>' +
+                '<td class="tui-chart-tooltip-value">' + items.r + '</td>' +
                 '</tr>' +
                 '</table>';
             '</div>';
         }
-    }
-};
-var theme = {
-    series: {
-        colors: [
-            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
-            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
-        ]
+    },
+    circleLegend: {
+        visible: true
     }
 };
 
-// For apply theme
+const bubbleChart = tuiChart.bubbleChart(elBubble, data, bubbleOptions);
+bubbleChart.chartType;
+bubbleChart.className;
+bubbleChart.getCheckedLegend();
 
-// tui.chart.registerTheme('myTheme', theme);
-// options.theme = 'myTheme';
-
-tui.chart.bubbleChart(container, data, options);
-</script>
-<!--For tutorial page-->
-<script src='../node_modules/codemirror/lib/codemirror.js'></script>
-<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
-<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
-<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
-<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
-<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
-<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
-<script src='./js/example.js'></script>
-
-</body>
-</html>
-
+bubbleChart.on('load', () => {
+    bubbleChart.addData('Jan', [2000, 4000, 6000, 8000]);
+});
+bubbleChart.resetTooltipAlign();
+bubbleChart.resetTooltipOffset();
+bubbleChart.resetTooltipPosition();
+bubbleChart.resize({
+    width: 500,
+    height: 400,
+});
+bubbleChart.setTooltipAlign('right bottom');
+bubbleChart.setTooltipOffset({
+    x: 50,
+    y: 50
+});
+bubbleChart.showSeriesLabel();
+bubbleChart.hideSeriesLabel();

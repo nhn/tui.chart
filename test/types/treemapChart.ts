@@ -1,46 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head lang="kr">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>11.2 [Treemap chart] useColorValue option</title>
-    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+import tuiChart from 'tui-chart';
 
-    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/lib/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
-    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
-</head>
-<body>
-<div class='wrap'>
-    <div class='code-html' id='code-html'>
-        <div id='chart-area'></div>
-    </div>
-</div>
-<div class='custom-area'>
-    <div id='error-dim'>
-        <span id='error-text'></span>
-        <div id='error-stack'></div>
-        <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
-    </div>
-    <div style='border: 0.2px solid #aaa;'>
-        <textarea id='code'></textarea>
-    </div>
+const elTreeMap = document.querySelector('.section[data-section="chart"] .treeMap');
 
-    <div class='apply-btn-area' style='width: 600px;'>
-        <button class="btn" style='position: absolute; right: 0px;' onclick='evaluationCode(chartCM, codeString);'>Run it!
-        </button>
-        <button class="btn" onclick="window.open('https://github.com/nhnent/tui.chart/wiki/theme')">More Theme
-        </button>
-    </div>
-</div>
-<!--Import chart.js and dependencies-->
-<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.7/core.js'></script>
-<script type='text/javascript' src='https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js'></script>
-<script type='text/javascript' src='https://uicdn.toast.com/tui.chart/latest/raphael.js'></script>
-<script src='../dist/tui-chart.js'></script>
-<script class='code-js' id='code-js'>
-var container = document.getElementById('chart-area');
-var data = {
+const data = {
     series: [
         {
             label: 'Asia',
@@ -141,7 +103,8 @@ var data = {
         }
     ]
 };
-var options = {
+
+const treemapOptions = {
     chart: {
         width: 900,
         height: 500,
@@ -161,31 +124,24 @@ var options = {
         align: 'top'
     }
 };
-var theme = {
-    series: {
-        startColor: '#ffefef',
-        endColor: '#ac4142',
-        overColor: '#75b5aa',
-        borderColor: '#F4511E'
-    }
-};
 
-// For apply theme
 
-// tui.chart.registerTheme('myTheme', theme);
-// options.theme = 'myTheme';
+const treemapChart = tuiChart.treemapChart(elTreeMap, data, treemapOptions);
+treemapChart.chartType;
+treemapChart.className;
 
-tui.chart.treemapChart(container, data, options);
-</script>
-
-<!--For tutorial page-->
-<script src='../node_modules/codemirror/lib/codemirror.js'></script>
-<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
-<script src='../node_modules/codemirror/addon/edit/matchbrackets.js'></script>
-<script src='../node_modules/codemirror/addon/selection/active-line.js'></script>
-<script src='../node_modules/codemirror/mode/javascript/javascript.js'></script>
-<script src='../node_modules/codemirror/addon/lint/lint.js'></script>
-<script src='../node_modules/codemirror/addon/lint/javascript-lint.js'></script>
-<script src='./js/example.js'></script>
-</body>
-</html>
+treemapChart.on('load', () => {
+    treemapChart.addData('Jan', [2000, 4000, 6000, 8000]);
+});
+treemapChart.resetTooltipAlign();
+treemapChart.resetTooltipOffset();
+treemapChart.resetTooltipPosition();
+treemapChart.resize({
+    width: 500,
+    height: 400,
+});
+treemapChart.setTooltipAlign('right bottom');
+treemapChart.setTooltipOffset({
+    x: 50,
+    y: 50
+});

@@ -51,7 +51,7 @@ var options = {
 tui.chart.barChart(container, data, options);
 ```
 
-Or, include tui-code-snippet(**v1.4.0 or later**) and then immediately write the options as follows:
+Or, include tui-code-snippet(**v1.5.0 or later**) and then immediately write the options as follows:
 
 ```js
     tui.usageStatistics = false;
