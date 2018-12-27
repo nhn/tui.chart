@@ -361,7 +361,13 @@ class ChartBase {
             this.prevXAxisData = boundsAndScale.axisDataMap.xAxis;
         }
 
-        this.addDataRatios(boundsAndScale.limitMap);
+        const isPieDonumCombo = predicate.isPieDonutComboChart(this.chartType, this.chartTypes);
+        const isPie = predicate.isPieChart(this.chartType);
+        const isPieSeriesChart = isPieDonumCombo || isPie;
+
+        if (!isPieSeriesChart) {
+            this.addDataRatios(boundsAndScale.limitMap);
+        }
 
         return boundsAndScale;
     }

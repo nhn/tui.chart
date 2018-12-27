@@ -238,6 +238,8 @@ class SeriesGroup {
     pluck(key) {
         const items = this.items.filter(snippet.isExisty);
 
+        console.log("ITEMS - ",items);
+
         return snippet.pluck(items, key);
     }
 

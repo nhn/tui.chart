@@ -164,6 +164,8 @@ class SeriesDataModel {
             sortValues = function() {};
         }
 
+        const totalValueForPieChart = isPieChart ? this.caculateTotalValueForPieChart() : null;
+
         return this.rawSeriesData.map(rawDatum => {
             let stack, data, legendName;
 
@@ -190,7 +192,8 @@ class SeriesDataModel {
                     stack,
                     isDivergingChart,
                     xAxisType: xAxisOption.type,
-                    dateFormat: xAxisOption.dateFormat
+                    dateFormat: xAxisOption.dateFormat,
+                    totalValue: totalValueForPieChart
                 })
             ));
             sortValues(items);
@@ -538,6 +541,16 @@ class SeriesDataModel {
         }
     }
 
+    caculateTotalValueForPieChart() {
+        return calculator.sum(this.rawSeriesData.map(rawDatum => {
+            let data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+
+            data = snippet.filter(data, snippet.isExisty);
+
+            return data[0];
+        }));
+    }
+
     /**
      * Add data ratios of pie chart.
      */
@@ -620,7 +633,6 @@ class SeriesDataModel {
      */
     each(iteratee, isPivot) {
         const groups = isPivot ? this._getPivotGroups() : this._getSeriesGroups();
-
         groups.forEach((seriesGroup, index) => iteratee(seriesGroup, index));
     }
 

@@ -135,6 +135,8 @@ class SeriesItem {
          */
         this.legendName = params.legendName;
 
+        this.totalValue = params.totalValue;
+
         this._initValues(params.datum, params.index);
     }
 
@@ -152,6 +154,10 @@ class SeriesItem {
         this.value = this.end = value;
         this.index = index;
 
+        if (predicate.isPieChart(this.chartType)) {
+            this.addRatio(this.totalValue);
+        }
+
         if (this.isDivergingChart) {
             value = Math.abs(value);
         }
@@ -165,7 +171,8 @@ class SeriesItem {
                     formatFunctions: this.formatFunctions,
                     chartType: this.chartType,
                     areaType: labelType === 'tooltipLabel' ? 'makingTooltipLabel' : 'makingSeriesLabel',
-                    legendName: this.legendName
+                    legendName: this.legendName,
+                    ratio: this.ratio
                 });
             });
         }

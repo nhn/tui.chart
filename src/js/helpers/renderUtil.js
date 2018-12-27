@@ -396,11 +396,12 @@ const renderUtil = {
             valueType = 'value',
             areaType,
             legendName,
-            chartType
+            chartType,
+            ratio = null
         } = params;
         const fns = [String(value), ...formatFunctions || []];
 
-        return snippet.reduce(fns, (stored, fn) => fn(stored, chartType, areaType, valueType, legendName));
+        return snippet.reduce(fns, (stored, fn) => fn(stored, chartType, areaType, valueType, legendName, ratio));
     },
     /**
      * Format values.
