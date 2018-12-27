@@ -557,17 +557,6 @@ class SeriesDataModel {
     }
 
     /**
-     * Add data ratios of pie chart.
-     */
-    addDataRatiosOfPieChart() {
-        this.each(seriesGroup => {
-            const sum = calculator.sum(seriesGroup.pluck('value'));
-
-            seriesGroup.addRatios(sum);
-        });
-    }
-
-    /**
      * Add ratios of data for chart of coordinate type.
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
      * @param {boolean} [hasRadius] - whether has radius or not

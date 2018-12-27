@@ -534,18 +534,6 @@ describe('Test for SeriesDataModel', () => {
         });
     });
 
-    describe('addDataRatiosOfPieChart()', () => {
-        it('should call addRatios() with all series group values, when pie chart', () => {
-            const seriesGroup = jasmine.createSpyObj('seriesGroup', ['pluck', 'addRatios']);
-
-            seriesDataModel.groups = [seriesGroup];
-            seriesGroup.pluck.and.returnValue([10, 20, 30, 40]);
-            seriesDataModel.addDataRatiosOfPieChart();
-
-            expect(seriesGroup.addRatios).toHaveBeenCalledWith(100);
-        });
-    });
-
     describe('addDataRatiosForCoordinateType()', () => {
         it('should set x ratio using xDistance and xSubstraction values from limitMap.x', () => {
             const limitMap = {

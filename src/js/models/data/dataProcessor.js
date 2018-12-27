@@ -1251,14 +1251,6 @@ class DataProcessor extends DataProcessorBase {
     }
 
     /**
-     * Add data ratios of pie chart.
-     * @param {string} chartType - type of chart.
-     */
-    addDataRatiosOfPieChart(chartType) {
-        this.getSeriesDataModel(chartType).addDataRatiosOfPieChart();
-    }
-
-    /**
      * Add data ratios for chart of coordinate type.
      * @param {string} chartType - type of chart.
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map

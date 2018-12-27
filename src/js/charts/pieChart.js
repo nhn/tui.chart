@@ -49,14 +49,6 @@ class PieChart extends ChartBase {
         this.componentManager.register('tooltip', 'tooltip');
         this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
     }
-
-    /**
-     * Add data ratios.
-     * @override
-     */
-    addDataRatios() {
-        this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
-    }
 }
 
 export default PieChart;
