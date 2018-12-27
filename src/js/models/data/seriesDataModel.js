@@ -541,6 +541,11 @@ class SeriesDataModel {
         }
     }
 
+    /**
+     * Calculate total value for pie chart
+     * @returns {number}
+     * @private
+     */
     caculateTotalValueForPieChart() {
         return calculator.sum(this.rawSeriesData.map(rawDatum => {
             let data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);

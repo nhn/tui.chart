@@ -103,6 +103,21 @@ describe('Test for SeriesDataModel', () => {
             expect(actual[1][0].value).toBe(20);
         });
 
+        it('should contain a ratio property at pie chart.', () => {
+            seriesDataModel.chartType = 'pie';
+            seriesDataModel.rawSeriesData = [{
+                data: 50
+            }, {
+                data: 20
+            }, {
+                data: 70
+            }];
+
+            const actual = seriesDataModel._createBaseGroups();
+
+            expect(actual[0][0].ratio.toFixed(2)).toBe('0.36');
+        });
+
         it('should not create item when pie data is null.', () => {
             seriesDataModel.chartType = 'pie';
             seriesDataModel.rawSeriesData = [{

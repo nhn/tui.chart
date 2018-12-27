@@ -112,6 +112,16 @@ describe('Test for renderUtil', () => {
             });
             expect(spy.calls.mostRecent().args[4]).toBe('newLegend');
         });
+
+        it('ratio argument is present, it should be returned.', () => {
+            const spy = jasmine.createSpy('spy');
+            renderUtil.formatValue({
+                value: 3,
+                formatFunctions: [spy],
+                ratio: 0.33
+            });
+            expect(spy.calls.mostRecent().args[5]).toBe(0.33);
+        });
     });
 
     describe('formatValues()', () => {

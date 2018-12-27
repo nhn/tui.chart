@@ -135,6 +135,10 @@ class SeriesItem {
          */
         this.legendName = params.legendName;
 
+        /**
+         * total value of series data
+         * @type {number}
+         */
         this.totalValue = params.totalValue;
 
         this._initValues(params.datum, params.index);
