@@ -1,7 +1,5 @@
-/**
- * Type definitions for tui.chart v3.4.1
- * TypeScript Version: 3.2
- */
+// Type definitions for TOAST UI Chart v3.4.2
+// TypeScript Version: 3.2.2
 
 type AnyFunc = (...args: any[]) => any;
 type AxisLabelType = string | number | Date;

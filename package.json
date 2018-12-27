@@ -8,7 +8,7 @@
   "scripts": {
     "serve": "webpack-dev-server --inline --hot -d",
     "serve:ie8": "webpack-dev-server -d",
-    "deploy": "npm run deploy:all && npm run deploy:babelpolyfill && npm run deploy:nodepth && cp -R ./maps ./dist",
+    "deploy": "npm run deploy:all && npm run deploy:babelpolyfill && npm run deploy:nodepth && cp -R ./maps ./dist && node tsBannerGenerator.js",
     "deploy:nodepth": "webpack --production --nodepth && webpack --production --nodepth --minify",
     "deploy:all": "webpack --production --alldepth && webpack --production --alldepth --minify",
     "deploy:babelpolyfill": "webpack --production --babelpolyfill && webpack --production --babelpolyfill --minify",
