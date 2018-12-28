@@ -246,6 +246,11 @@ class PieChartSeries extends Series {
         return seriesGroup.map(seriesItem => seriesItem.label);
     }
 
+    /**
+     * Make ratio values
+     * @returns {Array.<number>}
+     * @private
+     */
     _makeRatioValues() {
         const seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
 

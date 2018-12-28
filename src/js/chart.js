@@ -1136,6 +1136,7 @@ function comboChart(container, rawData, options) {
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {boolean} options.series.showLegend - whether show legend label or not
+ *          @param {function} options.series.labelFilter - filter for series label display 
  *          @param {number} options.series.radiusRatio - ratio of radius for pie graph
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.startAngle - start angle

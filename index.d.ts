@@ -182,6 +182,7 @@ interface PieSeriesConfig extends BaseSeriesConfig {
     labelAlign?: string;
     radiusRange?: string[];
     showLegend?: boolean;
+    labelFilter?: AnyFunc;
 }
 
 interface RadialSeriesConfig {

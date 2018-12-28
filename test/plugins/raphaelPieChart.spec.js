@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test for RaphaelBarChart.
+ * @fileoverview Test for RaphaelPieChart.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
