@@ -4,6 +4,16 @@
 type AnyFunc = (...args: any[]) => any;
 type AxisLabelType = string | number | Date;
 
+interface FilterInfo {
+    value: string;
+    dataType: string;
+    ratio: number;
+}
+
+interface LabelFilterFunc {
+    (filterInfo: FilterInfo): boolean;
+}
+
 interface TextStyleConfig {
     fontSize?: number;
     fontFamily?: string;
@@ -182,7 +192,7 @@ interface PieSeriesConfig extends BaseSeriesConfig {
     labelAlign?: string;
     radiusRange?: string[];
     showLegend?: boolean;
-    labelFilter?: AnyFunc;
+    labelFilter?: LabelFilterFunc;
 }
 
 interface RadialSeriesConfig {
