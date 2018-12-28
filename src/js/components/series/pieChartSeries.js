@@ -73,6 +73,12 @@ class PieChartSeries extends Series {
         this.valueLabels = [];
 
         /**
+         * series ratio values.
+         * @type {Array}
+         */
+        this.ratioValues = [];
+
+        /**
          * max legend width
          * @type {number}
          */
@@ -240,6 +246,12 @@ class PieChartSeries extends Series {
         return seriesGroup.map(seriesItem => seriesItem.label);
     }
 
+    _makeRatioValues() {
+        const seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
+
+        return seriesGroup.map(seriesItem => seriesItem.ratio);
+    }
+
     /**
      * Make series data.
      * @returns {{
@@ -254,6 +266,7 @@ class PieChartSeries extends Series {
         this.valueLabels = this._makeValueLabel();
         this.legendLabels = this._getLegendLabels();
         this.legendLongestWidth = this._getMaxLengthLegendWidth();
+        this.ratioValues = this._makeRatioValues();
 
         const circleBound = this._makeCircleBound();
         const sectorData = this._makeSectorData(circleBound);
@@ -652,6 +665,7 @@ class PieChartSeries extends Series {
         const graphRenderLabel = function(dataType, labels) {
             let colors;
             const theme = Object.assign({}, this.theme.label);
+            const {ratioValues} = this;
 
             if (this.isLabelAlignOuter && dataType === 'legend') {
                 colors = this.theme.colors;
@@ -667,8 +681,10 @@ class PieChartSeries extends Series {
                 labelSet,
                 positions,
                 labels,
+                ratioValues,
                 theme,
-                colors
+                colors,
+                labelFilter: this.options.labelFilter
             });
         }.bind(this);
 
@@ -676,6 +692,7 @@ class PieChartSeries extends Series {
             renderOption.positions = this._pickPositionsFromSectorData('centerPosition', 'value');
             graphRenderLabel('value', this.decorateLabel(this.valueLabels));
         }
+
         if (this.options.showLegend) {
             const legendLabelPosition = this.isLabelAlignOuter ? 'outerPosition' : 'centerPosition';
             renderOption.positions = this._pickPositionsFromSectorData(legendLabelPosition, 'legend');
