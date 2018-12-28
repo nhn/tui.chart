@@ -78,7 +78,7 @@ const axisDataMaker = {
             tickCount += 1;
         }
 
-        const result = {
+        return {
             labels,
             tickCount,
             validTickCount: tickCount,
@@ -88,8 +88,6 @@ const axisDataMaker = {
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned
         };
-
-        return result;
     },
 
     /**
