@@ -2,16 +2,17 @@
 // TypeScript Version: 3.2.2
 
 type AnyFunc = (...args: any[]) => any;
-type AxisLabelType = string | number | Date;
+type DateType = string | number | Date;
+type AxisLabelType = DateType;
 
-interface TextStyleConfig {
+interface ITextStyleConfig {
     fontSize?: number;
     fontFamily?: string;
     fontWeight?: string;
     color?: string;
 }
 
-interface DotOptions {
+interface IDotOptions {
     fillColor?: string;
     fillOpacity?: number;
     strokeColor?: string;
@@ -20,11 +21,11 @@ interface DotOptions {
     radius?: number;
 }
 
-interface SeriesDotOptions extends DotOptions {
-    hover?: DotOptions;
+interface ISeriesDotOptions extends IDotOptions {
+    hover?: IDotOptions;
 }
 
-interface ThemeConfig {
+interface IThemeConfig {
     chart?: {
         fontFamily?: string;
         background?: string;
@@ -37,13 +38,13 @@ interface ThemeConfig {
         background?: string;
     };
     yAxis?: {
-        title?: TextStyleConfig;
-        label?: TextStyleConfig;
+        title?: ITextStyleConfig;
+        label?: ITextStyleConfig;
         tickColor?: string;
     };
     xAxis?: {
-        title?: TextStyleConfig;
-        label?: TextStyleConfig;
+        title?: ITextStyleConfig;
+        label?: ITextStyleConfig;
         tickColor?: string;
     };
     plot?: {
@@ -64,10 +65,10 @@ interface ThemeConfig {
         overColor?: string;
         ranges?: any[];
         borderWidth?: string;
-        dot?: SeriesDotOptions;
+        dot?: ISeriesDotOptions;
     };
     legend?: {
-        label?: TextStyleConfig;
+        label?: ITextStyleConfig;
     };
     tooltip?: any;
     chartExportMenu?: {
@@ -78,20 +79,20 @@ interface ThemeConfig {
     };
 }
 
-interface RowData {
+interface IRowData {
     categories?: any;
     series: any;
 }
 
-interface TitleConfig {
+interface ITitleConfig {
     text?: string;
     offsetX?: number;
     offsetY?: number;
     align?: string;
 }
 
-interface YAxisConfig {
-    title?: string | TitleConfig;
+interface IYAxisConfig {
+    title?: string | ITitleConfig;
     labelMargin?: number;
     min?: number;
     max?: number;
@@ -101,8 +102,8 @@ interface YAxisConfig {
     chartType?: string;
 }
 
-interface XAxisConfig {
-    title?: string | TitleConfig;
+interface IXAxisConfig {
+    title?: string | ITitleConfig;
     labelMargin?: number;
     labelInterval?: number;
     rotateLabel?: boolean;
@@ -116,12 +117,12 @@ interface XAxisConfig {
     pointOnColumn?: boolean;
 }
 
-interface BaseSeriesConfig {
+interface IBaseSeriesConfig {
     showLabel?: boolean;
     allowSelect?: boolean;
 }
 
-interface AreaSeriesConfig extends BaseSeriesConfig {
+interface IAreaSeriesConfig extends IBaseSeriesConfig {
     showDot?: boolean;
     spline?: boolean;
     zoomable?: boolean;
@@ -130,14 +131,14 @@ interface AreaSeriesConfig extends BaseSeriesConfig {
     stackType?: string;
 }
 
-interface BarSeriesConfig extends BaseSeriesConfig {
+interface IBarSeriesConfig extends IBaseSeriesConfig {
     stackType?: string;
     barWidth?: number;
     diverging?: boolean;
     colorByPoint?: boolean;
 }
 
-interface ComboSeriesConfig extends BaseSeriesConfig {
+interface IComboSeriesConfig extends IBaseSeriesConfig {
     column?: {
         stackType?: string;
         showLabel?: boolean;
@@ -167,7 +168,7 @@ interface ComboSeriesConfig extends BaseSeriesConfig {
     shifting?: boolean;
 }
 
-interface LineSeriesConfig extends BaseSeriesConfig {
+interface ILineSeriesConfig extends IBaseSeriesConfig {
     showDot?: boolean;
     spline?: boolean;
     zoomable?: boolean;
@@ -175,7 +176,7 @@ interface LineSeriesConfig extends BaseSeriesConfig {
     pointWidth?: number;
 }
 
-interface PieSeriesConfig extends BaseSeriesConfig {
+interface IPieSeriesConfig extends IBaseSeriesConfig {
     radiusRatio?: number;
     startAngle?: number;
     endAngle?: number;
@@ -184,29 +185,29 @@ interface PieSeriesConfig extends BaseSeriesConfig {
     showLegend?: boolean;
 }
 
-interface RadialSeriesConfig {
+interface IRadialSeriesConfig {
     showDot?: boolean;
     showArea?: boolean;
 }
 
-interface ToolTipConfig {
+interface IToolTipConfig {
     suffix?: string;
     template?: AnyFunc;
     align?: string;
     offsetX?: number;
     offsetY?: number;
     grouped?: boolean;
-    column?: ToolTipConfig;
+    column?: IToolTipConfig;
 }
 
-interface LegendOptions {
+interface ILegendOptions {
     align?: string;
     showCheckbox?: boolean;
     visible?: boolean;
     maxWidth?: number;
 }
 
-interface PlotBandConfig {
+interface IPlotBandConfig {
     range: AxisLabelType[] | AxisLabelType[][];
     color: string;
     opacity?: number;
@@ -214,48 +215,50 @@ interface PlotBandConfig {
 
 }
 
-interface PlotLineConfig {
+interface IPlotLineConfig {
     value: string | number | Date;
     color: string;
     opacity?: number;
 }
 
-interface PlotOptions {
+interface IPlotOptions {
     showLine?: boolean;
-    bands?: PlotBandConfig[];
-    lines?: PlotLineConfig[];
+    bands?: IPlotBandConfig[];
+    lines?: IPlotLineConfig[];
     type?: string;
 }
 
-interface DemensionConfig {
+interface IDimensionConfig {
     width: number;
     height: number;
 }
 
-interface OffsetConfig {
+interface IOffsetConfig {
     x: number;
     y: number;
 }
 
-interface PositionConfig {
-    left: number;
-    top: number;
+interface IPositionConfig {
+    left?: number;
+    top?: number;
+    right?: number;
+    bottom?: number;
 }
 
-interface BaseChartOptions {
+interface IBaseChartOptions {
     width?: number;
     height?: number;
-    title?: string | TitleConfig;
+    title?: string | ITitleConfig;
     format?: string | AnyFunc;
 }
 
-interface BaseOptions {
-    chart: BaseChartOptions;
-    yAxis?: YAxisConfig | YAxisConfig[];
-    xAxis?: XAxisConfig;
-    tooltip?: ToolTipConfig;
-    legend?: LegendOptions;
-    plot?: PlotOptions;
+interface IBaseOptions {
+    chart: IBaseChartOptions;
+    yAxis?: IYAxisConfig | IYAxisConfig[];
+    xAxis?: IXAxisConfig;
+    tooltip?: IToolTipConfig;
+    legend?: ILegendOptions;
+    plot?: IPlotOptions;
     theme?: string;
     libType?: string;
     chartExportMenu?: {
@@ -265,53 +268,53 @@ interface BaseOptions {
     usageStatistics?: boolean;
 }
 
-interface AreaOptions extends BaseOptions {
-    series?: AreaSeriesConfig;
+interface IAreaOptions extends IBaseOptions {
+    series?: IAreaSeriesConfig;
 }
 
-interface BarOptions extends BaseOptions {
-    series?: BarSeriesConfig;
+interface IBarOptions extends IBaseOptions {
+    series?: IBarSeriesConfig;
 }
 
-interface BoxPlotOptions extends BaseOptions {
-    series?: AreaSeriesConfig;
+interface IBoxPlotOptions extends IBaseOptions {
+    series?: IAreaSeriesConfig;
 }
 
-interface BubbleOptons extends BaseOptions {
-    series?: BaseSeriesConfig;
+interface IBubbleOptons extends IBaseOptions {
+    series?: IBaseSeriesConfig;
     circleLegend?: {visible?: boolean};
 }
 
-interface ComboOptions extends BaseOptions {
-    series?: ComboSeriesConfig;
+interface IComboOptions extends IBaseOptions {
+    series?: IComboSeriesConfig;
 }
 
-interface HeatmapOptions extends BaseOptions {
-    series?: BaseSeriesConfig;
+interface IHeatmapOptions extends IBaseOptions {
+    series?: IBaseSeriesConfig;
 }
 
-interface LineOptions extends BaseOptions {
-    series?: LineSeriesConfig;
+interface ILineOptions extends IBaseOptions {
+    series?: ILineSeriesConfig;
 }
 
-interface MapOptions extends BaseOptions {
-    series?: BaseSeriesConfig;
+interface IMapOptions extends IBaseOptions {
+    series?: IBaseSeriesConfig;
     map?: string;
 }
 
-interface PieOptions extends BaseOptions {
-    series?: PieSeriesConfig;
+interface IPieOptions extends IBaseOptions {
+    series?: IPieSeriesConfig;
 }
 
-interface RadialOptions extends BaseOptions {
-    series?: RadialSeriesConfig;
+interface IRadialOptions extends IBaseOptions {
+    series?: IRadialSeriesConfig;
 }
 
-interface BasicOptions extends BaseOptions {
-    series?: BaseSeriesConfig;
+interface IBasicOptions extends IBaseOptions {
+    series?: IBaseSeriesConfig;
 }
 
-interface ChartBase {
+interface IChartBase {
     chartType: string;
     className: string;
 
@@ -321,16 +324,16 @@ interface ChartBase {
     resetTooltipAlign(): void;
     resetTooltipOffset(): void;
     resetTooltipPosition(): void;
-    resize(dimension: DemensionConfig): void;
+    resize(dimension: IDimensionConfig): void;
     setData(rawData: any | null): void;
     setTooltipAlign(align: string): void;
-    setTooltipOffset(offset: OffsetConfig): void;
-    setTooltipPosition(position: PositionConfig): void;
+    setTooltipOffset(offset: IOffsetConfig): void;
+    setTooltipPosition(position: IPositionConfig): void;
 }
 
-interface AreaChart extends ChartBase {
-    addPlotBand(data: PlotBandConfig): void;
-    addPlotLine(data: PlotLineConfig): void;
+interface IAreaChart extends IChartBase {
+    addPlotBand(data: IPlotBandConfig): void;
+    addPlotLine(data: IPlotLineConfig): void;
     removePlotBand(): void;
     removePlotLine(): void;
     getCheckedLegend(): {area: boolean[]};
@@ -338,39 +341,39 @@ interface AreaChart extends ChartBase {
     hideSeriesLabel(): void;
 }
 
-interface BarChart extends ChartBase {
+interface IBarChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
 }
 
-interface BoxplotChart extends ChartBase {
+interface IBoxplotChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
 }
 
-interface BubbleChart extends ChartBase {
+interface IBubbleChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
 }
 
-interface BulletChart extends ChartBase {
+interface IBulletChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
 }
 
-interface ColumnChart extends ChartBase {
+interface IColumnChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
 }
 
-interface ComboChart extends ChartBase {
-    addPlotBand(data: PlotBandConfig): void;
-    addPlotLine(data: PlotLineConfig): void;
+interface IComboChart extends IChartBase {
+    addPlotBand(data: IPlotBandConfig): void;
+    addPlotLine(data: IPlotLineConfig): void;
     removePlotBand(): void;
     removePlotLine(): void;
     getCheckedLegend(): {area: boolean[]};
@@ -378,9 +381,9 @@ interface ComboChart extends ChartBase {
     hideSeriesLabel(): void;
 }
 
-interface LineChart extends ChartBase {
-    addPlotBand(data: PlotBandConfig): void;
-    addPlotLine(data: PlotLineConfig): void;
+interface ILineChart extends IChartBase {
+    addPlotBand(data: IPlotBandConfig): void;
+    addPlotLine(data: IPlotLineConfig): void;
     removePlotBand(): void;
     removePlotLine(): void;
     getCheckedLegend(): {area: boolean[]};
@@ -388,46 +391,119 @@ interface LineChart extends ChartBase {
     hideSeriesLabel(): void;
 }
 
-interface PieChart extends ChartBase {
+interface IPieChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
 }
 
-interface RadialChart extends ChartBase {
+interface IRadialChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
 }
 
-interface ScatterChart extends ChartBase {
+interface IScatterChart extends IChartBase {
     getCheckedLegend(): {area: boolean[]};
     showSeriesLabel(): void;
     hideSeriesLabel(): void;
+}
+
+interface IArrayUtil {
+    min(arr: any[], condition?: AnyFunc, context?: any): any;
+    max(arr: any[], condition?: AnyFunc, context?: any): any;
+    any(collection: any[], condition: AnyFunc, context?: any): boolean;
+    all(collection: any[], condition: AnyFunc, context?: any): boolean;
+    unique(arr: any[], sorted?: boolean, iteratee?: AnyFunc, context?: any): any[];
+    pivot(arr2d: any[][]): any[][];
+}
+
+interface IFontCss {
+    fontSize?: number;
+    fontFamily?: string;
+    color?: string;
+}
+
+interface IDimensionNPosition {
+    dimension: IDimensionConfig;
+    position: IPositionConfig;
+}
+
+interface IReqAnimationIdObj {
+    id: number;
+}
+
+interface IRenderUtilFormatValueParam {
+    value: number;
+    formatFunctions: AnyFunc[];
+    valueType: string;
+    areaType: string;
+    legendName?: string;
+    chartType?: string;
+}
+
+interface IRenderUtilFormatValuesTypeInfo {
+    chartType: string;
+    areaType: string;
+    valueType: string;
+}
+
+interface IRenderUtil {
+    concatStr(...args: string[]): string;
+    oneLineTrim(...args: string[]): string;
+    makeFontCssText(theme: IFontCss): string;
+    getRenderedLabelWidth(label: string, theme: IFontCss): number;
+    getRenderedLabelHeight(label: string, theme: IFontCss): number;
+    getRenderedLabelsMaxWidth(labels: string[], theme: IFontCss): number;
+    getRenderedLabelsMaxHeight(labels: string[], theme: IFontCss): number;
+    renderDimension(el: Element, dimension: IDimensionConfig): void;
+    renderPosition(el: Element, position: IPositionConfig): void;
+    renderBackground(el: Element, background: string): void;
+    renderFontFamily(el: Element, fontFamily: string): void;
+    renderTitle(title: string, theme: IFontCss, className: string): Element;
+    expandBound(dimensionNPosition: IDimensionNPosition): IDimensionConfig;
+    makeMouseEventDetectorName(prefix: string, value: string, suffix: string): string;
+    formatValue(params: IRenderUtilFormatValueParam): string;
+    formatValues(values: number[], formatFunctions: AnyFunc[], typeInfos: IRenderUtilFormatValuesTypeInfo): string[];
+    formatDate(value: DateType, format?: string): string;
+    formatDates(values: DateType[], format?: string): string[];
+    cancelAnimation(animation: IReqAnimationIdObj): void;
+    startAnimation(animationTime: number, onAnimation: AnyFunc, onCompleted: AnyFunc): IReqAnimationIdObj;
+    isOldBrowser(): boolean;
+    formatToZeroFill(value: string, len: number): string;
+    formatToDecimal(value: string, len: number): string;
+    formatToComma(value: string): string;
+    makeCssTextFromMap(cssMap: any): string;
+    addPrefixSuffix(labels: string[], prefix?: string, suffix?: string): string[];
+    addPrefixSuffixItem(label: string, prefix?: string, suffix?: string): string;
+    getStyle(target: Element): any;
+    generateClipRectId(): string;
+    setOpacity(elements: Element | Element[], iteratee: AnyFunc): void;
+    makeCssFilterOpacityString(opacity: number): string;
 }
 
 declare namespace tuiChart {
-    export const arrayUtil: any;
-    export const renderUtil: any;
+    export const arrayUtil: IArrayUtil;
+    export const renderUtil: IRenderUtil;
 
-    export function areaChart(container: Element, data: RowData, options: AreaOptions): AreaChart;
-    export function barChart(container: Element, data: RowData, options: BarOptions): BarChart;
-    export function boxplotChart(container: Element, data: RowData, options: BoxPlotOptions): BoxplotChart;
-    export function bubbleChart(container: Element, data: RowData, options: BubbleOptons): BubbleChart;
-    export function bulletChart(container: Element, data: RowData, options: BarOptions): BulletChart;
-    export function columnChart(container: Element, data: RowData, options: BarOptions): ColumnChart;
-    export function comboChart(container: Element, data: RowData, options: ComboOptions): ComboChart;
-    export function heatmapChart(container: Element, data: RowData, options: HeatmapOptions): ChartBase;
-    export function lineChart(container: Element, data: RowData, options: LineOptions): LineChart;
-    export function mapChart(container: Element, data: RowData, options: MapOptions): ChartBase;
-    export function pieChart(container: Element, data: RowData, options: PieOptions): PieChart;
-    export function radialChart(container: Element, data: RowData, options: RadialOptions): RadialChart;
-    export function scatterChart(container: Element, data: RowData, options: BasicOptions): ScatterChart;
-    export function treemapChart(container: Element, data: RowData, options: BasicOptions): ChartBase;
+    export function areaChart(container: Element, data: IRowData, options: IAreaOptions): IAreaChart;
+    export function barChart(container: Element, data: IRowData, options: IBarOptions): IBarChart;
+    export function boxplotChart(container: Element, data: IRowData, options: IBoxPlotOptions): IBoxplotChart;
+    export function bubbleChart(container: Element, data: IRowData, options: IBubbleOptons): IBubbleChart;
+    export function bulletChart(container: Element, data: IRowData, options: IBarOptions): IBulletChart;
+    export function columnChart(container: Element, data: IRowData, options: IBarOptions): IColumnChart;
+    export function comboChart(container: Element, data: IRowData, options: IComboOptions): IComboChart;
+    export function heatmapChart(container: Element, data: IRowData, options: IHeatmapOptions): IChartBase;
+    export function lineChart(container: Element, data: IRowData, options: ILineOptions): ILineChart;
+    export function mapChart(container: Element, data: IRowData, options: IMapOptions): IChartBase;
+    export function pieChart(container: Element, data: IRowData, options: IPieOptions): IPieChart;
+    export function radialChart(container: Element, data: IRowData, options: IRadialOptions): IRadialChart;
+    export function scatterChart(container: Element, data: IRowData, options: IBasicOptions): IScatterChart;
+    export function treemapChart(container: Element, data: IRowData, options: IBasicOptions): IChartBase;
 
     export function registerMap(mapName: string, data: any): void;
-    export function registerPlugin(libType: string, plugin: any, getPaperCallback?: (...args: any[]) => any): void;
-    export function registerTheme(themeName: string, theme: ThemeConfig): void;
+    export function registerPlugin(libType: string, plugin: any, getPaperCallback?: AnyFunc): void;
+    export function registerTheme(themeName: string, theme: IThemeConfig): void;
 }
 
 declare module 'tui-chart' {
