@@ -36,6 +36,6 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "tui-chart": "^3.4.2"
+    "tui-chart": "~3.4.2"
   }
 }
