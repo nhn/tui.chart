@@ -3,7 +3,23 @@
 
 type AnyFunc = (...args: any[]) => any;
 type DateType = string | number | Date;
+type DataType = number[] | number[][];
+type LineSeriesDataType = number[] | Array<[string, number]> | Array<[number, number]> | IPos[];
+type ThemeRangeType = IThemeRange | null;
 type AxisLabelType = DateType;
+type TemplateFunc = (category: string,
+                     items: IToolTipTemplateConfig | IGroupedToolTipTemplateConfig[],
+                     categoryValue?: DateType,
+                     groupIndex?: number) => string;
+type FormatFunc = (value: string | number,
+                   chartType: string,
+                   areaType: string,
+                   valueType: string,
+                   legendName: string) => string | number;
+type AllRowDataType = IAreaChartRowData | IBarChartRowData | IBoxPlotChartRowData |
+    IBubbleChartRowData | IBulletChartRowData | IColumnChartRowData |
+    IHeatmapChartRowData | ILineChartRowData | IMapRowData | IPieChartRowData |
+    IRadialChart | IScatterChart | IComboRowData | null;
 
 interface ITextStyleConfig {
     fontSize?: number;
@@ -23,6 +39,11 @@ interface IDotOptions {
 
 interface ISeriesDotOptions extends IDotOptions {
     hover?: IDotOptions;
+}
+
+interface IThemeRange {
+    color?: string;
+    opacity?: number;
 }
 
 interface IThemeConfig {
@@ -63,14 +84,14 @@ interface IThemeConfig {
         startColor?: string;
         endColor?: string;
         overColor?: string;
-        ranges?: any[];
+        ranges?: ThemeRangeType[];
         borderWidth?: string;
         dot?: ISeriesDotOptions;
     };
     legend?: {
         label?: ITextStyleConfig;
     };
-    tooltip?: any;
+    tooltip?: object;
     chartExportMenu?: {
         backgroundColor?: string;
         borderRadius?: number;
@@ -79,9 +100,151 @@ interface IThemeConfig {
     };
 }
 
-interface IRowData {
-    categories?: any;
-    series: any;
+interface IAreaSeriesData {
+    name: string;
+    data: DataType;
+}
+
+interface IAreaChartRowData {
+    categories: string[];
+    series: IAreaSeriesData[];
+}
+
+interface IBarSeriesData {
+    name: string;
+    data: DataType;
+    stack?: string;
+}
+
+interface IBarChartRowData {
+    categories: string[];
+    series: IBarSeriesData[];
+}
+
+interface IBoxPlotSeriesData {
+    name: string;
+    data: DataType;
+    outliers: DataType;
+}
+
+interface IBoxPlotChartRowData {
+    categories: string[];
+    series: IBoxPlotSeriesData[];
+}
+
+interface IBubbleSeriesData {
+    x: number;
+    y: number;
+    r: number;
+    label: string;
+}
+
+interface IBubbleChartRowData {
+    series: IBubbleSeriesData[];
+}
+
+interface IBulletSeriesData {
+    name: string;
+    data: number;
+    markers: number[];
+    ranges: number[][];
+}
+
+interface IBulletChartRowData {
+    categories: string[];
+    series: IBulletSeriesData[];
+}
+
+interface IColumnSeriesData {
+    name: string;
+    data: number[];
+    stack?: string;
+}
+
+interface IColumnChartRowData {
+    categories: string[];
+    series: IColumnSeriesData[];
+}
+
+interface IComboRowData {
+    categories: string[];
+    seriesAlias?: {
+        [propName: string]: string;
+    };
+    series: {
+        [propName: string]: IPieSeriesData[];
+    } | {
+        column?: IColumnSeriesData[];
+        line?: ILineSeriesData[];
+        area?: IAreaSeriesData[];
+        scatter?: IScatterSeriesData[];
+    };
+}
+
+interface IHeatmapChartRowData {
+    categories: string[];
+    series: number[][];
+}
+
+interface ILineSeriesData {
+    name: string;
+    data: LineSeriesDataType;
+}
+
+interface ILineChartRowData {
+    categories: string[];
+    series: ILineSeriesData[];
+}
+
+interface IMapSeriesData {
+    code: string;
+    data: number;
+}
+
+interface IMapRowData {
+    series: IMapSeriesData[];
+}
+
+interface IPieSeriesData {
+    name: string;
+    data: number;
+}
+
+interface IPieChartRowData {
+    categories: string[];
+    series: IPieSeriesData[];
+}
+
+interface IRadiaSerieslData {
+    name: string;
+    data: number[];
+}
+
+interface IRadialChartRowData {
+    categories: string[];
+    series: IRadiaSerieslData[];
+}
+
+interface IPos {
+    x: number;
+    y: number;
+}
+
+interface IScatterSeriesData {
+    name: string;
+    data: IPos[];
+}
+
+interface IScatterChartRowData {
+    categories: string[];
+    series: IScatterSeriesData[];
+}
+
+interface IMapData {
+    code: string;
+    name: string;
+    path: string;
+    labelCoordinate: IPos;
 }
 
 interface ITitleConfig {
@@ -138,34 +301,18 @@ interface IBarSeriesConfig extends IBaseSeriesConfig {
     colorByPoint?: boolean;
 }
 
-interface IComboSeriesConfig extends IBaseSeriesConfig {
-    column?: {
-        stackType?: string;
-        showLabel?: boolean;
-        barWidth?: number;
-    };
-    line?: {
-        showDot?: boolean;
-        showLabel?: boolean;
-        spline?: boolean;
-    };
-    area?: {
-        showDot?: boolean;
-        showLabel?: boolean;
-        spline?: boolean;
-    };
-    pie?: {
-        showLabel?: boolean;
-        radiusRatio?: number;
-        startAngle?: boolean;
-        endAngle?: boolean;
-    };
-    [propName: string]: any; // pie1, pie2
-
+interface IComboSeriesConfig {
+    column?: IBarSeriesConfig;
+    line?: ILineSeriesConfig;
+    area?: IAreaSeriesConfig;
     showDot?: boolean;
+    showLabel?: boolean;
+    allowSelect?: boolean;
     spline?: boolean;
     zoomable?: boolean;
     shifting?: boolean;
+
+    [propName: string]: any;
 }
 
 interface ILineSeriesConfig extends IBaseSeriesConfig {
@@ -190,9 +337,40 @@ interface IRadialSeriesConfig {
     showArea?: boolean;
 }
 
+interface IGroupedToolTipTemplateConfig {
+    chartType: string;
+    legend: string;
+    suffix: string;
+    type: string;
+    vlaue: string;
+}
+
+interface IToolTipTemplateConfig {
+    category: string;
+    chartType: string;
+    cssText: string;
+    end?: string;
+    endRatio?: string;
+    label: string;
+    legend: string;
+    ratio: number;
+    ratioLabel?: string;
+    start?: string;
+    startRatio?: string;
+    x?: string;
+    xRatio?: number;
+    y?: string;
+    yRatio?: number;
+    r?: string;
+    rRatio?: number;
+    suffix: string;
+    value: string;
+    valueTypes: string;
+}
+
 interface IToolTipConfig {
     suffix?: string;
-    template?: AnyFunc;
+    template?: TemplateFunc;
     align?: string;
     offsetX?: number;
     offsetY?: number;
@@ -212,7 +390,6 @@ interface IPlotBandConfig {
     color: string;
     opacity?: number;
     mergeOverlappingRanges?: boolean;
-
 }
 
 interface IPlotLineConfig {
@@ -249,7 +426,7 @@ interface IBaseChartOptions {
     width?: number;
     height?: number;
     title?: string | ITitleConfig;
-    format?: string | AnyFunc;
+    format?: string | FormatFunc;
 }
 
 interface IBaseOptions {
@@ -314,18 +491,22 @@ interface IBasicOptions extends IBaseOptions {
     series?: IBaseSeriesConfig;
 }
 
+interface ICheckedLegendsData {
+    [propName: string]: boolean[];
+}
+
 interface IChartBase {
     chartType: string;
     className: string;
 
-    addData(category: string, values: any[]): void;
-    on(eventName: string, handler: (...args: any[]) => any): any;
-    rerender(checkedLegends: any, rawData: any): void; // 데이터가 어떤 형태로 들어갈까요?
+    addData(category: string, values: DataType | LineSeriesDataType): void;
+    on(eventName: string, handler: (...args: any[]) => void): void;
+    rerender(checkedLegends: ICheckedLegendsData, rawData: IComboRowData): void;
     resetTooltipAlign(): void;
     resetTooltipOffset(): void;
     resetTooltipPosition(): void;
     resize(dimension: IDimensionConfig): void;
-    setData(rawData: any | null): void;
+    setData(rawData: AllRowDataType): void;
     setTooltipAlign(align: string): void;
     setTooltipOffset(offset: IOffsetConfig): void;
     setTooltipPosition(position: IPositionConfig): void;
@@ -435,7 +616,7 @@ interface IReqAnimationIdObj {
 
 interface IRenderUtilFormatValueParam {
     value: number;
-    formatFunctions: AnyFunc[];
+    formatFunctions: FormatFunc[];
     valueType: string;
     areaType: string;
     legendName?: string;
@@ -446,6 +627,10 @@ interface IRenderUtilFormatValuesTypeInfo {
     chartType: string;
     areaType: string;
     valueType: string;
+}
+
+interface ICssProps {
+    [propName: string]: number | string;
 }
 
 interface IRenderUtil {
@@ -464,21 +649,24 @@ interface IRenderUtil {
     expandBound(dimensionNPosition: IDimensionNPosition): IDimensionConfig;
     makeMouseEventDetectorName(prefix: string, value: string, suffix: string): string;
     formatValue(params: IRenderUtilFormatValueParam): string;
-    formatValues(values: number[], formatFunctions: AnyFunc[], typeInfos: IRenderUtilFormatValuesTypeInfo): string[];
+    formatValues(values: number[], formatFunctions: FormatFunc[], typeInfos: IRenderUtilFormatValuesTypeInfo): string[];
     formatDate(value: DateType, format?: string): string;
     formatDates(values: DateType[], format?: string): string[];
     cancelAnimation(animation: IReqAnimationIdObj): void;
-    startAnimation(animationTime: number, onAnimation: AnyFunc, onCompleted: AnyFunc): IReqAnimationIdObj;
+    startAnimation(animationTime: number,
+                   onAnimation: (ratio: number) => void,
+                   onCompleted?: () => void): IReqAnimationIdObj;
     isOldBrowser(): boolean;
     formatToZeroFill(value: string, len: number): string;
     formatToDecimal(value: string, len: number): string;
     formatToComma(value: string): string;
-    makeCssTextFromMap(cssMap: any): string;
+    makeCssTextFromMap(cssMap: ICssProps): string;
     addPrefixSuffix(labels: string[], prefix?: string, suffix?: string): string[];
     addPrefixSuffixItem(label: string, prefix?: string, suffix?: string): string;
-    getStyle(target: Element): any;
+    getStyle(target: Element): CSSStyleDeclaration;
     generateClipRectId(): string;
-    setOpacity(elements: Element | Element[], iteratee: AnyFunc): void;
+    setOpacity(elements: Element | Element[],
+               iteratee: (element: Element) => void | number): void;
     makeCssFilterOpacityString(opacity: number): string;
 }
 
@@ -486,23 +674,24 @@ declare namespace tuiChart {
     export const arrayUtil: IArrayUtil;
     export const renderUtil: IRenderUtil;
 
-    export function areaChart(container: Element, data: IRowData, options: IAreaOptions): IAreaChart;
-    export function barChart(container: Element, data: IRowData, options: IBarOptions): IBarChart;
-    export function boxplotChart(container: Element, data: IRowData, options: IBoxPlotOptions): IBoxplotChart;
-    export function bubbleChart(container: Element, data: IRowData, options: IBubbleOptons): IBubbleChart;
-    export function bulletChart(container: Element, data: IRowData, options: IBarOptions): IBulletChart;
-    export function columnChart(container: Element, data: IRowData, options: IBarOptions): IColumnChart;
-    export function comboChart(container: Element, data: IRowData, options: IComboOptions): IComboChart;
-    export function heatmapChart(container: Element, data: IRowData, options: IHeatmapOptions): IChartBase;
-    export function lineChart(container: Element, data: IRowData, options: ILineOptions): ILineChart;
-    export function mapChart(container: Element, data: IRowData, options: IMapOptions): IChartBase;
-    export function pieChart(container: Element, data: IRowData, options: IPieOptions): IPieChart;
-    export function radialChart(container: Element, data: IRowData, options: IRadialOptions): IRadialChart;
-    export function scatterChart(container: Element, data: IRowData, options: IBasicOptions): IScatterChart;
-    export function treemapChart(container: Element, data: IRowData, options: IBasicOptions): IChartBase;
+    export function areaChart(container: Element, data: IAreaChartRowData, options: IAreaOptions): IAreaChart;
+    export function barChart(container: Element, data: IBarChartRowData, options: IBarOptions): IBarChart;
+    export function boxplotChart(container: Element,
+                                 data: IBoxPlotChartRowData,
+                                 options: IBoxPlotOptions): IBoxplotChart;
+    export function bubbleChart(container: Element, data: IBubbleChartRowData, options: IBubbleOptons): IBubbleChart;
+    export function bulletChart(container: Element, data: IBulletChartRowData, options: IBarOptions): IBulletChart;
+    export function columnChart(container: Element, data: IColumnChartRowData, options: IBarOptions): IColumnChart;
+    export function comboChart(container: Element, data: IComboRowData, options: IComboOptions): IComboChart;
+    export function heatmapChart(container: Element, data: IHeatmapChartRowData, options: IHeatmapOptions): IChartBase;
+    export function lineChart(container: Element, data: ILineChartRowData, options: ILineOptions): ILineChart;
+    export function mapChart(container: Element, data: IMapRowData, options: IMapOptions): IChartBase;
+    export function pieChart(container: Element, data: IPieChartRowData, options: IPieOptions): IPieChart;
+    export function radialChart(container: Element, data: IRadialChartRowData, options: IRadialOptions): IRadialChart;
+    export function scatterChart(container: Element, data: IScatterChartRowData, options: IBasicOptions): IScatterChart;
+    export function treemapChart(container: Element, data: IMapRowData, options: IBasicOptions): IChartBase;
 
-    export function registerMap(mapName: string, data: any): void;
-    export function registerPlugin(libType: string, plugin: any, getPaperCallback?: AnyFunc): void;
+    export function registerMap(mapName: string, data: IMapData): void;
     export function registerTheme(themeName: string, theme: IThemeConfig): void;
 }
 
