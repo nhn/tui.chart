@@ -203,20 +203,20 @@ If you use map chart, you should use `map` prop.
 For use method, first you need to assign ref attribute of element like this:
 
 ```html
-<bar-chart ref="tuiChart" data="chartData"/>
+<bar-chart ref="tuiBarChart" data="chartData"/>
 ```
 
 After then you can use methods through `this.$refs`. We provide `invoke` method. You can use `invoke` method to call the method of tui.chart. First argument of invoke is name of the method and second argument is parameters of the method.
 
 ```js
-this.$refs.tuiChart.invoke('resize', {
+this.$refs.tuiBarChart.invoke('resize', {
     width: 500,
     height: 500
 });
-this.$refs.tuiChart.invoke('animateChart');
+const checkedLegend = this.$refs.tuiBarChart.invoke('getCheckedLegend');
 ```
 
-For more information of method, see [method of tui.chart](http://nhnent.github.io/tui.chart/api/latest/).
+In the [api document](https://nhnent.github.io/tui.chart/latest/index.html), check the **methods** for each chart type.
 
 ## 🔧 Pull Request Steps
 
