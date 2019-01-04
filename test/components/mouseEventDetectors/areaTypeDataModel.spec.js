@@ -106,10 +106,6 @@ describe('Test for AreaTypeDataModel', () => {
                     bound: {
                         top: 10,
                         left: 10
-                    },
-                    indexes: {
-                        groupIndex: 0,
-                        index: 0
                     }
                 },
                 {
@@ -121,12 +117,12 @@ describe('Test for AreaTypeDataModel', () => {
             ];
 
             const actual = dataModel.findData({
-                x: 17,
-                y: 10
+                x: 10,
+                y: 17
             }, null, {
                 isCoordinateTypeChart: false
             });
-            const [expected] = dataModel.data;
+            const [, expected] = dataModel.data;
             expect(actual).toBe(expected);
         });
     });
