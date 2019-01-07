@@ -259,4 +259,24 @@ describe('RaphaelLineTypeBase', () => {
             expect(actual).toBe('item1');
         });
     });
+    describe('animate()', () => {
+        it('ClipRect should always be updated to reflect x, y.', () => {
+            lineTypeBase.clipRect = jasmine.createSpyObj('clipRect', ['attr', 'animate']);
+            lineTypeBase.paper = raphael(document.createElement('DIV'), 100, 100);
+            lineTypeBase.dimension = {
+                width: 100,
+                height: 100
+            };
+            lineTypeBase.position = {
+                left: 30,
+                top: 40
+            };
+            lineTypeBase.animate(() => {}, []);
+
+            const [callArgument] = lineTypeBase.clipRect.attr.calls.mostRecent().args;
+
+            expect(callArgument.x).toBe(20);
+            expect(callArgument.x).toBe(30);
+        });
+    });
 });
