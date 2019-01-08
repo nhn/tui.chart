@@ -277,6 +277,8 @@ class MouseEventDetectorBase {
     rerender(data) {
         let tickCount;
 
+        this.positionMap = data.positionMap;
+
         if (data.axisDataMap.xAxis) {
             tickCount = this._pickTickCount(data.axisDataMap);
         }
