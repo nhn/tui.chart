@@ -276,7 +276,7 @@ describe('RaphaelLineTypeBase', () => {
             const [callArgument] = lineTypeBase.clipRect.attr.calls.mostRecent().args;
 
             expect(callArgument.x).toBe(20);
-            expect(callArgument.x).toBe(30);
+            expect(callArgument.y).toBe(30);
         });
     });
 });
