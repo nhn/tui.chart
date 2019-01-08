@@ -80,16 +80,21 @@ class AreaTypeDataModel {
     /**
      * Find Data by layer position.
      * @param {{x: number, y: number}} layerPosition - layer position
-     * @param {number} [distanceLimit] distance limitation to find data
-     * @param {number} selectLegendIndex select legend sereis index
+     * @param {number} [selectLegendIndex] select legend sereis index
+     * @param {object} [searchInfo] distance limitation to find data
+     *   @param {number} searchInfo.distanceLimit distance limitation to find data
+     *   @param {boolean} searchInfo.isCoordinateTypeChart whether coordinate type chart or not
      * @returns {object}
      */
-    findData(layerPosition, distanceLimit, selectLegendIndex) {
-        if (distanceLimit && distanceLimit < this.leftStepLength) {
-            return this._findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex);
+    findData(layerPosition, selectLegendIndex, {distanceLimit, isCoordinateTypeChart} = {}) {
+        const isLooseDistancePosition = distanceLimit && distanceLimit < this.leftStepLength;
+        const useCoordinateDistanceSearch = isCoordinateTypeChart || isLooseDistancePosition;
+
+        if (useCoordinateDistanceSearch) {
+            return this._findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex);
         }
 
-        return this._findDataForDenseArea(layerPosition, selectLegendIndex);
+        return this._findDataForFirstXPosition(layerPosition, selectLegendIndex);
     }
 
     /**
@@ -99,7 +104,7 @@ class AreaTypeDataModel {
      * @returns {object}
      * @private
      */
-    _findDataForDenseArea(layerPosition, selectLegendIndex) {
+    _findDataForFirstXPosition(layerPosition, selectLegendIndex) {
         const {xMinValue} = this.data.reduce((findMinObj, datum) => {
             const xDiff = Math.abs(layerPosition.x - datum.bound.left);
             if (xDiff <= findMinObj.xMin) {
@@ -146,7 +151,7 @@ class AreaTypeDataModel {
      * @returns {object}
      * @private
      */
-    _findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex) {
+    _findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex) {
         let min = 100000;
         let findFound;
 
