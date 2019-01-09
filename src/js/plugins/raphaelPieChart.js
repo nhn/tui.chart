@@ -576,7 +576,7 @@ class RaphaelPieChart {
      *      @param {Array} colors series theme colors
      */
     renderLabels(options) {
-        const {theme, labelFilter, dataType, ratioValues} = options;
+        const {theme, labelFilter, dataType, ratioValues, seriesNames} = options;
         const attributes = {
             'font-size': theme.fontSize,
             'font-family': (options.fontFamily) ? options.fontFamily : options.theme.fontFamily,
@@ -590,7 +590,8 @@ class RaphaelPieChart {
             const ratio = ratioValues[index];
             const isFiltered = labelFilter && !labelFilter({
                 value: options.labels[index],
-                dataType,
+                labelType: dataType,
+                seriesName: seriesNames[index],
                 ratio
             });
             let label;

@@ -689,6 +689,7 @@ class PieChartSeries extends Series {
                 ratioValues,
                 theme,
                 colors,
+                seriesNames: this.legendLabels,
                 labelFilter: this.options.labelFilter
             });
         }.bind(this);

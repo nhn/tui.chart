@@ -31,6 +31,7 @@ describe('RaphaelPieChart', () => {
                 colors: ['#000', '#000', '#000', '#000', '#000'],
                 positions: [1, 2, 3, 4, 5],
                 ratioValues: [0.3, 0.1, 0.1, 0.3, 0.2],
+                seriesNames: ['labelA', 'labelB', 'labelC', 'labelD', 'labelE'],
                 labelFilter: filterInfo => filterInfo.ratio >= 0.2
             });
 
