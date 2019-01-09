@@ -256,19 +256,15 @@ interface IMapData {
     labelCoordinate: IPos;
 }
 
-interface ITreeMapChildrenData {
+interface ITreeMapData {
     label: string;
-    value: number;
-    colorValue: number;
-}
-
-interface ITreeMapSeriesData {
-    label: string;
-    children: ITreeMapChildrenData[];
+    value?: number;
+    colorValue?: number;
+    children?: ITreeMapData[];
 }
 
 interface ITreeMapChartRowData {
-    series: ITreeMapSeriesData[];
+    series: ITreeMapData[];
 }
 
 interface ITitleConfig {
