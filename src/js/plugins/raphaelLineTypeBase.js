@@ -7,6 +7,7 @@ import raphaelRenderUtil from './raphaelRenderUtil';
 import renderUtil from '../helpers/renderUtil';
 import predicate from '../helpers/predicate';
 import arrayUtil from '../helpers/arrayUtil';
+import chartConst from '../const';
 import snippet from 'tui-code-snippet';
 
 const {browser} = snippet;
@@ -785,16 +786,20 @@ class RaphaelLineTypeBase {
     animate(onFinish, seriesSet) {
         const {paper, dimension, position} = this;
         const clipRectId = this._getClipRectId();
+        const remakePosition = this._makeClipRectPosition(position);
         let {clipRect} = this;
 
         if (!IS_LTE_IE8 && dimension) {
             if (!clipRect) {
-                clipRect = createClipPathRectWithLayout(paper, position, dimension, clipRectId);
+                clipRect = createClipPathRectWithLayout(paper, remakePosition, dimension, clipRectId);
                 this.clipRect = clipRect;
             } else {
+                this._makeClipRectPosition(position);
                 clipRect.attr({
                     width: 0,
-                    height: dimension.height
+                    height: dimension.height,
+                    x: remakePosition.left,
+                    y: remakePosition.top
                 });
             }
 
@@ -806,6 +811,21 @@ class RaphaelLineTypeBase {
                 width: dimension.width
             }, ANIMATION_DURATION, '>', onFinish);
         }
+    }
+
+    /**
+     * Make selection dot.
+     * @param {object} position clip rect position
+     *   @param {number} left clip rect left position
+     *   @param {number} top clip rect top position
+     * @returns {{top: number, left: number}} remake clip rect position
+     * @private
+     */
+    _makeClipRectPosition(position) {
+        return {
+            left: position.left - chartConst.SERIES_EXPAND_SIZE,
+            top: position.top - chartConst.SERIES_EXPAND_SIZE
+        };
     }
 
     /**
@@ -1004,7 +1024,7 @@ class RaphaelLineTypeBase {
  */
 function createClipPathRectWithLayout(paper, position, dimension, id) {
     const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-    const rect = paper.rect((position.left - 10), (position.top - 10), 0, dimension.height);
+    const rect = paper.rect(position.left, position.top, 0, dimension.height);
 
     rect.id = `${id}_rect`;
     clipPath.id = id;

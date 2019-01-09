@@ -418,7 +418,7 @@ describe('Test for axisDataMaker', () => {
                 degree: 45,
                 overflowHeight: 10,
                 overflowLeft: -40,
-                overflowRight: -70
+                overflowRight: 30
             });
         });
 
@@ -447,7 +447,7 @@ describe('Test for axisDataMaker', () => {
 
             expect(actual).toEqual({
                 overflowLeft: -40,
-                overflowRight: 40
+                overflowRight: 140
             });
         });
     });

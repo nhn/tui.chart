@@ -16,7 +16,8 @@
     "test:ne": "KARMA_SERVER=ne karma start",
     "test:types": "tsc --project test/types",
     "doc": "jsdoc -c ./jsdoc.conf.json && git checkout gh-pages && npm run update",
-    "eslint": "eslint src/js test/"
+    "eslint": "eslint src/js test/",
+    "tslint": "tslint index.d.ts"
   },
   "repository": {
     "type": "git",
@@ -65,6 +66,7 @@
     "less-loader": "^2.2.3",
     "safe-umd-webpack-plugin": "^0.0.1",
     "style-loader": "^0.19.1",
+    "tslint": "^5.12.0",
     "tui-jsdoc-template": "^1.2.2",
     "typescript": "^3.2.2",
     "webpack": "^1.15.0",
