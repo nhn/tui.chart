@@ -4,7 +4,7 @@
 type AnyFunc = (...args: any[]) => any;
 type DateType = string | number | Date;
 type DataType = number[] | number[][];
-type LineSeriesDataType = number[] | Array<[string, number]> | Array<[number, number]> | IPos[];
+type LineSeriesDataType = number[] | Array<Array<(number | string)>> | IPos[];
 type ThemeRangeType = IThemeRange | null;
 type AxisLabelType = DateType;
 type TemplateFunc = (category: string,
@@ -19,7 +19,7 @@ type FormatFunc = (value: string | number,
 type AllRowDataType = IAreaChartRowData | IBarChartRowData | IBoxPlotChartRowData |
     IBubbleChartRowData | IBulletChartRowData | IColumnChartRowData |
     IHeatmapChartRowData | ILineChartRowData | IMapRowData | IPieChartRowData |
-    IRadialChart | IScatterChart | IComboRowData | null;
+    IRadialChartRowData | IScatterChartRowData | IComboRowData | null;
 
 interface ITextStyleConfig {
     fontSize?: number;
@@ -87,6 +87,7 @@ interface IThemeConfig {
         ranges?: ThemeRangeType[];
         borderWidth?: string;
         dot?: ISeriesDotOptions;
+        [propName: string]: any;
     };
     legend?: {
         label?: ITextStyleConfig;
@@ -132,11 +133,16 @@ interface IBoxPlotChartRowData {
     series: IBoxPlotSeriesData[];
 }
 
-interface IBubbleSeriesData {
+interface IBubbleData {
     x: number;
     y: number;
     r: number;
     label: string;
+}
+
+interface IBubbleSeriesData {
+    name: string;
+    data: IBubbleData[];
 }
 
 interface IBubbleChartRowData {
@@ -167,7 +173,7 @@ interface IColumnChartRowData {
 }
 
 interface IComboRowData {
-    categories: string[];
+    categories?: string[];
     seriesAlias?: {
         [propName: string]: string;
     };
@@ -182,7 +188,10 @@ interface IComboRowData {
 }
 
 interface IHeatmapChartRowData {
-    categories: string[];
+    categories: {
+        x: Array<string | number>;
+        y: Array<string | number>;
+    };
     series: number[][];
 }
 
@@ -192,7 +201,7 @@ interface ILineSeriesData {
 }
 
 interface ILineChartRowData {
-    categories: string[];
+    categories?: string[];
     series: ILineSeriesData[];
 }
 
@@ -236,7 +245,7 @@ interface IScatterSeriesData {
 }
 
 interface IScatterChartRowData {
-    categories: string[];
+    categories?: string[];
     series: IScatterSeriesData[];
 }
 
@@ -245,6 +254,21 @@ interface IMapData {
     name: string;
     path: string;
     labelCoordinate: IPos;
+}
+
+interface ITreeMapChildrenData {
+    label: string;
+    value: number;
+    colorValue: number;
+}
+
+interface ITreeMapSeriesData {
+    label: string;
+    children: ITreeMapChildrenData[];
+}
+
+interface ITreeMapChartRowData {
+    series: ITreeMapSeriesData[];
 }
 
 interface ITitleConfig {
@@ -495,100 +519,159 @@ interface ICheckedLegendsData {
     [propName: string]: boolean[];
 }
 
-interface IChartBase {
-    chartType: string;
-    className: string;
+declare class ChartBase {
+    public chartType: string;
+    public className: string;
 
-    addData(category: string, values: DataType | LineSeriesDataType): void;
-    on(eventName: string, handler: (...args: any[]) => void): void;
-    rerender(checkedLegends: ICheckedLegendsData, rawData: IComboRowData): void;
-    resetTooltipAlign(): void;
-    resetTooltipOffset(): void;
-    resetTooltipPosition(): void;
-    resize(dimension: IDimensionConfig): void;
-    setData(rawData: AllRowDataType): void;
-    setTooltipAlign(align: string): void;
-    setTooltipOffset(offset: IOffsetConfig): void;
-    setTooltipPosition(position: IPositionConfig): void;
+    public addData(category: string, values: DataType | LineSeriesDataType): void;
+    public on(eventName: string, handler: (...args: any[]) => void): void;
+    public rerender(checkedLegends: ICheckedLegendsData, rawData: IComboRowData): void;
+    public resetTooltipAlign(): void;
+    public resetTooltipOffset(): void;
+    public resetTooltipPosition(): void;
+    public resize(dimension: IDimensionConfig): void;
+    public setData(rawData: AllRowDataType): void;
+    public setTooltipAlign(align: string): void;
+    public setTooltipOffset(offset: IOffsetConfig): void;
+    public setTooltipPosition(position: IPositionConfig): void;
 }
 
-interface IAreaChart extends IChartBase {
-    addPlotBand(data: IPlotBandConfig): void;
-    addPlotLine(data: IPlotLineConfig): void;
-    removePlotBand(): void;
-    removePlotLine(): void;
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class AreaChart extends ChartBase {
+    public addPlotBand(data: IPlotBandConfig): void;
+    public addPlotLine(data: IPlotLineConfig): void;
+    public removePlotBand(): void;
+    public removePlotLine(): void;
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IBarChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class BarChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IBoxplotChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class BoxplotChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IBubbleChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class BubbleChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IBulletChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class BulletChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IColumnChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class ColumnChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IComboChart extends IChartBase {
-    addPlotBand(data: IPlotBandConfig): void;
-    addPlotLine(data: IPlotLineConfig): void;
-    removePlotBand(): void;
-    removePlotLine(): void;
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class ColumnLineComboChart extends ChartBase {
+    public chartTypes: string[];
+    public yAxisOptions: {
+        column?: IYAxisConfig;
+        line?: IYAxisConfig;
+    };
+
+    public addPlotBand(data: IPlotBandConfig): void;
+    public addPlotLine(data: IPlotLineConfig): void;
+    public removePlotBand(): void;
+    public removePlotLine(): void;
+    public getCheckedLegend(): {
+        column: boolean[];
+        line: boolean[];
+    };
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface ILineChart extends IChartBase {
-    addPlotBand(data: IPlotBandConfig): void;
-    addPlotLine(data: IPlotLineConfig): void;
-    removePlotBand(): void;
-    removePlotLine(): void;
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class HeatmapChart extends ChartBase {
+    public chartTypes: string[];
 }
 
-interface IPieChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class LineAreaComboChart extends ChartBase {
+    public chartTypes: string[];
+
+    public addPlotBand(data: IPlotBandConfig): void;
+    public addPlotLine(data: IPlotLineConfig): void;
+    public removePlotBand(): void;
+    public removePlotLine(): void;
+    public getCheckedLegend(): {
+        area: boolean[];
+        line: boolean[];
+    };
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IRadialChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class LineChart extends ChartBase {
+    public addPlotBand(data: IPlotBandConfig): void;
+    public addPlotLine(data: IPlotLineConfig): void;
+    public removePlotBand(): void;
+    public removePlotLine(): void;
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
 
-interface IScatterChart extends IChartBase {
-    getCheckedLegend(): {area: boolean[]};
-    showSeriesLabel(): void;
-    hideSeriesLabel(): void;
+declare class LineScatterComboChart extends ChartBase {
+    public chartTypes: string[];
+
+    public addPlotBand(data: IPlotBandConfig): void;
+    public addPlotLine(data: IPlotLineConfig): void;
+    public removePlotBand(): void;
+    public removePlotLine(): void;
+    public getCheckedLegend(): {
+        area: boolean[];
+        scatter: boolean[];
+    };
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
 }
+
+declare class MapChart extends ChartBase {}
+
+declare class PieChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
+}
+
+declare class PieDonutComboChart extends ChartBase {
+    public chartTypes: string[];
+
+    public addPlotBand(data: IPlotBandConfig): void;
+    public addPlotLine(data: IPlotLineConfig): void;
+    public removePlotBand(): void;
+    public removePlotLine(): void;
+    public getCheckedLegend(): {[propName: string]: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
+}
+
+declare class RadialChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
+}
+
+declare class ScatterChart extends ChartBase {
+    public getCheckedLegend(): {area: boolean[]};
+    public showSeriesLabel(): void;
+    public hideSeriesLabel(): void;
+}
+
+declare class TreemapChart extends ChartBase {}
 
 interface IArrayUtil {
     min(arr: any[], condition?: AnyFunc, context?: any): any;
@@ -674,24 +757,32 @@ declare namespace tuiChart {
     export const arrayUtil: IArrayUtil;
     export const renderUtil: IRenderUtil;
 
-    export function areaChart(container: Element, data: IAreaChartRowData, options: IAreaOptions): IAreaChart;
-    export function barChart(container: Element, data: IBarChartRowData, options: IBarOptions): IBarChart;
+    export function areaChart(container: Element, data: IAreaChartRowData, options: IAreaOptions): AreaChart;
+    export function barChart(container: Element, data: IBarChartRowData, options: IBarOptions): BarChart;
     export function boxplotChart(container: Element,
                                  data: IBoxPlotChartRowData,
-                                 options: IBoxPlotOptions): IBoxplotChart;
-    export function bubbleChart(container: Element, data: IBubbleChartRowData, options: IBubbleOptons): IBubbleChart;
-    export function bulletChart(container: Element, data: IBulletChartRowData, options: IBarOptions): IBulletChart;
-    export function columnChart(container: Element, data: IColumnChartRowData, options: IBarOptions): IColumnChart;
-    export function comboChart(container: Element, data: IComboRowData, options: IComboOptions): IComboChart;
-    export function heatmapChart(container: Element, data: IHeatmapChartRowData, options: IHeatmapOptions): IChartBase;
-    export function lineChart(container: Element, data: ILineChartRowData, options: ILineOptions): ILineChart;
-    export function mapChart(container: Element, data: IMapRowData, options: IMapOptions): IChartBase;
-    export function pieChart(container: Element, data: IPieChartRowData, options: IPieOptions): IPieChart;
-    export function radialChart(container: Element, data: IRadialChartRowData, options: IRadialOptions): IRadialChart;
-    export function scatterChart(container: Element, data: IScatterChartRowData, options: IBasicOptions): IScatterChart;
-    export function treemapChart(container: Element, data: IMapRowData, options: IBasicOptions): IChartBase;
+                                 options: IBoxPlotOptions): BoxplotChart;
+    export function bubbleChart(container: Element, data: IBubbleChartRowData, options: IBubbleOptons): BubbleChart;
+    export function bulletChart(container: Element, data: IBulletChartRowData, options: IBarOptions): BulletChart;
+    export function columnChart(container: Element, data: IColumnChartRowData, options: IBarOptions): ColumnChart;
+    export function comboChart(container: Element,
+                               data: IComboRowData,
+                               options: IComboOptions): ColumnLineComboChart |
+                                                        LineAreaComboChart |
+                                                        LineScatterComboChart |
+                                                        PieDonutComboChart;
+    export function heatmapChart(container: Element,
+                                 data: IHeatmapChartRowData,
+                                 options: IHeatmapOptions): HeatmapChart;
+    export function lineChart(container: Element, data: ILineChartRowData, options: ILineOptions): LineChart;
+    export function mapChart(container: Element, data: IMapRowData, options: IMapOptions): MapChart;
+    export function pieChart(container: Element, data: IPieChartRowData, options: IPieOptions): PieChart;
+    export function radialChart(container: Element, data: IRadialChartRowData, options: IRadialOptions): RadialChart;
+    export function scatterChart(container: Element, data: IScatterChartRowData, options: IBasicOptions): ScatterChart;
+    export function treemapChart(container: Element, data: ITreeMapChartRowData, options: IBasicOptions): TreemapChart;
 
-    export function registerMap(mapName: string, data: IMapData): void;
+    export function registerMap(mapName: string, data: IMapData[]): void;
+    export function registerPlugin(libType: string, plugin: any, getPaperCallback?: (...args: any[]) => void): void;
     export function registerTheme(themeName: string, theme: IThemeConfig): void;
 }
 
