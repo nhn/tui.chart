@@ -371,7 +371,7 @@ const pieNDonutOptions = {
         }
     },
     legend: {
-        visible: false
+        visible: true
     },
     tooltip: {
         suffix: '%'
@@ -385,5 +385,5 @@ console.log(pieNDonutChart);
 console.log('chartType: ', pieNDonutChart.chartType);
 console.log('chartTypes: ', pieNDonutChart.chartTypes);
 console.log('className : ', pieNDonutChart.className);
-console.log('getCheckedLegend : ', pieNDonutChart.getCheckedLegend()); // legend값이 true로 되어있지만 실제로 레전드는 표시되지 않음
+console.log('getCheckedLegend : ', pieNDonutChart.getCheckedLegend());
 console.groupEnd();
