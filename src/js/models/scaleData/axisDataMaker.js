@@ -538,7 +538,8 @@ const axisDataMaker = {
     makeAdditionalDataForRotatedLabels(validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
         const maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(validLabels, labelTheme);
         const seriesWidth = dimensionMap.series.width;
-        const yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0;
+        const yAxisAreaWidth = dimensionMap.yAxis.width + (dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0);
+
         let labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
         let additionalData = null;
         let contentWidth = (chartConst.CHART_PADDING * 2) + yAxisAreaWidth + seriesWidth;
