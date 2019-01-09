@@ -1,5 +1,6 @@
 import tuiChart from 'tui-chart';
 
+// ColumnLineComboChart
 const elColumnLineCombo = document.querySelector('.section[data-section="chart"] .columnLineCombo');
 const data = {
     categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
@@ -64,10 +65,16 @@ const columnAndLineOptions = {
 };
 
 
-const columnNLineChart = tuiChart.comboChart(elColumnLineCombo, data, columnAndLineOptions);
+const columnNLineChart = tuiChart.comboChart(elColumnLineCombo, data, columnAndLineOptions) as ColumnLineComboChart;
+console.group('ColumnLineChart');
+console.log(columnNLineChart);
+console.log('chartType: ', columnNLineChart.chartType);
+console.log('chartTypes: ', columnNLineChart.chartTypes);
+console.log('className : ', columnNLineChart.className);
+console.log('yAxisOptions : ', columnNLineChart.yAxisOptions);
+console.log('getCheckedLegend : ', columnNLineChart.getCheckedLegend());
+console.groupEnd();
 
-columnNLineChart.chartType;
-columnNLineChart.className;
 columnNLineChart.addPlotBand({
     range: [['Aug', 'Sep']],
     color: '#48a0ff',
@@ -99,6 +106,174 @@ columnNLineChart.setTooltipOffset({
 columnNLineChart.showSeriesLabel();
 columnNLineChart.hideSeriesLabel();
 
+// LineAreaComboChart
+const elLineAreaCombo = document.querySelector('.section[data-section="chart"] .lineAreaCombo');
+
+const lineAreaRowData = {
+    categories: ['2014.01', '2014.02', '2014.03', '2014.04', '2014.05', '2014.06', '2014.07', '2014.08', '2014.09', '2014.10', '2014.11', '2014.12',
+        '2015.01', '2015.02', '2015.03', '2015.04', '2015.05', '2015.06', '2015.07', '2015.08', '2015.09', '2015.10', '2015.11', '2015.12'],
+    series: {
+        area: [
+            {
+                name: 'Effective Load',
+                data: [150, 130, 100, 125, 128, 110, 134, 162, 120, 90, 98, 143,
+                    142, 124, 113, 129, 118, 120, 145, 172, 110, 70, 68, 103]
+            }
+        ],
+        line: [
+            {
+                name: 'Power Usage',
+                data: [72, 80, 110, 107, 126, 134, 148, 152, 130, 120, 114, 127,
+                    90, 72, 130, 117, 129, 137, 134, 160, 121, 110, 114, 117]
+            }
+        ]
+    }
+};
+const lineAreaComboOptions = {
+    chart: {
+        width: 1160,
+        height: 540,
+        title: 'Energy Usage'
+    },
+    yAxis: {
+        title: 'Energy (kWh)',
+        min: 0,
+        pointOnColumn: true
+    },
+    xAxis: {
+        title: 'Month',
+        tickInterval: 'auto'
+    },
+    series: {
+        zoomable: true
+    },
+    tooltip: {
+        suffix: 'kWh'
+    },
+    theme: 'theme5'
+};
+
+tuiChart.registerTheme('theme5', {
+    series: {
+        area: {
+            colors: ['#ffb840']
+        },
+        line: {
+            colors: ['#785fff']
+        }
+    }
+});
+
+const lineAreaComboChart = tuiChart.comboChart(elLineAreaCombo, lineAreaRowData, lineAreaComboOptions) as LineAreaComboChart;
+console.group('LineAreaComboChart');
+console.log(lineAreaComboChart);
+console.log('chartType: ', lineAreaComboChart.chartType);
+console.log('chartTypes: ', lineAreaComboChart.chartTypes);
+console.log('className : ', lineAreaComboChart.className);
+// console.log('yAxisOptions : ', lineAreaComboChart.yAxisOptions); // 데이터는 오지만 xAxis option이 들어있음
+console.log('getCheckedLegend : ', lineAreaComboChart.getCheckedLegend());
+console.groupEnd();
+
+// LineScatterComboChart
+const elLineScatterCombo = document.querySelector('.section[data-section="chart"] .lineScatterCombo');
+
+const theme6 = {
+    series: {
+        scatter: {
+            colors: ['#ffb840']
+        },
+        line: {
+            colors: ['#785fff']
+        }
+    }
+};
+
+tuiChart.registerTheme('theme6', theme6);
+
+const lineScatterData = {
+    series: {
+        scatter: [
+            {
+                name: 'Efficiency',
+                data: [
+                    { x: 10, y: 20 },
+                    { x: 14, y: 30 },
+                    { x: 18, y: 10 },
+                    { x: 20, y: 30 },
+                    { x: 24, y: 15 },
+                    { x: 25, y: 25 },
+                    { x: 26, y: 5 },
+                    { x: 30, y: 35 },
+                    { x: 34, y: 15 },
+                    { x: 36, y: 35 },
+                    { x: 37, y: 40 },
+                    { x: 38, y: 20 },
+                    { x: 40, y: 30 },
+                    { x: 42, y: 50 },
+                    { x: 46, y: 40 },
+                    { x: 47, y: 50 },
+                    { x: 48, y: 60 },
+                    { x: 50, y: 55 },
+                    { x: 54, y: 50 },
+                    { x: 58, y: 62 },
+                    { x: 58, y: 47 },
+                    { x: 62, y: 66 },
+                    { x: 66, y: 42 },
+                    { x: 65, y: 52 },
+                    { x: 70, y: 54 },
+                    { x: 74, y: 32 },
+                    { x: 78, y: 48 },
+                    { x: 82, y: 54 },
+                    { x: 86, y: 40 },
+                    { x: 90, y: 30 }
+                ]
+            }
+        ],
+        line: [
+            {
+                name: 'Expenses',
+                data: [
+                    { x: 0, y: 10 },
+                    { x: 30, y: 11 },
+                    { x: 60, y: 50 },
+                    { x: 70, y: 99 }
+                ]
+            }
+        ]
+    }
+};
+
+const lineScatterOptions = {
+    chart: {
+        width: 1160,
+        height: 540,
+        title: 'Efficiency vs Expenses'
+    },
+    yAxis: {
+        title: 'Percentage (%)'
+    },
+    xAxis: {
+        title: 'Temperature (C)'
+    },
+    series: {
+        line: {
+            spline: true
+        }
+    }
+};
+
+(lineScatterOptions as any).theme = 'theme6';
+
+const lineScatterChart = tuiChart.comboChart(elLineScatterCombo, lineScatterData, lineScatterOptions) as LineScatterComboChart;
+console.group('LineScatterComboChart');
+console.log(lineScatterChart);
+console.log('chartType: ', lineScatterChart.chartType);
+console.log('chartTypes: ', lineScatterChart.chartTypes);
+console.log('className : ', lineScatterChart.className);
+console.log('getCheckedLegend : ', lineScatterChart.getCheckedLegend());
+console.groupEnd();
+
+// PieDonutComboChart
 const elPieDonutCombo = document.querySelector('.section[data-section="chart"] .pieDonutCombo');
 
 const data2 = {
@@ -196,7 +371,7 @@ const pieNDonutOptions = {
         }
     },
     legend: {
-        visible: false
+        visible: true
     },
     tooltip: {
         suffix: '%'
@@ -205,3 +380,10 @@ const pieNDonutOptions = {
 };
 
 const pieNDonutChart = tuiChart.comboChart(elPieDonutCombo, data2, pieNDonutOptions);
+console.group('PieDonutComboChart');
+console.log(pieNDonutChart);
+console.log('chartType: ', pieNDonutChart.chartType);
+console.log('chartTypes: ', pieNDonutChart.chartTypes);
+console.log('className : ', pieNDonutChart.className);
+console.log('getCheckedLegend : ', pieNDonutChart.getCheckedLegend());
+console.groupEnd();

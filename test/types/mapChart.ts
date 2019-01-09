@@ -1,6 +1,16 @@
 import tuiChart from 'tui-chart';
 
-tuiChart.registerMap('newMap', {});
+tuiChart.registerMap('newMap', [
+    {
+        code: 'KR',
+        name: 'South Korea',
+        path: 'M835.13,346.53L837.55,350.71...',
+        labelCoordinate: {
+          x: 0.6,
+          y: 0.7
+        }
+    }
+]);
 
 const elMap = document.querySelector('.section[data-section="chart"] .map');
 

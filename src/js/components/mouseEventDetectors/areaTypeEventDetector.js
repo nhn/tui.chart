@@ -99,8 +99,12 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
     _findData(clientX, clientY) {
         const layerPosition = this._calculateLayerPosition(clientX, clientY);
         const {selectLegendIndex} = this.dataProcessor;
+        const isCoordinateTypeChart = this.dataProcessor.isCoordinateType();
 
-        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHOLD, selectLegendIndex);
+        return this.dataModel.findData(layerPosition, selectLegendIndex, {
+            distanceLimit: AREA_DETECT_DISTANCE_THRESHOLD,
+            isCoordinateTypeChart
+        });
     }
 
     /**
