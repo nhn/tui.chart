@@ -350,6 +350,7 @@ interface IPieSeriesConfig extends IBaseSeriesConfig {
     labelAlign?: string;
     radiusRange?: string[];
     showLegend?: boolean;
+    labelFilter?: LabelFilterFunc;
 }
 
 interface IRadialSeriesConfig {
