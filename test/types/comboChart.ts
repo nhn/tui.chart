@@ -65,7 +65,7 @@ const columnAndLineOptions = {
 };
 
 
-const columnNLineChart = tuiChart.comboChart(elColumnLineCombo, data, columnAndLineOptions) as ColumnLineComboChart;
+const columnNLineChart = tuiChart.comboChart(elColumnLineCombo, data, columnAndLineOptions);
 console.group('ColumnLineChart');
 console.log(columnNLineChart);
 console.log('chartType: ', columnNLineChart.chartType);
@@ -164,13 +164,12 @@ tuiChart.registerTheme('theme5', {
     }
 });
 
-const lineAreaComboChart = tuiChart.comboChart(elLineAreaCombo, lineAreaRowData, lineAreaComboOptions) as LineAreaComboChart;
+const lineAreaComboChart = tuiChart.comboChart(elLineAreaCombo, lineAreaRowData, lineAreaComboOptions);
 console.group('LineAreaComboChart');
 console.log(lineAreaComboChart);
 console.log('chartType: ', lineAreaComboChart.chartType);
 console.log('chartTypes: ', lineAreaComboChart.chartTypes);
 console.log('className : ', lineAreaComboChart.className);
-// console.log('yAxisOptions : ', lineAreaComboChart.yAxisOptions); // 데이터는 오지만 xAxis option이 들어있음
 console.log('getCheckedLegend : ', lineAreaComboChart.getCheckedLegend());
 console.groupEnd();
 
@@ -264,7 +263,7 @@ const lineScatterOptions = {
 
 (lineScatterOptions as any).theme = 'theme6';
 
-const lineScatterChart = tuiChart.comboChart(elLineScatterCombo, lineScatterData, lineScatterOptions) as LineScatterComboChart;
+const lineScatterChart = tuiChart.comboChart(elLineScatterCombo, lineScatterData, lineScatterOptions);
 console.group('LineScatterComboChart');
 console.log(lineScatterChart);
 console.log('chartType: ', lineScatterChart.chartType);
