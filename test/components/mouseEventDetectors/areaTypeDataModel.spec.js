@@ -45,7 +45,7 @@ describe('Test for AreaTypeDataModel', () => {
     });
 
     describe('findData()', () => {
-        it('Find the data closest to the x coordinate.', () => {
+        it('Find the data closest to the x coordinate at not coordinate type chart.', () => {
             dataModel.data = [
                 {
                     bound: {
@@ -67,21 +67,45 @@ describe('Test for AreaTypeDataModel', () => {
             const actual = dataModel.findData({
                 x: 17,
                 y: 10
-            }, null, null);
+            }, null, {
+                isCoordinateTypeChart: false
+            });
             const [, expected] = dataModel.data;
             expect(actual).toBe(expected);
         });
 
-        it('Must be found the data closest to the y-coordinate when x-coordinates are the same.', () => {
+        it('Find the data closest coordinate position at coordinate type chart.', () => {
             dataModel.data = [
                 {
                     bound: {
                         top: 10,
                         left: 10
-                    },
-                    indexes: {
-                        groupIndex: 0,
-                        index: 0
+                    }
+                },
+                {
+                    bound: {
+                        top: 20,
+                        left: 20
+                    }
+                }
+            ];
+            const actual = dataModel.findData({
+                x: 17,
+                y: 10
+            }, null, {
+                isCoordinateTypeChart: true
+            });
+            const [expected] = dataModel.data;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('Must be found the data closest to the y-coordinate when x-coordinates are the same and not coordinate type chart.', () => {
+            dataModel.data = [
+                {
+                    bound: {
+                        top: 10,
+                        left: 10
                     }
                 },
                 {
@@ -93,10 +117,12 @@ describe('Test for AreaTypeDataModel', () => {
             ];
 
             const actual = dataModel.findData({
-                x: 17,
-                y: 10
-            }, null, null);
-            const [expected] = dataModel.data;
+                x: 10,
+                y: 17
+            }, null, {
+                isCoordinateTypeChart: false
+            });
+            const [, expected] = dataModel.data;
             expect(actual).toBe(expected);
         });
     });

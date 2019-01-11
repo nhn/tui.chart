@@ -2,10 +2,10 @@
  * tui-chart-all
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.4.2
+ * @version 3.5.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Dec 24 2018 14:31:50 GMT+0900 (GMT+09:00)"
+ * bundle created at "Fri Jan 11 2019 10:58:28 GMT+0900 (GMT+09:00)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -18148,6 +18148,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
+	var _const = __webpack_require__(335);
+	
+	var _const2 = _interopRequireDefault(_const);
+	
 	var _tuiCodeSnippet = __webpack_require__(333);
 	
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
@@ -19036,17 +19040,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            position = this.position;
 	
 	        var clipRectId = this._getClipRectId();
+	        var remakePosition = this._makeClipRectPosition(position);
 	        var clipRect = this.clipRect;
 	
 	
 	        if (!IS_LTE_IE8 && dimension) {
 	            if (!clipRect) {
-	                clipRect = createClipPathRectWithLayout(paper, position, dimension, clipRectId);
+	                clipRect = createClipPathRectWithLayout(paper, remakePosition, dimension, clipRectId);
 	                this.clipRect = clipRect;
 	            } else {
+	                this._makeClipRectPosition(position);
 	                clipRect.attr({
 	                    width: 0,
-	                    height: dimension.height
+	                    height: dimension.height,
+	                    x: remakePosition.left,
+	                    y: remakePosition.top
 	                });
 	            }
 	
@@ -19058,6 +19066,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	                width: dimension.width
 	            }, ANIMATION_DURATION, '>', onFinish);
 	        }
+	    };
+	
+	    /**
+	     * Make selection dot.
+	     * @param {object} position clip rect position
+	     *   @param {number} left clip rect left position
+	     *   @param {number} top clip rect top position
+	     * @returns {{top: number, left: number}} remake clip rect position
+	     * @private
+	     */
+	
+	
+	    RaphaelLineTypeBase.prototype._makeClipRectPosition = function _makeClipRectPosition(position) {
+	        return {
+	            left: position.left - _const2['default'].SERIES_EXPAND_SIZE,
+	            top: position.top - _const2['default'].SERIES_EXPAND_SIZE
+	        };
 	    };
 	
 	    /**
@@ -19284,7 +19309,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function createClipPathRectWithLayout(paper, position, dimension, id) {
 	    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-	    var rect = paper.rect(position.left - 10, position.top - 10, 0, dimension.height);
+	    var rect = paper.rect(position.left, position.top, 0, dimension.height);
 	
 	    rect.id = id + '_rect';
 	    clipPath.id = id;
@@ -21215,7 +21240,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RaphaelPieChart.prototype.renderLabels = function renderLabels(options) {
 	        var _this2 = this;
 	
-	        var theme = options.theme;
+	        var theme = options.theme,
+	            labelFilter = options.labelFilter,
+	            dataType = options.dataType,
+	            ratioValues = options.ratioValues,
+	            seriesNames = options.seriesNames;
 	
 	        var attributes = {
 	            'font-size': theme.fontSize,
@@ -21227,7 +21256,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	
 	        options.positions.forEach(function (position, index) {
+	            var ratio = ratioValues[index];
+	            var isFiltered = labelFilter && !labelFilter({
+	                value: options.labels[index],
+	                labelType: dataType,
+	                seriesName: seriesNames[index],
+	                ratio: ratio
+	            });
 	            var label = void 0;
+	
+	            if (isFiltered) {
+	                return;
+	            }
 	
 	            if (options.colors) {
 	                attributes.fill = options.colors[index];
@@ -21240,7 +21280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                label.node.setAttribute('class', 'auto-shape-rendering');
 	            }
 	
-	            _this2.labelInfos[options.dataType].push(label);
+	            _this2.labelInfos[dataType].push(label);
 	            options.labelSet.push(label);
 	        }, this);
 	
@@ -26630,6 +26670,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {object} options.series - options for series component
 	 *          @param {boolean} options.series.showLabel - whether show label or not
 	 *          @param {boolean} options.series.showLegend - whether show legend label or not
+	 *          @param {function} options.series.labelFilter - filter for series label display 
 	 *          @param {number} options.series.radiusRatio - ratio of radius for pie graph
 	 *          @param {boolean} options.series.allowSelect - whether allow select or not
 	 *          @param {boolean} options.series.startAngle - start angle
@@ -39641,6 +39682,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    MouseEventDetectorBase.prototype.rerender = function rerender(data) {
 	        var tickCount = void 0;
 	
+	        this.positionMap = data.positionMap;
+	
 	        if (data.axisDataMap.xAxis) {
 	            tickCount = this._pickTickCount(data.axisDataMap);
 	        }
@@ -40737,8 +40780,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var layerPosition = this._calculateLayerPosition(clientX, clientY);
 	        var selectLegendIndex = this.dataProcessor.selectLegendIndex;
 	
+	        var isCoordinateTypeChart = this.dataProcessor.isCoordinateType();
 	
-	        return this.dataModel.findData(layerPosition, AREA_DETECT_DISTANCE_THRESHOLD, selectLegendIndex);
+	        return this.dataModel.findData(layerPosition, selectLegendIndex, {
+	            distanceLimit: AREA_DETECT_DISTANCE_THRESHOLD,
+	            isCoordinateTypeChart: isCoordinateTypeChart
+	        });
 	    };
 	
 	    /**
@@ -41486,18 +41533,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Find Data by layer position.
 	     * @param {{x: number, y: number}} layerPosition - layer position
-	     * @param {number} [distanceLimit] distance limitation to find data
-	     * @param {number} selectLegendIndex select legend sereis index
+	     * @param {number} [selectLegendIndex] select legend sereis index
+	     * @param {object} [searchInfo] distance limitation to find data
+	     *   @param {number} searchInfo.distanceLimit distance limitation to find data
+	     *   @param {boolean} searchInfo.isCoordinateTypeChart whether coordinate type chart or not
 	     * @returns {object}
 	     */
 	
 	
-	    AreaTypeDataModel.prototype.findData = function findData(layerPosition, distanceLimit, selectLegendIndex) {
-	        if (distanceLimit && distanceLimit < this.leftStepLength) {
-	            return this._findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex);
+	    AreaTypeDataModel.prototype.findData = function findData(layerPosition, selectLegendIndex) {
+	        var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+	            distanceLimit = _ref3.distanceLimit,
+	            isCoordinateTypeChart = _ref3.isCoordinateTypeChart;
+	
+	        var isLooseDistancePosition = distanceLimit && distanceLimit < this.leftStepLength;
+	        var useCoordinateDistanceSearch = isCoordinateTypeChart || isLooseDistancePosition;
+	
+	        if (useCoordinateDistanceSearch) {
+	            return this._findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex);
 	        }
 	
-	        return this._findDataForDenseArea(layerPosition, selectLegendIndex);
+	        return this._findDataForFirstXPosition(layerPosition, selectLegendIndex);
 	    };
 	
 	    /**
@@ -41509,7 +41565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	
 	
-	    AreaTypeDataModel.prototype._findDataForDenseArea = function _findDataForDenseArea(layerPosition, selectLegendIndex) {
+	    AreaTypeDataModel.prototype._findDataForFirstXPosition = function _findDataForFirstXPosition(layerPosition, selectLegendIndex) {
 	        var _data$reduce = this.data.reduce(function (findMinObj, datum) {
 	            var xDiff = Math.abs(layerPosition.x - datum.bound.left);
 	            if (xDiff <= findMinObj.xMin) {
@@ -41560,7 +41616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	
 	
-	    AreaTypeDataModel.prototype._findDataForLooseArea = function _findDataForLooseArea(layerPosition, distanceLimit, selectLegendIndex) {
+	    AreaTypeDataModel.prototype._findDataForCoordinateDistance = function _findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex) {
 	        var min = 100000;
 	        var findFound = void 0;
 	
@@ -41595,9 +41651,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	
 	
-	    AreaTypeDataModel.prototype.findDataByIndexes = function findDataByIndexes(_ref3) {
-	        var index = _ref3.index,
-	            seriesIndex = _ref3.seriesIndex;
+	    AreaTypeDataModel.prototype.findDataByIndexes = function findDataByIndexes(_ref4) {
+	        var index = _ref4.index,
+	            seriesIndex = _ref4.seriesIndex;
 	
 	        var foundData = null;
 	
@@ -46679,6 +46735,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this.valueLabels = [];
 	
 	        /**
+	         * series ratio values.
+	         * @type {Array}
+	         */
+	        _this.ratioValues = [];
+	
+	        /**
 	         * max legend width
 	         * @type {number}
 	         */
@@ -46879,6 +46941,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
+	     * Make ratio values
+	     * @returns {Array.<number>}
+	     * @private
+	     */
+	
+	
+	    PieChartSeries.prototype._makeRatioValues = function _makeRatioValues() {
+	        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
+	
+	        return seriesGroup.map(function (seriesItem) {
+	            return seriesItem.ratio;
+	        });
+	    };
+	
+	    /**
 	     * Make series data.
 	     * @returns {{
 	     *      chartBackground: string,
@@ -46894,6 +46971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.valueLabels = this._makeValueLabel();
 	        this.legendLabels = this._getLegendLabels();
 	        this.legendLongestWidth = this._getMaxLengthLegendWidth();
+	        this.ratioValues = this._makeRatioValues();
 	
 	        var circleBound = this._makeCircleBound();
 	        var sectorData = this._makeSectorData(circleBound);
@@ -47339,6 +47417,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var graphRenderLabel = function (dataType, labels) {
 	            var colors = void 0;
 	            var theme = Object.assign({}, this.theme.label);
+	            var ratioValues = this.ratioValues;
+	
 	
 	            if (this.isLabelAlignOuter && dataType === 'legend') {
 	                colors = this.theme.colors;
@@ -47354,8 +47434,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                labelSet: labelSet,
 	                positions: positions,
 	                labels: labels,
+	                ratioValues: ratioValues,
 	                theme: theme,
-	                colors: colors
+	                colors: colors,
+	                seriesNames: this.legendLabels,
+	                labelFilter: this.options.labelFilter
 	            });
 	        }.bind(this);
 	
@@ -47363,6 +47446,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            renderOption.positions = this._pickPositionsFromSectorData('centerPosition', 'value');
 	            graphRenderLabel('value', this.decorateLabel(this.valueLabels));
 	        }
+	
 	        if (this.options.showLegend) {
 	            var legendLabelPosition = this.isLabelAlignOuter ? 'outerPosition' : 'centerPosition';
 	            renderOption.positions = this._pickPositionsFromSectorData(legendLabelPosition, 'legend');
@@ -58211,7 +58295,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    makeAdditionalDataForRotatedLabels: function makeAdditionalDataForRotatedLabels(validLabels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
 	        var maxLabelWidth = _renderUtil2['default'].getRenderedLabelsMaxWidth(validLabels, labelTheme);
 	        var seriesWidth = dimensionMap.series.width;
-	        var yAxisAreaWidth = dimensionMap.yAxis.width + dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0;
+	        var yAxisAreaWidth = dimensionMap.yAxis.width + (dimensionMap.rightYAxis ? dimensionMap.rightYAxis.width : 0);
+	
 	        var labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
 	        var additionalData = null;
 	        var contentWidth = _const2['default'].CHART_PADDING * 2 + yAxisAreaWidth + seriesWidth;

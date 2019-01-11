@@ -1,14 +1,14 @@
 {
   "name": "tui-chart",
   "author": "NHN Ent. FE Development Lab <dl_javascript@nhnent.com>",
-  "version": "3.4.2",
+  "version": "3.5.0",
   "main": "dist/tui-chart",
   "license": "MIT",
   "description": "TOAST UI Application: Chart",
   "scripts": {
     "serve": "webpack-dev-server --inline --hot -d",
     "serve:ie8": "webpack-dev-server -d",
-    "deploy": "npm run deploy:all && npm run deploy:babelpolyfill && npm run deploy:nodepth && cp -R ./maps ./dist",
+    "deploy": "npm run deploy:all && npm run deploy:babelpolyfill && npm run deploy:nodepth && cp -R ./maps ./dist && node tsBannerGenerator.js",
     "deploy:nodepth": "webpack --production --nodepth && webpack --production --nodepth --minify",
     "deploy:all": "webpack --production --alldepth && webpack --production --alldepth --minify",
     "deploy:babelpolyfill": "webpack --production --babelpolyfill && webpack --production --babelpolyfill --minify",
@@ -16,7 +16,8 @@
     "test:ne": "KARMA_SERVER=ne karma start",
     "test:types": "tsc --project test/types",
     "doc": "jsdoc -c ./jsdoc.conf.json && git checkout gh-pages && npm run update",
-    "eslint": "eslint src/js test/"
+    "eslint": "eslint src/js test/",
+    "tslint": "tslint index.d.ts"
   },
   "repository": {
     "type": "git",
@@ -65,6 +66,7 @@
     "less-loader": "^2.2.3",
     "safe-umd-webpack-plugin": "^0.0.1",
     "style-loader": "^0.19.1",
+    "tslint": "^5.12.0",
     "tui-jsdoc-template": "^1.2.2",
     "typescript": "^3.2.2",
     "webpack": "^1.15.0",
