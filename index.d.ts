@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Chart v3.4.2
+// Type definitions for TOAST UI Chart v3.5.0
 // TypeScript Version: 3.2.2
 
 declare namespace tuiChart {
@@ -14,7 +14,11 @@ declare namespace tuiChart {
     export function bulletChart(container: Element, data: IBulletChartRowData, options: IBarOptions): BulletChart;
     export function columnChart(container: Element, data: IColumnChartRowData, options: IBarOptions): ColumnChart;
     export function comboChart(container: Element, data: IComboRowData, options: IComboOptions): ComboChart;
-    export function heatmapChart(container: Element, data: IHeatmapChartRowData, options: IHeatmapOptions): HeatmapChart;
+    export function heatmapChart(
+        container: Element,
+        data: IHeatmapChartRowData,
+        options: IHeatmapOptions): HeatmapChart;
+
     export function lineChart(container: Element, data: ILineChartRowData, options: ILineOptions): LineChart;
     export function mapChart(container: Element, data: IMapRowData, options: IMapOptions): MapChart;
     export function pieChart(container: Element, data: IPieChartRowData, options: IPieOptions): PieChart;
@@ -22,25 +26,27 @@ declare namespace tuiChart {
     export function scatterChart(container: Element, data: IScatterChartRowData, options: IBasicOptions): ScatterChart;
     export function treemapChart(container: Element, data: ITreeMapChartRowData, options: IBasicOptions): TreemapChart;
 
-    export function registerMap(mapName: string, data: IMapData): void;
+    export function registerMap(mapName: string, data: IMapData[]): void;
     export function registerPlugin(libType: string, plugin: any, getPaperCallback?: (...args: any[]) => void): void;
     export function registerTheme(themeName: string, theme: IThemeConfig): void;
 
     type AnyFunc = (...args: any[]) => any;
     type DateType = string | number | Date;
     type DataType = number[] | number[][];
-    type LineSeriesDataType = number[] | (number | string)[][] | IPos[];
+    type LineSeriesDataType = number[] | Array<Array<number | string>> | IPos[];
     type ThemeRangeType = IThemeRange | null;
     type AxisLabelType = DateType;
-    type TemplateFunc = (category: string,
-                        items: IToolTipTemplateConfig | IGroupedToolTipTemplateConfig[],
-                        categoryValue?: DateType,
-                        groupIndex?: number) => string;
-    type FormatFunc = (value: string | number,
-                    chartType: string,
-                    areaType: string,
-                    valueType: string,
-                    legendName: string) => string | number;
+    type TemplateFunc = (
+        category: string,
+        items: IToolTipTemplateConfig | IGroupedToolTipTemplateConfig[],
+        categoryValue?: DateType,
+        groupIndex?: number) => string;
+    type FormatFunc = (
+        value: string | number,
+        chartType: string,
+        areaType: string,
+        valueType: string,
+        legendName: string) => string | number;
     type AllRowDataType = IAreaChartRowData | IBarChartRowData | IBoxPlotChartRowData |
         IBubbleChartRowData | IBulletChartRowData | IColumnChartRowData |
         IHeatmapChartRowData | ILineChartRowData | IMapRowData | IPieChartRowData |
@@ -214,8 +220,8 @@ declare namespace tuiChart {
 
     interface IHeatmapChartRowData {
         categories: {
-            x: (string | number)[];
-            y: (string | number)[];
+            x: Array<string | number>;
+            y: Array<string | number>;
         };
         series: number[][];
     }
@@ -281,19 +287,15 @@ declare namespace tuiChart {
         labelCoordinate: IPos;
     }
 
-    interface ITreeMapChildrenData {
+    interface ITreeMapData {
         label: string;
-        value: number;
-        colorValue: number;
-    }
-
-    interface ITreeMapSeriesData {
-        label: string;
-        children: ITreeMapChildrenData[];
+        value?: number;
+        colorValue?: number;
+        children?: ITreeMapData[];
     }
 
     interface ITreeMapChartRowData {
-        series: ITreeMapSeriesData[];
+        series: ITreeMapData[];
     }
 
     interface ITitleConfig {
@@ -578,27 +580,27 @@ declare namespace tuiChart {
     }
 
     class BoxplotChart extends ChartBase {
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class BubbleChart extends ChartBase {
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class BulletChart extends ChartBase {
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class ColumnChart extends ChartBase {
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class ComboChart extends ChartBase {
@@ -606,17 +608,17 @@ declare namespace tuiChart {
         public yAxisOptions?: {
             column?: IYAxisConfig;
             line?: IYAxisConfig | IXAxisConfig;
-            area? : IXAxisConfig;
+            area?: IXAxisConfig;
         };
-        addPlotBand(data: IPlotBandConfig): void;
-        addPlotLine(data: IPlotLineConfig): void;
-        removePlotBand(): void;
-        removePlotLine(): void;
-        getCheckedLegend(): {
+        public addPlotBand(data: IPlotBandConfig): void;
+        public addPlotLine(data: IPlotLineConfig): void;
+        public removePlotBand(): void;
+        public removePlotLine(): void;
+        public getCheckedLegend(): {
             [propName: string]: boolean[];
         };
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class ColumnLineComboChart extends ComboChart {}
@@ -632,33 +634,33 @@ declare namespace tuiChart {
     }
 
     class LineChart extends ChartBase {
-        addPlotBand(data: IPlotBandConfig): void;
-        addPlotLine(data: IPlotLineConfig): void;
-        removePlotBand(): void;
-        removePlotLine(): void;
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public addPlotBand(data: IPlotBandConfig): void;
+        public addPlotLine(data: IPlotLineConfig): void;
+        public removePlotBand(): void;
+        public removePlotLine(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class MapChart extends ChartBase {}
 
     class PieChart extends ChartBase {
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class RadialChart extends ChartBase {
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class ScatterChart extends ChartBase {
-        getCheckedLegend(): {area: boolean[]};
-        showSeriesLabel(): void;
-        hideSeriesLabel(): void;
+        public getCheckedLegend(): {area: boolean[]};
+        public showSeriesLabel(): void;
+        public hideSeriesLabel(): void;
     }
 
     class TreemapChart extends ChartBase {}
@@ -722,13 +724,17 @@ declare namespace tuiChart {
         expandBound(dimensionNPosition: IDimensionNPosition): IDimensionConfig;
         makeMouseEventDetectorName(prefix: string, value: string, suffix: string): string;
         formatValue(params: IRenderUtilFormatValueParam): string;
-        formatValues(values: number[], formatFunctions: FormatFunc[], typeInfos: IRenderUtilFormatValuesTypeInfo): string[];
+        formatValues(
+            values: number[],
+            formatFunctions: FormatFunc[],
+            typeInfos: IRenderUtilFormatValuesTypeInfo): string[];
         formatDate(value: DateType, format?: string): string;
         formatDates(values: DateType[], format?: string): string[];
         cancelAnimation(animation: IReqAnimationIdObj): void;
-        startAnimation(animationTime: number,
-                    onAnimation: (ratio: number) => void,
-                    onCompleted?: () => void): IReqAnimationIdObj;
+        startAnimation(
+            animationTime: number,
+            onAnimation: (ratio: number) => void,
+            onCompleted?: () => void): IReqAnimationIdObj;
         isOldBrowser(): boolean;
         formatToZeroFill(value: string, len: number): string;
         formatToDecimal(value: string, len: number): string;
@@ -738,8 +744,9 @@ declare namespace tuiChart {
         addPrefixSuffixItem(label: string, prefix?: string, suffix?: string): string;
         getStyle(target: Element): CSSStyleDeclaration;
         generateClipRectId(): string;
-        setOpacity(elements: Element | Element[],
-                iteratee: (element: Element) => void | number): void;
+        setOpacity(
+            elements: Element | Element[],
+            iteratee: (element: Element) => void | number): void;
         makeCssFilterOpacityString(opacity: number): string;
     }
 }
