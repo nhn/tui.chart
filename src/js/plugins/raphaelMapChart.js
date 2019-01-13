@@ -312,6 +312,15 @@ class RaphaelMapChart {
 
         return set;
     }
+
+    /**
+     * Resize graph of map chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension dimension 
+     */
+    resize({dimension}) {
+        this.paper.setSize(dimension.width, dimension.height);
+    }
 }
 
 /**
@@ -323,14 +332,16 @@ class RaphaelMapChart {
  * @ignore
  */
 function createGElement(paper, sectorSet, id) {
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const g = paper.canvas.getElementById('tui-chart-series-group') || document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const gElementExists = !!g.id;
     g.id = id;
-
     sectorSet.forEach(sector => {
         dom.append(g, sector.node);
     });
 
-    paper.canvas.appendChild(g);
+    if (!gElementExists) {
+        paper.canvas.appendChild(g);
+    }
 
     return g;
 }

@@ -161,7 +161,7 @@ class MapChartSeries extends Series {
      * @param {object} data data for rendering
      */
     resize(data) {
-        this.rerender(data);
+        Series.prototype.resize.call(this, data);
     }
 
     /**
