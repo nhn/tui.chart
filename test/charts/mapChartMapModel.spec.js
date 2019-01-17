@@ -641,4 +641,33 @@ describe('MapChartMapModel', () => {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('clearMapData()', () => {
+        it('should set mapData to null', () => {
+            const rawMapData = [
+                {
+                    code: 'CD1',
+                    name: 'Map name1',
+                    path: 'M9,90L169,90L328,58L328,154L169,154L9,154',
+                    labelCoordinate: {
+                        x: 0.6,
+                        y: 0.6
+                    }
+                },
+                {
+                    code: 'CD2',
+                    name: 'Map name2',
+                    path: 'M9,122L169,106L328,74L328,154L169,154L9,154'
+                }
+            ];
+            
+            mapModel._createMapData(rawMapData);
+            mapModel.clearMapData();
+
+            const actual = mapModel.mapData;
+            const expected = null;
+
+            expect(actual).toEqual(expected);
+        });
+    });
 });

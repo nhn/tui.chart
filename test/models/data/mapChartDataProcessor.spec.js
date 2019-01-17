@@ -156,4 +156,45 @@ describe('Test for MapChartDataProcessor', () => {
             expect(actual.JP.ratio).toBe(jpExpected);
         });
     });
+
+    describe('getRawData()', () => {
+        it('should return raw data', () => {
+            const rawData = {
+                series: {
+                    map: [{
+                        code: 'VN',
+                        data: 292.6113458
+                    },
+                    {
+                        code: 'VU',
+                        data: 21.23732568
+                    },
+                    {
+                        code: 'XK',
+                        data: 167.4611004
+                    }]
+                }
+            };
+            dataProcessor.initData(rawData);
+            const actual = dataProcessor.getRawData();
+            const expected = {
+                series: {
+                    map: [{
+                        code: 'VN',
+                        data: 292.6113458
+                    },
+                    {
+                        code: 'VU',
+                        data: 21.23732568
+                    },
+                    {
+                        code: 'XK',
+                        data: 167.4611004
+                    }]
+                }
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
 });
