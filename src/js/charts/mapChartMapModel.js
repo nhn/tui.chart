@@ -401,6 +401,13 @@ class MapChartMapModel {
 
         return this.mapDimension;
     }
+
+    /**
+     * Clear map data.
+     */
+    clearMapData() {
+        this.mapData = null;
+    }
 }
 
 export default MapChartMapModel;

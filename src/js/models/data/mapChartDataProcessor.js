@@ -145,6 +145,14 @@ class MapChartDataProcessor extends DataProcessorBase {
     getLegendVisibility() {
         return null;
     }
+
+    /**
+    * Get raw data.
+    * @returns {rawData}
+    */
+    getRawData() {
+        return this.rawData;
+    }
 }
 
 export default MapChartDataProcessor;

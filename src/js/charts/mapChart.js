@@ -9,6 +9,7 @@ import mapManager from '../factories/mapManager';
 import MapChartMapModel from './mapChartMapModel';
 import MapChartDataProcessor from '../models/data/mapChartDataProcessor';
 import ColorSpectrum from './colorSpectrum';
+import rawDataHandler from '../models/data/rawDataHandler';
 
 class MapChart extends ChartBase {
     /**
@@ -85,6 +86,39 @@ class MapChart extends ChartBase {
      */
     addDataRatios(limitMap) {
         this.dataProcessor.addDataRatios(limitMap.legend);
+    }
+
+    /**
+     * setData
+     * @param {object} rawData rawData
+     * @api
+     */
+    setData(rawData = null) {
+        this.componentManager.componentMap.mapSeries.mapModel.clearMapData();
+        super.setData(rawData);
+    }
+
+    /**
+     * protectedRerender
+     * @param {{line: Array.<boolean>, column: Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @ignore
+     */
+    protectedRerender(checkedLegends, rawData) {
+        const {dataProcessor} = this;
+
+        if (!rawData) {
+            rawData = rawDataHandler.filterCheckedRawData(
+                dataProcessor.getRawData(),
+                checkedLegends
+            );
+        }
+
+        this.dataProcessor.initData(rawData);
+
+        const boundsAndScale = this.readyForRender();
+
+        this.componentManager.render('rerender', boundsAndScale, {checkedLegends}, this.chartContainer);
     }
 }
 
