@@ -331,10 +331,11 @@ class RaphaelMapChart {
  * @returns {object}
  * @ignore
  */
-function createGElement(paper, sectorSet, id) {
-    const g = paper.canvas.getElementById('tui-chart-series-group') || document.createElementNS('http://www.w3.org/2000/svg', 'g');
+export function createGElement(paper, sectorSet, id) {
+    const g = paper.canvas.getElementById(id) || document.createElementNS('http://www.w3.org/2000/svg', 'g');
     const gElementExists = !!g.id;
     g.id = id;
+
     sectorSet.forEach(sector => {
         dom.append(g, sector.node);
     });
