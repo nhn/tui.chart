@@ -6,6 +6,7 @@
 
 import snippet from 'tui-code-snippet';
 import mapSeriesFactory from '../../../src/js/components/series/mapChartSeries.js';
+import Series from '../../../src/js/components/series/series';
 
 describe('MapChartSeries', () => {
     let series, dataProcessor, mapModel;
@@ -153,6 +154,16 @@ describe('MapChartSeries', () => {
             expect(series.basePosition.top).toBe(-40);
             expect(series.limitPosition.left).toBe(-200);
             expect(series.limitPosition.top).toBe(-100);
+        });
+    });
+
+    describe('resize()', () => {
+        beforeEach(() => {
+            spyOn(Series.prototype, 'resize');
+        });
+        it('should call base resize function', () => {
+            series.resize();
+            expect(Series.prototype.resize).toHaveBeenCalled();
         });
     });
 });
