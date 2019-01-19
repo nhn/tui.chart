@@ -660,7 +660,7 @@ describe('MapChartMapModel', () => {
                     path: 'M9,122L169,106L328,74L328,154L169,154L9,154'
                 }
             ];
-            
+
             mapModel._createMapData(rawMapData);
             mapModel.clearMapData();
 
