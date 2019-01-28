@@ -295,7 +295,7 @@ See the older versions of API page on the [releases page](https://github.com/nhn
 ## 💬 Contributing
 * [Code of Conduct](CODE_OF_CONDUCT.md)
 * [Contributing guideline](CONTRIBUTING.md)
-* [Issue guideline](ISSUE_TEMPLATE.md)
+* [Issue guideline](https://github.com/nhnent/tui.editor/blob/production/docs/ISSUE_TEMPLATE.md)
 * [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
