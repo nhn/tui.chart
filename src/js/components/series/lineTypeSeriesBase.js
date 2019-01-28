@@ -249,7 +249,8 @@ class LineTypeSeriesBase {
      * To call hideGroupTooltipLine function of graphRenderer.
      */
     onHideGroupTooltipLine() {
-        if (!this.seriesData
+        const existSeriesData = this.seriesData && this.seriesData.length > 0;
+        if (!existSeriesData
             || !this.seriesData.isAvailable()
             || !this.graphRenderer.hideGroupTooltipLine
         ) {

@@ -36,6 +36,18 @@ describe('LineTypeSeriesBase', () => {
         };
     });
 
+    describe('onHideGroupTooltipLine()', () => {
+        it('Should be returned before executing HideGroupTooltipLine when series data is empty', () => {
+            series.graphRenderer = {
+                hideGroupTooltipLine: jasmine.createSpy('hideGroupTooltipLine')
+            };
+            series.seriesData = [];
+            series.onHideGroupTooltipLine();
+
+            expect(series.graphRenderer.hideGroupTooltipLine).not.toHaveBeenCalled();
+        });
+    });
+
     describe('_renderSeriesLabel()', () => {
         const paper = raphael(dom.create('div'), 100, 100);
         const seriesDataModel = new SeriesDataModel();
