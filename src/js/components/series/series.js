@@ -105,9 +105,9 @@ class Series {
 
         /**
          * series data
-         * @type {Array.<object>}
+         * @type {object}
          */
-        this.seriesData = [];
+        this.seriesData = {};
 
         /**
          * Selected legend index
@@ -449,7 +449,9 @@ class Series {
             this.labelSet.remove();
         }
 
-        this.seriesData = [];
+        this.seriesData = {
+            isAvailable: () => false
+        };
     }
 
     /**

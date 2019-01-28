@@ -29,6 +29,14 @@ describe('Series', () => {
         });
     });
 
+    describe('_clearSeriesContainer', () => {
+        it('Default value of `isAvailable ()` should be false.', () => {
+            series._clearSeriesContainer();
+
+            expect(series.seriesData.isAvailable()).toBe(false);
+        });
+    });
+
     describe('presetForChangeData()', () => {
         const theme = {
             label: {
