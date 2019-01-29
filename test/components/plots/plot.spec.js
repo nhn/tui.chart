@@ -198,13 +198,13 @@ describe('Test for Plot', () => {
             plot.dataProcessor.chartType = 'line';
 
             const actual = plot._createOptionalLinePositionWhenLabelAxis(300, {
-                tickCount: 4,
+                tickCount: 5,
                 options: {
                     pointOnColumn: true
                 }
             }, 'cate4');
 
-            expect(actual).toBe(275);
+            expect(actual).toBe(262.5);
         });
 
         it('if has not included value in categories, returns null', () => {
