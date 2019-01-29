@@ -291,11 +291,12 @@ class Plot {
     /**
      * Calculate xAxis labelDistance
      * @param {number} width - width of xAxis
+     * @param {object} xAxisData - x axis data
      * @returns {number}
      * @private
      */
-    _calculateXAxisLabelDistance(width) {
-        const {sizeRatio = 1, tickCount, remainLastBlockInterval} = this.axisDataMap.xAxis;
+    _calculateXAxisLabelDistance(width, xAxisData) {
+        const {sizeRatio = 1, tickCount, remainLastBlockInterval} = xAxisData;
         const remainLastBlockIntervalPosition = (remainLastBlockInterval) ? width : 0;
         const tickPixelPositions = calculator.makeTickPixelPositions(
             (width * sizeRatio),
@@ -310,17 +311,17 @@ class Plot {
     /**
      * Create position for optional line, when label axis.
      * @param {number} width - width
+     * @param {object} xAxisData - x axis data
      * @param {number} value - value
      * @returns {number|null}
      * @private
      */
-    _createOptionalLinePositionWhenLabelAxis(width, value) {
+    _createOptionalLinePositionWhenLabelAxis(width, xAxisData, value) {
         const {dataProcessor} = this;
-        const {pointOnColumn} = this.axisDataMap.xAxis.options;
-        const index = dataProcessor.findCategoryIndex(value);
         const isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
-        const isPointOnColumn = isLineTypeChart && pointOnColumn;
-        const halfLabelDistance = this._calculateXAxisLabelDistance(width) / 2;
+        const isPointOnColumn = isLineTypeChart && xAxisData.options.pointOnColumn;
+        const index = dataProcessor.findCategoryIndex(value);
+        const halfLabelDistance = this._calculateXAxisLabelDistance(width, xAxisData) / 2;
 
         let position = null;
         let ratio;
@@ -353,14 +354,13 @@ class Plot {
      * @private
      */
     _createOptionalLinePositionMap(optionalLineData, xAxisData, width) {
-        console.log(optionalLineData, xAxisData, width);
         const categories = this.dataProcessor.getCategories();
         const range = this._createOptionalLineValueRange(optionalLineData);
         let startPosition, endPosition;
 
         if (xAxisData.isLabelAxis) {
-            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
-            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
+            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, xAxisData, range[0]);
+            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, xAxisData, range[1]);
         } else {
             startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
             endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);

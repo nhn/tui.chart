@@ -179,15 +179,32 @@ describe('Test for Plot', () => {
         });
 
         it('create position for optional line, when label axis', () => {
-            const actual = plot._createOptionalLinePositionWhenLabelAxis(300, 'cate2');
+            const actual = plot._createOptionalLinePositionWhenLabelAxis(300, {
+                tickCount: 4
+            }, 'cate2');
 
             expect(actual).toBe(100);
         });
 
         it('create position for optional line, when label axis and has last value', () => {
-            const actual = plot._createOptionalLinePositionWhenLabelAxis(300, 'cate4');
+            const actual = plot._createOptionalLinePositionWhenLabelAxis(300, {
+                tickCount: 4
+            }, 'cate4');
 
             expect(actual).toBe(299);
+        });
+
+        it('create position for optional line, when label axis and has last value - 222', () => {
+            plot.dataProcessor.chartType = 'line';
+
+            const actual = plot._createOptionalLinePositionWhenLabelAxis(300, {
+                tickCount: 4,
+                options: {
+                    pointOnColumn: true
+                }
+            }, 'cate4');
+
+            expect(actual).toBe(275);
         });
 
         it('if has not included value in categories, returns null', () => {
