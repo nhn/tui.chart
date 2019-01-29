@@ -449,9 +449,7 @@ class Series {
             this.labelSet.remove();
         }
 
-        this.seriesData = {
-            isAvailable: () => false
-        };
+        this.seriesData = {};
     }
 
     /**
@@ -808,6 +806,10 @@ class Series {
             dom.removeClass(this.seriesLabelContainer, 'show');
             dom.removeClass(this.seriesLabelContainer, 'opacity');
         }
+    }
+
+    isAvailableSeriesData() {
+        return !!(this.seriesData && this.seriesData.isAvailable && this.seriesData.isAvailable());
     }
 
     /**

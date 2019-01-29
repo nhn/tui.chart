@@ -30,10 +30,10 @@ describe('Series', () => {
     });
 
     describe('_clearSeriesContainer', () => {
-        it('Default value of `isAvailable ()` should be false.', () => {
+        it('seriesData value must be initialized to null', () => {
             series._clearSeriesContainer();
 
-            expect(series.seriesData.isAvailable()).toBe(false);
+            expect(series.hasDataForRendering(series.seriesData)).toBe(false);
         });
     });
 
