@@ -30,10 +30,10 @@ describe('Series', () => {
     });
 
     describe('_clearSeriesContainer', () => {
-        it('seriesData value must be initialized to null', () => {
+        it('seriesData value must be initialized to empty object', () => {
             series._clearSeriesContainer();
 
-            expect(series.hasDataForRendering(series.seriesData)).toBe(false);
+            expect(series.seriesData).toEqual({});
         });
     });
 
