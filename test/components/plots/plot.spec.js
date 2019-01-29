@@ -194,7 +194,7 @@ describe('Test for Plot', () => {
             expect(actual).toBe(299);
         });
 
-        it('create position for optional line, when label axis and has last value - 222', () => {
+        it('create position for optional line, when exist pointOnColumn option', () => {
             plot.dataProcessor.chartType = 'line';
 
             const actual = plot._createOptionalLinePositionWhenLabelAxis(300, {
