@@ -289,21 +289,53 @@ class Plot {
     }
 
     /**
+     * Calculate xAxis labelDistance
+     * @param {number} width - width of xAxis
+     * @param {object} xAxisData - x axis data
+     * @returns {number}
+     * @private
+     */
+    _calculateXAxisLabelDistance(width, xAxisData) {
+        const {sizeRatio = 1, tickCount, remainLastBlockInterval} = xAxisData;
+        const remainLastBlockIntervalPosition = (remainLastBlockInterval) ? width : 0;
+        const tickPixelPositions = calculator.makeTickPixelPositions(
+            (width * sizeRatio),
+            tickCount,
+            0,
+            remainLastBlockIntervalPosition
+        );
+
+        return tickPixelPositions[1] - tickPixelPositions[0];
+    }
+
+    /**
      * Create position for optional line, when label axis.
      * @param {number} width - width
+     * @param {object} xAxisData - x axis data
      * @param {number} value - value
      * @returns {number|null}
      * @private
      */
-    _createOptionalLinePositionWhenLabelAxis(width, value) {
+    _createOptionalLinePositionWhenLabelAxis(width, xAxisData, value) {
         const {dataProcessor} = this;
+        const isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
+        const isPointOnColumn = isLineTypeChart && xAxisData.options.pointOnColumn;
         const index = dataProcessor.findCategoryIndex(value);
+        const halfLabelDistance = this._calculateXAxisLabelDistance(width, xAxisData) / 2;
+
         let position = null;
         let ratio;
 
         if (!snippet.isNull(index)) {
-            ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
+            const categoryCount = dataProcessor.getCategoryCount();
+            const divCount = isPointOnColumn ? categoryCount : categoryCount - 1;
+
+            ratio = (index === 0) ? 0 : (index / divCount);
+
             position = ratio * width;
+            if (isPointOnColumn) {
+                position += halfLabelDistance;
+            }
         }
 
         if (ratio === 1) {
@@ -327,8 +359,8 @@ class Plot {
         let startPosition, endPosition;
 
         if (xAxisData.isLabelAxis) {
-            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
-            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
+            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, xAxisData, range[0]);
+            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, xAxisData, range[1]);
         } else {
             startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
             endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);

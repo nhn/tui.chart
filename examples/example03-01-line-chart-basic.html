@@ -9,6 +9,7 @@
     <link rel='stylesheet' type='text/css' href='../node_modules/codemirror/addon/lint/lint.css'/>
     <link rel='stylesheet' type='text/css' href='./css/example.css'/>
 </head>
+
 <body>
 <div class='wrap'>
     <div class='code-html' id='code-html'>
@@ -72,12 +73,12 @@ var options = {
     },
     yAxis: {
         title: 'Temperature (Celsius)',
-        pointOnColumn: true
     },
     xAxis: {
         title: 'Month',
-        type: 'datetime',
-        dateFormat: 'MMM'
+        pointOnColumn: true,
+        dateFormat: 'MMM',
+        tickInterval: 'auto'
     },
     series: {
         showDot: false,
@@ -85,6 +86,21 @@ var options = {
     },
     tooltip: {
         suffix: '°C'
+    },
+    plot: {
+        bands: [
+            {
+                range: ['03/01/2016', '05/01/2016'],
+                color: 'gray',
+                opacity: 0.2
+            }
+        ],
+        lines: [
+            {
+                value: '03/01/2016',
+                color: '#fa2828'
+            }
+        ]
     }
 };
 var theme = {
