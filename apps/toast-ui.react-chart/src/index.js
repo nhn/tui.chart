@@ -1,14 +1,33 @@
-import React from 'react';
-import TuiChart from 'tui-chart';
+import Chart from './base';
 
-export default class Chart extends React.Component {
-  rootEl = React.createRef();
+const BarChart = Chart('bar');
+const ColumnChart = Chart('column');
+const LineChart = Chart('line');
+const AreaChart = Chart('area');
+const BubbleChart = Chart('bubble');
+const ScatterChart = Chart('scatter');
+const PieChart = Chart('pie');
+const ComboChart = Chart('combo');
+const MapChart = Chart('map');
+const HeatMapChart = Chart('heatmap');
+const TreeChart = Chart('treemap');
+const RadialChart = Chart('radial');
+const BoxPlotChart = Chart('boxplot');
+const BulletChart = Chart('bullet');
 
-  render() {
-    return (
-      <div ref={this.rootEl}>
-        Hello world
-      </div>
-    )
-  }
-}
+export {
+  BarChart,
+  ColumnChart,
+  LineChart,
+  AreaChart,
+  BubbleChart,
+  ScatterChart,
+  PieChart,
+  ComboChart,
+  MapChart,
+  HeatMapChart,
+  TreeChart,
+  RadialChart,
+  BoxPlotChart,
+  BulletChart
+};
