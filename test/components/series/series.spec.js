@@ -29,6 +29,14 @@ describe('Series', () => {
         });
     });
 
+    describe('_clearSeriesContainer', () => {
+        it('seriesData value must be initialized to empty object', () => {
+            series._clearSeriesContainer();
+
+            expect(series.seriesData).toEqual({});
+        });
+    });
+
     describe('presetForChangeData()', () => {
         const theme = {
             label: {
