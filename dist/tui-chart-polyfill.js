@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.5.0
+ * @version 3.5.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Fri Jan 11 2019 10:58:53 GMT+0900 (GMT+09:00)"
+ * bundle created at "Fri Feb 01 2019 15:20:58 GMT+0900 (GMT+09:00)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -27317,24 +27317,57 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
+	     * Calculate xAxis labelDistance
+	     * @param {number} width - width of xAxis
+	     * @param {object} xAxisData - x axis data
+	     * @returns {number}
+	     * @private
+	     */
+	
+	
+	    Plot.prototype._calculateXAxisLabelDistance = function _calculateXAxisLabelDistance(width, xAxisData) {
+	        var _xAxisData$sizeRatio = xAxisData.sizeRatio,
+	            sizeRatio = _xAxisData$sizeRatio === undefined ? 1 : _xAxisData$sizeRatio,
+	            tickCount = xAxisData.tickCount,
+	            remainLastBlockInterval = xAxisData.remainLastBlockInterval;
+	
+	        var remainLastBlockIntervalPosition = remainLastBlockInterval ? width : 0;
+	        var tickPixelPositions = _calculator2['default'].makeTickPixelPositions(width * sizeRatio, tickCount, 0, remainLastBlockIntervalPosition);
+	
+	        return tickPixelPositions[1] - tickPixelPositions[0];
+	    };
+	
+	    /**
 	     * Create position for optional line, when label axis.
 	     * @param {number} width - width
+	     * @param {object} xAxisData - x axis data
 	     * @param {number} value - value
 	     * @returns {number|null}
 	     * @private
 	     */
 	
 	
-	    Plot.prototype._createOptionalLinePositionWhenLabelAxis = function _createOptionalLinePositionWhenLabelAxis(width, value) {
+	    Plot.prototype._createOptionalLinePositionWhenLabelAxis = function _createOptionalLinePositionWhenLabelAxis(width, xAxisData, value) {
 	        var dataProcessor = this.dataProcessor;
 	
+	        var isLineTypeChart = _predicate2['default'].isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
+	        var isPointOnColumn = isLineTypeChart && xAxisData.options.pointOnColumn;
 	        var index = dataProcessor.findCategoryIndex(value);
+	        var halfLabelDistance = this._calculateXAxisLabelDistance(width, xAxisData) / 2;
+	
 	        var position = null;
 	        var ratio = void 0;
 	
 	        if (!_tuiCodeSnippet2['default'].isNull(index)) {
-	            ratio = index === 0 ? 0 : index / (dataProcessor.getCategoryCount() - 1);
+	            var categoryCount = dataProcessor.getCategoryCount();
+	            var divCount = isPointOnColumn ? categoryCount : categoryCount - 1;
+	
+	            ratio = index === 0 ? 0 : index / divCount;
+	
 	            position = ratio * width;
+	            if (isPointOnColumn) {
+	                position += halfLabelDistance;
+	            }
 	        }
 	
 	        if (ratio === 1) {
@@ -27361,8 +27394,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            endPosition = void 0;
 	
 	        if (xAxisData.isLabelAxis) {
-	            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
-	            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
+	            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, xAxisData, range[0]);
+	            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, xAxisData, range[1]);
 	        } else {
 	            startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
 	            endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
@@ -38494,9 +38527,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        /**
 	         * series data
-	         * @type {Array.<object>}
+	         * @type {object}
 	         */
-	        this.seriesData = [];
+	        this.seriesData = {};
 	
 	        /**
 	         * Selected legend index
@@ -38880,7 +38913,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.labelSet.remove();
 	        }
 	
-	        this.seriesData = [];
+	        this.seriesData = {};
 	    };
 	
 	    /**
@@ -39282,6 +39315,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _domHandler2['default'].removeClass(this.seriesLabelContainer, 'show');
 	            _domHandler2['default'].removeClass(this.seriesLabelContainer, 'opacity');
 	        }
+	    };
+	
+	    Series.prototype.isAvailableSeriesData = function isAvailableSeriesData() {
+	        return !!(this.seriesData && this.seriesData.isAvailable && this.seriesData.isAvailable());
 	    };
 	
 	    /**
@@ -40645,7 +40682,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    LineTypeSeriesBase.prototype.onHideGroupTooltipLine = function onHideGroupTooltipLine() {
-	        if (!this.seriesData || !this.seriesData.isAvailable() || !this.graphRenderer.hideGroupTooltipLine) {
+	        if (!this.isAvailableSeriesData() || !this.graphRenderer.hideGroupTooltipLine) {
 	            return;
 	        }
 	        this.graphRenderer.hideGroupTooltipLine();
