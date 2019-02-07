@@ -10,7 +10,7 @@ const PieChart = Chart('pie');
 const ComboChart = Chart('combo');
 const MapChart = Chart('map');
 const HeatMapChart = Chart('heatmap');
-const TreeChart = Chart('treemap');
+const TreeMapChart = Chart('treemap');
 const RadialChart = Chart('radial');
 const BoxPlotChart = Chart('boxplot');
 const BulletChart = Chart('bullet');
@@ -26,7 +26,7 @@ export {
   ComboChart,
   MapChart,
   HeatMapChart,
-  TreeChart,
+  TreeMapChart,
   RadialChart,
   BoxPlotChart,
   BulletChart
