@@ -60,7 +60,7 @@ You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module
 
     ```js
     import 'tui-chart/dist/tui-chart.css'
-    import {barChart, lineChart} from '@toast-ui/react-chart'
+    import {BarChart, LineChart} from '@toast-ui/react-chart'
     ```
 
 * Using CommonJS module
@@ -68,8 +68,8 @@ You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module
     ```js
     require('tui-chart/dist/tui-chart.css');
     var toastui = require('@toast-ui/react-chart');
-    var barChart = toastui.barChart;
-    var lineChart = toastui.lineChart;
+    var BarChart = toastui.BarChart;
+    var LineChart = toastui.LineChart;
     ```
 
 ### Components
