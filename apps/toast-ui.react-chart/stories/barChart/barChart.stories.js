@@ -5,9 +5,8 @@ import 'tui-chart/dist/tui-chart.min.css';
 import {storiesOf} from '@storybook/react';
 import {withKnobs, radios} from '@storybook/addon-knobs';
 import {BarChart} from '../../src/index';
-import {myTheme} from '../lineChart/dummyData';
-import {basicChartDummy} from '../barChart/dummyData';
-import {divergingAndCenterYAxisChartDummy, rangeDataChartDummy} from './dummyData';
+import {commonTheme} from '../theme';
+import {basicChartDummy, divergingAndCenterYAxisChartDummy, rangeDataChartDummy} from './dummyData';
 
 const stories = storiesOf('BarChart', module).addDecorator(withKnobs);
 
@@ -21,7 +20,7 @@ stories.add('basic with theme', () => {
 
   const Story = () => {
     if (theme === themeOptions.myTheme) {
-      TuiChart.registerTheme('myTheme', myTheme);
+      TuiChart.registerTheme('myTheme', commonTheme);
       options.theme = 'myTheme';
     }
 

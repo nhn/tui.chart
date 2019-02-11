@@ -4,7 +4,8 @@ import 'tui-chart/dist/tui-chart.min.css';
 
 import {storiesOf} from '@storybook/react';
 import {withKnobs, radios} from '@storybook/addon-knobs';
-import {basicChartDummy, myTheme} from '../treeMapChart/dummyData';
+import {treeMapChartTheme} from '../theme';
+import {basicChartDummy} from '../treeMapChart/dummyData';
 import {TreeMapChart} from '../../src/index';
 
 const stories = storiesOf('TreeMapChart', module).addDecorator(withKnobs);
@@ -19,7 +20,7 @@ stories.add('basic with theme', () => {
 
   const Story = () => {
     if (theme === themeOptions.myTheme) {
-      TuiChart.registerTheme('myTheme', myTheme);
+      TuiChart.registerTheme('myTheme', treeMapChartTheme);
       options.theme = 'myTheme';
     }
 

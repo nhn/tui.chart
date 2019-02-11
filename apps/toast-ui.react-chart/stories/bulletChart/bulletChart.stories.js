@@ -4,7 +4,8 @@ import 'tui-chart/dist/tui-chart.min.css';
 
 import {storiesOf} from '@storybook/react';
 import {withKnobs, radios} from '@storybook/addon-knobs';
-import {basicChartDummy, myTheme} from '../bulletChart/dummyData';
+import {bulletChartTheme} from '../theme';
+import {basicChartDummy} from '../bulletChart/dummyData';
 import {BulletChart} from '../../src/index';
 
 const stories = storiesOf('BulletChart', module).addDecorator(withKnobs);
@@ -19,7 +20,7 @@ stories.add('basic with theme', () => {
 
   const Story = () => {
     if (theme === themeOptions.myTheme) {
-      TuiChart.registerTheme('myTheme', myTheme);
+      TuiChart.registerTheme('myTheme', bulletChartTheme);
       options.theme = 'myTheme';
     }
 

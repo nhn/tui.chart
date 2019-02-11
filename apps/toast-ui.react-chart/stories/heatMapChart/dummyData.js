@@ -32,12 +32,3 @@ export const basicChartDummy = {
     }
   }
 };
-
-export const myTheme = {
-  series: {
-    startColor: '#ffefef',
-    endColor: '#ac4142',
-    overColor: '#75b5aa',
-    borderColor: '#F4511E'
-  }
-};

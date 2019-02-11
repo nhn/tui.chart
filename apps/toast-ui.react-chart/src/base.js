@@ -1,6 +1,5 @@
 import React from 'react';
 import TuiChart from 'tui-chart';
-import maps from './maps';
 
 const creator = {
   bar: TuiChart.barChart,
@@ -41,29 +40,16 @@ export default function(chartType) {
         });
     }
 
-    registerMap() {
-      const {
-        options: {map}
-      } = this.props;
-
-      TuiChart.registerMap(map, maps[map]);
-    }
-
     componentDidMount() {
-      const props = [this.props.data, this.props.options];
-
-      if (chartType === 'map') {
-        this.registerMap();
-      }
-
-      this.chartInst = new creator[chartType](this.rootEl.current, ...props);
+      const {data, options} = this.props;
+      this.chartInst = new creator[chartType](this.rootEl.current, data, options);
 
       this.bindEventHandlers();
     }
 
     shouldComponentUpdate(nextProps) {
-      const {data: currentData} = this.props;
-      const {data: nextData} = nextProps;
+      const currentData = this.props.data;
+      const nextData = nextProps.data;
 
       if (currentData !== nextData) {
         this.getInstance().setData(nextData);

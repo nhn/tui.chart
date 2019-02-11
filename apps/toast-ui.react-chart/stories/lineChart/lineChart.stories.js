@@ -6,11 +6,11 @@ import {withKnobs, radios} from '@storybook/addon-knobs';
 import {
   basicChartDummy,
   coordinateDataChartDummy,
-  myTheme,
   withoutSeriesDataChartDummy,
   splineChartDummy,
   synchronizedTooltipChartDummy
 } from './dummyData';
+import {commonTheme} from '../theme';
 import {LineChart} from '../../src/index';
 
 const stories = storiesOf('LineChart', module).addDecorator(withKnobs);
@@ -25,7 +25,7 @@ stories.add('basic with theme', () => {
 
   const Story = () => {
     if (theme === themeOptions.myTheme) {
-      TuiChart.registerTheme('myTheme', myTheme);
+      TuiChart.registerTheme('myTheme', commonTheme);
       options.theme = 'myTheme';
     }
 

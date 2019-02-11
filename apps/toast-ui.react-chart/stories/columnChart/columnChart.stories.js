@@ -5,7 +5,8 @@ import {storiesOf} from '@storybook/react';
 import {withKnobs, radios} from '@storybook/addon-knobs';
 
 import {ColumnChart} from '../../src/index';
-import {basicChartDummy, myTheme} from './dummyData';
+import {commonTheme} from '../theme';
+import {basicChartDummy} from './dummyData';
 
 const stories = storiesOf('ColumnChart', module).addDecorator(withKnobs);
 
@@ -19,7 +20,7 @@ stories.add('basic with theme', () => {
 
   const Story = () => {
     if (theme === themeOptions.myTheme) {
-      TuiChart.registerTheme('myTheme', myTheme);
+      TuiChart.registerTheme('myTheme', commonTheme);
       options.theme = 'myTheme';
     }
 

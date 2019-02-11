@@ -4,8 +4,8 @@ import 'tui-chart/dist/tui-chart.min.css';
 
 import {storiesOf} from '@storybook/react';
 import {withKnobs, radios} from '@storybook/addon-knobs';
-import {myTheme} from "../lineChart/dummyData";
-import {basicChartDummy} from "../bubbleChart/dummyData";
+import {commonTheme} from '../theme';
+import {basicChartDummy} from '../bubbleChart/dummyData';
 import {BubbleChart} from '../../src/index';
 
 const stories = storiesOf('BubbleChart', module).addDecorator(withKnobs);
@@ -20,7 +20,7 @@ stories.add('basic with theme', () => {
 
   const Story = () => {
     if (theme === themeOptions.myTheme) {
-      TuiChart.registerTheme('myTheme', myTheme);
+      TuiChart.registerTheme('myTheme', commonTheme);
       options.theme = 'myTheme';
     }
 
@@ -29,4 +29,3 @@ stories.add('basic with theme', () => {
 
   return <Story />;
 });
-

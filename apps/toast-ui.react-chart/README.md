@@ -1,6 +1,6 @@
 # TOAST UI Chart for React
 
-> This is React component wrapping [TOAST UI Chart](https://github.com/nhnent/tui.chart).
+> This is a React component wrapping [TOAST UI Chart](https://github.com/nhnent/tui.chart).
 
 [![github version](https://img.shields.io/github/release/nhnent/toast-ui.react-chart.svg)](https://github.com/nhnent/toast-ui.react-chart/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-chart.svg)](https://www.npmjs.com/package/@toast-ui/react-chart)
@@ -36,7 +36,7 @@ var options = {
 }
 ```
 
-Or, include include `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
+Or, include `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
@@ -54,7 +54,7 @@ npm install --save @toast-ui/react-chart
 
 ### Import
 
-You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-chart.css` from `tui-chart` manually.
+You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-chart.css` from `tui-chart` manually. Also map files are not included, so if you want to add a map chart, you have to import map files like a css file.
 
 * Using ECMAScript module
 
@@ -70,6 +70,13 @@ You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module
     var toastui = require('@toast-ui/react-chart');
     var BarChart = toastui.BarChart;
     var LineChart = toastui.LineChart;
+    ```
+
+* Using map files
+
+    ```js
+    import 'tui-chart/dist/maps/south-korea';
+    import {MapChart} from '@toast-ui/react-chart';
     ```
 
 ### Components

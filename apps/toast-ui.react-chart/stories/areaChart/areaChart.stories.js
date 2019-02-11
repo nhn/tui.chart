@@ -4,8 +4,8 @@ import 'tui-chart/dist/tui-chart.min.css';
 
 import {storiesOf} from '@storybook/react';
 import {withKnobs, radios} from '@storybook/addon-knobs';
-import {myTheme} from "../lineChart/dummyData";
-import {basicChartDummy} from "../areaChart/dummyData";
+import {commonTheme} from '../theme';
+import {basicChartDummy} from '../areaChart/dummyData';
 import {AreaChart} from '../../src/index';
 
 const stories = storiesOf('AreaChart', module).addDecorator(withKnobs);
@@ -20,7 +20,7 @@ stories.add('basic with theme', () => {
 
   const Story = () => {
     if (theme === themeOptions.myTheme) {
-      TuiChart.registerTheme('myTheme', myTheme);
+      TuiChart.registerTheme('myTheme', commonTheme);
       options.theme = 'myTheme';
     }
 

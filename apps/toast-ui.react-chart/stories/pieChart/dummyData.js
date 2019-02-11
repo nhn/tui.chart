@@ -54,26 +54,3 @@ export const donutChartDummy = {
     }
   }
 };
-
-export const myTheme = {
-  series: {
-    series: {
-      colors: [
-        '#83b14e',
-        '#458a3f',
-        '#295ba0',
-        '#2a4175',
-        '#289399',
-        '#289399',
-        '#617178',
-        '#8a9a9a',
-        '#516f7d',
-        '#dddddd'
-      ]
-    },
-    label: {
-      color: '#fff',
-      fontFamily: 'sans-serif'
-    }
-  }
-};

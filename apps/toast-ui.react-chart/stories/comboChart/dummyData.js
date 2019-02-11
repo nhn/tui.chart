@@ -60,14 +60,3 @@ export const basicChartDummy = {
     }
   }
 };
-
-export const myTheme = {
-  series: {
-    column: {
-      colors: ['#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399']
-    },
-    line: {
-      colors: ['#333']
-    }
-  }
-};
