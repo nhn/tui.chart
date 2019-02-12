@@ -18,4 +18,4 @@
         chart = require('tui-chart');
     }
     chart.registerMap('taiwan', data);
-})(tui.chart);
+})();
