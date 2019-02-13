@@ -54,7 +54,7 @@ npm install --save @toast-ui/react-chart
 
 ### Import
 
-You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-chart.css` from `tui-chart` manually. Also map files are not included, so if you want to add a map chart, you have to import map files like a css file.
+You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-chart.css` from `tui-chart` manually. Also, map files are not included, so if you want to use a map chart, you have to import map files in the same way.
 
 * Using ECMAScript module
 
