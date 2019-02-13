@@ -6,6 +6,7 @@
 
 ## Wrappers
 - [toast-ui.vue-chart](https://github.com/nhnent/toast-ui.vue-chart): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+- [toast-ui.react-chart](https://github.com/nhnent/toast-ui.react-chart): React wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
 
 ![chart_animation](https://user-images.githubusercontent.com/35218826/37018282-2a792584-2157-11e8-835f-fac1275d31e0.gif)
 ![all](https://user-images.githubusercontent.com/35218826/37026890-1e2bcfe0-2173-11e8-9b06-3db329d5f477.png)
