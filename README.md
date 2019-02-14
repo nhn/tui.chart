@@ -163,9 +163,9 @@ The TOAST UI Chart is available over a CDN.
 ```
 
 - The types of distribution files are classified into three types depending on whether or not they exist in the code of the dependency file.
-    1. `tui-cahrt.js` - This is not include dependency modules in the code.
-    2. `tui-cahrt-all.js` - Includes all dependency modules, including 'babel-polyfill', in bundle file code
-    3. `tui-cahrt-polyfill.js` - This includes only babel-polyfill in code.
+    1. `tui-chart.js` - This is not include dependency modules in the code.
+    2. `tui-chart-all.js` - Includes all dependency modules, including 'babel-polyfill', in bundle file code
+    3. `tui-chart-polyfill.js` - This includes only babel-polyfill in code.
 
 - Within the download you'll find the following directories
 
