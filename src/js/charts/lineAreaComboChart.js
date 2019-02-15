@@ -11,6 +11,7 @@ import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
 import DynamicDataHelper from './dynamicDataHelper';
 import snippet from 'tui-code-snippet';
 
+/** Class representing a point. */
 class LineAreaComboChart extends ChartBase {
     /**
      * Line and Area Combo chart.

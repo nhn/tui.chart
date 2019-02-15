@@ -8,6 +8,7 @@ import ChartBase from './chartBase';
 import ColorSpectrum from './colorSpectrum';
 import snippet from 'tui-code-snippet';
 
+/** Class representing a point. */
 class TreemapChart extends ChartBase {
     /**
      * Treemap chart is graphical representation of hierarchical data by using rectangles.

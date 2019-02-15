@@ -18,6 +18,7 @@ import snippet from 'tui-code-snippet';
 
 const GA_TRACKING_ID = 'UA-129983528-1';
 
+/** Class representing a point. */
 class ChartBase {
     /**
      * Chart base.

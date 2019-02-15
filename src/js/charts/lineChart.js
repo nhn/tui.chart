@@ -11,6 +11,7 @@ import Series from '../components/series/lineChartSeries';
 import rawDataHandler from '../models/data/rawDataHandler';
 import snippet from 'tui-code-snippet';
 
+/** Class representing a point. */
 class LineChart extends ChartBase {
     /**
      * Line chart.

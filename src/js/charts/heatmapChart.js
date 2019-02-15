@@ -9,6 +9,7 @@ import ChartBase from './chartBase';
 import ColorSpectrum from './colorSpectrum';
 import chartConst from '../const';
 
+/** Class representing a point. */
 class HeatmapChart extends ChartBase {
     /**
      * Heatmap chart is a graphical representation of data where the individual values contained

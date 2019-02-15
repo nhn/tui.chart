@@ -10,6 +10,7 @@ import MapChartMapModel from './mapChartMapModel';
 import MapChartDataProcessor from '../models/data/mapChartDataProcessor';
 import ColorSpectrum from './colorSpectrum';
 
+/** Class representing a point. */
 class MapChart extends ChartBase {
     /**
      * Map chart.

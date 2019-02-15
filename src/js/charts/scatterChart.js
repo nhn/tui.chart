@@ -7,6 +7,7 @@
 import ChartBase from './chartBase';
 import chartConst from '../const';
 
+/** Class representing a point. */
 class ScatterChart extends ChartBase {
     /**
      * Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates

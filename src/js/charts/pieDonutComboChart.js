@@ -8,6 +8,7 @@ import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
 import snippet from 'tui-code-snippet';
 
+/** Class representing a point. */
 class PieDonutComboChart extends ChartBase {
     /**
      * Pie and Donut Combo chart.
