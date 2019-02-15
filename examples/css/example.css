@@ -7,21 +7,21 @@ body > div {
     float: left;
 }
 .custom-area {
-    margin-top: 5px;
-    width: 650px;
-    position:relative;
+    padding: 0 52px;
 }
 
 .apply-btn-area {
     width: 100%;
     height: 35px;
-    position: relative;
+    text-align: right;
 }
 
 .apply-btn-area .btn {
     font-weight: bold;
     font-size: 14px;
-    margin: 5px 0 0 0;
+    margin: 5px 0 0;
+    border: 1px solid #ccc;
+    cursor: pointer;
 }
 
 .custom-area > div {
@@ -82,4 +82,27 @@ div#error-dim.show {
 
 div#go-to-dev-tool {
 
+}
+
+/* tui-example-style */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.code-description {
+    padding: 22px 52px;
+    background-color: rgba(81, 92, 230, 0.1);
+    line-height: 1.4em;
+}
+
+.code-description,
+.code-description a {
+    font-family: Arial;
+    font-size: 14px;
+    color: #515ce6;
+}
+
+.code-html {
+    padding: 20px 52px;
 }

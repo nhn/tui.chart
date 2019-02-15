@@ -45,10 +45,11 @@
         indentUnit: 4,
         gutters: ['CodeMirror-lint-markers'],
         lint: true,
-        value: document.getElementById('code-js').innerHTML
+        value: document.getElementById('code-js').innerHTML,
+        theme: 'neo'
     });
 
-    root.chartCM.setSize(600, 500);
+    root.chartCM.setSize(800, 500);
 
     root.codeString = root.chartCM.doc.getValue();
 })(window);
