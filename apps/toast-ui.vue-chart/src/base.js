@@ -1,5 +1,4 @@
 import TuiChart from 'tui-chart';
-import maps from './maps';
 
 const creator = {
     'bar': TuiChart.barChart,
@@ -48,9 +47,7 @@ export const createComponent = type => ({
             type: [String, Object],
             validator(value) {
                 let result = false;
-                if (typeof value === 'string') {
-                    result = maps.hasOwnProperty(value);
-                } else if (typeof value === 'object') {
+                if (typeof value === 'object') {
                     result = value.hasOwnProperty('name') && value.hasOwnProperty('value');
                 }
 
@@ -96,11 +93,7 @@ export const createComponent = type => ({
         },
         registerThemeToOptions() {
             if (this.map) {
-                if (typeof this.map === 'string') {
-                    TuiChart.registerMap(this.map, maps[this.map]);
-                } else {
-                    TuiChart.registerMap(this.map.name, this.map.value);
-                }
+                TuiChart.registerMap(this.map.name, this.map.value);
                 this.computedOptions = Object.assign({}, this.computedOptions, {
                     map: this.map.name || this.map
                 });

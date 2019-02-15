@@ -54,7 +54,7 @@ npm install --save @toast-ui/vue-chart
 
 ### Load
 
-You can use Toast UI Chart for Vue as moudule format or namespace. When using module format, you should load `tui-chart.css` in the script.
+You can use Toast UI Chart for Vue as moudule format or namespace. When using module format, you should load `tui-chart.css` in the script. Also, map files are not included, so if you want to use a map chart, you have to import map files in the same way.
 
 * Using Ecmascript module
 
@@ -77,6 +77,13 @@ You can use Toast UI Chart for Vue as moudule format or namespace. When using mo
     ```js
     var barChart = toastui.barChart;
     var lineChart = toastui.lineChart;
+    ```
+
+* Using map files
+
+    ```js
+    import 'tui-chart/dist/maps/south-korea';
+    import { mapChart } from '@toast-ui/vue-chart'
     ```
 
 ### Components
@@ -171,7 +178,7 @@ You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.cha
 
 You can use `data`, `options`, `theme` props for initailize tui.chart.
 
-If you use map chart, you should use `map` prop.
+If you want to use other maps, you should use `map` prop.
 
 **For more detail with example, see [Getting-Started](https://github.com/nhnent/toast-ui.vue-chart/blob/master/docs/getting-started.md#props)**
 
@@ -180,7 +187,7 @@ If you use map chart, you should use `map` prop.
 | data | Object | O | This prop is for data of the chart. When you change data, chart is rendering for changing data. |
 | options | Object | X | This prop is for options of tui.chart. You can configuration about chart. |
 | theme | Object | X | This prop can change theme of the chart. |
-| map | String or Object | X | You want to use map chart, you need to set map prop. We suppoert maps of `world`, `south-korea`, `china`, `usa`, `japan`, `singapore`, `thailand`, `taiwan`. So in case you just set `String` of these kinds of map. If you want to use other maps, you set Object that is required `name` and `value`. |
+| map | Object | X | If you want to use other maps, you set Object that is required `name` and `value`. |
 
 ### Event
 

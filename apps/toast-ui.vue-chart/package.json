@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-chart",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "TOAST UI Chart for Vue",
   "main": "dist/toastui-vue-chart.js",
   "files": [
@@ -36,6 +36,6 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "tui-chart": "~3.4.2"
+    "tui-chart": "^3.5.0"
   }
 }
