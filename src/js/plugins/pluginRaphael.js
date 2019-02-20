@@ -70,7 +70,6 @@ export const callback = function(container, dimension) {
     };
 
     paper.resizeBackground = function(width, height) {
-        paper.setSize(width, height);
         rect.attr({
             width,
             height
