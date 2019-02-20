@@ -448,7 +448,7 @@ class RaphaelLineTypeBase {
         const isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
         if (this.groupLines) {
             if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
-                opacity = (this.chartType === 'radial' && this.isShowArea) ? 0 : DE_EMPHASIS_OPACITY;
+                opacity = (this.chartType === 'radial' && this.showArea) ? 0 : DE_EMPHASIS_OPACITY;
             }
 
             if (changeType === CHART_HOVER_STATUS_OUT && isSelectedLegend) {

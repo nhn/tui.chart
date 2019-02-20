@@ -49,8 +49,8 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
     render(paper, data) {
         const {dimension, groupPositions, theme} = data;
         const {colors} = theme;
-        const dotOpacity = data.options.showDot ? 1 : 0;
-        const {isShowArea, pointWidth} = data.options;
+        const {pointWidth, showDot, showArea} = data.options;
+        const dotOpacity = showDot ? 1 : 0;
 
         const groupPaths = this._getLinesPath(groupPositions);
         const borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
@@ -68,7 +68,7 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
         this.dimension = dimension;
         this.position = data.position;
 
-        if (isShowArea) {
+        if (showArea) {
             this.groupAreas = this._renderArea(paper, groupPaths, colors, radialSeriesSet);
         }
 
@@ -86,7 +86,7 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
         this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
         this.dotOpacity = dotOpacity;
-        this.isShowArea = isShowArea;
+        this.showArea = showArea;
 
         return radialSeriesSet;
     }
@@ -164,8 +164,9 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
 
         this.groupPaths.forEach((path, groupIndex) => {
             this.groupLines[groupIndex].attr({path: path.join(' ')});
-            this.groupAreas[groupIndex].attr({path: path.join(' ')});
-
+            if (this.showArea) {
+                this.groupAreas[groupIndex].attr({path: path.join(' ')});
+            }
             this.groupDots[groupIndex].forEach((item, index) => {
                 this._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
             });
