@@ -1136,7 +1136,7 @@ function comboChart(container, rawData, options) {
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {boolean} options.series.showLegend - whether show legend label or not
- *          @param {function} options.series.labelFilter - filter for series label display 
+ *          @param {function} options.series.labelFilter - filter for series label display
  *          @param {number} options.series.radiusRatio - ratio of radius for pie graph
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.startAngle - start angle
@@ -1282,8 +1282,8 @@ function mapChart(container, rawData, options) {
  *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
- *          @param {boolean} options.series.showDot - show dot or not (default: true)
- *          @param {boolean} options.series.showArea - show area or not (default: true)
+ *          @param {boolean} options.series.showDot - show dot or not (default: false)
+ *          @param {boolean} options.series.showArea - show area or not (default: false)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.type - "spiderweb" or "circle" (default: "spiderweb")
  *      @param {object|Array} options.yAxis - options for y axis component
