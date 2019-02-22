@@ -43,8 +43,8 @@ class AreaTypeDataModel {
 
             lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
 
-            this.leftStepLength =
-                (groupPositions.length > 1) ? groupPositions[1][0].left - groupPositions[0][0].left : 0;
+            this.leftStepLength = groupPositions.length > 1 && groupPositions[1][0] ?
+                groupPositions[1][0].left - groupPositions[0][0].left : 0;
 
             return groupPositions.map((positions, groupIndex) => (
                 positions.map((position, index) => {
