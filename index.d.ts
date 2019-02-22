@@ -752,5 +752,5 @@ declare namespace tuiChart {
 }
 
 declare module 'tui-chart' {
-    export = tuiChart;
+    export default tuiChart;
 }
