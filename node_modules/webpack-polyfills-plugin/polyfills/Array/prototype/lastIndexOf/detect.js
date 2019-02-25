@@ -1,0 +1,1 @@
+'lastIndexOf' in Array.prototype

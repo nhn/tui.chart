@@ -1,0 +1,2 @@
+glob2>=0.4.1
+ordereddict==1.1

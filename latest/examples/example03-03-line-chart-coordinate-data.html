@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>3.3 [Line Chart] coordinate data</title>
+    <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+    <div class='custom-area'>
+        <div id='error-dim'>
+            <span id='error-text'></span>
+            <div id='error-stack'></div>
+            <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+        </div>
+        <div class="try-it-area">
+            <h3>try it</h3>
+            <textarea id="code"></textarea>
+            <div class="apply-btn-area">
+                <button class="btn" onclick='evaluationCode(chartCM, codeString);'>Run it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.7/core.js'></script>
+<script type='text/javascript' src='https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js'></script>
+<script type='text/javascript' src='https://uicdn.toast.com/tui.chart/latest/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script class='code-js' id='code-js'>
+var container = document.getElementById('chart-area');
+var data = {
+    series: [
+        {
+            name: 'SiteA',
+            data: [
+                ['08/22/2016 10:00:00', 202],
+                ['08/22/2016 10:05:00', 212],
+                ['08/22/2016 10:10:00', 222],
+                ['08/22/2016 10:15:00', 351],
+                ['08/22/2016 10:20:00', 412],
+                ['08/22/2016 10:25:00', 420],
+                ['08/22/2016 10:30:00', 300],
+                ['08/22/2016 10:35:00', 213],
+                ['08/22/2016 10:40:00', 230],
+                ['08/22/2016 10:45:00', 220],
+                ['08/22/2016 10:50:00', 234],
+                ['08/22/2016 10:55:00', 210],
+                ['08/22/2016 11:00:00', 220]
+            ]
+        },
+        {
+            name: 'SiteB',
+            data: [
+                ['08/22/2016 10:00:00', 312],
+                ['08/22/2016 10:10:00', 320],
+                ['08/22/2016 10:20:00', 295],
+                ['08/22/2016 10:30:00', 300],
+                ['08/22/2016 10:40:00', 320],
+                ['08/22/2016 10:50:00', 30],
+                ['08/22/2016 11:00:00', 20]
+            ]
+
+        }
+    ]
+};
+var options = {
+    chart: {
+        width: 1160,
+        height: 540,
+        title: 'Concurrent users'
+    },
+    xAxis: {
+        title: 'minutes',
+        type: 'datetime',
+        dateFormat: 'hh:mm'
+    },
+    yAxis: {
+        title: 'users',
+        pointOnColumn: true
+    },
+    series: {
+        showDot: false
+    },
+    plot: {
+        bands: [
+            {
+                range: ['08/22/2016 10:40:00', '08/22/2016 11:00:00'],
+                color: 'gray',
+                opacity: 0.2
+            }
+        ],
+        lines: [
+            {
+                value: '08/22/2016 10:10:00',
+                color: '#fa2828'
+            }
+        ]
+    }
+};
+var theme = {
+    series: {
+        colors: [
+            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+        ]
+    }
+};
+
+// For apply theme
+
+// tui.chart.registerTheme('myTheme', theme);
+// options.theme = 'myTheme';
+
+var chart = tui.chart.lineChart(container, data, options);
+</script>
+
+<!--For tutorial page-->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/matchbrackets.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/selection/active-line.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/javascript/javascript.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>

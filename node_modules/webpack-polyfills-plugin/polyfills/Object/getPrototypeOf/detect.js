@@ -1,0 +1,1 @@
+'getPrototypeOf' in Object

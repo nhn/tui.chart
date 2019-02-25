@@ -1,0 +1,1 @@
+'find' in Array.prototype

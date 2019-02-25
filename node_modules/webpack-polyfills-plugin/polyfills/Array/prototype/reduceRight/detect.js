@@ -1,0 +1,1 @@
+'reduceRight' in Array.prototype

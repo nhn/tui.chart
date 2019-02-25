@@ -1,0 +1,1 @@
+'getOwnPropertyNames' in Object

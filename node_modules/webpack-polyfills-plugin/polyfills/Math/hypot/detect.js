@@ -1,0 +1,1 @@
+'hypot' in Math

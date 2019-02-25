@@ -1,0 +1,1 @@
+'reduce' in Array.prototype

@@ -1,0 +1,1 @@
+'endsWith' in String.prototype

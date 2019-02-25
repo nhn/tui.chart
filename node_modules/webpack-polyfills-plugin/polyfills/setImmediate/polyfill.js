@@ -1,0 +1,1 @@
+window.setImmediate = _enqueueMicrotask;

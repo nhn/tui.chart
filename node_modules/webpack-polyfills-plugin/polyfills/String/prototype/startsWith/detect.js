@@ -1,0 +1,1 @@
+'startsWith' in String.prototype

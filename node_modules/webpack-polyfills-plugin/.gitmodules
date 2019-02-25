@@ -1,0 +1,3 @@
+[submodule "polyfill-service"]
+	path = polyfill-service
+	url = https://github.com/Financial-Times/polyfill-service.git
