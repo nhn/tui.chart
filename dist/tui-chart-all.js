@@ -2,10 +2,10 @@
  * tui-chart-all
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.5.2
+ * @version 3.6.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Feb 12 2019 09:08:10 GMT+0900 (GMT+09:00)"
+ * bundle created at "Mon Feb 25 2019 15:03:52 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -18650,7 +18650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isSelectedLegend = !_tuiCodeSnippet2['default'].isNull(this.selectedLegendIndex);
 	        if (this.groupLines) {
 	            if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
-	                opacity = this.chartType === 'radial' && this.isShowArea ? 0 : DE_EMPHASIS_OPACITY;
+	                opacity = this.chartType === 'radial' && this.showArea ? 0 : DE_EMPHASIS_OPACITY;
 	            }
 	
 	            if (changeType === CHART_HOVER_STATUS_OUT && isSelectedLegend) {
@@ -21377,12 +21377,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            groupPositions = data.groupPositions,
 	            theme = data.theme;
 	        var colors = theme.colors;
-	
-	        var dotOpacity = data.options.showDot ? 1 : 0;
 	        var _data$options = data.options,
-	            isShowArea = _data$options.isShowArea,
-	            pointWidth = _data$options.pointWidth;
+	            pointWidth = _data$options.pointWidth,
+	            showDot = _data$options.showDot,
+	            showArea = _data$options.showArea;
 	
+	        var dotOpacity = showDot ? 1 : 0;
 	
 	        var groupPaths = this._getLinesPath(groupPositions);
 	        var borderStyle = this.makeBorderStyle(theme.strokeColor, dotOpacity, theme.strokeWidth);
@@ -21400,7 +21400,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.dimension = dimension;
 	        this.position = data.position;
 	
-	        if (isShowArea) {
+	        if (showArea) {
 	            this.groupAreas = this._renderArea(paper, groupPaths, colors, radialSeriesSet);
 	        }
 	
@@ -21418,7 +21418,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.groupPositions = groupPositions;
 	        this.groupPaths = groupPaths;
 	        this.dotOpacity = dotOpacity;
-	        this.isShowArea = isShowArea;
+	        this.showArea = showArea;
 	
 	        return radialSeriesSet;
 	    };
@@ -21514,8 +21514,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this.groupPaths.forEach(function (path, groupIndex) {
 	            _this4.groupLines[groupIndex].attr({ path: path.join(' ') });
-	            _this4.groupAreas[groupIndex].attr({ path: path.join(' ') });
-	
+	            if (_this4.showArea) {
+	                _this4.groupAreas[groupIndex].attr({ path: path.join(' ') });
+	            }
 	            _this4.groupDots[groupIndex].forEach(function (item, index) {
 	                _this4._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
 	            });
@@ -26670,7 +26671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {object} options.series - options for series component
 	 *          @param {boolean} options.series.showLabel - whether show label or not
 	 *          @param {boolean} options.series.showLegend - whether show legend label or not
-	 *          @param {function} options.series.labelFilter - filter for series label display 
+	 *          @param {function} options.series.labelFilter - filter for series label display
 	 *          @param {number} options.series.radiusRatio - ratio of radius for pie graph
 	 *          @param {boolean} options.series.allowSelect - whether allow select or not
 	 *          @param {boolean} options.series.startAngle - start angle
@@ -26816,8 +26817,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {number} options.chart.title.offsetY - title offset y
 	 *          @param {string | function} options.chart.format - formatter for value
 	 *      @param {object} options.series - options for series component
-	 *          @param {boolean} options.series.showDot - show dot or not (default: true)
-	 *          @param {boolean} options.series.showArea - show area or not (default: true)
+	 *          @param {boolean} options.series.showDot - show dot or not (default: false)
+	 *          @param {boolean} options.series.showArea - show area or not (default: false)
 	 *      @param {object} options.plot - options for plot component
 	 *          @param {boolean} options.plot.type - "spiderweb" or "circle" (default: "spiderweb")
 	 *      @param {object|Array} options.yAxis - options for y axis component
@@ -28661,6 +28662,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var BarChart = function (_ChartBase) {
 	    _inherits(BarChart, _ChartBase);
 	
@@ -28861,6 +28863,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           */
 	
 	var GA_TRACKING_ID = 'UA-129983528-1';
+	
+	/** Class representing a point. */
 	
 	var ChartBase = function () {
 	    /**
@@ -29603,6 +29607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        _renderUtil2['default'].renderDimension(this.chartContainer, chartDimension);
 	        this.paper.resizeBackground(chartDimension.width, chartDimension.height);
+	        this.paper.setSize(chartDimension.width, chartDimension.height);
 	
 	        this.componentManager.render('resize', boundsAndScale, {
 	            checkedLegends: seriesVisibilityMap
@@ -41528,7 +41533,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
 	
-	            _this.leftStepLength = groupPositions.length > 1 ? groupPositions[1][0].left - groupPositions[0][0].left : 0;
+	            var hasGroupPositon = groupPositions.length > 1 && groupPositions[1][0] && groupPositions[0][0];
+	            _this.leftStepLength = hasGroupPositon ? groupPositions[1][0].left - groupPositions[0][0].left : 0;
 	
 	            return groupPositions.map(function (positions, groupIndex) {
 	                return positions.map(function (position, index) {
@@ -58400,6 +58406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var ColumnChart = function (_ChartBase) {
 	    _inherits(ColumnChart, _ChartBase);
 	
@@ -58552,6 +58559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var LineChart = function (_ChartBase) {
 	    _inherits(LineChart, _ChartBase);
 	
@@ -59166,6 +59174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
+	/** Class representing a point. */
 	var AreaChart = function (_ChartBase) {
 	    _inherits(AreaChart, _ChartBase);
 	
@@ -59457,6 +59466,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var ColumnLineComboChart = function (_ChartBase) {
 	    _inherits(ColumnLineComboChart, _ChartBase);
 	
@@ -59810,6 +59820,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var LineScatterComboChart = function (_ChartBase) {
 	    _inherits(LineScatterComboChart, _ChartBase);
 	
@@ -59948,6 +59959,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var LineAreaComboChart = function (_ChartBase) {
 	    _inherits(LineAreaComboChart, _ChartBase);
 	
@@ -60321,6 +60333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var PieDonutComboChart = function (_ChartBase) {
 	    _inherits(PieDonutComboChart, _ChartBase);
 	
@@ -60436,6 +60449,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
+	/** Class representing a point. */
 	var PieChart = function (_ChartBase) {
 	    _inherits(PieChart, _ChartBase);
 	
@@ -60535,6 +60549,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
+	/** Class representing a point. */
 	var BubbleChart = function (_ChartBase) {
 	    _inherits(BubbleChart, _ChartBase);
 	
@@ -60687,6 +60702,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
+	/** Class representing a point. */
 	var ScatterChart = function (_ChartBase) {
 	    _inherits(ScatterChart, _ChartBase);
 	
@@ -60813,6 +60829,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var HeatmapChart = function (_ChartBase) {
 	    _inherits(HeatmapChart, _ChartBase);
 	
@@ -61305,6 +61322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var TreemapChart = function (_ChartBase) {
 	    _inherits(TreemapChart, _ChartBase);
 	
@@ -61444,6 +61462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var MapChart = function (_ChartBase) {
 	    _inherits(MapChart, _ChartBase);
 	
@@ -62253,6 +62272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var RadialChart = function (_ChartBase) {
 	    _inherits(RadialChart, _ChartBase);
 	
@@ -62369,6 +62389,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var BoxplotChart = function (_ChartBase) {
 	    _inherits(BoxplotChart, _ChartBase);
 	
@@ -62505,6 +62526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
+	/** Class representing a point. */
 	var BulletChart = function (_ChartBase) {
 	    _inherits(BulletChart, _ChartBase);
 	
