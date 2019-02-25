@@ -7,6 +7,7 @@
 import ChartBase from './chartBase';
 import Series from '../components/series/lineChartSeries';
 
+/** Class representing a point. */
 class RadialChart extends ChartBase {
     /**
      * Radial chart.

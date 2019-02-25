@@ -1,4 +1,4 @@
-## ![Toast UI Chart](https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png)
+# ![Toast UI Chart](https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png)
 
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library
 
@@ -6,6 +6,7 @@
 
 ## Wrappers
 - [toast-ui.vue-chart](https://github.com/nhnent/toast-ui.vue-chart): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+- [toast-ui.react-chart](https://github.com/nhnent/toast-ui.react-chart): React wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
 
 ![chart_animation](https://user-images.githubusercontent.com/35218826/37018282-2a792584-2157-11e8-835f-fac1275d31e0.gif)
 ![all](https://user-images.githubusercontent.com/35218826/37026890-1e2bcfe0-2173-11e8-9b06-3db329d5f477.png)
@@ -90,11 +91,11 @@ With over 50 releases since June 2015 under MIT License, the TOAST UI Chart is t
 
 The TOAST UI Chart provides many types of charts to visualize the various forms of data.
 
-| [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic.html) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic.html)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)(Donut) |
+| [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut)(Donut) |
 | --- | --- | --- | --- |
 | ![2018-03-13 10 33 49](https://user-images.githubusercontent.com/35218826/37317756-151ad090-26aa-11e8-9fa0-74f9d1029bd9.png) | ![2018-03-13 10 44 51](https://user-images.githubusercontent.com/35218826/37318036-9770729c-26ab-11e8-9329-f30bb149e8e7.png) | ![2018-03-13 10 46 31](https://user-images.githubusercontent.com/35218826/37318092-d5c9737c-26ab-11e8-8975-dc6fb56fe99d.png) | ![2018-03-13 10 43 07](https://user-images.githubusercontent.com/35218826/37317996-60189a4a-26ab-11e8-9d5f-bcf5984ee971.png) |
 
-| [Heatmap](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)<br>[Treemap](https://nhnent.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic.html)  |  [Map](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map.html) | [Boxplot](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic.html) | [Bullet](https://nhnent.github.io/tui.chart/latest/tutorial-example15-01-bullet-chart-basic.html) |
+| [Heatmap](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic)<br>[Treemap](https://nhnent.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic)  |  [Map](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map) | [Boxplot](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic) | [Bullet](https://nhnent.github.io/tui.chart/latest/tutorial-example15-01-bullet-chart-basic) |
 | --- | --- | --- | --- |
 | ![2018-03-13 10 47 56](https://user-images.githubusercontent.com/35218826/37318126-07ba5158-26ac-11e8-8a71-3737d2050412.png) | ![2018-03-13 10 51 01](https://user-images.githubusercontent.com/35218826/37318186-76c13c56-26ac-11e8-9e41-5c4ba1bce610.png) | ![2018-03-13 10 59 27](https://user-images.githubusercontent.com/35218826/37318409-a5b03426-26ad-11e8-958f-b497fad5492b.png) | ![2018-03-13 11 01 46](https://user-images.githubusercontent.com/35218826/37318459-f4c7b35e-26ad-11e8-942b-6de4f7f2bb4c.png) |
 
@@ -104,7 +105,7 @@ The TOAST UI Chart provides many types of charts to visualize the various forms 
 
 The TOAST UI Chart covers complex data visualization.
 
-| [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html) |
+| [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter) |
 | --- | --- | --- | --- |
 | ![2018-03-13 11 04 48](https://user-images.githubusercontent.com/35218826/37318532-63adea7c-26ae-11e8-9033-d24f7379a0be.png) | ![2018-03-13 11 06 16](https://user-images.githubusercontent.com/35218826/37318577-980a1a3e-26ae-11e8-87d4-ff6d015839b7.png) | ![2018-03-13 11 07 44](https://user-images.githubusercontent.com/35218826/37318606-cbbf59d4-26ae-11e8-8ec8-9766279346cc.png) | ![2018-03-13 11 19 42](https://user-images.githubusercontent.com/35218826/37318993-80728378-26b0-11e8-929e-389995fd9694.png) |
 
@@ -120,11 +121,11 @@ Visualize the data in different styles by customizing the details of the charts.
 ### And More From Examples
 
 * [Load Data from a table](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/import-chart-data-from-existing-table-element.md)
-* [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)
+* [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically)
 * [Apply themes](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
 * [Map Data Attribution](https://www.amcharts.com/svg-maps/)
 
-Check out [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic.html) and [wiki](https://github.com/nhnent/tui.chart/tree/production/docs/wiki#tutorial) to discover more.
+Check out [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic) and [wiki](https://github.com/nhnent/tui.chart/tree/production/docs/wiki#tutorial) to discover more.
 
 ## 💾 Install
 

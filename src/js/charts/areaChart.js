@@ -9,6 +9,7 @@ import rawDataHandler from '../models/data/rawDataHandler';
 import Series from '../components/series/areaChartSeries';
 import snippet from 'tui-code-snippet';
 
+/** Class representing a point. */
 class AreaChart extends ChartBase {
     /**
      * Area chart.

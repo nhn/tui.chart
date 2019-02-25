@@ -7,6 +7,7 @@ import ChartBase from './chartBase';
 import chartConst from '../const';
 import snippet from 'tui-code-snippet';
 
+/** Class representing a point. */
 class BubbleChart extends ChartBase {
     /**
      * Bubble chart.

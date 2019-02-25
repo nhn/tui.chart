@@ -9,6 +9,7 @@ import chartConst from '../const';
 import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
 
+/** Class representing a point. */
 class BarChart extends ChartBase {
     /**
      * Bar chart.

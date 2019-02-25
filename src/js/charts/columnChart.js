@@ -8,6 +8,7 @@ import ChartBase from './chartBase';
 import chartConst from '../const';
 import rawDataHandler from '../models/data/rawDataHandler';
 
+/** Class representing a point. */
 class ColumnChart extends ChartBase {
     /**
      * Column chart.

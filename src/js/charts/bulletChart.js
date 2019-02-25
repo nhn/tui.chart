@@ -7,6 +7,7 @@
 import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
 
+/** Class representing a point. */
 class BulletChart extends ChartBase {
     /**
      * Bullet chart.

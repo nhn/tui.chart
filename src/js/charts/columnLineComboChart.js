@@ -9,6 +9,7 @@ import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
 import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
 
+/** Class representing a point. */
 class ColumnLineComboChart extends ChartBase {
     /**
      * Column and Line Combo chart.

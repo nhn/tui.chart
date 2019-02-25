@@ -7,6 +7,7 @@
 import ChartBase from './chartBase';
 import snippet from 'tui-code-snippet';
 
+/** Class representing a point. */
 class LineScatterComboChart extends ChartBase {
     /**
      * Line and Scatter Combo chart.

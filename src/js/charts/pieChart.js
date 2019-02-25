@@ -6,6 +6,7 @@
 import ChartBase from './chartBase';
 import chartConst from '../const';
 
+/** Class representing a point. */
 class PieChart extends ChartBase {
     /**
      * Pie chart.
