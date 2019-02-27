@@ -51,7 +51,6 @@ class MapChartDataProcessor extends DataProcessorBase {
      */
     initData(rawData) {
         this.rawData = rawData;
-
         /**
          * value map
          * @type {valueMap}
@@ -112,6 +111,15 @@ class MapChartDataProcessor extends DataProcessorBase {
      */
     getValues() {
         return snippet.pluck(this.getValueMap(), 'value');
+    }
+
+    /**
+     * Get zoomed raw data.
+     * Map chart does not have zoomed data. So, returns rawData.
+     * @returns {*|null}
+     */
+    getZoomedRawData() {
+        return this.rawData;
     }
 
     /**

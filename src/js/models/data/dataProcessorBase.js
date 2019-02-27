@@ -34,6 +34,13 @@ class DataProcessorBase {
     getValues() {}
 
     /**
+     * Get zoomed Raw Data.
+     * @abstract
+     * @returns {Array}
+     */
+    getZoomedRawData() {}
+
+    /**
      * Get max value.
      * @param {?string} chartType - type of chart
      * @param {?string} valueType - type of value like value, x, y, r

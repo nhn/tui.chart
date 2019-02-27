@@ -333,6 +333,13 @@ class MapChartMapModel {
     }
 
     /**
+     * map data init.
+     */
+    initMapData() {
+        this.mapData = null;
+    }
+
+    /**
      * Get map data.
      * @returns {Array.<object>}
      */
