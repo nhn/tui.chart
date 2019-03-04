@@ -122,10 +122,10 @@ class DataProcessor extends DataProcessorBase {
     }
 
     /**
-     * Get zoomed raw data.
+     * Get current data.
      * @returns {*|null}
      */
-    getZoomedRawData() {
+    getCurrentData() {
         let {zoomedRawData} = this;
 
         if (zoomedRawData) {
@@ -179,10 +179,10 @@ class DataProcessor extends DataProcessorBase {
      * @param {Array.<number>} indexRange - index range for zoom
      */
     updateRawDataForZoom(indexRange) {
-        const zoomedRawData = this.getZoomedRawData();
+        const currentData = this.getCurrentData();
         let rawData = this.getRawData();
 
-        this.zoomedRawData = this._filterRawDataByIndexRange(zoomedRawData, indexRange);
+        this.zoomedRawData = this._filterRawDataByIndexRange(currentData, indexRange);
         rawData = this._filterRawDataByIndexRange(rawData, indexRange);
         this.initData(rawData);
     }

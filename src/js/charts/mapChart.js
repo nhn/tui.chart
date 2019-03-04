@@ -71,12 +71,13 @@ class MapChart extends ChartBase {
 
     /**
      * setData
+     * need to clearMapData before setData. To re-generate map data.
      * @param {object} rawData rawData
      * @api
      * @override
      */
     setData(rawData = null) {
-        this.mapModel.initMapData();
+        this.mapModel.clearMapData();
         super.setData(rawData);
     }
 

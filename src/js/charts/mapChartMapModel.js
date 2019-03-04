@@ -333,9 +333,9 @@ class MapChartMapModel {
     }
 
     /**
-     * map data init.
+     * clear map data.
      */
-    initMapData() {
+    clearMapData() {
         this.mapData = null;
     }
 

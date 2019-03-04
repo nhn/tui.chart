@@ -114,11 +114,11 @@ class MapChartDataProcessor extends DataProcessorBase {
     }
 
     /**
-     * Get zoomed raw data.
+     * Get current data.
      * Map chart does not have zoomed data. So, returns rawData.
      * @returns {*|null}
      */
-    getZoomedRawData() {
+    getCurrentData() {
         return this.rawData;
     }
 

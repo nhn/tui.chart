@@ -408,7 +408,7 @@ class ChartBase {
 
         if (!rawData) {
             rawData = rawDataHandler.filterCheckedRawData(
-                dataProcessor.getZoomedRawData(),
+                dataProcessor.getCurrentData(),
                 checkedLegends
             );
         }

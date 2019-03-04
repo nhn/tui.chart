@@ -34,11 +34,11 @@ class DataProcessorBase {
     getValues() {}
 
     /**
-     * Get zoomed Raw Data.
+     * Get current  Data.
      * @abstract
      * @returns {Array}
      */
-    getZoomedRawData() {}
+    getCurrentData() {}
 
     /**
      * Get max value.
