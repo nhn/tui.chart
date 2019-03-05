@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.6.0
+ * @version 3.6.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Feb 25 2019 15:04:20 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Tue Mar 05 2019 16:09:08 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -24944,7 +24944,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        if (!rawData) {
-	            rawData = _rawDataHandler2['default'].filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
+	            rawData = _rawDataHandler2['default'].filterCheckedRawData(dataProcessor.getCurrentData(), checkedLegends);
 	        }
 	
 	        this.dataProcessor.initData(rawData);
@@ -25007,6 +25007,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var theme = _themeManager2['default'].get(themeOptions, chartType, data.series);
 	
 	        this.theme = theme;
+	        this.componentManager.presetBeforeRerender();
 	        this.componentManager.presetForChangeData(theme);
 	        this.protectedRerender(dataProcessor.getLegendVisibility());
 	    };
@@ -25855,6 +25856,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.components.push(component);
 	            this.componentMap[name] = component;
 	        }
+	    };
+	
+	    /**
+	     * Preset before rerender
+	     */
+	
+	
+	    ComponentManager.prototype.presetBeforeRerender = function presetBeforeRerender() {
+	        this.componentMap.mouseEventDetector.presetBeforeRerender();
 	    };
 	
 	    /**
@@ -36753,6 +36763,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    /**
+	     * preset zoom data before rerender.
+	     */
+	    presetBeforeRerender: function presetBeforeRerender() {
+	        if (this.resetZoomBtn) {
+	            this.mouseEventDetectorContainer.removeChild(this.resetZoomBtn);
+	            this.resetZoomBtn = null;
+	        }
+	        this._hideTooltip();
+	        this.prevDistanceOfRange = null;
+	    },
+	
+	
+	    /**
 	     * Show tooltip after zoom.
 	     * @private
 	     */
@@ -41933,6 +41956,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._setMapRatio();
 	    };
 	
+	    /**
+	     * Rerender series component.
+	     * @param {object} data data for rendering
+	     */
+	
+	
 	    MapChartSeries.prototype.rerender = function rerender(data) {
 	        _series2['default'].prototype.rerender.call(this, data);
 	        this.seriesSet = this.graphRenderer.sectorSet;
@@ -45403,12 +45432,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
-	     * Get zoomed raw data.
+	     * Get current data.
 	     * @returns {*|null}
 	     */
 	
 	
-	    DataProcessor.prototype.getZoomedRawData = function getZoomedRawData() {
+	    DataProcessor.prototype.getCurrentData = function getCurrentData() {
 	        var zoomedRawData = this.zoomedRawData;
 	
 	
@@ -45477,10 +45506,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype.updateRawDataForZoom = function updateRawDataForZoom(indexRange) {
-	        var zoomedRawData = this.getZoomedRawData();
+	        var currentData = this.getCurrentData();
 	        var rawData = this.getRawData();
 	
-	        this.zoomedRawData = this._filterRawDataByIndexRange(zoomedRawData, indexRange);
+	        this.zoomedRawData = this._filterRawDataByIndexRange(currentData, indexRange);
 	        rawData = this._filterRawDataByIndexRange(rawData, indexRange);
 	        this.initData(rawData);
 	    };
@@ -46964,6 +46993,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessorBase.prototype.getValues = function getValues() {};
+	
+	    /**
+	     * Get current  Data.
+	     * @abstract
+	     * @returns {Array}
+	     */
+	
+	
+	    DataProcessorBase.prototype.getCurrentData = function getCurrentData() {};
 	
 	    /**
 	     * Get max value.
@@ -55669,8 +55707,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    LineAreaComboChart.prototype.onChangeCheckedLegends = function onChangeCheckedLegends(checkedLegends) {
-	        var zoomedRawData = this.dataProcessor.getZoomedRawData();
-	        var rawData = _rawDataHandler2['default'].filterCheckedRawData(zoomedRawData, checkedLegends);
+	        var currentData = this.dataProcessor.getCurrentData();
+	        var rawData = _rawDataHandler2['default'].filterCheckedRawData(currentData, checkedLegends);
 	        var typeData = (0, _validTypeMakerForYAxisOptions2['default'])({
 	            rawSeriesData: rawData.series,
 	            yAxisOptions: this.options.yAxis
@@ -57157,11 +57195,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    MapChart.prototype.addComponents = function addComponents() {
 	        var seriesTheme = this.theme.series[this.chartType];
-	        var mapModel = new _mapChartMapModel2['default'](this.dataProcessor, this.options.map);
 	        var colorSpectrum = new _colorSpectrum2['default'](seriesTheme.startColor, seriesTheme.endColor);
+	        this.mapModel = new _mapChartMapModel2['default'](this.dataProcessor, this.options.map);
 	
 	        this.componentManager.register('mapSeries', 'mapSeries', {
-	            mapModel: mapModel,
+	            mapModel: this.mapModel,
 	            colorSpectrum: colorSpectrum
 	        });
 	
@@ -57172,12 +57210,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	
 	        this.componentManager.register('tooltip', 'tooltip', {
-	            mapModel: mapModel,
+	            mapModel: this.mapModel,
 	            colorSpectrum: colorSpectrum
 	        });
 	
 	        this.componentManager.register('zoom', 'zoom');
 	        this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
+	    };
+	
+	    /**
+	     * setData
+	     * need to clearMapData before setData. To re-generate map data.
+	     * @param {object} rawData rawData
+	     * @api
+	     * @override
+	     */
+	
+	
+	    MapChart.prototype.setData = function setData() {
+	        var rawData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+	
+	        this.mapModel.clearMapData();
+	        _ChartBase.prototype.setData.call(this, rawData);
 	    };
 	
 	    /**
@@ -57604,6 +57658,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
+	     * clear map data.
+	     */
+	
+	
+	    MapChartMapModel.prototype.clearMapData = function clearMapData() {
+	        this.mapData = null;
+	    };
+	
+	    /**
 	     * Get map data.
 	     * @returns {Array.<object>}
 	     */
@@ -57785,7 +57848,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    MapChartDataProcessor.prototype.initData = function initData(rawData) {
 	        this.rawData = rawData;
-	
 	        /**
 	         * value map
 	         * @type {valueMap}
@@ -57852,6 +57914,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    MapChartDataProcessor.prototype.getValues = function getValues() {
 	        return _tuiCodeSnippet2['default'].pluck(this.getValueMap(), 'value');
+	    };
+	
+	    /**
+	     * Get current data.
+	     * Map chart does not have zoomed data. So, returns rawData.
+	     * @returns {*|null}
+	     */
+	
+	
+	    MapChartDataProcessor.prototype.getCurrentData = function getCurrentData() {
+	        return this.rawData;
 	    };
 	
 	    /**
