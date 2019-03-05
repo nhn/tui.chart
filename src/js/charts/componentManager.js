@@ -218,6 +218,13 @@ class ComponentManager {
     }
 
     /**
+     * Preset before rerender
+     */
+    presetBeforeRerender() {
+        this.componentMap.mouseEventDetector.presetBeforeRerender();
+    }
+
+    /**
      * Preset components for setData
      * @param {object} theme theme object
      * @ignore

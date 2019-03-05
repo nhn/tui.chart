@@ -464,6 +464,7 @@ class ChartBase {
         const theme = themeManager.get(themeOptions, chartType, data.series);
 
         this.theme = theme;
+        this.componentManager.presetBeforeRerender();
         this.componentManager.presetForChangeData(theme);
         this.protectedRerender(dataProcessor.getLegendVisibility());
     }
