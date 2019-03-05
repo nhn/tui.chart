@@ -13,7 +13,7 @@ describe('Test for ChartBase', () => {
     let chartBase, chartBaseOption, componentManager, boundsModel;
 
     beforeAll(() => {
-        componentManager = jasmine.createSpyObj('componentManager', ['where', 'presetForChangeData']);
+        componentManager = jasmine.createSpyObj('componentManager', ['where', 'presetForChangeData', 'presetBeforeRerender']);
         boundsModel = jasmine.createSpyObj('boundsModel', ['initBoundsData', 'getDimension']);
     });
 
@@ -302,10 +302,11 @@ describe('Test for ChartBase', () => {
             expect(chartBase.dataProcessor.initData).toHaveBeenCalled();
         });
 
-        it('componentManager should be running presetForChangeData.', () => {
+        it('componentManager should be running presetForChangeData and presetBeforeRerender.', () => {
             chartBase.setData(rawData);
 
             expect(componentManager.presetForChangeData).toHaveBeenCalled();
+            expect(componentManager.presetBeforeRerender).toHaveBeenCalled();
         });
 
         it('protectedRerender () must be executed.', () => {
