@@ -46,13 +46,6 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
     }
 
     /**
-     * preset zoom data before rerender.
-     */
-    presetBeforeRerender() {
-        this._presetBeforeRerender();
-    }
-
-    /**
      * Animate for adding data.
      */
     animateForAddingData() {

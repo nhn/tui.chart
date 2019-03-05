@@ -88,7 +88,10 @@ export default {
         this.resetZoomBtn = null;
     },
 
-    _presetBeforeRerender() {
+    /**
+     * preset zoom data before rerender.
+     */
+    presetBeforeRerender() {
         if (this.resetZoomBtn) {
             this.mouseEventDetectorContainer.removeChild(this.resetZoomBtn);
             this.resetZoomBtn = null;
