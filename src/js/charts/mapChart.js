@@ -46,11 +46,11 @@ class MapChart extends ChartBase {
      */
     addComponents() {
         const seriesTheme = this.theme.series[this.chartType];
-        const mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
         const colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+        this.mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 
         this.componentManager.register('mapSeries', 'mapSeries', {
-            mapModel,
+            mapModel: this.mapModel,
             colorSpectrum
         });
 
@@ -61,12 +61,24 @@ class MapChart extends ChartBase {
         });
 
         this.componentManager.register('tooltip', 'tooltip', {
-            mapModel,
+            mapModel: this.mapModel,
             colorSpectrum
         });
 
         this.componentManager.register('zoom', 'zoom');
         this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
+    }
+
+    /**
+     * setData
+     * need to clearMapData before setData. To re-generate map data.
+     * @param {object} rawData rawData
+     * @api
+     * @override
+     */
+    setData(rawData = null) {
+        this.mapModel.clearMapData();
+        super.setData(rawData);
     }
 
     /**

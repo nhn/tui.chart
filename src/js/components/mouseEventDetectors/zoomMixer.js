@@ -89,6 +89,18 @@ export default {
     },
 
     /**
+     * preset zoom data before rerender.
+     */
+    presetBeforeRerender() {
+        if (this.resetZoomBtn) {
+            this.mouseEventDetectorContainer.removeChild(this.resetZoomBtn);
+            this.resetZoomBtn = null;
+        }
+        this._hideTooltip();
+        this.prevDistanceOfRange = null;
+    },
+
+    /**
      * Show tooltip after zoom.
      * @private
      */

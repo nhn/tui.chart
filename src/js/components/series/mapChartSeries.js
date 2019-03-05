@@ -150,6 +150,10 @@ class MapChartSeries extends Series {
         this._setMapRatio();
     }
 
+    /**
+     * Rerender series component.
+     * @param {object} data data for rendering
+     */
     rerender(data) {
         Series.prototype.rerender.call(this, data);
         this.seriesSet = this.graphRenderer.sectorSet;

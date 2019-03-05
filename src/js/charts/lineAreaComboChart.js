@@ -62,8 +62,8 @@ class LineAreaComboChart extends ChartBase {
      * @ignore
      */
     onChangeCheckedLegends(checkedLegends) {
-        const zoomedRawData = this.dataProcessor.getZoomedRawData();
-        const rawData = rawDataHandler.filterCheckedRawData(zoomedRawData, checkedLegends);
+        const currentData = this.dataProcessor.getCurrentData();
+        const rawData = rawDataHandler.filterCheckedRawData(currentData, checkedLegends);
         const typeData = validTypeMakerForYAxisOptions({
             rawSeriesData: rawData.series,
             yAxisOptions: this.options.yAxis
