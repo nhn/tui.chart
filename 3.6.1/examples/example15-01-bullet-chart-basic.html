@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head lang='kr'>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=Edge'/>
+    <title>[Bullet Chart] basic</title>
+    <link rel='stylesheet' type='text/css' href='../dist/tui-chart.css'/>
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css'/>
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css'/>
+    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+</head>
+<body>
+<div class='wrap'>
+    <div class='code-html' id='code-html'>
+        <div id='chart-area'></div>
+    </div>
+    <div class='custom-area'>
+        <div id='error-dim'>
+            <span id='error-text'></span>
+            <div id='error-stack'></div>
+            <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+        </div>
+        <div class="try-it-area">
+            <h3>try it</h3>
+            <textarea id="code"></textarea>
+            <div class="apply-btn-area">
+                <button class="btn" onclick='evaluationCode(chartCM, codeString);'>Run it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Import chart.js and dependencies-->
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.7/core.js'></script>
+<script type='text/javascript' src='https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js'></script>
+<script type='text/javascript' src='https://uicdn.toast.com/tui.chart/latest/raphael.js'></script>
+<script src='../dist/tui-chart.js'></script>
+<script class='code-js' id='code-js'>
+var container = document.getElementById('chart-area');
+var data = {
+    categories: ['July', 'August'],
+    series: [{
+        name: 'Budget',
+        data: 25,
+        markers: [28, 2, 15],
+        ranges: [[-1, 10], [10, 20], [20, 30]]
+    }, {
+        name: 'Hello',
+        data: 11,
+        markers: [20],
+        ranges: [[0, 8], [8, 15]]
+    }, {
+        name: 'World',
+        data: 30,
+        markers: [25],
+        ranges: [[0, 10], [10, 19], [19, 28]]
+    }, {
+        name: 'Income',
+        data: 23,
+        markers: [],
+        ranges: [[19, 25], [13, 19], [0, 13]]
+    }]
+};
+var options = {
+    chart: {
+        width: 1160,
+        height: 500,
+        title: 'Monthly Revenue',
+        format: '1,000'
+    },
+    legend: {
+        visible: true
+    },
+    xAxis: {
+        max: 35
+    },
+    series: {
+        showLabel: true,
+        vertical: false
+    }
+};
+var theme = {
+    series: {
+        ranges: [{ color: 'gray', opacity: 0.7 },
+            null,
+            { color: 'purple' }
+        ]
+    }
+};
+
+// For apply theme
+
+tui.chart.registerTheme('myTheme', theme);
+options.theme = 'myTheme';
+
+tui.chart.bulletChart(container, data, options);
+</script>
+
+<!--For tutorial page-->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/matchbrackets.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/selection/active-line.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/javascript/javascript.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/javascript-lint.js'></script>
+<script src='./js/example.js'></script>
+</body>
+</html>
