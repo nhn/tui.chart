@@ -6,6 +6,8 @@
 import MouseEventDetectorBase from './mouseEventDetectorBase';
 import chartConst from '../../const';
 import dom from '../../helpers/domHandler';
+import predicate from '../../helpers/predicate';
+import arrayUtil from '../../helpers/arrayUtil';
 import renderUtil from '../../helpers/renderUtil';
 import eventListener from '../../helpers/eventListener';
 import snippet from 'tui-code-snippet';
@@ -303,15 +305,12 @@ export default {
 
     /**
      * Adjust index range for ensure three indexes.
-     * @param {number} startIndex - start index
-     * @param {number} endIndex - end index
+     * @param {number} distanceOfRange - distance of range
+     * @param {Array} indexRange - index range
      * @returns {Array.<number>}
      * @private
      */
-    _adjustIndexRange(startIndex, endIndex) {
-        const indexRange = [startIndex, endIndex].sort((a, b) => a - b);
-        const distanceOfRange = indexRange[1] - indexRange[0];
-
+    _changeIndexToHaveMinimumIndexes(distanceOfRange, indexRange) {
         if (distanceOfRange === 0) {
             if (indexRange[0] === 0) {
                 indexRange[1] += 2;
@@ -328,6 +327,20 @@ export default {
         }
 
         return indexRange;
+    },
+
+    /**
+     * Adjust index range for ensure three indexes.
+     * @param {number} startIndex - start index
+     * @param {number} endIndex - end index
+     * @returns {Array.<number>}
+     * @private
+     */
+    _adjustIndexRange(startIndex, endIndex) {
+        const indexRange = [startIndex, endIndex].sort((a, b) => a - b);
+        const distanceOfRange = indexRange[1] - indexRange[0];
+
+        return this._changeIndexToHaveMinimumIndexes(distanceOfRange, indexRange);
     },
 
     /**
@@ -348,6 +361,50 @@ export default {
         this.prevDistanceOfRange = distanceOfRange;
         this.reverseMove = reverseMove;
         this.eventBus.fire('zoom', indexRange);
+    },
+
+    /**
+     * Adjust value range for ensure three indexes.
+     * @param {number} startValue - start index
+     * @param {number} endValue - end index
+     * @returns {Array.<number>}
+     * @private
+     */
+    _adjustValueRange(startValue, endValue) {
+        let startValueIndex, endValueIndex;
+        const {integratedXAxisData, options: {xAxis: xAxisOptions}} = this.dataProcessor;
+        const isDatetime = predicate.isDatetimeType(xAxisOptions.type);
+
+        if (isDatetime) {
+            startValueIndex = arrayUtil.findIndexFromDateTypeArray(integratedXAxisData, new Date(startValue));
+            endValueIndex = arrayUtil.findIndexFromDateTypeArray(integratedXAxisData, new Date(endValue));
+        } else {
+            startValueIndex = integratedXAxisData.indexOf(startValue);
+            endValueIndex = integratedXAxisData.indexOf(endValue);
+        }
+
+        let indexRange = [startValueIndex, endValueIndex].sort((a, b) => a - b);
+        const distanceOfRange = indexRange[1] - indexRange[0];
+        indexRange = this._changeIndexToHaveMinimumIndexes(distanceOfRange, indexRange);
+
+        return [integratedXAxisData[indexRange[0]], integratedXAxisData[indexRange[1]]];
+    },
+
+    /**
+     * Fire zoom mouse event detector for coordinateChart.
+     * @param {object} startIndexes - start index
+     * @param {object} endIndexes - end index
+     * @private
+     */
+    _fireZoomForCoordinateChart(startIndexes, endIndexes) {
+        const {index: startIndex, groupIndex: startGroupIndex} = startIndexes;
+        const {index: endIndex, groupIndex: endGroupIndex} = endIndexes;
+        const seriesData = this.dataProcessor.rawData.series.line;
+        const [startValue] = seriesData[startIndex].data[startGroupIndex];
+        const [endValue] = seriesData[endIndex].data[endGroupIndex];
+        const valueRange = this._adjustValueRange(startValue, endValue);
+
+        this.eventBus.fire('zoom', valueRange);
     },
 
     /**
@@ -390,7 +447,11 @@ export default {
             this.dragEndIndexes = foundedDragEndData.indexes;
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
-            this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
+            if (this.dataProcessor.isCoordinateType()) {
+                this._fireZoomForCoordinateChart(this.dragStartIndexes, this.dragEndIndexes);
+            } else {
+                this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
+            }
         } else {
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();

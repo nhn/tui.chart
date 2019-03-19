@@ -111,6 +111,41 @@ class DataProcessor extends DataProcessorBase {
         this.initData(rawData);
         this.initZoomedRawData();
         this.baseInit();
+
+        if (this.isCoordinateType()) {
+            this.integratedXAxisData = this._integrateXAxisData();
+        }
+    }
+
+    /**
+     * make integrated X Axis Data for coordinate chart
+     * @returns {array} integratedXAxisData
+     */
+    _integrateXAxisData() {
+        const seriesData = this.rawData.series.line;
+        const options = this.options.xAxis || {};
+        let integratedXAxisData = [];
+        let isDateTime = false;
+
+        if (snippet.isArray(options)) {
+            isDateTime = options.filter(option => option.type && predicate.isDatetimeType(option.type));
+        } else {
+            isDateTime = options.type && predicate.isDatetimeType(options.type);
+        }
+
+        seriesData.forEach(seriesDatum => {
+            seriesDatum.data.forEach(data => {
+                integratedXAxisData.push(data[0]);
+            });
+        });
+
+        integratedXAxisData = [...new Set(integratedXAxisData)];
+
+        if (isDateTime) {
+            integratedXAxisData = integratedXAxisData.map(data => new Date(data));
+        }
+
+        return integratedXAxisData.sort((a, b) => a - b);
     }
 
     /**
@@ -175,15 +210,61 @@ class DataProcessor extends DataProcessorBase {
     }
 
     /**
-     * Update raw data for zoom
-     * @param {Array.<number>} indexRange - index range for zoom
+     * Filter seriesData by value.
+     * @param {Array.<{data: Array}>} seriesData - series data
+     * @param {number} minValue - minimum value
+     * @param {number} maxValue - maximum value
+     * @returns {Array.<Array.<object>>}
+     * @private
      */
-    updateRawDataForZoom(indexRange) {
+    _filterSeriesDataByValue(seriesData, minValue, maxValue) {
+        const isDatetime = predicate.isDatetimeType(this.options.xAxis.type);
+
+        seriesData.forEach(seriesDatum => {
+            seriesDatum.data = seriesDatum.data.filter(data => {
+                const xAxisValue = isDatetime ? new Date(data[0]) : data[0];
+
+                return xAxisValue >= minValue && xAxisValue <= maxValue;
+            });
+        });
+
+        return seriesData;
+    }
+
+    /**
+     * Filter raw data by value.
+     * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
+     * @param {Array.<number>} valueRange - value range for zoom
+     * @returns {*}
+     * @private
+     */
+    _filterRawDataByValue(rawData, valueRange) {
+        const [minValue, maxValue] = valueRange;
+
+        Object.entries(rawData.series).forEach(([seriesType, seriesDataSet]) => {
+            rawData.series[seriesType] = this._filterSeriesDataByValue(seriesDataSet, minValue, maxValue);
+        });
+
+        return rawData;
+    }
+
+    /**
+     * Update raw data for zoom
+     * @param {Array.<number>} range - index or value range for zoom
+     */
+    updateRawDataForZoom(range) {
         const currentData = this.getCurrentData();
         let rawData = this.getRawData();
+        const isCoordinateChart = this.isCoordinateType();
 
-        this.zoomedRawData = this._filterRawDataByIndexRange(currentData, indexRange);
-        rawData = this._filterRawDataByIndexRange(rawData, indexRange);
+        if (isCoordinateChart) {
+            this.zoomedRawData = this._filterRawDataByValue(currentData, range);
+            rawData = this._filterRawDataByValue(rawData, range);
+        } else {
+            this.zoomedRawData = this._filterRawDataByIndexRange(currentData, range);
+            rawData = this._filterRawDataByIndexRange(rawData, range);
+        }
+
         this.initData(rawData);
     }
 
