@@ -305,28 +305,32 @@ export default {
 
     /**
      * Adjust index range for ensure three indexes.
-     * @param {number} distanceOfRange - distance of range
-     * @param {Array} indexRange - index range
-     * @returns {Array.<number>}
+     * @param {Array.<{startIndex: number, endIndex: number}>} indexRange - index range
+     * @returns {object} startIndex, endIndex
      * @private
      */
-    _changeIndexToHaveMinimumIndexes(distanceOfRange, indexRange) {
+    _changeIndexToHaveMinimumIndexes([startIndex, endIndex]) {
+        const distanceOfRange = endIndex - startIndex;
+
         if (distanceOfRange === 0) {
-            if (indexRange[0] === 0) {
-                indexRange[1] += 2;
+            if (startIndex === 0) {
+                endIndex += 2;
             } else {
-                indexRange[0] -= 1;
-                indexRange[1] += 1;
+                startIndex -= 1;
+                endIndex += 1;
             }
         } else if (distanceOfRange === 1) {
-            if (indexRange[0] === 0) {
-                indexRange[1] += 1;
+            if (startIndex === 0) {
+                endIndex += 1;
             } else {
-                indexRange[0] -= 1;
+                startIndex -= 1;
             }
         }
 
-        return indexRange;
+        return {
+            startIndex,
+            endIndex
+        };
     },
 
     /**
@@ -338,9 +342,8 @@ export default {
      */
     _adjustIndexRange(startIndex, endIndex) {
         const indexRange = [startIndex, endIndex].sort((a, b) => a - b);
-        const distanceOfRange = indexRange[1] - indexRange[0];
 
-        return this._changeIndexToHaveMinimumIndexes(distanceOfRange, indexRange);
+        return this._changeIndexToHaveMinimumIndexes(indexRange);
     },
 
     /**
@@ -363,8 +366,9 @@ export default {
      */
     _fireZoomUsingIndex(startIndex, endIndex) {
         const reverseMove = startIndex > endIndex;
-        const indexRange = this._adjustIndexRange(startIndex, endIndex);
-        const distanceOfRange = indexRange[1] - indexRange[0];
+        const {startIndex: adjustedStartIndex, endIndex: adjustedEndIndex}
+            = this._adjustIndexRange(startIndex, endIndex);
+        const distanceOfRange = adjustedEndIndex - adjustedStartIndex;
 
         if (this.prevDistanceOfRange === distanceOfRange) {
             return;
@@ -372,7 +376,7 @@ export default {
 
         this.prevDistanceOfRange = distanceOfRange;
         this.reverseMove = reverseMove;
-        this.eventBus.fire('zoom', indexRange);
+        this.eventBus.fire('zoom', [adjustedStartIndex, adjustedEndIndex]);
     },
 
     /**
@@ -395,11 +399,10 @@ export default {
             endValueIndex = integratedXAxisData.indexOf(endValue);
         }
 
-        let indexRange = [startValueIndex, endValueIndex].sort((a, b) => a - b);
-        const distanceOfRange = indexRange[1] - indexRange[0];
-        indexRange = this._changeIndexToHaveMinimumIndexes(distanceOfRange, indexRange);
+        const indexRange = [startValueIndex, endValueIndex].sort((a, b) => a - b);
+        const {startIndex, endIndex} = this._changeIndexToHaveMinimumIndexes(indexRange);
 
-        return [integratedXAxisData[indexRange[0]], integratedXAxisData[indexRange[1]]];
+        return [integratedXAxisData[startIndex], integratedXAxisData[endIndex]];
     },
 
     /**

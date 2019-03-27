@@ -82,49 +82,49 @@ describe('Test for zoomMixer', () => {
         it('should make ranges of index from startIndex and endIndex.', () => {
             const actual = zoomMixer._adjustIndexRange(2, 5);
 
-            expect(actual).toEqual([2, 5]);
+            expect(actual).toEqual({startIndex: 2, endIndex: 5});
         });
 
         it('should switch order of startIndex and endIndex, if startIndex is less than endIndex.', () => {
             const actual = zoomMixer._adjustIndexRange(8, 5);
 
-            expect(actual).toEqual([5, 8]);
+            expect(actual).toEqual({startIndex: 5, endIndex: 8});
         });
 
         it('should change endIndex to 2, if startIndex and endIndex are 0', () => {
             const actual = zoomMixer._adjustIndexRange(0, 0);
 
-            expect(actual).toEqual([0, 2]);
+            expect(actual).toEqual({startIndex: 0, endIndex: 2});
         });
 
         it('should make ranges to [startIndex - 1, endIndex + 1], if startIndex and endIndex are not 0.', () => {
             const actual = zoomMixer._adjustIndexRange(2, 2);
 
-            expect(actual).toEqual([1, 3]);
+            expect(actual).toEqual({startIndex: 1, endIndex: 3});
         });
 
         it('should set ranges [startIndex, endIndex + 1], if startIndex is 0 and endIndex is 1.', () => {
             const actual = zoomMixer._adjustIndexRange(0, 1);
 
-            expect(actual).toEqual([0, 2]);
+            expect(actual).toEqual({startIndex: 0, endIndex: 2});
         });
 
         it('should set reanges [startIndex -1, endIndex], when (startIndex === endIndex - 1 && startIndex !== 0)', () => {
             const actual = zoomMixer._adjustIndexRange(5, 6);
 
-            expect(actual).toEqual([4, 6]);
+            expect(actual).toEqual({startIndex: 4, endIndex: 6});
         });
 
         it('should return as it is, if (startIndex - endIndex) > 1.', () => {
             const actual = zoomMixer._adjustIndexRange(5, 10);
 
-            expect(actual).toEqual([5, 10]);
+            expect(actual).toEqual({startIndex: 5, endIndex: 10});
         });
 
         it('should switch startIndex and endIndex, if (endIndex - startIndex) > 1.', () => {
             const actual = zoomMixer._adjustIndexRange(15, 10);
 
-            expect(actual).toEqual([10, 15]);
+            expect(actual).toEqual({startIndex: 10, endIndex: 15});
         });
     });
 });

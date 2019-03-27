@@ -181,11 +181,13 @@ class DataProcessor extends DataProcessorBase {
      * @private
      */
     _filterSeriesDataByIndexRange(seriesData, startIndex, endIndex) {
-        seriesData.forEach(seriesDatum => {
+        const series = [...seriesData];
+
+        series.forEach(seriesDatum => {
             seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
         });
 
-        return seriesData;
+        return series;
     }
 
     /**
@@ -197,16 +199,17 @@ class DataProcessor extends DataProcessorBase {
      */
     _filterRawDataByIndexRange(rawData, indexRange) {
         const [startIndex, endIndex] = indexRange;
+        const data = Object.assign({}, rawData);
 
-        Object.entries(rawData.series).forEach(([seriesType, seriesDataSet]) => {
-            rawData.series[seriesType] = this._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+        Object.entries(data.series).forEach(([seriesType, seriesDataSet]) => {
+            data.series[seriesType] = this._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 
-        if (rawData.categories) {
-            rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+        if (data.categories) {
+            data.categories = data.categories.slice(startIndex, endIndex + 1);
         }
 
-        return rawData;
+        return data;
     }
 
     /**
@@ -219,8 +222,9 @@ class DataProcessor extends DataProcessorBase {
      */
     _filterSeriesDataByValue(seriesData, minValue, maxValue) {
         const isDatetime = predicate.isDatetimeType(this.options.xAxis.type);
+        const series = [...seriesData];
 
-        seriesData.forEach(seriesDatum => {
+        series.forEach(seriesDatum => {
             seriesDatum.data = seriesDatum.data.filter(data => {
                 const xAxisValue = isDatetime ? new Date(data[0]) : data[0];
 
@@ -228,7 +232,7 @@ class DataProcessor extends DataProcessorBase {
             });
         });
 
-        return seriesData;
+        return series;
     }
 
     /**
@@ -240,12 +244,13 @@ class DataProcessor extends DataProcessorBase {
      */
     _filterRawDataByValue(rawData, valueRange) {
         const [minValue, maxValue] = valueRange;
+        const data = Object.assign({}, rawData);
 
-        Object.entries(rawData.series).forEach(([seriesType, seriesDataSet]) => {
-            rawData.series[seriesType] = this._filterSeriesDataByValue(seriesDataSet, minValue, maxValue);
+        Object.entries(data.series).forEach(([seriesType, seriesDataSet]) => {
+            data.series[seriesType] = this._filterSeriesDataByValue(seriesDataSet, minValue, maxValue);
         });
 
-        return rawData;
+        return data;
     }
 
     /**
@@ -255,9 +260,8 @@ class DataProcessor extends DataProcessorBase {
     updateRawDataForZoom(range) {
         const currentData = this.getCurrentData();
         let rawData = this.getRawData();
-        const isCoordinateChart = this.isCoordinateType();
 
-        const getZoomedRawData = isCoordinateChart ?
+        const getZoomedRawData = this.isCoordinateType() ?
             this._filterRawDataByValue.bind(this) : this._filterRawDataByIndexRange.bind(this);
 
         this.zoomedRawData = getZoomedRawData(currentData, range);
