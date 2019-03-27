@@ -185,6 +185,7 @@ function findIndexFromDateTypeArray(dateArray, date) {
     for (const [idx, value] of dateArray.entries()) {
         if (Number(value) === dateValue) {
             foundIndex = idx;
+            break;
         }
     }
 

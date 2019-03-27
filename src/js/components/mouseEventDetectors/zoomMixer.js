@@ -345,11 +345,23 @@ export default {
 
     /**
      * Fire zoom mouse event detector.
+     * @private
+     */
+    _fireZoom() {
+        if (this.dataProcessor.isCoordinateType()) {
+            this._fireZoomUsingValue(this.dragStartIndexes, this.dragEndIndexes);
+        } else {
+            this._fireZoomUsingIndex(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
+        }
+    },
+
+    /**
+     * Fire zoom mouse event detector using Index.
      * @param {number} startIndex - start index
      * @param {number} endIndex - end index
      * @private
      */
-    _fireZoom(startIndex, endIndex) {
+    _fireZoomUsingIndex(startIndex, endIndex) {
         const reverseMove = startIndex > endIndex;
         const indexRange = this._adjustIndexRange(startIndex, endIndex);
         const distanceOfRange = indexRange[1] - indexRange[0];
@@ -396,7 +408,7 @@ export default {
      * @param {object} endIndexes - end index
      * @private
      */
-    _fireZoomForCoordinateChart(startIndexes, endIndexes) {
+    _fireZoomUsingValue(startIndexes, endIndexes) {
         const {index: startIndex, groupIndex: startGroupIndex} = startIndexes;
         const {index: endIndex, groupIndex: endGroupIndex} = endIndexes;
         const seriesData = this.dataProcessor.rawData.series.line;
@@ -447,11 +459,7 @@ export default {
             this.dragEndIndexes = foundedDragEndData.indexes;
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
-            if (this.dataProcessor.isCoordinateType()) {
-                this._fireZoomForCoordinateChart(this.dragStartIndexes, this.dragEndIndexes);
-            } else {
-                this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
-            }
+            this._fireZoom();
         } else {
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();

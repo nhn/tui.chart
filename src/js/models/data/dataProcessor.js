@@ -257,13 +257,11 @@ class DataProcessor extends DataProcessorBase {
         let rawData = this.getRawData();
         const isCoordinateChart = this.isCoordinateType();
 
-        if (isCoordinateChart) {
-            this.zoomedRawData = this._filterRawDataByValue(currentData, range);
-            rawData = this._filterRawDataByValue(rawData, range);
-        } else {
-            this.zoomedRawData = this._filterRawDataByIndexRange(currentData, range);
-            rawData = this._filterRawDataByIndexRange(rawData, range);
-        }
+        const getZoomedRawData = isCoordinateChart ?
+            this._filterRawDataByValue.bind(this) : this._filterRawDataByIndexRange.bind(this);
+
+        this.zoomedRawData = getZoomedRawData(currentData, range);
+        rawData = getZoomedRawData(rawData, range);
 
         this.initData(rawData);
     }
