@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for axisCalculator.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import axisCalculator from '../../../src/js/models/bounds/axisCalculator';
 import renderUtil from '../../../src/js/helpers/renderUtil';

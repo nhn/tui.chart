@@ -1,7 +1,7 @@
 /**
  * @fileoverview test bubble chart series
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import snippet from 'tui-code-snippet';
 import bubbleSeriesFactory from '../../../src/js/components/series/bubbleChartSeries';

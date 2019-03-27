@@ -1,8 +1,8 @@
 /**
  * @fileoverview BoundsTypeEventDetector is mouse event detector for bounds type charts
  *                                                                              like bar, column, heatmap, treemap.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import EventDetectorBase from './mouseEventDetectorBase';

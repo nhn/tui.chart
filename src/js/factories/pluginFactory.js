@@ -1,8 +1,8 @@
 /**
  * @fileoverview  Plugin factory play role register rendering plugin.
  *                Also, you can get plugin from this factory.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import chartConst from '../const';
 

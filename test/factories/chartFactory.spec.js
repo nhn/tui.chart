@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for chartFactory.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import chartFactory from '../../src/js/factories/chartFactory.js';
 

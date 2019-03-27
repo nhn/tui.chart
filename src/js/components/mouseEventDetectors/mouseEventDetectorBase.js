@@ -1,7 +1,7 @@
 /**
  * @fileoverview MouseEventDetectorBase is base class for mouse event detector components.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import TickBaseCoordinateModel from './tickBaseCoordinateModel';

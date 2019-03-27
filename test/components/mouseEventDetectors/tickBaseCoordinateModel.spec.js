@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for TickBaseCoordinateModel.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import TickBaseCoordinateModel from '../../../src/js/components/mouseEventDetectors/tickBaseCoordinateModel';
 

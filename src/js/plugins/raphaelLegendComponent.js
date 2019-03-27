@@ -1,7 +1,7 @@
 /**
  * @fileoverview Raphael title renderer.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import chartConst from '../const';
@@ -26,7 +26,7 @@ function getIconWidth() {
 }
 
 // const RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
-class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */ 
+class RaphaelLegendComponent { /** @lends RaphaelLegendComponent.prototype */
     constructor() {
         /**
          * @type {number}

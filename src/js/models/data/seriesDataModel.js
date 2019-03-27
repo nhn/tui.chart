@@ -2,8 +2,8 @@
  * @fileoverview SeriesDataModel is base model for drawing graph of chart series area,
  *                  and create from rawSeriesData by user,
  * SeriesDataModel.groups has SeriesGroups.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 /*

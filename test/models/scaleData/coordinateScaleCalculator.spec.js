@@ -1,7 +1,7 @@
 /**
  * @fileoverview Calculate coordinateType scale data
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import csc from '../../../src/js/models/scaleData/coordinateScaleCalculator';
 

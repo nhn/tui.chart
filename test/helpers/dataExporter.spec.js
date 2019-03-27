@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for dataExporter.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import chartExporter from '../../src/js/helpers/chartExporter';

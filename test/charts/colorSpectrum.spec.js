@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for ColorSpectrum.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import ColorSpectrum from '../../src/js/charts/colorSpectrum';

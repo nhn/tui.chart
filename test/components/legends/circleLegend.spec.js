@@ -1,7 +1,7 @@
 /**
  * @fileoverview test circleLegend
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import circleLegendFactory from '../../../src/js/components/legends/circleLegend';
 

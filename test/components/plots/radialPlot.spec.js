@@ -1,7 +1,7 @@
 /**
  * @fileoverview test radial plot
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import radialPlotFactory from '../../../src/js/components/plots/radialPlot';
 

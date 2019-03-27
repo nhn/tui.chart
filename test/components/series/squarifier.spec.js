@@ -1,7 +1,7 @@
 /**
  * @fileoverview test for squarifier.js
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import squarifier from '../../../src/js/components/series/squarifier';
 

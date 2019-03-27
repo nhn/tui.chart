@@ -1,7 +1,7 @@
 /**
  * @fileoverview test plot
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import raphael from 'raphael';
 import plotFactory from '../../../src/js/components/plots/plot.js';

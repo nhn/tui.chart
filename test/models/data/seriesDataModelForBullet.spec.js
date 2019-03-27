@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for SeriesDataModelForBullet.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModelForBullet';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';

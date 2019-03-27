@@ -1,7 +1,7 @@
 /**
  * @fileoverview Implements valid type maker on yAxisOptions
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import snippet from 'tui-code-snippet';

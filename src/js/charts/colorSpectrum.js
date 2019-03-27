@@ -1,7 +1,7 @@
 /**
  * @fileoverview ColorSpectrum create a color spectrum and provide color value.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import colorutil from '../helpers/colorutil';
 

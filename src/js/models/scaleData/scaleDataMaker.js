@@ -1,7 +1,7 @@
 /**
  * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
- * @auth NHN Ent.
- *       FE Development Lab <dl_javascript@nhnent.com>
+ * @auth NHN.
+ *       FE Development Lab <dl_javascript@nhn.com>
  */
 
 import chartConst from '../../const';

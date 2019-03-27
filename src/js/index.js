@@ -13,7 +13,7 @@ chart.arrayUtil = arrayUtil;
 chart.colorutil = colorUtil;
 
 /**
- * NHN Entertainment Toast UI Chart.
+ * NHN. Toast UI Chart.
  * @namespace tui.chart
  */
 module.exports = chart;

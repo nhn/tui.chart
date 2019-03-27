@@ -1,10 +1,10 @@
 /* eslint no-process-env: 0 */
 /**
  * Config file for testing
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 const webdriverConfig = {
-    hostname: 'fe.nhnent.com',
+    hostname: 'fe.nhn.com',
     port: 4444,
     remoteHost: true
 };

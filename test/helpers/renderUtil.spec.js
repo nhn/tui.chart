@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for renderUtil.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import renderUtil from '../../src/js/helpers/renderUtil.js';

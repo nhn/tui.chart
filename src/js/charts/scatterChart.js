@@ -1,8 +1,8 @@
 /**
  * @fileoverview Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
  *                  to display values for typically two variables for a set of data.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import ChartBase from './chartBase';
 import chartConst from '../const';

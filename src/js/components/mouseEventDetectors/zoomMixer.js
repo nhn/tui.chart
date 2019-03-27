@@ -1,7 +1,7 @@
 /**
  * @fileoverview  Mixer for zoom event of area type mouse event detector.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import MouseEventDetectorBase from './mouseEventDetectorBase';
 import chartConst from '../../const';

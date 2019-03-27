@@ -1,8 +1,8 @@
 /**
  * @fileoverview SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
  * SeriesDataModel.groups has SeriesGroups.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import SeriesDataModel from './seriesDataModel';
