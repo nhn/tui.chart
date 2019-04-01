@@ -481,7 +481,7 @@ describe('Test for Plot', () => {
         /* eslint-enable object-property-newline */
     });
 
-    describe('_isBeforeVisibleCategories()', () => {
+    describe('_isBeforeVisibleValues()', () => {
         const originalCategories = [1398870000000, 1401548400000, 1404140400000, 1406818800000, 1409497200000];
         let result;
 
@@ -494,39 +494,39 @@ describe('Test for Plot', () => {
 
         it('should return true, when type is datetime and value is smaller than first visible categories', () => {
             plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
-            result = plot._isBeforeVisibleCategories(1388502000000, 1404140400000);
+            result = plot._isBeforeVisibleValue(1388502000000, 1404140400000);
 
             expect(result).toBe(true);
         });
 
         it('should return false, when type is datetime and value is same or bigger than first visible categories', () => {
             plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
-            result = plot._isBeforeVisibleCategories(1409497200000, 1404140400000);
+            result = plot._isBeforeVisibleValue(1409497200000, 1404140400000);
 
             expect(result).toBe(false);
         });
 
         it('should return false, when type is datetime and value is empty', () => {
             plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
-            result = plot._isBeforeVisibleCategories(null, 1404140400000);
+            result = plot._isBeforeVisibleValue(null, 1404140400000);
 
             expect(result).toBe(false);
         });
 
         it('should return true, when category index is smaller than first visible', () => {
-            result = plot._isBeforeVisibleCategories(1398870000000, 1404140400000);
+            result = plot._isBeforeVisibleValue(1398870000000, 1404140400000);
 
             expect(result).toBe(true);
         });
 
         it('should return false, when category index is same or bigger than first visible', () => {
-            result = plot._isBeforeVisibleCategories(1409497200000, 1404140400000);
+            result = plot._isBeforeVisibleValue(1409497200000, 1404140400000);
 
             expect(result).toBe(false);
         });
     });
 
-    describe('_isAfterVisibleCatgories()', () => {
+    describe('_isAfterVisibleValue()', () => {
         let result;
 
         beforeEach(() => {
@@ -538,26 +538,26 @@ describe('Test for Plot', () => {
 
         it('should return true, when type is datetime and value is bigger than last visible categories', () => {
             plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
-            result = plot._isAfterVisibleCatgories(1427814000000, 1404140400000);
+            result = plot._isAfterVisibleValue(1427814000000, 1404140400000);
 
             expect(result).toBe(true);
         });
 
         it('should return false, when type is datetime and value is smaller than last visible categories', () => {
             plot.xAxisTypeOption = chartConst.AXIS_TYPE_DATETIME;
-            result = plot._isAfterVisibleCatgories(1388502000000, 1404140400000);
+            result = plot._isAfterVisibleValue(1388502000000, 1404140400000);
 
             expect(result).toBe(false);
         });
 
         it('should return true, when category index is bigger than last visible', () => {
-            result = plot._isAfterVisibleCatgories(1409497200000, 1404140400000);
+            result = plot._isAfterVisibleValue(1409497200000, 1404140400000);
 
             expect(result).toBe(true);
         });
 
         it('should return false, when category index is same or less than last visible', () => {
-            result = plot._isAfterVisibleCatgories(1398870000000, 1404140400000);
+            result = plot._isAfterVisibleValue(1398870000000, 1404140400000);
 
             expect(result).toBe(false);
         });

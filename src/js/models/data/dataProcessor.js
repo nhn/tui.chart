@@ -111,6 +111,41 @@ class DataProcessor extends DataProcessorBase {
         this.initData(rawData);
         this.initZoomedRawData();
         this.baseInit();
+
+        if (this.isCoordinateType()) {
+            this.integratedXAxisData = this._integrateXAxisData();
+        }
+    }
+
+    /**
+     * make integrated X Axis Data for coordinate chart
+     * @returns {array} integratedXAxisData
+     */
+    _integrateXAxisData() {
+        const seriesData = this.rawData.series.line;
+        const options = this.options.xAxis || {};
+        let integratedXAxisData = [];
+        let isDateTime = false;
+
+        if (snippet.isArray(options)) {
+            isDateTime = options.filter(option => option.type && predicate.isDatetimeType(option.type));
+        } else {
+            isDateTime = options.type && predicate.isDatetimeType(options.type);
+        }
+
+        seriesData.forEach(seriesDatum => {
+            seriesDatum.data.forEach(data => {
+                integratedXAxisData.push(data[0]);
+            });
+        });
+
+        integratedXAxisData = [...new Set(integratedXAxisData)];
+
+        if (isDateTime) {
+            integratedXAxisData = integratedXAxisData.map(data => new Date(data));
+        }
+
+        return integratedXAxisData.sort((a, b) => a - b);
     }
 
     /**
@@ -146,11 +181,13 @@ class DataProcessor extends DataProcessorBase {
      * @private
      */
     _filterSeriesDataByIndexRange(seriesData, startIndex, endIndex) {
-        seriesData.forEach(seriesDatum => {
+        const series = [...seriesData];
+
+        series.forEach(seriesDatum => {
             seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
         });
 
-        return seriesData;
+        return series;
     }
 
     /**
@@ -162,28 +199,74 @@ class DataProcessor extends DataProcessorBase {
      */
     _filterRawDataByIndexRange(rawData, indexRange) {
         const [startIndex, endIndex] = indexRange;
+        const data = Object.assign({}, rawData);
 
-        Object.entries(rawData.series).forEach(([seriesType, seriesDataSet]) => {
-            rawData.series[seriesType] = this._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+        Object.entries(data.series).forEach(([seriesType, seriesDataSet]) => {
+            data.series[seriesType] = this._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
         });
 
-        if (rawData.categories) {
-            rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+        if (data.categories) {
+            data.categories = data.categories.slice(startIndex, endIndex + 1);
         }
 
-        return rawData;
+        return data;
+    }
+
+    /**
+     * Filter seriesData by value.
+     * @param {Array.<{data: Array}>} seriesData - series data
+     * @param {number} minValue - minimum value
+     * @param {number} maxValue - maximum value
+     * @returns {Array.<Array.<object>>}
+     * @private
+     */
+    _filterSeriesDataByValue(seriesData, minValue, maxValue) {
+        const isDatetime = predicate.isDatetimeType(this.options.xAxis.type);
+        const series = [...seriesData];
+
+        series.forEach(seriesDatum => {
+            seriesDatum.data = seriesDatum.data.filter(data => {
+                const xAxisValue = isDatetime ? new Date(data[0]) : data[0];
+
+                return xAxisValue >= minValue && xAxisValue <= maxValue;
+            });
+        });
+
+        return series;
+    }
+
+    /**
+     * Filter raw data by value.
+     * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
+     * @param {Array.<number>} valueRange - value range for zoom
+     * @returns {*}
+     * @private
+     */
+    _filterRawDataByValue(rawData, valueRange) {
+        const [minValue, maxValue] = valueRange;
+        const data = Object.assign({}, rawData);
+
+        Object.entries(data.series).forEach(([seriesType, seriesDataSet]) => {
+            data.series[seriesType] = this._filterSeriesDataByValue(seriesDataSet, minValue, maxValue);
+        });
+
+        return data;
     }
 
     /**
      * Update raw data for zoom
-     * @param {Array.<number>} indexRange - index range for zoom
+     * @param {Array.<number>} range - index or value range for zoom
      */
-    updateRawDataForZoom(indexRange) {
+    updateRawDataForZoom(range) {
         const currentData = this.getCurrentData();
         let rawData = this.getRawData();
 
-        this.zoomedRawData = this._filterRawDataByIndexRange(currentData, indexRange);
-        rawData = this._filterRawDataByIndexRange(rawData, indexRange);
+        const getZoomedRawData = this.isCoordinateType() ?
+            this._filterRawDataByValue.bind(this) : this._filterRawDataByIndexRange.bind(this);
+
+        this.zoomedRawData = getZoomedRawData(currentData, range);
+        rawData = getZoomedRawData(rawData, range);
+
         this.initData(rawData);
     }
 

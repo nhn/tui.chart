@@ -171,11 +171,33 @@ function pivot(arr2d) {
     return result;
 }
 
+/**
+ * find index from date type array
+ * @memberOf module:arrayUtil
+ * @param {Array} dateArray date type value array
+ * @param {Date} date target date
+ * @returns {number} index
+ */
+function findIndexFromDateTypeArray(dateArray, date) {
+    const dateValue = Number(date);
+    let foundIndex = -1;
+
+    for (const [idx, value] of dateArray.entries()) {
+        if (Number(value) === dateValue) {
+            foundIndex = idx;
+            break;
+        }
+    }
+
+    return foundIndex;
+}
+
 export default {
     min,
     max,
     any,
     all,
     unique,
-    pivot
+    pivot,
+    findIndexFromDateTypeArray
 };

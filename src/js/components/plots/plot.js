@@ -355,6 +355,8 @@ class Plot {
      */
     _createOptionalLinePositionMap(optionalLineData, xAxisData, width) {
         const categories = this.dataProcessor.getCategories();
+        const categoriesLen = categories.length;
+        const {linex: xAxisValues} = this.dataProcessor.valuesMap;
         const range = this._createOptionalLineValueRange(optionalLineData);
         let startPosition, endPosition;
 
@@ -367,11 +369,13 @@ class Plot {
         }
 
         if (snippet.isNull(startPosition)) {
-            startPosition = this._isBeforeVisibleCategories(range[0], categories[0]) ? 0 : -1;
+            const startValue = categoriesLen ? categories[0] : xAxisValues[0];
+            startPosition = this._isBeforeVisibleValue(range[0], startValue) ? 0 : -1;
         }
 
-        if (snippet.isNull(endPosition)) {
-            endPosition = this._isAfterVisibleCatgories(range[1], categories[categories.length - 1]) ? width : -1;
+        if (snippet.isNull(endPosition) || endPosition > width) {
+            const endValue = categoriesLen ? categories[categoriesLen - 1] : xAxisValues[xAxisValues.length - 1];
+            endPosition = this._isAfterVisibleValue(range[1], endValue) ? width : -1;
         }
 
         return {
@@ -382,11 +386,11 @@ class Plot {
 
     /**
      * @param {string} value - value of starting point
-     * @param {string} firstCategory - first visible category data
-     * @returns {boolean} - whether starting point value is at before first visible category data or not
+     * @param {string} firstValue - first visible value data
+     * @returns {boolean} - whether starting point value is at before first visible data or not
      * @private
      */
-    _isBeforeVisibleCategories(value, firstCategory) {
+    _isBeforeVisibleValue(value, firstValue) {
         const {dataProcessor} = this;
 
         if (!snippet.isExisty(value)) {
@@ -394,22 +398,22 @@ class Plot {
         }
 
         if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-            return value < firstCategory;
+            return value < firstValue;
         }
 
         const valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
-        const firstCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(firstCategory);
+        const firstValueIndex = dataProcessor.findAbsoluteCategoryIndex(firstValue);
 
-        return (valueIndex >= 0) && (valueIndex < firstCategoryIndex);
+        return (valueIndex >= 0) && (valueIndex < firstValueIndex);
     }
 
     /**
      * @param {string} value - value of end point
-     * @param {string} lastCategory - last visible category data
-     * @returns {boolean} - whether end point value is at after last visible category data or not
+     * @param {string} lastValue - last visible value data
+     * @returns {boolean} - whether end point value is at after last visible value data or not
      * @private
      */
-    _isAfterVisibleCatgories(value, lastCategory) {
+    _isAfterVisibleValue(value, lastValue) {
         const {dataProcessor} = this;
 
         if (!snippet.isExisty(value)) {
@@ -417,13 +421,13 @@ class Plot {
         }
 
         if (predicate.isDatetimeType(this.xAxisTypeOption)) {
-            return value > lastCategory;
+            return value > lastValue;
         }
 
         const valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
-        const lastCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(lastCategory);
+        const lastValueIndex = dataProcessor.findAbsoluteCategoryIndex(lastValue);
 
-        return (valueIndex >= 0) && (valueIndex > lastCategoryIndex);
+        return (valueIndex >= 0) && (valueIndex > lastValueIndex);
     }
 
     /**
